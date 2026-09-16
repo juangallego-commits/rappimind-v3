@@ -6076,8 +6076,8 @@ var NOMBRE_DEL_HUECO = {
   URL_PRIVACIDAD_TRAVEL: 'el enlace de la política de datos de la entidad de viajes',
   ENTIDAD_VIGILANCIA_TRAVEL: 'la entidad de vigilancia de los viajes',
   TOPE_TRAVEL: 'el tope por orden',
-  NOMBRE_CAMPANA: 'el nombre, que sale de la tienda, el porcentaje y el día de inicio',
-  NOMBRE_CAMPANA_MAYUS: 'el nombre, que sale de la tienda, el porcentaje y el día de inicio',
+  NOMBRE_CAMPANA: 'el nombre, que sale de la tienda o la marca, el porcentaje y el día de inicio',
+  NOMBRE_CAMPANA_MAYUS: 'el nombre, que sale de la tienda o la marca, el porcentaje y el día de inicio',
   TIENDA: 'la tienda',
   TEXTO_TERRITORIO: 'dónde aplica',
   FECHA_INICIO: 'el día de inicio',
@@ -7376,6 +7376,7 @@ var estado = {
   pasoActual: 0,
   campoAbierto: null,
   filtroRespondido: false,
+  filtroDeTravelRespondido: false,
   motivoDeLegal: null,
   errores: {},
   // Qué preguntas respondió de verdad el comercial. Un valor por defecto NO
@@ -7420,6 +7421,7 @@ function reiniciarFormulario(base, yaRespondidas) {
   estado.campoAbierto = null;
   estado.errores = {};
   estado.filtroRespondido = false;
+  estado.filtroDeTravelRespondido = false;
   estado.motivoDeLegal = null;
   estado.resultado = null;
   estado.ultimoTextoVistaPrevia = '';
@@ -8286,6 +8288,89 @@ function pantallaFiltro(raiz) {
   raiz.appendChild(contenido);
 }
 
+/**
+ * El filtro de Rappi Travel.
+ *
+ * Se muestra despues de elegir uno de los dos tipos de Travel, no antes: las
+ * nueve preguntas solo tienen sentido sabiendo que la campana es de viajes.
+ * Reemplaza, para Travel, las preguntas generales de fondeo y de T&C propios.
+ */
+function pantallaFiltroTravel(raiz) {
+  var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
+    crear('h1', { texto: 'Antes de seguir con tu campaña de Travel' }),
+    crear('p', {
+      clase: 'pregunta-ayuda',
+      texto: 'Nueve preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano. No es un castigo: es un caso que un abogado tiene que mirar.',
+    }),
+  ]);
+
+  var respuestas = {};
+  var lista = crear('div', {});
+
+  function revisar() {
+    for (var i = 0; i < FILTRO_DE_TRAVEL.length; i++) {
+      if (respuestas[FILTRO_DE_TRAVEL[i].id] === true) {
+        E.motivoDeLegal = FILTRO_DE_TRAVEL[i].razon;
+        RM.app.ir('legal');
+        return;
+      }
+    }
+    var todas = FILTRO_DE_TRAVEL.every(function (pregunta) { return respuestas[pregunta.id] === false; });
+    if (todas) {
+      E.filtroDeTravelRespondido = true;
+      // El tipo ya quedo respondido antes del filtro, asi que al volver hay que
+      // seguir en la pregunta siguiente. Sin esto, el asistente reabre la del
+      // tipo y parece que no hubiera pasado nada.
+      E.pantalla = 'pasos';
+      E.campoAbierto = 'tipo';
+      // avanzar vuelve a buscar el campo por identificador, asi que basta con
+      // decirle cual estaba abierto; el indice lo resuelve el solo.
+      RM.pasos.avanzar([{ id: 'tipo' }], 0, null);
+    }
+  }
+
+  for (var i = 0; i < FILTRO_DE_TRAVEL.length; i++) {
+    (function (pregunta) {
+      var bloque = crear('div', { clase: 'pregunta' }, [
+        crear('h2', { clase: 'pregunta-titulo', texto: pregunta.texto }),
+      ]);
+      var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': pregunta.texto });
+      [['No', false], ['Sí', true]].forEach(function (par) {
+        grupo.appendChild(crear('button', {
+          clase: 'opcion', type: 'button', texto: par[0],
+          role: 'radio', 'aria-checked': 'false', 'aria-pressed': 'false',
+          onclick: function () {
+            respuestas[pregunta.id] = par[1];
+            var hermanos = grupo.querySelectorAll('.opcion');
+            for (var k = 0; k < hermanos.length; k++) {
+              hermanos[k].setAttribute('aria-checked', 'false');
+              hermanos[k].setAttribute('aria-pressed', 'false');
+            }
+            this.setAttribute('aria-checked', 'true');
+            this.setAttribute('aria-pressed', 'true');
+            revisar();
+          },
+        }));
+      });
+      bloque.appendChild(grupo);
+      lista.appendChild(bloque);
+    })(FILTRO_DE_TRAVEL[i]);
+  }
+
+  contenido.appendChild(lista);
+  contenido.appendChild(crear('div', { clase: 'fila-botones' }, [
+    crear('button', {
+      clase: 'boton boton-secundario', type: 'button', texto: 'Cambiar el tipo de campaña',
+      onclick: function () {
+        estado.fijar('tipo', null);
+        E.filtroDeTravelRespondido = false;
+        RM.app.ir('pasos');
+      },
+    }),
+  ]));
+  raiz.appendChild(contenido);
+}
+
 function pantallaLegal(raiz) {
   var url = E.configuracion.urlFormularioLegal;
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
@@ -8321,6 +8406,7 @@ RM.flujo = {
   refrescarDocumento: refrescarDocumento,
   pantallaInicio: pantallaInicio,
   pantallaFiltro: pantallaFiltro,
+  pantallaFiltroTravel: pantallaFiltroTravel,
   pantallaLegal: pantallaLegal,
 };
 
@@ -8772,6 +8858,14 @@ function alResponder(campoId, valor, campos, indice) {
   // cuatro campañas de cashback duran un solo día.
   if (campoId === 'fechaInicio' && !estado.entrada().fechaFin) estado.fijar('fechaFin', valor);
   if (campoId === 'pais') estado.fijar('tipo', null);
+
+  // Rappi Travel tiene su propio filtro de nueve preguntas, y va despues de
+  // elegir el tipo: antes de eso no se sabe que la campana es de viajes.
+  if (campoId === 'tipo' && esTipoDeTravel(valor) && !E.filtroDeTravelRespondido) {
+    flujo.refrescarDocumento();
+    RM.app.ir('filtroTravel');
+    return;
+  }
   if (campoId === 'criterioGanador' && estado.entrada().desempate === valor) estado.fijar('desempate', null);
 
   flujo.refrescarDocumento();
@@ -8900,6 +8994,7 @@ function retroceder(camposViejos, indiceViejo, pasosViejos) {
 
 RM.pasos = {
   pantallaPasos: pantallaPasos,
+  avanzar: avanzar,
   comoTexto: comoTexto,
   columnaDocumento: columnaDocumento,
   calculadora: calculadora,
@@ -9998,6 +10093,7 @@ var E = estado.estado;
 var PANTALLAS = {
   inicio: function (raiz) { RM.flujo.pantallaInicio(raiz); },
   filtro: function (raiz) { RM.flujo.pantallaFiltro(raiz); },
+  filtroTravel: function (raiz) { RM.flujo.pantallaFiltroTravel(raiz); },
   legal: function (raiz) { RM.flujo.pantallaLegal(raiz); },
   pasos: function (raiz) { RM.pasos.pantallaPasos(raiz); },
   resumen: function (raiz) { RM.resumen.pantallaResumen(raiz); },

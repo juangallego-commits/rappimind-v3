@@ -3889,6 +3889,7 @@ la pregunta que lo llena. Estos son los nombres:
 | `TEXTO_CARGA_TRAVEL` | cuándo llegan los Créditos |
 | `TEXTO_REDENCION_TRAVEL` | dónde se pueden usar los Créditos |
 | `TEXTO_DESCUENTO_TRAVEL` | en qué consiste el descuento |
+| `TEXTO_SEGUN_PRODUCTO_TRAVEL` | si el descuento cambia según el producto |
 | `TEXTO_MAXIMO_DISPONIBLE_TRAVEL` | a cuántos productos llega el descuento máximo |
 | `TEXTO_VISIBILIDAD_TRAVEL` | dónde ve el usuario el descuento |
 | `TEXTO_ASISTENCIA_TRAVEL` | el alcance del descuento de la asistencia |
@@ -3906,8 +3907,8 @@ la pregunta que lo llena. Estos son los nombres:
 | `URL_PRIVACIDAD_TRAVEL` | el enlace de la política de datos de la entidad de viajes |
 | `ENTIDAD_VIGILANCIA_TRAVEL` | la entidad de vigilancia de los viajes |
 | `TOPE_TRAVEL` | el tope por orden |
-| `NOMBRE_CAMPANA` | el nombre, que sale de la tienda, el porcentaje y el día de inicio |
-| `NOMBRE_CAMPANA_MAYUS` | el nombre, que sale de la tienda, el porcentaje y el día de inicio |
+| `NOMBRE_CAMPANA` | el nombre, que sale de la tienda o la marca, el porcentaje y el día de inicio |
+| `NOMBRE_CAMPANA_MAYUS` | el nombre, que sale de la tienda o la marca, el porcentaje y el día de inicio |
 | `TIENDA` | la tienda |
 | `TEXTO_TERRITORIO` | dónde aplica |
 | `FECHA_INICIO` | el día de inicio |

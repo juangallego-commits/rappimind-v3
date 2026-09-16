@@ -443,6 +443,14 @@ function alResponder(campoId, valor, campos, indice) {
   // cuatro campañas de cashback duran un solo día.
   if (campoId === 'fechaInicio' && !estado.entrada().fechaFin) estado.fijar('fechaFin', valor);
   if (campoId === 'pais') estado.fijar('tipo', null);
+
+  // Rappi Travel tiene su propio filtro de nueve preguntas, y va despues de
+  // elegir el tipo: antes de eso no se sabe que la campana es de viajes.
+  if (campoId === 'tipo' && esTipoDeTravel(valor) && !E.filtroDeTravelRespondido) {
+    flujo.refrescarDocumento();
+    RM.app.ir('filtroTravel');
+    return;
+  }
   if (campoId === 'criterioGanador' && estado.entrada().desempate === valor) estado.fijar('desempate', null);
 
   flujo.refrescarDocumento();
@@ -571,6 +579,7 @@ function retroceder(camposViejos, indiceViejo, pasosViejos) {
 
 RM.pasos = {
   pantallaPasos: pantallaPasos,
+  avanzar: avanzar,
   comoTexto: comoTexto,
   columnaDocumento: columnaDocumento,
   calculadora: calculadora,

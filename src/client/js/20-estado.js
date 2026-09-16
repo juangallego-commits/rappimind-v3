@@ -20,6 +20,7 @@ var estado = {
   pasoActual: 0,
   campoAbierto: null,
   filtroRespondido: false,
+  filtroDeTravelRespondido: false,
   motivoDeLegal: null,
   errores: {},
   // Qué preguntas respondió de verdad el comercial. Un valor por defecto NO
@@ -64,6 +65,7 @@ function reiniciarFormulario(base, yaRespondidas) {
   estado.campoAbierto = null;
   estado.errores = {};
   estado.filtroRespondido = false;
+  estado.filtroDeTravelRespondido = false;
   estado.motivoDeLegal = null;
   estado.resultado = null;
   estado.ultimoTextoVistaPrevia = '';

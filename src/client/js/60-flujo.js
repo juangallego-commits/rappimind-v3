@@ -264,6 +264,89 @@ function pantallaFiltro(raiz) {
   raiz.appendChild(contenido);
 }
 
+/**
+ * El filtro de Rappi Travel.
+ *
+ * Se muestra despues de elegir uno de los dos tipos de Travel, no antes: las
+ * nueve preguntas solo tienen sentido sabiendo que la campana es de viajes.
+ * Reemplaza, para Travel, las preguntas generales de fondeo y de T&C propios.
+ */
+function pantallaFiltroTravel(raiz) {
+  var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
+    crear('h1', { texto: 'Antes de seguir con tu campaña de Travel' }),
+    crear('p', {
+      clase: 'pregunta-ayuda',
+      texto: 'Nueve preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano. No es un castigo: es un caso que un abogado tiene que mirar.',
+    }),
+  ]);
+
+  var respuestas = {};
+  var lista = crear('div', {});
+
+  function revisar() {
+    for (var i = 0; i < FILTRO_DE_TRAVEL.length; i++) {
+      if (respuestas[FILTRO_DE_TRAVEL[i].id] === true) {
+        E.motivoDeLegal = FILTRO_DE_TRAVEL[i].razon;
+        RM.app.ir('legal');
+        return;
+      }
+    }
+    var todas = FILTRO_DE_TRAVEL.every(function (pregunta) { return respuestas[pregunta.id] === false; });
+    if (todas) {
+      E.filtroDeTravelRespondido = true;
+      // El tipo ya quedo respondido antes del filtro, asi que al volver hay que
+      // seguir en la pregunta siguiente. Sin esto, el asistente reabre la del
+      // tipo y parece que no hubiera pasado nada.
+      E.pantalla = 'pasos';
+      E.campoAbierto = 'tipo';
+      // avanzar vuelve a buscar el campo por identificador, asi que basta con
+      // decirle cual estaba abierto; el indice lo resuelve el solo.
+      RM.pasos.avanzar([{ id: 'tipo' }], 0, null);
+    }
+  }
+
+  for (var i = 0; i < FILTRO_DE_TRAVEL.length; i++) {
+    (function (pregunta) {
+      var bloque = crear('div', { clase: 'pregunta' }, [
+        crear('h2', { clase: 'pregunta-titulo', texto: pregunta.texto }),
+      ]);
+      var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': pregunta.texto });
+      [['No', false], ['Sí', true]].forEach(function (par) {
+        grupo.appendChild(crear('button', {
+          clase: 'opcion', type: 'button', texto: par[0],
+          role: 'radio', 'aria-checked': 'false', 'aria-pressed': 'false',
+          onclick: function () {
+            respuestas[pregunta.id] = par[1];
+            var hermanos = grupo.querySelectorAll('.opcion');
+            for (var k = 0; k < hermanos.length; k++) {
+              hermanos[k].setAttribute('aria-checked', 'false');
+              hermanos[k].setAttribute('aria-pressed', 'false');
+            }
+            this.setAttribute('aria-checked', 'true');
+            this.setAttribute('aria-pressed', 'true');
+            revisar();
+          },
+        }));
+      });
+      bloque.appendChild(grupo);
+      lista.appendChild(bloque);
+    })(FILTRO_DE_TRAVEL[i]);
+  }
+
+  contenido.appendChild(lista);
+  contenido.appendChild(crear('div', { clase: 'fila-botones' }, [
+    crear('button', {
+      clase: 'boton boton-secundario', type: 'button', texto: 'Cambiar el tipo de campaña',
+      onclick: function () {
+        estado.fijar('tipo', null);
+        E.filtroDeTravelRespondido = false;
+        RM.app.ir('pasos');
+      },
+    }),
+  ]));
+  raiz.appendChild(contenido);
+}
+
 function pantallaLegal(raiz) {
   var url = E.configuracion.urlFormularioLegal;
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
@@ -299,5 +382,6 @@ RM.flujo = {
   refrescarDocumento: refrescarDocumento,
   pantallaInicio: pantallaInicio,
   pantallaFiltro: pantallaFiltro,
+  pantallaFiltroTravel: pantallaFiltroTravel,
   pantallaLegal: pantallaLegal,
 };

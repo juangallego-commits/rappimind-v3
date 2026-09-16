@@ -16,6 +16,7 @@ var E = estado.estado;
 var PANTALLAS = {
   inicio: function (raiz) { RM.flujo.pantallaInicio(raiz); },
   filtro: function (raiz) { RM.flujo.pantallaFiltro(raiz); },
+  filtroTravel: function (raiz) { RM.flujo.pantallaFiltroTravel(raiz); },
   legal: function (raiz) { RM.flujo.pantallaLegal(raiz); },
   pasos: function (raiz) { RM.pasos.pantallaPasos(raiz); },
   resumen: function (raiz) { RM.resumen.pantallaResumen(raiz); },
