@@ -1,11 +1,10 @@
 {
-  "nota": "Nombres de secciones de la app para la opción de redención. Confirmar nombres exactos por país.",
+  "nota": "Nombres de secciones de la app para la opción de redención. Salen entre comillas en el documento, así que tienen que coincidir con los de la app. Lista de CO confirmada por Juan Camilo Gallego. Faltan los demás países.",
   "CO": [
     "Restaurantes",
     "Turbo",
     "Supermercados",
-    "Farmacia",
-    "Licores",
-    "Tiendas especializadas"
+    "CPGs",
+    "Turbo Restaurantes"
   ]
 }

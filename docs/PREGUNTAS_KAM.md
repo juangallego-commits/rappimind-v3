@@ -40,7 +40,7 @@ tocar, aparece la definición.
 
 # Cashback
 
-Una tienda devuelve un porcentaje del pedido en Créditos.
+La tienda devuelve un porcentaje de lo que el usuario pagó, en Créditos para su Billetera. El usuario compra hoy y vuelve a gastar ese saldo después.
 
 ## Filtro de entrada
 
@@ -48,14 +48,13 @@ Antes del formulario. Si responde **sí** a cualquiera, no se genera: se muestra
 la pantalla "Esta campaña la redacta Legal" con la razón y el enlace al
 formulario manual.
 
-- ¿La campaña la fondea Rappi y no una tienda o marca?
 - ¿La tienda o la marca exige sus propios términos y condiciones?
 
 ## Paso: Campaña
 
 ### ¿En qué país corre la campaña?
 
-> Casi siempre es Colombia. Si tu país no aparece, todavía no está habilitado.
+> Si tu país no aparece en la lista, todavía no está habilitado.
 
 **Por qué te preguntamos esto.** Cada país tiene su propia entidad legal de Rappi, su moneda y su autoridad de protección al consumidor. El documento cambia completo según el país.
 
@@ -74,7 +73,7 @@ formulario manual.
 
 ### ¿Qué tipo de campaña vas a hacer?
 
-> Cashback es lo más común: devuelves un porcentaje del pedido en Créditos.
+> Elige el que se parezca a tu campaña. Cada opción dice de qué se trata.
 
 **Por qué te preguntamos esto.** Cada tipo usa un modelo legal distinto, aprobado por Legal. Elegir mal significa generar el documento equivocado.
 
@@ -352,7 +351,7 @@ formulario manual.
 - `cero`: El tope tiene que ser mayor que cero.
 - `mayorQuePresupuesto`: El tope por pedido es mayor que el presupuesto total. Con eso, el primer pedido se lleva toda la campaña. Revisa los dos números.
 
-### ¿Cuánto hay en total para la campaña?
+### ¿Cuánto es el presupuesto total de la campaña?
 
 > Cuando se acabe, la campaña termina sola. Lo habitual va de 5 a 40 millones.
 
@@ -404,11 +403,11 @@ formulario manual.
 
 No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
-### ¿Aplica solo en algún caso especial?
+### ¿El beneficio aplica solo en cierto tipo de pedido?
 
-> Puedes marcar varias, o ninguna.
+> Es opcional: si el beneficio aplica en cualquier pedido, no marques nada.
 
-**Por qué te preguntamos esto.** Estas restricciones limitan dónde vale el beneficio. Si no quedan escritas, el usuario puede exigirlas en cualquier pedido.
+**Por qué te preguntamos esto.** Esta pregunta es sobre el pedido con el que el usuario se gana el beneficio, no sobre dónde gasta después los Créditos: eso se pregunta más adelante. Si la restricción no queda escrita, el usuario puede reclamar el beneficio en cualquier pedido.
 
 | | |
 |---|---|
@@ -421,16 +420,16 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 **Opciones** (casillas, se pueden marcar varias):
 
-- **Solo en pedidos por Turbo**: El beneficio no aplica en el resto de la app.
-- **Solo para consumo en el local**: El usuario come en el restaurante, no pide domicilio.
+- **Solo si el pedido se hace por Turbo**: Un pedido por el resto de la app no da el beneficio.
+- **Solo si consume en el local**: La modalidad de consumo en el local de la app. Un domicilio no da el beneficio.
 
 ## Paso: Créditos
 
 ### ¿Cuándo le llegan los Créditos?
 
-> Al día siguiente es lo más usado, porque da tiempo de verificar el pedido.
+> Es el momento en que el saldo le queda disponible en la Billetera.
 
-**Por qué te preguntamos esto.** El usuario va a reclamar si no le llegan cuando el documento dice. Elige lo que el equipo de operaciones puede cumplir.
+**Por qué te preguntamos esto.** El documento fija en qué momento el usuario recibe los Créditos, y eso es lo que el usuario va a esperar. Elige lo que el equipo de operaciones puede cumplir.
 
 | | |
 |---|---|
@@ -541,7 +540,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 > Siete de cada diez campañas los limitan a la misma tienda.
 
-**Por qué te preguntamos esto.** Define dónde vale el saldo. Abrirlo a toda la app hace la campaña mucho más cara para quien la fondea.
+**Por qué te preguntamos esto.** Define dónde vale el saldo. Lo normal es que se gaste en la misma tienda donde el usuario se ganó el beneficio. En todo caso, estos Créditos casi nunca aplican a RappiFavor, Cajero ATM ni RappiTravel.
 
 | | |
 |---|---|
@@ -660,7 +659,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ### ¿Hay que gastar un mínimo para participar?
 
-> Solo el 15% de las campañas lo exige. Si lo pones, lo común es 100.000.
+> Es opcional: si no exiges un mínimo, deja el campo vacío y sigue.
 
 **Por qué te preguntamos esto.** Si lo exiges, tiene que quedar escrito. Si no aparece en el documento, no lo puedes aplicar después.
 
@@ -702,7 +701,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 # Carrera de Compras
 
-Gana quien más compre durante la vigencia.
+Un concurso con premio: durante unas fechas gana quien más compre en la tienda. No hay azar, gana por lo que compró.
 
 ## Filtro de entrada
 
@@ -720,7 +719,7 @@ formulario manual.
 
 ### ¿En qué país corre la campaña?
 
-> Casi siempre es Colombia. Si tu país no aparece, todavía no está habilitado.
+> Si tu país no aparece en la lista, todavía no está habilitado.
 
 **Por qué te preguntamos esto.** Cada país tiene su propia entidad legal de Rappi, su moneda y su autoridad de protección al consumidor. El documento cambia completo según el país.
 
@@ -739,7 +738,7 @@ formulario manual.
 
 ### ¿Qué tipo de campaña vas a hacer?
 
-> Cashback es lo más común: devuelves un porcentaje del pedido en Créditos.
+> Elige el que se parezca a tu campaña. Cada opción dice de qué se trata.
 
 **Por qué te preguntamos esto.** Cada tipo usa un modelo legal distinto, aprobado por Legal. Elegir mal significa generar el documento equivocado.
 
@@ -1350,7 +1349,7 @@ formulario manual.
 
 ### ¿Hay que gastar un mínimo para participar?
 
-> Solo el 15% de las campañas lo exige. Si lo pones, lo común es 100.000.
+> Es opcional: si no exiges un mínimo, deja el campo vacío y sigue.
 
 **Por qué te preguntamos esto.** Si lo exiges, tiene que quedar escrito. Si no aparece en el documento, no lo puedes aplicar después.
 
@@ -1392,7 +1391,7 @@ formulario manual.
 
 # Cashback Day
 
-Varias tiendas hacen cashback el mismo día, cada una con su presupuesto.
+Varias tiendas hacen cashback dentro de una misma jornada comercial. Cada tienda pone su porcentaje, su tope y su presupuesto, y cada una organiza lo suyo.
 
 ## Filtro de entrada
 
@@ -1400,14 +1399,13 @@ Antes del formulario. Si responde **sí** a cualquiera, no se genera: se muestra
 la pantalla "Esta campaña la redacta Legal" con la razón y el enlace al
 formulario manual.
 
-- ¿La campaña la fondea Rappi y no las tiendas?
 - ¿Alguna tienda exige sus propios términos y condiciones?
 
 ## Paso: Campaña
 
 ### ¿En qué país corre la campaña?
 
-> Casi siempre es Colombia. Si tu país no aparece, todavía no está habilitado.
+> Si tu país no aparece en la lista, todavía no está habilitado.
 
 **Por qué te preguntamos esto.** Cada país tiene su propia entidad legal de Rappi, su moneda y su autoridad de protección al consumidor. El documento cambia completo según el país.
 
@@ -1426,7 +1424,7 @@ formulario manual.
 
 ### ¿Qué tipo de campaña vas a hacer?
 
-> Cashback es lo más común: devuelves un porcentaje del pedido en Créditos.
+> Elige el que se parezca a tu campaña. Cada opción dice de qué se trata.
 
 **Por qué te preguntamos esto.** Cada tipo usa un modelo legal distinto, aprobado por Legal. Elegir mal significa generar el documento equivocado.
 
@@ -1623,11 +1621,11 @@ formulario manual.
 
 No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
-### ¿Aplica solo en algún caso especial?
+### ¿El beneficio aplica solo en cierto tipo de pedido?
 
-> Puedes marcar varias, o ninguna.
+> Es opcional: si el beneficio aplica en cualquier pedido, no marques nada.
 
-**Por qué te preguntamos esto.** Estas restricciones limitan dónde vale el beneficio. Si no quedan escritas, el usuario puede exigirlas en cualquier pedido.
+**Por qué te preguntamos esto.** Esta pregunta es sobre el pedido con el que el usuario se gana el beneficio, no sobre dónde gasta después los Créditos: eso se pregunta más adelante. Si la restricción no queda escrita, el usuario puede reclamar el beneficio en cualquier pedido.
 
 | | |
 |---|---|
@@ -1640,16 +1638,16 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 **Opciones** (casillas, se pueden marcar varias):
 
-- **Solo en pedidos por Turbo**: El beneficio no aplica en el resto de la app.
-- **Solo para consumo en el local**: El usuario come en el restaurante, no pide domicilio.
+- **Solo si el pedido se hace por Turbo**: Un pedido por el resto de la app no da el beneficio.
+- **Solo si consume en el local**: La modalidad de consumo en el local de la app. Un domicilio no da el beneficio.
 
 ## Paso: Créditos
 
 ### ¿Cuándo le llegan los Créditos?
 
-> Al día siguiente es lo más usado, porque da tiempo de verificar el pedido.
+> Es el momento en que el saldo le queda disponible en la Billetera.
 
-**Por qué te preguntamos esto.** El usuario va a reclamar si no le llegan cuando el documento dice. Elige lo que el equipo de operaciones puede cumplir.
+**Por qué te preguntamos esto.** El documento fija en qué momento el usuario recibe los Créditos, y eso es lo que el usuario va a esperar. Elige lo que el equipo de operaciones puede cumplir.
 
 | | |
 |---|---|
@@ -1760,7 +1758,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 > Siete de cada diez campañas los limitan a la misma tienda.
 
-**Por qué te preguntamos esto.** Define dónde vale el saldo. Abrirlo a toda la app hace la campaña mucho más cara para quien la fondea.
+**Por qué te preguntamos esto.** Define dónde vale el saldo. Lo normal es que se gaste en la misma tienda donde el usuario se ganó el beneficio. En todo caso, estos Créditos casi nunca aplican a RappiFavor, Cajero ATM ni RappiTravel.
 
 | | |
 |---|---|
@@ -1911,7 +1909,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ### ¿Hay que gastar un mínimo para participar?
 
-> Solo el 15% de las campañas lo exige. Si lo pones, lo común es 100.000.
+> Es opcional: si no exiges un mínimo, deja el campo vacío y sigue.
 
 **Por qué te preguntamos esto.** Si lo exiges, tiene que quedar escrito. Si no aparece en el documento, no lo puedes aplicar después.
 

@@ -189,3 +189,57 @@ el comercial nunca veía**.
 ### Qué necesito de Juan
 
 Todo está en `docs/REVISION_MANANA.md`.
+
+## 16 de septiembre · tarde · Primera prueba real en Apps Script
+
+Juan corrió la aplicación de verdad y generó su primer T&C. De ahí salieron trece
+observaciones. Esto es lo que quedó.
+
+### El defecto que bloqueaba la prueba
+
+La vista previa salía en blanco y la opción elegida no se resaltaba. Era **un solo
+defecto**: el navegador nunca recibía los textos legales. Los archivos `Modelos.js`,
+`PaisesSemilla.js` y `Secciones.js` quedaban sueltos en `dist/`, que es el lado del
+servidor, y el navegador solo recibe lo que va dentro de `MotorCliente.html`. Sin ellos
+la vista previa reventaba, y como reventaba a mitad del clic tampoco alcanzaba a pintar
+la opción elegida. En la demostración funcionaba porque ahí sí iban en la misma página.
+
+Arreglado en `scripts/build.js`, con la prueba que faltaba: `pruebas/build.test.js` ahora
+corre `MotorCliente.html` en un ambiente como el del navegador y exige que la vista previa
+salga con sus huecos marcados.
+
+### Los cambios de contenido
+
+| Punto | Qué cambió |
+|---|---|
+| 1 | Se quitó la pregunta de filtro "¿La campaña la fondea Rappi?". El Organizador es siempre la tienda o la marca, así que la pregunta sobraba. |
+| 2 | La ayuda del país ya no recomienda Colombia. |
+| 3 | La ayuda del tipo ya no recomienda Cashback. Cada tipo se explica en su propia descripción. |
+| 6 | "¿Cuánto hay en total para la campaña?" pasó a "¿Cuánto es el presupuesto total de la campaña?". |
+| 7 y 9 | "¿Aplica solo en algún caso especial?" pasó a "¿El beneficio aplica solo en cierto tipo de pedido?", y el porqué dice de entrada que no es la pregunta de dónde se gastan los Créditos. |
+| 8 | La ayuda de la carga explica en qué momento le queda el saldo disponible al usuario. |
+| 10 (i) | El porqué de la redención dice que lo normal es la misma tienda y que estos Créditos casi nunca aplican a RappiFavor, Cajero ATM ni RappiTravel. |
+| 10 (ii) | `data/secciones.json` para Colombia: Restaurantes, Turbo, Supermercados, CPGs y Turbo Restaurantes. |
+| 11 | Las preguntas opcionales llevan una marca "Opcional" al lado del título. Antes el dato estaba en el código y no se veía en pantalla. |
+
+### Lo que quedó esperando tu decisión
+
+- **El nombre de la campaña** y **el nombre del tipo "Cashback Day"**:
+  `docs/PROPUESTA_NOMBRE_CAMPANA.md`.
+- **Cuatro observaciones legales** del primer documento generado, al final de
+  `docs/PENDIENTES_LEGAL.md`. La primera es la más seria: el título decía 99% y la
+  cláusula decía 50%.
+
+### Dónde viven las respuestas de los usuarios
+
+En el Sheet `RappiMind v3 · Base`:
+<https://docs.google.com/spreadsheets/d/1Pk_UmG_O1sklnARmHxKiei--HdwvRAraqcZRnr4gZgU/edit>
+
+Pestañas: `Paises`, `Equipo`, `Solicitudes` y `Registro`. Para auditoría sirven las dos
+últimas. `Solicitudes` tiene una fila por campaña generada, con el identificador, la
+fecha, el correo de quien la hizo, el país, el tipo, la versión del modelo legal que se
+usó, el enlace al documento y, en `datos_json`, todas las respuestas tal como las dio el
+comercial. `Registro` guarda cada acción con su hora.
+
+Los documentos quedan en la carpeta de Drive `RappiMind v3`, en una subcarpeta por país:
+<https://drive.google.com/drive/folders/1RLtv88GEYT5Fxj6wIypF-Aho-LacmON7>

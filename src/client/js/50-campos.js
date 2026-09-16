@@ -262,7 +262,13 @@ function dibujarPregunta(campo, config) {
 
   var bloque = crear('div', { clase: 'pregunta' + (config.error ? ' campo-error' : ''), 'data-campo': campo.id });
 
-  bloque.appendChild(crear('h2', { clase: 'pregunta-titulo', id: 'pregunta-' + campo.id, texto: pregunta.pregunta }));
+  var titulo = crear('h2', { clase: 'pregunta-titulo', id: 'pregunta-' + campo.id, texto: pregunta.pregunta });
+  // Una pregunta opcional tiene que verse opcional. Sin esta marca el comercial
+  // se queda atascado buscando que contestar.
+  if (pregunta.opcional) {
+    titulo.appendChild(crear('span', { clase: 'marca-opcional', texto: 'Opcional' }));
+  }
+  bloque.appendChild(titulo);
   bloque.appendChild(crear('p', { clase: 'pregunta-ayuda' }, [conGlosario(pregunta.ayuda)]));
 
   function alCambiar(valor) {

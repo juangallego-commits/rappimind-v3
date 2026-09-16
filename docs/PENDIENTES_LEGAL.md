@@ -49,3 +49,36 @@ El kit no tenía el .docx v2 de julio. El modelo v3 se armó desde el v1 más la
    si Travel entra en una versión siguiente.
 2. Descuentos que no son cashback (porcentaje de descuento, cupones, 2x1, combos,
    obsequios) son 319 de 711 promociones y tampoco están en v3.
+
+## De la revisión del primer T&C real generado en Apps Script (16 de septiembre)
+
+Documento revisado: `T&C · 99% de Cashback el Corral 20/09 · Colombia · RM-20260916-0001`.
+Salió limpio: cero marcadores, cero valores vacíos, cero tablas y el articulado numerado
+de 1 a 20. Lo que sigue son observaciones, no cambios: los textos son de Legal.
+
+1. **El nombre de la campaña contradice el articulado.** El título dice "99% de Cashback"
+   y "20/09". La cláusula 6 dice cincuenta por ciento (50%) y la cláusula 3 fija la
+   vigencia el 17 de septiembre. Con la cláusula 12 ("en caso de discrepancia se aplicará
+   la condición más favorable para ti"), un título publicado que diga 99% es un riesgo
+   real: es el texto que el usuario lee primero y el que queda en el buscador. Hoy el
+   nombre es texto libre. La propuesta para quitarle el texto libre está en
+   `docs/PROPUESTA_NOMBRE_CAMPANA.md` y necesita tu visto bueno.
+2. **Acreditación inmediata y verificación previa conviven en la misma cláusula.**
+   La cláusula 8 dice que los Créditos se acreditan "de manera inmediata una vez
+   finalizada la orden" y, tres líneas después, que "Rappi se reserva el derecho de
+   verificar la elegibilidad de cada pedido antes de acreditar el Beneficio". Si la
+   verificación es previa, la acreditación no es inmediata. Con la opción "al día
+   siguiente" no hay tensión. Decide si la frase de verificación debe salir cuando la
+   carga es inmediata, o si el texto se deja como está.
+3. **Exclusiones de la redención.** Juan confirmó que estos Créditos casi nunca aplican
+   a RappiFavor, Cajero ATM ni RappiTravel. Hoy eso quedó dicho en la ayuda del
+   formulario, no en el documento: el texto legal dice "cualquier sección de la
+   Plataforma Rappi habilitada para el uso de Créditos". Decide si el modelo debe
+   nombrar esas exclusiones de forma expresa.
+4. **"Consumo en el local" frente a "la misma tienda".** En la revisión se leyó la
+   condición "solo para consumo en el local" como si fuera sobre dónde se gastan los
+   Créditos. No lo es: es sobre el pedido con el que el usuario se gana el beneficio,
+   y el texto de Legal dice "bajo la modalidad de consumo en el local disponible en la
+   Plataforma Rappi". Se reescribió la pregunta del formulario para que eso quede claro,
+   sin tocar el texto legal. Si el nombre correcto de esa modalidad en la app cambió,
+   avísame y lo anoto aquí.

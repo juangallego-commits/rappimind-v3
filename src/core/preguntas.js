@@ -59,7 +59,7 @@ var PREGUNTAS = {
   pais: p({
     paso: 'campana',
     pregunta: '¿En qué país corre la campaña?',
-    ayuda: 'Casi siempre es Colombia. Si tu país no aparece, todavía no está habilitado.',
+    ayuda: 'Si tu país no aparece en la lista, todavía no está habilitado.',
     porQue: 'Cada país tiene su propia entidad legal de Rappi, su moneda y su autoridad de protección al consumidor. El documento cambia completo según el país.',
     avanzaSola: true,
     placeholders: ['PAIS_LEGAL', 'ENTIDAD_LEGAL'],
@@ -69,7 +69,7 @@ var PREGUNTAS = {
   tipo: p({
     paso: 'campana',
     pregunta: '¿Qué tipo de campaña vas a hacer?',
-    ayuda: 'Cashback es lo más común: devuelves un porcentaje del pedido en Créditos.',
+    ayuda: 'Elige el que se parezca a tu campaña. Cada opción dice de qué se trata.',
     porQue: 'Cada tipo usa un modelo legal distinto, aprobado por Legal. Elegir mal significa generar el documento equivocado.',
     avanzaSola: true,
     placeholders: [],
@@ -232,7 +232,7 @@ var PREGUNTAS = {
 
   presupuesto: p({
     paso: 'beneficio',
-    pregunta: '¿Cuánto hay en total para la campaña?',
+    pregunta: '¿Cuánto es el presupuesto total de la campaña?',
     ayuda: 'Cuando se acabe, la campaña termina sola. Lo habitual va de 5 a 40 millones.',
     porQue: 'El documento dice que la campaña termina al agotarse el presupuesto. Es lo que te protege si el consumo se dispara.',
     ejemplo: '20000000',
@@ -277,7 +277,7 @@ var PREGUNTAS = {
   compraMinima: p({
     paso: 'beneficio',
     pregunta: '¿Hay que gastar un mínimo para participar?',
-    ayuda: 'Solo el 15% de las campañas lo exige. Si lo pones, lo común es 100.000.',
+    ayuda: 'Es opcional: si no exiges un mínimo, deja el campo vacío y sigue.',
     porQue: 'Si lo exiges, tiene que quedar escrito. Si no aparece en el documento, no lo puedes aplicar después.',
     ejemplo: '100000',
     moneda: true,
@@ -288,14 +288,14 @@ var PREGUNTAS = {
 
   condiciones: p({
     paso: 'beneficio',
-    pregunta: '¿Aplica solo en algún caso especial?',
-    ayuda: 'Puedes marcar varias, o ninguna.',
-    porQue: 'Estas restricciones limitan dónde vale el beneficio. Si no quedan escritas, el usuario puede exigirlas en cualquier pedido.',
+    pregunta: '¿El beneficio aplica solo en cierto tipo de pedido?',
+    ayuda: 'Es opcional: si el beneficio aplica en cualquier pedido, no marques nada.',
+    porQue: 'Esta pregunta es sobre el pedido con el que el usuario se gana el beneficio, no sobre dónde gasta después los Créditos: eso se pregunta más adelante. Si la restricción no queda escrita, el usuario puede reclamar el beneficio en cualquier pedido.',
     opcional: true,
     multiple: true,
     opciones: [
-      { valor: 'turbo', etiqueta: 'Solo en pedidos por Turbo', nota: 'El beneficio no aplica en el resto de la app.' },
-      { valor: 'consumo_local', etiqueta: 'Solo para consumo en el local', nota: 'El usuario come en el restaurante, no pide domicilio.' },
+      { valor: 'turbo', etiqueta: 'Solo si el pedido se hace por Turbo', nota: 'Un pedido por el resto de la app no da el beneficio.' },
+      { valor: 'consumo_local', etiqueta: 'Solo si consume en el local', nota: 'La modalidad de consumo en el local de la app. Un domicilio no da el beneficio.' },
     ],
     placeholders: ['TEXTO_CONDICIONES'],
     errores: {},
@@ -306,8 +306,8 @@ var PREGUNTAS = {
   carga: p({
     paso: 'creditos',
     pregunta: '¿Cuándo le llegan los Créditos?',
-    ayuda: 'Al día siguiente es lo más usado, porque da tiempo de verificar el pedido.',
-    porQue: 'El usuario va a reclamar si no le llegan cuando el documento dice. Elige lo que el equipo de operaciones puede cumplir.',
+    ayuda: 'Es el momento en que el saldo le queda disponible en la Billetera.',
+    porQue: 'El documento fija en qué momento el usuario recibe los Créditos, y eso es lo que el usuario va a esperar. Elige lo que el equipo de operaciones puede cumplir.',
     avanzaSola: true,
     porDefecto: 'dia_siguiente',
     opciones: [
@@ -374,7 +374,7 @@ var PREGUNTAS = {
     paso: 'creditos',
     pregunta: '¿Dónde puede gastar los Créditos?',
     ayuda: 'Siete de cada diez campañas los limitan a la misma tienda.',
-    porQue: 'Define dónde vale el saldo. Abrirlo a toda la app hace la campaña mucho más cara para quien la fondea.',
+    porQue: 'Define dónde vale el saldo. Lo normal es que se gaste en la misma tienda donde el usuario se ganó el beneficio. En todo caso, estos Créditos casi nunca aplican a RappiFavor, Cajero ATM ni RappiTravel.',
     avanzaSola: true,
     porDefecto: 'tienda',
     opciones: [

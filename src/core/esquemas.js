@@ -337,7 +337,7 @@ var ESQUEMAS = {
   cashback: {
     id: 'cashback',
     nombre: 'Cashback',
-    descripcion: 'Una tienda devuelve un porcentaje del pedido en Créditos.',
+    descripcion: 'La tienda devuelve un porcentaje de lo que el usuario pagó, en Créditos para su Billetera. El usuario compra hoy y vuelve a gastar ese saldo después.',
     modelo: 'cashback',
     // El presupuesto va justo despues del tope: son el mismo tema y la
     // calculadora avisa cuando el tope se come el presupuesto entero.
@@ -346,15 +346,16 @@ var ESQUEMAS = {
       'tope',
       { id: 'presupuesto', etiqueta: 'Presupuesto total', tipo: 'numero', paso: 'beneficio', obligatorio: true }
     ),
+    // No se pregunta quien fondea: el Organizador es siempre la tienda o la
+    // marca, y eso no cambia porque Rappi ponga la plata por detras.
     filtroDeEntrada: [
-      '¿La campaña la fondea Rappi y no una tienda o marca?',
       '¿La tienda o la marca exige sus propios términos y condiciones?',
     ],
   },
   carrera_compras: {
     id: 'carrera_compras',
     nombre: 'Carrera de Compras',
-    descripcion: 'Gana quien más compre durante la vigencia.',
+    descripcion: 'Un concurso con premio: durante unas fechas gana quien más compre en la tienda. No hay azar, gana por lo que compró.',
     modelo: 'carrera_compras',
     campos: unir(CAMPOS_COMUNES, CAMPOS_TIENDA_Y_ORGANIZADOR, CAMPOS_CARRERA),
     filtroDeEntrada: [
@@ -368,13 +369,12 @@ var ESQUEMAS = {
   cashback_day: {
     id: 'cashback_day',
     nombre: 'Cashback Day',
-    descripcion: 'Varias tiendas hacen cashback el mismo día, cada una con su presupuesto.',
+    descripcion: 'Varias tiendas hacen cashback dentro de una misma jornada comercial. Cada tienda pone su porcentaje, su tope y su presupuesto, y cada una organiza lo suyo.',
     modelo: 'cashback_day',
     // No hay organizador unico: cada tienda organiza su propio beneficio.
     campos: unir(CAMPOS_COMUNES, CAMPOS_CREDITOS, CAMPOS_CASHBACK_DAY),
     camposPorTienda: CAMPOS_POR_TIENDA,
     filtroDeEntrada: [
-      '¿La campaña la fondea Rappi y no las tiendas?',
       '¿Alguna tienda exige sus propios términos y condiciones?',
     ],
   },

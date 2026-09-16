@@ -197,6 +197,14 @@ button { font-size: 15px; cursor: pointer; }
 .pregunta-titulo { font-family: var(--titulos); font-weight: 600; font-size: 21px; line-height: 1.3; margin: 0 0 var(--e2); }
 .pregunta-ayuda { color: var(--gris-lapiz); font-size: 14px; margin: 0 0 var(--e3); }
 
+/* Marca de pregunta opcional, al lado del titulo. */
+.marca-opcional {
+  display: inline-block; vertical-align: middle; margin-left: var(--e2);
+  padding: 2px 8px; border: 1px solid var(--borde); border-radius: 999px;
+  font-family: var(--cuerpo); font-weight: 700; font-size: 12px;
+  letter-spacing: 0.02em; color: var(--gris-lapiz); background: var(--niebla);
+}
+
 .por-que { margin: var(--e2) 0 0; }
 .por-que summary {
   color: var(--naranja-accion); font-size: 14px; cursor: pointer;
