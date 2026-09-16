@@ -92,6 +92,61 @@ var CANAL_TC = {
  * Los datos entre llaves los pone la pantalla final con los de la campaña, para
  * que el comercial no tenga que deducir nada.
  */
+/**
+ * El filtro de entrada de Rappi Travel.
+ *
+ * Se muestra despues de elegir uno de los dos tipos de Travel y reemplaza, para
+ * Travel, las preguntas generales. Cualquier si lleva a Legal con su razon.
+ * Ver docs/MODELO_BASE_TRAVEL.md, seccion 11.
+ */
+var FILTRO_DE_TRAVEL = [
+  {
+    id: 'pagaRappiTravel',
+    texto: '¿La campaña la paga Rappi Travel o Rappi, y no la marca de un aliado?',
+    razon: 'Rappi Travel nunca es el Organizador. Si la campaña la paga Rappi Travel, la redacta Legal.',
+  },
+  {
+    id: 'tycPropiosTravel',
+    texto: '¿El aliado exige sus propios términos y condiciones?',
+    razon: 'Si el aliado impone su documento, hay que revisarlo con Legal antes de publicarlo.',
+  },
+  {
+    id: 'azarTravel',
+    texto: '¿Hay sorteo o concurso, o la campaña se anuncia con palabras como "gana"?',
+    razon: 'Las dinámicas con azar necesitan permiso previo de Coljuegos, y la palabra "gana" hace ver la campaña como un concurso.',
+  },
+  {
+    id: 'anunciaPrecio',
+    texto: '¿La campaña anuncia un precio "desde" o una tarifa de vuelo, hotel o paquete?',
+    razon: 'Los anuncios de tarifas tienen reglas especiales de información y ya generaron una sanción a Rappi Travel.',
+  },
+  {
+    id: 'beneficioDeTercero',
+    texto: '¿El beneficio es distinto a Créditos o a un descuento en el precio? Por ejemplo: noches o niños gratis, cupones, millas, eSIM, bonos o cuotas sin interés.',
+    razon: 'Ese beneficio lo presta un tercero con sus propias condiciones, así que necesita otro documento.',
+  },
+  {
+    id: 'beneficioVariable',
+    texto: '¿El porcentaje, el tope o la compra mínima cambian según el destino, el producto o el tipo de usuario, o se mezcla descuento con cashback?',
+    razon: 'Este documento usa un solo beneficio para toda la campaña. Con varios, las cláusulas se contradicen.',
+  },
+  {
+    id: 'dependeDeBanco',
+    texto: '¿El beneficio depende de pagar con una tarjeta en cuotas o de una condición de un banco?',
+    razon: 'Esas campañas tienen otra entidad responsable y otro documento.',
+  },
+  {
+    id: 'esSeguro',
+    texto: '¿El producto es un seguro con cobertura de una aseguradora, y no una asistencia al viajero?',
+    razon: 'Los seguros tienen reglas propias de la Superintendencia Financiera.',
+  },
+  {
+    id: 'empleadosOSinFin',
+    texto: '¿La campaña es solo para empleados o no tiene fecha de fin?',
+    razon: 'Necesita un documento distinto.',
+  },
+];
+
 var PASOS_SQUARESPACE = [
   {
     hace: 'Abre el documento y léelo completo. Es el texto que vas a publicar, tal cual, sin editarlo.',
@@ -199,6 +254,7 @@ if (typeof module !== 'undefined') {
   module.exports = {
     AVISO_AZAR: AVISO_AZAR,
     CONTACTOS: CONTACTOS,
+    FILTRO_DE_TRAVEL: FILTRO_DE_TRAVEL,
     ACCESOS_SQUARESPACE: ACCESOS_SQUARESPACE,
     CANAL_TC: CANAL_TC,
     PASOS_SQUARESPACE: PASOS_SQUARESPACE,
