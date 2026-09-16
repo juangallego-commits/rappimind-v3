@@ -100,11 +100,9 @@ de la sección 13 de ese documento.
 
 ### Lo que bloquea la generación hoy
 
-1. **Falta la política de datos de Rappi Travel** (R14). `data/paises.json` tiene
-   `travel_politica_privacidad` y `travel_url_privacidad` vacíos, y mientras estén vacíos
-   **la herramienta no genera ni un solo T&C de Travel**: dice qué falta y manda a Legal.
-   La cláusula 22 necesita el nombre y la URL de una política a nombre de Travel Moustache;
-   la actual remite a Rappi S.A.S. Es el primer dato que necesito de ti.
+1. ~~**Falta la política de datos de Rappi Travel** (R14).~~ **Resuelto por Juan el 16 de
+   septiembre**: "la política de privacidad", en <https://travel.rappi.com.co/private-policy>.
+   Con eso Colombia ya genera T&C de Travel.
 2. **RNT y su vencimiento** (R15). Va 79000, que es lo que dicen el certificado y las
    respuestas a la SIC, y vencimiento el 31 de marzo de 2027, que es lo que dicen tus
    notas. El certificado del Drive vencía el 31 de marzo de 2026. Si el RNT está vencido,
@@ -118,13 +116,16 @@ de la sección 13 de ese documento.
 4. **Créditos sin documento madre** (R2). La cláusula 12 dice que estos Créditos se rigen
    por el propio T&C. Solo cuando la redención incluye toda la Plataforma se agrega el
    párrafo que remite a los T&C de Créditos de Rappi.
-5. **Cancelaciones** (R3). Las viñetas de "Reembolso parcial" y "Plazo" son nuevas. La
-   propuesta adicional de conservar el beneficio cuando el Proveedor modifica la reserva y
-   el usuario la acepta sin reembolso **no está aplicada**: dime si entra.
-6. **Responsabilidad** (R4). La cláusula 21 quedó **tal cual** el modelo de junio, con la
-   observación de Supertransporte encima: como proveedor indirecto con responsabilidad
-   solidaria, una exclusión general puede leerse como cláusula abusiva. La redacción
-   alternativa está escrita en R4 y no está aplicada. Es la decisión de más riesgo.
+5. **Cancelaciones** (R3). Las viñetas de "Reembolso parcial" y "Plazo" son nuevas.
+   **Juan aprobó el 16 de septiembre** la propuesta adicional, y ya está aplicada: si el
+   Proveedor modifica la reserva y el usuario la acepta sin reembolso, conserva el
+   Beneficio. Quien pierde el Beneficio es quien cancela, pide reembolso o modifica él
+   mismo la reserva.
+6. **Responsabilidad** (R4). **Juan decidió el 16 de septiembre dejarla tal cual** el
+   modelo de junio. Queda anotada la observación de Supertransporte, que calificó a Rappi
+   Travel como proveedor indirecto con responsabilidad solidaria: una exclusión general de
+   responsabilidad por la prestación del servicio puede leerse como cláusula abusiva y no
+   protege. La redacción alternativa sigue escrita en R4 por si algún día se retoma.
 7. **Entidad de vigilancia** (R5). Va "la Superintendencia de Industria y Comercio y la
    Superintendencia de Transporte, según corresponda".
 8. **Base de cálculo** (R6). Falta decidir si los impuestos y las tasas de la tarifa

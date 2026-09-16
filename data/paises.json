@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-16b",
+  "version": "2026-09-16c",
   "fuente": "RappiMind_Config_Legal_por_Pais_4.xlsx",
   "paises": [
     {
@@ -38,8 +38,6 @@
       "por_confirmar_en_pruebas": [
         "travel_rnt",
         "travel_rnt_vence",
-        "travel_politica_privacidad",
-        "travel_url_privacidad",
         "travel_entidad_vigilancia"
       ],
       "travel_entidad": "Travel Moustache S.A.S.",
@@ -48,8 +46,8 @@
       "travel_rnt_vence": "2027-03-31",
       "travel_url_sitio": "www.travel.rappi.com.co",
       "travel_url_tc": "https://travel.rappi.com.co/terms",
-      "travel_politica_privacidad": "",
-      "travel_url_privacidad": "",
+      "travel_politica_privacidad": "la política de privacidad",
+      "travel_url_privacidad": "https://travel.rappi.com.co/private-policy",
       "travel_entidad_vigilancia": "la Superintendencia de Industria y Comercio y la Superintendencia de Transporte, según corresponda"
     },
     {

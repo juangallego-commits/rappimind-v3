@@ -22,25 +22,8 @@ const modelos = cargarModelos();
 const generan = casos.filter((caso) => caso.esperado.resultado === 'genera');
 const fallan = casos.filter((caso) => caso.esperado.resultado === 'falla');
 
-/**
- * Rappi Travel todavía no tiene política de datos propia en data/paises.json:
- * es un dato que Juan debe conseguir con Legal Travel, y mientras falte la
- * herramienta no genera. Las pruebas usan valores de prueba, para poder probar
- * todo lo demás. Cuando el dato real entre, esta función sobra.
- */
-const DATOS_DE_PRUEBA_DE_TRAVEL = {
-  travel_politica_privacidad: 'la Política de Tratamiento de Datos Personales de Prueba',
-  travel_url_privacidad: 'https://ejemplo.travel.rappi.com.co/privacidad',
-};
-
-function paisDelCaso(caso) {
-  const pais = paises.find((p) => p.codigo === caso.entrada.pais);
-  if (String(caso.id).indexOf('TV') !== 0) return pais;
-  return Object.assign({}, pais, DATOS_DE_PRUEBA_DE_TRAVEL);
-}
-
 function correr(caso) {
-  const pais = paisDelCaso(caso);
+  const pais = paises.find((p) => p.codigo === caso.entrada.pais);
   return generarTexto(caso.entrada, pais, modelos, {
     fechaReferencia: caso.fecha_referencia,
     usuarioEnEquipo: caso.usuario_en_equipo === true,
