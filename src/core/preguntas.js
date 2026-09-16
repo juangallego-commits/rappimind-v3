@@ -1250,6 +1250,7 @@ var NOMBRE_DEL_HUECO = {
   TEXTO_CARGA_TRAVEL: 'cuándo llegan los Créditos',
   TEXTO_REDENCION_TRAVEL: 'dónde se pueden usar los Créditos',
   TEXTO_DESCUENTO_TRAVEL: 'en qué consiste el descuento',
+  TEXTO_SEGUN_PRODUCTO_TRAVEL: 'si el descuento cambia según el producto',
   TEXTO_MAXIMO_DISPONIBLE_TRAVEL: 'a cuántos productos llega el descuento máximo',
   TEXTO_VISIBILIDAD_TRAVEL: 'dónde ve el usuario el descuento',
   TEXTO_ASISTENCIA_TRAVEL: 'el alcance del descuento de la asistencia',

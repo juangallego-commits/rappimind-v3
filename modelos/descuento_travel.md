@@ -10,7 +10,7 @@
 [[INCLUIR:travel_condiciones]]
 § Mecánica y Beneficio. Para obtener el beneficio de la Campaña (en adelante, el “Beneficio”) debes comprar uno o varios Productos Participantes a través de los Sistemas Rappi Travel durante la vigencia de la Campaña y pagar la orden con un medio de pago válido para la Campaña.
 {{TEXTO_METODO_PAGO_TRAVEL}}
-El Beneficio consiste en {{TEXTO_DESCUENTO_TRAVEL}} sobre el valor de la tarifa de los Productos Participantes. El descuento se aplica directamente en el precio y el valor final con descuento se muestra antes de que pagues.[[?TEXTO_MAXIMO_DISPONIBLE_TRAVEL]] {{TEXTO_MAXIMO_DISPONIBLE_TRAVEL}}[[/?]][[?TEXTO_ASISTENCIA_TRAVEL]] {{TEXTO_ASISTENCIA_TRAVEL}}[[/?]]
+El Beneficio consiste en {{TEXTO_DESCUENTO_TRAVEL}} sobre el valor de la tarifa de los Productos Participantes[[?TEXTO_SEGUN_PRODUCTO_TRAVEL]]{{TEXTO_SEGUN_PRODUCTO_TRAVEL}}[[/?]]. El descuento se aplica directamente en el precio y el valor final con descuento se muestra antes de que pagues.[[?TEXTO_MAXIMO_DISPONIBLE_TRAVEL]] {{TEXTO_MAXIMO_DISPONIBLE_TRAVEL}}[[/?]][[?TEXTO_ASISTENCIA_TRAVEL]] {{TEXTO_ASISTENCIA_TRAVEL}}[[/?]]
 § Cómo identificar el descuento. El descuento estará identificado en {{TEXTO_VISIBILIDAD_TRAVEL}}, y el porcentaje exacto de cada Producto Participante se mostrará antes de que pagues.
 § Límites.
 • **Máximo de órdenes por usuario:** {{TEXTO_LIMITE_ORDENES_TRAVEL}}

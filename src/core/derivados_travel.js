@@ -384,8 +384,11 @@ function textoDescuentoTravel(entrada) {
     return 'un descuento del **' + porcentajeEnLetras(entrada.porcentaje) + '**';
   }
   if (!tieneValorTravel(entrada.porcentajeMinimo)) return '';
+  // "segun el Producto Participante" va al final de la frase, no aqui: en medio
+  // partia la oracion ("...segun el Producto Participante sobre el valor de la
+  // tarifa..."). Son las mismas palabras del modelo base, en otro orden.
   return 'un descuento de entre el **' + porcentajeEnLetras(entrada.porcentajeMinimo) +
-    '** y el **' + porcentajeEnLetras(entrada.porcentaje) + '**, según el Producto Participante';
+    '** y el **' + porcentajeEnLetras(entrada.porcentaje) + '**';
 }
 
 /**
@@ -484,6 +487,7 @@ function calcularDerivadosTravel(entrada, pais) {
   valores.TEXTO_CARGA_TRAVEL = textoCargaTravel(datos);
   valores.TEXTO_REDENCION_TRAVEL = textoRedencionTravel(datos, p);
   valores.TEXTO_DESCUENTO_TRAVEL = textoDescuentoTravel(datos);
+  valores.TEXTO_SEGUN_PRODUCTO_TRAVEL = datos.formaDescuento === 'variable' ? ', según el Producto Participante' : '';
   valores.TEXTO_MAXIMO_DISPONIBLE_TRAVEL = textoMaximoDisponibleTravel(datos);
   valores.TEXTO_VISIBILIDAD_TRAVEL = textoVisibilidadTravel(datos);
   valores.TEXTO_ASISTENCIA_TRAVEL = textoAsistenciaTravel(datos);

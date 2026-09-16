@@ -153,7 +153,12 @@ de la sección 13 de ese documento.
     Créditos, que son masculinos. Travel trae órdenes, unidades y noches, que son
     femeninas. Arreglado en el motor, con su prueba. No cambia ni una letra de los
     documentos de delivery.
-16. **El nombre de una campaña sin marca aliada queda con la razón social.** Por ejemplo
+16. **Una frase del descuento variable quedaba partida.** Tal como está escrita en el
+    modelo base, la cláusula salía así: "un descuento de entre el 5% y el 40%, según el
+    Producto Participante sobre el valor de la tarifa de los Productos Participantes".
+    Moví "según el Producto Participante" al final de la oración. Son exactamente las
+    mismas palabras, en otro orden. Si prefieres otra redacción, dímela.
+17. **El nombre de una campaña sin marca aliada queda con la razón social.** Por ejemplo
     "OPERADOR DE PRUEBA S.A.S. · 50% CASHBACK TRAVEL · 15 OCT 2026". Se lee raro con el
     "S.A.S." adentro. Si prefieres, pongo "Rappi Travel" cuando no hay marca, o hago la
     marca obligatoria.
