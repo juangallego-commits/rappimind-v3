@@ -141,8 +141,29 @@ function calculadora() {
   return crear('div', { clase: 'aviso' }, lineas);
 }
 
-/** Barra de progreso con el nombre de cada paso. */
+/**
+ * Barra de progreso.
+ *
+ * En escritorio va el nombre de cada paso. En celular no caben siete nombres
+ * sin encaramarse uno sobre otro, así que se muestra "Paso 2 de 7" con el
+ * nombre del actual y una línea que avanza. La hoja de estilos decide cuál de
+ * los dos se ve.
+ */
 function barraDeProgreso(pasos) {
+  var compacta = crear('p', { clase: 'progreso-compacto' }, [
+    crear('span', { clase: 'progreso-cuenta', texto: 'Paso ' + (E.pasoActual + 1) + ' de ' + pasos.length }),
+    document.createTextNode(' \u00B7 '),
+    crear('strong', { texto: pasos[E.pasoActual].nombre }),
+    crear('span', {
+      clase: 'progreso-linea',
+      role: 'progressbar',
+      'aria-valuenow': String(E.pasoActual + 1),
+      'aria-valuemin': '1',
+      'aria-valuemax': String(pasos.length),
+      style: '--avance: ' + Math.round(((E.pasoActual + 1) / pasos.length) * 100) + '%',
+    }),
+  ]);
+
   var lista = crear('ol', { clase: 'progreso' });
   for (var i = 0; i < pasos.length; i++) {
     (function (paso, indice) {
@@ -157,7 +178,7 @@ function barraDeProgreso(pasos) {
       ]));
     })(pasos[i], i);
   }
-  return lista;
+  return crear('div', {}, [compacta, lista]);
 }
 
 /** La columna del documento. */

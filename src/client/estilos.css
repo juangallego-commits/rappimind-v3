@@ -171,6 +171,8 @@ button { font-size: 15px; cursor: pointer; }
 
 /* --- Barra de progreso -------------------------------------------------- */
 
+.progreso-compacto { display: none; }
+
 .progreso { display: flex; gap: var(--e1); margin: 0 0 var(--e6); list-style: none; padding: 0; }
 .progreso li { flex: 1; min-width: 0; }
 .progreso button {
@@ -413,6 +415,20 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
   .columna-documento { display: none; }
   h1 { font-size: 23px; }
   .pregunta-titulo { font-size: 19px; }
+  .progreso { display: none; }
+  .progreso-compacto {
+    display: block; margin: 0 0 var(--e5); font-size: 14px; color: var(--gris-lapiz);
+  }
+  .progreso-compacto strong { color: var(--tinta); font-family: var(--titulos); font-weight: 600; }
+  .progreso-linea {
+    display: block; height: 2px; margin-top: var(--e2);
+    background: var(--borde); border-radius: 1px; position: relative;
+  }
+  .progreso-linea::before {
+    content: ''; position: absolute; inset: 0 auto 0 0;
+    width: var(--avance); background: var(--naranja-marca); border-radius: 1px;
+  }
+
   .barra-superior { padding: var(--e2) var(--e4); gap: var(--e3); }
   .marca { font-size: 15px; white-space: nowrap; flex: none; }
   .marca .corona { width: 11px; left: 36px; }
