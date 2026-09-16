@@ -51,7 +51,7 @@ formulario manual.
 - ¿La campaña la fondea Rappi y no una tienda o marca?
 - ¿La tienda o la marca exige sus propios términos y condiciones?
 
-## Paso: Tu campaña
+## Paso: Campaña
 
 ### ¿En qué país corre la campaña?
 
@@ -62,7 +62,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `pais` |
-| Paso | Tu campaña |
+| Paso | Campaña |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | sí |
@@ -81,7 +81,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `tipo` |
-| Paso | Tu campaña |
+| Paso | Campaña |
 | Tipo de control | tarjetas |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | sí |
@@ -99,7 +99,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `nombreCampana` |
-| Paso | Tu campaña |
+| Paso | Campaña |
 | Tipo de control | texto |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | 99% Cashback Pollo Dorado |
@@ -120,7 +120,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `tienda` |
-| Paso | Tu campaña |
+| Paso | Campaña |
 | Tipo de control | texto |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | Pollo Dorado |
@@ -140,7 +140,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `alcance` |
-| Paso | Tu campaña |
+| Paso | Campaña |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Valor por defecto | Nacional |
@@ -165,7 +165,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `ciudades` |
-| Paso | Tu campaña |
+| Paso | Campaña |
 | Tipo de control | texto |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | Bogotá, Medellín, Cali |
@@ -178,7 +178,7 @@ formulario manual.
 
 - `vacio`: Escribe al menos una ciudad, o vuelve y elige cobertura nacional.
 
-## Paso: Quién la organiza
+## Paso: Organizador
 
 ### ¿Qué empresa paga el beneficio?
 
@@ -189,7 +189,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `organizadorRazonSocial` |
-| Paso | Quién la organiza |
+| Paso | Organizador |
 | Tipo de control | texto |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | Alimentos del Norte S.A.S. |
@@ -209,7 +209,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `organizadorId` |
-| Paso | Quién la organiza |
+| Paso | Organizador |
 | Tipo de control | identificacion |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | 900.111.222-1 |
@@ -307,7 +307,7 @@ formulario manual.
 
 - `vacio`: Elige la hora de fin.
 
-## Paso: El beneficio
+## Paso: Beneficio
 
 ### ¿Qué porcentaje del pedido devuelves en Créditos?
 
@@ -318,7 +318,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `porcentaje` |
-| Paso | El beneficio |
+| Paso | Beneficio |
 | Tipo de control | numero |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | 99 |
@@ -339,7 +339,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `tope` |
-| Paso | El beneficio |
+| Paso | Beneficio |
 | Tipo de control | numero |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | 25000 |
@@ -352,6 +352,27 @@ formulario manual.
 - `cero`: El tope tiene que ser mayor que cero.
 - `mayorQuePresupuesto`: El tope por pedido es mayor que el presupuesto total. Con eso, el primer pedido se lleva toda la campaña. Revisa los dos números.
 
+### ¿Cuánto hay en total para la campaña?
+
+> Cuando se acabe, la campaña termina sola. Lo habitual va de 5 a 40 millones.
+
+**Por qué te preguntamos esto.** El documento dice que la campaña termina al agotarse el presupuesto. Es lo que te protege si el consumo se dispara.
+
+| | |
+|---|---|
+| Campo interno | `presupuesto` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 20000000 |
+| Avanza sola | no |
+| Llena en el documento | `PRESUPUESTO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el presupuesto total de la campaña.
+- `cero`: El presupuesto tiene que ser mayor que cero.
+
 ### ¿Cuántas veces puede ganar la misma persona?
 
 > La mitad de las campañas permite una sola vez por usuario.
@@ -361,7 +382,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `maxPedidos` |
-| Paso | El beneficio |
+| Paso | Beneficio |
 | Tipo de control | numero |
 | Obligatorio | sí, cuando se ve |
 | Valor por defecto | 1 |
@@ -392,7 +413,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `condiciones` |
-| Paso | El beneficio |
+| Paso | Beneficio |
 | Tipo de control | casillas |
 | Obligatorio | no |
 | Avanza sola | no |
@@ -403,28 +424,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 - **Solo en pedidos por Turbo**: El beneficio no aplica en el resto de la app.
 - **Solo para consumo en el local**: El usuario come en el restaurante, no pide domicilio.
 
-### ¿Cuánto hay en total para la campaña?
-
-> Cuando se acabe, la campaña termina sola. Lo habitual va de 5 a 40 millones.
-
-**Por qué te preguntamos esto.** El documento dice que la campaña termina al agotarse el presupuesto. Es lo que te protege si el consumo se dispara.
-
-| | |
-|---|---|
-| Campo interno | `presupuesto` |
-| Paso | El beneficio |
-| Tipo de control | numero |
-| Obligatorio | sí, cuando se ve |
-| Ejemplo | 20000000 |
-| Avanza sola | no |
-| Llena en el documento | `PRESUPUESTO` |
-
-**Mensajes de validación:**
-
-- `vacio`: Escribe el presupuesto total de la campaña.
-- `cero`: El presupuesto tiene que ser mayor que cero.
-
-## Paso: Los Créditos
+## Paso: Créditos
 
 ### ¿Cuándo le llegan los Créditos?
 
@@ -435,7 +435,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `carga` |
-| Paso | Los Créditos |
+| Paso | Créditos |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Valor por defecto | dia_siguiente |
@@ -461,7 +461,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `fechaCarga` |
-| Paso | Los Créditos |
+| Paso | Créditos |
 | Tipo de control | fecha |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | no |
@@ -481,7 +481,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `vigencia` |
-| Paso | Los Créditos |
+| Paso | Créditos |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | sí |
@@ -505,7 +505,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `diasVigencia` |
-| Paso | Los Créditos |
+| Paso | Créditos |
 | Tipo de control | numero |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | 30 |
@@ -526,7 +526,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `fechaFinRedencion` |
-| Paso | Los Créditos |
+| Paso | Créditos |
 | Tipo de control | fecha |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | no |
@@ -546,7 +546,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `redencion` |
-| Paso | Los Créditos |
+| Paso | Créditos |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Valor por defecto | tienda |
@@ -572,7 +572,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `secciones` |
-| Paso | Los Créditos |
+| Paso | Créditos |
 | Tipo de control | casillas |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | no |
@@ -582,7 +582,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 - `vacio`: Marca al menos una sección.
 
-## Paso: Quién participa
+## Paso: Participantes
 
 ### ¿Quiénes pueden participar?
 
@@ -593,7 +593,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `segmento` |
-| Paso | Quién participa |
+| Paso | Participantes |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Valor por defecto | todos |
@@ -620,7 +620,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `diasSinCompra` |
-| Paso | Quién participa |
+| Paso | Participantes |
 | Tipo de control | numero |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | 60 |
@@ -641,7 +641,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `metodoPago` |
-| Paso | Quién participa |
+| Paso | Participantes |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Valor por defecto | todos |
@@ -667,7 +667,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `compraMinima` |
-| Paso | El beneficio |
+| Paso | Beneficio |
 | Tipo de control | numero |
 | Obligatorio | no |
 | Ejemplo | 100000 |
@@ -678,7 +678,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 - `cero`: Si no quieres exigir un mínimo, deja el campo vacío.
 
-## Paso: Revisa y genera
+## Paso: Revisar
 
 ### Confirma que la información es correcta
 
@@ -689,7 +689,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `declaracion` |
-| Paso | Revisa y genera |
+| Paso | Revisar |
 | Tipo de control | casilla |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | no |
@@ -716,7 +716,7 @@ formulario manual.
 - ¿La tienda o la marca exige sus propios términos y condiciones?
 - ¿Participan varias tiendas?
 
-## Paso: Tu campaña
+## Paso: Campaña
 
 ### ¿En qué país corre la campaña?
 
@@ -727,7 +727,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `pais` |
-| Paso | Tu campaña |
+| Paso | Campaña |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | sí |
@@ -746,7 +746,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `tipo` |
-| Paso | Tu campaña |
+| Paso | Campaña |
 | Tipo de control | tarjetas |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | sí |
@@ -764,7 +764,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `nombreCampana` |
-| Paso | Tu campaña |
+| Paso | Campaña |
 | Tipo de control | texto |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | 99% Cashback Pollo Dorado |
@@ -785,7 +785,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `tienda` |
-| Paso | Tu campaña |
+| Paso | Campaña |
 | Tipo de control | texto |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | Pollo Dorado |
@@ -805,7 +805,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `alcance` |
-| Paso | Tu campaña |
+| Paso | Campaña |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Valor por defecto | Nacional |
@@ -830,7 +830,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `ciudades` |
-| Paso | Tu campaña |
+| Paso | Campaña |
 | Tipo de control | texto |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | Bogotá, Medellín, Cali |
@@ -843,7 +843,7 @@ formulario manual.
 
 - `vacio`: Escribe al menos una ciudad, o vuelve y elige cobertura nacional.
 
-## Paso: Quién la organiza
+## Paso: Organizador
 
 ### ¿Qué empresa paga el beneficio?
 
@@ -854,7 +854,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `organizadorRazonSocial` |
-| Paso | Quién la organiza |
+| Paso | Organizador |
 | Tipo de control | texto |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | Alimentos del Norte S.A.S. |
@@ -874,7 +874,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `organizadorId` |
-| Paso | Quién la organiza |
+| Paso | Organizador |
 | Tipo de control | identificacion |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | 900.111.222-1 |
@@ -972,7 +972,7 @@ formulario manual.
 
 - `vacio`: Elige la hora de fin.
 
-## Paso: El concurso
+## Paso: Concurso
 
 ### ¿Qué productos participan?
 
@@ -983,7 +983,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `productos` |
-| Paso | El concurso |
+| Paso | Concurso |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | sí |
@@ -1008,7 +1008,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `makerMarca` |
-| Paso | El concurso |
+| Paso | Concurso |
 | Tipo de control | texto |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | Galletas Lunaria |
@@ -1028,7 +1028,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `productosLista` |
-| Paso | El concurso |
+| Paso | Concurso |
 | Tipo de control | texto |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | Galletas Lunaria clásicas, Galletas Lunaria de chocolate |
@@ -1048,7 +1048,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `criterioGanador` |
-| Paso | El concurso |
+| Paso | Concurso |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | sí |
@@ -1072,7 +1072,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `numeroGanadores` |
-| Paso | El concurso |
+| Paso | Concurso |
 | Tipo de control | numero |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | 3 |
@@ -1093,7 +1093,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `desempate` |
-| Paso | El concurso |
+| Paso | Concurso |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | sí |
@@ -1112,7 +1112,7 @@ formulario manual.
 
 **Opción deshabilitada:** se muestra con la razón visible: "Ya es el criterio del ganador: nunca desempataría."
 
-## Paso: El premio
+## Paso: Premio
 
 ### ¿Qué se gana?
 
@@ -1123,7 +1123,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `tipoPremio` |
-| Paso | El premio |
+| Paso | Premio |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | sí |
@@ -1147,7 +1147,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `creditosPremio` |
-| Paso | El premio |
+| Paso | Premio |
 | Tipo de control | numero |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | 500000 |
@@ -1168,7 +1168,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `descripcionPremio` |
-| Paso | El premio |
+| Paso | Premio |
 | Tipo de control | texto |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | Una bicicleta de montaña marca Andes, rin 29 |
@@ -1189,7 +1189,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `entregaPor` |
-| Paso | El premio |
+| Paso | Premio |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | sí |
@@ -1213,7 +1213,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `medioNotificacion` |
-| Paso | El premio |
+| Paso | Premio |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Valor por defecto | correo |
@@ -1239,7 +1239,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `fechaNotificacion` |
-| Paso | El premio |
+| Paso | Premio |
 | Tipo de control | fecha |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | no |
@@ -1259,7 +1259,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `plazoConfirmacion` |
-| Paso | El premio |
+| Paso | Premio |
 | Tipo de control | numero |
 | Obligatorio | sí, cuando se ve |
 | Valor por defecto | 5 |
@@ -1272,7 +1272,7 @@ formulario manual.
 - `vacio`: Escribe cuántos días hábiles tiene para responder.
 - `rango`: El plazo va de 1 a 30 días hábiles.
 
-## Paso: Quién participa
+## Paso: Participantes
 
 ### ¿Quiénes pueden participar?
 
@@ -1283,7 +1283,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `segmento` |
-| Paso | Quién participa |
+| Paso | Participantes |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Valor por defecto | todos |
@@ -1310,7 +1310,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `diasSinCompra` |
-| Paso | Quién participa |
+| Paso | Participantes |
 | Tipo de control | numero |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | 60 |
@@ -1331,7 +1331,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `metodoPago` |
-| Paso | Quién participa |
+| Paso | Participantes |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Valor por defecto | todos |
@@ -1357,7 +1357,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `compraMinima` |
-| Paso | El beneficio |
+| Paso | Beneficio |
 | Tipo de control | numero |
 | Obligatorio | no |
 | Ejemplo | 100000 |
@@ -1368,7 +1368,7 @@ formulario manual.
 
 - `cero`: Si no quieres exigir un mínimo, deja el campo vacío.
 
-## Paso: Revisa y genera
+## Paso: Revisar
 
 ### Confirma que la información es correcta
 
@@ -1379,7 +1379,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `declaracion` |
-| Paso | Revisa y genera |
+| Paso | Revisar |
 | Tipo de control | casilla |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | no |
@@ -1403,7 +1403,7 @@ formulario manual.
 - ¿La campaña la fondea Rappi y no las tiendas?
 - ¿Alguna tienda exige sus propios términos y condiciones?
 
-## Paso: Tu campaña
+## Paso: Campaña
 
 ### ¿En qué país corre la campaña?
 
@@ -1414,7 +1414,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `pais` |
-| Paso | Tu campaña |
+| Paso | Campaña |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | sí |
@@ -1433,7 +1433,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `tipo` |
-| Paso | Tu campaña |
+| Paso | Campaña |
 | Tipo de control | tarjetas |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | sí |
@@ -1451,7 +1451,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `nombreCampana` |
-| Paso | Tu campaña |
+| Paso | Campaña |
 | Tipo de control | texto |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | 99% Cashback Pollo Dorado |
@@ -1547,7 +1547,7 @@ formulario manual.
 
 - `vacio`: Elige la hora de fin.
 
-## Paso: El beneficio
+## Paso: Beneficio
 
 ### ¿Qué porcentaje del pedido devuelves en Créditos?
 
@@ -1558,7 +1558,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `porcentaje` |
-| Paso | El beneficio |
+| Paso | Beneficio |
 | Tipo de control | numero |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | 99 |
@@ -1579,7 +1579,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `tope` |
-| Paso | El beneficio |
+| Paso | Beneficio |
 | Tipo de control | numero |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | 25000 |
@@ -1601,7 +1601,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `maxPedidos` |
-| Paso | El beneficio |
+| Paso | Beneficio |
 | Tipo de control | numero |
 | Obligatorio | sí, cuando se ve |
 | Valor por defecto | 1 |
@@ -1632,7 +1632,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `condiciones` |
-| Paso | El beneficio |
+| Paso | Beneficio |
 | Tipo de control | casillas |
 | Obligatorio | no |
 | Avanza sola | no |
@@ -1643,7 +1643,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 - **Solo en pedidos por Turbo**: El beneficio no aplica en el resto de la app.
 - **Solo para consumo en el local**: El usuario come en el restaurante, no pide domicilio.
 
-## Paso: Los Créditos
+## Paso: Créditos
 
 ### ¿Cuándo le llegan los Créditos?
 
@@ -1654,7 +1654,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `carga` |
-| Paso | Los Créditos |
+| Paso | Créditos |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Valor por defecto | dia_siguiente |
@@ -1680,7 +1680,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `fechaCarga` |
-| Paso | Los Créditos |
+| Paso | Créditos |
 | Tipo de control | fecha |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | no |
@@ -1700,7 +1700,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `vigencia` |
-| Paso | Los Créditos |
+| Paso | Créditos |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | sí |
@@ -1724,7 +1724,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `diasVigencia` |
-| Paso | Los Créditos |
+| Paso | Créditos |
 | Tipo de control | numero |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | 30 |
@@ -1745,7 +1745,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `fechaFinRedencion` |
-| Paso | Los Créditos |
+| Paso | Créditos |
 | Tipo de control | fecha |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | no |
@@ -1765,7 +1765,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `redencion` |
-| Paso | Los Créditos |
+| Paso | Créditos |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Valor por defecto | tienda |
@@ -1791,7 +1791,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `secciones` |
-| Paso | Los Créditos |
+| Paso | Créditos |
 | Tipo de control | casillas |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | no |
@@ -1801,7 +1801,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 - `vacio`: Marca al menos una sección.
 
-## Paso: Las tiendas
+## Paso: Tiendas
 
 ### ¿Qué tiendas participan?
 
@@ -1812,7 +1812,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `tiendas` |
-| Paso | Las tiendas |
+| Paso | Tiendas |
 | Tipo de control | repetible |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | no |
@@ -1833,7 +1833,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 - **Cobertura nacional**: Marca esto y no necesitas escribir ciudades.
 - **Presupuesto**: De esta tienda, no el total. Ejemplo: 5000000
 
-## Paso: Quién participa
+## Paso: Participantes
 
 ### ¿Quiénes pueden participar?
 
@@ -1844,7 +1844,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `segmento` |
-| Paso | Quién participa |
+| Paso | Participantes |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Valor por defecto | todos |
@@ -1871,7 +1871,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `diasSinCompra` |
-| Paso | Quién participa |
+| Paso | Participantes |
 | Tipo de control | numero |
 | Obligatorio | sí, cuando se ve |
 | Ejemplo | 60 |
@@ -1892,7 +1892,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `metodoPago` |
-| Paso | Quién participa |
+| Paso | Participantes |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
 | Valor por defecto | todos |
@@ -1918,7 +1918,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `compraMinima` |
-| Paso | El beneficio |
+| Paso | Beneficio |
 | Tipo de control | numero |
 | Obligatorio | no |
 | Ejemplo | 100000 |
@@ -1929,7 +1929,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 - `cero`: Si no quieres exigir un mínimo, deja el campo vacío.
 
-## Paso: Revisa y genera
+## Paso: Revisar
 
 ### Confirma que la información es correcta
 
@@ -1940,7 +1940,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `declaracion` |
-| Paso | Revisa y genera |
+| Paso | Revisar |
 | Tipo de control | casilla |
 | Obligatorio | sí, cuando se ve |
 | Avanza sola | no |

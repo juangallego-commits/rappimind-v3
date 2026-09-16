@@ -315,6 +315,16 @@ var CAMPOS_POR_TIENDA = [
   { id: 'presupuesto', etiqueta: 'Presupuesto', tipo: 'numero', obligatorio: true },
 ];
 
+/** Inserta un campo justo despues de otro, por identificador. */
+function insertarDespuesDe(campos, id, nuevo) {
+  var salida = [];
+  for (var i = 0; i < campos.length; i++) {
+    salida.push(campos[i]);
+    if (campos[i].id === id) salida.push(nuevo);
+  }
+  return salida;
+}
+
 function unir() {
   var todos = [];
   for (var i = 0; i < arguments.length; i++) {
@@ -329,9 +339,13 @@ var ESQUEMAS = {
     nombre: 'Cashback',
     descripcion: 'Una tienda devuelve un porcentaje del pedido en Créditos.',
     modelo: 'cashback',
-    campos: unir(CAMPOS_COMUNES, CAMPOS_TIENDA_Y_ORGANIZADOR, CAMPOS_CREDITOS, [
-      { id: 'presupuesto', etiqueta: 'Presupuesto total', tipo: 'numero', paso: 'beneficio', obligatorio: true },
-    ]),
+    // El presupuesto va justo despues del tope: son el mismo tema y la
+    // calculadora avisa cuando el tope se come el presupuesto entero.
+    campos: insertarDespuesDe(
+      unir(CAMPOS_COMUNES, CAMPOS_TIENDA_Y_ORGANIZADOR, CAMPOS_CREDITOS),
+      'tope',
+      { id: 'presupuesto', etiqueta: 'Presupuesto total', tipo: 'numero', paso: 'beneficio', obligatorio: true }
+    ),
     filtroDeEntrada: [
       '¿La campaña la fondea Rappi y no una tienda o marca?',
       '¿La tienda o la marca exige sus propios términos y condiciones?',

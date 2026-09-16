@@ -19,7 +19,7 @@ const ARCHIVOS_CORE = [
   'documento', 'correo', 'derivados', 'esquemas', 'validaciones', 'motor', 'generar',
 ];
 
-const ARCHIVOS_SERVIDOR = ['Config', 'Datos', 'Documento', 'Correo', 'Setup', 'Api'];
+const ARCHIVOS_SERVIDOR = ['Config', 'Datos', 'AdaptadorDocumento', 'EnvioCorreo', 'Setup', 'Api'];
 
 /** Lo que el build deja en dist/Modelos.js. */
 function constanteDeModelos() {

@@ -1,0 +1,217 @@
+'use strict';
+
+/**
+ * Genera demo/index.html: UN solo archivo que se abre con doble clic.
+ *
+ * Lleva dentro el motor real de src/core, la interfaz completa, los modelos y
+ * los paises, mas un servidor simulado en memoria. No necesita internet salvo
+ * para las tipografias, y si no las carga se ve igual con las del sistema.
+ *
+ * Uso: npm run demo
+ */
+
+const path = require('path');
+const {
+  rutaDesdeRaiz, leerTexto, leerJson, escribirTexto, listarArchivos, asegurarCarpeta,
+} = require('./lib/archivos');
+const { construir, DIST } = require('./build');
+
+/** El servidor simulado: las mismas funciones que Api.js, en memoria. */
+const SERVIDOR_SIMULADO = `
+/*
+ * Servidor simulado de la demostración.
+ *
+ * Implementa las mismas funciones que src/server/Api.js, pero en memoria y sin
+ * Google. Usa el motor real, así que el texto que sale aquí es el mismo que
+ * saldría en producción.
+ */
+(function () {
+  var solicitudes = [];
+  var consecutivo = 0;
+
+  var equipo = [{ email: 'demostracion@rappi.com', nombre: 'Demostración', rol: 'admin', pais: 'CO', activo: true }];
+  var paises = PAISES_SEMILLA.map(paisDesdeFila);
+
+  function hoy() {
+    var ahora = new Date();
+    var mes = String(ahora.getMonth() + 1);
+    var dia = String(ahora.getDate());
+    return ahora.getFullYear() + '-' + (mes.length < 2 ? '0' + mes : mes) + '-' + (dia.length < 2 ? '0' + dia : dia);
+  }
+
+  function catalogo() {
+    var lista = [];
+    for (var id in ESQUEMAS) {
+      if (!Object.prototype.hasOwnProperty.call(ESQUEMAS, id)) continue;
+      lista.push({
+        id: ESQUEMAS[id].id, nombre: ESQUEMAS[id].nombre,
+        descripcion: ESQUEMAS[id].descripcion, modelo: ESQUEMAS[id].modelo,
+        filtroDeEntrada: ESQUEMAS[id].filtroDeEntrada,
+      });
+    }
+    return lista;
+  }
+
+  window.RM = window.RM || {};
+  window.RM.servidorSimulado = {
+    estadoInicial: function () {
+      return {
+        correo: 'demostracion@rappi.com',
+        // En la demostración se entra como administrador para que se pueda ver
+        // también esa pantalla. No hay nada que administrar de verdad.
+        rol: 'admin',
+        demostracion: true,
+        paises: paisesDisponibles(paises, true),
+        tipos: catalogo(),
+        secciones: SECCIONES,
+        versionesDeModelo: MODELOS.versiones,
+        urlFormularioLegal: 'https://forms.gle/ejemplo-de-la-demostracion',
+        urlCanalAyuda: 'https://rappi.slack.com/ejemplo-de-la-demostracion',
+        hoy: hoy(),
+      };
+    },
+
+    previsualizar: function (entrada) {
+      var pais = paisPorCodigo(paises, entrada && entrada.pais);
+      return generarTexto(entrada || {}, pais, MODELOS, { fechaReferencia: hoy(), usuarioEnEquipo: true });
+    },
+
+    generar: function (entrada) {
+      var pais = paisPorCodigo(paises, entrada && entrada.pais);
+      var resultado = generarTexto(entrada || {}, pais, MODELOS, { fechaReferencia: hoy(), usuarioEnEquipo: true });
+      if (!resultado.valido) return { valido: false, errores: resultado.errores };
+
+      consecutivo += 1;
+      var id = identificadorDeSolicitud(hoy(), consecutivo);
+      solicitudes.push({
+        id: id, fecha: hoy() + ' 10:00:00', email: 'demostracion@rappi.com',
+        pais: pais.codigo, tipo: entrada.tipo,
+        version_modelo: MODELOS.versiones[esquemaDe(entrada.tipo).modelo] || '',
+        nombre_campana: entrada.nombreCampana || '', tienda: entrada.tienda || '',
+        organizador: entrada.organizadorRazonSocial || '', id_organizador: entrada.organizadorId || '',
+        fecha_inicio: entrada.fechaInicio || '', fecha_fin: entrada.fechaFin || '',
+        link_doc: '', estado: 'generado', link_publicado: '', fecha_publicacion: '',
+        datos_json: JSON.stringify(entrada), _fila: solicitudes.length + 2,
+      });
+
+      return { valido: true, demostracion: true, texto: resultado.texto, id: id };
+    },
+
+    historial: function (busqueda) {
+      return buscarEnSolicitudes(solicitudes, busqueda).slice().reverse();
+    },
+
+    marcarPublicado: function (id, url) {
+      var revision = validarLinkPublicado(url);
+      if (!revision.valido) return { valido: false, errores: [{ campo: 'linkPublicado', mensaje: revision.mensaje }] };
+      for (var i = 0; i < solicitudes.length; i++) {
+        if (solicitudes[i].id !== id) continue;
+        solicitudes[i].estado = 'publicado';
+        solicitudes[i].link_publicado = revision.url;
+        return { valido: true, id: id, linkPublicado: revision.url };
+      }
+      return { valido: false, errores: [{ campo: 'id', mensaje: 'No encontramos esa solicitud.' }] };
+    },
+
+    datosDeSolicitud: function (id) {
+      for (var i = 0; i < solicitudes.length; i++) {
+        if (solicitudes[i].id === id) return { valido: true, entrada: JSON.parse(solicitudes[i].datos_json) };
+      }
+      return { valido: false, errores: [{ campo: 'id', mensaje: 'No encontramos esa solicitud.' }] };
+    },
+
+    adminEstado: function () {
+      return { paises: paises, equipo: equipo, estados: ESTADOS, roles: ['comercial', 'pruebas', 'legal', 'admin'] };
+    },
+
+    adminGuardarEstadoDePais: function (codigo, estado) {
+      if (ESTADOS.indexOf(estado) === -1) return { valido: false, errores: [{ campo: 'estado', mensaje: 'Ese estado no existe.' }] };
+      var pais = paisPorCodigo(paises, codigo);
+      if (!pais) return { valido: false, errores: [{ campo: 'codigo', mensaje: 'No encontramos ese país.' }] };
+      pais.estado = estado;
+      return { valido: true };
+    },
+
+    adminGuardarMiembro: function (miembro) {
+      var correo = String(miembro.email || '').trim().toLowerCase();
+      if (!/@rappi\\.com$/.test(correo)) return { valido: false, errores: [{ campo: 'email', mensaje: 'El correo debe ser @rappi.com.' }] };
+      var existente = miembroPorCorreo(equipo, correo);
+      var fila = { email: correo, nombre: miembro.nombre || '', rol: miembro.rol || 'comercial', pais: String(miembro.pais || '').toUpperCase(), activo: true };
+      if (existente) { for (var k in fila) existente[k] = fila[k]; } else { equipo.push(fila); }
+      return { valido: true };
+    },
+
+    adminSolicitudes: function (busqueda) {
+      return buscarEnSolicitudes(solicitudes, busqueda).slice().reverse();
+    },
+
+    adminSolicitudesCsv: function (busqueda) {
+      var columnas = ['id', 'fecha', 'email', 'pais', 'tipo', 'nombre_campana', 'tienda', 'estado', 'link_publicado'];
+      return comoCsv(buscarEnSolicitudes(solicitudes, busqueda), columnas);
+    },
+  };
+})();
+`;
+
+function contenidoEntreEtiquetas(html, etiqueta) {
+  const patron = new RegExp('<' + etiqueta + '[^>]*>([\\s\\S]*?)</' + etiqueta + '>');
+  const encontrado = patron.exec(html);
+  return encontrado ? encontrado[1] : '';
+}
+
+function main() {
+  construir();
+
+  const plantilla = leerTexto(path.join(DIST, 'Index.html'));
+  const estilos = contenidoEntreEtiquetas(leerTexto(path.join(DIST, 'Estilos.html')), 'style');
+  const motor = contenidoEntreEtiquetas(leerTexto(path.join(DIST, 'MotorCliente.html')), 'script');
+  const interfaz = contenidoEntreEtiquetas(leerTexto(path.join(DIST, 'App.html')), 'script');
+
+  const datos = [
+    leerTexto(path.join(DIST, 'Modelos.js')),
+    leerTexto(path.join(DIST, 'PaisesSemilla.js')),
+    leerTexto(path.join(DIST, 'Secciones.js')),
+  ].join('\n');
+
+  // La demostración corre en el navegador, sin CommonJS. En vez de recortar los
+  // bloques de exportación con una expresión regular, que es frágil y puede
+  // comerse el archivo siguiente, se declara un `module` de mentiras: los
+  // bloques corren, escriben en él y no molestan a nadie. El bloque que carga
+  // dependencias con require exige `typeof require === 'function'`, que en el
+  // navegador es falso, así que se salta solo.
+  const MODULO_FALSO = 'var module = { exports: {} };\n';
+
+  // El reemplazo va como función, nunca como cadena. El código que se inyecta
+  // contiene secuencias de reemplazo (las que empiezan por el signo de dólar) y
+  // si se pasan como cadena, JavaScript las interpreta como patrones y corrompe
+  // el archivo sin avisar.
+  const poner = (valor) => () => valor;
+
+  const html = plantilla
+    .replace("<?!= incluir('Estilos') ?>", poner('<style>\n' + estilos + '\n</style>'))
+    .replace(
+      "<?!= incluir('MotorCliente') ?>",
+      poner('<script>\n' + MODULO_FALSO + datos + '\n' + motor + '\n' + SERVIDOR_SIMULADO + '\n</script>')
+    )
+    .replace("<?!= incluir('App') ?>", poner('<script>\n' + interfaz + '\n</script>'))
+    .replace('<title>RappiMind v3</title>', poner('<title>RappiMind v3 · demostración</title>'))
+    .replace('<base target="_top" />', poner(''));
+
+  const aviso = [
+    '<!--',
+    '  Demostración de RappiMind v3, generada con npm run demo.',
+    '  Un solo archivo: ábrelo con doble clic, sin instalar nada.',
+    '  Lleva el motor real, así que el texto que ves es el que saldría en producción.',
+    '  No crea documentos, no manda correos y nada queda guardado.',
+    '-->',
+  ].join('\n');
+
+  asegurarCarpeta(rutaDesdeRaiz('demo'));
+  escribirTexto(rutaDesdeRaiz('demo', 'index.html'), aviso + '\n' + html);
+
+  const tamano = Math.round(html.length / 1024);
+  console.log('demo/index.html generado: ' + tamano + ' KB, un solo archivo.');
+}
+
+if (require.main === module) main();
+module.exports = { main };

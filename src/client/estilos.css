@@ -178,7 +178,7 @@ button { font-size: 15px; cursor: pointer; }
   padding: var(--e2) 0 var(--e2);
   border-bottom: 2px solid var(--borde);
   font-family: var(--cuerpo); font-size: 13px; color: var(--gris-lapiz);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  line-height: 1.25; word-break: normal; hyphens: none;
 }
 .progreso .hecho button { border-bottom-color: var(--naranja-accion); color: var(--tinta); }
 .progreso .actual button { border-bottom-color: var(--naranja-marca); color: var(--tinta); font-weight: 700; }
@@ -303,6 +303,7 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
   border-radius: var(--r-hoja);
   box-shadow: var(--sombra-hoja);
   padding: var(--e6) var(--e6) var(--e7);
+  min-height: 260px;
   max-height: calc(100vh - 160px);
   overflow-y: auto;
   scroll-behavior: smooth;
@@ -333,7 +334,10 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
   font-size: 13px;
 }
 
-.hoja-vacia { color: var(--gris-lapiz); text-align: center; padding: var(--e7) var(--e4); }
+.hoja-vacia {
+  color: var(--gris-lapiz); text-align: center;
+  padding: var(--e7) var(--e4); max-width: 34ch; margin: 0 auto;
+}
 
 /* --- Resumen ------------------------------------------------------------ */
 
@@ -409,8 +413,15 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
   .columna-documento { display: none; }
   h1 { font-size: 23px; }
   .pregunta-titulo { font-size: 19px; }
-  .barra-superior { padding: var(--e3) var(--e4); }
-  .marca .corona { width: 11px; }
+  .barra-superior { padding: var(--e2) var(--e4); gap: var(--e3); }
+  .marca { font-size: 15px; white-space: nowrap; flex: none; }
+  .marca .corona { width: 11px; left: 36px; }
+  .barra-superior nav {
+    flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .barra-superior nav::-webkit-scrollbar { display: none; }
+  .enlace-nav { white-space: nowrap; padding: var(--e2); font-size: 13px; }
 
   .boton-flotante {
     display: flex; align-items: center; justify-content: center; gap: var(--e2);

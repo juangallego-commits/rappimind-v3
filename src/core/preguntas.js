@@ -20,17 +20,21 @@
  * el analisis de 1.184 solicitudes reales.
  */
 
+/**
+ * Los pasos. El nombre corto es el de la barra de progreso, donde hay poco
+ * ancho; el titulo es el encabezado de la pantalla, donde si cabe una frase.
+ */
 var PASOS = [
-  { id: 'campana', nombre: 'Tu campaña' },
-  { id: 'organizador', nombre: 'Quién la organiza' },
-  { id: 'vigencia', nombre: 'Cuándo' },
-  { id: 'beneficio', nombre: 'El beneficio' },
-  { id: 'creditos', nombre: 'Los Créditos' },
-  { id: 'concurso', nombre: 'El concurso' },
-  { id: 'premio', nombre: 'El premio' },
-  { id: 'tiendas', nombre: 'Las tiendas' },
-  { id: 'participantes', nombre: 'Quién participa' },
-  { id: 'confirmacion', nombre: 'Revisa y genera' },
+  { id: 'campana', nombre: 'Campaña', titulo: 'Tu campaña' },
+  { id: 'organizador', nombre: 'Organizador', titulo: 'Quién organiza la campaña' },
+  { id: 'vigencia', nombre: 'Cuándo', titulo: 'Cuándo corre la campaña' },
+  { id: 'beneficio', nombre: 'Beneficio', titulo: 'El beneficio' },
+  { id: 'creditos', nombre: 'Créditos', titulo: 'Los Créditos' },
+  { id: 'concurso', nombre: 'Concurso', titulo: 'El concurso' },
+  { id: 'premio', nombre: 'Premio', titulo: 'El premio' },
+  { id: 'tiendas', nombre: 'Tiendas', titulo: 'Las tiendas participantes' },
+  { id: 'participantes', nombre: 'Participantes', titulo: 'Quién puede participar' },
+  { id: 'confirmacion', nombre: 'Revisar', titulo: 'Revisa y genera' },
 ];
 
 var GLOSARIO = {

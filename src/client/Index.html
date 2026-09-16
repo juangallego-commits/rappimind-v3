@@ -3,6 +3,7 @@
   <head>
     <base target="_top" />
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>RappiMind v3</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -13,21 +14,10 @@
     <?!= incluir('Estilos') ?>
   </head>
   <body>
-    <main class="pagina">
-      <header class="cabecera">
-        <p class="marca">RappiMind <span>v3</span></p>
-        <h1>Términos y Condiciones de tu campaña</h1>
-        <p class="ayuda">
-          Bloque 0 en curso. Por ahora esta página solo confirma que el despliegue responde.
-        </p>
-      </header>
+    <main id="app"></main>
 
-      <section class="tarjeta" aria-live="polite">
-        <h2>Estado del despliegue</h2>
-        <p id="estado" class="ayuda">Consultando…</p>
-        <dl id="detalle" class="detalle" hidden></dl>
-      </section>
-    </main>
+    <!-- Para lectores de pantalla: aquí se anuncian los cambios importantes. -->
+    <div id="anuncios" class="solo-lectores" role="status" aria-live="polite"></div>
 
     <?!= incluir('MotorCliente') ?>
     <?!= incluir('App') ?>

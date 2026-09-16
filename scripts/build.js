@@ -43,6 +43,24 @@ function comoLiteral(valor) {
   return JSON.stringify(valor, null, 2);
 }
 
+/**
+ * Apps Script no distingue mayusculas en los nombres de archivo: dist/motor.js
+ * y dist/Motor.js serian el mismo archivo y uno pisaria al otro sin avisar.
+ */
+function revisarColisionesDeNombre(copiados) {
+  const vistos = {};
+  for (const relativa of copiados) {
+    const nombre = relativa.split('/').pop().toLowerCase();
+    if (vistos[nombre]) {
+      throw new Error(
+        'Dos archivos se llaman igual salvo por mayusculas: ' + vistos[nombre] + ' y ' + relativa +
+        '. En Apps Script uno pisaria al otro.'
+      );
+    }
+    vistos[nombre] = relativa;
+  }
+}
+
 function copiarCodigoFuente() {
   const copiados = [];
   for (const carpeta of ['core', 'server']) {
@@ -52,6 +70,7 @@ function copiarCodigoFuente() {
       copiados.push(carpeta + '/' + archivo);
     }
   }
+  revisarColisionesDeNombre(copiados);
   return copiados;
 }
 
@@ -133,9 +152,27 @@ function generarHtml() {
     envolver('style', leerTexto(rutaDesdeRaiz('src', 'client', 'estilos.css')), 'Generado desde src/client/estilos.css')
   );
 
+  // La interfaz vive en varios archivos, que se concatenan en orden alfabetico.
+  // Los prefijos numericos de src/client/js/ fijan ese orden.
+  //
+  // Cada archivo se envuelve en una funcion que se llama sola. Sin eso, todos
+  // compartirian un unico ambito y dos archivos que declaren `var estado`
+  // terminarian pisandose entre si, con errores dificiles de encontrar. Se
+  // comunican por window.RM, asi que el aislamiento no les quita nada.
+  var interfaz = listarArchivos(rutaDesdeRaiz('src', 'client', 'js'), '.js')
+    .map(function (archivo) {
+      return [
+        '// --- src/client/js/' + archivo + ' ---',
+        '(function () {',
+        leerTexto(rutaDesdeRaiz('src', 'client', 'js', archivo)),
+        '})();',
+      ].join('\n');
+    })
+    .join('\n');
+
   escribirTexto(
     path.join(DIST, 'App.html'),
-    envolver('script', leerTexto(rutaDesdeRaiz('src', 'client', 'app.js')), 'Generado desde src/client/app.js')
+    envolver('script', interfaz, 'Generado desde src/client/js/*.js')
   );
 
   // MotorCliente.html lleva el motor al navegador para la vista previa en vivo.
@@ -157,9 +194,12 @@ function copiarManifiesto() {
 }
 
 function construir() {
-  const faltantes = ['src/client/Index.html', 'src/client/estilos.css', 'src/client/app.js', 'appsscript.json'].filter(
+  const faltantes = ['src/client/Index.html', 'src/client/estilos.css', 'appsscript.json'].filter(
     (relativa) => !existe(rutaDesdeRaiz(...relativa.split('/')))
   );
+  if (listarArchivos(rutaDesdeRaiz('src', 'client', 'js'), '.js').length === 0) {
+    throw new Error('No hay archivos de interfaz en src/client/js/.');
+  }
   if (faltantes.length) {
     throw new Error('Faltan archivos para construir dist/: ' + faltantes.join(', '));
   }
