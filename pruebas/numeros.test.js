@@ -80,3 +80,28 @@ test('cero y números grandes', () => {
   assert.strictEqual(numeroEnLetras(0), 'cero');
   assert.strictEqual(numeroEnLetras(999999999999).indexOf('millones') !== -1, true);
 });
+
+/**
+ * Las órdenes, las unidades y las noches son femeninas. Los modelos de delivery
+ * solo hablan de pedidos y Créditos, que son masculinos, así que esto nació con
+ * Rappi Travel: "doscientos órdenes" estaba mal escrito en un documento legal.
+ */
+test('los números tienen forma femenina cuando el sustantivo lo es', () => {
+  const { letrasYCifraFemenino, letrasYCifra } = require('../src/core/numeros.js');
+
+  assert.strictEqual(letrasYCifraFemenino(1), 'una (1)');
+  assert.strictEqual(letrasYCifraFemenino(21), 'veintiuna (21)');
+  assert.strictEqual(letrasYCifraFemenino(31), 'treinta y una (31)');
+  assert.strictEqual(letrasYCifraFemenino(200), 'doscientas (200)');
+  assert.strictEqual(letrasYCifraFemenino(500), 'quinientas (500)');
+  assert.strictEqual(letrasYCifraFemenino(700), 'setecientas (700)');
+  assert.strictEqual(letrasYCifraFemenino(1500), 'mil quinientas (1500)');
+
+  // "cien" y "mil" no tienen femenino.
+  assert.strictEqual(letrasYCifraFemenino(100), 'cien (100)');
+  assert.strictEqual(letrasYCifraFemenino(2000), 'dos mil (2000)');
+
+  // El masculino no se toca: los documentos de delivery no pueden cambiar.
+  assert.strictEqual(letrasYCifra(200), 'doscientos (200)');
+  assert.strictEqual(letrasYCifra(1), 'un (1)');
+});

@@ -24,6 +24,9 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 
   var moduloIdentificaciones = require('./identificaciones.js');
   var validarIdentificacion = moduloIdentificaciones.validarIdentificacion;
+
+  var separarPorComas = moduloFechas.separarPorComas;
+  var travelDisponible = require('./paises.js').travelDisponible;
 }
 
 function error(campo, mensaje) {
@@ -261,6 +264,222 @@ function validarLinkPublicado(url) {
   return { valido: true, mensaje: '', url: texto };
 }
 
+// --- Rappi Travel ----------------------------------------------------------
+
+/** Solo los digitos de una identificacion, para comparar sin formato. */
+function soloDigitosDeId(valor) {
+  return String(valor === null || valor === undefined ? '' : valor).replace(/[^0-9]/g, '');
+}
+
+/** El NIT sin su digito de verificacion. */
+function nitSinVerificacion(valor) {
+  var digitos = soloDigitosDeId(valor);
+  return digitos.length > 9 ? digitos.slice(0, 9) : digitos;
+}
+
+/** Texto en minusculas y sin tildes, para comparar nombres de empresas. */
+function comoClaveDeNombre(texto) {
+  var original = String(texto === null || texto === undefined ? '' : texto).toLowerCase();
+  var con = 'áàäâãéèëêíìïîóòöôõúùüûñç';
+  var sin = 'aaaaaeeeeiiiiooooouuuunc';
+  var salida = '';
+  for (var i = 0; i < original.length; i++) {
+    var posicion = con.indexOf(original.charAt(i));
+    salida += posicion === -1 ? original.charAt(i) : sin.charAt(posicion);
+  }
+  return salida;
+}
+
+/** Nombres que nunca pueden ser el Organizador de una campana de Travel. */
+var NOMBRES_PROHIBIDOS_DE_TRAVEL = ['rappi', 'travel moustache', 'travel mustache'];
+
+var MENSAJE_ORGANIZADOR_DE_TRAVEL =
+  'Rappi Travel nunca es el Organizador. Escribe la empresa dueña de la marca que paga el beneficio. ' +
+  'Si la campaña la paga Rappi Travel, la redacta Legal.';
+
+/**
+ * El Organizador de una campana de Travel no puede ser Rappi ni Travel Moustache.
+ *
+ * Es la regla 1 de CLAUDE.md llevada a Travel: el Organizador es siempre quien
+ * pone la plata, y que Rappi Travel opere la mecanica no lo vuelve organizador.
+ */
+function validarOrganizadorDeTravel(entrada, pais) {
+  var errores = [];
+
+  var nombre = comoClaveDeNombre(entrada.organizadorRazonSocial);
+  for (var i = 0; i < NOMBRES_PROHIBIDOS_DE_TRAVEL.length; i++) {
+    if (nombre.indexOf(NOMBRES_PROHIBIDOS_DE_TRAVEL[i]) !== -1) {
+      errores.push(error('organizadorRazonSocial', MENSAJE_ORGANIZADOR_DE_TRAVEL));
+      break;
+    }
+  }
+
+  var nitDado = nitSinVerificacion(entrada.organizadorId);
+  var prohibidos = [nitSinVerificacion(pais && pais.id_fiscal), nitSinVerificacion(pais && pais.travel_id_fiscal)];
+  if (nitDado && prohibidos.indexOf(nitDado) !== -1) {
+    errores.push(error('organizadorId', MENSAJE_ORGANIZADOR_DE_TRAVEL));
+  }
+  return errores;
+}
+
+/** Las reglas propias de los dos tipos de Travel. Seccion 10 del modelo base. */
+function validarTravel(entrada, pais, fechaReferencia) {
+  var errores = [];
+  var esDescuento = entrada.tipo === 'descuento_travel';
+
+  errores = errores.concat(validarOrganizadorDeTravel(entrada, pais));
+
+  // Si el aliado pide algo que el formulario no cubre, el documento se queda
+  // corto: eso lo redacta Legal.
+  if (entrada.otraCondicion === 'si') {
+    errores.push(error('otraCondicion', 'El aliado pide una condición que este documento no cubre. Esta campaña la redacta Legal.'));
+  }
+
+  // Periodo de viaje.
+  var viajeInicio = comoNumeroFecha(entrada.periodoViajeInicio);
+  var viajeFin = comoNumeroFecha(entrada.periodoViajeFin);
+  if (viajeInicio !== null && viajeFin !== null && viajeFin < viajeInicio) {
+    errores.push(error('periodoViajeFin', 'El periodo de viaje no puede terminar antes de empezar.'));
+  }
+
+  var excluidas = separarPorComas(entrada.fechasExcluidas);
+  for (var f = 0; f < excluidas.length; f++) {
+    var excluida = comoNumeroFecha(excluidas[f]);
+    if (excluida === null) {
+      errores.push(error('fechasExcluidas', 'Las fechas excluidas van en formato año-mes-día, separadas por comas. Revisa "' + excluidas[f] + '".'));
+      break;
+    }
+    if (viajeInicio !== null && viajeFin !== null && (excluida < viajeInicio || excluida > viajeFin)) {
+      errores.push(error('fechasExcluidas', 'Las fechas excluidas tienen que estar dentro del periodo de viaje. Revisa "' + excluidas[f] + '".'));
+      break;
+    }
+  }
+
+  // Clases tarifarias: una letra cada una, sin repetir.
+  var clases = separarPorComas(entrada.clasesExcluidas);
+  var vistas = {};
+  for (var c = 0; c < clases.length; c++) {
+    var clase = String(clases[c]).toUpperCase();
+    if (!/^[A-Z]$/.test(clase)) {
+      errores.push(error('clasesExcluidas', 'Cada clase tarifaria es una sola letra, separada por comas. Revisa "' + clases[c] + '".'));
+      break;
+    }
+    if (vistas[clase]) {
+      errores.push(error('clasesExcluidas', 'La clase tarifaria "' + clase + '" está repetida.'));
+      break;
+    }
+    vistas[clase] = true;
+  }
+
+  // Dias de alquiler.
+  var minimoDias = Number(entrada.diasAlquilerMinimo);
+  var maximoDias = Number(entrada.diasAlquilerMaximo);
+  if (isFinite(minimoDias) && minimoDias > 0 && isFinite(maximoDias) && maximoDias > 0 && minimoDias > maximoDias) {
+    errores.push(error('diasAlquilerMaximo', 'El mínimo de días de alquiler no puede ser mayor que el máximo.'));
+  }
+
+  // El medio de pago de "Pro o RappiCard" no puede excluir a quien paga con
+  // otra cosa: el segmento ya dice que RappiCard es una via de entrada.
+  if (entrada.segmento === 'pro_o_rappicard' && entrada.metodoPago !== 'digitales') {
+    errores.push(error('metodoPago', 'Si pueden participar quienes pagan con RappiCard, el medio de pago tiene que ser "digitales, excepto efectivo". Si no, el documento se contradice.'));
+  }
+
+  // La primera comunicacion nunca puede haber salido ya: el T&C se publica antes.
+  var hoy = comoNumeroFecha(fechaReferencia);
+  var primera = comoNumeroFecha(entrada.fechaPrimeraComunicacion);
+  if (hoy !== null && primera !== null && primera < hoy) {
+    errores.push(error('fechaPrimeraComunicacion', 'La primera comunicación no puede ser una fecha que ya pasó: el T&C se publica antes de que salga la primera pieza.'));
+  }
+
+  if (esDescuento) {
+    errores = errores.concat(validarDescuentoTravel(entrada));
+  } else {
+    errores = errores.concat(validarCashbackTravel(entrada));
+  }
+  return errores;
+}
+
+/** Reglas del cashback_travel: montos, ordenes y redencion. */
+function validarCashbackTravel(entrada) {
+  var errores = [];
+  var presupuesto = Number(entrada.presupuesto);
+
+  if (entrada.formaBeneficio === 'porcentaje' && !entrada.sinTope) {
+    var tope = Number(entrada.tope);
+    if (isFinite(tope) && tope > 0 && isFinite(presupuesto) && presupuesto > 0 && tope > presupuesto) {
+      errores.push(error('tope', 'El tope por orden es mayor que el presupuesto total. Con eso, la primera orden se lleva toda la campaña. Revisa los dos números.'));
+    }
+  }
+  if (entrada.formaBeneficio === 'monto_fijo') {
+    var monto = Number(entrada.montoFijo);
+    if (isFinite(monto) && monto > 0 && isFinite(presupuesto) && presupuesto > 0 && monto > presupuesto) {
+      errores.push(error('montoFijo', 'Los Créditos por orden son más que el presupuesto total. Revisa los dos números.'));
+    }
+  }
+
+  var porUsuario = Number(entrada.limitePorUsuario);
+  var deLaCampana = Number(entrada.maxOrdenes);
+  if (!entrada.sinMaxOrdenes && isFinite(porUsuario) && porUsuario > 0 && isFinite(deLaCampana) && deLaCampana > 0 && deLaCampana < porUsuario) {
+    errores.push(error('maxOrdenes', 'El máximo de órdenes de la campaña es menor que el máximo por persona. Una sola persona agotaría la campaña.'));
+  }
+
+  if (entrada.redencion === 'categorias') {
+    var elegidas = entrada.categoriasRedencion || [];
+    if (elegidas.length === 0) {
+      errores.push(error('categoriasRedencion', 'Marca al menos una categoría donde se puedan usar los Créditos.'));
+    }
+  }
+  return errores;
+}
+
+/** Reglas del descuento_travel: porcentajes, asistencia y visibilidad. */
+function validarDescuentoTravel(entrada) {
+  var errores = [];
+
+  if (entrada.formaDescuento === 'variable') {
+    var minimo = Number(entrada.porcentajeMinimo);
+    var maximo = Number(entrada.porcentaje);
+    if (isFinite(minimo) && isFinite(maximo) && minimo >= maximo) {
+      errores.push(error('porcentajeMinimo', 'El porcentaje mínimo tiene que ser menor que el máximo. Si son iguales, el descuento es fijo.'));
+    }
+  }
+
+  // Una asistencia al viajero se compra junto con el vuelo o el paquete, y el
+  // descuento solo cubre la asistencia. Mezclarla con otra categoria haria que
+  // el documento no pueda decir sobre que aplica.
+  var categorias = entrada.categorias || [];
+  if (categorias.indexOf('Asistencia') !== -1 && categorias.length > 1) {
+    errores.push(error('categorias', 'Si la campaña incluye "Asistencia", esa tiene que ser la única categoría. Para las demás, haz una campaña aparte.'));
+  }
+
+  if ((entrada.visibilidad || []).length === 0) {
+    errores.push(error('visibilidad', 'Marca al menos un lugar donde el usuario vea el descuento.'));
+  }
+  return errores;
+}
+
+/**
+ * Avisos de Travel: no bloquean, se muestran en el resumen.
+ *
+ * PENDIENTE (R17 de docs/MODELO_BASE_TRAVEL.md): Juan decide si alguno pasa a
+ * ser un bloqueo.
+ */
+function avisosDeTravel(entrada) {
+  var avisos = [];
+
+  var dias = Number(entrada.diasVigencia);
+  if (isFinite(dias) && dias > 0 && dias < 5) {
+    avisos.push('Los Créditos duran menos de cinco días. En las campañas reales, una vigencia tan corta genera reclamos de usuarios que no alcanzan a usarlos.');
+  }
+
+  var primera = comoNumeroFecha(entrada.fechaPrimeraComunicacion);
+  var inicio = comoNumeroFecha(entrada.fechaInicio);
+  if (primera !== null && inicio !== null && primera < inicio) {
+    avisos.push('La primera pieza sale antes de que arranque la campaña. Publica el T&C antes de esa fecha.');
+  }
+  return avisos;
+}
+
 /**
  * Valida la solicitud completa.
  *
@@ -293,6 +512,14 @@ function validarSolicitud(entrada, pais, contexto) {
   if (entrada.tipo === 'cashback_day') {
     errores = errores.concat(validarTiendas(entrada, pais, esquema));
   }
+  if (esquema && esquema.esDeTravel) {
+    // Sin los datos de Travel del pais, o con el RNT vencido, no se genera.
+    var estadoTravel = travelDisponible(pais, opciones.fechaReferencia);
+    if (!estadoTravel.disponible) {
+      return { valido: false, errores: [error('tipo', estadoTravel.motivo)] };
+    }
+    errores = errores.concat(validarTravel(entrada, pais, opciones.fechaReferencia));
+  }
 
   return { valido: errores.length === 0, errores: errores };
 }
@@ -307,6 +534,12 @@ if (typeof module !== 'undefined') {
     validarObligatorios: validarObligatorios,
     validarVigencia: validarVigencia,
     validarTiendas: validarTiendas,
+    validarTravel: validarTravel,
+    validarOrganizadorDeTravel: validarOrganizadorDeTravel,
+    validarCashbackTravel: validarCashbackTravel,
+    validarDescuentoTravel: validarDescuentoTravel,
+    avisosDeTravel: avisosDeTravel,
+    NOMBRES_PROHIBIDOS_DE_TRAVEL: NOMBRES_PROHIBIDOS_DE_TRAVEL,
     estaVacio: estaVacio,
   };
 }

@@ -123,6 +123,18 @@ function generarDatos() {
     ].join('\n')
   );
 
+  const categoriasTravel = leerJson(rutaDesdeRaiz('data', 'categorias_travel.json'));
+  escribirTexto(
+    path.join(DIST, 'CategoriasTravel.js'),
+    [
+      encabezado('data/categorias_travel.json'),
+      'var CATEGORIAS_TRAVEL = ' + comoLiteral(categoriasTravel) + ';',
+      '',
+      "if (typeof module !== 'undefined') { module.exports = { CATEGORIAS_TRAVEL: CATEGORIAS_TRAVEL }; }",
+      '',
+    ].join('\n')
+  );
+
   const secciones = leerJson(rutaDesdeRaiz('data', 'secciones.json'));
   escribirTexto(
     path.join(DIST, 'Secciones.js'),
@@ -184,7 +196,7 @@ function generarHtml() {
   // y la pantalla se queda a medio pintar.
   const partesDelMotor = [];
 
-  for (const generado of ['Modelos.js', 'PaisesSemilla.js', 'Secciones.js']) {
+  for (const generado of ['Modelos.js', 'PaisesSemilla.js', 'Secciones.js', 'CategoriasTravel.js']) {
     partesDelMotor.push('// --- ' + generado + ' ---', leerTexto(path.join(DIST, generado)));
   }
 

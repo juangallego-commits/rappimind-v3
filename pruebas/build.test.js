@@ -23,6 +23,7 @@ function archivosEsperados() {
     'App.html',
     'Estilos.html',
     'Index.html',
+    'CategoriasTravel.js',
     'Modelos.js',
     'MotorCliente.html',
     'PaisesSemilla.js',

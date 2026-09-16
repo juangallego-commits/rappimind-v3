@@ -109,6 +109,38 @@ function letrasYCifra(n) {
   return numeroEnLetras(entero, true) + ' (' + entero + ')';
 }
 
+/**
+ * La forma femenina de un numero escrito en letras.
+ *
+ * "doscientos ordenes" esta mal: son "doscientas ordenes". Igual con unidades y
+ * noches. Los modelos de delivery hablan de pedidos y Creditos, que son
+ * masculinos, asi que esto nacio con Rappi Travel, donde aparecen ordenes,
+ * unidades y noches.
+ *
+ * Solo cambian las centenas y el uno, y nunca "mil" ni "millones", que no
+ * tienen femenino. Esta funcion no toca el texto masculino: se pide aparte.
+ */
+function enFemenino(texto) {
+  var t = String(texto);
+  // Las centenas concuerdan aunque lleven decenas detras: "doscientas treinta".
+  // "quinientos" no lleva la silaba "cien", asi que va aparte.
+  t = t.replace(/quinientos/g, 'quinientas');
+  t = t.replace(/(dos|tres|cuatro|seis|sete|ocho|nove)cientos/g, '$1cientas');
+  // El uno concuerda al final, que es donde queda pegado al sustantivo.
+  t = t.replace(/veintiuno$/, 'veintiuna');
+  t = t.replace(/(^|\s)uno$/, '$1una');
+  return t;
+}
+
+/**
+ * Forma "letras (cifra)" que precede a un sustantivo femenino:
+ * "una (1) orden", "doscientas (200) ordenes".
+ */
+function letrasYCifraFemenino(n) {
+  var entero = Math.trunc(Number(n));
+  return enFemenino(numeroEnLetras(entero)) + ' (' + entero + ')';
+}
+
 /** Entero con el separador de miles del pais. */
 function formatearMiles(n, separador) {
   var entero = String(Math.trunc(Math.abs(Number(n))));
@@ -156,6 +188,8 @@ if (typeof module !== 'undefined') {
     apocopar: apocopar,
     numeroEnLetras: numeroEnLetras,
     letrasYCifra: letrasYCifra,
+    enFemenino: enFemenino,
+    letrasYCifraFemenino: letrasYCifraFemenino,
     formatearMiles: formatearMiles,
     cantidadCreditos: cantidadCreditos,
     montoConMoneda: montoConMoneda,

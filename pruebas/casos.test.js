@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Los 11 casos de pruebas/casos_base.json contra el motor completo.
+ * Los casos de pruebas/casos_base.json contra el motor completo.
  *
  * Criterio de aceptación 1: los que deben pasar pasan y los que deben fallar
  * fallan con el error esperado.
@@ -34,10 +34,15 @@ function salidaEsperada(caso) {
   return normalizarParaComparar(leerTexto(rutaDesdeRaiz('pruebas', 'salidas_esperadas', caso.id + '.txt')));
 }
 
-test('hay once casos, cinco que generan y seis que fallan', () => {
-  assert.strictEqual(casos.length, 11);
-  assert.strictEqual(generan.length, 5);
-  assert.strictEqual(fallan.length, 6);
+test('hay veinticinco casos, doce que generan y trece que fallan', () => {
+  assert.strictEqual(casos.length, 25);
+  assert.strictEqual(generan.length, 12);
+  assert.strictEqual(fallan.length, 13);
+
+  // Los catorce de Rappi Travel: siete que generan y siete que fallan.
+  const deTravel = casos.filter((caso) => String(caso.id).indexOf('TV') === 0);
+  assert.strictEqual(deTravel.length, 14);
+  assert.strictEqual(deTravel.filter((c) => c.esperado.resultado === 'genera').length, 7);
 });
 
 for (const caso of generan) {

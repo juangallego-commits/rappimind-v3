@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-16",
+  "version": "2026-09-16c",
   "fuente": "RappiMind_Config_Legal_por_Pais_4.xlsx",
   "paises": [
     {
@@ -10,7 +10,9 @@
       "modelos": [
         "cashback",
         "carrera_compras",
-        "cashback_day"
+        "cashback_day",
+        "cashback_travel",
+        "descuento_travel"
       ],
       "entidad_legal": "Rappi S.A.S.",
       "id_fiscal": "NIT 900.843.898-9",
@@ -33,7 +35,20 @@
       "texto_persona": "persona natural",
       "texto_hora_local": "hora local de la República de Colombia",
       "texto_derechos_datos": "tus derechos a conocer, actualizar, rectificar y suprimir tus datos personales, y a revocar la autorización otorgada",
-      "por_confirmar_en_pruebas": []
+      "por_confirmar_en_pruebas": [
+        "travel_rnt",
+        "travel_rnt_vence",
+        "travel_entidad_vigilancia"
+      ],
+      "travel_entidad": "Travel Moustache S.A.S.",
+      "travel_id_fiscal": "NIT 901.337.236-7",
+      "travel_rnt": "79000",
+      "travel_rnt_vence": "2027-03-31",
+      "travel_url_sitio": "www.travel.rappi.com.co",
+      "travel_url_tc": "https://travel.rappi.com.co/terms",
+      "travel_politica_privacidad": "la política de privacidad",
+      "travel_url_privacidad": "https://travel.rappi.com.co/private-policy",
+      "travel_entidad_vigilancia": "la Superintendencia de Industria y Comercio y la Superintendencia de Transporte, según corresponda"
     },
     {
       "codigo": "MX",

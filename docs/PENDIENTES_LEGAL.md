@@ -91,3 +91,75 @@ de 1 a 20. Lo que sigue son observaciones, no cambios: los textos son de Legal.
    un articulado. Es correcto, porque ese es el nombre oficial de la campaña, pero si
    prefieres otra redacción para esa frase, dímelo y la anoto como cambio de modelo.
    En el Cashback el nombre solo va en el título, así que ahí no hay nada que mirar.
+
+## Rappi Travel
+
+Todo lo de esta sección está implementado con el texto propuesto en
+`docs/MODELO_BASE_TRAVEL.md` y espera tu revisión. Las referencias R1 a R17 son las
+de la sección 13 de ese documento.
+
+### Lo que bloquea la generación hoy
+
+1. ~~**Falta la política de datos de Rappi Travel** (R14).~~ **Resuelto por Juan el 16 de
+   septiembre**: "la política de privacidad", en <https://travel.rappi.com.co/private-policy>.
+   Con eso Colombia ya genera T&C de Travel.
+2. **RNT y su vencimiento** (R15). Va 79000, que es lo que dicen el certificado y las
+   respuestas a la SIC, y vencimiento el 31 de marzo de 2027, que es lo que dicen tus
+   notas. El certificado del Drive vencía el 31 de marzo de 2026. Si el RNT está vencido,
+   la herramienta tampoco genera.
+
+### Textos nuevos que necesitan tu visto bueno
+
+3. **Rol de Rappi Travel** (R1). La cláusula 1 dice que Travel Moustache "actúa como
+   agencia de viajes que opera los Sistemas Rappi Travel", no como plataforma de
+   intermediación, y trae el RNT. Es un cambio de fondo frente al bloque de delivery.
+4. **Créditos sin documento madre** (R2). La cláusula 12 dice que estos Créditos se rigen
+   por el propio T&C. Solo cuando la redención incluye toda la Plataforma se agrega el
+   párrafo que remite a los T&C de Créditos de Rappi.
+5. **Cancelaciones** (R3). Las viñetas de "Reembolso parcial" y "Plazo" son nuevas.
+   **Juan aprobó el 16 de septiembre** la propuesta adicional, y ya está aplicada: si el
+   Proveedor modifica la reserva y el usuario la acepta sin reembolso, conserva el
+   Beneficio. Quien pierde el Beneficio es quien cancela, pide reembolso o modifica él
+   mismo la reserva.
+6. **Responsabilidad** (R4). **Juan decidió el 16 de septiembre dejarla tal cual** el
+   modelo de junio. Queda anotada la observación de Supertransporte, que calificó a Rappi
+   Travel como proveedor indirecto con responsabilidad solidaria: una exclusión general de
+   responsabilidad por la prestación del servicio puede leerse como cláusula abusiva y no
+   protege. La redacción alternativa sigue escrita en R4 por si algún día se retoma.
+7. **Entidad de vigilancia** (R5). Va "la Superintendencia de Industria y Comercio y la
+   Superintendencia de Transporte, según corresponda".
+8. **Base de cálculo** (R6). Falta decidir si los impuestos y las tasas de la tarifa
+   cuentan para el cashback. Hoy dice "el valor pagado con dinero real por la tarifa o la
+   reserva", sin pronunciarse.
+9. **Ejemplo del tope** (R7) y **descuento variable** (R8). Los dos son nuevos y salen del
+   criterio de transparencia. El ejemplo del tope nació del reclamo de agosto de 2025.
+10. **Conteo por trayecto** (R11). La opción existe en el formulario. Falta confirmar que
+    en la práctica alguna campaña la use.
+11. **Nombre de la sección de Créditos en la app** (R13). El documento dice las secciones
+    "Cuenta" y "Créditos", como en delivery. El modelo de junio decía "Promos y Créditos".
+12. **Pagos con Créditos en los descuentos** (R16). La frase que excluye las órdenes
+    pagadas con Créditos viene de los cashback y hoy también sale en los descuentos.
+    ¿Se queda?
+13. **Vigencia mínima de Créditos** (R17). Menos de cinco días muestra un aviso, no
+    bloquea. Dime si prefieres que bloquee.
+
+### Lo que encontré yo al armarlo
+
+14. **El texto del ámbito habla de vuelos incluso sin vuelos.** La frase de la sección 5
+    dice "Aplica únicamente para vuelos con origen y destino en ... y para servicios que
+    se presten en ...". En una campaña solo de hoteles, la primera mitad sobra y queda
+    ruido en el documento. Lo dejé tal cual porque el texto es tuyo. Si quieres, lo parto
+    en dos y solo sale la mitad que aplica.
+15. **"Doscientos órdenes" estaba mal.** Los modelos de delivery solo hablan de pedidos y
+    Créditos, que son masculinos. Travel trae órdenes, unidades y noches, que son
+    femeninas. Arreglado en el motor, con su prueba. No cambia ni una letra de los
+    documentos de delivery.
+16. **Una frase del descuento variable quedaba partida.** Tal como está escrita en el
+    modelo base, la cláusula salía así: "un descuento de entre el 5% y el 40%, según el
+    Producto Participante sobre el valor de la tarifa de los Productos Participantes".
+    Moví "según el Producto Participante" al final de la oración. Son exactamente las
+    mismas palabras, en otro orden. Si prefieres otra redacción, dímela.
+17. **El nombre de una campaña sin marca aliada queda con la razón social.** Por ejemplo
+    "OPERADOR DE PRUEBA S.A.S. · 50% CASHBACK TRAVEL · 15 OCT 2026". Se lee raro con el
+    "S.A.S." adentro. Si prefieres, pongo "Rappi Travel" cuando no hay marca, o hago la
+    marca obligatoria.

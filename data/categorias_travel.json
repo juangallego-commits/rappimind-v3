@@ -1,0 +1,28 @@
+{
+  "nota": "Categorias de la seccion Rappi Travel de la app, en el orden y con los nombres exactos de la captura del 16 de septiembre de 2026. En el T&C van entre comillas, asi que tienen que coincidir con la app.",
+  "CO": [
+    "Hoteles",
+    "Vuelos",
+    "Paquetes",
+    "Tours y Actividades",
+    "Autos",
+    "Hoteles por horas",
+    "Marriott Bonvoy",
+    "Asistencia"
+  ],
+  "grupos": {
+    "aereas": [
+      "Vuelos",
+      "Paquetes"
+    ],
+    "alojamiento": [
+      "Hoteles",
+      "Hoteles por horas",
+      "Marriott Bonvoy",
+      "Paquetes"
+    ],
+    "autos": [
+      "Autos"
+    ]
+  }
+}

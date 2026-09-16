@@ -252,3 +252,48 @@ que escribir igual de bien.
 
 **Lo que nunca se hace.** Mover o borrar una columna que ya exista: desalinearía todo el
 histórico.
+
+## Rappi Travel no reusa ni un bloque de delivery
+
+**Qué se decidió.** Trece bloques nuevos en `modelos/bloques/travel_*.md` y un archivo
+aparte de derivados, `src/core/derivados_travel.js`.
+
+**Por qué.** Los bloques de delivery dicen "Rappi" y los de Travel tienen que decir "Rappi
+Travel", que es otra sociedad, con otro NIT y con un Registro Nacional de Turismo.
+Parametrizar el nombre de la entidad habría dejado un solo archivo capaz de cambiar los
+dos documentos, y los de delivery ya están aprobados por Legal. Con archivos separados,
+tocar Travel no puede tocar delivery.
+
+## Los datos de Travel van planos en la fila del país
+
+**Qué se decidió.** `travel_entidad`, `travel_rnt` y los demás son columnas, no un objeto
+anidado.
+
+**Por qué.** La pestaña `Paises` del Sheet es una tabla. Un objeto anidado se guardaría
+como `[object Object]` en la ida y vuelta.
+
+## Sin los datos de Travel del país, no se genera
+
+**Qué se decidió.** `travelDisponible()` exige los nueve datos y el RNT vigente. Si falta
+uno, no se genera y se dice cuál falta.
+
+**Por qué.** Un T&C de agencia de viajes sin RNT vigente no cumple la ley 300 de 1996, y
+uno sin política de datos deja al usuario sin saber quién trata sus datos. Es preferible
+no generar a generar algo incompleto.
+
+## Unas pocas preguntas cambian de texto según el tipo
+
+**Qué se decidió.** `preguntaDe(campo, tipo)` resuelve una `variante` por tipo de campaña,
+en vez de duplicar el campo.
+
+**Por qué.** En delivery se habla de "pedido" y en Travel de "orden", y el segmento, el
+pago, la carga y la redención tienen opciones distintas. Con campos duplicados, la misma
+respuesta quedaría en dos columnas del Sheet y el histórico se partiría en dos.
+
+## Los números tienen forma femenina
+
+**Qué se decidió.** `letrasYCifraFemenino()`, usado para órdenes, unidades y noches.
+
+**Por qué.** "Doscientos órdenes" está mal escrito en un documento legal. No se había
+visto porque los modelos de delivery solo hablan de pedidos y de Créditos, que son
+masculinos. El femenino es opt-in, así que ningún documento de delivery cambia.

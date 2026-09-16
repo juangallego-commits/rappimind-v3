@@ -11,6 +11,10 @@
 if (typeof module !== 'undefined' && typeof require === 'function') {
   var moduloTablas = require('./tablas.js');
   var comoBooleano = moduloTablas.comoBooleano;
+
+  var moduloFechas = require('./fechas.js');
+  var listaY = moduloFechas.listaY;
+  var formatearFecha = moduloFechas.formatearFecha;
 }
 
 var ESTADOS = ['activo', 'piloto', 'bloqueado'];
@@ -131,6 +135,76 @@ function rolDe(equipo, correo) {
   return miembro ? miembro.rol : 'comercial';
 }
 
+// --- Rappi Travel ----------------------------------------------------------
+
+/**
+ * Los tipos de campana de Rappi Travel.
+ *
+ * Travel tiene su propia entidad legal (Travel Moustache S.A.S.), su propio
+ * Registro Nacional de Turismo y su propia politica de datos. Nada de eso se
+ * hereda de la fila del pais, asi que un pais sin bloque travel no ofrece estos
+ * tipos. Ver docs/INVESTIGACION_TRAVEL.md.
+ */
+var TIPOS_DE_TRAVEL = ['cashback_travel', 'descuento_travel'];
+
+/** Los datos de Travel sin los cuales un T&C saldria incompleto. */
+var DATOS_DE_TRAVEL_OBLIGATORIOS = [
+  { llave: 'travel_entidad', nombre: 'la razón social de Rappi Travel' },
+  { llave: 'travel_id_fiscal', nombre: 'el NIT de Rappi Travel' },
+  { llave: 'travel_rnt', nombre: 'el número del Registro Nacional de Turismo' },
+  { llave: 'travel_rnt_vence', nombre: 'la fecha de vencimiento del Registro Nacional de Turismo' },
+  { llave: 'travel_url_sitio', nombre: 'la dirección del sitio de Rappi Travel' },
+  { llave: 'travel_url_tc', nombre: 'el enlace a los T&C de los Sistemas Rappi Travel' },
+  { llave: 'travel_politica_privacidad', nombre: 'el nombre de la política de datos de Rappi Travel' },
+  { llave: 'travel_url_privacidad', nombre: 'el enlace a la política de datos de Rappi Travel' },
+  { llave: 'travel_entidad_vigilancia', nombre: 'la entidad de vigilancia de Rappi Travel' },
+];
+
+function esTipoDeTravel(tipo) {
+  return TIPOS_DE_TRAVEL.indexOf(String(tipo || '')) !== -1;
+}
+
+/**
+ * Si el pais puede generar T&C de Travel hoy, y por que no.
+ *
+ * Mientras falte un dato o el RNT este vencido no se genera. Un T&C de agencia
+ * de viajes sin RNT vigente no cumple la ley 300 de 1996, y uno sin politica de
+ * datos deja al usuario sin saber quien trata sus datos ni como reclamarlos.
+ *
+ * Devuelve { disponible, motivo }.
+ */
+function travelDisponible(pais, hoyIso) {
+  if (!pais) return { disponible: false, motivo: 'No encontramos el país de la campaña.' };
+
+  var faltantes = [];
+  for (var i = 0; i < DATOS_DE_TRAVEL_OBLIGATORIOS.length; i++) {
+    var dato = DATOS_DE_TRAVEL_OBLIGATORIOS[i];
+    if (!String(pais[dato.llave] === null || pais[dato.llave] === undefined ? '' : pais[dato.llave]).trim()) {
+      faltantes.push(dato.nombre);
+    }
+  }
+  if (faltantes.length > 0) {
+    return {
+      disponible: false,
+      faltantes: faltantes,
+      motivo: 'Rappi Travel todavía no está habilitado en ' + (pais.nombre || pais.codigo) +
+        ': falta ' + listaY(faltantes) + '. Escríbele a Legal para que lo complete.',
+    };
+  }
+
+  var vence = String(pais.travel_rnt_vence || '').trim();
+  var hoy = String(hoyIso || '').trim();
+  if (hoy && vence && hoy > vence) {
+    return {
+      disponible: false,
+      vencido: true,
+      motivo: 'El Registro Nacional de Turismo de Rappi Travel venció el ' + formatearFecha(vence) +
+        '. No se pueden generar T&C de Travel hasta renovarlo. Escríbele a Legal.',
+    };
+  }
+  return { disponible: true, motivo: '' };
+}
+
 /** Solo pruebas, legal y admin pueden generar en paises en piloto. */
 function puedeVerPiloto(rol) {
   return rol === 'pruebas' || rol === 'legal' || rol === 'admin';
@@ -149,5 +223,9 @@ if (typeof module !== 'undefined') {
     rolDe: rolDe,
     puedeVerPiloto: puedeVerPiloto,
     comoLista: comoLista,
+    TIPOS_DE_TRAVEL: TIPOS_DE_TRAVEL,
+    DATOS_DE_TRAVEL_OBLIGATORIOS: DATOS_DE_TRAVEL_OBLIGATORIOS,
+    esTipoDeTravel: esTipoDeTravel,
+    travelDisponible: travelDisponible,
   };
 }

@@ -48,11 +48,29 @@ function fechaCortaDeNombre(iso) {
  */
 function tramoDeBeneficio(entrada, esquema) {
   var nombreDelTipo = esquema ? esquema.nombre : '';
-  var porcentaje = Number(entrada.porcentaje);
   if (!nombreDelTipo) return '';
-  if (esquema.id !== 'cashback') return nombreDelTipo;
-  if (!isFinite(porcentaje) || porcentaje <= 0) return nombreDelTipo;
-  return porcentaje + '% ' + nombreDelTipo;
+  var porcentaje = Number(entrada.porcentaje);
+  var conPorcentaje = isFinite(porcentaje) && porcentaje > 0;
+
+  if (esquema.id === 'cashback') {
+    return conPorcentaje ? porcentaje + '% ' + nombreDelTipo : nombreDelTipo;
+  }
+
+  // Cashback Travel con monto fijo no lleva porcentaje, porque no tiene.
+  if (esquema.id === 'cashback_travel') {
+    if (entrada.formaBeneficio !== 'porcentaje' || !conPorcentaje) return nombreDelTipo;
+    return porcentaje + '% ' + nombreDelTipo;
+  }
+
+  // En el descuento variable el titulo dice "Hasta", que es lo que exige la
+  // transparencia: un "40%" a secas prometeria ese porcentaje en todo.
+  if (esquema.id === 'descuento_travel') {
+    if (!conPorcentaje) return nombreDelTipo;
+    var hasta = entrada.formaDescuento === 'variable' ? 'Hasta ' : '';
+    return hasta + porcentaje + '% ' + nombreDelTipo;
+  }
+
+  return nombreDelTipo;
 }
 
 /**
@@ -68,8 +86,10 @@ function nombreDeCampana(entrada, esquema) {
   var datos = entrada || {};
   var tramos = [];
 
-  // El Cashback Multitienda no tiene una sola tienda, asi que arranca por el tipo.
-  var tienda = String(datos.tienda || '').trim();
+  // El Cashback Multitienda no tiene una sola tienda, asi que arranca por el
+  // tipo. En Travel la tienda es la marca aliada y, si no hay, el Organizador.
+  var tienda = String(datos.tienda || datos.marcaAliado || '').trim();
+  if (!tienda && esquema && esquema.esDeTravel) tienda = String(datos.organizadorRazonSocial || '').trim();
   if (tienda) tramos.push(tienda);
 
   var beneficio = tramoDeBeneficio(datos, esquema);

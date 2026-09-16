@@ -487,6 +487,696 @@
           "pais"
         ]
       }
+    },
+    {
+      "id": "TV01",
+      "descripcion": "Cashback Travel de vuelos internacionales de una aerolínea, ida y regreso",
+      "fecha_referencia": "2026-09-16",
+      "usuario_en_equipo": true,
+      "entrada": {
+        "pais": "CO",
+        "otraCondicion": "no",
+        "ambito": "internacional",
+        "fechaPrimeraComunicacion": "2026-09-28",
+        "aliadoAprobo": true,
+        "declaracionPiezas": true,
+        "declaracion": true,
+        "segmento": "todos",
+        "metodoPago": "digitales",
+        "horaInicio": "00:00",
+        "horaFin": "23:59",
+        "fechaInicio": "2026-10-01",
+        "fechaFin": "2026-10-31",
+        "tipo": "cashback_travel",
+        "organizadorRazonSocial": "Aerolínea de Prueba S.A.",
+        "organizadorId": "900111222-1",
+        "marcaAliado": "Aerolínea de Prueba",
+        "categorias": [
+          "Vuelos"
+        ],
+        "destinos": "España, Estados Unidos, México",
+        "aerolinea": "Aerolínea de Prueba",
+        "soloOperados": true,
+        "trayecto": "ida_y_regreso",
+        "conteoIdaRegreso": "una_orden",
+        "soloOrigenPais": true,
+        "sinCompraMinima": true,
+        "formaBeneficio": "porcentaje",
+        "porcentaje": 5,
+        "tope": 150000,
+        "limitePorUsuario": 2,
+        "presupuesto": 5000000,
+        "maxOrdenes": 33,
+        "carga": "dias_calendario",
+        "diasCarga": 5,
+        "diasVigencia": 15,
+        "redencion": "categorias",
+        "categoriasRedencion": [
+          "Hoteles",
+          "Paquetes",
+          "Autos",
+          "Tours y Actividades",
+          "Asistencia"
+        ]
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "inscrita en el Registro Nacional de Turismo con el número 79000",
+          "Los vuelos deben ser operados directamente por Aerolínea de Prueba",
+          "el cinco por ciento (5%) del valor pagado por tu orden",
+          "una compra de ida y regreso cuenta como una (1) orden"
+        ]
+      }
+    },
+    {
+      "id": "TV02",
+      "descripcion": "Cashback Travel de autos con compra mínima y carga en días hábiles",
+      "fecha_referencia": "2026-09-16",
+      "usuario_en_equipo": true,
+      "entrada": {
+        "pais": "CO",
+        "otraCondicion": "no",
+        "ambito": "ambos",
+        "fechaPrimeraComunicacion": "2026-09-28",
+        "aliadoAprobo": true,
+        "declaracionPiezas": true,
+        "declaracion": true,
+        "segmento": "todos",
+        "metodoPago": "digitales",
+        "horaInicio": "00:00",
+        "horaFin": "23:59",
+        "fechaInicio": "2026-10-01",
+        "fechaFin": "2026-10-31",
+        "tipo": "cashback_travel",
+        "organizadorRazonSocial": "Rentadora de Prueba S.A.S.",
+        "organizadorId": "900333444-0",
+        "marcaAliado": "Rentadora de Prueba",
+        "categorias": [
+          "Autos"
+        ],
+        "compraMinima": 600000,
+        "formaBeneficio": "porcentaje",
+        "porcentaje": 10,
+        "tope": 90000,
+        "limitePorUsuario": 2,
+        "presupuesto": 3200000,
+        "maxOrdenes": 40,
+        "carga": "dias_habiles",
+        "diasCarga": 5,
+        "diasVigencia": 15,
+        "redencion": "categorias",
+        "categoriasRedencion": [
+          "Hoteles",
+          "Paquetes",
+          "Tours y Actividades"
+        ]
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "El valor pagado por la orden debe ser igual o superior a",
+          "días hábiles siguientes a la finalización de la Campaña"
+        ]
+      }
+    },
+    {
+      "id": "TV03",
+      "descripcion": "Cashback Travel de hoteles nacionales, sin tope, carga al confirmarse",
+      "fecha_referencia": "2026-09-16",
+      "usuario_en_equipo": true,
+      "entrada": {
+        "pais": "CO",
+        "otraCondicion": "no",
+        "ambito": "nacional",
+        "fechaPrimeraComunicacion": "2026-09-28",
+        "aliadoAprobo": true,
+        "declaracionPiezas": true,
+        "declaracion": true,
+        "segmento": "todos",
+        "metodoPago": "digitales",
+        "horaInicio": "00:00",
+        "horaFin": "23:59",
+        "fechaInicio": "2026-10-01",
+        "fechaFin": "2026-10-31",
+        "tipo": "cashback_travel",
+        "organizadorRazonSocial": "Hotelera de Prueba S.A.S.",
+        "organizadorId": "900555666-1",
+        "marcaAliado": "Hotelera de Prueba",
+        "categorias": [
+          "Hoteles"
+        ],
+        "hotelesModo": "algunos",
+        "hotelesLista": "Hotel de Prueba Santa Marta",
+        "sinCompraMinima": true,
+        "formaBeneficio": "porcentaje",
+        "porcentaje": 10,
+        "sinTope": true,
+        "limitePorUsuario": 2,
+        "presupuesto": 5000000,
+        "maxOrdenes": 20,
+        "carga": "al_confirmarse",
+        "diasVigencia": 30,
+        "redencion": "todo_travel"
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "sin un tope por orden",
+          "participan únicamente los siguientes hoteles: Hotel de Prueba Santa Marta",
+          "una vez se confirme la emisión de tu reserva",
+          "Los Créditos podrán redimirse en cualquier categoría de los Sistemas Rappi Travel."
+        ]
+      }
+    },
+    {
+      "id": "TV04",
+      "descripcion": "Cashback Travel con monto fijo y redención también en la Plataforma",
+      "fecha_referencia": "2026-09-16",
+      "usuario_en_equipo": true,
+      "entrada": {
+        "pais": "CO",
+        "otraCondicion": "no",
+        "ambito": "ambos",
+        "fechaPrimeraComunicacion": "2026-09-28",
+        "aliadoAprobo": true,
+        "declaracionPiezas": true,
+        "declaracion": true,
+        "segmento": "todos",
+        "metodoPago": "digitales",
+        "horaInicio": "00:00",
+        "horaFin": "23:59",
+        "fechaInicio": "2026-10-01",
+        "fechaFin": "2026-10-31",
+        "tipo": "cashback_travel",
+        "organizadorRazonSocial": "Aerolínea Dos de Prueba S.A.",
+        "organizadorId": "900777888-2",
+        "marcaAliado": "Aerolínea Dos de Prueba",
+        "categorias": [
+          "Vuelos"
+        ],
+        "aerolinea": "Aerolínea Dos de Prueba",
+        "trayecto": "cualquiera",
+        "conteoIdaRegreso": "una_orden",
+        "soloOrigenPais": true,
+        "periodoViajeInicio": "2026-12-01",
+        "periodoViajeFin": "2027-01-31",
+        "sinCompraMinima": true,
+        "formaBeneficio": "monto_fijo",
+        "montoFijo": 100000,
+        "limitePorUsuario": 1,
+        "presupuesto": 3000000,
+        "sinMaxOrdenes": true,
+        "carga": "dias_calendario",
+        "diasCarga": 3,
+        "diasVigencia": 30,
+        "redencion": "travel_y_plataforma"
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "cien mil (100.000) Créditos por cada orden",
+          "El viaje o el uso del servicio debe realizarse entre el 1 de diciembre de 2026 y el 31 de enero de 2027.",
+          "su uso se regirá además por los Términos y Condiciones de Funcionamiento de los Créditos",
+          "en una (1) orden"
+        ]
+      }
+    },
+    {
+      "id": "TV05",
+      "descripcion": "Cashback Travel en las ocho categorías, franja de un solo día, Pro o RappiCard",
+      "fecha_referencia": "2026-09-16",
+      "usuario_en_equipo": true,
+      "entrada": {
+        "pais": "CO",
+        "otraCondicion": "no",
+        "ambito": "ambos",
+        "fechaPrimeraComunicacion": "2026-09-28",
+        "aliadoAprobo": true,
+        "declaracionPiezas": true,
+        "declaracion": true,
+        "segmento": "pro_o_rappicard",
+        "metodoPago": "digitales",
+        "horaInicio": "18:00",
+        "horaFin": "20:00",
+        "fechaInicio": "2026-10-15",
+        "fechaFin": "2026-10-15",
+        "tipo": "cashback_travel",
+        "organizadorRazonSocial": "Operador de Prueba S.A.S.",
+        "organizadorId": "900999000-2",
+        "categorias": [
+          "Hoteles",
+          "Vuelos",
+          "Paquetes",
+          "Tours y Actividades",
+          "Autos",
+          "Hoteles por horas",
+          "Marriott Bonvoy",
+          "Asistencia"
+        ],
+        "trayecto": "cualquiera",
+        "conteoIdaRegreso": "una_orden",
+        "sinCompraMinima": true,
+        "formaBeneficio": "porcentaje",
+        "porcentaje": 50,
+        "tope": 300000,
+        "limitePorUsuario": 2,
+        "presupuesto": 70000000,
+        "maxOrdenes": 200,
+        "carga": "dias_calendario",
+        "diasCarga": 5,
+        "diasVigencia": 30,
+        "redencion": "categorias",
+        "categoriasRedencion": [
+          "Hoteles",
+          "Paquetes",
+          "Tours y Actividades",
+          "Autos",
+          "Hoteles por horas",
+          "Marriott Bonvoy",
+          "Asistencia"
+        ],
+        "hotelesModo": "todos"
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "en todas las categorías de los Sistemas Rappi Travel",
+          "así como los que paguen la orden con su tarjeta RappiCard",
+          "desde las 6:00 p. m. del 15 de octubre de 2026 hasta las 8:00 p. m.",
+          "no podrán usarse en la categoría “Vuelos”"
+        ]
+      }
+    },
+    {
+      "id": "TV06",
+      "descripcion": "Descuento Travel de asistencia al viajero, porcentaje fijo",
+      "fecha_referencia": "2026-09-16",
+      "usuario_en_equipo": true,
+      "entrada": {
+        "pais": "CO",
+        "otraCondicion": "no",
+        "ambito": "ambos",
+        "fechaPrimeraComunicacion": "2026-09-28",
+        "aliadoAprobo": true,
+        "declaracionPiezas": true,
+        "declaracion": true,
+        "segmento": "todos",
+        "metodoPago": "digitales",
+        "horaInicio": "00:00",
+        "horaFin": "23:59",
+        "fechaInicio": "2026-10-01",
+        "fechaFin": "2026-10-31",
+        "tipo": "descuento_travel",
+        "organizadorRazonSocial": "Asistencia de Prueba S.A.",
+        "organizadorId": "900111222-1",
+        "marcaAliado": "Asistencia de Prueba",
+        "categorias": [
+          "Asistencia"
+        ],
+        "sinCompraMinima": true,
+        "formaDescuento": "fijo",
+        "porcentaje": 15,
+        "visibilidad": [
+          "precio_tachado"
+        ],
+        "sinLimitePorUsuario": true,
+        "sinUnidades": true
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "un descuento del quince por ciento (15%)",
+          "El descuento aplica únicamente sobre el valor de la asistencia al viajero",
+          "no hay un límite de órdenes por Usuario/Consumidor",
+          "el precio tachado del flujo de compra"
+        ]
+      }
+    },
+    {
+      "id": "TV07",
+      "descripcion": "Descuento Travel de hoteles con etiqueta, porcentaje variable y unidades",
+      "fecha_referencia": "2026-09-16",
+      "usuario_en_equipo": true,
+      "entrada": {
+        "pais": "CO",
+        "otraCondicion": "no",
+        "ambito": "ambos",
+        "fechaPrimeraComunicacion": "2026-09-28",
+        "aliadoAprobo": true,
+        "declaracionPiezas": true,
+        "declaracion": true,
+        "segmento": "todos",
+        "metodoPago": "digitales",
+        "horaInicio": "00:00",
+        "horaFin": "23:59",
+        "fechaInicio": "2026-10-01",
+        "fechaFin": "2026-10-31",
+        "tipo": "descuento_travel",
+        "organizadorRazonSocial": "Cadena de Prueba S.A.S.",
+        "organizadorId": "900333444-0",
+        "marcaAliado": "Cadena de Prueba",
+        "categorias": [
+          "Hoteles"
+        ],
+        "hotelesModo": "etiqueta",
+        "periodoViajeInicio": "2026-11-01",
+        "periodoViajeFin": "2026-12-31",
+        "fechasExcluidas": "2026-12-24, 2026-12-31",
+        "nochesMinimas": 2,
+        "sinCompraMinima": true,
+        "formaDescuento": "variable",
+        "porcentaje": 40,
+        "porcentajeMinimo": 5,
+        "productosConMaximo": 3,
+        "visibilidad": [
+          "inicio",
+          "etiqueta"
+        ],
+        "limitePorUsuario": 2,
+        "unidades": 100
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "un descuento de entre el cinco por ciento (5%) y el cuarenta por ciento (40%)",
+          "El descuento máximo del cuarenta por ciento (40%) aplica a tres (3) de los Productos Participantes.",
+          "La Campaña cuenta con cien (100) unidades con descuento",
+          "No aplica para viajes o servicios en las siguientes fechas: 24 de diciembre de 2026 y 31 de diciembre de 2026.",
+          "La reserva de hotel debe ser de dos (2) noches o más."
+        ]
+      }
+    },
+    {
+      "id": "TV08",
+      "descripcion": "Travel Moustache como Organizador: no se puede",
+      "fecha_referencia": "2026-09-16",
+      "usuario_en_equipo": true,
+      "entrada": {
+        "pais": "CO",
+        "otraCondicion": "no",
+        "ambito": "ambos",
+        "fechaPrimeraComunicacion": "2026-09-28",
+        "aliadoAprobo": true,
+        "declaracionPiezas": true,
+        "declaracion": true,
+        "segmento": "todos",
+        "metodoPago": "digitales",
+        "horaInicio": "00:00",
+        "horaFin": "23:59",
+        "fechaInicio": "2026-10-01",
+        "fechaFin": "2026-10-31",
+        "tipo": "cashback_travel",
+        "organizadorRazonSocial": "Travel Moustache S.A.S.",
+        "organizadorId": "901337236-7",
+        "categorias": [
+          "Vuelos"
+        ],
+        "trayecto": "cualquiera",
+        "conteoIdaRegreso": "una_orden",
+        "sinCompraMinima": true,
+        "formaBeneficio": "porcentaje",
+        "porcentaje": 10,
+        "tope": 50000,
+        "limitePorUsuario": 1,
+        "presupuesto": 1000000,
+        "sinMaxOrdenes": true,
+        "carga": "al_confirmarse",
+        "diasVigencia": 30,
+        "redencion": "todo_travel"
+      },
+      "esperado": {
+        "resultado": "falla",
+        "errores": [
+          "organizadorRazonSocial",
+          "organizadorId"
+        ]
+      }
+    },
+    {
+      "id": "TV09",
+      "descripcion": "Razón social con la palabra Rappi: no se puede",
+      "fecha_referencia": "2026-09-16",
+      "usuario_en_equipo": true,
+      "entrada": {
+        "pais": "CO",
+        "otraCondicion": "no",
+        "ambito": "ambos",
+        "fechaPrimeraComunicacion": "2026-09-28",
+        "aliadoAprobo": true,
+        "declaracionPiezas": true,
+        "declaracion": true,
+        "segmento": "todos",
+        "metodoPago": "digitales",
+        "horaInicio": "00:00",
+        "horaFin": "23:59",
+        "fechaInicio": "2026-10-01",
+        "fechaFin": "2026-10-31",
+        "tipo": "cashback_travel",
+        "organizadorRazonSocial": "Rappi Colombia S.A.S.",
+        "organizadorId": "900111222-1",
+        "categorias": [
+          "Vuelos"
+        ],
+        "trayecto": "cualquiera",
+        "conteoIdaRegreso": "una_orden",
+        "sinCompraMinima": true,
+        "formaBeneficio": "porcentaje",
+        "porcentaje": 10,
+        "tope": 50000,
+        "limitePorUsuario": 1,
+        "presupuesto": 1000000,
+        "sinMaxOrdenes": true,
+        "carga": "al_confirmarse",
+        "diasVigencia": 30,
+        "redencion": "todo_travel"
+      },
+      "esperado": {
+        "resultado": "falla",
+        "errores": [
+          "organizadorRazonSocial"
+        ]
+      }
+    },
+    {
+      "id": "TV10",
+      "descripcion": "Asistencia mezclada con hoteles en un descuento: no se puede",
+      "fecha_referencia": "2026-09-16",
+      "usuario_en_equipo": true,
+      "entrada": {
+        "pais": "CO",
+        "otraCondicion": "no",
+        "ambito": "ambos",
+        "fechaPrimeraComunicacion": "2026-09-28",
+        "aliadoAprobo": true,
+        "declaracionPiezas": true,
+        "declaracion": true,
+        "segmento": "todos",
+        "metodoPago": "digitales",
+        "horaInicio": "00:00",
+        "horaFin": "23:59",
+        "fechaInicio": "2026-10-01",
+        "fechaFin": "2026-10-31",
+        "tipo": "descuento_travel",
+        "organizadorRazonSocial": "Asistencia de Prueba S.A.",
+        "organizadorId": "900111222-1",
+        "categorias": [
+          "Asistencia",
+          "Hoteles"
+        ],
+        "hotelesModo": "todos",
+        "sinCompraMinima": true,
+        "formaDescuento": "fijo",
+        "porcentaje": 15,
+        "visibilidad": [
+          "etiqueta"
+        ],
+        "sinLimitePorUsuario": true,
+        "sinUnidades": true
+      },
+      "esperado": {
+        "resultado": "falla",
+        "errores": [
+          "categorias"
+        ]
+      }
+    },
+    {
+      "id": "TV11",
+      "descripcion": "Descuento variable con el mínimo igual al máximo",
+      "fecha_referencia": "2026-09-16",
+      "usuario_en_equipo": true,
+      "entrada": {
+        "pais": "CO",
+        "otraCondicion": "no",
+        "ambito": "ambos",
+        "fechaPrimeraComunicacion": "2026-09-28",
+        "aliadoAprobo": true,
+        "declaracionPiezas": true,
+        "declaracion": true,
+        "segmento": "todos",
+        "metodoPago": "digitales",
+        "horaInicio": "00:00",
+        "horaFin": "23:59",
+        "fechaInicio": "2026-10-01",
+        "fechaFin": "2026-10-31",
+        "tipo": "descuento_travel",
+        "organizadorRazonSocial": "Cadena de Prueba S.A.S.",
+        "organizadorId": "900333444-0",
+        "categorias": [
+          "Hoteles"
+        ],
+        "hotelesModo": "todos",
+        "sinCompraMinima": true,
+        "formaDescuento": "variable",
+        "porcentaje": 20,
+        "porcentajeMinimo": 20,
+        "productosConMaximo": 2,
+        "visibilidad": [
+          "etiqueta"
+        ],
+        "limitePorUsuario": 1,
+        "sinUnidades": true
+      },
+      "esperado": {
+        "resultado": "falla",
+        "errores": [
+          "porcentajeMinimo"
+        ]
+      }
+    },
+    {
+      "id": "TV12",
+      "descripcion": "Tope por orden mayor que el presupuesto de la campaña",
+      "fecha_referencia": "2026-09-16",
+      "usuario_en_equipo": true,
+      "entrada": {
+        "pais": "CO",
+        "otraCondicion": "no",
+        "ambito": "ambos",
+        "fechaPrimeraComunicacion": "2026-09-28",
+        "aliadoAprobo": true,
+        "declaracionPiezas": true,
+        "declaracion": true,
+        "segmento": "todos",
+        "metodoPago": "digitales",
+        "horaInicio": "00:00",
+        "horaFin": "23:59",
+        "fechaInicio": "2026-10-01",
+        "fechaFin": "2026-10-31",
+        "tipo": "cashback_travel",
+        "organizadorRazonSocial": "Hotelera de Prueba S.A.S.",
+        "organizadorId": "900555666-1",
+        "categorias": [
+          "Hoteles"
+        ],
+        "hotelesModo": "todos",
+        "sinCompraMinima": true,
+        "formaBeneficio": "porcentaje",
+        "porcentaje": 10,
+        "tope": 5000000,
+        "limitePorUsuario": 1,
+        "presupuesto": 1000000,
+        "sinMaxOrdenes": true,
+        "carga": "al_confirmarse",
+        "diasVigencia": 30,
+        "redencion": "todo_travel"
+      },
+      "esperado": {
+        "resultado": "falla",
+        "errores": [
+          "tope"
+        ]
+      }
+    },
+    {
+      "id": "TV13",
+      "descripcion": "El aliado pide una condición que el formulario no cubre",
+      "fecha_referencia": "2026-09-16",
+      "usuario_en_equipo": true,
+      "entrada": {
+        "pais": "CO",
+        "otraCondicion": "si",
+        "ambito": "ambos",
+        "fechaPrimeraComunicacion": "2026-09-28",
+        "aliadoAprobo": true,
+        "declaracionPiezas": true,
+        "declaracion": true,
+        "segmento": "todos",
+        "metodoPago": "digitales",
+        "horaInicio": "00:00",
+        "horaFin": "23:59",
+        "fechaInicio": "2026-10-01",
+        "fechaFin": "2026-10-31",
+        "tipo": "cashback_travel",
+        "organizadorRazonSocial": "Operador de Prueba S.A.S.",
+        "organizadorId": "900999000-2",
+        "categorias": [
+          "Tours y Actividades"
+        ],
+        "sinCompraMinima": true,
+        "formaBeneficio": "porcentaje",
+        "porcentaje": 10,
+        "tope": 50000,
+        "limitePorUsuario": 1,
+        "presupuesto": 1000000,
+        "sinMaxOrdenes": true,
+        "carga": "al_confirmarse",
+        "diasVigencia": 30,
+        "redencion": "todo_travel"
+      },
+      "esperado": {
+        "resultado": "falla",
+        "errores": [
+          "otraCondicion"
+        ]
+      }
+    },
+    {
+      "id": "TV14",
+      "descripcion": "Segmento Pro o RappiCard con el pago limitado a RappiCard: se contradice",
+      "fecha_referencia": "2026-09-16",
+      "usuario_en_equipo": true,
+      "entrada": {
+        "pais": "CO",
+        "otraCondicion": "no",
+        "ambito": "ambos",
+        "fechaPrimeraComunicacion": "2026-09-28",
+        "aliadoAprobo": true,
+        "declaracionPiezas": true,
+        "declaracion": true,
+        "segmento": "pro_o_rappicard",
+        "metodoPago": "rappicard",
+        "horaInicio": "00:00",
+        "horaFin": "23:59",
+        "fechaInicio": "2026-10-01",
+        "fechaFin": "2026-10-31",
+        "tipo": "cashback_travel",
+        "organizadorRazonSocial": "Operador de Prueba S.A.S.",
+        "organizadorId": "900999000-2",
+        "categorias": [
+          "Paquetes"
+        ],
+        "hotelesModo": "todos",
+        "trayecto": "cualquiera",
+        "conteoIdaRegreso": "una_orden",
+        "sinCompraMinima": true,
+        "formaBeneficio": "porcentaje",
+        "porcentaje": 10,
+        "tope": 50000,
+        "limitePorUsuario": 1,
+        "presupuesto": 1000000,
+        "sinMaxOrdenes": true,
+        "carga": "al_confirmarse",
+        "diasVigencia": 30,
+        "redencion": "todo_travel"
+      },
+      "esperado": {
+        "resultado": "falla",
+        "errores": [
+          "metodoPago"
+        ]
+      }
     }
   ]
 }

@@ -9,6 +9,15 @@
  * "obligatorio" y "visible" pueden ser true/false o una funcion de la entrada.
  */
 
+/*
+ * En Apps Script CATEGORIAS_TRAVEL es global: lo genera el build desde
+ * data/categorias_travel.json. En Node se carga aqui, porque la visibilidad de
+ * los campos de Travel depende de los grupos de categorias.
+ */
+if (typeof module !== 'undefined' && typeof require === 'function' && typeof CATEGORIAS_TRAVEL === 'undefined') {
+  var CATEGORIAS_TRAVEL = require('../../data/categorias_travel.json');
+}
+
 function siempre() {
   return true;
 }
@@ -332,6 +341,438 @@ function unir() {
   return todos;
 }
 
+/* --- Rappi Travel ---------------------------------------------------------
+ *
+ * Dos tipos: cashback_travel y descuento_travel. Comparten casi todo el
+ * formulario y se separan en el paso del beneficio. La especificacion completa
+ * esta en docs/MODELO_BASE_TRAVEL.md, seccion 4.
+ *
+ * Travel no tiene "tienda": tiene categorias de la app y, opcionalmente, una
+ * marca aliada. Por eso no reusa CAMPOS_TIENDA_Y_ORGANIZADOR.
+ */
+
+/** Las categorias marcadas, como lista. */
+function categoriasDe(entrada) {
+  var valor = (entrada && entrada.categorias) || [];
+  return Object.prototype.toString.call(valor) === '[object Array]' ? valor : [];
+}
+
+/** true si alguna categoria marcada esta en el grupo. */
+function hayGrupoDeTravel(entrada, grupo) {
+  if (typeof CATEGORIAS_TRAVEL === 'undefined') return false;
+  var delGrupo = (CATEGORIAS_TRAVEL.grupos || {})[grupo] || [];
+  var marcadas = categoriasDe(entrada);
+  for (var i = 0; i < marcadas.length; i++) {
+    if (delGrupo.indexOf(marcadas[i]) !== -1) return true;
+  }
+  return false;
+}
+
+function hayAereasDeTravel(entrada) {
+  return hayGrupoDeTravel(entrada, 'aereas');
+}
+
+function hayAlojamientoDeTravel(entrada) {
+  return hayGrupoDeTravel(entrada, 'alojamiento');
+}
+
+/** Hoteles, Marriott Bonvoy y Paquetes admiten un minimo de noches. Hoteles por horas no. */
+function admiteNochesMinimas(entrada) {
+  var marcadas = categoriasDe(entrada);
+  var conNoches = ['Hoteles', 'Marriott Bonvoy', 'Paquetes'];
+  for (var i = 0; i < marcadas.length; i++) {
+    if (conNoches.indexOf(marcadas[i]) !== -1) return true;
+  }
+  return false;
+}
+
+function hayAutosDeTravel(entrada) {
+  return categoriasDe(entrada).indexOf('Autos') !== -1;
+}
+
+/** Campos que comparten los dos tipos de Travel. */
+var CAMPOS_TRAVEL_COMUNES = [
+  { id: 'pais', etiqueta: 'País', tipo: 'lista', paso: 'campana', obligatorio: true },
+  { id: 'tipo', etiqueta: 'Tipo de campaña', tipo: 'tarjetas', paso: 'campana', obligatorio: true },
+
+  // --- Organizador ---------------------------------------------------------
+  { id: 'organizadorRazonSocial', etiqueta: 'Razón social del organizador', tipo: 'texto', paso: 'organizador', obligatorio: true },
+  { id: 'organizadorId', etiqueta: 'Identificación del organizador', tipo: 'identificacion', paso: 'organizador', obligatorio: true },
+  { id: 'marcaAliado', etiqueta: 'Marca aliada', tipo: 'texto', paso: 'organizador', obligatorio: false },
+
+  // --- Productos -----------------------------------------------------------
+  { id: 'categorias', etiqueta: 'Categorías participantes', tipo: 'casillas', paso: 'productos_travel', obligatorio: true },
+  {
+    id: 'ambito',
+    etiqueta: 'Ámbito de los viajes',
+    tipo: 'lista',
+    paso: 'productos_travel',
+    obligatorio: true,
+    opciones: [
+      { valor: 'nacional', etiqueta: 'Solo nacionales' },
+      { valor: 'internacional', etiqueta: 'Solo internacionales' },
+      { valor: 'ambos', etiqueta: 'Nacionales e internacionales' },
+    ],
+  },
+  { id: 'destinos', etiqueta: 'Destinos (separados por comas)', tipo: 'texto', paso: 'productos_travel', obligatorio: false },
+  {
+    id: 'hotelesModo',
+    etiqueta: '¿Qué hoteles participan?',
+    tipo: 'lista',
+    paso: 'productos_travel',
+    visible: hayAlojamientoDeTravel,
+    obligatorio: hayAlojamientoDeTravel,
+    opciones: [
+      { valor: 'todos', etiqueta: 'Todos' },
+      { valor: 'algunos', etiqueta: 'Solo algunos' },
+      { valor: 'etiqueta', etiqueta: 'Los que tengan la etiqueta de la campaña' },
+    ],
+  },
+  {
+    id: 'hotelesLista',
+    etiqueta: 'Hoteles participantes (separados por comas)',
+    tipo: 'texto',
+    paso: 'productos_travel',
+    visible: function (entrada) { return hayAlojamientoDeTravel(entrada) && entrada.hotelesModo === 'algunos'; },
+    obligatorio: function (entrada) { return hayAlojamientoDeTravel(entrada) && entrada.hotelesModo === 'algunos'; },
+  },
+
+  // --- Condiciones de los productos ---------------------------------------
+  { id: 'aerolinea', etiqueta: 'Aerolínea', tipo: 'texto', paso: 'condiciones_travel', visible: hayAereasDeTravel, obligatorio: false },
+  {
+    id: 'soloOperados',
+    etiqueta: 'Solo vuelos operados directamente',
+    tipo: 'casilla',
+    paso: 'condiciones_travel',
+    visible: function (entrada) { return hayAereasDeTravel(entrada) && !!String(entrada.aerolinea || '').trim(); },
+    obligatorio: false,
+  },
+  {
+    id: 'trayecto',
+    etiqueta: 'Trayectos que aplican',
+    tipo: 'lista',
+    paso: 'condiciones_travel',
+    visible: hayAereasDeTravel,
+    obligatorio: hayAereasDeTravel,
+    opciones: [
+      { valor: 'cualquiera', etiqueta: 'Cualquiera' },
+      { valor: 'ida_y_regreso', etiqueta: 'Solo ida y regreso' },
+      { valor: 'solo_ida', etiqueta: 'Solo ida' },
+    ],
+  },
+  {
+    id: 'conteoIdaRegreso',
+    etiqueta: 'Cómo se cuentan las compras de ida y regreso',
+    tipo: 'lista',
+    paso: 'condiciones_travel',
+    visible: function (entrada) { return hayAereasDeTravel(entrada) && entrada.trayecto !== 'solo_ida'; },
+    obligatorio: function (entrada) { return hayAereasDeTravel(entrada) && entrada.trayecto !== 'solo_ida'; },
+    opciones: [
+      { valor: 'una_orden', etiqueta: 'Como una sola orden' },
+      { valor: 'por_trayecto', etiqueta: 'Cada trayecto como una orden' },
+    ],
+  },
+  { id: 'clasesExcluidas', etiqueta: 'Clases tarifarias excluidas', tipo: 'texto', paso: 'condiciones_travel', visible: hayAereasDeTravel, obligatorio: false },
+  { id: 'soloOrigenPais', etiqueta: 'Solo vuelos con origen en el país', tipo: 'casilla', paso: 'condiciones_travel', visible: hayAereasDeTravel, obligatorio: false },
+  {
+    id: 'anticipacionDias',
+    etiqueta: 'Días de anticipación',
+    tipo: 'numero',
+    minimo: 1,
+    maximo: 365,
+    paso: 'condiciones_travel',
+    visible: hayAereasDeTravel,
+    obligatorio: false,
+  },
+  { id: 'periodoViajeInicio', etiqueta: 'El viaje empieza desde', tipo: 'fecha', paso: 'condiciones_travel', obligatorio: false },
+  {
+    id: 'periodoViajeFin',
+    etiqueta: 'El viaje termina hasta',
+    tipo: 'fecha',
+    paso: 'condiciones_travel',
+    obligatorio: function (entrada) { return !!entrada.periodoViajeInicio; },
+  },
+  {
+    id: 'ambasFechasDentro',
+    etiqueta: 'Los dos trayectos dentro del periodo',
+    tipo: 'casilla',
+    paso: 'condiciones_travel',
+    visible: function (entrada) { return entrada.trayecto === 'ida_y_regreso' && !!entrada.periodoViajeInicio; },
+    obligatorio: false,
+  },
+  {
+    id: 'fechasExcluidas',
+    etiqueta: 'Fechas excluidas (separadas por comas)',
+    tipo: 'texto',
+    paso: 'condiciones_travel',
+    visible: function (entrada) { return hayAlojamientoDeTravel(entrada) || hayAutosDeTravel(entrada); },
+    obligatorio: false,
+  },
+  {
+    id: 'nochesMinimas',
+    etiqueta: 'Mínimo de noches',
+    tipo: 'numero',
+    minimo: 1,
+    maximo: 365,
+    paso: 'condiciones_travel',
+    visible: admiteNochesMinimas,
+    obligatorio: false,
+  },
+  {
+    id: 'diasAlquilerMinimo',
+    etiqueta: 'Mínimo de días de alquiler',
+    tipo: 'numero',
+    minimo: 1,
+    maximo: 365,
+    paso: 'condiciones_travel',
+    visible: hayAutosDeTravel,
+    obligatorio: false,
+  },
+  {
+    id: 'diasAlquilerMaximo',
+    etiqueta: 'Máximo de días de alquiler',
+    tipo: 'numero',
+    minimo: 1,
+    maximo: 365,
+    paso: 'condiciones_travel',
+    visible: function (entrada) { return hayAutosDeTravel(entrada) && !!entrada.diasAlquilerMinimo; },
+    obligatorio: function (entrada) { return hayAutosDeTravel(entrada) && !!entrada.diasAlquilerMinimo; },
+  },
+  {
+    id: 'compraMinima',
+    etiqueta: 'Compra mínima',
+    tipo: 'numero',
+    paso: 'condiciones_travel',
+    visible: function (entrada) { return !entrada.sinCompraMinima; },
+    obligatorio: function (entrada) { return !entrada.sinCompraMinima; },
+  },
+  { id: 'sinCompraMinima', etiqueta: 'Sin compra mínima', tipo: 'casilla', paso: 'condiciones_travel', obligatorio: false },
+  {
+    id: 'otraCondicion',
+    etiqueta: '¿El aliado pide otra condición?',
+    tipo: 'lista',
+    paso: 'condiciones_travel',
+    obligatorio: true,
+    opciones: [
+      { valor: 'no', etiqueta: 'No' },
+      { valor: 'si', etiqueta: 'Sí' },
+    ],
+  },
+
+  // --- Vigencia ------------------------------------------------------------
+  { id: 'fechaInicio', etiqueta: 'Fecha de inicio', tipo: 'fecha', paso: 'vigencia', obligatorio: true },
+  { id: 'horaInicio', etiqueta: 'Hora de inicio', tipo: 'hora', porDefecto: '00:00', paso: 'vigencia', obligatorio: true },
+  { id: 'fechaFin', etiqueta: 'Fecha de fin', tipo: 'fecha', paso: 'vigencia', obligatorio: true },
+  { id: 'horaFin', etiqueta: 'Hora de fin', tipo: 'hora', porDefecto: '23:59', paso: 'vigencia', obligatorio: true },
+
+  // --- Participantes -------------------------------------------------------
+  {
+    id: 'segmento',
+    etiqueta: '¿Quiénes pueden participar?',
+    tipo: 'lista',
+    paso: 'participantes',
+    obligatorio: true,
+    opciones: [
+      { valor: 'todos', etiqueta: 'Todos' },
+      { valor: 'pro', etiqueta: 'Pro y Pro Black' },
+      { valor: 'pro_black', etiqueta: 'Solo Pro Black' },
+      { valor: 'pro_o_rappicard', etiqueta: 'Pro o RappiCard' },
+      { valor: 'sin_pro', etiqueta: 'Solo quienes no tienen Pro' },
+      { valor: 'primera_compra', etiqueta: 'Primera compra en Travel' },
+    ],
+  },
+  {
+    id: 'metodoPago',
+    etiqueta: 'Medios de pago',
+    tipo: 'lista',
+    paso: 'participantes',
+    obligatorio: true,
+    opciones: [
+      { valor: 'digitales', etiqueta: 'Digitales, excepto efectivo' },
+      { valor: 'rappicard', etiqueta: 'Solo RappiCard' },
+    ],
+  },
+
+  // --- Comunicacion y declaraciones ---------------------------------------
+  { id: 'fechaPrimeraComunicacion', etiqueta: 'Fecha de la primera comunicación', tipo: 'fecha', paso: 'confirmacion', obligatorio: true },
+  { id: 'linkAnterior', etiqueta: 'Link de la campaña anterior', tipo: 'texto', paso: 'confirmacion', obligatorio: false },
+  { id: 'aliadoAprobo', etiqueta: 'El aliado aprobó esta mecánica', tipo: 'casilla', paso: 'confirmacion', obligatorio: true },
+  { id: 'declaracionPiezas', etiqueta: 'Las piezas dicen lo mismo que el T&C', tipo: 'casilla', paso: 'confirmacion', obligatorio: true },
+  { id: 'declaracion', etiqueta: 'Confirmo que la información es veraz', tipo: 'casilla', paso: 'confirmacion', obligatorio: true },
+];
+
+/** Beneficio y Creditos del cashback_travel. */
+var CAMPOS_CASHBACK_TRAVEL = [
+  {
+    id: 'formaBeneficio',
+    etiqueta: 'Forma del beneficio',
+    tipo: 'lista',
+    paso: 'beneficio',
+    obligatorio: true,
+    opciones: [
+      { valor: 'porcentaje', etiqueta: 'Un porcentaje de lo pagado' },
+      { valor: 'monto_fijo', etiqueta: 'Un monto fijo en Créditos' },
+    ],
+  },
+  {
+    id: 'porcentaje',
+    etiqueta: 'Porcentaje de cashback',
+    tipo: 'numero',
+    minimo: 1,
+    maximo: 99,
+    paso: 'beneficio',
+    visible: function (entrada) { return entrada.formaBeneficio === 'porcentaje'; },
+    obligatorio: function (entrada) { return entrada.formaBeneficio === 'porcentaje'; },
+  },
+  {
+    id: 'tope',
+    etiqueta: 'Tope por orden',
+    tipo: 'numero',
+    paso: 'beneficio',
+    visible: function (entrada) { return entrada.formaBeneficio === 'porcentaje' && !entrada.sinTope; },
+    obligatorio: function (entrada) { return entrada.formaBeneficio === 'porcentaje' && !entrada.sinTope; },
+  },
+  {
+    id: 'sinTope',
+    etiqueta: 'Sin tope por orden',
+    tipo: 'casilla',
+    paso: 'beneficio',
+    visible: function (entrada) { return entrada.formaBeneficio === 'porcentaje'; },
+    obligatorio: false,
+  },
+  {
+    id: 'montoFijo',
+    etiqueta: 'Créditos por orden',
+    tipo: 'numero',
+    paso: 'beneficio',
+    visible: function (entrada) { return entrada.formaBeneficio === 'monto_fijo'; },
+    obligatorio: function (entrada) { return entrada.formaBeneficio === 'monto_fijo'; },
+  },
+  { id: 'limitePorUsuario', etiqueta: 'Órdenes con beneficio por persona', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: true },
+  { id: 'presupuesto', etiqueta: 'Presupuesto total', tipo: 'numero', paso: 'beneficio', obligatorio: true },
+  {
+    id: 'maxOrdenes',
+    etiqueta: 'Máximo de órdenes de la campaña',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: function (entrada) { return !entrada.sinMaxOrdenes; },
+    obligatorio: function (entrada) { return !entrada.sinMaxOrdenes; },
+  },
+  { id: 'sinMaxOrdenes', etiqueta: 'Sin máximo de órdenes', tipo: 'casilla', paso: 'beneficio', obligatorio: false },
+
+  {
+    id: 'carga',
+    etiqueta: '¿Cuándo se cargan los Créditos?',
+    tipo: 'lista',
+    paso: 'creditos',
+    obligatorio: true,
+    opciones: [
+      { valor: 'al_confirmarse', etiqueta: 'Al confirmarse la reserva' },
+      { valor: 'dias_calendario', etiqueta: 'Unos días calendario después del fin' },
+      { valor: 'dias_habiles', etiqueta: 'Unos días hábiles después del fin' },
+    ],
+  },
+  {
+    id: 'diasCarga',
+    etiqueta: 'Días para la carga',
+    tipo: 'numero',
+    minimo: 1,
+    maximo: 30,
+    paso: 'creditos',
+    visible: function (entrada) { return entrada.carga === 'dias_calendario' || entrada.carga === 'dias_habiles'; },
+    obligatorio: function (entrada) { return entrada.carga === 'dias_calendario' || entrada.carga === 'dias_habiles'; },
+  },
+  { id: 'diasVigencia', etiqueta: 'Días de vigencia de los Créditos', tipo: 'numero', minimo: 1, maximo: 365, paso: 'creditos', obligatorio: true },
+  {
+    id: 'redencion',
+    etiqueta: '¿Dónde se redimen los Créditos?',
+    tipo: 'lista',
+    paso: 'creditos',
+    obligatorio: true,
+    opciones: [
+      { valor: 'categorias', etiqueta: 'Solo en algunas categorías de Travel' },
+      { valor: 'todo_travel', etiqueta: 'En todo Travel' },
+      { valor: 'travel_y_plataforma', etiqueta: 'En Travel y en toda la Plataforma Rappi' },
+    ],
+  },
+  {
+    id: 'categoriasRedencion',
+    etiqueta: 'Categorías donde se redimen',
+    tipo: 'casillas',
+    paso: 'creditos',
+    visible: function (entrada) { return entrada.redencion === 'categorias'; },
+    obligatorio: function (entrada) { return entrada.redencion === 'categorias'; },
+  },
+];
+
+/** Beneficio del descuento_travel. No tiene paso de Creditos. */
+var CAMPOS_DESCUENTO_TRAVEL = [
+  {
+    id: 'formaDescuento',
+    etiqueta: 'Forma del descuento',
+    tipo: 'lista',
+    paso: 'beneficio',
+    obligatorio: true,
+    opciones: [
+      { valor: 'fijo', etiqueta: 'Un porcentaje fijo' },
+      { valor: 'variable', etiqueta: 'Cambia según el producto' },
+    ],
+  },
+  { id: 'porcentaje', etiqueta: 'Porcentaje de descuento', tipo: 'numero', minimo: 1, maximo: 99, paso: 'beneficio', obligatorio: true },
+  {
+    id: 'porcentajeMinimo',
+    etiqueta: 'Porcentaje mínimo',
+    tipo: 'numero',
+    minimo: 1,
+    maximo: 98,
+    paso: 'beneficio',
+    visible: function (entrada) { return entrada.formaDescuento === 'variable'; },
+    obligatorio: function (entrada) { return entrada.formaDescuento === 'variable'; },
+  },
+  {
+    id: 'productosConMaximo',
+    etiqueta: 'Productos con el descuento máximo',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: function (entrada) { return entrada.formaDescuento === 'variable'; },
+    obligatorio: function (entrada) { return entrada.formaDescuento === 'variable'; },
+  },
+  {
+    id: 'visibilidad',
+    etiqueta: '¿Dónde se ve el descuento?',
+    tipo: 'casillas',
+    paso: 'beneficio',
+    obligatorio: true,
+    opciones: [
+      { valor: 'inicio', etiqueta: 'En la página de inicio de Travel' },
+      { valor: 'etiqueta', etiqueta: 'En la etiqueta del producto' },
+      { valor: 'precio_tachado', etiqueta: 'En el precio tachado del flujo de compra' },
+    ],
+  },
+  {
+    id: 'limitePorUsuario',
+    etiqueta: 'Órdenes con descuento por persona',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: function (entrada) { return !entrada.sinLimitePorUsuario; },
+    obligatorio: function (entrada) { return !entrada.sinLimitePorUsuario; },
+  },
+  { id: 'sinLimitePorUsuario', etiqueta: 'Sin límite por persona', tipo: 'casilla', paso: 'beneficio', obligatorio: false },
+  {
+    id: 'unidades',
+    etiqueta: 'Unidades con descuento',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: function (entrada) { return !entrada.sinUnidades; },
+    obligatorio: function (entrada) { return !entrada.sinUnidades; },
+  },
+  { id: 'sinUnidades', etiqueta: 'No depende de unidades', tipo: 'casilla', paso: 'beneficio', obligatorio: false },
+];
+
 var ESQUEMAS = {
   cashback: {
     id: 'cashback',
@@ -364,6 +805,27 @@ var ESQUEMAS = {
       '¿La tienda o la marca exige sus propios términos y condiciones?',
       '¿Participan varias tiendas?',
     ],
+  },
+  cashback_travel: {
+    id: 'cashback_travel',
+    nombre: 'Cashback Travel',
+    descripcion: 'La marca aliada devuelve un porcentaje de lo que el usuario pagó por su vuelo, hotel, auto o paquete, en Créditos para su Billetera. Solo para campañas de Rappi Travel.',
+    modelo: 'cashback_travel',
+    campos: unir(CAMPOS_TRAVEL_COMUNES, CAMPOS_CASHBACK_TRAVEL),
+    // El filtro de Travel reemplaza al general: ver docs/MODELO_BASE_TRAVEL.md,
+    // seccion 11. Vive en FILTRO_DE_TRAVEL, no aqui, porque son nueve preguntas
+    // con su razon y las comparten los dos tipos.
+    filtroDeEntrada: [],
+    esDeTravel: true,
+  },
+  descuento_travel: {
+    id: 'descuento_travel',
+    nombre: 'Descuento Travel',
+    descripcion: 'La marca aliada baja el precio de sus vuelos, hoteles, autos o paquetes. El usuario ve el precio ya rebajado antes de pagar, no recibe Créditos. Solo para campañas de Rappi Travel.',
+    modelo: 'descuento_travel',
+    campos: unir(CAMPOS_TRAVEL_COMUNES, CAMPOS_DESCUENTO_TRAVEL),
+    filtroDeEntrada: [],
+    esDeTravel: true,
   },
   cashback_day: {
     id: 'cashback_day',
@@ -407,6 +869,10 @@ if (typeof module !== 'undefined') {
   module.exports = {
     ESQUEMAS: ESQUEMAS,
     CAMPOS_POR_TIENDA: CAMPOS_POR_TIENDA,
+    categoriasDe: categoriasDe,
+    hayAereasDeTravel: hayAereasDeTravel,
+    hayAlojamientoDeTravel: hayAlojamientoDeTravel,
+    hayAutosDeTravel: hayAutosDeTravel,
     esquemaDe: esquemaDe,
     camposVisibles: camposVisibles,
     resolverAtributo: resolverAtributo,

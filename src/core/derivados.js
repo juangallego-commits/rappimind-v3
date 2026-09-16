@@ -30,7 +30,10 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var validarIdentificacion = moduloIdentificaciones.validarIdentificacion;
 
   var nombreDeCampana = require('./nombres.js').nombreDeCampana;
-  var esquemaDe = require('./esquemas.js').esquemaDe;
+  var moduloEsquemas2 = require('./esquemas.js');
+  var esquemaDe = moduloEsquemas2.esquemaDe;
+
+  var calcularDerivadosTravel = require('./derivados_travel.js').calcularDerivadosTravel;
 }
 
 // --- Textos fijos de Legal -------------------------------------------------
@@ -326,6 +329,16 @@ function calcularDerivados(entrada, pais) {
   for (var placeholder in VALORES_DEL_PAIS) {
     if (Object.prototype.hasOwnProperty.call(VALORES_DEL_PAIS, placeholder)) {
       valores[placeholder] = pais[VALORES_DEL_PAIS[placeholder]] || '';
+    }
+  }
+
+  // Rappi Travel tiene su propia entidad, sus propios textos y su propio
+  // archivo. Se agregan encima, sin tocar nada de delivery.
+  var esquemaActual = esquemaDe(entrada.tipo);
+  if (esquemaActual && esquemaActual.esDeTravel) {
+    var deTravel = calcularDerivadosTravel(entrada, pais);
+    for (var llaveTravel in deTravel) {
+      if (Object.prototype.hasOwnProperty.call(deTravel, llaveTravel)) valores[llaveTravel] = deTravel[llaveTravel];
     }
   }
 
