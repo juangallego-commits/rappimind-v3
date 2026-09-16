@@ -237,15 +237,20 @@ function pantallaFiltro(raiz) {
       var bloque = crear('div', { clase: 'pregunta' }, [
         crear('h2', { clase: 'pregunta-titulo', texto: pregunta.texto }),
       ]);
-      var grupo = crear('div', { clase: 'opciones' });
+      var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': pregunta.texto });
       [['no', 'No', false], ['si', 'Sí', true]].forEach(function (par) {
         grupo.appendChild(crear('button', {
           clase: 'opcion', type: 'button', texto: par[1],
+          role: 'radio', 'aria-checked': 'false', 'aria-pressed': 'false',
           onclick: function () {
             respuestas[pregunta.id] = par[2];
             var hermanos = grupo.querySelectorAll('.opcion');
-            for (var k = 0; k < hermanos.length; k++) hermanos[k].classList.remove('elegida');
-            this.classList.add('elegida');
+            for (var k = 0; k < hermanos.length; k++) {
+              hermanos[k].setAttribute('aria-checked', 'false');
+              hermanos[k].setAttribute('aria-pressed', 'false');
+            }
+            this.setAttribute('aria-checked', 'true');
+            this.setAttribute('aria-pressed', 'true');
             revisar();
           },
         }));

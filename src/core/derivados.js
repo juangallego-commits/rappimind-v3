@@ -28,6 +28,9 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 
   var moduloIdentificaciones = require('./identificaciones.js');
   var validarIdentificacion = moduloIdentificaciones.validarIdentificacion;
+
+  var nombreDeCampana = require('./nombres.js').nombreDeCampana;
+  var esquemaDe = require('./esquemas.js').esquemaDe;
 }
 
 // --- Textos fijos de Legal -------------------------------------------------
@@ -269,7 +272,9 @@ function valoresDeTienda(tienda, pais) {
 function calcularDerivados(entrada, pais) {
   var valores = {};
 
-  valores.NOMBRE_CAMPANA = entrada.nombreCampana || '';
+  // El nombre no lo escribe nadie: sale de las respuestas, asi que el titulo
+  // del documento no puede contradecir el articulado. Ver src/core/nombres.js.
+  valores.NOMBRE_CAMPANA = nombreDeCampana(entrada, esquemaDe(entrada.tipo));
   valores.NOMBRE_CAMPANA_MAYUS = valores.NOMBRE_CAMPANA.toUpperCase();
   valores.TIENDA = entrada.tienda || '';
   valores.TEXTO_TERRITORIO = textoTerritorio(entrada, pais);

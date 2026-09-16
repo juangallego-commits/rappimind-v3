@@ -17,7 +17,6 @@ function siempre() {
 var CAMPOS_COMUNES = [
   { id: 'pais', etiqueta: 'País', tipo: 'lista', paso: 'campana', obligatorio: true },
   { id: 'tipo', etiqueta: 'Tipo de campaña', tipo: 'tarjetas', paso: 'campana', obligatorio: true },
-  { id: 'nombreCampana', etiqueta: 'Nombre de la campaña', tipo: 'texto', maximo: 80, paso: 'campana', obligatorio: true },
   { id: 'fechaInicio', etiqueta: 'Fecha de inicio', tipo: 'fecha', paso: 'vigencia', obligatorio: true },
   { id: 'horaInicio', etiqueta: 'Hora de inicio', tipo: 'hora', porDefecto: '00:00', paso: 'vigencia', obligatorio: true },
   { id: 'fechaFin', etiqueta: 'Fecha de fin', tipo: 'fecha', paso: 'vigencia', obligatorio: true },
@@ -368,7 +367,7 @@ var ESQUEMAS = {
   },
   cashback_day: {
     id: 'cashback_day',
-    nombre: 'Cashback Day',
+    nombre: 'Cashback Multitienda',
     descripcion: 'Varias tiendas hacen cashback dentro de una misma jornada comercial. Cada tienda pone su porcentaje, su tope y su presupuesto, y cada una organiza lo suyo.',
     modelo: 'cashback_day',
     // No hay organizador unico: cada tienda organiza su propio beneficio.

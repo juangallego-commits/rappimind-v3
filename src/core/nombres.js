@@ -1,0 +1,158 @@
+'use strict';
+
+/**
+ * El nombre de la campana y la direccion con la que se publica.
+ *
+ * Nadie los escribe a mano. Los dos salen de las respuestas que ya dio el
+ * comercial, y por eso no pueden contradecir el articulado.
+ *
+ * El caso que obligo a esto: una campana se llamo "99% de Cashback El Corral
+ * 20/09" y la clausula decia cincuenta por ciento (50%) con vigencia el 17 de
+ * septiembre. Como el documento dice que en caso de discrepancia se aplica la
+ * condicion mas favorable para el usuario, un titulo que promete 99% obliga a
+ * pagar 99%.
+ *
+ * Forma del nombre (decidida por Juan el 16 de septiembre):
+ *
+ *   Tienda · Porcentaje y tipo · Dia de inicio
+ *   El Corral · 50% Cashback · 20 sep 2026
+ *   Pollo Dorado · Carrera de Compras · 20 sep 2026
+ *   Cashback Multitienda · 20 sep 2026
+ *
+ * Sin etiqueta libre. Dos campanas nunca se pueden llamar igual: cuando el
+ * nombre ya existe se le agrega un consecutivo.
+ */
+
+/* En Node las dependencias se cargan con require; en Apps Script ya son globales. */
+if (typeof module !== 'undefined' && typeof require === 'function') {
+  var partesDeFecha = require('./fechas.js').partesDeFecha;
+}
+
+var SEPARADOR_NOMBRE = ' · ';
+
+/** Meses cortos para el nombre. En el documento van completos, no aqui. */
+var MESES_CORTOS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+
+/** "2026-09-20" -> "20 sep 2026". Cadena vacia si la fecha no sirve. */
+function fechaCortaDeNombre(iso) {
+  var partes = partesDeFecha(iso);
+  if (!partes) return '';
+  return partes.dia + ' ' + MESES_CORTOS[partes.mes - 1] + ' ' + partes.anio;
+}
+
+/**
+ * El tramo que describe el beneficio. Lleva el porcentaje cuando la campana
+ * tiene uno solo, porque sale del mismo dato que alimenta la clausula y por eso
+ * nunca puede decir algo distinto. El Cashback Multitienda no lo lleva: ahi
+ * cada tienda tiene su propio porcentaje.
+ */
+function tramoDeBeneficio(entrada, esquema) {
+  var nombreDelTipo = esquema ? esquema.nombre : '';
+  var porcentaje = Number(entrada.porcentaje);
+  if (!nombreDelTipo) return '';
+  if (esquema.id !== 'cashback') return nombreDelTipo;
+  if (!isFinite(porcentaje) || porcentaje <= 0) return nombreDelTipo;
+  return porcentaje + '% ' + nombreDelTipo;
+}
+
+/**
+ * El nombre de la campana.
+ *
+ * entrada.sufijoNombre, cuando viene, es el consecutivo que evita que dos
+ * campanas se llamen igual. Lo pone el servidor al generar, nunca el comercial.
+ *
+ * Devuelve cadena vacia mientras falte algun dato: la vista previa lo muestra
+ * como un hueco, igual que cualquier otro.
+ */
+function nombreDeCampana(entrada, esquema) {
+  var datos = entrada || {};
+  var tramos = [];
+
+  // El Cashback Multitienda no tiene una sola tienda, asi que arranca por el tipo.
+  var tienda = String(datos.tienda || '').trim();
+  if (tienda) tramos.push(tienda);
+
+  var beneficio = tramoDeBeneficio(datos, esquema);
+  if (!beneficio) return '';
+  tramos.push(beneficio);
+
+  var fecha = fechaCortaDeNombre(datos.fechaInicio);
+  if (!fecha) return '';
+  tramos.push(fecha);
+
+  var sufijo = Number(datos.sufijoNombre);
+  if (isFinite(sufijo) && sufijo > 1) tramos.push(String(sufijo));
+
+  return tramos.join(SEPARADOR_NOMBRE);
+}
+
+/**
+ * Quita las tildes. No se usa String.normalize porque Apps Script corre en un
+ * motor viejo en algunos casos y esto tiene que dar igual en los dos lados.
+ */
+var LETRAS_CON_TILDE = 'áàäâãéèëêíìïîóòöôõúùüûñçÁÀÄÂÃÉÈËÊÍÌÏÎÓÒÖÔÕÚÙÜÛÑÇ';
+var LETRAS_SIN_TILDE = 'aaaaaeeeeiiiiooooouuuuncAAAAAEEEEIIIIOOOOOUUUUNC';
+
+function sinTildes(texto) {
+  var salida = '';
+  var original = String(texto || '');
+  for (var i = 0; i < original.length; i++) {
+    var posicion = LETRAS_CON_TILDE.indexOf(original.charAt(i));
+    salida += posicion === -1 ? original.charAt(i) : LETRAS_SIN_TILDE.charAt(posicion);
+  }
+  return salida;
+}
+
+/**
+ * La parte final de la direccion en Squarespace.
+ *
+ * "El Corral · 50% Cashback · 20 sep 2026" -> "el-corral-50-cashback-20-sep-2026"
+ *
+ * Sale del nombre, asi que la direccion y el titulo siempre hablan de la misma
+ * campana y se pueden buscar con las mismas palabras.
+ */
+function direccionDeCampana(nombre) {
+  return sinTildes(nombre)
+    .toLowerCase()
+    .replace(/%/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '')
+    .replace(/-{2,}/g, '-');
+}
+
+/**
+ * El consecutivo libre para un nombre, mirando los que ya existen.
+ *
+ * Devuelve 1 cuando el nombre esta libre, 2 para el segundo, y asi. La
+ * comparacion ignora mayusculas y tildes, porque "El Corral" y "el corral" son
+ * la misma campana para quien busca.
+ */
+function sufijoLibreDeNombre(nombreBase, nombresExistentes) {
+  var usados = {};
+  var lista = nombresExistentes || [];
+  for (var i = 0; i < lista.length; i++) {
+    usados[direccionDeCampana(lista[i])] = true;
+  }
+
+  var base = String(nombreBase || '').trim();
+  if (!base) return 1;
+
+  for (var sufijo = 1; sufijo <= 500; sufijo++) {
+    var candidato = sufijo === 1 ? base : base + SEPARADOR_NOMBRE + sufijo;
+    if (!usados[direccionDeCampana(candidato)]) return sufijo;
+  }
+  return 1;
+}
+
+if (typeof module !== 'undefined') {
+  module.exports = {
+    SEPARADOR_NOMBRE: SEPARADOR_NOMBRE,
+    MESES_CORTOS: MESES_CORTOS,
+    fechaCortaDeNombre: fechaCortaDeNombre,
+    nombreDeCampana: nombreDeCampana,
+    sinTildes: sinTildes,
+    direccionDeCampana: direccionDeCampana,
+    sufijoLibreDeNombre: sufijoLibreDeNombre,
+  };
+}

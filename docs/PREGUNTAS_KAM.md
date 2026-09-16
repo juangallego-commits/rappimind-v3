@@ -89,27 +89,6 @@ formulario manual.
 
 - `vacio`: Elige el tipo de campaña.
 
-### ¿Cómo se llama tu campaña?
-
-> Como la conoce el equipo. Por ejemplo: 99% Cashback Pollo Dorado.
-
-**Por qué te preguntamos esto.** Va en el título del documento y en el nombre del archivo, para que después lo encuentres. No tiene efecto legal.
-
-| | |
-|---|---|
-| Campo interno | `nombreCampana` |
-| Paso | Campaña |
-| Tipo de control | texto |
-| Obligatorio | sí, cuando se ve |
-| Ejemplo | 99% Cashback Pollo Dorado |
-| Avanza sola | no |
-| Llena en el documento | `NOMBRE_CAMPANA`, `NOMBRE_CAMPANA_MAYUS` |
-
-**Mensajes de validación:**
-
-- `vacio`: Ponle un nombre a la campaña para poder encontrarla después.
-- `largo`: El nombre no puede pasar de 80 caracteres. Déjalo corto: porcentaje, palabra clave y marca.
-
 ### ¿En qué tienda aplica?
 
 > La marca comercial como aparece en la app. Por ejemplo: Pollo Dorado.
@@ -754,27 +733,6 @@ formulario manual.
 
 - `vacio`: Elige el tipo de campaña.
 
-### ¿Cómo se llama tu campaña?
-
-> Como la conoce el equipo. Por ejemplo: 99% Cashback Pollo Dorado.
-
-**Por qué te preguntamos esto.** Va en el título del documento y en el nombre del archivo, para que después lo encuentres. No tiene efecto legal.
-
-| | |
-|---|---|
-| Campo interno | `nombreCampana` |
-| Paso | Campaña |
-| Tipo de control | texto |
-| Obligatorio | sí, cuando se ve |
-| Ejemplo | 99% Cashback Pollo Dorado |
-| Avanza sola | no |
-| Llena en el documento | `NOMBRE_CAMPANA`, `NOMBRE_CAMPANA_MAYUS` |
-
-**Mensajes de validación:**
-
-- `vacio`: Ponle un nombre a la campaña para poder encontrarla después.
-- `largo`: El nombre no puede pasar de 80 caracteres. Déjalo corto: porcentaje, palabra clave y marca.
-
 ### ¿En qué tienda aplica?
 
 > La marca comercial como aparece en la app. Por ejemplo: Pollo Dorado.
@@ -1389,7 +1347,7 @@ formulario manual.
 
 ---
 
-# Cashback Day
+# Cashback Multitienda
 
 Varias tiendas hacen cashback dentro de una misma jornada comercial. Cada tienda pone su porcentaje, su tope y su presupuesto, y cada una organiza lo suyo.
 
@@ -1439,27 +1397,6 @@ formulario manual.
 **Mensajes de validación:**
 
 - `vacio`: Elige el tipo de campaña.
-
-### ¿Cómo se llama tu campaña?
-
-> Como la conoce el equipo. Por ejemplo: 99% Cashback Pollo Dorado.
-
-**Por qué te preguntamos esto.** Va en el título del documento y en el nombre del archivo, para que después lo encuentres. No tiene efecto legal.
-
-| | |
-|---|---|
-| Campo interno | `nombreCampana` |
-| Paso | Campaña |
-| Tipo de control | texto |
-| Obligatorio | sí, cuando se ve |
-| Ejemplo | 99% Cashback Pollo Dorado |
-| Avanza sola | no |
-| Llena en el documento | `NOMBRE_CAMPANA`, `NOMBRE_CAMPANA_MAYUS` |
-
-**Mensajes de validación:**
-
-- `vacio`: Ponle un nombre a la campaña para poder encontrarla después.
-- `largo`: El nombre no puede pasar de 80 caracteres. Déjalo corto: porcentaje, palabra clave y marca.
 
 ## Paso: Cuándo
 
@@ -1956,8 +1893,8 @@ la pregunta que lo llena. Estos son los nombres:
 
 | En el modelo | Dice en pantalla |
 |---|---|
-| `NOMBRE_CAMPANA` | el nombre de la campaña |
-| `NOMBRE_CAMPANA_MAYUS` | el nombre de la campaña |
+| `NOMBRE_CAMPANA` | el nombre, que sale de la tienda, el porcentaje y el día de inicio |
+| `NOMBRE_CAMPANA_MAYUS` | el nombre, que sale de la tienda, el porcentaje y el día de inicio |
 | `TIENDA` | la tienda |
 | `TEXTO_TERRITORIO` | dónde aplica |
 | `FECHA_INICIO` | el día de inicio |

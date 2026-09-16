@@ -83,18 +83,29 @@ const SERVIDOR_SIMULADO = `
 
       consecutivo += 1;
       var id = identificadorDeSolicitud(hoy(), consecutivo);
+
+      var usados = [];
+      for (var s = 0; s < solicitudes.length; s++) usados.push(solicitudes[s].nombre_campana);
+      var esquema = esquemaDe(entrada.tipo);
+      entrada.sufijoNombre = sufijoLibreDeNombre(nombreDeCampana(entrada, esquema), usados);
+      var nombreCampana = nombreDeCampana(entrada, esquema);
       solicitudes.push({
         id: id, fecha: hoy() + ' 10:00:00', email: 'demostracion@rappi.com',
         pais: pais.codigo, tipo: entrada.tipo,
         version_modelo: MODELOS.versiones[esquemaDe(entrada.tipo).modelo] || '',
-        nombre_campana: entrada.nombreCampana || '', tienda: entrada.tienda || '',
+        nombre_campana: nombreCampana, direccion_sugerida: direccionDeCampana(nombreCampana),
+        tienda: entrada.tienda || '',
         organizador: entrada.organizadorRazonSocial || '', id_organizador: entrada.organizadorId || '',
         fecha_inicio: entrada.fechaInicio || '', fecha_fin: entrada.fechaFin || '',
         link_doc: '', estado: 'generado', link_publicado: '', fecha_publicacion: '',
         datos_json: JSON.stringify(entrada), _fila: solicitudes.length + 2,
       });
 
-      return { valido: true, demostracion: true, texto: resultado.texto, id: id };
+      return {
+        valido: true, demostracion: true, texto: resultado.texto, id: id,
+        nombreCampana: nombreCampana, direccionSugerida: direccionDeCampana(nombreCampana),
+        pais: pais.codigo,
+      };
     },
 
     historial: function (busqueda) {

@@ -243,3 +243,63 @@ comercial. `Registro` guarda cada acción con su hora.
 
 Los documentos quedan en la carpeta de Drive `RappiMind v3`, en una subcarpeta por país:
 <https://drive.google.com/drive/folders/1RLtv88GEYT5Fxj6wIypF-Aho-LacmON7>
+
+## 16 de septiembre · noche · Nombre estructurado, auditoría y Squarespace
+
+### 1. El nombre de la campaña ya no lo escribe nadie
+
+La pregunta "¿Cómo se llama tu campaña?" desapareció. El nombre lo arma
+`src/core/nombres.js` con la tienda, el porcentaje y el día de inicio:
+
+```
+El Corral · 50% Cashback · 20 sep 2026
+Carulla · Carrera de Compras · 5 oct 2026
+Cashback Multitienda · 24 sep 2026
+```
+
+El porcentaje del título sale del mismo dato que alimenta la cláusula, así que el caso
+del primer T&C real (título 99%, cláusula 50%) ya no puede repetirse. Hay una prueba
+que lo exige. Dos campañas nunca se llaman igual: si el nombre está tomado, el servidor
+le agrega un consecutivo y vuelve a armar el documento, porque el nombre va adentro del
+articulado. "Cashback Day" pasó a llamarse **Cashback Multitienda**.
+
+### 2. El Sheet guarda cada respuesta en su propia columna
+
+La pestaña `Solicitudes` ahora tiene una columna por pregunta, con el valor tal como lo
+leyó el comercial en pantalla: `resp_redencion` dice "Solo en esta tienda", no "tienda".
+Son 43 columnas nuevas, y salen de los esquemas, así que una pregunta nueva trae su
+columna sola. Las preguntas que no aplicaban a esa campaña quedan vacías, que es la
+verdad: no se hicieron. `datos_json` sigue estando para reconstruir el documento
+idéntico; las columnas nuevas son para leer y filtrar. El CSV de administración también
+las lleva.
+
+**Para que aparezcan en tu Sheet hay que correr `setup()` otra vez.** Agrega las
+columnas que faltan al final y no toca ninguna de las que ya están: mover una columna
+con datos adentro desalinearía todo el histórico.
+
+### 3. La publicación en Squarespace
+
+La pantalla final ahora da, listo para copiar con un botón:
+
+- **El título del evento**: el nombre de la campaña, tal cual.
+- **La dirección del evento**: `el-corral-50-cashback-20-sep-2026`, que va en la pestaña
+  Opciones. La parte del país la pone Squarespace sola.
+- **Las fechas** que hay que ponerle al evento, iguales a la vigencia del documento.
+- **Los diez pasos reales**, con lo que debería verse en cada uno.
+- **Quién tiene usuario de Squarespace** en ese país, y el canal de Legal para quien no
+  lo tenga.
+
+### Cómo probarlo
+
+```
+npm run demo
+```
+
+Abre `demo/index.html`, llena una campaña de Cashback y llega hasta el final. Vas a ver
+el título y la dirección con su botón de copiar.
+
+### Qué necesito de ti
+
+- Correr `setup()` en Apps Script para que aparezcan las columnas nuevas.
+- Los usuarios de Squarespace de los demás países, y quién queda para concursos en
+  Colombia. Hoy están solo Camilo Patiño y Valery Medina, para cashback y descuentos.

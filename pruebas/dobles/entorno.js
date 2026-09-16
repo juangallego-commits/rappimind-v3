@@ -11,14 +11,16 @@
 
 const path = require('path');
 const { instalarDobles, desinstalarDobles } = require('./google.js');
-const { rutaDesdeRaiz, leerJson } = require('../../scripts/lib/archivos');
+const { rutaDesdeRaiz, leerJson, listarArchivos } = require('../../scripts/lib/archivos');
 const { cargarModelos, versionDelModelo } = require('../../scripts/lib/modelos');
 
-const ARCHIVOS_CORE = [
-  'texto', 'numeros', 'fechas', 'identificaciones', 'tablas', 'paises',
-  'documento', 'correo', 'derivados', 'esquemas', 'validaciones', 'motor', 'generar',
-];
+// Los archivos de src/core se leen de la carpeta, no de una lista escrita a
+// mano: en Apps Script se cargan TODOS, así que aquí también. Con una lista
+// fija, un archivo nuevo quedaba fuera y las pruebas fallaban con un
+// "no está definido" que no decía nada.
+const ARCHIVOS_CORE = listarArchivos(rutaDesdeRaiz('src', 'core'), '.js').map((n) => n.replace(/\.js$/, ''));
 
+// El orden del servidor sí importa: Api usa lo que Config y Datos publican.
 const ARCHIVOS_SERVIDOR = ['Config', 'Datos', 'AdaptadorDocumento', 'EnvioCorreo', 'Setup', 'Api'];
 
 /** Lo que el build deja en dist/Modelos.js. */

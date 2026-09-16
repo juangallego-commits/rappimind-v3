@@ -205,6 +205,28 @@ button { font-size: 15px; cursor: pointer; }
   letter-spacing: 0.02em; color: var(--gris-lapiz); background: var(--niebla);
 }
 
+/* Un dato listo para copiar: el titulo y la direccion de Squarespace. */
+.copiable {
+  border: 1px solid var(--borde); border-radius: var(--r-panel);
+  padding: var(--e3) var(--e4); margin: 0 0 var(--e3); background: var(--papel);
+}
+.copiable-encabezado {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--e3); margin-bottom: var(--e2);
+}
+.copiable-etiqueta {
+  font-family: var(--titulos); font-weight: 600; font-size: 13px;
+  letter-spacing: 0.02em; color: var(--gris-lapiz);
+}
+.copiable-valor {
+  display: block; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 14px; line-height: 1.5; color: var(--tinta);
+  background: var(--niebla); border-radius: var(--r-control);
+  padding: var(--e2) var(--e3); word-break: break-word;
+}
+.copiable .pregunta-ayuda { margin: var(--e2) 0 0; }
+.boton-chico { padding: 4px 12px; font-size: 13px; min-height: 0; }
+
 .por-que { margin: var(--e2) 0 0; }
 .por-que summary {
   color: var(--naranja-accion); font-size: 14px; cursor: pointer;

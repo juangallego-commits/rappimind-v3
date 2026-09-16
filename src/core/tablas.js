@@ -58,6 +58,14 @@ function objetoComoFila(objeto, encabezados) {
 }
 
 /** Lee un valor de verdad escrito en el Sheet: si, true, TRUE, 1, x. */
+/** Un objeto nuevo con las llaves de los dos. El segundo manda si chocan. */
+function unirObjetos(uno, otro) {
+  var salida = {};
+  for (var a in uno) if (Object.prototype.hasOwnProperty.call(uno, a)) salida[a] = uno[a];
+  for (var b in otro) if (Object.prototype.hasOwnProperty.call(otro, b)) salida[b] = otro[b];
+  return salida;
+}
+
 function comoBooleano(valor) {
   if (valor === true) return true;
   if (valor === false || valor === null || valor === undefined) return false;
@@ -142,6 +150,7 @@ if (typeof module !== 'undefined') {
   module.exports = {
     filasComoObjetos: filasComoObjetos,
     objetoComoFila: objetoComoFila,
+    unirObjetos: unirObjetos,
     comoBooleano: comoBooleano,
     siguienteConsecutivo: siguienteConsecutivo,
     solicitudesVisibles: solicitudesVisibles,

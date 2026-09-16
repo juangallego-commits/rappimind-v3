@@ -59,19 +59,88 @@ var CONTACTOS = [
   },
 ];
 
+/**
+ * Quien tiene usuario de Squarespace, por pais.
+ *
+ * No todo el mundo puede publicar: la cuenta la tienen unas pocas personas por
+ * pais. Si el comercial no esta en esta lista, el paso de publicar no es suyo y
+ * tiene que pedirlo por el canal.
+ *
+ * Por ahora solo esta Colombia. Los demas paises los confirma Juan.
+ */
+var ACCESOS_SQUARESPACE = {
+  CO: {
+    cashback: [
+      { nombre: 'Camilo Patiño', correo: 'ivan.patino@rappi.com' },
+      { nombre: 'Valery Medina', correo: 'ext-v.reina@rappi.com' },
+    ],
+    concursos: [],
+    notaConcursos: 'Para concursos todavía no hay una persona asignada. Pídelo por el canal de Legal.',
+  },
+};
+
+/** El canal donde se centraliza todo lo de T&C. */
+var CANAL_TC = {
+  nombre: '#tyc-rappi',
+  url: 'https://rappiplus.slack.com/archives/C0C29SK54HL',
+  para: 'Cualquier solicitud, duda o revisión de T&C. Si no tienes usuario de Squarespace, pide aquí que te publiquen la página.',
+};
+
+/**
+ * Los pasos para publicar en Squarespace, en el orden real de la herramienta.
+ *
+ * Los datos entre llaves los pone la pantalla final con los de la campaña, para
+ * que el comercial no tenga que deducir nada.
+ */
 var PASOS_SQUARESPACE = [
-  { hace: 'Abre el documento y léelo completo. Es el texto que vas a publicar tal cual.', ve: 'El documento con el nombre de tu campaña en el título.' },
-  { hace: 'Selecciona todo el contenido del documento y cópialo.', ve: 'Todo el texto resaltado.' },
-  { hace: 'Entra a Squarespace y crea una página nueva dentro de promos.rappi.com.', ve: 'El editor de la página en blanco.' },
-  { hace: 'Pega el contenido y revisa que los títulos y las viñetas se vean bien.', ve: 'El texto con sus cláusulas numeradas y sus viñetas.' },
-  { hace: 'Publica la página y copia el enlace de la barra del navegador.', ve: 'Un enlace que empieza por https://promos.rappi.com/' },
-  { hace: 'Vuelve a RappiMind, pega el enlace y marca la campaña como publicada.', ve: 'Tu campaña en verde en el historial.' },
+  {
+    hace: 'Abre el documento y léelo completo. Es el texto que vas a publicar, tal cual, sin editarlo.',
+    ve: 'El documento con el nombre de tu campaña en el título.',
+  },
+  {
+    hace: 'Entra a Squarespace, a la lista de páginas, y abre la página del país de tu campaña.',
+    ve: 'El menú de la izquierda con un país por línea: Brasil, Argentina, Chile, Colombia y los demás.',
+  },
+  {
+    hace: 'Dentro del país, dale al signo de más para crear un evento nuevo.',
+    ve: 'El calendario del mes y, a la izquierda, la lista de los T&C que ya existen.',
+  },
+  {
+    hace: 'Copia el título de la campaña que te damos aquí abajo y pégalo en el título del evento. No lo cambies ni le agregues nada.',
+    ve: 'El título arriba, donde dice "Escribe un título para el evento".',
+  },
+  {
+    hace: 'Pon la fecha de inicio y la de fin del evento iguales a la vigencia del documento. Si no coinciden, el evento se cae del calendario antes o después de que termine la campaña.',
+    ve: 'Las dos fechas debajo del título.',
+  },
+  {
+    hace: 'Selecciona todo el documento, cópialo y pégalo en el cuerpo del evento. Revisa que las cláusulas numeradas y las viñetas se vean bien.',
+    ve: 'El texto completo con sus veinte cláusulas.',
+  },
+  {
+    hace: 'Entra a la pestaña Opciones y reemplaza la dirección del evento por la que te damos aquí abajo. La parte del país no se toca: Squarespace la pone sola.',
+    ve: 'El campo "URL del evento", con el país a la izquierda y el resto editable.',
+  },
+  {
+    hace: 'Dale a Guardar y publicar. Guardar solo deja la página en borrador y el enlace no abre.',
+    ve: 'El evento en el calendario, sin la etiqueta de borrador.',
+  },
+  {
+    hace: 'Abre el enlace en el navegador para confirmar que carga, y cópialo.',
+    ve: 'Tu documento publicado, en una dirección que empieza por https://promos.rappi.com/',
+  },
+  {
+    hace: 'Vuelve a RappiMind, pega el enlace abajo y marca la campaña como publicada.',
+    ve: 'Tu campaña en verde en el historial, con su enlace guardado.',
+  },
 ];
 
 var SI_ALGO_SALE_MAL = [
   { problema: 'El enlace no abre o da error 404.', solucion: 'La página quedó en borrador. Vuelve a Squarespace y dale Publicar, no solo Guardar.' },
   { problema: 'El texto se ve corrido o sin viñetas.', solucion: 'Pégalo otra vez usando Pegar sin formato y deja que Squarespace le aplique el estilo de la página.' },
   { problema: 'El enlace no empieza por promos.rappi.com.', solucion: 'Creaste la página en otro sitio. Tiene que estar dentro de promos.rappi.com para que RappiMind la acepte.' },
+  { problema: 'No tengo usuario de Squarespace.', solucion: 'Es normal: la cuenta la tienen unas pocas personas por país. Pide la publicación por el canal de Legal y pasa el documento y la dirección que te dio RappiMind.' },
+  { problema: 'La dirección que puse quedó distinta a la que me dio la herramienta.', solucion: 'Vuelve a Opciones, corrígela y publica otra vez. Si ya la publicaste con otra dirección, pega en RappiMind el enlace real, no el que te propusimos.' },
   { problema: 'Me equivoqué en un dato y ya generé el documento.', solucion: 'No edites el documento a mano. Genera uno nuevo con los datos corregidos y publica ese. El anterior queda en tu historial sin publicar.' },
 ];
 
@@ -130,6 +199,8 @@ if (typeof module !== 'undefined') {
   module.exports = {
     AVISO_AZAR: AVISO_AZAR,
     CONTACTOS: CONTACTOS,
+    ACCESOS_SQUARESPACE: ACCESOS_SQUARESPACE,
+    CANAL_TC: CANAL_TC,
     PASOS_SQUARESPACE: PASOS_SQUARESPACE,
     SI_ALGO_SALE_MAL: SI_ALGO_SALE_MAL,
     PREGUNTAS_FRECUENTES: PREGUNTAS_FRECUENTES,

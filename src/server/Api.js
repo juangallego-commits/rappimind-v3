@@ -121,19 +121,40 @@ function generar(entrada) {
     for (var i = 0; i < solicitudes.length; i++) identificadores.push(solicitudes[i].id);
 
     var id = identificadorDeSolicitud(hoy, siguienteConsecutivo(identificadores, hoy));
-    var titulo = tituloDelDocumento(entrada.nombreCampana, pais.nombre, id);
+
+    // El nombre sale de las respuestas, no de un campo de texto. Dos campanas
+    // nunca se pueden llamar igual: si el nombre ya existe se le pone un
+    // consecutivo y el documento se vuelve a armar con ese nombre, porque el
+    // nombre va adentro del articulado.
+    var nombresUsados = [];
+    for (var n = 0; n < solicitudes.length; n++) nombresUsados.push(solicitudes[n].nombre_campana);
+
+    var esquema = esquemaDe(entrada.tipo);
+    entrada.sufijoNombre = sufijoLibreDeNombre(nombreDeCampana(entrada, esquema), nombresUsados);
+    if (entrada.sufijoNombre > 1) {
+      resultado = generarTexto(entrada, pais, MODELOS, {
+        fechaReferencia: hoyIso(),
+        usuarioEnEquipo: quien.enEquipo,
+      });
+      if (!resultado.valido) return { valido: false, errores: resultado.errores };
+    }
+
+    var nombreCampana = nombreDeCampana(entrada, esquema);
+    var direccion = direccionDeCampana(nombreCampana);
+    var titulo = tituloDelDocumento(nombreCampana, pais.nombre, id);
     var carpeta = carpetaDelPais(pais.codigo, pais.nombre);
 
     var documento = crearDocumento(titulo, estructuraDelDocumento(resultado.texto), carpeta, quien.correo);
 
-    agregarFila('Solicitudes', {
+    agregarFila('Solicitudes', unirObjetos({
       id: id,
       fecha: ahoraTexto(),
       email: quien.correo,
       pais: pais.codigo,
       tipo: entrada.tipo,
-      version_modelo: MODELOS.versiones[esquemaDe(entrada.tipo).modelo] || '',
-      nombre_campana: entrada.nombreCampana || '',
+      version_modelo: MODELOS.versiones[esquema.modelo] || '',
+      nombre_campana: nombreCampana,
+      direccion_sugerida: direccion,
       tienda: entrada.tienda || '',
       organizador: entrada.organizadorRazonSocial || '',
       id_organizador: entrada.organizadorId || '',
@@ -144,10 +165,10 @@ function generar(entrada) {
       link_publicado: '',
       fecha_publicacion: '',
       datos_json: JSON.stringify(entrada),
-    });
+    }, respuestasParaElSheet(entrada)));
 
     enviarCorreoDeGeneracion(quien.correo, {
-      nombreCampana: entrada.nombreCampana,
+      nombreCampana: nombreCampana,
       pais: pais.nombre,
       id: id,
       linkDoc: documento.url,
@@ -157,7 +178,15 @@ function generar(entrada) {
 
     registrar('generar', id + ' · ' + pais.codigo + ' · ' + entrada.tipo);
 
-    return { valido: true, id: id, linkDoc: documento.url, titulo: titulo };
+    return {
+      valido: true,
+      id: id,
+      linkDoc: documento.url,
+      titulo: titulo,
+      nombreCampana: nombreCampana,
+      direccionSugerida: direccion,
+      pais: pais.codigo,
+    };
   } finally {
     bloqueo.releaseLock();
   }
@@ -276,9 +305,10 @@ function adminSolicitudes(busqueda) {
 
 function adminSolicitudesCsv(busqueda) {
   exigirAdministrador();
+  var encabezados = encabezadosDe('Solicitudes');
   var columnas = [];
-  for (var i = 0; i < PESTANAS.Solicitudes.length; i++) {
-    if (PESTANAS.Solicitudes[i] !== 'datos_json') columnas.push(PESTANAS.Solicitudes[i]);
+  for (var i = 0; i < encabezados.length; i++) {
+    if (encabezados[i] !== 'datos_json') columnas.push(encabezados[i]);
   }
   return comoCsv(buscarEnSolicitudes(leerSolicitudes(), busqueda), columnas);
 }

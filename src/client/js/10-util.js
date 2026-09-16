@@ -39,6 +39,51 @@ function crear(etiqueta, atributos, hijos) {
   return elemento;
 }
 
+/**
+ * Un dato para copiar: el valor a la vista y un boton que lo copia.
+ *
+ * Se usa para el titulo y la direccion de la campana, que el comercial tiene
+ * que pegar tal cual en Squarespace. Copiar a mano es donde se cuelan los
+ * errores de dedo.
+ */
+function paraCopiar(etiqueta, valor, ayuda) {
+  var caja = crear('div', { clase: 'copiable' });
+  var texto = crear('code', { clase: 'copiable-valor', texto: valor });
+
+  var boton = crear('button', { clase: 'boton boton-secundario boton-chico', type: 'button', texto: 'Copiar' });
+  boton.addEventListener('click', function () {
+    function listo() {
+      boton.textContent = 'Copiado';
+      anunciar(etiqueta + ' copiado.');
+      setTimeout(function () { boton.textContent = 'Copiar'; }, 1600);
+    }
+    // El portapapeles moderno no existe en todos los navegadores ni en todos
+    // los contextos, asi que hay una segunda via con una seleccion.
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(valor).then(listo, function () { seleccionar(texto); });
+      return;
+    }
+    seleccionar(texto);
+  });
+
+  caja.appendChild(crear('div', { clase: 'copiable-encabezado' }, [
+    crear('span', { clase: 'copiable-etiqueta', texto: etiqueta }),
+    boton,
+  ]));
+  caja.appendChild(texto);
+  if (ayuda) caja.appendChild(crear('p', { clase: 'pregunta-ayuda', texto: ayuda }));
+  return caja;
+}
+
+/** Deja el texto seleccionado para que se pueda copiar con el teclado. */
+function seleccionar(elemento) {
+  var rango = document.createRange();
+  rango.selectNodeContents(elemento);
+  var seleccion = window.getSelection();
+  seleccion.removeAllRanges();
+  seleccion.addRange(rango);
+}
+
 function vaciar(elemento) {
   while (elemento.firstChild) elemento.removeChild(elemento.firstChild);
   return elemento;
@@ -139,6 +184,8 @@ function anunciar(mensaje) {
 }
 
 RM.util = {
+  paraCopiar: paraCopiar,
+  seleccionar: seleccionar,
   crear: crear,
   vaciar: vaciar,
   porId: porId,

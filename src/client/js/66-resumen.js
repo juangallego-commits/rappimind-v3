@@ -13,14 +13,8 @@ var estado = RM.estado;
 var E = estado.estado;
 var flujo = RM.flujo;
 
-var PASOS_SQUARESPACE = [
-  { texto: 'Abre el documento y léelo completo. Es el texto que vas a publicar tal cual.', ve: 'El documento con el nombre de tu campaña.' },
-  { texto: 'Selecciona todo el contenido del documento y cópialo.', ve: 'Todo el texto resaltado.' },
-  { texto: 'Entra a Squarespace y crea una página nueva dentro de promos.rappi.com.', ve: 'El editor de la página en blanco.' },
-  { texto: 'Pega el contenido y revisa que los títulos y las viñetas se vean bien.', ve: 'El texto con sus cláusulas numeradas.' },
-  { texto: 'Publica la página y copia el enlace de la barra del navegador.', ve: 'Un enlace que empieza por https://promos.rappi.com/' },
-  { texto: 'Vuelve aquí, pega el enlace y marca la campaña como publicada.', ve: 'La campaña en verde en tu historial.' },
-];
+// Los pasos de Squarespace viven en src/core/ayuda.js, para que la pantalla
+// final y la de Ayuda digan exactamente lo mismo.
 
 function seccionesDelResumen() {
   var entrada = estado.entrada();
@@ -158,6 +152,93 @@ function generar(boton) {
   });
 }
 
+/**
+ * Quien puede publicar en Squarespace. No es todo el mundo: la cuenta la tienen
+ * unas pocas personas por pais. Si el comercial no es una de ellas, el paso de
+ * publicar no es suyo y tiene que pedirlo por el canal.
+ */
+function bloqueDeQuienPublica(codigoDePais, tipo) {
+  var accesos = ACCESOS_SQUARESPACE[codigoDePais];
+  var caja = crear('div', { clase: 'aviso' }, [crear('h3', { texto: '¿Quién puede publicar?' })]);
+
+  var esConcurso = tipo === 'carrera_compras';
+  var personas = accesos ? (esConcurso ? accesos.concursos : accesos.cashback) || [] : [];
+
+  if (personas.length > 0) {
+    caja.appendChild(crear('p', { texto: 'En tu país tienen usuario de Squarespace:' }));
+    var lista = crear('ul');
+    for (var i = 0; i < personas.length; i++) {
+      lista.appendChild(crear('li', { texto: personas[i].nombre + ' · ' + personas[i].correo }));
+    }
+    caja.appendChild(lista);
+    caja.appendChild(crear('p', {
+      texto: 'Si no eres una de estas personas, pásales el documento y la dirección de aquí arriba, o pídelo por el canal.',
+    }));
+  } else if (accesos && esConcurso && accesos.notaConcursos) {
+    caja.appendChild(crear('p', { texto: accesos.notaConcursos }));
+  } else {
+    caja.appendChild(crear('p', {
+      texto: 'Todavía no tenemos la lista de tu país. Pide la publicación por el canal de Legal.',
+    }));
+  }
+
+  caja.appendChild(crear('p', {}, [
+    document.createTextNode(CANAL_TC.para + ' '),
+    crear('a', { href: CANAL_TC.url, target: '_blank', rel: 'noopener', texto: CANAL_TC.nombre }),
+  ]));
+  return caja;
+}
+
+/**
+ * Todo lo que el comercial necesita para publicar: que pegar, donde y quien
+ * puede hacerlo. Se usa igual en la demostracion y en produccion.
+ */
+function bloqueDePublicacion(resultado) {
+  var contenido = crear('div', {});
+  // Lo que hay que pegar en Squarespace, listo para copiar. El titulo y la
+  // direccion salen de las respuestas: escribirlos a mano es como el titulo
+  // termino diciendo 99% cuando la clausula decia 50%.
+  contenido.appendChild(crear('h2', { texto: 'Lo que vas a pegar en Squarespace' }));
+  var entrada = estado.entrada();
+
+  contenido.appendChild(RM.util.paraCopiar(
+    'Título del evento',
+    resultado.nombreCampana || '',
+    'Va tal cual en el título del evento. No lo cambies: es el mismo nombre que quedó en el documento.'
+  ));
+
+  var pais = flujo.paisElegido();
+  var rutaDelPais = (pais && pais.nombre ? pais.nombre : '').toLowerCase();
+  contenido.appendChild(RM.util.paraCopiar(
+    'Dirección del evento',
+    resultado.direccionSugerida || '',
+    'Va en la pestaña Opciones, en "URL del evento". La parte de ' + rutaDelPais + ' la pone Squarespace sola: reemplaza solo lo que va después.'
+  ));
+
+  if (entrada.fechaInicio && entrada.fechaFin) {
+    contenido.appendChild(crear('div', { clase: 'aviso' }, [
+      crear('h3', { texto: 'Las fechas del evento' }),
+      crear('p', {
+        texto: 'Inicio: ' + formatearFecha(entrada.fechaInicio) + '. Fin: ' + formatearFecha(entrada.fechaFin) +
+          '. Tienen que ser iguales a la vigencia del documento.',
+      }),
+    ]));
+  }
+
+  contenido.appendChild(crear('h2', { texto: 'Cómo publicarlo, paso a paso' }));
+  var pasos = crear('ol', { clase: 'pasos-publicar' });
+  for (var i = 0; i < PASOS_SQUARESPACE.length; i++) {
+    pasos.appendChild(crear('li', {}, [
+      crear('p', { texto: PASOS_SQUARESPACE[i].hace }),
+      crear('p', { clase: 'pregunta-ayuda', texto: 'Deberías ver: ' + PASOS_SQUARESPACE[i].ve }),
+    ]));
+  }
+  contenido.appendChild(pasos);
+  contenido.appendChild(bloqueDeQuienPublica(resultado.pais || entrada.pais, entrada.tipo));
+
+  return contenido;
+}
+
 // --- Pantalla final ----------------------------------------------------------
 
 function pantallaListo(raiz) {
@@ -174,6 +255,7 @@ function pantallaListo(raiz) {
     var hoja = crear('div', { clase: 'hoja' });
     RM.documento.dibujar(hoja, resultado.texto, '');
     contenido.appendChild(hoja);
+    contenido.appendChild(bloqueDePublicacion(resultado));
     contenido.appendChild(crear('div', { clase: 'fila-botones' }, [
       crear('button', {
         clase: 'boton boton-secundario', type: 'button', texto: 'Hacer otra campaña',
@@ -197,16 +279,7 @@ function pantallaListo(raiz) {
       : null,
   ]));
 
-  contenido.appendChild(crear('h2', { texto: 'Cómo publicarlo en Squarespace' }));
-  var pasos = crear('ol', { clase: 'pasos-publicar' });
-  for (var i = 0; i < PASOS_SQUARESPACE.length; i++) {
-    pasos.appendChild(crear('li', {}, [
-      crear('p', { texto: PASOS_SQUARESPACE[i].texto }),
-      crear('p', { clase: 'pregunta-ayuda', texto: 'Deberías ver: ' + PASOS_SQUARESPACE[i].ve }),
-      crear('div', { clase: 'captura', texto: '[CAPTURA ' + (i + 1) + ']' }),
-    ]));
-  }
-  contenido.appendChild(pasos);
+  contenido.appendChild(bloqueDePublicacion(resultado));
 
   // Link publicado.
   contenido.appendChild(crear('h2', { texto: 'Cuando ya esté publicado' }));
@@ -274,5 +347,4 @@ RM.resumen = {
   pantallaResumen: pantallaResumen,
   pantallaListo: pantallaListo,
   loQueFalta: loQueFalta,
-  PASOS_SQUARESPACE: PASOS_SQUARESPACE,
 };

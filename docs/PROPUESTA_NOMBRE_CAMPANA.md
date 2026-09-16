@@ -1,3 +1,6 @@
+> **Decidido por Juan el 16 de septiembre y ya implementado.** Este documento queda
+> como la explicación de por qué el nombre funciona así. Lo que se hizo está al final.
+
 # Propuesta: cómo se llaman las campañas
 
 Para Juan. Dos decisiones pendientes, las dos salen de tu revisión del 16 de septiembre.
@@ -81,3 +84,41 @@ El identificador interno (`cashback_day`) y el archivo del modelo se quedan como
 para no romper las solicitudes ya guardadas.
 
 Dime cuál y lo cambio.
+
+
+## Lo que quedó implementado
+
+Juan decidió: porcentaje adentro del título, día de inicio, mes y año, sin etiqueta
+libre, y nombres que nunca se repiten. Y **Cashback Multitienda** para el tercer tipo.
+
+Así quedó:
+
+```
+El Corral · 50% Cashback · 20 sep 2026
+Carulla · Carrera de Compras · 5 oct 2026
+Cashback Multitienda · 24 sep 2026
+```
+
+- La pregunta "¿Cómo se llama tu campaña?" **ya no existe**. El nombre lo arma
+  `src/core/nombres.js` con la tienda, el porcentaje y el día de inicio, todos datos
+  que el comercial ya dio.
+- El porcentaje del título sale del mismo dato que alimenta la cláusula, así que no
+  pueden decir cosas distintas. Hay una prueba que lo exige.
+- **Dos campañas nunca se llaman igual.** Al generar, el servidor mira los nombres que
+  ya existen y, si el nombre está tomado, le agrega un consecutivo: `· 2`, `· 3`. Como
+  el nombre va adentro del articulado, el documento se vuelve a armar con el nombre
+  definitivo.
+- La comparación ignora mayúsculas y tildes, porque "El Corral" y "el corral" son la
+  misma campaña para quien busca.
+- De ese mismo nombre sale la dirección de Squarespace: `el-corral-50-cashback-20-sep-2026`.
+  El título y el enlace se buscan con las mismas palabras.
+- El identificador interno del tipo (`cashback_day`) y el archivo del modelo no se
+  tocaron, para no romper las solicitudes ya guardadas. Solo cambió el nombre que se ve.
+
+### Lo único que vale la pena mirar
+
+En la Carrera de Compras el nombre va **adentro** de una cláusula, no solo en el
+título: *"la campaña promocional denominada 'Carulla · Carrera de Compras · 5 oct
+2026'"*. Se lee un poco raro para un documento legal. Se puede dejar así, que es lo
+correcto porque es el nombre oficial de la campaña, o pedirle a Legal una redacción
+distinta para esa frase. Anotado en `docs/PENDIENTES_LEGAL.md`.

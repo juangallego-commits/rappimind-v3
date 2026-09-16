@@ -82,3 +82,12 @@ de 1 a 20. Lo que sigue son observaciones, no cambios: los textos son de Legal.
    Plataforma Rappi". Se reescribió la pregunta del formulario para que eso quede claro,
    sin tocar el texto legal. Si el nombre correcto de esa modalidad en la app cambió,
    avísame y lo anoto aquí.
+
+## Del nombre estructurado de campaña (16 de septiembre, tarde)
+
+1. **El nombre va adentro de una cláusula de la Carrera de Compras.** El modelo dice
+   "la campaña promocional denominada “{{NOMBRE_CAMPANA}}”". Con el nombre nuevo queda
+   "denominada “Carulla · Carrera de Compras · 5 oct 2026”", que se lee raro dentro de
+   un articulado. Es correcto, porque ese es el nombre oficial de la campaña, pero si
+   prefieres otra redacción para esa frase, dímelo y la anoto como cambio de modelo.
+   En el Cashback el nombre solo va en el título, así que ahí no hay nada que mirar.

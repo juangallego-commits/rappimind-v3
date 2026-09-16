@@ -85,11 +85,25 @@ function asegurarPestanas(base, pasos) {
       pasos.push('pestaña ' + nombre + ' creada');
     }
 
-    var encabezados = PESTANAS[nombre];
+    var encabezados = encabezadosDe(nombre);
     if (hoja.getLastRow() === 0) {
       hoja.getRange(1, 1, 1, encabezados.length).setValues([encabezados]);
       hoja.setFrozenRows(1);
       pasos.push('encabezados de ' + nombre + ' escritos');
+      continue;
+    }
+
+    // La pestana ya existia: se agregan al final las columnas nuevas y no se
+    // toca ninguna de las que ya estan. Mover una columna con datos adentro
+    // desalinearia todo el historico.
+    var actuales = hoja.getRange(1, 1, 1, hoja.getLastColumn()).getValues()[0];
+    var faltantes = [];
+    for (var c = 0; c < encabezados.length; c++) {
+      if (actuales.indexOf(encabezados[c]) === -1) faltantes.push(encabezados[c]);
+    }
+    if (faltantes.length > 0) {
+      hoja.getRange(1, actuales.length + 1, 1, faltantes.length).setValues([faltantes]);
+      pasos.push(faltantes.length + ' columnas nuevas en ' + nombre + ': ' + faltantes.join(', '));
     }
   }
 

@@ -76,18 +76,9 @@ var PREGUNTAS = {
     errores: { vacio: 'Elige el tipo de campaña.' },
   }),
 
-  nombreCampana: p({
-    paso: 'campana',
-    pregunta: '¿Cómo se llama tu campaña?',
-    ayuda: 'Como la conoce el equipo. Por ejemplo: 99% Cashback Pollo Dorado.',
-    porQue: 'Va en el título del documento y en el nombre del archivo, para que después lo encuentres. No tiene efecto legal.',
-    ejemplo: '99% Cashback Pollo Dorado',
-    placeholders: ['NOMBRE_CAMPANA', 'NOMBRE_CAMPANA_MAYUS'],
-    errores: {
-      vacio: 'Ponle un nombre a la campaña para poder encontrarla después.',
-      largo: 'El nombre no puede pasar de 80 caracteres. Déjalo corto: porcentaje, palabra clave y marca.',
-    },
-  }),
+  // El nombre de la campana ya no se pregunta: lo arma la herramienta con la
+  // tienda, el porcentaje y el dia de inicio. Ver src/core/nombres.js y el caso
+  // que lo obligo, en docs/PENDIENTES_LEGAL.md.
 
   tienda: p({
     paso: 'campana',
@@ -667,8 +658,8 @@ var PREGUNTAS = {
  * Es lo que dice el espacio en blanco del documento: "falta el porcentaje".
  */
 var NOMBRE_DEL_HUECO = {
-  NOMBRE_CAMPANA: 'el nombre de la campaña',
-  NOMBRE_CAMPANA_MAYUS: 'el nombre de la campaña',
+  NOMBRE_CAMPANA: 'el nombre, que sale de la tienda, el porcentaje y el día de inicio',
+  NOMBRE_CAMPANA_MAYUS: 'el nombre, que sale de la tienda, el porcentaje y el día de inicio',
   TIENDA: 'la tienda',
   TEXTO_TERRITORIO: 'dónde aplica',
   FECHA_INICIO: 'el día de inicio',

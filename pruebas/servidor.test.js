@@ -106,11 +106,15 @@ test('después de setup ya no está en modo demostración', () => {
 
 test('generar crea el documento con el título de la especificación', () => {
   const mundo = conSetup();
-  const resultado = generar(solicitudValida({ nombreCampana: 'Jumbo MT' }));
+  const resultado = generar(solicitudValida({ tienda: 'Jumbo', porcentaje: 50 }));
 
   assert.ok(resultado.valido);
   assert.strictEqual(resultado.id, 'RM-20260916-0001');
-  assert.strictEqual(resultado.titulo, 'T&C · Jumbo MT · Colombia · RM-20260916-0001');
+  // El nombre lo arma la herramienta con la tienda, el porcentaje y el día de
+  // inicio. Nadie lo escribe, así que no puede contradecir el articulado.
+  assert.strictEqual(resultado.nombreCampana, 'Jumbo · 50% Cashback · 20 sep 2026');
+  assert.strictEqual(resultado.direccionSugerida, 'jumbo-50-cashback-20-sep-2026');
+  assert.strictEqual(resultado.titulo, 'T&C · Jumbo · 50% Cashback · 20 sep 2026 · Colombia · RM-20260916-0001');
   assert.strictEqual(Object.keys(mundo.documentos).length, 1);
 });
 
@@ -155,12 +159,12 @@ test('el cuerpo del documento lleva el formato de la especificación', () => {
 
 test('se manda un correo con el enlace del documento', () => {
   const mundo = conSetup({ correo: 'kam@rappi.com' });
-  const resultado = generar(solicitudValida({ nombreCampana: 'Jumbo MT' }));
+  const resultado = generar(solicitudValida({ tienda: 'Jumbo' }));
 
   assert.strictEqual(mundo.correos.length, 1);
   const correo = mundo.correos[0];
   assert.strictEqual(correo.to, 'kam@rappi.com');
-  assert.ok(correo.subject.indexOf('Jumbo MT') !== -1);
+  assert.ok(correo.subject.indexOf('Jumbo · 20% Cashback') !== -1, correo.subject);
   assert.ok(correo.htmlBody.indexOf(resultado.linkDoc) !== -1);
   assert.strictEqual(correo.name, 'RappiMind');
   assert.ok(!correo.cc, 'sin CORREO_COPIA_LEGAL no debería haber copia');
@@ -175,7 +179,7 @@ test('CORREO_COPIA_LEGAL agrega la copia', () => {
 
 test('la solicitud queda registrada con cada dato en su columna', () => {
   conSetup({ correo: 'kam@rappi.com' });
-  const resultado = generar(solicitudValida({ nombreCampana: 'Jumbo MT', tienda: 'Jumbo' }));
+  const resultado = generar(solicitudValida({ tienda: 'Jumbo' }));
 
   const solicitudes = leerSolicitudes();
   assert.strictEqual(solicitudes.length, 1);
@@ -185,11 +189,43 @@ test('la solicitud queda registrada con cada dato en su columna', () => {
   assert.strictEqual(fila.email, 'kam@rappi.com');
   assert.strictEqual(fila.pais, 'CO');
   assert.strictEqual(fila.tipo, 'cashback');
-  assert.strictEqual(fila.nombre_campana, 'Jumbo MT');
+  assert.strictEqual(fila.nombre_campana, 'Jumbo · 20% Cashback · 20 sep 2026');
+  assert.strictEqual(fila.direccion_sugerida, 'jumbo-20-cashback-20-sep-2026');
   assert.strictEqual(fila.tienda, 'Jumbo');
   assert.strictEqual(fila.estado, 'generado');
   assert.strictEqual(fila.version_modelo, '3.0');
   assert.ok(JSON.parse(fila.datos_json).porcentaje, 'datos_json debería traer el formulario completo');
+});
+
+test('la solicitud guarda cada respuesta en su propia columna', () => {
+  // Para auditar hay que poder abrir el Sheet y ver qué contestó el comercial,
+  // sin tener que leer el JSON.
+  conSetup();
+  generar(solicitudValida({ tienda: 'Jumbo', redencion: 'secciones', secciones: ['Restaurantes', 'Turbo'] }));
+
+  const fila = leerSolicitudes()[0];
+  assert.strictEqual(fila.resp_tienda, 'Jumbo');
+  assert.strictEqual(fila.resp_porcentaje, 20);
+  assert.strictEqual(fila.resp_redencion, 'En ciertas secciones de Rappi');
+  assert.strictEqual(fila.resp_secciones, 'Restaurantes, Turbo');
+  assert.strictEqual(fila.resp_declaracion, 'Sí');
+  // Una pregunta que no aplica queda vacía, que es la verdad: no se hizo.
+  assert.strictEqual(fila.resp_diasSinCompra, '');
+});
+
+test('dos campañas nunca se llaman igual', () => {
+  conSetup();
+  const primera = generar(solicitudValida({ tienda: 'Jumbo' }));
+  const segunda = generar(solicitudValida({ tienda: 'Jumbo' }));
+  const tercera = generar(solicitudValida({ tienda: 'Jumbo' }));
+
+  assert.strictEqual(primera.nombreCampana, 'Jumbo · 20% Cashback · 20 sep 2026');
+  assert.strictEqual(segunda.nombreCampana, 'Jumbo · 20% Cashback · 20 sep 2026 · 2');
+  assert.strictEqual(tercera.nombreCampana, 'Jumbo · 20% Cashback · 20 sep 2026 · 3');
+
+  // El nombre va adentro del articulado, así que el documento se rearma con él.
+  assert.ok(segunda.titulo.indexOf('· 2 ·') !== -1, segunda.titulo);
+  assert.notStrictEqual(primera.direccionSugerida, segunda.direccionSugerida);
 });
 
 test('el consecutivo avanza dentro del mismo día', () => {
@@ -244,7 +280,7 @@ test('previsualizar no crea nada', () => {
 test('el historial solo muestra lo propio a un comercial', () => {
   const mundo = conSetup();
   comoComercial(mundo, 'uno@rappi.com');
-  generar(solicitudValida({ nombreCampana: 'De uno' }));
+  generar(solicitudValida({ tienda: 'De uno' }));
 
   agregarFila('Solicitudes', {
     id: 'RM-20260916-0099', fecha: '2026-09-16 09:00:00', email: 'otro@rappi.com',
@@ -253,13 +289,13 @@ test('el historial solo muestra lo propio a un comercial', () => {
 
   const mio = historial('');
   assert.strictEqual(mio.length, 1);
-  assert.strictEqual(mio[0].nombre_campana, 'De uno');
+  assert.strictEqual(mio[0].nombre_campana, 'De uno · 20% Cashback · 20 sep 2026');
 });
 
 test('la búsqueda del historial funciona', () => {
   conSetup();
-  generar(solicitudValida({ nombreCampana: 'Jumbo MT' }));
-  generar(solicitudValida({ nombreCampana: 'Farmacia Vida' }));
+  generar(solicitudValida({ tienda: 'Jumbo MT' }));
+  generar(solicitudValida({ tienda: 'Farmacia Vida' }));
 
   assert.strictEqual(historial('').length, 2);
   assert.strictEqual(historial('jumbo').length, 1);
@@ -347,7 +383,7 @@ test('el equipo solo acepta correos del dominio', () => {
 
 test('la exportación es un CSV sin la columna de datos crudos', () => {
   conSetup();
-  generar(solicitudValida({ nombreCampana: 'Jumbo MT' }));
+  generar(solicitudValida({ tienda: 'Jumbo MT' }));
 
   const csv = adminSolicitudesCsv('');
   const encabezados = csv.split('\n')[0];

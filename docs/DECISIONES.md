@@ -179,3 +179,49 @@ inicio alcanzara a leerlo: la función de no perder lo escrito no servía para
 nada y no se notaba, porque no falla, simplemente nunca ofrece nada. Ahora el
 borrador solo se escribe cuando el comercial responde algo, que es cuando hay
 algo que perder.
+
+## El nombre de la campaña se calcula, no se escribe
+
+**Qué se decidió.** Quitar el campo de texto libre y armar el nombre con la tienda, el
+porcentaje y el día de inicio, en `src/core/nombres.js`.
+
+**Por qué.** El primer T&C real salió titulado "99% de Cashback El Corral 20/09" con una
+cláusula que decía 50% y una vigencia del 17 de septiembre. La cláusula 12 del propio
+documento dice que ante una discrepancia se aplica la condición más favorable al
+usuario, así que un título que promete 99% obliga a pagar 99%. Mientras el nombre y el
+articulado salgan de fuentes distintas, ese error se puede repetir.
+
+**Cómo.** `calcularDerivados` ignora lo que venga en `entrada.nombreCampana` y calcula
+`NOMBRE_CAMPANA` desde los mismos datos que alimentan las cláusulas. Un borrador viejo o
+una campaña reusada no pueden colar un nombre escrito a mano.
+
+**La unicidad la resuelve el servidor, no el formulario.** El comercial no tiene que
+inventar un distinguidor. Al generar, dentro del bloqueo, se mira qué nombres existen y
+se asigna el primer consecutivo libre. Si hay consecutivo, el documento se vuelve a
+armar, porque en la Carrera de Compras el nombre va adentro de una cláusula.
+
+## Las respuestas se guardan dos veces, a propósito
+
+**Qué se decidió.** La pestaña `Solicitudes` guarda cada respuesta en su propia columna,
+con el valor legible, *y además* mantiene `datos_json` con la respuesta cruda.
+
+**Por qué.** Son dos usos distintos. Para auditar hay que abrir el Sheet, filtrar y leer
+lo que contestó el comercial, y para eso el JSON no sirve. Para volver a generar un
+documento idéntico hace falta el valor crudo, y para eso la etiqueta no sirve.
+
+**Las columnas salen de los esquemas**, no de una lista escrita a mano, así que una
+pregunta nueva trae su columna sola. Llevan el prefijo `resp_` porque `pais`, `tipo` y
+`tienda` ya existen como columnas.
+
+**Solo se llenan las preguntas visibles.** Un campo oculto puede tener un valor viejo de
+antes de que el comercial cambiara una respuesta; guardarlo diría que se preguntó algo
+que nunca se preguntó.
+
+## El entorno de pruebas carga src/core completo
+
+**Qué se decidió.** `pruebas/dobles/entorno.js` lee la carpeta en vez de tener una lista
+de archivos escrita a mano.
+
+**Por qué.** En Apps Script se cargan todos. Con la lista fija, un archivo nuevo quedaba
+fuera y las pruebas fallaban con un "no está definido" que no decía dónde estaba el
+problema.

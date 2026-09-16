@@ -18,7 +18,6 @@ function solicitudBase(cambios) {
   const base = {
     pais: 'CO',
     tipo: 'cashback',
-    nombreCampana: 'Campaña de prueba',
     tienda: 'Tienda de Prueba',
     alcance: 'Nacional',
     ciudades: '',
@@ -133,8 +132,17 @@ test('hay que marcar la declaración', () => {
   assert.deepStrictEqual(campos(solicitudBase({ declaracion: false })), ['declaracion']);
 });
 
-test('el nombre de la campaña no puede pasar de 80 caracteres', () => {
-  assert.deepStrictEqual(campos(solicitudBase({ nombreCampana: 'x'.repeat(81) })), ['nombreCampana']);
+test('el nombre de la campaña lo arma la herramienta, no el comercial', () => {
+  // Ya no hay campo de texto libre: lo que el comercial mande en nombreCampana
+  // se ignora, y el nombre sale de la tienda, el porcentaje y el día de inicio.
+  const { nombreDeCampana } = require('../src/core/nombres.js');
+  const { esquemaDe } = require('../src/core/esquemas.js');
+
+  assert.deepStrictEqual(campos(solicitudBase({ nombreCampana: 'x'.repeat(81) })), []);
+  assert.strictEqual(
+    nombreDeCampana({ tipo: 'cashback', tienda: 'El Corral', porcentaje: 50, fechaInicio: '2026-09-20' }, esquemaDe('cashback')),
+    'El Corral · 50% Cashback · 20 sep 2026'
+  );
 });
 
 test('el Cashback Day exige al menos dos tiendas y no permite ID repetido', () => {

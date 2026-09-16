@@ -32,12 +32,25 @@ var PESTANAS = {
   ],
   Equipo: ['email', 'nombre', 'rol', 'pais', 'activo'],
   Solicitudes: [
-    'id', 'fecha', 'email', 'pais', 'tipo', 'version_modelo', 'nombre_campana', 'tienda',
+    'id', 'fecha', 'email', 'pais', 'tipo', 'version_modelo', 'nombre_campana',
+    'direccion_sugerida', 'tienda',
     'organizador', 'id_organizador', 'fecha_inicio', 'fecha_fin', 'link_doc', 'estado',
     'link_publicado', 'fecha_publicacion', 'datos_json',
   ],
   Registro: ['fecha', 'email', 'accion', 'detalle'],
 };
+
+/**
+ * Los encabezados de una pestana.
+ *
+ * Solicitudes lleva ademas una columna por respuesta, para poder auditar sin
+ * abrir el JSON. Se calcula aqui y no en PESTANAS porque sale de los esquemas,
+ * y en Apps Script no hay forma segura de saber que archivo se carga primero.
+ */
+function encabezadosDe(nombre) {
+  if (nombre !== 'Solicitudes') return PESTANAS[nombre];
+  return PESTANAS.Solicitudes.concat(columnasDeRespuestas());
+}
 
 var DOMINIO_PERMITIDO = 'rappi.com';
 
@@ -113,6 +126,7 @@ if (typeof module !== 'undefined') {
     NOMBRE_DE_LA_CARPETA: NOMBRE_DE_LA_CARPETA,
     PROPIEDADES: PROPIEDADES,
     PESTANAS: PESTANAS,
+    encabezadosDe: encabezadosDe,
     DOMINIO_PERMITIDO: DOMINIO_PERMITIDO,
     leerPropiedad: leerPropiedad,
     guardarPropiedad: guardarPropiedad,

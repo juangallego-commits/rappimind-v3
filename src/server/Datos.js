@@ -27,13 +27,13 @@ function objetosDe(nombre) {
 
 /** Agrega una fila respetando el orden de los encabezados. */
 function agregarFila(nombre, objeto) {
-  hojaPorNombre(nombre).appendRow(objetoComoFila(objeto, PESTANAS[nombre]));
+  hojaPorNombre(nombre).appendRow(objetoComoFila(objeto, encabezadosDe(nombre)));
 }
 
 /** Escribe columnas sueltas de una fila que ya existe. */
 function actualizarFila(nombre, numeroFila, cambios) {
   var hoja = hojaPorNombre(nombre);
-  var encabezados = PESTANAS[nombre];
+  var encabezados = encabezadosDe(nombre);
 
   for (var llave in cambios) {
     if (!Object.prototype.hasOwnProperty.call(cambios, llave)) continue;
