@@ -95,3 +95,42 @@ test('.clasp.json apunta a dist/', () => {
   const clasp = JSON.parse(leerTexto(rutaDesdeRaiz('.clasp.json')));
   assert.strictEqual(clasp.rootDir, 'dist');
 });
+
+/**
+ * Esta es la prueba que faltaba cuando la vista previa salio en blanco en Apps
+ * Script: el navegador solo recibe lo que va dentro de MotorCliente.html. Los
+ * archivos sueltos de dist/ (Modelos.js, PaisesSemilla.js, Secciones.js) son
+ * del servidor. Si los textos legales no viajan dentro del HTML, MODELOS queda
+ * sin definir, la vista previa revienta y la pantalla se queda a medias.
+ *
+ * Se corre el script tal cual, en un ambiente parecido al del navegador: sin
+ * module y sin require, que es lo que hay del lado del usuario.
+ */
+test('MotorCliente.html corre solo en el navegador y arma la vista previa', () => {
+  const vm = require('node:vm');
+  const html = leerTexto(path.join(DIST, 'MotorCliente.html'));
+  const guion = /<script>\n([\s\S]*)\n<\/script>/.exec(html);
+  assert.ok(guion, 'MotorCliente.html no trae un bloque de script');
+
+  const ambiente = { console: console };
+  ambiente.window = ambiente;
+  vm.createContext(ambiente);
+  vm.runInContext(guion[1], ambiente, { filename: 'MotorCliente.html' });
+
+  for (const nombre of ['MODELOS', 'PAISES_SEMILLA', 'SECCIONES', 'ESQUEMAS', 'PREGUNTAS']) {
+    assert.notStrictEqual(ambiente[nombre], undefined, 'falta ' + nombre + ' en el navegador');
+  }
+  assert.ok(Object.keys(ambiente.MODELOS.modelos).length > 0, 'los textos legales no viajaron al navegador');
+
+  // Con la campana a medio llenar la vista previa tiene que salir igual, con
+  // huecos marcados donde falta el dato. Esto es lo que ve el comercial.
+  const pais = ambiente.paisDesdeFila(ambiente.PAISES_SEMILLA.find((fila) => fila.codigo === 'CO'));
+  const vista = ambiente.renderizarVistaPrevia(
+    ambiente.esquemaDe('cashback').modelo,
+    { tipo: 'cashback', pais: 'CO' },
+    pais,
+    ambiente.MODELOS
+  );
+  assert.ok(vista.texto.length > 0, 'la vista previa salio vacia');
+  assert.ok(vista.huecos.length > 0, 'la vista previa no marco ningun hueco');
+});

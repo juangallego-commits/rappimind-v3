@@ -167,11 +167,8 @@ function main() {
   const motor = contenidoEntreEtiquetas(leerTexto(path.join(DIST, 'MotorCliente.html')), 'script');
   const interfaz = contenidoEntreEtiquetas(leerTexto(path.join(DIST, 'App.html')), 'script');
 
-  const datos = [
-    leerTexto(path.join(DIST, 'Modelos.js')),
-    leerTexto(path.join(DIST, 'PaisesSemilla.js')),
-    leerTexto(path.join(DIST, 'Secciones.js')),
-  ].join('\n');
+  // Los textos legales y los paises ya vienen dentro de MotorCliente.html: el
+  // build los mete ahi para que el navegador los reciba. Aqui no se repiten.
 
   // La demostración corre en el navegador, sin CommonJS. En vez de recortar los
   // bloques de exportación con una expresión regular, que es frágil y puede
@@ -191,7 +188,7 @@ function main() {
     .replace("<?!= incluir('Estilos') ?>", poner('<style>\n' + estilos + '\n</style>'))
     .replace(
       "<?!= incluir('MotorCliente') ?>",
-      poner('<script>\n' + MODULO_FALSO + datos + '\n' + motor + '\n' + SERVIDOR_SIMULADO + '\n</script>')
+      poner('<script>\n' + MODULO_FALSO + motor + '\n' + SERVIDOR_SIMULADO + '\n</script>')
     )
     .replace("<?!= incluir('App') ?>", poner('<script>\n' + interfaz + '\n</script>'))
     .replace('<title>RappiMind v3</title>', poner('<title>RappiMind v3 · demostración</title>'))

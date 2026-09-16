@@ -176,16 +176,29 @@ function generarHtml() {
   );
 
   // MotorCliente.html lleva el motor al navegador para la vista previa en vivo.
-  const motor = listarArchivos(rutaDesdeRaiz('src', 'core'), '.js')
-    .map((archivo) => {
-      const codigo = leerTexto(rutaDesdeRaiz('src', 'core', archivo));
-      return ['// --- src/core/' + archivo + ' ---', codigo].join('\n');
-    })
-    .join('\n');
+  //
+  // OJO: tiene que llevar TAMBIEN los textos legales y los paises. Los archivos
+  // Modelos.js, PaisesSemilla.js y Secciones.js que quedan sueltos en dist/ son
+  // de Apps Script, o sea del servidor: el navegador nunca los recibe. Sin
+  // ellos, MODELOS queda sin definir en el navegador, la vista previa revienta
+  // y la pantalla se queda a medio pintar.
+  const partesDelMotor = [];
+
+  for (const generado of ['Modelos.js', 'PaisesSemilla.js', 'Secciones.js']) {
+    partesDelMotor.push('// --- ' + generado + ' ---', leerTexto(path.join(DIST, generado)));
+  }
+
+  for (const archivo of listarArchivos(rutaDesdeRaiz('src', 'core'), '.js')) {
+    partesDelMotor.push('// --- src/core/' + archivo + ' ---', leerTexto(rutaDesdeRaiz('src', 'core', archivo)));
+  }
 
   escribirTexto(
     path.join(DIST, 'MotorCliente.html'),
-    envolver('script', motor, 'Generado desde src/core/*.js para la vista previa en el navegador')
+    envolver(
+      'script',
+      partesDelMotor.join('\n'),
+      'Generado desde src/core/*.js y los datos, para la vista previa en el navegador'
+    )
   );
 }
 
