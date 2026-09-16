@@ -106,3 +106,64 @@ test('renderizar bloquea cuando un dato obligatorio queda vacío', () => {
   assert.ok(salida.errores.length > 0);
   assert.ok(salida.placeholdersVacios.indexOf('FECHA_INICIO') !== -1);
 });
+
+// --- Vista previa en vivo ---------------------------------------------------
+
+const { renderizarVistaPrevia, tramosDeVistaPrevia, MARCA_HUECO } = require('../src/core/motor.js');
+const { cargarModelos: cargar } = require('../scripts/lib/modelos');
+const { nombreDelHueco } = require('../src/core/preguntas.js');
+const { leerJson: leer, rutaDesdeRaiz: raiz } = require('../scripts/lib/archivos');
+
+const modelosReales = cargar();
+const casosBase = leer(raiz('pruebas', 'casos_base.json')).casos;
+
+test('la vista previa marca un hueco por cada dato que falta', () => {
+  const resultado = renderizarVistaPrevia('cashback', { tipo: 'cashback', alcance: 'Nacional' }, CO, modelosReales);
+  assert.ok(resultado.huecos.length > 5);
+  assert.ok(resultado.huecos.indexOf('ORGANIZADOR') !== -1);
+  assert.ok(resultado.texto.indexOf(MARCA_HUECO) !== -1);
+});
+
+test('cada hueco se puede nombrar en palabras del comercial', () => {
+  const resultado = renderizarVistaPrevia('cashback', { tipo: 'cashback', alcance: 'Nacional' }, CO, modelosReales);
+  for (const hueco of resultado.huecos) {
+    const nombre = nombreDelHueco(hueco);
+    assert.ok(nombre && nombre.indexOf('_') === -1, hueco + ' no tiene un nombre legible');
+  }
+});
+
+test('con el formulario completo la vista previa es idéntica al documento final', () => {
+  for (const caso of casosBase.filter((c) => c.esperado.resultado === 'genera')) {
+    const pais = leer(raiz('data', 'paises.json')).paises.find((p) => p.codigo === caso.entrada.pais);
+    const modelo = { cashback: 'cashback', carrera_compras: 'carrera_compras', cashback_day: 'cashback_day' }[caso.entrada.tipo];
+
+    const vista = renderizarVistaPrevia(modelo, caso.entrada, pais, modelosReales);
+    const final = renderizar(modelo, caso.entrada, pais, modelosReales);
+
+    assert.deepStrictEqual(vista.huecos, [], caso.id + ' tiene huecos estando completo');
+    assert.strictEqual(vista.texto, final.texto, caso.id + ': la vista previa no coincide con el documento');
+  }
+});
+
+test('la marca de hueco nunca sobrevive al documento final', () => {
+  for (const caso of casosBase.filter((c) => c.esperado.resultado === 'genera')) {
+    const pais = leer(raiz('data', 'paises.json')).paises.find((p) => p.codigo === caso.entrada.pais);
+    const modelo = { cashback: 'cashback', carrera_compras: 'carrera_compras', cashback_day: 'cashback_day' }[caso.entrada.tipo];
+    assert.strictEqual(renderizar(modelo, caso.entrada, pais, modelosReales).texto.indexOf(MARCA_HUECO), -1);
+  }
+});
+
+test('tramosDeVistaPrevia separa texto y huecos', () => {
+  const linea = 'antes ' + MARCA_HUECO + 'PORCENTAJE' + MARCA_HUECO + ' después';
+  assert.deepStrictEqual(tramosDeVistaPrevia(linea), [
+    { tipo: 'texto', valor: 'antes ' },
+    { tipo: 'hueco', valor: 'PORCENTAJE' },
+    { tipo: 'texto', valor: ' después' },
+  ]);
+});
+
+test('un Cashback Day sin tiendas anuncia que faltan', () => {
+  const resultado = renderizarVistaPrevia('cashback_day', { tipo: 'cashback_day', tiendas: [] }, CO, modelosReales);
+  assert.ok(resultado.huecos.indexOf('TIENDA_MARCA') !== -1);
+  assert.strictEqual(resultado.texto.indexOf('[[#TIENDAS]]'), -1, 'quedó el marcador del bloque repetible');
+});

@@ -192,9 +192,71 @@ function renderizar(nombreModelo, entrada, pais, modelos) {
   return { texto: texto, errores: errores, placeholdersVacios: reemplazo.vacios };
 }
 
+/** Marca que envuelve un hueco en la vista previa. Nunca aparece en el documento. */
+var MARCA_HUECO = String.fromCharCode(1);
+
+/**
+ * Render para la vista previa en vivo.
+ *
+ * Igual que renderizar(), pero en vez de dejar vacio un dato que falta pone un
+ * hueco marcado. La interfaz lo convierte en un espacio en blanco gris que dice
+ * que pregunta lo llena.
+ *
+ * Esto NUNCA genera el documento: generar() usa renderizar(), que bloquea si
+ * falta algo. Los huecos viven solo en la pantalla.
+ */
+function renderizarVistaPrevia(nombreModelo, entrada, pais, modelos) {
+  if (!Object.prototype.hasOwnProperty.call(modelos.modelos, nombreModelo)) {
+    return { texto: '', huecos: [] };
+  }
+
+  var inclusiones = expandirInclusiones(modelos.modelos[nombreModelo], modelos.bloques);
+  var texto = quitarComentarios(inclusiones.texto);
+  var valores = calcularDerivados(entrada, pais);
+  var huecos = [];
+
+  // Un bloque repetible sin tiendas deja la lista vacia: se anuncia el hueco.
+  var tiendas = entrada.tiendas || [];
+  if (tiendas.length === 0) {
+    texto = texto.replace(/^\[\[#TIENDAS\]\]\n[\s\S]*?\n\[\[\/TIENDAS\]\]$/gm, function () {
+      huecos.push('TIENDA_MARCA');
+      return '\u2022 {{TIENDA_MARCA}}';
+    });
+  } else {
+    texto = expandirTiendas(texto, tiendas, pais);
+  }
+
+  texto = resolverOpcionales(texto, valores);
+
+  texto = texto.replace(/\{\{(\w+)\}\}/g, function (todo, llave) {
+    var valor = valores[llave];
+    if (valor) return valor;
+    if (huecos.indexOf(llave) === -1) huecos.push(llave);
+    return MARCA_HUECO + llave + MARCA_HUECO;
+  });
+
+  return { texto: numerarClausulas(texto), huecos: huecos };
+}
+
+/**
+ * Parte una linea de la vista previa en tramos de texto y de hueco.
+ * Devuelve [{ tipo: 'texto' | 'hueco', valor }].
+ */
+function tramosDeVistaPrevia(linea) {
+  var partes = String(linea).split(MARCA_HUECO);
+  var tramos = [];
+  for (var i = 0; i < partes.length; i++) {
+    if (!partes[i]) continue;
+    tramos.push({ tipo: i % 2 === 1 ? 'hueco' : 'texto', valor: partes[i] });
+  }
+  return tramos;
+}
 if (typeof module !== 'undefined') {
   module.exports = {
     renderizar: renderizar,
+    renderizarVistaPrevia: renderizarVistaPrevia,
+    tramosDeVistaPrevia: tramosDeVistaPrevia,
+    MARCA_HUECO: MARCA_HUECO,
     expandirInclusiones: expandirInclusiones,
     quitarComentarios: quitarComentarios,
     expandirTiendas: expandirTiendas,
