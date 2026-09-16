@@ -29,6 +29,11 @@ var PESTANAS = {
     'moneda_nombre', 'politica_privacidad', 'edad_minima', 'tipo_id_organizador',
     'moneda_simbolo', 'separador_miles', 'termino_dias', 'texto_persona',
     'texto_hora_local', 'texto_derechos_datos', 'por_confirmar_en_pruebas',
+    // Rappi Travel tiene su propia entidad legal, su RNT y su politica de
+    // datos. Van planas, una por columna, porque la pestana es una tabla.
+    'travel_entidad', 'travel_id_fiscal', 'travel_rnt', 'travel_rnt_vence',
+    'travel_url_sitio', 'travel_url_tc', 'travel_politica_privacidad',
+    'travel_url_privacidad', 'travel_entidad_vigilancia',
   ],
   Equipo: ['email', 'nombre', 'rol', 'pais', 'activo'],
   Solicitudes: [
