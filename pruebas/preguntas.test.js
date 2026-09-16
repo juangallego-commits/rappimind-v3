@@ -268,3 +268,23 @@ test('ningún texto visible usa emojis', () => {
     }
   }
 });
+
+/**
+ * El paso lo manda el esquema: es el que arma el asistente. preguntas.js tiene
+ * que decir lo mismo, porque de ahi sale docs/PREGUNTAS_KAM.md y si no
+ * coinciden el documento le dice al comercial que la pregunta esta en un paso
+ * donde nunca la va a ver.
+ */
+test('el paso de cada pregunta coincide con el del esquema', () => {
+  const { ESQUEMAS } = require('../src/core/esquemas.js');
+  for (const tipo of Object.keys(ESQUEMAS)) {
+    for (const campo of ESQUEMAS[tipo].campos) {
+      const pregunta = PREGUNTAS[campo.id];
+      if (!pregunta || !pregunta.paso) continue;
+      assert.strictEqual(
+        pregunta.paso, campo.paso,
+        campo.id + ' esta en el paso ' + pregunta.paso + ' en preguntas.js y en ' + campo.paso + ' en el esquema ' + tipo
+      );
+    }
+  }
+});

@@ -212,7 +212,7 @@ salga con sus huecos marcados.
 
 | Punto | Qué cambió |
 |---|---|
-| 1 | Se quitó la pregunta de filtro "¿La campaña la fondea Rappi?". El Organizador es siempre la tienda o la marca, así que la pregunta sobraba. |
+| 1 | Se quitó la pregunta de filtro "¿La campaña la fondea Rappi?", tanto de la pantalla de entrada como del filtro de cada tipo, y también el caso de frontera que decía consultarlo en la guía de azar. El Organizador es siempre la tienda o la marca. |
 | 2 | La ayuda del país ya no recomienda Colombia. |
 | 3 | La ayuda del tipo ya no recomienda Cashback. Cada tipo se explica en su propia descripción. |
 | 6 | "¿Cuánto hay en total para la campaña?" pasó a "¿Cuánto es el presupuesto total de la campaña?". |

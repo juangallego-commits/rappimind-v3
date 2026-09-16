@@ -36,7 +36,6 @@ var AVISO_AZAR = {
     'Premios distintos por puesto en un ranking, o tabla de puntos: consúltalo.',
     'El premio es una boleta, una experiencia o algo atado a un evento con fecha: consúltalo.',
     'Hay un jurado que decide, o un criterio de "el más creativo": consúltalo.',
-    'La campaña la fondea Rappi y no una tienda o una marca: consúltalo.',
     'Participan varias tiendas en un mismo concurso: consúltalo.',
   ],
   regla: 'La prueba más simple: si dos personas hacen exactamente lo mismo y una puede ganar y la otra no, hay azar. Consulta antes de lanzar.',

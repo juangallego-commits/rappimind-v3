@@ -666,7 +666,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `compraMinima` |
-| Paso | Beneficio |
+| Paso | Participantes |
 | Tipo de control | numero |
 | Obligatorio | no |
 | Ejemplo | 100000 |
@@ -1356,7 +1356,7 @@ formulario manual.
 | | |
 |---|---|
 | Campo interno | `compraMinima` |
-| Paso | Beneficio |
+| Paso | Participantes |
 | Tipo de control | numero |
 | Obligatorio | no |
 | Ejemplo | 100000 |
@@ -1916,7 +1916,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | | |
 |---|---|
 | Campo interno | `compraMinima` |
-| Paso | Beneficio |
+| Paso | Participantes |
 | Tipo de control | numero |
 | Obligatorio | no |
 | Ejemplo | 100000 |

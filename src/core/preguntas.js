@@ -275,7 +275,10 @@ var PREGUNTAS = {
   }),
 
   compraMinima: p({
-    paso: 'beneficio',
+    // Va en el paso de participantes, no en el del beneficio: es un requisito
+    // para participar. El esquema manda, y este archivo tiene que decir lo
+    // mismo, porque de aqui sale docs/PREGUNTAS_KAM.md.
+    paso: 'participantes',
     pregunta: '¿Hay que gastar un mínimo para participar?',
     ayuda: 'Es opcional: si no exiges un mínimo, deja el campo vacío y sigue.',
     porQue: 'Si lo exiges, tiene que quedar escrito. Si no aparece en el documento, no lo puedes aplicar después.',
