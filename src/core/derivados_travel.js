@@ -23,6 +23,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var montoConMoneda = moduloNumeros.montoConMoneda;
   var porcentajeEnLetras = moduloNumeros.porcentajeEnLetras;
   var formatearMiles = moduloNumeros.formatearMiles;
+  var letrasYCifraFemenino = moduloNumeros.letrasYCifraFemenino;
 
   var moduloFechas = require('./fechas.js');
   var formatearFecha = moduloFechas.formatearFecha;
@@ -215,7 +216,7 @@ function vinetasDeCondicionesTravel(entrada, pais) {
   }
 
   if (tieneValorTravel(entrada.nochesMinimas)) {
-    vinetas.push('La reserva de hotel debe ser de ' + letrasYCifra(entrada.nochesMinimas) + ' noches o más.');
+    vinetas.push('La reserva de hotel debe ser de ' + letrasYCifraFemenino(entrada.nochesMinimas) + ' noches o más.');
   }
 
   if (tieneValorTravel(entrada.diasAlquilerMinimo) && tieneValorTravel(entrada.diasAlquilerMaximo)) {
@@ -290,7 +291,7 @@ function textoLimiteOrdenesTravel(entrada) {
   if (!tieneValorTravel(entrada.limitePorUsuario)) return '';
 
   var cuantas = Number(entrada.limitePorUsuario);
-  var enPalabras = cuantas === 1 ? 'en una (1) orden' : 'hasta en ' + letrasYCifra(cuantas) + ' órdenes';
+  var enPalabras = cuantas === 1 ? 'en una (1) orden' : 'hasta en ' + letrasYCifraFemenino(cuantas) + ' órdenes';
   return 'cada Usuario/Consumidor podrá recibir el Beneficio ' + enPalabras + ' durante la vigencia de la Campaña.';
 }
 
@@ -298,20 +299,20 @@ function textoLimiteOrdenesTravel(entrada) {
 function textoAgotamientoVigenciaTravel(entrada, pais) {
   if (entrada.tipo === 'descuento_travel') {
     if (entrada.sinUnidades || !tieneValorTravel(entrada.unidades)) return '';
-    return 'las ' + letrasYCifra(entrada.unidades) + ' unidades con descuento';
+    return 'las ' + letrasYCifraFemenino(entrada.unidades) + ' unidades con descuento';
   }
 
   if (!tieneValorTravel(entrada.presupuesto)) return '';
   var presupuesto = 'el presupuesto disponible de **' + cantidadCreditos(entrada.presupuesto, pais) + '**';
   if (entrada.sinMaxOrdenes || !tieneValorTravel(entrada.maxOrdenes)) return presupuesto;
-  return presupuesto + ' o el máximo de ' + letrasYCifra(entrada.maxOrdenes) + ' órdenes con Beneficio';
+  return presupuesto + ' o el máximo de ' + letrasYCifraFemenino(entrada.maxOrdenes) + ' órdenes con Beneficio';
 }
 
 /** ORACION: el limite de toda la campana. */
 function textoLimiteCampanaTravel(entrada, pais) {
   if (entrada.tipo === 'descuento_travel') {
     if (entrada.sinUnidades || !tieneValorTravel(entrada.unidades)) return '';
-    return 'La Campaña cuenta con ' + letrasYCifra(entrada.unidades) +
+    return 'La Campaña cuenta con ' + letrasYCifraFemenino(entrada.unidades) +
       ' unidades con descuento. Una vez agotadas, la Campaña finalizará automáticamente, aunque no haya terminado su vigencia.';
   }
 
@@ -323,7 +324,7 @@ function textoLimiteCampanaTravel(entrada, pais) {
       '. Una vez agotado, la Campaña finalizará automáticamente, aunque no haya terminado su vigencia.';
   }
   return 'La Campaña tiene un presupuesto total de ' + presupuesto + ' y un máximo de ' +
-    letrasYCifra(entrada.maxOrdenes) +
+    letrasYCifraFemenino(entrada.maxOrdenes) +
     ' órdenes con Beneficio. Cuando se agote cualquiera de los dos, la Campaña finalizará automáticamente, aunque no haya terminado su vigencia.';
 }
 
@@ -537,10 +538,10 @@ function textoNotasDeModificacion(entrada, pais) {
       cambios.push('el presupuesto de la Campaña se amplía a **' + cantidadCreditos(nota.presupuesto, pais) + '**');
     }
     if (tieneValorTravel(nota.maxOrdenes)) {
-      cambios.push('el máximo de órdenes con Beneficio se amplía a ' + letrasYCifra(nota.maxOrdenes));
+      cambios.push('el máximo de órdenes con Beneficio se amplía a ' + letrasYCifraFemenino(nota.maxOrdenes));
     }
     if (tieneValorTravel(nota.unidades)) {
-      cambios.push('las unidades con descuento se amplían a ' + letrasYCifra(nota.unidades));
+      cambios.push('las unidades con descuento se amplían a ' + letrasYCifraFemenino(nota.unidades));
     }
     if (cambios.length === 0) continue;
 

@@ -345,3 +345,44 @@ columna que ya esté, porque eso desalinearía todo el histórico.
 
 Arriba de la lista: abrir otra vez un documento ya generado, marcar una campaña como
 publicada, y arrancar una nueva copiando los datos de otra con "Usar como base".
+
+## 16 de septiembre · noche · Rappi Travel, bloques 1 a 4 y 6
+
+Trabajo en la rama `claude/travel`, **sin subir a main**, porque cada push a main
+dispara el despliegue y pediste no desplegar.
+
+### Lo que quedó funcionando
+
+| Bloque | Estado |
+|---|---|
+| 1. Datos | Listo. Bloque `travel` en la fila CO, `data/categorias_travel.json` con las ocho categorías. |
+| 2. Motor y validaciones | Listo. Dos esquemas, veinticinco textos derivados, dieciséis validaciones. |
+| 3. Modelos | Listo. `cashback_travel`, `descuento_travel` y trece bloques propios de Travel. |
+| 4. Interfaz | **A medias.** Las preguntas y el filtro de Travel están escritos; falta conectarlos a las pantallas. |
+| 5. Historial | **No empezado.** Ampliar una campaña en curso es una función nueva del servidor. |
+| 6. Pruebas | Listo. TV01 a TV14, con su salida esperada exacta. 249 pruebas en verde. |
+| 7. Documentación | Listo. |
+
+### Lo que no se puede generar todavía, y está bien
+
+**Colombia no genera ni un T&C de Travel hoy**, a propósito: faltan el nombre y el enlace
+de la política de datos de Travel Moustache. La herramienta lo dice en palabras y manda a
+Legal. Las pruebas usan valores de prueba y lo dejan escrito en el archivo. Es el primer
+dato que necesito de Juan.
+
+### Un defecto de redacción que salió al armarlo
+
+"Doscientos órdenes" estaba mal: son "doscientas". Los modelos de delivery solo hablan de
+pedidos y de Créditos, que son masculinos, así que nunca se había visto. Travel trae
+órdenes, unidades y noches. Arreglado en `src/core/numeros.js` con su prueba, sin cambiar
+ni una letra de los documentos de delivery.
+
+### Cómo verlo
+
+```
+node -e "console.log(require('fs').readFileSync('pruebas/salidas_esperadas/TV01.txt','utf8'))"
+```
+
+Los siete documentos que generan están en `pruebas/salidas_esperadas/TV01.txt` a
+`TV07.txt`. Las diecisiete decisiones que necesito de Juan están en
+`docs/PENDIENTES_LEGAL.md`, sección "Rappi Travel".
