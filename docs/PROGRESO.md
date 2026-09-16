@@ -5,8 +5,8 @@
 | 0 | cerrado | `npm test` (32 pruebas), `npm run build` y el flujo de Actions en verde | Crear el despliegue de la web app (lo hace el disparo manual) |
 | 1 | listo, en punto de control A | `npm test` (103 pruebas) y `npm run previsualizar` | Revisar 3 textos y `docs/PENDIENTES_LEGAL.md` |
 | 2 | listo, falta verificar en Google | `npm test` (157 pruebas) | Correr `setup()` y completar las propiedades |
-| 3 | pendiente | | |
-| 4 | pendiente | | |
+| 3 | listo | `npm run demo` y abrir `demo/index.html` | Revisar las capturas y los textos |
+| 4 | pendiente | | Falta el despliegue versionado, que lo dispara Juan |
 
 ## Bloque 0 · Repo, build y despliegue
 
@@ -144,3 +144,48 @@ el documento, muestra el texto final. No toca Drive, ni el Sheet, ni manda corre
 
 Lo único que no se puede probar en Node: que Google acepte de verdad las llamadas.
 Está en `docs/REVISION_MANANA.md`.
+
+## Bloque 3 · La interfaz
+
+### Qué quedó
+
+Preguntas simples a la izquierda, el T&C escribiéndose solo a la derecha. Lo que
+falta aparece como un espacio en blanco gris que dice qué pregunta lo llena; al
+responder, el espacio se rellena con la frase legal de verdad y destella. Es el
+mismo motor de `src/core`, así que lo que ve el comercial es lo que sale.
+
+| Archivo | Qué hace |
+|---|---|
+| `src/client/js/10-util.js` | DOM, iconos SVG, la corona, formatos |
+| `src/client/js/20-estado.js` | Estado y borrador en el navegador |
+| `src/client/js/30-servidor.js` | Puente con Apps Script o con el servidor simulado |
+| `src/client/js/40-documento.js` | La hoja: dibuja el documento y resalta lo que cambió |
+| `src/client/js/50-campos.js` | Una pregunta con todo lo que exige el estándar |
+| `src/client/js/60-flujo.js` | Inicio, filtro de entrada y pantalla de Legal |
+| `src/client/js/62-pasos.js` | El formulario por pasos |
+| `src/client/js/64-tiendas.js` | La lista de tiendas del Cashback Day, con pegar desde Excel |
+| `src/client/js/66-resumen.js` | Resumen y pantalla final |
+| `src/client/js/68-pantallas.js` | Historial, Ayuda y Administración |
+| `src/client/js/70-app.js` | Arranque y navegación |
+
+### Cómo probarlo
+
+```
+npm run demo
+```
+
+Y abrir `demo/index.html` con doble clic. Es la aplicación completa, con el motor
+real y un servidor simulado en memoria. No toca nada de producción.
+
+Las capturas están en `docs/capturas/`, con su índice.
+
+### Lo que encontré mirando la aplicación funcionando
+
+Seis defectos que no aparecían en las pruebas y sí en el navegador. Están
+listados en el mensaje del commit y los importantes en `docs/DECISIONES.md`. El
+más serio: los valores por defecto hacían que la interfaz **saltara preguntas que
+el comercial nunca veía**.
+
+### Qué necesito de Juan
+
+Todo está en `docs/REVISION_MANANA.md`.

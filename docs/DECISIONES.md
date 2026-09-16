@@ -128,3 +128,47 @@ identificador hasta que la fila queda escrita.
 
 **El enlace publicado se valida contra promos.rappi.com.** Cualquier otro dominio
 significa que el T&C no quedó donde la campaña lo referencia.
+
+## Bloque 3
+
+**Cada archivo de la interfaz va envuelto en una función.** Al concatenar,
+`src/client/js/*.js` compartiría un solo ámbito y dos archivos con `var estado`
+se pisarían: el segundo dejaba al primero apuntando a otra cosa, con errores
+imposibles de leer. El build los envuelve en `(function () { ... })()`. Se
+comunican por `window.RM`, así que el aislamiento no les quita nada. Los archivos
+de `src/core` NO se envuelven: Apps Script los necesita globales.
+
+**El build falla si dos archivos solo se distinguen por mayúsculas.** Había
+`dist/documento.js` (core) y `dist/Documento.js` (servidor). En Apps Script uno
+pisaría al otro sin avisar. Los del servidor se llaman ahora
+`AdaptadorDocumento.js` y `EnvioCorreo.js`, y el build revisa las colisiones.
+
+**Preseleccionar no es responder.** Un valor por defecto deja la opción marcada,
+pero la pregunta se muestra igual y el comercial tiene que pasar por ella. Antes
+la interfaz saltaba esas preguntas y el comercial nunca veía decisiones que
+tienen efecto legal, como cuándo se cargan los Créditos. El estado lleva
+`respondidas`, que se llena solo cuando el comercial responde o avanza.
+
+**La vista previa usa el motor real, no una aproximación.**
+`renderizarVistaPrevia` es el mismo pipeline de `renderizar`, salvo que deja un
+hueco marcado donde falta un dato. Hay prueba de que con el formulario completo
+las dos salidas son idénticas carácter por carácter. Si se hubiera escrito una
+vista previa aparte, tarde o temprano mostraría algo distinto de lo que se genera.
+
+**Todo dato del usuario entra al DOM como texto.** No hay un solo `innerHTML` con
+datos en toda la interfaz; el ayudante `crear()` lanza un error si alguien
+intenta pasarle HTML. Un nombre de campaña con una etiqueta dentro se ve como
+texto, no se ejecuta.
+
+**La declaración vive solo en el resumen.** Estaba en el formulario y en el
+resumen, y el flujo se atascaba en el paso de confirmación. Va donde el comercial
+ve todo junto antes de generar, que es donde tiene sentido declarar.
+
+**El reemplazo de cadenas al generar la demostración va como función.** El código
+que se inyecta contiene secuencias de reemplazo con el signo de dólar, y pasarlas
+como cadena hace que JavaScript las interprete como patrones y corrompa el
+archivo sin avisar. Pasó de verdad y costó encontrarlo.
+
+**Playwright no es dependencia del proyecto.** Las capturas se sacan con un
+recorrido que vive fuera del repositorio. `npm test` sigue sin dependencias
+externas, como pide CLAUDE.md.
