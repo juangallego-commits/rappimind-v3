@@ -46,7 +46,7 @@ test('setup crea la base, la carpeta, las pestañas y los países', () => {
   assert.ok(resumen.carpetaId);
   assert.strictEqual(leerPaises().length, 9);
   assert.strictEqual(paisPorCodigo(leerPaises(), 'CO').estado, 'activo');
-  assert.deepStrictEqual(paisPorCodigo(leerPaises(), 'CO').modelos, ['cashback', 'carrera_compras', 'cashback_day']);
+  assert.deepStrictEqual(paisPorCodigo(leerPaises(), 'CO').modelos, ['cashback', 'carrera_compras', 'cashback_day', 'cashback_travel', 'descuento_travel']);
   assert.ok(Object.keys(mundo.carpetas).length >= 10, 'faltan carpetas por país');
 });
 

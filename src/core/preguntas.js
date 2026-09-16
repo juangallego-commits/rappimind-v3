@@ -55,6 +55,34 @@ function p(definicion) {
   return definicion;
 }
 
+/* Opciones que Rappi Travel formula distinto. Ver docs/MODELO_BASE_TRAVEL.md. */
+
+var OPCIONES_SEGMENTO_TRAVEL = [
+  { valor: 'todos', etiqueta: 'Todos los usuarios', nota: 'Cualquier persona mayor de edad.' },
+  { valor: 'pro', etiqueta: 'Pro y Pro Black', nota: 'Con la suscripción activa.' },
+  { valor: 'pro_black', etiqueta: 'Solo Pro Black', nota: 'El nivel más alto de la suscripción.' },
+  { valor: 'pro_o_rappicard', etiqueta: 'Pro, o quien pague con RappiCard', nota: 'Dos caminos para entrar a la campaña.' },
+  { valor: 'sin_pro', etiqueta: 'Solo quienes no tienen Pro', nota: 'Campañas para atraer suscriptores nuevos.' },
+  { valor: 'primera_compra', etiqueta: 'Primera compra en Travel', nota: 'Quien nunca ha comprado un viaje en Rappi.' },
+];
+
+var OPCIONES_PAGO_TRAVEL = [
+  { valor: 'digitales', etiqueta: 'Digitales, excepto efectivo', nota: 'Lo habitual en Travel: tarjetas y billeteras.' },
+  { valor: 'rappicard', etiqueta: 'Solo RappiCard', nota: 'La orden se paga entera con la tarjeta de Rappi.' },
+];
+
+var OPCIONES_CARGA_TRAVEL = [
+  { valor: 'al_confirmarse', etiqueta: 'Al confirmarse la reserva', nota: 'Apenas el proveedor emite el tiquete o la reserva.' },
+  { valor: 'dias_calendario', etiqueta: 'Unos días calendario después del fin', nota: 'Lo más usado. Cuenta todos los días.' },
+  { valor: 'dias_habiles', etiqueta: 'Unos días hábiles después del fin', nota: 'No cuenta fines de semana ni festivos.' },
+];
+
+var OPCIONES_REDENCION_TRAVEL = [
+  { valor: 'categorias', etiqueta: 'Solo en algunas categorías de Travel', nota: 'Tú eliges cuáles. Es lo más usado.' },
+  { valor: 'todo_travel', etiqueta: 'En todo Travel', nota: 'Cualquier categoría de viajes.' },
+  { valor: 'travel_y_plataforma', etiqueta: 'En Travel y en toda la app', nota: 'También en delivery. Hace la campaña más cara.' },
+];
+
 var PREGUNTAS = {
   // --- Tu campaña ---------------------------------------------------------
 
@@ -206,6 +234,19 @@ var PREGUNTAS = {
       vacio: 'Escribe el porcentaje que devuelves, sin el signo de porcentaje.',
       rango: 'El porcentaje va de 1 a 100. Si necesitas varios porcentajes o un rango, eso es otra campaña: escríbele a Legal.',
     },
+    variantes: {
+      cashback_travel: {
+        pregunta: '¿Qué porcentaje de la orden devuelves?',
+        ayuda: 'Sin el signo de porcentaje. En Travel lo más usado va de 5 a 20.',
+        placeholders: ['TEXTO_BENEFICIO_TRAVEL'],
+      },
+      descuento_travel: {
+        pregunta: '¿Cuál es el porcentaje de descuento?',
+        ayuda: 'Sin el signo. Si cambia según el producto, escribe aquí el más alto.',
+        porQue: 'Es el descuento que ve el usuario en el precio. Si cambia según el producto, este es el máximo y el documento lo dice junto con el mínimo.',
+        placeholders: ['TEXTO_DESCUENTO_TRAVEL'],
+      },
+    },
   }),
 
   tope: p({
@@ -220,6 +261,14 @@ var PREGUNTAS = {
       vacio: 'Escribe el máximo de Créditos que recibe una persona por pedido.',
       cero: 'El tope tiene que ser mayor que cero.',
       mayorQuePresupuesto: 'El tope por pedido es mayor que el presupuesto total. Con eso, el primer pedido se lleva toda la campaña. Revisa los dos números.',
+    },
+    variantes: {
+      cashback_travel: {
+        pregunta: '¿Qué es lo máximo que recibe por orden?',
+        ayuda: 'Aunque la orden sea grande, no recibe más de esto. En Travel va de 50.000 a 300.000.',
+        porQue: 'Sin tope, una sola reserva grande se lleva el presupuesto entero. El documento trae además un ejemplo con el valor desde el cual se recibe el tope.',
+        placeholders: ['TEXTO_BENEFICIO_TRAVEL'],
+      },
     },
   }),
 
@@ -280,6 +329,10 @@ var PREGUNTAS = {
     opcional: true,
     placeholders: ['TEXTO_MINIMO_COMPRA', 'TEXTO_UMBRAL'],
     errores: { cero: 'Si no quieres exigir un mínimo, deja el campo vacío.' },
+    variantes: {
+      cashback_travel: { paso: 'condiciones_travel', placeholders: ['TEXTO_CONDICIONES_TRAVEL'] },
+      descuento_travel: { paso: 'condiciones_travel', placeholders: ['TEXTO_CONDICIONES_TRAVEL'] },
+    },
   }),
 
   condiciones: p({
@@ -313,6 +366,14 @@ var PREGUNTAS = {
     ],
     placeholders: ['TEXTO_CARGA'],
     errores: { vacio: 'Dinos cuándo le llegan los Créditos al usuario.' },
+    variantes: {
+      cashback_travel: {
+        pregunta: '¿Cuándo le llegan los Créditos?',
+        ayuda: 'Al confirmarse la reserva, o unos días después de que termine la campaña.',
+        opciones: OPCIONES_CARGA_TRAVEL,
+        placeholders: ['TEXTO_CARGA_TRAVEL'],
+      },
+    },
   }),
 
   fechaCarga: p({
@@ -352,6 +413,12 @@ var PREGUNTAS = {
       vacio: 'Escribe cuántos días duran los Créditos.',
       rango: 'Los días van de 1 a 365.',
     },
+    variantes: {
+      cashback_travel: {
+        ayuda: 'En las campañas de Travel lo más usado son 15 o 30 días.',
+        placeholders: ['TEXTO_VIGENCIA_CREDITOS'],
+      },
+    },
   }),
 
   fechaFinRedencion: p({
@@ -380,6 +447,15 @@ var PREGUNTAS = {
     ],
     placeholders: ['TEXTO_LUGAR_REDENCION'],
     errores: { vacio: 'Dinos dónde puede gastar los Créditos.' },
+    variantes: {
+      cashback_travel: {
+        pregunta: '¿Dónde puede gastar los Créditos?',
+        ayuda: 'Lo normal es limitarlos a algunas categorías de Travel.',
+        porQue: 'Define dónde vale el saldo. En las campañas reales casi nunca se abren a Vuelos, porque ahí el margen es más bajo.',
+        opciones: OPCIONES_REDENCION_TRAVEL,
+        placeholders: ['TEXTO_REDENCION_TRAVEL'],
+      },
+    },
   }),
 
   secciones: p({
@@ -390,6 +466,493 @@ var PREGUNTAS = {
     multiple: true,
     placeholders: ['TEXTO_LUGAR_REDENCION'],
     errores: { vacio: 'Marca al menos una sección.' },
+  }),
+
+  // --- Rappi Travel -------------------------------------------------------
+  //
+  // Las preguntas de los dos tipos de Travel. La especificacion esta en
+  // docs/MODELO_BASE_TRAVEL.md, seccion 4. Los ejemplos salen de las 141
+  // solicitudes reales de Travel (docs/INVESTIGACION_TRAVEL.md, seccion 4).
+
+  marcaAliado: p({
+    paso: 'organizador',
+    pregunta: '¿De qué marca son los productos?',
+    ayuda: 'Como la ve el usuario en la app. Por ejemplo: JetSMART. Si participan todas, déjalo vacío.',
+    porQue: 'El documento dice de qué marca son los productos que participan. Si lo dejas vacío, participan todos los de las categorías que elijas.',
+    ejemplo: 'JetSMART',
+    opcional: true,
+    placeholders: ['TEXTO_PRODUCTOS_TRAVEL'],
+    errores: {},
+  }),
+
+  categorias: p({
+    paso: 'productos_travel',
+    pregunta: '¿Qué categorías de Travel participan?',
+    ayuda: 'Las mismas de la app. Puedes marcar varias. Por ejemplo: Vuelos y Paquetes.',
+    porQue: 'Los nombres salen entre comillas en el documento, así que tienen que coincidir con los de la app. De esto también dependen las preguntas que vienen: los vuelos tienen condiciones que los hoteles no.',
+    multiple: true,
+    placeholders: ['TEXTO_PRODUCTOS_TRAVEL'],
+    errores: { vacio: 'Marca al menos una categoría.' },
+  }),
+
+  ambito: p({
+    paso: 'productos_travel',
+    pregunta: '¿Los viajes son nacionales o internacionales?',
+    ayuda: 'Si aplica a los dos, elige la tercera opción y el documento no lo menciona.',
+    porQue: 'Define si el beneficio cubre un vuelo a Medellín, uno a Madrid o los dos. Si no queda escrito, el usuario lo puede exigir en cualquiera.',
+    avanzaSola: true,
+    porDefecto: 'ambos',
+    opciones: [
+      { valor: 'nacional', etiqueta: 'Solo nacionales', nota: 'Origen y destino dentro del país.' },
+      { valor: 'internacional', etiqueta: 'Solo internacionales', nota: 'Origen o destino fuera del país.' },
+      { valor: 'ambos', etiqueta: 'Nacionales e internacionales', nota: 'Sin restricción de destino.' },
+    ],
+    placeholders: ['TEXTO_AMBITO_TRAVEL'],
+    errores: { vacio: 'Dinos si los viajes son nacionales, internacionales o los dos.' },
+  }),
+
+  destinos: p({
+    paso: 'productos_travel',
+    pregunta: '¿Aplica solo a algunos destinos?',
+    ayuda: 'Es opcional. Ciudades o países separados por comas. Por ejemplo: España, México.',
+    porQue: 'Si la campaña solo cubre unos destinos, tienen que quedar escritos. Si lo dejas vacío, el beneficio aplica a cualquier destino del ámbito que elegiste.',
+    ejemplo: 'España, Estados Unidos, México',
+    opcional: true,
+    placeholders: ['TEXTO_DESTINOS_TRAVEL'],
+    errores: {},
+  }),
+
+  hotelesModo: p({
+    paso: 'productos_travel',
+    pregunta: '¿Qué hoteles participan?',
+    ayuda: 'Si son pocos, los escribes en la siguiente pregunta.',
+    porQue: 'El usuario tiene que poder saber, antes de reservar, si ese hotel entra en la campaña. Si el documento no lo dice, entra cualquiera.',
+    avanzaSola: true,
+    porDefecto: 'todos',
+    opciones: [
+      { valor: 'todos', etiqueta: 'Todos', nota: 'Todos los de las categorías de alojamiento que marcaste.' },
+      { valor: 'algunos', etiqueta: 'Solo algunos', nota: 'Los nombras uno por uno.' },
+      { valor: 'etiqueta', etiqueta: 'Los que tengan la etiqueta de la campaña', nota: 'El usuario los identifica en la app.' },
+    ],
+    placeholders: ['TEXTO_HOTELES_TRAVEL'],
+    errores: { vacio: 'Dinos qué hoteles participan.' },
+  }),
+
+  hotelesLista: p({
+    paso: 'productos_travel',
+    pregunta: '¿Cuáles hoteles?',
+    ayuda: 'Sepáralos con comas, como aparecen en la app.',
+    porQue: 'Los nombres salen escritos en el documento. Si falta uno, el usuario que reserve ahí no recibe el beneficio.',
+    ejemplo: 'Hotel Estelar Santamar, Decameron Galeón',
+    placeholders: ['TEXTO_HOTELES_TRAVEL'],
+    errores: { vacio: 'Escribe al menos un hotel, o vuelve y elige que participan todos.' },
+  }),
+
+  aerolinea: p({
+    paso: 'condiciones_travel',
+    pregunta: '¿Aplica solo a una aerolínea?',
+    ayuda: 'Es opcional. Escríbela como aparece en la app. Por ejemplo: Avianca.',
+    porQue: 'Casi todas las campañas de vuelos las paga una aerolínea y aplican solo a sus vuelos. Si lo dejas vacío, aplica a cualquier aerolínea.',
+    ejemplo: 'Avianca',
+    opcional: true,
+    placeholders: ['TEXTO_CONDICIONES_TRAVEL'],
+    errores: {},
+  }),
+
+  soloOperados: p({
+    paso: 'condiciones_travel',
+    pregunta: '¿Solo vuelos que ella misma opere?',
+    ayuda: 'Márcalo si quedan fuera los vuelos en código compartido con otra aerolínea.',
+    porQue: 'Una aerolínea vende vuelos que opera otra compañía. Si la campaña no los cubre y el documento no lo dice, el usuario los puede reclamar.',
+    opcional: true,
+    placeholders: ['TEXTO_CONDICIONES_TRAVEL'],
+    errores: {},
+  }),
+
+  trayecto: p({
+    paso: 'condiciones_travel',
+    pregunta: '¿Qué trayectos aplican?',
+    ayuda: 'Muchas campañas de aerolínea exigen ida y regreso.',
+    porQue: 'Si la campaña exige ida y regreso y el documento no lo dice, quien compre solo ida puede reclamar el beneficio.',
+    avanzaSola: true,
+    porDefecto: 'cualquiera',
+    opciones: [
+      { valor: 'cualquiera', etiqueta: 'Cualquiera', nota: 'Ida sola, ida y regreso, lo que sea.' },
+      { valor: 'ida_y_regreso', etiqueta: 'Solo ida y regreso', nota: 'No aplica a un tiquete de ida sola.' },
+      { valor: 'solo_ida', etiqueta: 'Solo ida', nota: 'No aplica a un tiquete de ida y regreso.' },
+    ],
+    placeholders: ['TEXTO_CONDICIONES_TRAVEL'],
+    errores: { vacio: 'Dinos qué trayectos aplican.' },
+  }),
+
+  conteoIdaRegreso: p({
+    paso: 'condiciones_travel',
+    pregunta: '¿Una ida y regreso cuenta como una orden?',
+    ayuda: 'Es lo habitual: una compra, una orden, un beneficio.',
+    porQue: 'De esto depende cuántas veces se aplica el tope y cuánto consume del presupuesto una sola compra. Si el documento no lo dice, el usuario puede sostener que son dos.',
+    avanzaSola: true,
+    porDefecto: 'una_orden',
+    opciones: [
+      { valor: 'una_orden', etiqueta: 'Sí, cuenta como una', nota: 'El beneficio se calcula sobre el total de la compra.' },
+      { valor: 'por_trayecto', etiqueta: 'No, cada trayecto cuenta aparte', nota: 'El beneficio se calcula sobre cada trayecto.' },
+    ],
+    placeholders: ['TEXTO_CONTEO_IDA_REGRESO_TRAVEL'],
+    errores: { vacio: 'Dinos cómo se cuenta una compra de ida y regreso.' },
+  }),
+
+  clasesExcluidas: p({
+    paso: 'condiciones_travel',
+    pregunta: '¿Hay clases tarifarias excluidas?',
+    ayuda: 'Es opcional. Una letra cada una, separadas por comas. Por ejemplo: A, F.',
+    porQue: 'Las aerolíneas excluyen sus tarifas más baratas o promocionales. Si no quedan escritas, el usuario que compre esa clase puede reclamar.',
+    ejemplo: 'A, F',
+    opcional: true,
+    placeholders: ['TEXTO_CONDICIONES_TRAVEL'],
+    errores: {
+      formato: 'Cada clase tarifaria es una sola letra, separada por comas. Por ejemplo: A, F.',
+    },
+  }),
+
+  soloOrigenPais: p({
+    paso: 'condiciones_travel',
+    pregunta: '¿Solo vuelos que salgan del país?',
+    ayuda: 'Márcalo si no aplica a vuelos que empiezan en el exterior.',
+    porQue: 'Un vuelo Madrid a Bogotá también se vende en la app. Si la campaña no lo cubre, tiene que decirlo.',
+    opcional: true,
+    placeholders: ['TEXTO_CONDICIONES_TRAVEL'],
+    errores: {},
+  }),
+
+  anticipacionDias: p({
+    paso: 'condiciones_travel',
+    pregunta: '¿Hay que comprar con anticipación?',
+    ayuda: 'Es opcional. Cuántos días antes del viaje. Por ejemplo: 15.',
+    porQue: 'Si la campaña exige comprar con anticipación y el documento no lo dice, el usuario que compre el mismo día puede reclamar el beneficio.',
+    ejemplo: '15',
+    opcional: true,
+    placeholders: ['TEXTO_CONDICIONES_TRAVEL'],
+    errores: { rango: 'Los días de anticipación van de 1 a 365.' },
+  }),
+
+  periodoViajeInicio: p({
+    paso: 'condiciones_travel',
+    pregunta: '¿El viaje tiene que ser desde cierta fecha?',
+    ayuda: 'Es opcional, y no es lo mismo que la vigencia: es cuándo viaja, no cuándo compra.',
+    porQue: 'La campaña puede correr en octubre para viajes de diciembre. Son dos fechas distintas y el documento las separa.',
+    opcional: true,
+    placeholders: ['TEXTO_CONDICIONES_TRAVEL'],
+    errores: {},
+  }),
+
+  periodoViajeFin: p({
+    paso: 'condiciones_travel',
+    pregunta: '¿Y hasta qué fecha?',
+    ayuda: 'El último día en que se puede viajar o usar el servicio.',
+    porQue: 'Cierra el periodo de viaje. Sin esta fecha, el periodo queda abierto y el usuario lo puede usar cuando quiera.',
+    placeholders: ['TEXTO_CONDICIONES_TRAVEL'],
+    errores: {
+      vacio: 'Escribe hasta cuándo se puede viajar.',
+      orden: 'El periodo de viaje no puede terminar antes de empezar.',
+    },
+  }),
+
+  ambasFechasDentro: p({
+    paso: 'condiciones_travel',
+    pregunta: '¿Los dos trayectos dentro de ese periodo?',
+    ayuda: 'Márcalo si el regreso también tiene que caer dentro de las fechas.',
+    porQue: 'Sin esta regla, alguien vuela dentro del periodo y regresa meses después. Si el aliado no lo acepta, tiene que quedar escrito.',
+    opcional: true,
+    placeholders: ['TEXTO_CONDICIONES_TRAVEL'],
+    errores: {},
+  }),
+
+  fechasExcluidas: p({
+    paso: 'condiciones_travel',
+    pregunta: '¿Hay fechas en las que no aplica?',
+    ayuda: 'Es opcional. En formato año-mes-día, separadas por comas. Por ejemplo: 2026-12-24, 2026-12-31.',
+    porQue: 'Los hoteles y las rentadoras suelen excluir puentes y fin de año. Si no queda escrito, el usuario puede reclamar esas fechas.',
+    ejemplo: '2026-12-24, 2026-12-31',
+    opcional: true,
+    placeholders: ['TEXTO_CONDICIONES_TRAVEL'],
+    errores: {
+      formato: 'Las fechas van en formato año-mes-día, separadas por comas. Por ejemplo: 2026-12-24.',
+      fuera: 'Las fechas excluidas tienen que estar dentro del periodo de viaje.',
+    },
+  }),
+
+  nochesMinimas: p({
+    paso: 'condiciones_travel',
+    pregunta: '¿Hay un mínimo de noches?',
+    ayuda: 'Es opcional. Por ejemplo: 2.',
+    porQue: 'Si el hotel exige dos noches y el documento no lo dice, quien reserve una puede reclamar el beneficio.',
+    ejemplo: '2',
+    opcional: true,
+    placeholders: ['TEXTO_CONDICIONES_TRAVEL'],
+    errores: { rango: 'El mínimo de noches va de 1 a 365.' },
+  }),
+
+  diasAlquilerMinimo: p({
+    paso: 'condiciones_travel',
+    pregunta: '¿Hay un mínimo de días de alquiler?',
+    ayuda: 'Es opcional. Por ejemplo: 3.',
+    porQue: 'Las rentadoras suelen pedir un mínimo de días. Si no queda escrito, no se puede exigir después.',
+    ejemplo: '3',
+    opcional: true,
+    placeholders: ['TEXTO_CONDICIONES_TRAVEL'],
+    errores: { rango: 'El mínimo de días va de 1 a 365.' },
+  }),
+
+  diasAlquilerMaximo: p({
+    paso: 'condiciones_travel',
+    pregunta: '¿Y un máximo?',
+    ayuda: 'El alquiler más largo que entra en la campaña. Por ejemplo: 15.',
+    porQue: 'Cierra el rango. Un alquiler de dos meses puede llevarse el beneficio entero si no hay tope de días.',
+    ejemplo: '15',
+    placeholders: ['TEXTO_CONDICIONES_TRAVEL'],
+    errores: {
+      vacio: 'Escribe el máximo de días de alquiler.',
+      orden: 'El mínimo de días no puede ser mayor que el máximo.',
+    },
+  }),
+
+  sinCompraMinima: p({
+    paso: 'condiciones_travel',
+    respondidoPor: 'compraMinima',
+    pregunta: null,
+    placeholders: ['TEXTO_CONDICIONES_TRAVEL'],
+    errores: {},
+  }),
+
+  otraCondicion: p({
+    paso: 'condiciones_travel',
+    pregunta: '¿El aliado pide alguna otra condición?',
+    ayuda: 'Cualquier requisito que no te hayamos preguntado ya.',
+    porQue: 'Si el aliado exige algo que este documento no cubre, el T&C se queda corto y el usuario puede reclamar lo que no quedó escrito. En ese caso la campaña la redacta Legal.',
+    avanzaSola: true,
+    porDefecto: 'no',
+    opciones: [
+      { valor: 'no', etiqueta: 'No, nada más', nota: 'Todo lo que pide el aliado ya lo respondiste.' },
+      { valor: 'si', etiqueta: 'Sí, pide algo más', nota: 'Te llevamos al formulario de Legal, que la redacta a mano.' },
+    ],
+    placeholders: [],
+    errores: { vacio: 'Dinos si el aliado pide alguna otra condición.' },
+  }),
+
+  formaBeneficio: p({
+    paso: 'beneficio',
+    pregunta: '¿Cómo se calcula el cashback?',
+    ayuda: 'Un porcentaje de lo que pagó, o siempre la misma cantidad.',
+    porQue: 'Cambia la cláusula del beneficio entera. Con porcentaje hace falta un tope; con monto fijo, no.',
+    avanzaSola: true,
+    porDefecto: 'porcentaje',
+    opciones: [
+      { valor: 'porcentaje', etiqueta: 'Un porcentaje de lo que pagó', nota: 'Lo más usado. Necesita un tope.' },
+      { valor: 'monto_fijo', etiqueta: 'Una cantidad fija de Créditos', nota: 'Todos reciben lo mismo.' },
+    ],
+    placeholders: ['TEXTO_BENEFICIO_TRAVEL'],
+    errores: { vacio: 'Dinos cómo se calcula el cashback.' },
+  }),
+
+  sinTope: p({
+    paso: 'beneficio',
+    respondidoPor: 'tope',
+    pregunta: null,
+    placeholders: ['TEXTO_BENEFICIO_TRAVEL'],
+    errores: {},
+  }),
+
+  montoFijo: p({
+    paso: 'beneficio',
+    pregunta: '¿Cuántos Créditos recibe por orden?',
+    ayuda: 'La misma cantidad para todos. En las campañas reales va de 50.000 a 300.000.',
+    porQue: 'Es el beneficio completo: no depende de cuánto pagó el usuario. Sale escrito en letras y en cifra.',
+    ejemplo: '100000',
+    moneda: true,
+    placeholders: ['TEXTO_BENEFICIO_TRAVEL'],
+    errores: {
+      vacio: 'Escribe cuántos Créditos recibe una persona por orden.',
+      cero: 'Los Créditos por orden tienen que ser más que cero.',
+      mayorQuePresupuesto: 'Los Créditos por orden son más que el presupuesto total. Revisa los dos números.',
+    },
+  }),
+
+  limitePorUsuario: p({
+    paso: 'beneficio',
+    pregunta: '¿Cuántas órdenes puede beneficiar una persona?',
+    ayuda: 'En las campañas de Travel lo más usado son 2.',
+    porQue: 'Sin límite, unos pocos usuarios consumen el presupuesto. Con límite, el beneficio llega a más gente.',
+    ejemplo: '2',
+    porDefecto: 2,
+    placeholders: ['TEXTO_LIMITE_ORDENES_TRAVEL'],
+    errores: {
+      vacio: 'Escribe cuántas órdenes con beneficio puede tener una persona.',
+      rango: 'Tiene que ser al menos una orden.',
+    },
+  }),
+
+  maxOrdenes: p({
+    paso: 'beneficio',
+    pregunta: '¿Hay un máximo de órdenes en la campaña?',
+    ayuda: 'Cuando se llegue a ese número, la campaña termina sola. En Travel es habitual.',
+    porQue: 'Es un segundo freno además del presupuesto. El documento dice que la campaña termina al agotarse cualquiera de los dos.',
+    ejemplo: '33',
+    placeholders: ['TEXTO_LIMITE_CAMPANA_TRAVEL'],
+    errores: {
+      vacio: 'Escribe el máximo de órdenes, o marca que no hay máximo.',
+      rango: 'Tiene que ser al menos una orden.',
+    },
+  }),
+
+  sinMaxOrdenes: p({
+    paso: 'beneficio',
+    respondidoPor: 'maxOrdenes',
+    pregunta: null,
+    placeholders: ['TEXTO_LIMITE_CAMPANA_TRAVEL'],
+    errores: {},
+  }),
+
+  formaDescuento: p({
+    paso: 'beneficio',
+    pregunta: '¿El descuento es igual en todos los productos?',
+    ayuda: 'Si cambia según el hotel o el vuelo, elige la segunda opción.',
+    porQue: 'Si el descuento cambia, el documento tiene que decir el mínimo y el máximo, y a cuántos productos llega el máximo. Anunciar solo el máximo es publicidad engañosa.',
+    avanzaSola: true,
+    porDefecto: 'fijo',
+    opciones: [
+      { valor: 'fijo', etiqueta: 'Sí, es el mismo para todos', nota: 'Un solo porcentaje.' },
+      { valor: 'variable', etiqueta: 'No, cambia según el producto', nota: 'Vas a decir el mínimo y el máximo.' },
+    ],
+    placeholders: ['TEXTO_DESCUENTO_TRAVEL'],
+    errores: { vacio: 'Dinos si el descuento es igual en todos los productos.' },
+  }),
+
+  porcentajeMinimo: p({
+    paso: 'beneficio',
+    pregunta: '¿Cuál es el descuento más bajo?',
+    ayuda: 'El porcentaje del producto con menos descuento. Por ejemplo: 5.',
+    porQue: 'El documento dice el rango completo. Anunciar solo el máximo hace pensar que todos los productos lo tienen, y eso la SIC lo trata como publicidad engañosa.',
+    ejemplo: '5',
+    placeholders: ['TEXTO_DESCUENTO_TRAVEL'],
+    errores: {
+      vacio: 'Escribe el descuento más bajo de la campaña.',
+      rango: 'El descuento más bajo tiene que ser menor que el más alto. Si son iguales, el descuento es fijo.',
+    },
+  }),
+
+  productosConMaximo: p({
+    paso: 'beneficio',
+    pregunta: '¿A cuántos productos llega el descuento máximo?',
+    ayuda: 'Cuéntalos. Por ejemplo: 3 hoteles tienen el 40%.',
+    porQue: 'Es lo que la SIC exige para poder anunciar un "hasta". Sin ese número, el usuario no sabe qué tan real es el máximo.',
+    ejemplo: '3',
+    placeholders: ['TEXTO_MAXIMO_DISPONIBLE_TRAVEL'],
+    errores: {
+      vacio: 'Escribe a cuántos productos llega el descuento máximo.',
+      rango: 'Tiene que ser al menos un producto.',
+    },
+  }),
+
+  visibilidad: p({
+    paso: 'beneficio',
+    pregunta: '¿Dónde ve el usuario el descuento?',
+    ayuda: 'Puedes marcar varias.',
+    porQue: 'El documento dice dónde encontrarlo. Si el usuario no lo ve en ninguna parte, el descuento no es verificable.',
+    multiple: true,
+    placeholders: ['TEXTO_VISIBILIDAD_TRAVEL'],
+    errores: { vacio: 'Marca al menos un lugar donde el usuario vea el descuento.' },
+  }),
+
+  sinLimitePorUsuario: p({
+    paso: 'beneficio',
+    respondidoPor: 'limitePorUsuario',
+    pregunta: null,
+    placeholders: ['TEXTO_LIMITE_ORDENES_TRAVEL'],
+    errores: {},
+  }),
+
+  unidades: p({
+    paso: 'beneficio',
+    pregunta: '¿La campaña termina al agotarse unas unidades?',
+    ayuda: 'Cuántos productos con descuento hay. Por ejemplo: 100.',
+    porQue: 'Si la campaña se acaba al agotarse las unidades, el número tiene que estar en el documento. Es el mismo criterio de la SIC que aplica al descuento variable.',
+    ejemplo: '100',
+    placeholders: ['TEXTO_LIMITE_CAMPANA_TRAVEL'],
+    errores: {
+      vacio: 'Escribe cuántas unidades hay, o marca que no depende de unidades.',
+      rango: 'Tiene que ser al menos una unidad.',
+    },
+  }),
+
+  sinUnidades: p({
+    paso: 'beneficio',
+    respondidoPor: 'unidades',
+    pregunta: null,
+    placeholders: ['TEXTO_LIMITE_CAMPANA_TRAVEL'],
+    errores: {},
+  }),
+
+  diasCarga: p({
+    paso: 'creditos',
+    pregunta: '¿Cuántos días después?',
+    ayuda: 'Los valores más usados en Travel van de 3 a 5 días.',
+    porQue: 'Es el plazo que el usuario va a esperar. Se cuenta desde que termina la campaña, no desde su compra.',
+    ejemplo: '5',
+    placeholders: ['TEXTO_CARGA_TRAVEL'],
+    errores: {
+      vacio: 'Escribe cuántos días después de que termine la campaña llegan los Créditos.',
+      rango: 'Los días van de 1 a 30.',
+    },
+  }),
+
+  categoriasRedencion: p({
+    paso: 'creditos',
+    pregunta: '¿En qué categorías se pueden usar?',
+    ayuda: 'Puedes marcar varias. En las campañas reales casi nunca incluyen Vuelos.',
+    porQue: 'El documento dice en qué categorías valen los Créditos y en cuáles no. Si no lo dice, el usuario los puede usar en cualquiera y la campaña sale más cara de lo previsto.',
+    multiple: true,
+    placeholders: ['TEXTO_REDENCION_TRAVEL'],
+    errores: { vacio: 'Marca al menos una categoría donde se puedan usar los Créditos.' },
+  }),
+
+  fechaPrimeraComunicacion: p({
+    paso: 'confirmacion',
+    pregunta: '¿Qué día sale la primera pieza?',
+    ayuda: 'El día del primer correo, push, banner o mensaje. El T&C se publica antes.',
+    porQue: 'En junio de 2026 salió un mensaje de WhatsApp antes de que el T&C estuviera publicado y un usuario reclamó. Esta fecha nos deja verificar que eso no se repita.',
+    placeholders: [],
+    errores: {
+      vacio: 'Escribe el día en que sale la primera comunicación.',
+      pasado: 'La primera comunicación no puede ser una fecha que ya pasó: el T&C se publica antes de que salga la primera pieza.',
+    },
+  }),
+
+  linkAnterior: p({
+    paso: 'confirmacion',
+    pregunta: '¿Esta campaña repite una anterior?',
+    ayuda: 'Es opcional. Pega el link de promos.rappi.com de la campaña anterior.',
+    porQue: 'Nos deja comparar las dos y ver si alguna condición cambió sin que nadie lo notara. No sale en el documento.',
+    ejemplo: 'https://promos.rappi.com/colombia/...',
+    opcional: true,
+    placeholders: [],
+    errores: {},
+  }),
+
+  aliadoAprobo: p({
+    paso: 'confirmacion',
+    pregunta: 'Confirma que el aliado aprobó la mecánica',
+    ayuda: 'Confirmo que el aliado aprobó esta mecánica.',
+    porQue: 'El aliado es el Organizador y responde por la campaña. Si no la aprobó, no se puede publicar a su nombre.',
+    placeholders: [],
+    errores: { vacio: 'Confirma que el aliado aprobó la mecánica.' },
+  }),
+
+  declaracionPiezas: p({
+    paso: 'confirmacion',
+    pregunta: 'Confirma que las piezas dicen lo mismo que el T&C',
+    ayuda: 'Confirmo que las piezas dicen lo mismo que este T&C (el porcentaje, la palabra "hasta" junto al tope y las categorías donde se usan los Créditos) y que nada sale antes de publicarlo.',
+    porQue: 'En agosto de 2025 una etiqueta prometía 250.000 de cashback sin la palabra "hasta" y terminó en un reclamo por publicidad engañosa que hubo que pagar.',
+    placeholders: [],
+    errores: { vacio: 'Confirma que las piezas dicen lo mismo que el T&C.' },
   }),
 
   // --- Quién participa ----------------------------------------------------
@@ -409,6 +972,12 @@ var PREGUNTAS = {
     ],
     placeholders: ['TEXTO_SEGMENTO'],
     errores: { vacio: 'Dinos quiénes pueden participar.' },
+    // En Travel la misma columna del Sheet, con otras opciones: los segmentos
+    // de viajes no son los de delivery. Ver docs/MODELO_BASE_TRAVEL.md, sección 3.
+    variantes: {
+      cashback_travel: { opciones: OPCIONES_SEGMENTO_TRAVEL, placeholders: ['TEXTO_SEGMENTO_TRAVEL'] },
+      descuento_travel: { opciones: OPCIONES_SEGMENTO_TRAVEL, placeholders: ['TEXTO_SEGMENTO_TRAVEL'] },
+    },
   }),
 
   diasSinCompra: p({
@@ -438,6 +1007,10 @@ var PREGUNTAS = {
     ],
     placeholders: ['TEXTO_METODO_PAGO'],
     errores: { vacio: 'Dinos con qué puede pagar el usuario.' },
+    variantes: {
+      cashback_travel: { opciones: OPCIONES_PAGO_TRAVEL, placeholders: ['TEXTO_METODO_PAGO_TRAVEL'] },
+      descuento_travel: { opciones: OPCIONES_PAGO_TRAVEL, placeholders: ['TEXTO_METODO_PAGO_TRAVEL'] },
+    },
   }),
 
   declaracion: p({
@@ -660,6 +1233,40 @@ var PREGUNTAS = {
  * Es lo que dice el espacio en blanco del documento: "falta el porcentaje".
  */
 var NOMBRE_DEL_HUECO = {
+  TEXTO_PRODUCTOS_TRAVEL: 'las categorías que participan',
+  TEXTO_AMBITO_TRAVEL: 'si los viajes son nacionales o internacionales',
+  TEXTO_DESTINOS_TRAVEL: 'los destinos',
+  TEXTO_HOTELES_TRAVEL: 'qué hoteles participan',
+  TEXTO_CONDICIONES_TRAVEL: 'las condiciones de la compra',
+  TEXTO_SEGMENTO_TRAVEL: 'quiénes pueden participar',
+  TEXTO_METODO_PAGO_TRAVEL: 'los medios de pago',
+  TEXTO_BENEFICIO_TRAVEL: 'en qué consiste el cashback',
+  TEXTO_BASE_CALCULO_TRAVEL: 'sobre qué valor se calcula el cashback',
+  TEXTO_EJEMPLO_TOPE_TRAVEL: 'el ejemplo del tope',
+  TEXTO_LIMITE_ORDENES_TRAVEL: 'cuántas órdenes puede beneficiar una persona',
+  TEXTO_AGOTAMIENTO_VIGENCIA_TRAVEL: 'el presupuesto o las unidades que agotan la campaña',
+  TEXTO_LIMITE_CAMPANA_TRAVEL: 'el límite total de la campaña',
+  TEXTO_CONTEO_IDA_REGRESO_TRAVEL: 'cómo cuenta una compra de ida y regreso',
+  TEXTO_CARGA_TRAVEL: 'cuándo llegan los Créditos',
+  TEXTO_REDENCION_TRAVEL: 'dónde se pueden usar los Créditos',
+  TEXTO_DESCUENTO_TRAVEL: 'en qué consiste el descuento',
+  TEXTO_MAXIMO_DISPONIBLE_TRAVEL: 'a cuántos productos llega el descuento máximo',
+  TEXTO_VISIBILIDAD_TRAVEL: 'dónde ve el usuario el descuento',
+  TEXTO_ASISTENCIA_TRAVEL: 'el alcance del descuento de la asistencia',
+  TEXTO_CREDITOS_FUERA_DE_TRAVEL: 'el uso de los Créditos fuera de los viajes',
+  TEXTO_NOTAS_DE_MODIFICACION: 'las modificaciones de la campaña',
+  TEXTO_RESPONSABILIDAD_TRAVEL: 'de qué responde la entidad de viajes',
+  TEXTO_YA_OTORGADO_TRAVEL: 'lo que ya se otorgó',
+  VERBO_BENEFICIO_TRAVEL: 'qué se hace con el beneficio',
+  ENTIDAD_TRAVEL: 'la razón social de la entidad de viajes',
+  ID_FISCAL_TRAVEL: 'el NIT de la entidad de viajes',
+  RNT_TRAVEL: 'el número del registro nacional de turismo',
+  URL_SITIO_TRAVEL: 'el sitio de viajes',
+  URL_TC_TRAVEL: 'los términos de los sistemas de viajes',
+  POLITICA_PRIVACIDAD_TRAVEL: 'la política de datos de la entidad de viajes',
+  URL_PRIVACIDAD_TRAVEL: 'el enlace de la política de datos de la entidad de viajes',
+  ENTIDAD_VIGILANCIA_TRAVEL: 'la entidad de vigilancia de los viajes',
+  TOPE_TRAVEL: 'el tope por orden',
   NOMBRE_CAMPANA: 'el nombre, que sale de la tienda, el porcentaje y el día de inicio',
   NOMBRE_CAMPANA_MAYUS: 'el nombre, que sale de la tienda, el porcentaje y el día de inicio',
   TIENDA: 'la tienda',
@@ -700,8 +1307,29 @@ var NOMBRE_DEL_HUECO = {
   TIENDA_PRESUPUESTO: 'el presupuesto',
 };
 
-function preguntaDe(campo) {
-  return Object.prototype.hasOwnProperty.call(PREGUNTAS, campo) ? PREGUNTAS[campo] : null;
+/**
+ * La pregunta de un campo, para el tipo de campana que se esta llenando.
+ *
+ * Unos pocos campos cambian de texto segun el tipo: en delivery se habla de
+ * "pedido" y en Rappi Travel de "orden", y el segmento y la redencion tienen
+ * opciones distintas. Eso vive en `variantes`, para no duplicar el campo ni
+ * partir en dos el historico del Sheet.
+ */
+function preguntaDe(campo, tipo) {
+  if (!Object.prototype.hasOwnProperty.call(PREGUNTAS, campo)) return null;
+  var pregunta = PREGUNTAS[campo];
+
+  var variante = pregunta.variantes && tipo ? pregunta.variantes[tipo] : null;
+  if (!variante) return pregunta;
+
+  var mezclada = {};
+  for (var llave in pregunta) {
+    if (Object.prototype.hasOwnProperty.call(pregunta, llave) && llave !== 'variantes') mezclada[llave] = pregunta[llave];
+  }
+  for (var cambio in variante) {
+    if (Object.prototype.hasOwnProperty.call(variante, cambio)) mezclada[cambio] = variante[cambio];
+  }
+  return mezclada;
 }
 
 function nombreDelHueco(placeholder) {

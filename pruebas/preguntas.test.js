@@ -11,7 +11,7 @@
 const test = require('node:test');
 const assert = require('node:assert');
 
-const { PREGUNTAS, PASOS, GLOSARIO, NOMBRE_DEL_HUECO, nombreDelHueco } = require('../src/core/preguntas.js');
+const { PREGUNTAS, PASOS, GLOSARIO, NOMBRE_DEL_HUECO, nombreDelHueco, preguntaDe } = require("../src/core/preguntas.js");
 const { ESQUEMAS } = require('../src/core/esquemas.js');
 const { cargarModelos } = require('../scripts/lib/modelos');
 const { calcularDerivados } = require('../src/core/derivados.js');
@@ -29,7 +29,7 @@ function palabras(texto) {
 test('todo campo de todo esquema tiene pregunta, o se responde dentro de otra', () => {
   for (const tipoId of Object.keys(ESQUEMAS)) {
     for (const campo of ESQUEMAS[tipoId].campos) {
-      const pregunta = PREGUNTAS[campo.id];
+      const pregunta = preguntaDe(campo.id, tipoId);
       assert.ok(pregunta, 'el campo ' + campo.id + ' (' + tipoId + ') no tiene pregunta');
       assert.ok(
         pregunta.pregunta || pregunta.respondidoPor,
@@ -73,8 +73,8 @@ test('cada pregunta es una pregunta, salvo las casillas de confirmación', () =>
   for (const id of preguntasVisibles()) {
     const texto = PREGUNTAS[id].pregunta;
     const esPregunta = texto.indexOf('¿') !== -1 && texto.trim().slice(-1) === '?';
-    // "Confirma que la información es correcta" es una instrucción, no una pregunta.
-    const esInstruccion = id === 'declaracion';
+    // Las casillas de confirmación son instrucciones, no preguntas.
+    const esInstruccion = ['declaracion', 'aliadoAprobo', 'declaracionPiezas'].indexOf(id) !== -1;
     assert.ok(esPregunta || esInstruccion, id + ' no está redactada como pregunta: "' + texto + '"');
   }
 });
@@ -154,7 +154,9 @@ test('las opciones de la pregunta coinciden con las del esquema', () => {
   };
   for (const tipoId of Object.keys(ESQUEMAS)) {
     for (const campo of ESQUEMAS[tipoId].campos) {
-      const pregunta = PREGUNTAS[campo.id];
+      // La variante del tipo manda: un mismo campo puede tener opciones
+      // distintas en delivery y en Travel.
+      const pregunta = preguntaDe(campo.id, tipoId);
       if (!campo.opciones || !pregunta.opciones) continue;
       const delEsquema = campo.opciones.map((o) => o.valor).sort();
       const deLaPregunta = pregunta.opciones.map((o) => o.valor).sort();
@@ -279,7 +281,7 @@ test('el paso de cada pregunta coincide con el del esquema', () => {
   const { ESQUEMAS } = require('../src/core/esquemas.js');
   for (const tipo of Object.keys(ESQUEMAS)) {
     for (const campo of ESQUEMAS[tipo].campos) {
-      const pregunta = PREGUNTAS[campo.id];
+      const pregunta = preguntaDe(campo.id, tipo);
       if (!pregunta || !pregunta.paso) continue;
       assert.strictEqual(
         pregunta.paso, campo.paso,
