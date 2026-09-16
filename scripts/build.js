@@ -1,0 +1,192 @@
+'use strict';
+
+/**
+ * Build de RappiMind v3: arma dist/ con lo que sube clasp.
+ *
+ * Todo se hace con Node, sin comandos del sistema, para que corra igual en
+ * Windows y en el runner de GitHub Actions. Todo lo que se escribe sale con
+ * finales de linea \n.
+ *
+ * Pasos (especificacion, seccion 2):
+ *   1. Copia src/core/*.js y src/server/*.js a dist/.
+ *   2. Convierte modelos/**\/*.md en dist/Modelos.js y data/*.json en
+ *      dist/PaisesSemilla.js y dist/Secciones.js.
+ *   3. Arma dist/Index.html, dist/Estilos.html, dist/App.html y
+ *      dist/MotorCliente.html (este ultimo envuelve src/core para la vista
+ *      previa en el navegador).
+ *   4. Copia appsscript.json a dist/.
+ */
+
+const path = require('path');
+const {
+  rutaDesdeRaiz,
+  leerTexto,
+  leerJson,
+  escribirTexto,
+  borrarCarpeta,
+  asegurarCarpeta,
+  copiarArchivo,
+  listarArchivos,
+  existe,
+} = require('./lib/archivos');
+const { cargarModelos, versionDelModelo } = require('./lib/modelos');
+
+const DIST = rutaDesdeRaiz('dist');
+const AVISO = '// Archivo generado por scripts/build.js. No editar a mano.';
+
+function encabezado(origen) {
+  return [AVISO, '// Fuente: ' + origen, ''].join('\n');
+}
+
+/** Serializa un valor como literal JavaScript legible para Apps Script. */
+function comoLiteral(valor) {
+  return JSON.stringify(valor, null, 2);
+}
+
+function copiarCodigoFuente() {
+  const copiados = [];
+  for (const carpeta of ['core', 'server']) {
+    const origen = rutaDesdeRaiz('src', carpeta);
+    for (const archivo of listarArchivos(origen, '.js')) {
+      copiarArchivo(path.join(origen, archivo), path.join(DIST, archivo));
+      copiados.push(carpeta + '/' + archivo);
+    }
+  }
+  return copiados;
+}
+
+function generarModelos() {
+  const { modelos, bloques } = cargarModelos();
+
+  const versiones = {};
+  for (const [nombre, texto] of Object.entries(modelos)) {
+    versiones[nombre] = versionDelModelo(texto);
+  }
+
+  const contenido = [
+    encabezado('modelos/*.md y modelos/bloques/*.md'),
+    '// Los textos legales son la fuente de verdad de Legal. No se editan aqui.',
+    '',
+    'var MODELOS = {',
+    '  versiones: ' + indentar(comoLiteral(versiones), 2) + ',',
+    '  modelos: ' + indentar(comoLiteral(modelos), 2) + ',',
+    '  bloques: ' + indentar(comoLiteral(bloques), 2) + ',',
+    '};',
+    '',
+    "if (typeof module !== 'undefined') { module.exports = { MODELOS: MODELOS }; }",
+    '',
+  ].join('\n');
+
+  escribirTexto(path.join(DIST, 'Modelos.js'), contenido);
+  return { modelos: Object.keys(modelos).length, bloques: Object.keys(bloques).length };
+}
+
+/** Reindenta un literal JSON multilinea para que encaje dentro del objeto. */
+function indentar(texto, espacios) {
+  const relleno = ' '.repeat(espacios);
+  return texto
+    .split('\n')
+    .map((linea, indice) => (indice === 0 ? linea : relleno + linea))
+    .join('\n');
+}
+
+function generarDatos() {
+  const paises = leerJson(rutaDesdeRaiz('data', 'paises.json'));
+  escribirTexto(
+    path.join(DIST, 'PaisesSemilla.js'),
+    [
+      encabezado('data/paises.json'),
+      'var PAISES_SEMILLA = ' + comoLiteral(paises.paises) + ';',
+      'var PAISES_VERSION = ' + comoLiteral(paises.version || '') + ';',
+      '',
+      "if (typeof module !== 'undefined') { module.exports = { PAISES_SEMILLA: PAISES_SEMILLA, PAISES_VERSION: PAISES_VERSION }; }",
+      '',
+    ].join('\n')
+  );
+
+  const secciones = leerJson(rutaDesdeRaiz('data', 'secciones.json'));
+  escribirTexto(
+    path.join(DIST, 'Secciones.js'),
+    [
+      encabezado('data/secciones.json'),
+      'var SECCIONES = ' + comoLiteral(secciones) + ';',
+      '',
+      "if (typeof module !== 'undefined') { module.exports = { SECCIONES: SECCIONES }; }",
+      '',
+    ].join('\n')
+  );
+
+  return { paises: paises.paises.length };
+}
+
+/** Envuelve un archivo de texto dentro de una etiqueta HTML. */
+function envolver(etiqueta, cuerpo, comentario) {
+  return ['<!-- ' + comentario + ' -->', '<' + etiqueta + '>', cuerpo, '</' + etiqueta + '>', ''].join('\n');
+}
+
+function generarHtml() {
+  // Index.html se copia tal cual: es la plantilla que evalua Apps Script.
+  copiarArchivo(rutaDesdeRaiz('src', 'client', 'Index.html'), path.join(DIST, 'Index.html'));
+
+  escribirTexto(
+    path.join(DIST, 'Estilos.html'),
+    envolver('style', leerTexto(rutaDesdeRaiz('src', 'client', 'estilos.css')), 'Generado desde src/client/estilos.css')
+  );
+
+  escribirTexto(
+    path.join(DIST, 'App.html'),
+    envolver('script', leerTexto(rutaDesdeRaiz('src', 'client', 'app.js')), 'Generado desde src/client/app.js')
+  );
+
+  // MotorCliente.html lleva el motor al navegador para la vista previa en vivo.
+  const motor = listarArchivos(rutaDesdeRaiz('src', 'core'), '.js')
+    .map((archivo) => {
+      const codigo = leerTexto(rutaDesdeRaiz('src', 'core', archivo));
+      return ['// --- src/core/' + archivo + ' ---', codigo].join('\n');
+    })
+    .join('\n');
+
+  escribirTexto(
+    path.join(DIST, 'MotorCliente.html'),
+    envolver('script', motor, 'Generado desde src/core/*.js para la vista previa en el navegador')
+  );
+}
+
+function copiarManifiesto() {
+  copiarArchivo(rutaDesdeRaiz('appsscript.json'), path.join(DIST, 'appsscript.json'));
+}
+
+function construir() {
+  const faltantes = ['src/client/Index.html', 'src/client/estilos.css', 'src/client/app.js', 'appsscript.json'].filter(
+    (relativa) => !existe(rutaDesdeRaiz(...relativa.split('/')))
+  );
+  if (faltantes.length) {
+    throw new Error('Faltan archivos para construir dist/: ' + faltantes.join(', '));
+  }
+
+  borrarCarpeta(DIST);
+  asegurarCarpeta(DIST);
+
+  const copiados = copiarCodigoFuente();
+  const conteoModelos = generarModelos();
+  const conteoDatos = generarDatos();
+  generarHtml();
+  copiarManifiesto();
+
+  console.log('Build listo en dist/');
+  console.log('  codigo copiado  : ' + copiados.length + ' archivos (' + copiados.join(', ') + ')');
+  console.log('  modelos         : ' + conteoModelos.modelos + ' modelos, ' + conteoModelos.bloques + ' bloques');
+  console.log('  paises          : ' + conteoDatos.paises);
+  console.log('  archivos en dist: ' + listarArchivos(DIST).join(', '));
+}
+
+if (require.main === module) {
+  try {
+    construir();
+  } catch (error) {
+    console.error('El build fallo: ' + error.message);
+    process.exit(1);
+  }
+}
+
+module.exports = { construir, DIST };

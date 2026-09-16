@@ -1,0 +1,18 @@
+{
+  "name": "rappimind-v3",
+  "version": "3.0.0",
+  "description": "Motor Legal Rappi v3: generador de Terminos y Condiciones para campanas de marketing",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test \"pruebas/**/*.test.js\"",
+    "limpiar": "node scripts/limpiar.js",
+    "build": "node scripts/build.js",
+    "previsualizar": "node scripts/previsualizar.js",
+    "push": "node scripts/push.js"
+  }
+}

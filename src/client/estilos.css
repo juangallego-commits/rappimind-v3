@@ -1,0 +1,104 @@
+/* Identidad Rappi: acento naranja sobre fondo claro, sin sombras decorativas. */
+
+:root {
+  --naranja: #ff441f;
+  --tinta: #16181d;
+  --gris: #5d626d;
+  --borde: #e3e5ea;
+  --fondo: #f7f8fa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--tinta);
+  font-family: 'Lato', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.pagina {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px 16px 64px;
+}
+
+h1,
+h2,
+.marca {
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: 28px;
+  margin: 8px 0 12px;
+}
+
+h2 {
+  font-size: 18px;
+  margin: 0 0 12px;
+}
+
+.marca {
+  font-size: 14px;
+  margin: 0;
+  color: var(--naranja);
+}
+
+.marca span {
+  color: var(--gris);
+}
+
+.ayuda {
+  color: var(--gris);
+  margin: 0;
+}
+
+.tarjeta {
+  background: #ffffff;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 24px;
+}
+
+.detalle {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px 20px;
+  margin: 16px 0 0;
+}
+
+.detalle dt {
+  color: var(--gris);
+}
+
+.detalle dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.error {
+  color: var(--naranja);
+}
+
+:focus-visible {
+  outline: 3px solid var(--naranja);
+  outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 23px;
+  }
+
+  .tarjeta {
+    padding: 18px;
+  }
+}
