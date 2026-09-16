@@ -1,0 +1,247 @@
+name: Pruebas y despliegue
+
+# Dos partes, como se acordo:
+#   a. En cada push a main: instala, corre las pruebas, arma dist/ y hace clasp push.
+#   b. Disparo manual (Actions > Run workflow): ademas crea una version inmutable
+#      y apunta el despliegue de la web app a esa version.
+#
+# Las credenciales viven en el secreto CLASPRC_JSON y nunca se imprimen: se
+# escriben directo a un archivo y se borran al terminar. GitHub ademas enmascara
+# el valor en los registros.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      descripcion:
+        description: "Descripcion de la version que se va a crear"
+        required: false
+        default: "Despliegue manual desde GitHub Actions"
+
+permissions:
+  contents: read
+
+# Un despliegue a la vez: dos push seguidos no pueden pisarse en Apps Script.
+concurrency:
+  group: despliegue-apps-script
+  cancel-in-progress: false
+
+jobs:
+  pruebas:
+    name: Pruebas y build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Traer el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Instalar dependencias
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install --no-audit --no-fund
+          fi
+
+      - name: Correr las pruebas
+        run: npm test
+
+      - name: Armar dist/
+        run: npm run build
+
+      - name: Revisar que dist/ quedo completo
+        run: |
+          set -euo pipefail
+          for archivo in appsscript.json Modelos.js PaisesSemilla.js Index.html; do
+            if [ ! -f "dist/$archivo" ]; then
+              echo "Falta dist/$archivo" >&2
+              exit 1
+            fi
+          done
+          {
+            echo "### dist/ armado"
+            echo ""
+            echo '```'
+            ls -1 dist
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  subir:
+    name: Subir a Apps Script (clasp push)
+    needs: pruebas
+    runs-on: ubuntu-latest
+    env:
+      CLASPRC_JSON: ${{ secrets.CLASPRC_JSON }}
+      VERSION_CLASP: "3.4.1"
+    steps:
+      - name: Traer el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Revisar requisitos del despliegue
+        id: requisitos
+        run: |
+          set -euo pipefail
+          listo=si
+
+          if [ -z "${CLASPRC_JSON:-}" ]; then
+            echo "Falta el secreto CLASPRC_JSON." >> "$GITHUB_STEP_SUMMARY"
+            listo=no
+          fi
+
+          script_id="$(node -p "(require('./.clasp.json').scriptId || '').trim()")"
+          if [ -z "$script_id" ]; then
+            echo "Falta el scriptId en .clasp.json." >> "$GITHUB_STEP_SUMMARY"
+            listo=no
+          fi
+
+          if [ "$listo" = "no" ]; then
+            echo "El despliegue se omite hasta que esten los dos. Las pruebas y el build si corrieron." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "listo=$listo" >> "$GITHUB_OUTPUT"
+
+      - name: Instalar dependencias
+        if: steps.requisitos.outputs.listo == 'si'
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install --no-audit --no-fund
+          fi
+
+      - name: Armar dist/
+        if: steps.requisitos.outputs.listo == 'si'
+        run: npm run build
+
+      - name: Cargar credenciales de clasp
+        if: steps.requisitos.outputs.listo == 'si'
+        run: |
+          set -euo pipefail
+          umask 077
+          printf '%s' "$CLASPRC_JSON" > "$HOME/.clasprc.json"
+          node -e "try { JSON.parse(require('fs').readFileSync(process.env.HOME + '/.clasprc.json', 'utf8')); console.log('Credenciales cargadas.'); } catch (e) { console.error('El secreto CLASPRC_JSON no es un JSON valido. Vuelve a copiarlo desde tu .clasprc.json.'); process.exit(1); }"
+
+      - name: clasp push
+        if: steps.requisitos.outputs.listo == 'si'
+        run: npx --yes "@google/clasp@$VERSION_CLASP" push --force
+
+      - name: Borrar las credenciales
+        if: always()
+        run: rm -f "$HOME/.clasprc.json"
+
+      - name: Resumen
+        if: steps.requisitos.outputs.listo == 'si'
+        run: echo "Codigo subido al proyecto de Apps Script." >> "$GITHUB_STEP_SUMMARY"
+
+  desplegar:
+    name: Crear version y actualizar la web app
+    # Solo en el disparo manual: cada push a main no debe mover la URL que usan
+    # los comerciales.
+    if: github.event_name == 'workflow_dispatch'
+    needs: subir
+    runs-on: ubuntu-latest
+    env:
+      CLASPRC_JSON: ${{ secrets.CLASPRC_JSON }}
+      ID_DESPLIEGUE: ${{ vars.ID_DESPLIEGUE }}
+      DESCRIPCION: ${{ inputs.descripcion }}
+      VERSION_CLASP: "3.4.1"
+    steps:
+      - name: Traer el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Revisar requisitos del despliegue
+        id: requisitos
+        run: |
+          set -euo pipefail
+          if [ -z "${CLASPRC_JSON:-}" ]; then
+            echo "Falta el secreto CLASPRC_JSON." >&2
+            exit 1
+          fi
+          script_id="$(node -p "(require('./.clasp.json').scriptId || '').trim()")"
+          if [ -z "$script_id" ]; then
+            echo "Falta el scriptId en .clasp.json." >&2
+            exit 1
+          fi
+
+      - name: Cargar credenciales de clasp
+        run: |
+          set -euo pipefail
+          umask 077
+          printf '%s' "$CLASPRC_JSON" > "$HOME/.clasprc.json"
+          node -e "try { JSON.parse(require('fs').readFileSync(process.env.HOME + '/.clasprc.json', 'utf8')); console.log('Credenciales cargadas.'); } catch (e) { console.error('El secreto CLASPRC_JSON no es un JSON valido. Vuelve a copiarlo desde tu .clasprc.json.'); process.exit(1); }"
+
+      - name: Crear la version
+        id: version
+        run: |
+          set -euo pipefail
+          descripcion="${DESCRIPCION:-Despliegue manual desde GitHub Actions}"
+          salida="$(npx --yes "@google/clasp@$VERSION_CLASP" create-version "$descripcion")"
+          echo "$salida"
+          numero="$(printf '%s' "$salida" | grep -oE '[0-9]+' | tail -1 || true)"
+          if [ -z "$numero" ]; then
+            echo "No se pudo leer el numero de version de la salida de clasp." >&2
+            exit 1
+          fi
+          echo "numero=$numero" >> "$GITHUB_OUTPUT"
+
+      - name: Averiguar cual despliegue actualizar
+        id: destino
+        run: |
+          set -euo pipefail
+
+          if [ -n "${ID_DESPLIEGUE:-}" ]; then
+            echo "id=$ID_DESPLIEGUE" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Sin variable configurada: sirve si hay exactamente un despliegue
+          # ademas del @HEAD que Apps Script mantiene siempre.
+          lista="$(npx --yes "@google/clasp@$VERSION_CLASP" list-deployments)"
+          echo "$lista"
+          candidatos="$(printf '%s\n' "$lista" | grep -v '@HEAD' | grep -oE 'AKfyc[A-Za-z0-9_-]+' | sort -u || true)"
+          cuantos="$(printf '%s\n' "$candidatos" | grep -c . || true)"
+
+          if [ "$cuantos" != "1" ]; then
+            echo "Se encontraron $cuantos despliegues ademas del @HEAD." >&2
+            echo "Crea la variable ID_DESPLIEGUE en Settings > Secrets and variables > Actions > Variables" >&2
+            echo "con el ID del despliegue de la web app que usan los comerciales." >&2
+            exit 1
+          fi
+
+          echo "id=$candidatos" >> "$GITHUB_OUTPUT"
+
+      - name: Apuntar el despliegue a la version nueva
+        run: |
+          set -euo pipefail
+          npx --yes "@google/clasp@$VERSION_CLASP" update-deployment \
+            --versionNumber "${{ steps.version.outputs.numero }}" \
+            --description "${DESCRIPCION:-Despliegue manual desde GitHub Actions}" \
+            "${{ steps.destino.outputs.id }}"
+
+      - name: Borrar las credenciales
+        if: always()
+        run: rm -f "$HOME/.clasprc.json"
+
+      - name: Resumen
+        run: |
+          {
+            echo "### Despliegue actualizado"
+            echo ""
+            echo "- Version creada: ${{ steps.version.outputs.numero }}"
+            echo "- Despliegue: ${{ steps.destino.outputs.id }}"
+            echo "- Descripcion: ${DESCRIPCION:-Despliegue manual desde GitHub Actions}"
+          } >> "$GITHUB_STEP_SUMMARY"
