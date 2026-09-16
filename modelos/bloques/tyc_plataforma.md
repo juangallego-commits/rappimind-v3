@@ -1,0 +1,2 @@
+%% Bloque compartido: tyc_plataforma · versión 3.0
+§ Aplicación de los Términos y Condiciones de Uso de la Plataforma Rappi. Los presentes Términos y Condiciones son especiales y complementarios respecto de los Términos y Condiciones de Uso de la Plataforma Rappi, disponibles en: {{URL_TC_PLATAFORMA}}, los cuales continúan aplicando en todo aquello no regulado expresamente en el presente documento. En caso de contradicción respecto de las condiciones específicas de la Campaña, prevalecerán los presentes Términos y Condiciones.

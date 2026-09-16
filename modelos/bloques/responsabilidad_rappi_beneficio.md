@@ -1,0 +1,2 @@
+%% Bloque compartido: responsabilidad_rappi_beneficio · versión 3.0
+§ Responsabilidades de Rappi. Rappi es responsable de: (i) la correcta acreditación de los Créditos en tu Billetera de Créditos conforme a las condiciones de la Campaña; (ii) la publicación veraz y completa de los presentes Términos y Condiciones; y (iii) la atención oportuna de tus peticiones, quejas y reclamos relacionados con la Campaña.

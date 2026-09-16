@@ -1,0 +1,2 @@
+%% Bloque compartido: ley · versión 3.0
+§ Ley aplicable y jurisdicción. Los presentes Términos y Condiciones se rigen e interpretan de conformidad con {{LEY_APLICABLE}}. Cualquier controversia que surja con ocasión de la Campaña o de los presentes Términos y Condiciones se someterá a {{JURISDICCION}}, sin perjuicio de las acciones, derechos y mecanismos de protección que la ley reconoce a los consumidores ante {{ENTIDAD_VIGILANCIA}}.

@@ -1,0 +1,2 @@
+%% Bloque compartido: publicidad · versión 3.0
+§ Publicidad y prevalencia. Las condiciones específicas de la Campaña son las establecidas en los presentes Términos y Condiciones. En caso de discrepancia entre la información contenida en piezas publicitarias, comunicaciones comerciales o cualquier otro medio de difusión y los presentes Términos y Condiciones, se aplicará la condición más favorable para ti. Rappi se compromete a que la publicidad de la Campaña sea veraz, verificable y no te induzca a error.

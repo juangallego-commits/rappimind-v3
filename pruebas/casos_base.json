@@ -1,0 +1,492 @@
+{
+  "nota": "Los NIT, RFC y razones sociales son de prueba (dígitos de verificación válidos, empresas inexistentes). La fecha de referencia de todas las pruebas es 16 de septiembre de 2026.",
+  "casos": [
+    {
+      "id": "CB01",
+      "descripcion": "Cashback CO basado en la solicitud real de Jumbo MT (17 sep 2026)",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "CO",
+        "alcance": "Nacional",
+        "ciudades": "",
+        "segmento": "todos",
+        "metodoPago": "todos",
+        "declaracion": true,
+        "tipo": "cashback",
+        "nombreCampana": "Jumbo MT 50% de Cashback 17/09/2026",
+        "tienda": "Jumbo MT",
+        "fechaInicio": "2026-09-17",
+        "horaInicio": "09:00",
+        "fechaFin": "2026-09-17",
+        "horaFin": "23:59",
+        "organizadorRazonSocial": "Organizador de Prueba S.A.S.",
+        "organizadorId": "900111222-1",
+        "porcentaje": 50,
+        "tope": 30000,
+        "presupuesto": 12000000,
+        "maxPedidos": 1,
+        "sinLimite": false,
+        "carga": "inmediata",
+        "vigencia": "fecha",
+        "fechaFinRedencion": "2026-09-20",
+        "redencion": "tienda",
+        "condiciones": []
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "cincuenta por ciento (50%)",
+          "treinta mil (30.000) Créditos",
+          "doce millones (12.000.000) de Créditos",
+          "un máximo de un (1) pedido",
+          "NIT 900.111.222-1",
+          "podrán redimirse hasta las 11:59 p. m. del 20 de septiembre de 2026",
+          "desde las 9:00 a. m. del 17 de septiembre de 2026",
+          "el territorio nacional de la República de Colombia",
+          "Rappi no es el organizador de la Campaña"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          "..",
+          "()"
+        ]
+      }
+    },
+    {
+      "id": "CB02",
+      "descripcion": "Cashback CO tipo Domino's: Pro, RappiCard, una ciudad, secciones y vigencia por días",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "CO",
+        "alcance": "Ciudades",
+        "ciudades": "Bogotá",
+        "segmento": "pro",
+        "metodoPago": "rappicard",
+        "declaracion": true,
+        "tipo": "cashback",
+        "nombreCampana": "99% cashback Dominos",
+        "tienda": "Domino's Pizza",
+        "fechaInicio": "2026-09-20",
+        "horaInicio": "00:00",
+        "fechaFin": "2026-09-21",
+        "horaFin": "23:59",
+        "organizadorRazonSocial": "Organizador de Prueba Dos S.A.S.",
+        "organizadorId": "900333444-0",
+        "porcentaje": 99,
+        "tope": 25000,
+        "presupuesto": 10000000,
+        "maxPedidos": null,
+        "sinLimite": true,
+        "carga": "inmediata",
+        "vigencia": "dias",
+        "diasVigencia": 2,
+        "redencion": "secciones",
+        "secciones": [
+          "Restaurantes"
+        ],
+        "compraMinima": 50000,
+        "condiciones": [
+          "consumo_local"
+        ]
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "noventa y nueve por ciento (99%)",
+          "la ciudad de Bogotá, en la República de Colombia",
+          "dos (2) días calendario",
+          "de la sección “Restaurantes”",
+          "cincuenta mil pesos M/Cte. ($50.000)",
+          "únicamente para pedidos pagados con RappiCard",
+          "no establece un número máximo de pedidos",
+          "consumo en el local"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          ".."
+        ]
+      }
+    },
+    {
+      "id": "CB03",
+      "descripcion": "Cashback CO sin organizador: no debe generar",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "CO",
+        "alcance": "Nacional",
+        "ciudades": "",
+        "segmento": "todos",
+        "metodoPago": "todos",
+        "declaracion": true,
+        "tipo": "cashback",
+        "nombreCampana": "Prueba sin organizador",
+        "tienda": "Hamburguesas de Prueba",
+        "fechaInicio": "2026-09-20",
+        "horaInicio": "00:00",
+        "fechaFin": "2026-09-20",
+        "horaFin": "23:59",
+        "organizadorRazonSocial": "",
+        "organizadorId": "",
+        "porcentaje": 20,
+        "tope": 20000,
+        "presupuesto": 1000000,
+        "maxPedidos": 1,
+        "sinLimite": false,
+        "carga": "inmediata",
+        "vigencia": "dias",
+        "diasVigencia": 30,
+        "redencion": "tienda",
+        "condiciones": []
+      },
+      "esperado": {
+        "resultado": "falla",
+        "errores": [
+          "organizadorRazonSocial",
+          "organizadorId"
+        ]
+      }
+    },
+    {
+      "id": "CB04",
+      "descripcion": "Cashback CO con NIT de dígito inválido: no debe generar",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "CO",
+        "alcance": "Nacional",
+        "ciudades": "",
+        "segmento": "todos",
+        "metodoPago": "todos",
+        "declaracion": true,
+        "tipo": "cashback",
+        "nombreCampana": "Prueba NIT inválido",
+        "tienda": "Tienda de Prueba",
+        "fechaInicio": "2026-09-20",
+        "horaInicio": "00:00",
+        "fechaFin": "2026-09-20",
+        "horaFin": "23:59",
+        "organizadorRazonSocial": "Organizador de Prueba S.A.S.",
+        "organizadorId": "900111222-5",
+        "porcentaje": 20,
+        "tope": 20000,
+        "presupuesto": 1000000,
+        "maxPedidos": 1,
+        "sinLimite": false,
+        "carga": "inmediata",
+        "vigencia": "dias",
+        "diasVigencia": 30,
+        "redencion": "tienda",
+        "condiciones": []
+      },
+      "esperado": {
+        "resultado": "falla",
+        "errores": [
+          "organizadorId"
+        ]
+      }
+    },
+    {
+      "id": "CB05",
+      "descripcion": "Cashback CO con presupuesto vacío y tope mayor que presupuesto en otro campo: no debe generar",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "CO",
+        "alcance": "Nacional",
+        "ciudades": "",
+        "segmento": "todos",
+        "metodoPago": "todos",
+        "declaracion": true,
+        "tipo": "cashback",
+        "nombreCampana": "Prueba sin presupuesto",
+        "tienda": "Tienda de Prueba",
+        "fechaInicio": "2026-09-20",
+        "horaInicio": "00:00",
+        "fechaFin": "2026-09-19",
+        "horaFin": "23:59",
+        "organizadorRazonSocial": "Organizador de Prueba S.A.S.",
+        "organizadorId": "900111222-1",
+        "porcentaje": 20,
+        "tope": 20000,
+        "presupuesto": null,
+        "maxPedidos": 1,
+        "sinLimite": false,
+        "carga": "inmediata",
+        "vigencia": "dias",
+        "diasVigencia": 30,
+        "redencion": "tienda",
+        "condiciones": []
+      },
+      "esperado": {
+        "resultado": "falla",
+        "errores": [
+          "presupuesto",
+          "fechaFin"
+        ]
+      }
+    },
+    {
+      "id": "CC01",
+      "descripcion": "Carrera CO: 3 ganadores, marca Maker, premio en Créditos, entrega del Organizador",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "CO",
+        "alcance": "Nacional",
+        "ciudades": "",
+        "segmento": "todos",
+        "metodoPago": "todos",
+        "declaracion": true,
+        "tipo": "carrera_compras",
+        "nombreCampana": "Carrera de Compras Bimbo 30",
+        "tienda": "Carulla",
+        "fechaInicio": "2026-09-20",
+        "horaInicio": "00:00",
+        "fechaFin": "2026-09-30",
+        "horaFin": "23:59",
+        "organizadorRazonSocial": "Organizador de Prueba Tres S.A.S.",
+        "organizadorId": "900555666-1",
+        "productos": "marca",
+        "makerMarca": "Bimbo",
+        "criterioGanador": "mayor_valor",
+        "numeroGanadores": 3,
+        "desempate": "primero",
+        "tipoPremio": "creditos",
+        "creditosPremio": 500000,
+        "entregaPor": "organizador",
+        "medioNotificacion": "correo",
+        "fechaNotificacion": "2026-10-05",
+        "plazoConfirmacion": 5,
+        "compraMinima": 30000
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "Resultarán ganadores los tres (3) participantes",
+          "cinco (5) días hábiles",
+          "los productos de la marca Bimbo",
+          "quinientos mil (500.000) Créditos",
+          "podrá compartir con el Organizador",
+          "treinta mil pesos M/Cte. ($30.000)",
+          "el mayor valor total en compras de Productos Participantes",
+          "ganará el participante que haya alcanzado primero"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          ".."
+        ]
+      }
+    },
+    {
+      "id": "CC02",
+      "descripcion": "Carrera CO con desempate igual al criterio del ganador: no debe generar",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "CO",
+        "alcance": "Nacional",
+        "ciudades": "",
+        "segmento": "todos",
+        "metodoPago": "todos",
+        "declaracion": true,
+        "tipo": "carrera_compras",
+        "nombreCampana": "Carrera inválida",
+        "tienda": "Tienda de Prueba",
+        "fechaInicio": "2026-09-20",
+        "horaInicio": "00:00",
+        "fechaFin": "2026-09-30",
+        "horaFin": "23:59",
+        "organizadorRazonSocial": "Organizador de Prueba S.A.S.",
+        "organizadorId": "900111222-1",
+        "productos": "todos",
+        "criterioGanador": "mayor_valor",
+        "numeroGanadores": 1,
+        "desempate": "mayor_valor",
+        "tipoPremio": "fisico",
+        "descripcionPremio": "Una consola de videojuegos",
+        "entregaPor": "rappi",
+        "medioNotificacion": "plataforma",
+        "fechaNotificacion": "2026-10-05",
+        "plazoConfirmacion": 1
+      },
+      "esperado": {
+        "resultado": "falla",
+        "errores": [
+          "desempate"
+        ]
+      }
+    },
+    {
+      "id": "CD01",
+      "descripcion": "Cashback Day CO con 3 tiendas (caso real de Restaurantes)",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "CO",
+        "alcance": "Nacional",
+        "ciudades": "",
+        "segmento": "todos",
+        "metodoPago": "todos",
+        "declaracion": true,
+        "tipo": "cashback_day",
+        "nombreCampana": "Cashback 99% Beer Station, Leños & Carbon y EVOK",
+        "fechaInicio": "2026-09-24",
+        "horaInicio": "11:00",
+        "fechaFin": "2026-09-24",
+        "horaFin": "22:00",
+        "porcentaje": 99,
+        "tope": 25000,
+        "maxPedidos": 1,
+        "sinLimite": false,
+        "carga": "inmediata",
+        "vigencia": "dias",
+        "diasVigencia": 3,
+        "redencion": "tienda",
+        "condiciones": [],
+        "tiendas": [
+          {
+            "marca": "Beer Station",
+            "razonSocial": "Tienda Prueba Uno S.A.S.",
+            "id": "900777888-2",
+            "ciudades": "Bogotá, Medellín",
+            "nacional": false,
+            "presupuesto": 5000000
+          },
+          {
+            "marca": "Leños & Carbon",
+            "razonSocial": "Tienda Prueba Dos S.A.S.",
+            "id": "901222333-9",
+            "ciudades": "Cali",
+            "nacional": false,
+            "presupuesto": 500000
+          },
+          {
+            "marca": "EVOK",
+            "razonSocial": "Tienda Prueba Tres S.A.S.",
+            "id": "830111222-6",
+            "ciudades": "",
+            "nacional": true,
+            "presupuesto": 1500000
+          }
+        ]
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "• Beer Station: Tienda Prueba Uno S.A.S., identificada con NIT 900.777.888-2.",
+          "• Leños & Carbon (Cali): quinientos mil (500.000) Créditos",
+          "• EVOK (cobertura nacional): un millón quinientos mil (1.500.000) Créditos",
+          "• Beer Station (Bogotá y Medellín): cinco millones (5.000.000) de Créditos"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          "TIENDA_"
+        ]
+      }
+    },
+    {
+      "id": "CD02",
+      "descripcion": "Cashback Day sin tiendas: no debe generar",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "CO",
+        "alcance": "Nacional",
+        "ciudades": "",
+        "segmento": "todos",
+        "metodoPago": "todos",
+        "declaracion": true,
+        "tipo": "cashback_day",
+        "nombreCampana": "Day vacío",
+        "fechaInicio": "2026-09-24",
+        "horaInicio": "11:00",
+        "fechaFin": "2026-09-24",
+        "horaFin": "22:00",
+        "porcentaje": 50,
+        "tope": 10000,
+        "maxPedidos": 1,
+        "sinLimite": false,
+        "carga": "inmediata",
+        "vigencia": "dias",
+        "diasVigencia": 3,
+        "redencion": "tienda",
+        "condiciones": [],
+        "tiendas": []
+      },
+      "esperado": {
+        "resultado": "falla",
+        "errores": [
+          "tiendas"
+        ]
+      }
+    },
+    {
+      "id": "MX01",
+      "descripcion": "Cashback MX (país en piloto, usuario del equipo de pruebas)",
+      "fecha_referencia": "2026-09-16",
+      "usuario_en_equipo": true,
+      "entrada": {
+        "pais": "MX",
+        "tipo": "cashback",
+        "nombreCampana": "Cashback de prueba México",
+        "tienda": "Tienda de Prueba MX",
+        "alcance": "Nacional",
+        "ciudades": "",
+        "segmento": "todos",
+        "metodoPago": "sin_efectivo",
+        "declaracion": true,
+        "fechaInicio": "2026-09-20",
+        "horaInicio": "00:00",
+        "fechaFin": "2026-09-25",
+        "horaFin": "23:59",
+        "organizadorRazonSocial": "Organizador de Prueba, S.A. de C.V.",
+        "organizadorId": "PRU200101AB5",
+        "porcentaje": 21,
+        "tope": 500,
+        "presupuesto": 1000000,
+        "maxPedidos": 21,
+        "sinLimite": false,
+        "carga": "dia_siguiente",
+        "vigencia": "dias",
+        "diasVigencia": 31,
+        "redencion": "general",
+        "condiciones": [],
+        "compraMinima": 200000
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "RFC PRU200101AB5",
+          "veintiuno por ciento (21%)",
+          "quinientos (500) Créditos",
+          "un millón (1,000,000) de Créditos",
+          "veintiún (21) pedidos",
+          "treinta y un (31) días naturales",
+          "hora de la Ciudad de México",
+          "el Aviso de privacidad",
+          "doscientos mil pesos MXN ($200,000)",
+          "Secretaría Anticorrupción y Buen Gobierno"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          ".."
+        ]
+      }
+    },
+    {
+      "id": "MX02",
+      "descripcion": "Cashback MX con usuario que NO está en el equipo de pruebas: no debe generar",
+      "fecha_referencia": "2026-09-16",
+      "usuario_en_equipo": false,
+      "entrada": {
+        "pais": "MX",
+        "tipo": "cashback"
+      },
+      "esperado": {
+        "resultado": "falla",
+        "errores": [
+          "pais"
+        ]
+      }
+    }
+  ]
+}

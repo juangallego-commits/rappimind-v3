@@ -1,0 +1,2 @@
+%% Bloque compartido: acreditacion · versión 3.0
+§ Acreditación del Beneficio. Los Créditos correspondientes al Beneficio se acreditarán en tu Billetera de Créditos **{{TEXTO_CARGA}}**. Podrás verificar el estado de tus Créditos en las secciones “Cuenta” y “Créditos” de la Plataforma Rappi. Rappi se reserva el derecho de verificar la elegibilidad de cada pedido antes de acreditar el Beneficio; si la verificación determina que el pedido no cumple las condiciones de la Campaña, los Créditos no serán acreditados y se te informará a través de la Plataforma Rappi.

@@ -1,0 +1,3 @@
+%% Bloque compartido: organizador · versión 3.0
+§ Organizador y rol de Rappi. La presente campaña promocional (en adelante, la “Campaña”) es organizada por **{{ORGANIZADOR}}**, identificada con **{{ID_ORGANIZADOR}}** (en adelante, el “Organizador”), quien responde por su desarrollo, sus condiciones y el beneficio o premio ofrecido. **{{ENTIDAD_LEGAL}}** (en adelante, “Rappi”) actúa únicamente como plataforma de contacto e intermediación tecnológica y como medio de difusión de la Campaña; Rappi no es el organizador de la Campaña.
+Los términos con mayúscula inicial que no se definan en este documento tendrán el significado que les asignan los Términos y Condiciones de Uso de la Plataforma Rappi.
