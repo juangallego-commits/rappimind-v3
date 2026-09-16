@@ -116,7 +116,27 @@ escriba solo mientras respondes. Esa es la idea de toda la interfaz.
 - **El despliegue versionado.** No lo disparé, como pediste. Cuando quieras publicar los cambios de la noche: Actions > Pruebas y despliegue > Run workflow.
 - **Pegar tiendas desde Excel.** Quedó hecho, en el Cashback Day, dentro de "Pegar varias tiendas desde Excel". No lo probé con un Excel real tuyo.
 
-## 7. Cómo verificar que no rompí nada
+## 7. Lo que verifiqué en un navegador de verdad
+
+Además de las 196 pruebas, recorrí la aplicación con un navegador sin interfaz y
+comprobé lo que no se ve en una captura. Las once pasan:
+
+- La opción de desempate igual al criterio del ganador queda deshabilitada, con
+  la razón visible: "Ya es el criterio del ganador: nunca desempataría".
+- El foco de teclado se ve: contorno sólido de 3px.
+- Las flechas del teclado mueven entre las opciones.
+- Un nombre de campaña con HTML dentro **no se ejecuta**: sale como texto en el
+  documento. Probado con `<img src=x onerror=...>`.
+- Con la preferencia de movimiento reducido del sistema, el destello no anima y
+  el cambio se marca con un contorno fijo, para no perder la información.
+- El borrador se ofrece al volver a abrir la pestaña.
+
+Ahí encontré un error que las pruebas no veían: **el borrador se borraba en cada
+arranque**, porque reiniciar el formulario lo sobrescribía antes de que la
+pantalla de inicio lo leyera. No fallaba, simplemente nunca ofrecía nada.
+Corregido.
+
+## 8. Cómo verificar que no rompí nada
 
 ```
 npm test                    196 pruebas

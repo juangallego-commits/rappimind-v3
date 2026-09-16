@@ -172,3 +172,10 @@ archivo sin avisar. Pasó de verdad y costó encontrarlo.
 **Playwright no es dependencia del proyecto.** Las capturas se sacan con un
 recorrido que vive fuera del repositorio. `npm test` sigue sin dependencias
 externas, como pide CLAUDE.md.
+
+**Reiniciar el formulario no guarda el borrador.** Lo hacía, y con eso arrancar la
+aplicación pisaba el borrador de la sesión anterior antes de que la pantalla de
+inicio alcanzara a leerlo: la función de no perder lo escrito no servía para
+nada y no se notaba, porque no falla, simplemente nunca ofrece nada. Ahora el
+borrador solo se escribe cuando el comercial responde algo, que es cuando hay
+algo que perder.

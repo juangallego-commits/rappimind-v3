@@ -48,6 +48,15 @@ function fijarVarios(cambios) {
   guardarBorrador();
 }
 
+/**
+ * Deja el formulario como nuevo.
+ *
+ * OJO: esto NO guarda el borrador. Si lo guardara, arrancar la aplicación
+ * pisaría el borrador de la sesión anterior antes de que la pantalla de inicio
+ * alcanzara a leerlo, y la función de no perder lo escrito no serviría de nada.
+ * El borrador se guarda cuando el comercial responde algo, que es cuando hay
+ * algo que perder.
+ */
 function reiniciarFormulario(base, yaRespondidas) {
   estado.entrada = base || {};
   estado.respondidas = yaRespondidas || {};
@@ -58,7 +67,6 @@ function reiniciarFormulario(base, yaRespondidas) {
   estado.motivoDeLegal = null;
   estado.resultado = null;
   estado.ultimoTextoVistaPrevia = '';
-  guardarBorrador();
 }
 
 // --- Borrador ---------------------------------------------------------------
