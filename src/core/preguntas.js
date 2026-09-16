@@ -27,6 +27,8 @@
 var PASOS = [
   { id: 'campana', nombre: 'Campaña', titulo: 'Tu campaña' },
   { id: 'organizador', nombre: 'Organizador', titulo: 'Quién organiza la campaña' },
+  { id: 'productos_travel', nombre: 'Productos', titulo: 'Qué se puede comprar' },
+  { id: 'condiciones_travel', nombre: 'Condiciones', titulo: 'Condiciones de la compra' },
   { id: 'vigencia', nombre: 'Cuándo', titulo: 'Cuándo corre la campaña' },
   { id: 'beneficio', nombre: 'Beneficio', titulo: 'El beneficio' },
   { id: 'creditos', nombre: 'Créditos', titulo: 'Los Créditos' },
