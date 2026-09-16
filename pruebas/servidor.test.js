@@ -545,3 +545,37 @@ test('cada ampliación queda en el Registro', () => {
   const registro = objetosDe('Registro');
   assert.ok(registro.some((fila) => fila.accion === 'ampliar' && String(fila.detalle).indexOf(original.id) !== -1));
 });
+
+/**
+ * El estado inicial es lo primero que recibe el navegador, y de ahí sale la
+ * lista de tipos de campaña. Esta prueba existe porque se rompió de verdad:
+ * al limpiar las fechas para que pasaran por google.script.run, la lista
+ * `pais.modelos` se convirtió en la cadena "cashback,carrera_compras,..." y la
+ * pantalla se quedó sin una sola opción que elegir.
+ *
+ * En la demostración no se veía, porque ahí el servidor simulado no limpia
+ * nada. Solo se veía en Apps Script.
+ */
+test('el estado inicial conserva las listas, no las vuelve texto', () => {
+  conSetup();
+  const inicial = estadoInicial();
+
+  const colombia = inicial.paises.filter((p) => p.codigo === 'CO')[0];
+  assert.ok(colombia, 'Colombia debería estar disponible');
+  assert.ok(Array.isArray(colombia.modelos), 'pais.modelos llegó como ' + typeof colombia.modelos);
+  assert.ok(colombia.modelos.indexOf('cashback_travel') !== -1, JSON.stringify(colombia.modelos));
+
+  // Y con esa lista, la pantalla tiene los cinco tipos que ofrecer.
+  const disponibles = tiposDelPais(colombia, inicial.tipos);
+  assert.strictEqual(disponibles.length, 5, disponibles.map((t) => t.id).join(', '));
+});
+
+test('el historial conserva las listas de cada solicitud', () => {
+  conSetup();
+  generar(solicitudValida({ tienda: 'Jumbo', redencion: 'secciones', secciones: ['Restaurantes', 'Turbo'] }));
+
+  const fila = historial('')[0];
+  const guardado = JSON.parse(fila.datos_json);
+  assert.ok(Array.isArray(guardado.secciones), 'las secciones llegaron como ' + typeof guardado.secciones);
+  assert.deepStrictEqual(guardado.secciones, ['Restaurantes', 'Turbo']);
+});

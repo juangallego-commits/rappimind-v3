@@ -68,6 +68,7 @@ function bajarEntorno() {
 function solicitudValida(cambios) {
   return Object.assign({
     pais: 'CO',
+    negocio: 'rappi',
     tipo: 'cashback',
     nombreCampana: 'Campaña de prueba',
     tienda: 'Tienda de Prueba',

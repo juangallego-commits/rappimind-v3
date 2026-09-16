@@ -481,6 +481,22 @@ function avisosDeTravel(entrada) {
 }
 
 /**
+ * El negocio y el tipo tienen que hablar de lo mismo.
+ *
+ * Son dos empresas distintas: los domicilios los opera Rappi S.A.S. y los
+ * viajes Travel Moustache S.A.S. Un documento con el negocio de una y el tipo
+ * de la otra saldria a nombre de quien no es.
+ */
+function validarNegocio(entrada, esquema) {
+  if (!esquema || estaVacio(entrada.negocio)) return [];
+  var esperado = esquema.esDeTravel ? 'travel' : 'rappi';
+  if (entrada.negocio === esperado) return [];
+  return [error('negocio', esquema.esDeTravel
+    ? 'Este tipo de campaña es de Rappi Travel, pero arriba dice que la campaña es de Rappi. Corrige una de las dos.'
+    : 'Este tipo de campaña es de Rappi, pero arriba dice que la campaña es de Rappi Travel. Corrige una de las dos.')];
+}
+
+/**
  * Valida la solicitud completa.
  *
  * contexto: { fechaReferencia, usuarioEnEquipo }
@@ -502,6 +518,7 @@ function validarSolicitud(entrada, pais, contexto) {
   errores = errores.concat(validarVigencia(entrada, opciones.fechaReferencia));
   errores = errores.concat(validarOrganizador(entrada, pais));
   errores = errores.concat(validarCreditos(entrada));
+  errores = errores.concat(validarNegocio(entrada, esquema));
 
   if (entrada.tipo === 'cashback') {
     errores = errores.concat(validarCashback(entrada));
@@ -534,6 +551,7 @@ if (typeof module !== 'undefined') {
     validarObligatorios: validarObligatorios,
     validarVigencia: validarVigencia,
     validarTiendas: validarTiendas,
+    validarNegocio: validarNegocio,
     validarTravel: validarTravel,
     validarOrganizadorDeTravel: validarOrganizadorDeTravel,
     validarCashbackTravel: validarCashbackTravel,

@@ -271,8 +271,10 @@ function dibujarPregunta(campo, config) {
   bloque.appendChild(titulo);
   bloque.appendChild(crear('p', { clase: 'pregunta-ayuda' }, [conGlosario(pregunta.ayuda)]));
 
+  // Devuelve true cuando el cambio ya cambio de pantalla: en ese caso nadie
+  // puede avanzar encima.
   function alCambiar(valor) {
-    config.alCambiar(campo.id, valor);
+    return config.alCambiar(campo.id, valor);
   }
 
   var control;
@@ -280,7 +282,7 @@ function dibujarPregunta(campo, config) {
   else if (campo.tipo === 'fecha' || campo.tipo === 'hora') control = controlFechaUHora(campo, alCambiar);
   else if (campo.tipo === 'lista' || campo.tipo === 'tarjetas') {
     control = controlOpciones(campo, pregunta, function (valor) {
-      alCambiar(valor);
+      if (alCambiar(valor)) return;
       if (pregunta.avanzaSola && config.alAvanzar) config.alAvanzar();
     }, config.deshabilitadas);
   } else if (campo.tipo === 'casillas') {

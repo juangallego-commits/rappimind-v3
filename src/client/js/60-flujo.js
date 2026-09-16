@@ -273,7 +273,7 @@ function pantallaFiltro(raiz) {
  */
 function pantallaFiltroTravel(raiz) {
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
-    crear('h1', { texto: 'Antes de seguir con tu campaña de Travel' }),
+    crear('h1', { texto: 'Antes de seguir con tu campaña de Rappi Travel' }),
     crear('p', {
       clase: 'pregunta-ayuda',
       texto: 'Nueve preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano. No es un castigo: es un caso que un abogado tiene que mirar.',
@@ -297,11 +297,10 @@ function pantallaFiltroTravel(raiz) {
       // El tipo ya quedo respondido antes del filtro, asi que al volver hay que
       // seguir en la pregunta siguiente. Sin esto, el asistente reabre la del
       // tipo y parece que no hubiera pasado nada.
-      E.pantalla = 'pasos';
+      // El filtro va justo despues de elegir Rappi Travel, asi que al volver la
+      // pregunta que toca es la del tipo.
       E.campoAbierto = 'tipo';
-      // avanzar vuelve a buscar el campo por identificador, asi que basta con
-      // decirle cual estaba abierto; el indice lo resuelve el solo.
-      RM.pasos.avanzar([{ id: 'tipo' }], 0, null);
+      RM.app.ir('pasos');
     }
   }
 
@@ -336,10 +335,12 @@ function pantallaFiltroTravel(raiz) {
   contenido.appendChild(lista);
   contenido.appendChild(crear('div', { clase: 'fila-botones' }, [
     crear('button', {
-      clase: 'boton boton-secundario', type: 'button', texto: 'Cambiar el tipo de campaña',
+      clase: 'boton boton-secundario', type: 'button', texto: 'Esta campaña no es de Travel',
       onclick: function () {
+        estado.fijar('negocio', 'rappi');
         estado.fijar('tipo', null);
         E.filtroDeTravelRespondido = false;
+        E.campoAbierto = 'tipo';
         RM.app.ir('pasos');
       },
     }),

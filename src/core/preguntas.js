@@ -96,6 +96,21 @@ var PREGUNTAS = {
     errores: { vacio: 'Elige el país de la campaña.' },
   }),
 
+  negocio: p({
+    paso: 'campana',
+    pregunta: '¿La campaña es de Rappi o de Rappi Travel?',
+    ayuda: 'Rappi es el domicilio de siempre. Rappi Travel son vuelos, hoteles, autos y paquetes.',
+    porQue: 'Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.',
+    avanzaSola: true,
+    porDefecto: 'rappi',
+    opciones: [
+      { valor: 'rappi', etiqueta: 'Rappi', nota: 'Restaurantes, supermercados, farmacias y todo lo que llega a domicilio.' },
+      { valor: 'travel', etiqueta: 'Rappi Travel', nota: 'Vuelos, hoteles, autos, paquetes, tours y asistencia al viajero.' },
+    ],
+    placeholders: [],
+    errores: { vacio: 'Dinos si la campaña es de Rappi o de Rappi Travel.' },
+  }),
+
   tipo: p({
     paso: 'campana',
     pregunta: '¿Qué tipo de campaña vas a hacer?',

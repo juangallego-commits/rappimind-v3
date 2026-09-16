@@ -419,3 +419,36 @@ hubo órdenes, así que si ya pasó la hora de inicio asume que las hubo. Funcio
 con las franjas de un solo día, de 6 a 8 de la noche.
 
 **265 pruebas en verde**, más cuatro recorridos verificados en el navegador.
+
+## 16 de septiembre · noche · Dos arreglos después de la prueba de Juan
+
+### La pantalla se quedó sin tipos que elegir
+
+Juan abrió la herramienta y la pregunta "¿Qué tipo de campaña vas a hacer?" no mostraba ni
+una opción. **Lo rompí yo**, al arreglar "Mis campañas**: la función que limpia las fechas
+antes de que la respuesta cruce a `google.script.run` también convertía las **listas** a
+texto. La lista de modelos del país llegaba al navegador como la cadena
+`"cashback,carrera_compras,..."` en vez de una lista, y la pantalla no encontraba ningún
+tipo que ofrecer.
+
+En la demostración no se veía, porque ahí el servidor simulado no limpia nada. Solo se veía
+en Apps Script, que es justo donde no puedo probar yo. Ahora hay una prueba que corre
+`estadoInicial()` con los dobles y exige que `pais.modelos` siga siendo una lista con los
+cinco tipos: quitando el arreglo, falla.
+
+### La primera pregunta ahora es Rappi o Rappi Travel
+
+Antes los cinco tipos salían mezclados en una sola lista. Ahora, después del país, la
+pregunta es **"¿La campaña es de Rappi o de Rappi Travel?"**, y de ahí salen solo los tipos
+de ese negocio: tres para Rappi, dos para Travel.
+
+Elegir Rappi Travel lleva de una al filtro de nueve preguntas, antes de elegir el tipo: si
+la campaña va a terminar en Legal, mejor saberlo antes de llenar media campaña.
+
+El negocio queda guardado en el Sheet y hay una validación que no deja que se contradiga
+con el tipo: un documento con el negocio de una empresa y el tipo de la otra saldría a
+nombre de quien no es.
+
+De paso salieron dos defectos de navegación: avanzar después de haber cambiado de pantalla
+mandaba al resumen con el formulario vacío, y al elegir el tipo de una campaña de Travel el
+asistente se quedaba mirando la pregunta que el comercial acababa de contestar.

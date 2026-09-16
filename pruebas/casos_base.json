@@ -30,7 +30,8 @@
         "vigencia": "fecha",
         "fechaFinRedencion": "2026-09-20",
         "redencion": "tienda",
-        "condiciones": []
+        "condiciones": [],
+        "negocio": "rappi"
       },
       "esperado": {
         "resultado": "genera",
@@ -88,7 +89,8 @@
         "compraMinima": 50000,
         "condiciones": [
           "consumo_local"
-        ]
+        ],
+        "negocio": "rappi"
       },
       "esperado": {
         "resultado": "genera",
@@ -138,7 +140,8 @@
         "vigencia": "dias",
         "diasVigencia": 30,
         "redencion": "tienda",
-        "condiciones": []
+        "condiciones": [],
+        "negocio": "rappi"
       },
       "esperado": {
         "resultado": "falla",
@@ -177,7 +180,8 @@
         "vigencia": "dias",
         "diasVigencia": 30,
         "redencion": "tienda",
-        "condiciones": []
+        "condiciones": [],
+        "negocio": "rappi"
       },
       "esperado": {
         "resultado": "falla",
@@ -215,7 +219,8 @@
         "vigencia": "dias",
         "diasVigencia": 30,
         "redencion": "tienda",
-        "condiciones": []
+        "condiciones": [],
+        "negocio": "rappi"
       },
       "esperado": {
         "resultado": "falla",
@@ -256,7 +261,8 @@
         "medioNotificacion": "correo",
         "fechaNotificacion": "2026-10-05",
         "plazoConfirmacion": 5,
-        "compraMinima": 30000
+        "compraMinima": 30000,
+        "negocio": "rappi"
       },
       "esperado": {
         "resultado": "genera",
@@ -306,7 +312,8 @@
         "entregaPor": "rappi",
         "medioNotificacion": "plataforma",
         "fechaNotificacion": "2026-10-05",
-        "plazoConfirmacion": 1
+        "plazoConfirmacion": 1,
+        "negocio": "rappi"
       },
       "esperado": {
         "resultado": "falla",
@@ -366,7 +373,8 @@
             "nacional": true,
             "presupuesto": 1500000
           }
-        ]
+        ],
+        "negocio": "rappi"
       },
       "esperado": {
         "resultado": "genera",
@@ -409,7 +417,8 @@
         "diasVigencia": 3,
         "redencion": "tienda",
         "condiciones": [],
-        "tiendas": []
+        "tiendas": [],
+        "negocio": "rappi"
       },
       "esperado": {
         "resultado": "falla",
@@ -449,7 +458,8 @@
         "diasVigencia": 31,
         "redencion": "general",
         "condiciones": [],
-        "compraMinima": 200000
+        "compraMinima": 200000,
+        "negocio": "rappi"
       },
       "esperado": {
         "resultado": "genera",
@@ -479,7 +489,8 @@
       "usuario_en_equipo": false,
       "entrada": {
         "pais": "MX",
-        "tipo": "cashback"
+        "tipo": "cashback",
+        "negocio": "rappi"
       },
       "esperado": {
         "resultado": "falla",
@@ -537,7 +548,8 @@
           "Autos",
           "Tours y Actividades",
           "Asistencia"
-        ]
+        ],
+        "negocio": "travel"
       },
       "esperado": {
         "resultado": "genera",
@@ -590,7 +602,8 @@
           "Hoteles",
           "Paquetes",
           "Tours y Actividades"
-        ]
+        ],
+        "negocio": "travel"
       },
       "esperado": {
         "resultado": "genera",
@@ -637,7 +650,8 @@
         "maxOrdenes": 20,
         "carga": "al_confirmarse",
         "diasVigencia": 30,
-        "redencion": "todo_travel"
+        "redencion": "todo_travel",
+        "negocio": "travel"
       },
       "esperado": {
         "resultado": "genera",
@@ -690,7 +704,8 @@
         "carga": "dias_calendario",
         "diasCarga": 3,
         "diasVigencia": 30,
-        "redencion": "travel_y_plataforma"
+        "redencion": "travel_y_plataforma",
+        "negocio": "travel"
       },
       "esperado": {
         "resultado": "genera",
@@ -756,7 +771,8 @@
           "Marriott Bonvoy",
           "Asistencia"
         ],
-        "hotelesModo": "todos"
+        "hotelesModo": "todos",
+        "negocio": "travel"
       },
       "esperado": {
         "resultado": "genera",
@@ -801,7 +817,8 @@
           "precio_tachado"
         ],
         "sinLimitePorUsuario": true,
-        "sinUnidades": true
+        "sinUnidades": true,
+        "negocio": "travel"
       },
       "esperado": {
         "resultado": "genera",
@@ -854,7 +871,8 @@
           "etiqueta"
         ],
         "limitePorUsuario": 2,
-        "unidades": 100
+        "unidades": 100,
+        "negocio": "travel"
       },
       "esperado": {
         "resultado": "genera",
@@ -903,7 +921,8 @@
         "sinMaxOrdenes": true,
         "carga": "al_confirmarse",
         "diasVigencia": 30,
-        "redencion": "todo_travel"
+        "redencion": "todo_travel",
+        "negocio": "travel"
       },
       "esperado": {
         "resultado": "falla",
@@ -949,7 +968,8 @@
         "sinMaxOrdenes": true,
         "carga": "al_confirmarse",
         "diasVigencia": 30,
-        "redencion": "todo_travel"
+        "redencion": "todo_travel",
+        "negocio": "travel"
       },
       "esperado": {
         "resultado": "falla",
@@ -992,7 +1012,8 @@
           "etiqueta"
         ],
         "sinLimitePorUsuario": true,
-        "sinUnidades": true
+        "sinUnidades": true,
+        "negocio": "travel"
       },
       "esperado": {
         "resultado": "falla",
@@ -1036,7 +1057,8 @@
           "etiqueta"
         ],
         "limitePorUsuario": 1,
-        "sinUnidades": true
+        "sinUnidades": true,
+        "negocio": "travel"
       },
       "esperado": {
         "resultado": "falla",
@@ -1080,7 +1102,8 @@
         "sinMaxOrdenes": true,
         "carga": "al_confirmarse",
         "diasVigencia": 30,
-        "redencion": "todo_travel"
+        "redencion": "todo_travel",
+        "negocio": "travel"
       },
       "esperado": {
         "resultado": "falla",
@@ -1123,7 +1146,8 @@
         "sinMaxOrdenes": true,
         "carga": "al_confirmarse",
         "diasVigencia": 30,
-        "redencion": "todo_travel"
+        "redencion": "todo_travel",
+        "negocio": "travel"
       },
       "esperado": {
         "resultado": "falla",
@@ -1169,7 +1193,8 @@
         "sinMaxOrdenes": true,
         "carga": "al_confirmarse",
         "diasVigencia": 30,
-        "redencion": "todo_travel"
+        "redencion": "todo_travel",
+        "negocio": "travel"
       },
       "esperado": {
         "resultado": "falla",

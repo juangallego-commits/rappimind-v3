@@ -17,6 +17,7 @@ const BR = paises.find((p) => p.codigo === 'BR');
 function solicitudBase(cambios) {
   const base = {
     pais: 'CO',
+    negocio: 'rappi',
     tipo: 'cashback',
     tienda: 'Tienda de Prueba',
     alcance: 'Nacional',

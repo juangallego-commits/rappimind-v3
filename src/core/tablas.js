@@ -75,6 +75,22 @@ function valorPlano(valor) {
   if (valor === null || valor === undefined) return '';
   if (Object.prototype.toString.call(valor) === '[object Date]') return fechaComoTexto(valor);
   if (typeof valor === 'number' || typeof valor === 'boolean' || typeof valor === 'string') return valor;
+
+  // Las listas y los objetos SI pasan por google.script.run: se recorren, no se
+  // convierten a texto. Convertirlos rompio la lista de tipos de campana, que
+  // llega como pais.modelos y se volvio la cadena "cashback,carrera_compras,...".
+  if (Object.prototype.toString.call(valor) === '[object Array]') {
+    var lista = [];
+    for (var i = 0; i < valor.length; i++) lista.push(valorPlano(valor[i]));
+    return lista;
+  }
+  if (typeof valor === 'object') {
+    var objeto = {};
+    for (var llave in valor) {
+      if (Object.prototype.hasOwnProperty.call(valor, llave)) objeto[llave] = valorPlano(valor[llave]);
+    }
+    return objeto;
+  }
   return String(valor);
 }
 

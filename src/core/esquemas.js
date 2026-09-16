@@ -25,6 +25,17 @@ function siempre() {
 /** Campos comunes a los tres tipos (seccion 5.1). */
 var CAMPOS_COMUNES = [
   { id: 'pais', etiqueta: 'País', tipo: 'lista', paso: 'campana', obligatorio: true },
+  {
+    id: 'negocio',
+    etiqueta: 'Negocio',
+    tipo: 'lista',
+    paso: 'campana',
+    obligatorio: true,
+    opciones: [
+      { valor: 'rappi', etiqueta: 'Rappi' },
+      { valor: 'travel', etiqueta: 'Rappi Travel' },
+    ],
+  },
   { id: 'tipo', etiqueta: 'Tipo de campaña', tipo: 'tarjetas', paso: 'campana', obligatorio: true },
   { id: 'fechaInicio', etiqueta: 'Fecha de inicio', tipo: 'fecha', paso: 'vigencia', obligatorio: true },
   { id: 'horaInicio', etiqueta: 'Hora de inicio', tipo: 'hora', porDefecto: '00:00', paso: 'vigencia', obligatorio: true },
@@ -393,6 +404,17 @@ function hayAutosDeTravel(entrada) {
 /** Campos que comparten los dos tipos de Travel. */
 var CAMPOS_TRAVEL_COMUNES = [
   { id: 'pais', etiqueta: 'País', tipo: 'lista', paso: 'campana', obligatorio: true },
+  {
+    id: 'negocio',
+    etiqueta: 'Negocio',
+    tipo: 'lista',
+    paso: 'campana',
+    obligatorio: true,
+    opciones: [
+      { valor: 'rappi', etiqueta: 'Rappi' },
+      { valor: 'travel', etiqueta: 'Rappi Travel' },
+    ],
+  },
   { id: 'tipo', etiqueta: 'Tipo de campaña', tipo: 'tarjetas', paso: 'campana', obligatorio: true },
 
   // --- Organizador ---------------------------------------------------------

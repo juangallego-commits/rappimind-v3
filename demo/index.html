@@ -2825,6 +2825,17 @@ function siempre() {
 /** Campos comunes a los tres tipos (seccion 5.1). */
 var CAMPOS_COMUNES = [
   { id: 'pais', etiqueta: 'País', tipo: 'lista', paso: 'campana', obligatorio: true },
+  {
+    id: 'negocio',
+    etiqueta: 'Negocio',
+    tipo: 'lista',
+    paso: 'campana',
+    obligatorio: true,
+    opciones: [
+      { valor: 'rappi', etiqueta: 'Rappi' },
+      { valor: 'travel', etiqueta: 'Rappi Travel' },
+    ],
+  },
   { id: 'tipo', etiqueta: 'Tipo de campaña', tipo: 'tarjetas', paso: 'campana', obligatorio: true },
   { id: 'fechaInicio', etiqueta: 'Fecha de inicio', tipo: 'fecha', paso: 'vigencia', obligatorio: true },
   { id: 'horaInicio', etiqueta: 'Hora de inicio', tipo: 'hora', porDefecto: '00:00', paso: 'vigencia', obligatorio: true },
@@ -3193,6 +3204,17 @@ function hayAutosDeTravel(entrada) {
 /** Campos que comparten los dos tipos de Travel. */
 var CAMPOS_TRAVEL_COMUNES = [
   { id: 'pais', etiqueta: 'País', tipo: 'lista', paso: 'campana', obligatorio: true },
+  {
+    id: 'negocio',
+    etiqueta: 'Negocio',
+    tipo: 'lista',
+    paso: 'campana',
+    obligatorio: true,
+    opciones: [
+      { valor: 'rappi', etiqueta: 'Rappi' },
+      { valor: 'travel', etiqueta: 'Rappi Travel' },
+    ],
+  },
   { id: 'tipo', etiqueta: 'Tipo de campaña', tipo: 'tarjetas', paso: 'campana', obligatorio: true },
 
   // --- Organizador ---------------------------------------------------------
@@ -5108,6 +5130,21 @@ var PREGUNTAS = {
     errores: { vacio: 'Elige el país de la campaña.' },
   }),
 
+  negocio: p({
+    paso: 'campana',
+    pregunta: '¿La campaña es de Rappi o de Rappi Travel?',
+    ayuda: 'Rappi es el domicilio de siempre. Rappi Travel son vuelos, hoteles, autos y paquetes.',
+    porQue: 'Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.',
+    avanzaSola: true,
+    porDefecto: 'rappi',
+    opciones: [
+      { valor: 'rappi', etiqueta: 'Rappi', nota: 'Restaurantes, supermercados, farmacias y todo lo que llega a domicilio.' },
+      { valor: 'travel', etiqueta: 'Rappi Travel', nota: 'Vuelos, hoteles, autos, paquetes, tours y asistencia al viajero.' },
+    ],
+    placeholders: [],
+    errores: { vacio: 'Dinos si la campaña es de Rappi o de Rappi Travel.' },
+  }),
+
   tipo: p({
     paso: 'campana',
     pregunta: '¿Qué tipo de campaña vas a hacer?',
@@ -6449,6 +6486,22 @@ function valorPlano(valor) {
   if (valor === null || valor === undefined) return '';
   if (Object.prototype.toString.call(valor) === '[object Date]') return fechaComoTexto(valor);
   if (typeof valor === 'number' || typeof valor === 'boolean' || typeof valor === 'string') return valor;
+
+  // Las listas y los objetos SI pasan por google.script.run: se recorren, no se
+  // convierten a texto. Convertirlos rompio la lista de tipos de campana, que
+  // llega como pais.modelos y se volvio la cadena "cashback,carrera_compras,...".
+  if (Object.prototype.toString.call(valor) === '[object Array]') {
+    var lista = [];
+    for (var i = 0; i < valor.length; i++) lista.push(valorPlano(valor[i]));
+    return lista;
+  }
+  if (typeof valor === 'object') {
+    var objeto = {};
+    for (var llave in valor) {
+      if (Object.prototype.hasOwnProperty.call(valor, llave)) objeto[llave] = valorPlano(valor[llave]);
+    }
+    return objeto;
+  }
   return String(valor);
 }
 
@@ -7139,6 +7192,22 @@ function avisosDeTravel(entrada) {
 }
 
 /**
+ * El negocio y el tipo tienen que hablar de lo mismo.
+ *
+ * Son dos empresas distintas: los domicilios los opera Rappi S.A.S. y los
+ * viajes Travel Moustache S.A.S. Un documento con el negocio de una y el tipo
+ * de la otra saldria a nombre de quien no es.
+ */
+function validarNegocio(entrada, esquema) {
+  if (!esquema || estaVacio(entrada.negocio)) return [];
+  var esperado = esquema.esDeTravel ? 'travel' : 'rappi';
+  if (entrada.negocio === esperado) return [];
+  return [error('negocio', esquema.esDeTravel
+    ? 'Este tipo de campaña es de Rappi Travel, pero arriba dice que la campaña es de Rappi. Corrige una de las dos.'
+    : 'Este tipo de campaña es de Rappi, pero arriba dice que la campaña es de Rappi Travel. Corrige una de las dos.')];
+}
+
+/**
  * Valida la solicitud completa.
  *
  * contexto: { fechaReferencia, usuarioEnEquipo }
@@ -7160,6 +7229,7 @@ function validarSolicitud(entrada, pais, contexto) {
   errores = errores.concat(validarVigencia(entrada, opciones.fechaReferencia));
   errores = errores.concat(validarOrganizador(entrada, pais));
   errores = errores.concat(validarCreditos(entrada));
+  errores = errores.concat(validarNegocio(entrada, esquema));
 
   if (entrada.tipo === 'cashback') {
     errores = errores.concat(validarCashback(entrada));
@@ -7192,6 +7262,7 @@ if (typeof module !== 'undefined') {
     validarObligatorios: validarObligatorios,
     validarVigencia: validarVigencia,
     validarTiendas: validarTiendas,
+    validarNegocio: validarNegocio,
     validarTravel: validarTravel,
     validarOrganizadorDeTravel: validarOrganizadorDeTravel,
     validarCashbackTravel: validarCashbackTravel,
@@ -7233,6 +7304,7 @@ if (typeof module !== 'undefined') {
         id: ESQUEMAS[id].id, nombre: ESQUEMAS[id].nombre,
         descripcion: ESQUEMAS[id].descripcion, modelo: ESQUEMAS[id].modelo,
         filtroDeEntrada: ESQUEMAS[id].filtroDeEntrada,
+        esDeTravel: !!ESQUEMAS[id].esDeTravel,
       });
     }
     return lista;
@@ -8194,8 +8266,10 @@ function dibujarPregunta(campo, config) {
   bloque.appendChild(titulo);
   bloque.appendChild(crear('p', { clase: 'pregunta-ayuda' }, [conGlosario(pregunta.ayuda)]));
 
+  // Devuelve true cuando el cambio ya cambio de pantalla: en ese caso nadie
+  // puede avanzar encima.
   function alCambiar(valor) {
-    config.alCambiar(campo.id, valor);
+    return config.alCambiar(campo.id, valor);
   }
 
   var control;
@@ -8203,7 +8277,7 @@ function dibujarPregunta(campo, config) {
   else if (campo.tipo === 'fecha' || campo.tipo === 'hora') control = controlFechaUHora(campo, alCambiar);
   else if (campo.tipo === 'lista' || campo.tipo === 'tarjetas') {
     control = controlOpciones(campo, pregunta, function (valor) {
-      alCambiar(valor);
+      if (alCambiar(valor)) return;
       if (pregunta.avanzaSola && config.alAvanzar) config.alAvanzar();
     }, config.deshabilitadas);
   } else if (campo.tipo === 'casillas') {
@@ -8538,7 +8612,7 @@ function pantallaFiltro(raiz) {
  */
 function pantallaFiltroTravel(raiz) {
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
-    crear('h1', { texto: 'Antes de seguir con tu campaña de Travel' }),
+    crear('h1', { texto: 'Antes de seguir con tu campaña de Rappi Travel' }),
     crear('p', {
       clase: 'pregunta-ayuda',
       texto: 'Nueve preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano. No es un castigo: es un caso que un abogado tiene que mirar.',
@@ -8562,11 +8636,10 @@ function pantallaFiltroTravel(raiz) {
       // El tipo ya quedo respondido antes del filtro, asi que al volver hay que
       // seguir en la pregunta siguiente. Sin esto, el asistente reabre la del
       // tipo y parece que no hubiera pasado nada.
-      E.pantalla = 'pasos';
+      // El filtro va justo despues de elegir Rappi Travel, asi que al volver la
+      // pregunta que toca es la del tipo.
       E.campoAbierto = 'tipo';
-      // avanzar vuelve a buscar el campo por identificador, asi que basta con
-      // decirle cual estaba abierto; el indice lo resuelve el solo.
-      RM.pasos.avanzar([{ id: 'tipo' }], 0, null);
+      RM.app.ir('pasos');
     }
   }
 
@@ -8601,10 +8674,12 @@ function pantallaFiltroTravel(raiz) {
   contenido.appendChild(lista);
   contenido.appendChild(crear('div', { clase: 'fila-botones' }, [
     crear('button', {
-      clase: 'boton boton-secundario', type: 'button', texto: 'Cambiar el tipo de campaña',
+      clase: 'boton boton-secundario', type: 'button', texto: 'Esta campaña no es de Travel',
       onclick: function () {
+        estado.fijar('negocio', 'rappi');
         estado.fijar('tipo', null);
         E.filtroDeTravelRespondido = false;
+        E.campoAbierto = 'tipo';
         RM.app.ir('pasos');
       },
     }),
@@ -8863,6 +8938,7 @@ function pantallaPasos(raiz) {
   if (campos.length === 0 && !entrada.tipo) {
     campos = [
       { id: 'pais', tipo: 'lista', paso: 'campana', etiqueta: 'País' },
+      { id: 'negocio', tipo: 'lista', paso: 'campana', etiqueta: 'Negocio', opciones: preguntaDe('negocio').opciones },
       { id: 'tipo', tipo: 'tarjetas', paso: 'campana', etiqueta: 'Tipo' },
     ];
   }
@@ -8910,7 +8986,7 @@ function pantallaPasos(raiz) {
       deshabilitadas: opcionesDeshabilitadas(campoAbierto),
       opciones: opcionesEspeciales,
       aviso: avisoDe(campoAbierto),
-      alCambiar: function (campoId, valor) { alResponder(campoId, valor, campos, indiceAbierto); },
+      alCambiar: function (campoId, valor) { return alResponder(campoId, valor, campos, indiceAbierto); },
       alAvanzar: function () { avanzar(campos, indiceAbierto, pasos); },
     });
 
@@ -8992,10 +9068,13 @@ function preguntaDeCatalogo(campo, campos, indice, pasos) {
       return { valor: p.codigo, etiqueta: p.nombre, nota: p.estado === 'piloto' ? 'En piloto: solo para el equipo de pruebas.' : 'Disponible.' };
     });
   } else {
+    // Solo los tipos del negocio elegido: Rappi y Rappi Travel son dos empresas
+    // distintas y mezclar sus tipos en la misma lista confunde.
     var pais = flujo.paisElegido();
-    opciones = tiposDelPais(pais || { modelos: [] }, E.configuracion.tipos).map(function (t) {
-      return { valor: t.id, etiqueta: t.nombre, nota: t.descripcion };
-    });
+    var negocio = estado.entrada().negocio || 'rappi';
+    opciones = tiposDelPais(pais || { modelos: [] }, E.configuracion.tipos)
+      .filter(function (t) { return (t.esDeTravel ? 'travel' : 'rappi') === negocio; })
+      .map(function (t) { return { valor: t.id, etiqueta: t.nombre, nota: t.descripcion }; });
   }
 
   for (var i = 0; i < opciones.length; i++) {
@@ -9004,9 +9083,9 @@ function preguntaDeCatalogo(campo, campos, indice, pasos) {
         clase: 'opcion' + (elegido === opcion.valor ? ' elegida' : ''),
         type: 'button', role: 'radio', 'aria-checked': String(elegido === opcion.valor),
         onclick: function () {
-          alResponder(campo.id, opcion.valor, campos, indice);
+          if (alResponder(campo.id, opcion.valor, campos, indice)) return;
           E.campoAbierto = null;
-          RM.app.dibujar();
+          seguirDespuesDeUnaTarjeta();
         },
       }, [
         crear('span', { clase: 'opcion-titulo', texto: opcion.etiqueta }),
@@ -9090,6 +9169,33 @@ function preguntaDeVeces(campos, indice, pasos, errores) {
 
 // --- Navegación --------------------------------------------------------------
 
+/**
+ * Guarda una respuesta.
+ *
+ * Devuelve true cuando la respuesta ya cambio de pantalla. Quien llama tiene
+ * que respetarlo y no avanzar encima: avanzar despues de navegar mandaba al
+ * resumen con el formulario vacio.
+ */
+/**
+ * Que hacer despues de elegir el pais, el negocio o el tipo.
+ *
+ * Si el paso todavia tiene preguntas sin responder, se abre la siguiente. Si no
+ * queda ninguna, se pasa al paso siguiente: en Rappi Travel el paso de la
+ * campana se acaba con el tipo, y quedarse quieto dejaba al comercial mirando
+ * la pregunta que acababa de contestar.
+ */
+function seguirDespuesDeUnaTarjeta() {
+  var ahora = situacionActual();
+  for (var i = 0; i < ahora.campos.length; i++) {
+    if (!flujo.tieneRespuesta(ahora.campos[i].id)) {
+      RM.app.dibujar();
+      return;
+    }
+  }
+  if (ahora.campos.length > 0 && E.pasoActual < ahora.pasos.length - 1) E.pasoActual += 1;
+  RM.app.dibujar();
+}
+
 function alResponder(campoId, valor, campos, indice) {
   estado.fijar(campoId, valor);
   E.errores[campoId] = true;
@@ -9100,17 +9206,31 @@ function alResponder(campoId, valor, campos, indice) {
   if (campoId === 'fechaInicio' && !estado.entrada().fechaFin) estado.fijar('fechaFin', valor);
   if (campoId === 'pais') estado.fijar('tipo', null);
 
-  // Rappi Travel tiene su propio filtro de nueve preguntas, y va despues de
-  // elegir el tipo: antes de eso no se sabe que la campana es de viajes.
-  if (campoId === 'tipo' && esTipoDeTravel(valor) && !E.filtroDeTravelRespondido) {
+  // Cambiar de negocio invalida el tipo elegido: los tipos de Rappi no son los
+  // de Rappi Travel.
+  if (campoId === 'negocio') {
+    estado.fijar('tipo', null);
+    E.respondidas.tipo = false;
+
+    // Rappi Travel tiene su propio filtro de nueve preguntas. Va aqui, apenas
+    // se sabe que la campana es de viajes, para no hacerle llenar media
+    // campana a alguien que va a terminar en Legal.
+    if (valor === 'travel' && !E.filtroDeTravelRespondido) {
+      flujo.refrescarDocumento();
+      RM.app.ir('filtroTravel');
+      return true;
+    }
+
+    E.campoAbierto = 'tipo';
     flujo.refrescarDocumento();
-    RM.app.ir('filtroTravel');
-    return;
+    RM.app.dibujar();
+    return true;
   }
   if (campoId === 'criterioGanador' && estado.entrada().desempate === valor) estado.fijar('desempate', null);
 
   flujo.refrescarDocumento();
   actualizarValidacionEnVivo(campoId);
+  return false;
 }
 
 /** Refresca solo el mensaje de error del campo abierto, sin redibujar todo. */

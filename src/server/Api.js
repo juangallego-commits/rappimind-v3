@@ -47,6 +47,7 @@ function catalogoDeTipos() {
       descripcion: ESQUEMAS[id].descripcion,
       modelo: ESQUEMAS[id].modelo,
       filtroDeEntrada: ESQUEMAS[id].filtroDeEntrada,
+      esDeTravel: !!ESQUEMAS[id].esDeTravel,
     });
   }
   return catalogo;

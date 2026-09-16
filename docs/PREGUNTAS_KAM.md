@@ -71,6 +71,30 @@ formulario manual.
 
 - `vacio`: Elige el país de la campaña.
 
+### ¿La campaña es de Rappi o de Rappi Travel?
+
+> Rappi es el domicilio de siempre. Rappi Travel son vuelos, hoteles, autos y paquetes.
+
+**Por qué te preguntamos esto.** Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.
+
+| | |
+|---|---|
+| Campo interno | `negocio` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | rappi |
+| Avanza sola | sí |
+
+**Opciones** (botones grandes, una sola):
+
+- **Rappi**: Restaurantes, supermercados, farmacias y todo lo que llega a domicilio.
+- **Rappi Travel**: Vuelos, hoteles, autos, paquetes, tours y asistencia al viajero.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si la campaña es de Rappi o de Rappi Travel.
+
 ### ¿Qué tipo de campaña vas a hacer?
 
 > Elige el que se parezca a tu campaña. Cada opción dice de qué se trata.
@@ -714,6 +738,30 @@ formulario manual.
 **Mensajes de validación:**
 
 - `vacio`: Elige el país de la campaña.
+
+### ¿La campaña es de Rappi o de Rappi Travel?
+
+> Rappi es el domicilio de siempre. Rappi Travel son vuelos, hoteles, autos y paquetes.
+
+**Por qué te preguntamos esto.** Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.
+
+| | |
+|---|---|
+| Campo interno | `negocio` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | rappi |
+| Avanza sola | sí |
+
+**Opciones** (botones grandes, una sola):
+
+- **Rappi**: Restaurantes, supermercados, farmacias y todo lo que llega a domicilio.
+- **Rappi Travel**: Vuelos, hoteles, autos, paquetes, tours y asistencia al viajero.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si la campaña es de Rappi o de Rappi Travel.
 
 ### ¿Qué tipo de campaña vas a hacer?
 
@@ -1378,6 +1426,30 @@ formulario manual.
 **Mensajes de validación:**
 
 - `vacio`: Elige el país de la campaña.
+
+### ¿La campaña es de Rappi o de Rappi Travel?
+
+> Rappi es el domicilio de siempre. Rappi Travel son vuelos, hoteles, autos y paquetes.
+
+**Por qué te preguntamos esto.** Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.
+
+| | |
+|---|---|
+| Campo interno | `negocio` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | rappi |
+| Avanza sola | sí |
+
+**Opciones** (botones grandes, una sola):
+
+- **Rappi**: Restaurantes, supermercados, farmacias y todo lo que llega a domicilio.
+- **Rappi Travel**: Vuelos, hoteles, autos, paquetes, tours y asistencia al viajero.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si la campaña es de Rappi o de Rappi Travel.
 
 ### ¿Qué tipo de campaña vas a hacer?
 
@@ -2428,6 +2500,30 @@ formulario manual.
 
 - `vacio`: Elige el país de la campaña.
 
+### ¿La campaña es de Rappi o de Rappi Travel?
+
+> Rappi es el domicilio de siempre. Rappi Travel son vuelos, hoteles, autos y paquetes.
+
+**Por qué te preguntamos esto.** Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.
+
+| | |
+|---|---|
+| Campo interno | `negocio` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | rappi |
+| Avanza sola | sí |
+
+**Opciones** (botones grandes, una sola):
+
+- **Rappi**: Restaurantes, supermercados, farmacias y todo lo que llega a domicilio.
+- **Rappi Travel**: Vuelos, hoteles, autos, paquetes, tours y asistencia al viajero.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si la campaña es de Rappi o de Rappi Travel.
+
 ### ¿Qué tipo de campaña vas a hacer?
 
 > Elige el que se parezca a tu campaña. Cada opción dice de qué se trata.
@@ -3358,6 +3454,30 @@ formulario manual.
 **Mensajes de validación:**
 
 - `vacio`: Elige el país de la campaña.
+
+### ¿La campaña es de Rappi o de Rappi Travel?
+
+> Rappi es el domicilio de siempre. Rappi Travel son vuelos, hoteles, autos y paquetes.
+
+**Por qué te preguntamos esto.** Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.
+
+| | |
+|---|---|
+| Campo interno | `negocio` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | rappi |
+| Avanza sola | sí |
+
+**Opciones** (botones grandes, una sola):
+
+- **Rappi**: Restaurantes, supermercados, farmacias y todo lo que llega a domicilio.
+- **Rappi Travel**: Vuelos, hoteles, autos, paquetes, tours y asistencia al viajero.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si la campaña es de Rappi o de Rappi Travel.
 
 ### ¿Qué tipo de campaña vas a hacer?
 

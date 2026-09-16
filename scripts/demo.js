@@ -47,6 +47,7 @@ const SERVIDOR_SIMULADO = `
         id: ESQUEMAS[id].id, nombre: ESQUEMAS[id].nombre,
         descripcion: ESQUEMAS[id].descripcion, modelo: ESQUEMAS[id].modelo,
         filtroDeEntrada: ESQUEMAS[id].filtroDeEntrada,
+        esDeTravel: !!ESQUEMAS[id].esDeTravel,
       });
     }
     return lista;
