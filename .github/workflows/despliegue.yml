@@ -33,10 +33,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Traer el repositorio
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Preparar Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: "22"
 
@@ -80,10 +80,10 @@ jobs:
       VERSION_CLASP: "3.4.1"
     steps:
       - name: Traer el repositorio
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Preparar Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: "22"
 
@@ -156,10 +156,10 @@ jobs:
       VERSION_CLASP: "3.4.1"
     steps:
       - name: Traer el repositorio
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Preparar Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: "22"
 
@@ -198,39 +198,56 @@ jobs:
           fi
           echo "numero=$numero" >> "$GITHUB_OUTPUT"
 
-      - name: Averiguar cual despliegue actualizar
+      - name: Publicar la version en la web app
         id: destino
         run: |
           set -euo pipefail
+          descripcion="${DESCRIPCION:-Despliegue manual desde GitHub Actions}"
+          version="${{ steps.version.outputs.numero }}"
 
-          if [ -n "${ID_DESPLIEGUE:-}" ]; then
-            echo "id=$ID_DESPLIEGUE" >> "$GITHUB_OUTPUT"
-            exit 0
+          destino="${ID_DESPLIEGUE:-}"
+
+          if [ -z "$destino" ]; then
+            # Sin variable configurada: se mira que hay. Apps Script siempre
+            # mantiene un despliegue @HEAD, que no es el que usan los comerciales.
+            lista="$(npx --yes "@google/clasp@$VERSION_CLASP" list-deployments)"
+            echo "$lista"
+            candidatos="$(printf '%s\n' "$lista" | grep -v '@HEAD' | grep -oE 'AKfyc[A-Za-z0-9_-]+' | sort -u || true)"
+            cuantos="$(printf '%s' "$candidatos" | grep -c . || true)"
+
+            if [ "$cuantos" -gt 1 ]; then
+              echo "Hay $cuantos despliegues ademas del @HEAD y no se sabe cual actualizar." >&2
+              echo "Crea la variable ID_DESPLIEGUE en Settings > Secrets and variables > Actions > Variables" >&2
+              echo "con el ID del despliegue de la web app que usan los comerciales." >&2
+              exit 1
+            fi
+
+            if [ "$cuantos" -eq 1 ]; then
+              destino="$candidatos"
+            fi
           fi
 
-          # Sin variable configurada: sirve si hay exactamente un despliegue
-          # ademas del @HEAD que Apps Script mantiene siempre.
-          lista="$(npx --yes "@google/clasp@$VERSION_CLASP" list-deployments)"
-          echo "$lista"
-          candidatos="$(printf '%s\n' "$lista" | grep -v '@HEAD' | grep -oE 'AKfyc[A-Za-z0-9_-]+' | sort -u || true)"
-          cuantos="$(printf '%s\n' "$candidatos" | grep -c . || true)"
-
-          if [ "$cuantos" != "1" ]; then
-            echo "Se encontraron $cuantos despliegues ademas del @HEAD." >&2
-            echo "Crea la variable ID_DESPLIEGUE en Settings > Secrets and variables > Actions > Variables" >&2
-            echo "con el ID del despliegue de la web app que usan los comerciales." >&2
-            exit 1
+          if [ -z "$destino" ]; then
+            # Primera vez: no hay web app publicada todavia. Se crea una y se
+            # avisa para guardar el ID, porque esa URL es la que se comparte.
+            echo "No hay despliegues. Se crea el primero."
+            salida="$(npx --yes "@google/clasp@$VERSION_CLASP" create-deployment --versionNumber "$version" --description "$descripcion")"
+            echo "$salida"
+            destino="$(printf '%s' "$salida" | grep -oE 'AKfyc[A-Za-z0-9_-]+' | head -1 || true)"
+            if [ -z "$destino" ]; then
+              echo "Se creo el despliegue pero no se pudo leer su ID de la salida de clasp." >&2
+              exit 1
+            fi
+            echo "creado=si" >> "$GITHUB_OUTPUT"
+          else
+            npx --yes "@google/clasp@$VERSION_CLASP" update-deployment \
+              --versionNumber "$version" \
+              --description "$descripcion" \
+              "$destino"
+            echo "creado=no" >> "$GITHUB_OUTPUT"
           fi
 
-          echo "id=$candidatos" >> "$GITHUB_OUTPUT"
-
-      - name: Apuntar el despliegue a la version nueva
-        run: |
-          set -euo pipefail
-          npx --yes "@google/clasp@$VERSION_CLASP" update-deployment \
-            --versionNumber "${{ steps.version.outputs.numero }}" \
-            --description "${DESCRIPCION:-Despliegue manual desde GitHub Actions}" \
-            "${{ steps.destino.outputs.id }}"
+          echo "id=$destino" >> "$GITHUB_OUTPUT"
 
       - name: Borrar las credenciales
         if: always()
@@ -243,5 +260,8 @@ jobs:
             echo ""
             echo "- Version creada: ${{ steps.version.outputs.numero }}"
             echo "- Despliegue: ${{ steps.destino.outputs.id }}"
+            if [ "${{ steps.destino.outputs.creado }}" = "si" ]; then
+              echo "- Es el primer despliegue. Guarda ese ID en la variable ID_DESPLIEGUE."
+            fi
             echo "- Descripcion: ${DESCRIPCION:-Despliegue manual desde GitHub Actions}"
           } >> "$GITHUB_STEP_SUMMARY"
