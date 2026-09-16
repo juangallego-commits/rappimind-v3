@@ -303,3 +303,45 @@ el título y la dirección con su botón de copiar.
 - Correr `setup()` en Apps Script para que aparezcan las columnas nuevas.
 - Los usuarios de Squarespace de los demás países, y quién queda para concursos en
   Colombia. Hoy están solo Camilo Patiño y Valery Medina, para cashback y descuentos.
+
+## 16 de septiembre · noche · Dos defectos que salieron probando
+
+### "Mis campañas" no cargaba
+
+`Cannot read properties of null (reading 'length')`. La causa es una regla de
+Apps Script que no está a la vista: **`google.script.run` solo deja pasar números,
+textos, booleanos, nulos, listas y objetos de esos. Una fecha no pasa.** Si va una sola
+fecha en toda la respuesta, Apps Script no falla ni avisa: le entrega `null` al
+navegador, y la pantalla revienta con un error que no apunta a ninguna parte.
+
+Google Sheets convierte sola a fecha una celda que diga `2026-09-17`, así que esto
+aparecía apenas hubiera una campaña guardada. En las pruebas no salía porque los dobles
+del Sheet devuelven texto.
+
+Arreglado en `src/core/tablas.js`: todo lo que sale del Sheet hacia el navegador pasa por
+`filasPlanas()`, que convierte las fechas a texto. Se aplicó al historial, al estado
+inicial y a las dos pantallas de administración. Hay una prueba que mete una fecha de
+verdad en la hoja y exige que la respuesta no lleve ninguna: quitando el arreglo, falla.
+
+Y si algún día el servidor vuelve a devolver algo que no es una lista, la pantalla ahora
+lo dice en palabras en vez de reventar.
+
+### El Sheet se pone al día solo
+
+Las columnas nuevas de auditoría ya no necesitan que alguien corra `setup()`. Al
+escribir una fila, `src/server/Datos.js` mira los encabezados que la hoja tiene de
+verdad y agrega al final los que falten, en ese momento. Nunca mueve ni borra una
+columna que ya esté, porque eso desalinearía todo el histórico.
+
+### La pantalla de Ayuda
+
+- Fuera las cajas vacías que decían `[CAPTURA 1]`, `[CAPTURA 2]`. No teníamos capturas
+  que poner y se veían como algo roto.
+- Entraron los diez pasos nuevos de Squarespace, los mismos de la pantalla final.
+- Entró **quién puede publicar**, país por país, separando cashback de concursos, con el
+  canal de Legal para quien no tenga usuario.
+
+### "Mis campañas" ahora dice para qué sirve
+
+Arriba de la lista: abrir otra vez un documento ya generado, marcar una campaña como
+publicada, y arrancar una nueva copiando los datos de otra con "Usar como base".

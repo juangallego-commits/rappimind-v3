@@ -12,6 +12,10 @@ var E = estado.estado;
 function pantallaHistorial(raiz) {
   var contenido = crear('div', { clase: 'pagina' }, [
     crear('h1', { texto: 'Tus campañas' }),
+    crear('p', {
+      clase: 'pregunta-ayuda',
+      texto: 'Todas las campañas que has generado, con su documento y su estado. Sirve para tres cosas: abrir otra vez un documento que ya generaste, marcar una campaña como publicada cuando ya la subiste a Squarespace, y arrancar una campaña nueva copiando los datos de una anterior con "Usar como base".',
+    }),
   ]);
 
   var buscador = crear('input', {
@@ -31,8 +35,19 @@ function pantallaHistorial(raiz) {
     RM.util.vaciar(destino);
     destino.appendChild(crear('p', { clase: 'pregunta-ayuda', texto: 'Cargando...' }));
 
-    RM.servidor.llamar('historial', busqueda || '').then(function (filas) {
+    RM.servidor.llamar('historial', busqueda || '').then(function (respuesta) {
       RM.util.vaciar(destino);
+
+      // Si el servidor no devuelve una lista, se dice que pasó en vez de
+      // reventar con un error que no le sirve a nadie.
+      if (!respuesta || typeof respuesta.length !== 'number') {
+        destino.appendChild(crear('p', {
+          clase: 'mensaje-error',
+          texto: 'El servidor no devolvió tu historial. Vuelve a cargar la página y, si sigue igual, avísale a Legal por el canal de ayuda.',
+        }));
+        return;
+      }
+      var filas = respuesta;
 
       if (filas.length === 0) {
         destino.appendChild(crear('p', { clase: 'pregunta-ayuda', texto: busqueda ? 'No encontramos ninguna campaña con eso.' : 'Todavía no has generado ninguna campaña.' }));
@@ -121,6 +136,58 @@ function listaSimple(items, clase) {
   return lista;
 }
 
+/** Quién tiene usuario de Squarespace, país por país, y el canal de Legal. */
+function fichaDeAccesos() {
+  var ficha = crear('div', { clase: 'ficha' });
+
+  for (var codigo in ACCESOS_SQUARESPACE) {
+    if (!Object.prototype.hasOwnProperty.call(ACCESOS_SQUARESPACE, codigo)) continue;
+    (function (accesos, codigoDePais) {
+      var seccion = crear('div', { clase: 'ficha-seccion' }, [
+        crear('h3', { texto: nombreDelPais(codigoDePais) }),
+      ]);
+
+      var grupos = [
+        { titulo: 'Cashback y descuentos', personas: accesos.cashback || [], nota: '' },
+        { titulo: 'Concursos', personas: accesos.concursos || [], nota: accesos.notaConcursos || '' },
+      ];
+
+      for (var g = 0; g < grupos.length; g++) {
+        seccion.appendChild(crear('p', { clase: 'copiable-etiqueta', texto: grupos[g].titulo }));
+        if (grupos[g].personas.length > 0) {
+          var lista = crear('ul');
+          for (var i = 0; i < grupos[g].personas.length; i++) {
+            lista.appendChild(crear('li', { texto: grupos[g].personas[i].nombre + ' · ' + grupos[g].personas[i].correo }));
+          }
+          seccion.appendChild(lista);
+        } else {
+          seccion.appendChild(crear('p', { clase: 'pregunta-ayuda', texto: grupos[g].nota || 'Todavía no hay nadie asignado. Pídelo por el canal.' }));
+        }
+      }
+      ficha.appendChild(seccion);
+    })(ACCESOS_SQUARESPACE[codigo], codigo);
+  }
+
+  ficha.appendChild(crear('div', { clase: 'ficha-seccion' }, [
+    crear('h3', { texto: 'Los demás países' }),
+    crear('p', { clase: 'pregunta-ayuda', texto: 'Todavía no tenemos la lista. Pide la publicación por el canal de Legal.' }),
+    crear('p', {}, [
+      document.createTextNode(CANAL_TC.para + ' '),
+      crear('a', { href: CANAL_TC.url, target: '_blank', rel: 'noopener', texto: CANAL_TC.nombre }),
+    ]),
+  ]));
+  return ficha;
+}
+
+/** El nombre del país tal como lo trae el servidor, o su código. */
+function nombreDelPais(codigo) {
+  var paises = E.configuracion.paises || [];
+  for (var i = 0; i < paises.length; i++) {
+    if (paises[i].codigo === codigo) return paises[i].nombre;
+  }
+  return codigo;
+}
+
 function pantallaAyuda(raiz) {
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
     crear('h1', { texto: 'Ayuda' }),
@@ -151,17 +218,28 @@ function pantallaAyuda(raiz) {
   contenido.appendChild(listaSimple(AVISO_AZAR.frontera));
   contenido.appendChild(crear('div', { clase: 'aviso' }, [crear('p', { texto: AVISO_AZAR.regla })]));
 
-  // 2. Guía de Squarespace.
+  // 2. Guía de Squarespace. Es la misma lista que la pantalla final, para que
+  // las dos digan exactamente lo mismo.
   contenido.appendChild(crear('h2', { texto: 'Publicar en Squarespace' }));
+  contenido.appendChild(crear('p', {
+    clase: 'pregunta-ayuda',
+    texto: 'Cuando generes una campaña, al final te damos el título y la dirección ya armados, listos para copiar. Esto es el paso a paso.',
+  }));
+
   var pasos = crear('ol', { clase: 'pasos-publicar' });
   for (var s = 0; s < PASOS_SQUARESPACE.length; s++) {
     pasos.appendChild(crear('li', {}, [
       crear('p', { texto: PASOS_SQUARESPACE[s].hace }),
       crear('p', { clase: 'pregunta-ayuda', texto: 'Deberías ver: ' + PASOS_SQUARESPACE[s].ve }),
-      crear('div', { clase: 'captura', texto: '[CAPTURA ' + (s + 1) + ']' }),
     ]));
   }
   contenido.appendChild(pasos);
+
+  contenido.appendChild(crear('h3', { texto: '¿Quién puede publicar?' }));
+  contenido.appendChild(crear('p', {
+    texto: 'No todo el mundo tiene usuario de Squarespace: la cuenta la tienen unas pocas personas por país. Si no eres una de ellas, pásales el documento y la dirección que te dio la herramienta, o pídelo por el canal.',
+  }));
+  contenido.appendChild(fichaDeAccesos());
 
   contenido.appendChild(crear('h3', { texto: 'Si algo sale mal' }));
   var problemas = crear('dl', {});

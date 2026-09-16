@@ -225,3 +225,30 @@ de archivos escrita a mano.
 **Por qué.** En Apps Script se cargan todos. Con la lista fija, un archivo nuevo quedaba
 fuera y las pruebas fallaban con un "no está definido" que no decía dónde estaba el
 problema.
+
+## Nada que salga del Sheet cruza sin limpiar
+
+**Qué se decidió.** Toda respuesta del servidor que venga del Sheet pasa por
+`filasPlanas()` antes de llegar al navegador.
+
+**Por qué.** `google.script.run` solo transporta números, textos, booleanos, nulos,
+listas y objetos de esos. Una fecha no pasa, y lo peor es cómo falla: no lanza un error,
+le entrega `null` al navegador. El síntoma aparece lejos de la causa, en cualquier
+pantalla que use la respuesta. Rompió "Mis campañas" en producción y en las pruebas no
+se veía, porque los dobles del Sheet devuelven texto.
+
+**Dónde se hace.** En la frontera, no en cada pantalla. Un arreglo por pantalla se
+olvida en la siguiente.
+
+## El Sheet se migra solo, no con setup()
+
+**Qué se decidió.** `agregarFila` y `actualizarFila` leen los encabezados que la hoja
+tiene de verdad y agregan al final los que falten, en ese momento.
+
+**Por qué.** La alternativa era pedirle a Juan que corriera `setup()` cada vez que
+apareciera una columna. Eso funciona hasta que alguien se olvida, y ahí las filas nuevas
+se escriben corridas de columna sin que nadie lo note. Una hoja vieja y una nueva tienen
+que escribir igual de bien.
+
+**Lo que nunca se hace.** Mover o borrar una columna que ya exista: desalinearía todo el
+histórico.

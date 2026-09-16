@@ -406,3 +406,68 @@ test('cada acción importante deja rastro en Registro', () => {
   assert.ok(acciones.indexOf('publicar') !== -1);
   assert.ok(acciones.indexOf('admin_pais') !== -1);
 });
+
+// --- lo que cruza a google.script.run ---------------------------------------
+
+/**
+ * Apps Script solo deja pasar números, textos, booleanos, nulos, listas y
+ * objetos de esos. Una fecha no pasa: si va una sola en toda la respuesta,
+ * Apps Script no falla ni avisa, le entrega null al navegador, y la pantalla
+ * revienta con un "no puedo leer length de null" que no apunta a ninguna parte.
+ *
+ * Google Sheets convierte sola a fecha una celda que diga 2026-09-17, así que
+ * esto pasa apenas hay una campaña guardada. Fue justo lo que rompió "Mis
+ * campañas" en producción.
+ */
+function tieneFechas(valor) {
+  if (Object.prototype.toString.call(valor) === '[object Date]') return true;
+  if (valor && typeof valor === 'object') {
+    for (const llave of Object.keys(valor)) {
+      if (tieneFechas(valor[llave])) return true;
+    }
+  }
+  return false;
+}
+
+test('el historial no devuelve fechas, que Apps Script convierte en null', () => {
+  conSetup();
+  generar(solicitudValida({ tienda: 'Jumbo' }));
+
+  // Sheets convierte sola la celda de fecha. Aquí se reproduce a mano.
+  const hoja = hojaPorNombre('Solicitudes');
+  const columna = encabezadosDe('Solicitudes').indexOf('fecha_inicio');
+  hoja.valores[1][columna] = new Date(2026, 8, 17);
+
+  const filas = historial('');
+  assert.strictEqual(filas.length, 1);
+  assert.ok(!tieneFechas(filas), 'el historial devolvió una fecha: el navegador recibiría null');
+  assert.strictEqual(filas[0].fecha_inicio, '2026-09-17');
+});
+
+test('el estado inicial y el panel de administración tampoco llevan fechas', () => {
+  conSetup();
+  generar(solicitudValida());
+
+  assert.ok(!tieneFechas(estadoInicial()), 'estadoInicial devolvió una fecha');
+  assert.ok(!tieneFechas(adminEstado()), 'adminEstado devolvió una fecha');
+  assert.ok(!tieneFechas(adminSolicitudes('')), 'adminSolicitudes devolvió una fecha');
+});
+
+test('una hoja vieja se pone al día sola, sin correr setup otra vez', () => {
+  // El caso real: el Sheet ya existía con las columnas de antes y las nuevas
+  // columnas de auditoría no estaban. Generar no puede escribir corrido.
+  conSetup();
+  const hoja = hojaPorNombre('Solicitudes');
+
+  // Se deja la hoja como estaba antes: solo las columnas de siempre.
+  const viejas = PESTANAS.Solicitudes.slice();
+  hoja.valores = [viejas.slice()];
+
+  const resultado = generar(solicitudValida({ tienda: 'Jumbo' }));
+  assert.ok(resultado.valido);
+
+  const fila = leerSolicitudes()[0];
+  assert.strictEqual(fila.nombre_campana, 'Jumbo · 20% Cashback · 20 sep 2026');
+  assert.strictEqual(fila.resp_tienda, 'Jumbo', 'la columna nueva no se agregó sola');
+  assert.strictEqual(fila.id, resultado.id, 'los datos quedaron corridos de columna');
+});

@@ -431,11 +431,6 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
   font-family: var(--titulos); font-weight: 600; font-size: 13px;
   display: flex; align-items: center; justify-content: center;
 }
-.captura {
-  margin: var(--e3) 0 0; padding: var(--e5) var(--e4);
-  border: 1px dashed var(--borde-control); border-radius: var(--r-control);
-  color: var(--gris-lapiz); font-size: 13px; text-align: center; background: var(--niebla);
-}
 
 /* --- Celular ------------------------------------------------------------ */
 

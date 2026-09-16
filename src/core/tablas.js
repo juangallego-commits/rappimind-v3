@@ -58,6 +58,52 @@ function objetoComoFila(objeto, encabezados) {
 }
 
 /** Lee un valor de verdad escrito en el Sheet: si, true, TRUE, 1, x. */
+/**
+ * Deja un valor del Sheet listo para cruzar a google.script.run.
+ *
+ * Apps Script solo deja pasar numeros, textos, booleanos, nulos, listas y
+ * objetos de esos. Una fecha NO pasa: si va una sola en toda la respuesta,
+ * Apps Script no falla ni avisa, simplemente le entrega null al navegador. Ahi
+ * la pantalla revienta con un "no puedo leer length de null" que no apunta a
+ * ninguna parte.
+ *
+ * Google Sheets convierte sola a fecha una celda que diga 2026-09-17, asi que
+ * esto pasa apenas hay una campana guardada. Por eso todo lo que sale del Sheet
+ * pasa por aqui.
+ */
+function valorPlano(valor) {
+  if (valor === null || valor === undefined) return '';
+  if (Object.prototype.toString.call(valor) === '[object Date]') return fechaComoTexto(valor);
+  if (typeof valor === 'number' || typeof valor === 'boolean' || typeof valor === 'string') return valor;
+  return String(valor);
+}
+
+/** Una fecha del Sheet como texto. Sin hora cuando es medianoche. */
+function fechaComoTexto(fecha) {
+  if (isNaN(fecha.getTime())) return '';
+  function dos(numero) {
+    return numero < 10 ? '0' + numero : String(numero);
+  }
+  var dia = fecha.getFullYear() + '-' + dos(fecha.getMonth() + 1) + '-' + dos(fecha.getDate());
+  if (fecha.getHours() === 0 && fecha.getMinutes() === 0 && fecha.getSeconds() === 0) return dia;
+  return dia + ' ' + dos(fecha.getHours()) + ':' + dos(fecha.getMinutes()) + ':' + dos(fecha.getSeconds());
+}
+
+/** Lo mismo, para una lista de objetos del Sheet. */
+function filasPlanas(objetos) {
+  var lista = objetos || [];
+  var salida = [];
+  for (var i = 0; i < lista.length; i++) {
+    var original = lista[i] || {};
+    var limpio = {};
+    for (var llave in original) {
+      if (Object.prototype.hasOwnProperty.call(original, llave)) limpio[llave] = valorPlano(original[llave]);
+    }
+    salida.push(limpio);
+  }
+  return salida;
+}
+
 /** Un objeto nuevo con las llaves de los dos. El segundo manda si chocan. */
 function unirObjetos(uno, otro) {
   var salida = {};
@@ -151,6 +197,9 @@ if (typeof module !== 'undefined') {
     filasComoObjetos: filasComoObjetos,
     objetoComoFila: objetoComoFila,
     unirObjetos: unirObjetos,
+    valorPlano: valorPlano,
+    fechaComoTexto: fechaComoTexto,
+    filasPlanas: filasPlanas,
     comoBooleano: comoBooleano,
     siguienteConsecutivo: siguienteConsecutivo,
     solicitudesVisibles: solicitudesVisibles,

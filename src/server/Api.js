@@ -61,7 +61,7 @@ function estadoInicial() {
     correo: quien.correo,
     rol: quien.rol,
     demostracion: quien.demostracion,
-    paises: paisesDisponibles(paises, quien.enEquipo),
+    paises: filasPlanas(paisesDisponibles(paises, quien.enEquipo)),
     tipos: catalogoDeTipos(),
     secciones: typeof SECCIONES !== 'undefined' ? SECCIONES : {},
     versionesDeModelo: MODELOS.versiones,
@@ -196,7 +196,9 @@ function generar(entrada) {
 function historial(busqueda) {
   var quien = contextoDeQuienPide();
   var visibles = solicitudesVisibles(leerSolicitudes(), quien.correo, quien.rol, quien.pais);
-  return buscarEnSolicitudes(visibles, busqueda).reverse();
+  // filasPlanas y no las filas crudas: una fecha del Sheet no cruza a
+  // google.script.run y el navegador recibiria null. Ver src/core/tablas.js.
+  return filasPlanas(buscarEnSolicitudes(visibles, busqueda).reverse());
 }
 
 /** Guarda el link publicado y pasa la solicitud a publicada. */
@@ -255,8 +257,8 @@ function exigirAdministrador() {
 function adminEstado() {
   exigirAdministrador();
   return {
-    paises: leerPaises(),
-    equipo: leerEquipo(),
+    paises: filasPlanas(leerPaises()),
+    equipo: filasPlanas(leerEquipo()),
     estados: ESTADOS,
     roles: ['comercial', 'pruebas', 'legal', 'admin'],
   };
@@ -300,7 +302,7 @@ function adminGuardarMiembro(miembro) {
 
 function adminSolicitudes(busqueda) {
   exigirAdministrador();
-  return buscarEnSolicitudes(leerSolicitudes(), busqueda).reverse();
+  return filasPlanas(buscarEnSolicitudes(leerSolicitudes(), busqueda).reverse());
 }
 
 function adminSolicitudesCsv(busqueda) {

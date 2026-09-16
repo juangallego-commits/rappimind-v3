@@ -25,15 +25,49 @@ function objetosDe(nombre) {
   return filasComoObjetos(hojaPorNombre(nombre).getDataRange().getValues());
 }
 
-/** Agrega una fila respetando el orden de los encabezados. */
+/**
+ * Los encabezados que tiene la hoja de verdad, no los que deberia tener.
+ *
+ * Si falta alguno de los esperados se agrega al final, en ese momento. Nunca se
+ * mueve ni se borra uno que ya este: mover una columna con datos adentro
+ * desalinearia todo el historico.
+ *
+ * Esto existe para que agregar una columna no dependa de que alguien se acuerde
+ * de correr setup(). Una hoja vieja y una nueva escriben igual de bien.
+ */
+function encabezadosDeLaHoja(hoja, nombre) {
+  var esperados = encabezadosDe(nombre);
+  if (hoja.getLastRow() === 0) {
+    hoja.getRange(1, 1, 1, esperados.length).setValues([esperados]);
+    hoja.setFrozenRows(1);
+    return esperados.slice();
+  }
+
+  var actuales = [];
+  var crudos = hoja.getRange(1, 1, 1, hoja.getLastColumn()).getValues()[0];
+  for (var i = 0; i < crudos.length; i++) actuales.push(String(crudos[i] === null || crudos[i] === undefined ? '' : crudos[i]).trim());
+
+  var faltantes = [];
+  for (var e = 0; e < esperados.length; e++) {
+    if (actuales.indexOf(esperados[e]) === -1) faltantes.push(esperados[e]);
+  }
+  if (faltantes.length > 0) {
+    hoja.getRange(1, actuales.length + 1, 1, faltantes.length).setValues([faltantes]);
+    actuales = actuales.concat(faltantes);
+  }
+  return actuales;
+}
+
+/** Agrega una fila respetando el orden de los encabezados de la hoja. */
 function agregarFila(nombre, objeto) {
-  hojaPorNombre(nombre).appendRow(objetoComoFila(objeto, encabezadosDe(nombre)));
+  var hoja = hojaPorNombre(nombre);
+  hoja.appendRow(objetoComoFila(objeto, encabezadosDeLaHoja(hoja, nombre)));
 }
 
 /** Escribe columnas sueltas de una fila que ya existe. */
 function actualizarFila(nombre, numeroFila, cambios) {
   var hoja = hojaPorNombre(nombre);
-  var encabezados = encabezadosDe(nombre);
+  var encabezados = encabezadosDeLaHoja(hoja, nombre);
 
   for (var llave in cambios) {
     if (!Object.prototype.hasOwnProperty.call(cambios, llave)) continue;
