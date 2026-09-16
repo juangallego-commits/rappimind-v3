@@ -1,0 +1,302 @@
+'use strict';
+
+/**
+ * Lo que llama la interfaz con google.script.run.
+ *
+ * Reglas de esta capa:
+ *   1. Se verifica el dominio en cada entrada. No se confia en el cliente.
+ *   2. Se vuelve a validar en el servidor aunque el navegador ya haya validado.
+ *   3. En modo demostracion no se crea nada: se devuelve el texto final.
+ */
+
+/** Todo endpoint empieza por aqui. Devuelve quien pide y que puede hacer. */
+function contextoDeQuienPide() {
+  var correo = correoDelUsuario();
+  if (!correoEsDelDominio(correo)) {
+    if (enModoDemostracion()) {
+      // En demostración no hay cuenta ni documentos: se deja pasar para probar.
+      correo = correo || 'demostracion@rappi.com';
+    } else {
+      throw new Error('Esta herramienta es solo para cuentas @rappi.com.');
+    }
+  }
+
+  var equipo = leerEquipo();
+  // En demostración se usa el rol de pruebas para poder ver también los países
+  // en piloto. No se genera ningún documento, así que no hay riesgo legal.
+  var rol = enModoDemostracion() ? 'pruebas' : rolDe(equipo, correo);
+  var miembro = miembroPorCorreo(equipo, correo);
+
+  return {
+    correo: correo,
+    rol: rol,
+    pais: miembro ? miembro.pais : '',
+    enEquipo: puedeVerPiloto(rol),
+    demostracion: enModoDemostracion(),
+  };
+}
+
+/** Catálogo de tipos sin funciones, listo para viajar al navegador. */
+function catalogoDeTipos() {
+  var catalogo = [];
+  for (var id in ESQUEMAS) {
+    if (!Object.prototype.hasOwnProperty.call(ESQUEMAS, id)) continue;
+    catalogo.push({
+      id: ESQUEMAS[id].id,
+      nombre: ESQUEMAS[id].nombre,
+      descripcion: ESQUEMAS[id].descripcion,
+      modelo: ESQUEMAS[id].modelo,
+      filtroDeEntrada: ESQUEMAS[id].filtroDeEntrada,
+    });
+  }
+  return catalogo;
+}
+
+/** Todo lo que la interfaz necesita al abrir. */
+function estadoInicial() {
+  var quien = contextoDeQuienPide();
+  var paises = leerPaises();
+
+  return {
+    correo: quien.correo,
+    rol: quien.rol,
+    demostracion: quien.demostracion,
+    paises: paisesDisponibles(paises, quien.enEquipo),
+    tipos: catalogoDeTipos(),
+    secciones: typeof SECCIONES !== 'undefined' ? SECCIONES : {},
+    versionesDeModelo: MODELOS.versiones,
+    urlFormularioLegal: leerPropiedad(PROPIEDADES.URL_FORMULARIO_LEGAL),
+    urlCanalAyuda: leerPropiedad(PROPIEDADES.CANAL_AYUDA_URL),
+    hoy: enModoDemostracion() ? '' : hoyIso(),
+  };
+}
+
+/** Valida y renderiza sin crear nada. La verdad la tiene el servidor. */
+function previsualizar(entrada) {
+  var quien = contextoDeQuienPide();
+  var pais = paisPorCodigo(leerPaises(), entrada && entrada.pais);
+
+  var resultado = generarTexto(entrada || {}, pais, MODELOS, {
+    fechaReferencia: enModoDemostracion() ? entrada.fechaReferencia : hoyIso(),
+    usuarioEnEquipo: quien.enEquipo,
+  });
+
+  return { valido: resultado.valido, errores: resultado.errores, texto: resultado.texto };
+}
+
+/**
+ * Genera de verdad: documento, carpeta del pais, correo y fila en Solicitudes.
+ * En modo demostracion devuelve el texto y no toca nada.
+ */
+function generar(entrada) {
+  var quien = contextoDeQuienPide();
+  var paises = leerPaises();
+  var pais = paisPorCodigo(paises, entrada && entrada.pais);
+
+  var resultado = generarTexto(entrada || {}, pais, MODELOS, {
+    fechaReferencia: enModoDemostracion() ? entrada.fechaReferencia : hoyIso(),
+    usuarioEnEquipo: quien.enEquipo,
+  });
+
+  if (!resultado.valido) {
+    return { valido: false, errores: resultado.errores };
+  }
+
+  if (quien.demostracion) {
+    return {
+      valido: true,
+      demostracion: true,
+      texto: resultado.texto,
+      mensaje: 'Modo demostración: no se creó ningún documento.',
+    };
+  }
+
+  var bloqueo = LockService.getScriptLock();
+  bloqueo.waitLock(30000);
+
+  try {
+    var hoy = hoyIso();
+    var solicitudes = leerSolicitudes();
+    var identificadores = [];
+    for (var i = 0; i < solicitudes.length; i++) identificadores.push(solicitudes[i].id);
+
+    var id = identificadorDeSolicitud(hoy, siguienteConsecutivo(identificadores, hoy));
+    var titulo = tituloDelDocumento(entrada.nombreCampana, pais.nombre, id);
+    var carpeta = carpetaDelPais(pais.codigo, pais.nombre);
+
+    var documento = crearDocumento(titulo, estructuraDelDocumento(resultado.texto), carpeta, quien.correo);
+
+    agregarFila('Solicitudes', {
+      id: id,
+      fecha: ahoraTexto(),
+      email: quien.correo,
+      pais: pais.codigo,
+      tipo: entrada.tipo,
+      version_modelo: MODELOS.versiones[esquemaDe(entrada.tipo).modelo] || '',
+      nombre_campana: entrada.nombreCampana || '',
+      tienda: entrada.tienda || '',
+      organizador: entrada.organizadorRazonSocial || '',
+      id_organizador: entrada.organizadorId || '',
+      fecha_inicio: entrada.fechaInicio || '',
+      fecha_fin: entrada.fechaFin || '',
+      link_doc: documento.url,
+      estado: 'generado',
+      link_publicado: '',
+      fecha_publicacion: '',
+      datos_json: JSON.stringify(entrada),
+    });
+
+    enviarCorreoDeGeneracion(quien.correo, {
+      nombreCampana: entrada.nombreCampana,
+      pais: pais.nombre,
+      id: id,
+      linkDoc: documento.url,
+      urlApp: ScriptApp.getService().getUrl(),
+      urlAyuda: leerPropiedad(PROPIEDADES.CANAL_AYUDA_URL),
+    });
+
+    registrar('generar', id + ' · ' + pais.codigo + ' · ' + entrada.tipo);
+
+    return { valido: true, id: id, linkDoc: documento.url, titulo: titulo };
+  } finally {
+    bloqueo.releaseLock();
+  }
+}
+
+/** Las solicitudes que puede ver quien pide, con busqueda opcional. */
+function historial(busqueda) {
+  var quien = contextoDeQuienPide();
+  var visibles = solicitudesVisibles(leerSolicitudes(), quien.correo, quien.rol, quien.pais);
+  return buscarEnSolicitudes(visibles, busqueda).reverse();
+}
+
+/** Guarda el link publicado y pasa la solicitud a publicada. */
+function marcarPublicado(id, url) {
+  var quien = contextoDeQuienPide();
+  var revision = validarLinkPublicado(url);
+  if (!revision.valido) return { valido: false, errores: [{ campo: 'linkPublicado', mensaje: revision.mensaje }] };
+
+  var solicitudes = leerSolicitudes();
+  var solicitud = null;
+  for (var i = 0; i < solicitudes.length; i++) {
+    if (solicitudes[i].id === id) solicitud = solicitudes[i];
+  }
+  if (!solicitud) {
+    return { valido: false, errores: [{ campo: 'id', mensaje: 'No encontramos esa solicitud.' }] };
+  }
+
+  var propia = String(solicitud.email).toLowerCase() === quien.correo;
+  if (!propia && quien.rol !== 'admin' && quien.rol !== 'legal') {
+    return { valido: false, errores: [{ campo: 'id', mensaje: 'Esa solicitud no es tuya.' }] };
+  }
+
+  actualizarFila('Solicitudes', solicitud._fila, {
+    link_publicado: revision.url,
+    fecha_publicacion: ahoraTexto(),
+    estado: 'publicado',
+  });
+  registrar('publicar', id + ' · ' + revision.url);
+
+  return { valido: true, id: id, linkPublicado: revision.url };
+}
+
+/** Los datos de una solicitud para reusarla como base. */
+function datosDeSolicitud(id) {
+  var quien = contextoDeQuienPide();
+  var visibles = solicitudesVisibles(leerSolicitudes(), quien.correo, quien.rol, quien.pais);
+  for (var i = 0; i < visibles.length; i++) {
+    if (visibles[i].id !== id) continue;
+    try {
+      return { valido: true, entrada: JSON.parse(visibles[i].datos_json || '{}') };
+    } catch (error) {
+      return { valido: false, errores: [{ campo: 'id', mensaje: 'Los datos guardados de esa solicitud no se pueden leer.' }] };
+    }
+  }
+  return { valido: false, errores: [{ campo: 'id', mensaje: 'No encontramos esa solicitud.' }] };
+}
+
+// --- Administracion --------------------------------------------------------
+
+function exigirAdministrador() {
+  var quien = contextoDeQuienPide();
+  if (quien.rol !== 'admin') throw new Error('Solo los administradores pueden entrar aquí.');
+  return quien;
+}
+
+function adminEstado() {
+  exigirAdministrador();
+  return {
+    paises: leerPaises(),
+    equipo: leerEquipo(),
+    estados: ESTADOS,
+    roles: ['comercial', 'pruebas', 'legal', 'admin'],
+  };
+}
+
+function adminGuardarEstadoDePais(codigo, estado) {
+  exigirAdministrador();
+  if (ESTADOS.indexOf(estado) === -1) {
+    return { valido: false, errores: [{ campo: 'estado', mensaje: 'Ese estado no existe.' }] };
+  }
+  var pais = paisPorCodigo(leerPaises(), codigo);
+  if (!pais) return { valido: false, errores: [{ campo: 'codigo', mensaje: 'No encontramos ese país.' }] };
+
+  actualizarFila('Paises', pais._fila, { estado: estado });
+  registrar('admin_pais', codigo + ' -> ' + estado);
+  return { valido: true };
+}
+
+function adminGuardarMiembro(miembro) {
+  exigirAdministrador();
+  var correo = String(miembro && miembro.email || '').trim().toLowerCase();
+  if (!correoEsDelDominio(correo)) {
+    return { valido: false, errores: [{ campo: 'email', mensaje: 'El correo debe ser @rappi.com.' }] };
+  }
+
+  var existente = miembroPorCorreo(leerEquipo(), correo);
+  var fila = {
+    email: correo,
+    nombre: miembro.nombre || '',
+    rol: miembro.rol || 'comercial',
+    pais: String(miembro.pais || '').toUpperCase(),
+    activo: miembro.activo === false ? 'no' : 'sí',
+  };
+
+  if (existente) actualizarFila('Equipo', existente._fila, fila);
+  else agregarFila('Equipo', fila);
+
+  registrar('admin_equipo', correo + ' -> ' + fila.rol);
+  return { valido: true };
+}
+
+function adminSolicitudes(busqueda) {
+  exigirAdministrador();
+  return buscarEnSolicitudes(leerSolicitudes(), busqueda).reverse();
+}
+
+function adminSolicitudesCsv(busqueda) {
+  exigirAdministrador();
+  var columnas = [];
+  for (var i = 0; i < PESTANAS.Solicitudes.length; i++) {
+    if (PESTANAS.Solicitudes[i] !== 'datos_json') columnas.push(PESTANAS.Solicitudes[i]);
+  }
+  return comoCsv(buscarEnSolicitudes(leerSolicitudes(), busqueda), columnas);
+}
+
+if (typeof module !== 'undefined') {
+  module.exports = {
+    contextoDeQuienPide: contextoDeQuienPide,
+    catalogoDeTipos: catalogoDeTipos,
+    estadoInicial: estadoInicial,
+    previsualizar: previsualizar,
+    generar: generar,
+    historial: historial,
+    marcarPublicado: marcarPublicado,
+    datosDeSolicitud: datosDeSolicitud,
+    adminEstado: adminEstado,
+    adminGuardarEstadoDePais: adminGuardarEstadoDePais,
+    adminGuardarMiembro: adminGuardarMiembro,
+    adminSolicitudes: adminSolicitudes,
+    adminSolicitudesCsv: adminSolicitudesCsv,
+  };
+}

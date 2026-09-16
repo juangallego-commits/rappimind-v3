@@ -241,6 +241,26 @@ function validarTiendas(entrada, pais, esquema) {
   return errores;
 }
 
+var PREFIJO_PUBLICACION = 'https://promos.rappi.com/';
+
+/**
+ * El link publicado tiene que vivir en promos.rappi.com. Cualquier otro sitio
+ * significa que el T&C no quedo donde la campana lo va a referenciar.
+ */
+function validarLinkPublicado(url) {
+  var texto = String(url || '').trim();
+  if (!texto) {
+    return { valido: false, mensaje: 'Pega el enlace de la página publicada.' };
+  }
+  if (texto.indexOf(PREFIJO_PUBLICACION) !== 0) {
+    return { valido: false, mensaje: 'El enlace debe empezar por ' + PREFIJO_PUBLICACION + '. Copia la dirección de la página ya publicada en Squarespace.' };
+  }
+  if (texto.length <= PREFIJO_PUBLICACION.length) {
+    return { valido: false, mensaje: 'Falta la parte final del enlace, después de ' + PREFIJO_PUBLICACION + '.' };
+  }
+  return { valido: true, mensaje: '', url: texto };
+}
+
 /**
  * Valida la solicitud completa.
  *
@@ -280,6 +300,8 @@ function validarSolicitud(entrada, pais, contexto) {
 if (typeof module !== 'undefined') {
   module.exports = {
     validarSolicitud: validarSolicitud,
+    validarLinkPublicado: validarLinkPublicado,
+    PREFIJO_PUBLICACION: PREFIJO_PUBLICACION,
     validarPais: validarPais,
     validarTipo: validarTipo,
     validarObligatorios: validarObligatorios,

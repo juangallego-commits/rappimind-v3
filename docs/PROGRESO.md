@@ -4,7 +4,7 @@
 |---|---|---|---|
 | 0 | cerrado | `npm test` (32 pruebas), `npm run build` y el flujo de Actions en verde | Crear el despliegue de la web app (lo hace el disparo manual) |
 | 1 | listo, en punto de control A | `npm test` (103 pruebas) y `npm run previsualizar` | Revisar 3 textos y `docs/PENDIENTES_LEGAL.md` |
-| 2 | pendiente | | |
+| 2 | listo, falta verificar en Google | `npm test` (157 pruebas) | Correr `setup()` y completar las propiedades |
 | 3 | pendiente | | |
 | 4 | pendiente | | |
 
@@ -113,3 +113,34 @@ texto. Los 8 identificadores reales de las sociedades Rappi validan.
 Las opciones del campo `secciones` todavía no salen de `data/secciones.json`:
 el motor usa los nombres que le llegan. Hay que conectarlo al armar el
 formulario.
+
+## Bloque 2 · Servidor
+
+### Qué quedó
+
+| Archivo | Qué hace |
+|---|---|
+| `src/server/Config.js` | Propiedades del script, pestañas, modo demostración |
+| `src/server/Datos.js` | Lectura y escritura del Sheet, carpeta por país |
+| `src/server/Setup.js` | `setup()` idempotente |
+| `src/server/Documento.js` | Adaptador de DocumentApp |
+| `src/server/Correo.js` | Envío del correo |
+| `src/server/Api.js` | Lo que llama la interfaz con google.script.run |
+
+Piezas puras nuevas en `src/core/`: `tablas.js`, `paises.js`, `documento.js`,
+`correo.js`.
+
+**157 pruebas en verde**, incluido el servidor completo contra dobles de las APIs de
+Google: setup idempotente, generación, formato del documento, carpeta por país,
+compartir como lector, correo, fila en Solicitudes, consecutivo, historial por rol,
+publicación, administración y registro.
+
+### Modo demostración
+
+Sin `SHEET_ID` la app usa los países de `data/`, avisa en pantalla y, en vez de crear
+el documento, muestra el texto final. No toca Drive, ni el Sheet, ni manda correos.
+
+### Qué falta verificar con la cuenta de Juan
+
+Lo único que no se puede probar en Node: que Google acepte de verdad las llamadas.
+Está en `docs/REVISION_MANANA.md`.

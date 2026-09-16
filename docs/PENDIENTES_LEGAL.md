@@ -20,7 +20,10 @@ lo que hay que confirmar es lo que ya está en esta lista.
 1. Medios de pago: se agregó en "Todos" y "RappiCard" que los pedidos pagados con Créditos no son válidos (antes solo estaba en "excepto efectivo").
 2. Segmentos nuevos: Nuevos usuarios y Usuarios reactivados (con días sin compra).
 3. Condiciones opcionales: "solo Turbo" y "solo consumo en el local".
-4. Nombres de las secciones para la redención (`data/secciones.json`).
+4. Nombres de las secciones para la redención (`data/secciones.json`). En las 1.184
+   solicitudes reales aparece una sección **Express** que no está en el archivo, y no
+   aparecen **Farmacia** ni **Tiendas especializadas**, que sí están. No toqué
+   `data/`: decide tú cuál es la lista correcta. Ver `docs/HALLAZGOS_SOLICITUDES.md`.
 
 ## Carrera de Compras
 El kit no tenía el .docx v2 de julio. El modelo v3 se armó desde el v1 más las decisiones de julio. Si tienes el v2, compáralo.
@@ -39,3 +42,10 @@ El kit no tenía el .docx v2 de julio. El modelo v3 se armó desde el v1 más la
 1. Por confirmar en las pruebas de cada país: separador de miles, término de días, texto de hora local y texto de derechos de datos.
 2. Chile: autoridad de datos (la agencia nueva entra con la Ley 21.719).
 3. México: confirmar que abre el link de T&C de Créditos (el enlace dice "terminos-ycondiciones").
+
+## Fuera del alcance de v3, con demanda real
+1. **Rappi Travel** es el 12% de las solicitudes (138 de 1.184) y v3 no lo cubre. Hoy
+   la interfaz lo manda al formulario de Legal. Confirmar si eso es lo que quieres o
+   si Travel entra en una versión siguiente.
+2. Descuentos que no son cashback (porcentaje de descuento, cupones, 2x1, combos,
+   obsequios) son 319 de 711 promociones y tampoco están en v3.

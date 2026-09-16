@@ -88,3 +88,43 @@ mapeo de la especificación (0 a 9 valen 0 a 9, A a N valen 10 a 23, & vale 24,
 O a Z valen 25 a 36) es exactamente el índice en la cadena
 `'0123456789ABCDEFGHIJKLMN&OPQRSTUVWXYZ'`. Escribirlo como un desplazamiento
 condicional corría el valor de `&` y de la O a la Z en uno.
+
+## Bloque 2
+
+**El servidor se prueba entero en Node con dobles de Google.** `pruebas/dobles/`
+reproduce SpreadsheetApp, DriveApp, DocumentApp, MailApp, PropertiesService,
+LockService y Session con el comportamiento que usa el servidor, y
+`pruebas/dobles/entorno.js` publica src/core y src/server en globalThis, igual que
+hace Apps Script. Así setup, generación, documento, correo, historial, publicación y
+administración quedan cubiertos sin la cuenta de Juan.
+
+**La parte que toca Google es lo más delgada posible.** Todo lo que piensa vive en
+src/core: `tablas.js` (filas, consecutivos, permisos, CSV), `paises.js`
+(normalización y disponibilidad), `documento.js` (estructura del Doc) y `correo.js`
+(HTML del correo). `src/server/` solo lee y escribe rectángulos de celdas y traduce
+la estructura a llamadas de DocumentApp.
+
+**El navegador lleva el motor completo.** El build ya mete src/core en
+`MotorCliente.html`, así que la interfaz arma el formulario desde `esquemas.js`,
+calcula los derivados y valida en vivo sin ida y vuelta al servidor. El servidor
+vuelve a validar siempre antes de generar: hay prueba que manda un país en piloto
+desde un usuario que no es del equipo y verifica que el servidor lo rechaza.
+
+**Los esquemas no viajan al cliente.** Tienen funciones (`visible`, `obligatorio`)
+que no sobreviven a `google.script.run`. Como el cliente ya tiene `esquemas.js`, el
+servidor solo manda datos: países, rol, secciones, versiones y URLs.
+
+**En modo demostración el usuario es "pruebas".** Sin SHEET_ID no se crea ningún
+documento, así que dejar ver los países en piloto no tiene riesgo legal y hace que la
+demostración sirva para algo. El aviso en pantalla lo dice.
+
+**Quien despliega queda como administrador.** Si no, nadie podría entrar a la
+administración después de `setup()`. Los demás administradores salen de la propiedad
+`CORREOS_ADMIN`. No inventé los correos de Anna ni de Paula: los agrega Juan.
+
+**El identificador se calcula bajo LockService.** Dos generaciones simultáneas
+podrían leer el mismo consecutivo. El bloqueo cubre desde la lectura del último
+identificador hasta que la fila queda escrita.
+
+**El enlace publicado se valida contra promos.rappi.com.** Cualquier otro dominio
+significa que el T&C no quedó donde la campaña lo referencia.
