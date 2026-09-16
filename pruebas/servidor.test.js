@@ -471,3 +471,77 @@ test('una hoja vieja se pone al día sola, sin correr setup otra vez', () => {
   assert.strictEqual(fila.resp_tienda, 'Jumbo', 'la columna nueva no se agregó sola');
   assert.strictEqual(fila.id, resultado.id, 'los datos quedaron corridos de columna');
 });
+
+// --- ampliar una campaña en curso ------------------------------------------
+
+/**
+ * Una campaña que ya arrancó solo puede recibir más: más días, más presupuesto,
+ * más órdenes o más unidades. El enlace publicado no cambia, porque la gente ya
+ * lo tiene: lo que cambia es el texto que el comercial pega ahí.
+ */
+function campanaEnCurso() {
+  // El mundo de prueba está en 2026-09-16, así que esta campaña ya arrancó.
+  const resultado = generar(solicitudValida({ tienda: 'Jumbo', fechaInicio: '2026-09-16', fechaFin: '2026-09-30' }));
+  marcarPublicado(resultado.id, 'https://promos.rappi.com/colombia/jumbo');
+  return resultado;
+}
+
+test('ampliar una campaña en curso genera otra versión del documento', () => {
+  conSetup();
+  const original = campanaEnCurso();
+
+  const ampliada = ampliarCampana(original.id, { fechaFin: '2026-10-15', presupuesto: 3000000 });
+  assert.ok(ampliada.valido, JSON.stringify(ampliada.errores));
+  assert.strictEqual(ampliada.version, 2);
+  assert.ok(ampliada.titulo.indexOf('versión 2') !== -1, ampliada.titulo);
+
+  // El enlace publicado es el mismo: el comercial reemplaza el texto ahí.
+  assert.strictEqual(ampliada.linkPublicado, 'https://promos.rappi.com/colombia/jumbo');
+
+  const fila = leerSolicitudes()[0];
+  assert.strictEqual(fila.link_publicado, 'https://promos.rappi.com/colombia/jumbo');
+  assert.strictEqual(fila.link_doc, ampliada.linkDoc, 'el historial debería apuntar a la versión nueva');
+  assert.strictEqual(JSON.parse(fila.datos_json).presupuesto, 3000000);
+  assert.strictEqual(JSON.parse(fila.datos_json).modificaciones.length, 1);
+});
+
+test('ampliar nunca deja bajar un número ni adelantar el fin', () => {
+  conSetup();
+  const original = campanaEnCurso();
+
+  const bajar = ampliarCampana(original.id, { presupuesto: 500000 });
+  assert.ok(!bajar.valido);
+  assert.ok(bajar.errores[0].mensaje.indexOf('quien ya compró') !== -1, bajar.errores[0].mensaje);
+
+  const adelantar = ampliarCampana(original.id, { fechaFin: '2026-09-20' });
+  assert.ok(!adelantar.valido);
+  assert.ok(adelantar.errores[0].mensaje.indexOf('hacia adelante') !== -1, adelantar.errores[0].mensaje);
+});
+
+test('una campaña sin publicar no se amplía', () => {
+  conSetup();
+  const sinPublicar = generar(solicitudValida({ fechaInicio: '2026-09-16', fechaFin: '2026-09-30' }));
+
+  const resultado = ampliarCampana(sinPublicar.id, { presupuesto: 3000000 });
+  assert.ok(!resultado.valido);
+  assert.ok(resultado.errores[0].mensaje.indexOf('no está publicada') !== -1, resultado.errores[0].mensaje);
+});
+
+test('la ampliación de otra persona se rechaza', () => {
+  const mundo = conSetup();
+  const original = campanaEnCurso();
+
+  comoComercial(mundo, 'otro@rappi.com');
+  const resultado = ampliarCampana(original.id, { presupuesto: 3000000 });
+  assert.ok(!resultado.valido);
+  assert.strictEqual(resultado.errores[0].mensaje, 'Esa solicitud no es tuya.');
+});
+
+test('cada ampliación queda en el Registro', () => {
+  const mundo = conSetup();
+  const original = campanaEnCurso();
+  ampliarCampana(original.id, { presupuesto: 3000000 });
+
+  const registro = objetosDe('Registro');
+  assert.ok(registro.some((fila) => fila.accion === 'ampliar' && String(fila.detalle).indexOf(original.id) !== -1));
+});

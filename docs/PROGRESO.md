@@ -386,3 +386,36 @@ node -e "console.log(require('fs').readFileSync('pruebas/salidas_esperadas/TV01.
 Los siete documentos que generan están en `pruebas/salidas_esperadas/TV01.txt` a
 `TV07.txt`. Las diecisiete decisiones que necesito de Juan están en
 `docs/PENDIENTES_LEGAL.md`, sección "Rappi Travel".
+
+## 16 de septiembre · noche · Travel, bloques 4 y 5 terminados
+
+### El filtro de Travel ya está en pantalla
+
+Elegir Cashback Travel o Descuento Travel lleva a una pantalla con las nueve preguntas del
+filtro. Va **después** de elegir el tipo, no antes: las preguntas solo tienen sentido
+sabiendo que la campaña es de viajes. Cualquier sí lleva a Legal con su razón escrita.
+
+### Ampliar una campaña en curso
+
+En "Mis campañas", una campaña **publicada y corriendo** muestra un botón **Ampliar**.
+Abre un formulario que solo deja subir: la fecha de fin hacia adelante, el presupuesto, el
+máximo de órdenes o las unidades. Nunca bajar, porque eso cambiaría las condiciones de
+quien ya compró.
+
+Al ampliar:
+
+1. Se genera **una versión nueva del documento**, con la nota de modificación al final y su
+   fecha.
+2. **El enlace publicado no cambia.** La pantalla lo muestra con su botón de copiar y
+   recuerda reemplazar el texto en esa misma página de Squarespace, porque la gente ya
+   tiene el enlace.
+3. Queda registro en la pestaña `Registro`.
+
+Lo que no se puede ampliar dice por qué en palabras: una campaña sin publicar todavía se
+edita y se regenera; una que ya terminó no se reabre, se crea otra con "Usar como base".
+
+El momento de la campaña sale de la hora, no de una casilla: la herramienta no sabe si
+hubo órdenes, así que si ya pasó la hora de inicio asume que las hubo. Funciona también
+con las franjas de un solo día, de 6 a 8 de la noche.
+
+**265 pruebas en verde**, más cuatro recorridos verificados en el navegador.

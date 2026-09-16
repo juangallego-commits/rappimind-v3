@@ -131,6 +131,28 @@ const SERVIDOR_SIMULADO = `
       return { valido: false, errores: [{ campo: 'id', mensaje: 'No encontramos esa solicitud.' }] };
     },
 
+    ampliarCampana: function (id, cambios) {
+      for (var i = 0; i < solicitudes.length; i++) {
+        if (solicitudes[i].id !== id) continue;
+        var entrada = JSON.parse(solicitudes[i].datos_json);
+        var disponible = puedeAmpliar(solicitudes[i], entrada, hoy(), '12:00');
+        if (!disponible.puede) return { valido: false, errores: [{ campo: 'id', mensaje: disponible.motivo }] };
+
+        var revision = validarAmpliacion(entrada, cambios, hoy(), '12:00');
+        if (!revision.valido) return { valido: false, errores: revision.errores };
+
+        var ampliada = aplicarAmpliacion(entrada, revision.cambios, hoy());
+        solicitudes[i].datos_json = JSON.stringify(ampliada);
+        solicitudes[i].fecha_fin = ampliada.fechaFin || '';
+        return {
+          valido: true, demostracion: true, id: id,
+          version: ampliada.modificaciones.length + 1,
+          linkDoc: '', linkPublicado: solicitudes[i].link_publicado,
+        };
+      }
+      return { valido: false, errores: [{ campo: 'id', mensaje: 'No encontramos esa solicitud.' }] };
+    },
+
     adminEstado: function () {
       return { paises: paises, equipo: equipo, estados: ESTADOS, roles: ['comercial', 'pruebas', 'legal', 'admin'] };
     },

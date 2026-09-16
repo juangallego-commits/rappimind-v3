@@ -106,6 +106,12 @@ function ahoraTexto(zonaHoraria) {
   return Utilities.formatDate(new Date(), zona, 'yyyy-MM-dd HH:mm:ss');
 }
 
+/** Hora de ahora en HH:MM. La usa la ampliacion, que depende de la hora. */
+function horaAhora(zonaHoraria) {
+  var zona = zonaHoraria || Session.getScriptTimeZone();
+  return Utilities.formatDate(new Date(), zona, 'HH:mm');
+}
+
 /** Correos que setup() deja como administradores. */
 function correosAdministradores() {
   var lista = leerPropiedad(PROPIEDADES.CORREOS_ADMIN)
@@ -139,6 +145,7 @@ if (typeof module !== 'undefined') {
     correoDelUsuario: correoDelUsuario,
     correoEsDelDominio: correoEsDelDominio,
     hoyIso: hoyIso,
+    horaAhora: horaAhora,
     ahoraTexto: ahoraTexto,
     correosAdministradores: correosAdministradores,
   };

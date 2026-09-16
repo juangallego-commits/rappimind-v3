@@ -160,6 +160,20 @@ function hoyEnElNavegador() {
   return ahora.getFullYear() + '-' + (mes.length < 2 ? '0' + mes : mes) + '-' + (dia.length < 2 ? '0' + dia : dia);
 }
 
+/**
+ * La hora de ahora en HH:MM, para saber si una campana ya arranco.
+ *
+ * Es la hora del navegador, no la del servidor: solo decide si se ofrece el
+ * boton de ampliar. Quien manda es el servidor, que revisa otra vez con su
+ * propia hora antes de tocar nada.
+ */
+function horaEnElNavegador() {
+  var ahora = new Date();
+  var hora = String(ahora.getHours());
+  var minuto = String(ahora.getMinutes());
+  return (hora.length < 2 ? '0' + hora : hora) + ':' + (minuto.length < 2 ? '0' + minuto : minuto);
+}
+
 /** Días entre dos fechas ISO. Positivo si la segunda es posterior. */
 function diasEntre(desdeIso, hastaIso) {
   var a = new Date(desdeIso + 'T00:00:00');
@@ -194,6 +208,7 @@ RM.util = {
   conSeparadorDeMiles: conSeparadorDeMiles,
   soloDigitos: soloDigitos,
   hoyEnElNavegador: hoyEnElNavegador,
+  horaEnElNavegador: horaEnElNavegador,
   diasEntre: diasEntre,
   conRetraso: conRetraso,
   anunciar: anunciar,

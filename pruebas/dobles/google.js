@@ -263,6 +263,7 @@ function instalarDobles(opciones) {
       var dia = iso.slice(0, 10);
       var hora = iso.slice(11, 19);
       if (formato === 'yyyy-MM-dd') return dia;
+      if (formato === 'HH:mm') return hora.slice(0, 5);
       return dia + ' ' + hora;
     },
     sleep: function () {},

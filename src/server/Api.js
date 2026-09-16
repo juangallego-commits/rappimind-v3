@@ -231,6 +231,85 @@ function marcarPublicado(id, url) {
   return { valido: true, id: id, linkPublicado: revision.url };
 }
 
+/**
+ * Amplia una campana en curso: mas dias, mas presupuesto, mas ordenes o mas
+ * unidades. Nunca menos, y nunca otra cosa.
+ *
+ * Genera un documento nuevo con la nota de modificacion al final y deja el
+ * mismo enlace publicado: el comercial reemplaza el texto en Squarespace, en la
+ * misma pagina, porque la gente ya la tiene. Ver src/core/ampliacion.js.
+ */
+function ampliarCampana(id, cambios) {
+  var quien = contextoDeQuienPide();
+  if (quien.demostracion) {
+    return { valido: false, errores: [{ campo: 'id', mensaje: 'En modo demostración no hay campañas guardadas que ampliar.' }] };
+  }
+
+  var solicitudes = leerSolicitudes();
+  var solicitud = null;
+  for (var i = 0; i < solicitudes.length; i++) {
+    if (solicitudes[i].id === id) solicitud = solicitudes[i];
+  }
+  if (!solicitud) return { valido: false, errores: [{ campo: 'id', mensaje: 'No encontramos esa solicitud.' }] };
+
+  var propia = String(solicitud.email).toLowerCase() === quien.correo;
+  if (!propia && quien.rol !== 'admin' && quien.rol !== 'legal') {
+    return { valido: false, errores: [{ campo: 'id', mensaje: 'Esa solicitud no es tuya.' }] };
+  }
+
+  var entrada;
+  try {
+    entrada = JSON.parse(solicitud.datos_json || '{}');
+  } catch (error) {
+    return { valido: false, errores: [{ campo: 'id', mensaje: 'Los datos guardados de esa solicitud no se pueden leer.' }] };
+  }
+
+  var disponible = puedeAmpliar(solicitud, entrada, hoyIso(), horaAhora());
+  if (!disponible.puede) return { valido: false, errores: [{ campo: 'id', mensaje: disponible.motivo }] };
+
+  var revision = validarAmpliacion(entrada, cambios, hoyIso(), horaAhora());
+  if (!revision.valido) return { valido: false, errores: revision.errores };
+
+  var ampliada = aplicarAmpliacion(entrada, revision.cambios, hoyIso());
+  var pais = paisPorCodigo(leerPaises(), ampliada.pais);
+  var resultado = generarTexto(ampliada, pais, MODELOS, {
+    fechaReferencia: hoyIso(),
+    usuarioEnEquipo: quien.enEquipo,
+  });
+  if (!resultado.valido) return { valido: false, errores: resultado.errores };
+
+  var bloqueo = LockService.getScriptLock();
+  bloqueo.waitLock(30000);
+
+  try {
+    var version = ampliada.modificaciones.length + 1;
+    var titulo = tituloDelDocumento(solicitud.nombre_campana, pais.nombre, id) + ' · versión ' + version;
+    var carpeta = carpetaDelPais(pais.codigo, pais.nombre);
+    var documento = crearDocumento(titulo, estructuraDelDocumento(resultado.texto), carpeta, quien.correo);
+
+    var fila = unirObjetos({
+      link_doc: documento.url,
+      datos_json: JSON.stringify(ampliada),
+      fecha_fin: ampliada.fechaFin || '',
+    }, respuestasParaElSheet(ampliada));
+    actualizarFila('Solicitudes', solicitud._fila, fila);
+
+    registrar('ampliar', id + ' · versión ' + version + ' · ' + JSON.stringify(revision.cambios));
+
+    return {
+      valido: true,
+      id: id,
+      version: version,
+      linkDoc: documento.url,
+      linkPublicado: solicitud.link_publicado,
+      titulo: titulo,
+      cambios: revision.cambios,
+    };
+  } finally {
+    bloqueo.releaseLock();
+  }
+}
+
 /** Los datos de una solicitud para reusarla como base. */
 function datosDeSolicitud(id) {
   var quien = contextoDeQuienPide();
@@ -324,6 +403,7 @@ if (typeof module !== 'undefined') {
     generar: generar,
     historial: historial,
     marcarPublicado: marcarPublicado,
+    ampliarCampana: ampliarCampana,
     datosDeSolicitud: datosDeSolicitud,
     adminEstado: adminEstado,
     adminGuardarEstadoDePais: adminGuardarEstadoDePais,

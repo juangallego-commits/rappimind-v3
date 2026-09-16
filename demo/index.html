@@ -972,6 +972,210 @@ var CATEGORIAS_TRAVEL = {
 
 if (typeof module !== 'undefined') { module.exports = { CATEGORIAS_TRAVEL: CATEGORIAS_TRAVEL }; }
 
+// --- src/core/ampliacion.js ---
+'use strict';
+
+/**
+ * Ampliar una campana que ya empezo.
+ *
+ * El principio, decidido por Juan: una campana que ya arranco no cambia sus
+ * condiciones, porque pudo haber ordenes hechas con ellas. Lo unico que se
+ * puede hacer es darle mas: mas dias, mas presupuesto, mas ordenes o mas
+ * unidades. Nunca menos, y nunca otra cosa.
+ *
+ * La herramienta no sabe si hubo ordenes, asi que usa la hora: si ya paso la
+ * hora de inicio, asume que las hubo.
+ *
+ * Cada ampliacion deja una nota al final del documento, con su fecha. El
+ * comercial reemplaza el texto en el mismo enlace de Squarespace, porque el
+ * enlace ya esta publicado y la gente ya lo tiene.
+ *
+ * Ver docs/INVESTIGACION_TRAVEL.md, seccion 6, y docs/MODELO_BASE_TRAVEL.md,
+ * seccion 9.
+ */
+
+/* En Node las dependencias se cargan con require; en Apps Script ya son globales. */
+if (typeof module !== 'undefined' && typeof require === 'function') {
+  var moduloFechas = require('./fechas.js');
+  var comoNumeroFechaHora = moduloFechas.comoNumeroFechaHora;
+  var comoNumeroFecha = moduloFechas.comoNumeroFecha;
+  var formatearFecha = moduloFechas.formatearFecha;
+}
+
+/** Los cuatro numeros que se pueden ampliar, y como se llaman en pantalla. */
+var CAMPOS_AMPLIABLES = [
+  { id: 'presupuesto', nombre: 'el presupuesto' },
+  { id: 'maxOrdenes', nombre: 'el máximo de órdenes' },
+  { id: 'unidades', nombre: 'las unidades con descuento' },
+];
+
+/**
+ * En que momento esta la campana.
+ *
+ * Devuelve 'no_empezada', 'en_curso' o 'terminada'. Sin fechas devuelve
+ * 'no_empezada', que es lo conservador: deja editar.
+ */
+function momentoDeLaCampana(entrada, ahoraIso, ahoraHora) {
+  var datos = entrada || {};
+  var ahora = comoNumeroFechaHora(ahoraIso, ahoraHora || '00:00');
+  if (ahora === null) return 'no_empezada';
+
+  var inicio = comoNumeroFechaHora(datos.fechaInicio, datos.horaInicio || '00:00');
+  var fin = comoNumeroFechaHora(datos.fechaFin, datos.horaFin || '23:59');
+
+  if (inicio !== null && ahora < inicio) return 'no_empezada';
+  if (fin !== null && ahora > fin) return 'terminada';
+  return 'en_curso';
+}
+
+/**
+ * Si se puede ofrecer el boton de ampliar, y por que no.
+ *
+ * solicitud: la fila del Sheet, con link_publicado.
+ * entrada: las respuestas guardadas.
+ */
+function puedeAmpliar(solicitud, entrada, ahoraIso, ahoraHora) {
+  var fila = solicitud || {};
+
+  if (!String(fila.link_publicado || '').trim()) {
+    return {
+      puede: false,
+      motivo: 'Esta campaña todavía no está publicada. Ampliar solo tiene sentido cuando ya hay un enlace que la gente puede estar viendo.',
+    };
+  }
+
+  var momento = momentoDeLaCampana(entrada, ahoraIso, ahoraHora);
+  if (momento === 'no_empezada') {
+    return {
+      puede: false,
+      momento: momento,
+      motivo: 'La campaña todavía no arranca, así que puedes cambiar lo que necesites y generar otra vez. No hace falta ampliarla.',
+    };
+  }
+  if (momento === 'terminada') {
+    return {
+      puede: false,
+      momento: momento,
+      motivo: 'La campaña ya terminó. Una campaña terminada no se reabre: crea una nueva con "Usar como base", que queda con su propio enlace.',
+    };
+  }
+  return { puede: true, momento: momento, motivo: '' };
+}
+
+/** true si el valor nuevo es un numero mayor que el viejo. */
+function esAumento(valorNuevo, valorViejo) {
+  var nuevo = Number(valorNuevo);
+  var viejo = Number(valorViejo);
+  if (!isFinite(nuevo) || nuevo <= 0) return false;
+  if (!isFinite(viejo) || viejo <= 0) return true;
+  return nuevo > viejo;
+}
+
+/**
+ * Revisa una ampliacion. Solo deja mover la fecha de fin hacia adelante y
+ * subir los numeros; cualquier otra cosa se rechaza con su razon.
+ *
+ * cambios: { fechaFin, horaFin, presupuesto, maxOrdenes, unidades }
+ * Devuelve { valido, errores, cambios } con solo los cambios que aplican.
+ */
+function validarAmpliacion(entrada, cambios, ahoraIso, ahoraHora) {
+  var datos = entrada || {};
+  var pedido = cambios || {};
+  var errores = [];
+  var aplicables = {};
+
+  var estado = puedeAmpliar({ link_publicado: 'x' }, datos, ahoraIso, ahoraHora);
+  if (!estado.puede) {
+    return { valido: false, errores: [{ campo: 'id', mensaje: estado.motivo }], cambios: {} };
+  }
+
+  if (pedido.fechaFin) {
+    var finViejo = comoNumeroFechaHora(datos.fechaFin, datos.horaFin || '23:59');
+    var finNuevo = comoNumeroFechaHora(pedido.fechaFin, pedido.horaFin || datos.horaFin || '23:59');
+
+    if (finNuevo === null) {
+      errores.push({ campo: 'fechaFin', mensaje: 'Esa fecha de fin no tiene forma de fecha. Revísala.' });
+    } else if (finViejo !== null && finNuevo <= finViejo) {
+      errores.push({
+        campo: 'fechaFin',
+        mensaje: 'La vigencia solo se puede ampliar hacia adelante. Para terminar antes una campaña en curso, escríbele a Legal.',
+      });
+    } else {
+      aplicables.fechaFin = pedido.fechaFin;
+      aplicables.horaFin = pedido.horaFin || datos.horaFin || '23:59';
+    }
+  }
+
+  for (var i = 0; i < CAMPOS_AMPLIABLES.length; i++) {
+    var campo = CAMPOS_AMPLIABLES[i];
+    if (pedido[campo.id] === null || pedido[campo.id] === undefined || pedido[campo.id] === '') continue;
+
+    if (!esAumento(pedido[campo.id], datos[campo.id])) {
+      errores.push({
+        campo: campo.id,
+        mensaje: 'Solo se puede subir ' + campo.nombre + ', nunca bajarlo. Bajarlo cambiaría las condiciones de quien ya compró.',
+      });
+      continue;
+    }
+    aplicables[campo.id] = Number(pedido[campo.id]);
+  }
+
+  var hayAlgo = false;
+  for (var llave in aplicables) {
+    if (Object.prototype.hasOwnProperty.call(aplicables, llave)) hayAlgo = true;
+  }
+  if (!hayAlgo && errores.length === 0) {
+    errores.push({ campo: 'id', mensaje: 'No pediste ningún cambio. Escribe la fecha nueva, o el número nuevo, de lo que quieras ampliar.' });
+  }
+
+  return { valido: errores.length === 0, errores: errores, cambios: aplicables };
+}
+
+/**
+ * Aplica la ampliacion a las respuestas guardadas y agrega la nota.
+ *
+ * No muta la entrada original: devuelve una copia. La nota la imprime el
+ * modelo al final del documento, con su fecha.
+ */
+function aplicarAmpliacion(entrada, cambios, hoyIso) {
+  var nueva = {};
+  for (var llave in entrada) {
+    if (Object.prototype.hasOwnProperty.call(entrada, llave)) nueva[llave] = entrada[llave];
+  }
+
+  var nota = { fecha: hoyIso };
+  for (var campo in cambios) {
+    if (!Object.prototype.hasOwnProperty.call(cambios, campo)) continue;
+    nueva[campo] = cambios[campo];
+    if (campo !== 'horaFin') nota[campo] = cambios[campo];
+  }
+  if (cambios.fechaFin) nota.horaFin = cambios.horaFin || nueva.horaFin;
+
+  nueva.modificaciones = (entrada.modificaciones || []).slice();
+  nueva.modificaciones.push(nota);
+  return nueva;
+}
+
+/** Lo que el comercial lee en el historial cuando no puede ampliar. */
+function textoDeAmpliacion(solicitud, entrada, ahoraIso, ahoraHora) {
+  var estado = puedeAmpliar(solicitud, entrada, ahoraIso, ahoraHora);
+  if (estado.puede) {
+    return 'Esta campaña está en curso. Puedes ampliar la fecha de fin, el presupuesto, el máximo de órdenes o las unidades. Cualquier otro cambio necesita una campaña nueva.';
+  }
+  return estado.motivo;
+}
+
+if (typeof module !== 'undefined') {
+  module.exports = {
+    CAMPOS_AMPLIABLES: CAMPOS_AMPLIABLES,
+    momentoDeLaCampana: momentoDeLaCampana,
+    puedeAmpliar: puedeAmpliar,
+    validarAmpliacion: validarAmpliacion,
+    aplicarAmpliacion: aplicarAmpliacion,
+    textoDeAmpliacion: textoDeAmpliacion,
+  };
+}
+
 // --- src/core/auditoria.js ---
 'use strict';
 
@@ -7113,6 +7317,28 @@ if (typeof module !== 'undefined') {
       return { valido: false, errores: [{ campo: 'id', mensaje: 'No encontramos esa solicitud.' }] };
     },
 
+    ampliarCampana: function (id, cambios) {
+      for (var i = 0; i < solicitudes.length; i++) {
+        if (solicitudes[i].id !== id) continue;
+        var entrada = JSON.parse(solicitudes[i].datos_json);
+        var disponible = puedeAmpliar(solicitudes[i], entrada, hoy(), '12:00');
+        if (!disponible.puede) return { valido: false, errores: [{ campo: 'id', mensaje: disponible.motivo }] };
+
+        var revision = validarAmpliacion(entrada, cambios, hoy(), '12:00');
+        if (!revision.valido) return { valido: false, errores: revision.errores };
+
+        var ampliada = aplicarAmpliacion(entrada, revision.cambios, hoy());
+        solicitudes[i].datos_json = JSON.stringify(ampliada);
+        solicitudes[i].fecha_fin = ampliada.fechaFin || '';
+        return {
+          valido: true, demostracion: true, id: id,
+          version: ampliada.modificaciones.length + 1,
+          linkDoc: '', linkPublicado: solicitudes[i].link_publicado,
+        };
+      }
+      return { valido: false, errores: [{ campo: 'id', mensaje: 'No encontramos esa solicitud.' }] };
+    },
+
     adminEstado: function () {
       return { paises: paises, equipo: equipo, estados: ESTADOS, roles: ['comercial', 'pruebas', 'legal', 'admin'] };
     },
@@ -7312,6 +7538,20 @@ function hoyEnElNavegador() {
   return ahora.getFullYear() + '-' + (mes.length < 2 ? '0' + mes : mes) + '-' + (dia.length < 2 ? '0' + dia : dia);
 }
 
+/**
+ * La hora de ahora en HH:MM, para saber si una campana ya arranco.
+ *
+ * Es la hora del navegador, no la del servidor: solo decide si se ofrece el
+ * boton de ampliar. Quien manda es el servidor, que revisa otra vez con su
+ * propia hora antes de tocar nada.
+ */
+function horaEnElNavegador() {
+  var ahora = new Date();
+  var hora = String(ahora.getHours());
+  var minuto = String(ahora.getMinutes());
+  return (hora.length < 2 ? '0' + hora : hora) + ':' + (minuto.length < 2 ? '0' + minuto : minuto);
+}
+
 /** Días entre dos fechas ISO. Positivo si la segunda es posterior. */
 function diasEntre(desdeIso, hastaIso) {
   var a = new Date(desdeIso + 'T00:00:00');
@@ -7346,6 +7586,7 @@ RM.util = {
   conSeparadorDeMiles: conSeparadorDeMiles,
   soloDigitos: soloDigitos,
   hoyEnElNavegador: hoyEnElNavegador,
+  horaEnElNavegador: horaEnElNavegador,
   diasEntre: diasEntre,
   conRetraso: conRetraso,
   anunciar: anunciar,
@@ -9701,6 +9942,7 @@ function pantallaHistorial(raiz) {
                 clase: 'boton-texto', type: 'button', texto: 'Usar como base',
                 onclick: function () { usarComoBase(fila.id); },
               }),
+              botonDeAmpliar(fila, destino),
             ]),
           ]));
         })(filas[i]);
@@ -9714,6 +9956,115 @@ function pantallaHistorial(raiz) {
   }
 
   cargar('');
+}
+
+/**
+ * El boton de ampliar una campana en curso.
+ *
+ * Solo aparece cuando la campana esta publicada y corriendo. Una campana que ya
+ * arranco no cambia sus condiciones: lo unico que se puede es darle mas dias,
+ * mas presupuesto, mas ordenes o mas unidades. Ver src/core/ampliacion.js.
+ */
+function botonDeAmpliar(fila, destino) {
+  var entrada = datosDeLaFila(fila);
+  if (!entrada) return null;
+
+  var hoy = E.configuracion.hoy || RM.util.hoyEnElNavegador();
+  var estado = puedeAmpliar(fila, entrada, hoy, RM.util.horaEnElNavegador());
+  if (!estado.puede) return null;
+
+  return crear('button', {
+    clase: 'boton-texto', type: 'button', texto: 'Ampliar',
+    onclick: function () { abrirAmpliacion(fila, entrada, destino); },
+  });
+}
+
+/** Las respuestas guardadas de una fila del historial, o null. */
+function datosDeLaFila(fila) {
+  try {
+    return JSON.parse(fila.datos_json || '{}');
+  } catch (error) {
+    return null;
+  }
+}
+
+/** El formulario de ampliacion, debajo de la tabla. */
+function abrirAmpliacion(fila, entrada, destino) {
+  var viejo = document.getElementById('caja-ampliacion');
+  if (viejo) viejo.parentNode.removeChild(viejo);
+
+  var caja = crear('div', { clase: 'ficha', id: 'caja-ampliacion' });
+  var seccion = crear('div', { clase: 'ficha-seccion' }, [
+    crear('h3', { texto: 'Ampliar ' + (fila.nombre_campana || fila.id) }),
+    crear('p', {
+      clase: 'pregunta-ayuda',
+      texto: 'Esta campaña ya arrancó, así que solo se le puede dar más: más días, más presupuesto, más órdenes o más unidades. Nunca menos, porque cambiaría las condiciones de quien ya compró.',
+    }),
+  ]);
+
+  var controles = {};
+  function campoDeAmpliacion(id, etiqueta, tipo, valorActual) {
+    var control = crear('input', { type: tipo, id: 'ampliar-' + id, 'aria-label': etiqueta });
+    controles[id] = control;
+    seccion.appendChild(crear('div', { clase: 'pregunta' }, [
+      crear('label', { clase: 'copiable-etiqueta', for: 'ampliar-' + id, texto: etiqueta }),
+      crear('div', { clase: 'campo-caja' }, [control]),
+      crear('p', { clase: 'pregunta-ayuda', texto: 'Ahora dice: ' + (valorActual === null || valorActual === undefined || valorActual === '' ? 'sin valor' : valorActual) }),
+    ]));
+  }
+
+  campoDeAmpliacion('fechaFin', 'Nueva fecha de fin', 'date', entrada.fechaFin);
+  if (entrada.presupuesto) campoDeAmpliacion('presupuesto', 'Nuevo presupuesto', 'text', entrada.presupuesto);
+  if (entrada.maxOrdenes) campoDeAmpliacion('maxOrdenes', 'Nuevo máximo de órdenes', 'text', entrada.maxOrdenes);
+  if (entrada.unidades) campoDeAmpliacion('unidades', 'Nuevas unidades con descuento', 'text', entrada.unidades);
+
+  var mensaje = crear('p', { clase: 'pregunta-ayuda', texto: 'Llena solo lo que quieras ampliar y deja el resto vacío.' });
+  var guardar = crear('button', { clase: 'boton', type: 'button', texto: 'Ampliar la campaña' });
+
+  guardar.addEventListener('click', function () {
+    var cambios = {};
+    for (var id in controles) {
+      if (!Object.prototype.hasOwnProperty.call(controles, id)) continue;
+      var valor = String(controles[id].value || '').trim();
+      if (valor) cambios[id] = id === 'fechaFin' ? valor : Number(RM.util.soloDigitos(valor));
+    }
+
+    guardar.disabled = true;
+    guardar.textContent = 'Ampliando...';
+    RM.servidor.llamar('ampliarCampana', fila.id, cambios).then(function (respuesta) {
+      guardar.disabled = false;
+      guardar.textContent = 'Ampliar la campaña';
+      if (!respuesta || !respuesta.valido) {
+        mensaje.className = 'mensaje-error';
+        mensaje.textContent = respuesta && respuesta.errores ? respuesta.errores[0].mensaje : 'No pudimos ampliar la campaña.';
+        return;
+      }
+      RM.util.vaciar(seccion);
+      seccion.appendChild(crear('h3', { texto: 'Listo: versión ' + respuesta.version }));
+      seccion.appendChild(crear('p', {
+        texto: 'Abre el documento nuevo, cópialo completo y reemplaza el texto en la misma página de Squarespace. El enlace no cambia: la gente ya lo tiene.',
+      }));
+      if (respuesta.linkPublicado) {
+        seccion.appendChild(RM.util.paraCopiar('La página que hay que actualizar', respuesta.linkPublicado, ''));
+      }
+      seccion.appendChild(crear('div', { clase: 'fila-botones' }, [
+        crear('a', { clase: 'boton', href: respuesta.linkDoc, target: '_blank', rel: 'noopener' }, [
+          document.createTextNode('Abrir el documento nuevo'), RM.util.icono('abrir', 16),
+        ]),
+      ]));
+    }).catch(function (error) {
+      guardar.disabled = false;
+      guardar.textContent = 'Ampliar la campaña';
+      mensaje.className = 'mensaje-error';
+      mensaje.textContent = 'No pudimos ampliar la campaña: ' + error.message;
+    });
+  });
+
+  seccion.appendChild(mensaje);
+  seccion.appendChild(crear('div', { clase: 'fila-botones' }, [guardar]));
+  caja.appendChild(seccion);
+  destino.appendChild(caja);
+  caja.scrollIntoView({ block: 'nearest' });
 }
 
 function usarComoBase(id) {

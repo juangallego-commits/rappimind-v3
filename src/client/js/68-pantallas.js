@@ -89,6 +89,7 @@ function pantallaHistorial(raiz) {
                 clase: 'boton-texto', type: 'button', texto: 'Usar como base',
                 onclick: function () { usarComoBase(fila.id); },
               }),
+              botonDeAmpliar(fila, destino),
             ]),
           ]));
         })(filas[i]);
@@ -102,6 +103,115 @@ function pantallaHistorial(raiz) {
   }
 
   cargar('');
+}
+
+/**
+ * El boton de ampliar una campana en curso.
+ *
+ * Solo aparece cuando la campana esta publicada y corriendo. Una campana que ya
+ * arranco no cambia sus condiciones: lo unico que se puede es darle mas dias,
+ * mas presupuesto, mas ordenes o mas unidades. Ver src/core/ampliacion.js.
+ */
+function botonDeAmpliar(fila, destino) {
+  var entrada = datosDeLaFila(fila);
+  if (!entrada) return null;
+
+  var hoy = E.configuracion.hoy || RM.util.hoyEnElNavegador();
+  var estado = puedeAmpliar(fila, entrada, hoy, RM.util.horaEnElNavegador());
+  if (!estado.puede) return null;
+
+  return crear('button', {
+    clase: 'boton-texto', type: 'button', texto: 'Ampliar',
+    onclick: function () { abrirAmpliacion(fila, entrada, destino); },
+  });
+}
+
+/** Las respuestas guardadas de una fila del historial, o null. */
+function datosDeLaFila(fila) {
+  try {
+    return JSON.parse(fila.datos_json || '{}');
+  } catch (error) {
+    return null;
+  }
+}
+
+/** El formulario de ampliacion, debajo de la tabla. */
+function abrirAmpliacion(fila, entrada, destino) {
+  var viejo = document.getElementById('caja-ampliacion');
+  if (viejo) viejo.parentNode.removeChild(viejo);
+
+  var caja = crear('div', { clase: 'ficha', id: 'caja-ampliacion' });
+  var seccion = crear('div', { clase: 'ficha-seccion' }, [
+    crear('h3', { texto: 'Ampliar ' + (fila.nombre_campana || fila.id) }),
+    crear('p', {
+      clase: 'pregunta-ayuda',
+      texto: 'Esta campaña ya arrancó, así que solo se le puede dar más: más días, más presupuesto, más órdenes o más unidades. Nunca menos, porque cambiaría las condiciones de quien ya compró.',
+    }),
+  ]);
+
+  var controles = {};
+  function campoDeAmpliacion(id, etiqueta, tipo, valorActual) {
+    var control = crear('input', { type: tipo, id: 'ampliar-' + id, 'aria-label': etiqueta });
+    controles[id] = control;
+    seccion.appendChild(crear('div', { clase: 'pregunta' }, [
+      crear('label', { clase: 'copiable-etiqueta', for: 'ampliar-' + id, texto: etiqueta }),
+      crear('div', { clase: 'campo-caja' }, [control]),
+      crear('p', { clase: 'pregunta-ayuda', texto: 'Ahora dice: ' + (valorActual === null || valorActual === undefined || valorActual === '' ? 'sin valor' : valorActual) }),
+    ]));
+  }
+
+  campoDeAmpliacion('fechaFin', 'Nueva fecha de fin', 'date', entrada.fechaFin);
+  if (entrada.presupuesto) campoDeAmpliacion('presupuesto', 'Nuevo presupuesto', 'text', entrada.presupuesto);
+  if (entrada.maxOrdenes) campoDeAmpliacion('maxOrdenes', 'Nuevo máximo de órdenes', 'text', entrada.maxOrdenes);
+  if (entrada.unidades) campoDeAmpliacion('unidades', 'Nuevas unidades con descuento', 'text', entrada.unidades);
+
+  var mensaje = crear('p', { clase: 'pregunta-ayuda', texto: 'Llena solo lo que quieras ampliar y deja el resto vacío.' });
+  var guardar = crear('button', { clase: 'boton', type: 'button', texto: 'Ampliar la campaña' });
+
+  guardar.addEventListener('click', function () {
+    var cambios = {};
+    for (var id in controles) {
+      if (!Object.prototype.hasOwnProperty.call(controles, id)) continue;
+      var valor = String(controles[id].value || '').trim();
+      if (valor) cambios[id] = id === 'fechaFin' ? valor : Number(RM.util.soloDigitos(valor));
+    }
+
+    guardar.disabled = true;
+    guardar.textContent = 'Ampliando...';
+    RM.servidor.llamar('ampliarCampana', fila.id, cambios).then(function (respuesta) {
+      guardar.disabled = false;
+      guardar.textContent = 'Ampliar la campaña';
+      if (!respuesta || !respuesta.valido) {
+        mensaje.className = 'mensaje-error';
+        mensaje.textContent = respuesta && respuesta.errores ? respuesta.errores[0].mensaje : 'No pudimos ampliar la campaña.';
+        return;
+      }
+      RM.util.vaciar(seccion);
+      seccion.appendChild(crear('h3', { texto: 'Listo: versión ' + respuesta.version }));
+      seccion.appendChild(crear('p', {
+        texto: 'Abre el documento nuevo, cópialo completo y reemplaza el texto en la misma página de Squarespace. El enlace no cambia: la gente ya lo tiene.',
+      }));
+      if (respuesta.linkPublicado) {
+        seccion.appendChild(RM.util.paraCopiar('La página que hay que actualizar', respuesta.linkPublicado, ''));
+      }
+      seccion.appendChild(crear('div', { clase: 'fila-botones' }, [
+        crear('a', { clase: 'boton', href: respuesta.linkDoc, target: '_blank', rel: 'noopener' }, [
+          document.createTextNode('Abrir el documento nuevo'), RM.util.icono('abrir', 16),
+        ]),
+      ]));
+    }).catch(function (error) {
+      guardar.disabled = false;
+      guardar.textContent = 'Ampliar la campaña';
+      mensaje.className = 'mensaje-error';
+      mensaje.textContent = 'No pudimos ampliar la campaña: ' + error.message;
+    });
+  });
+
+  seccion.appendChild(mensaje);
+  seccion.appendChild(crear('div', { clase: 'fila-botones' }, [guardar]));
+  caja.appendChild(seccion);
+  destino.appendChild(caja);
+  caja.scrollIntoView({ block: 'nearest' });
 }
 
 function usarComoBase(id) {
