@@ -1,74 +1,101 @@
 'use strict';
 
 /**
- * Coherencia de pruebas/casos_base.json: los casos que deben generar tienen su
- * salida esperada y los que deben fallar no la tienen.
+ * Los 11 casos de pruebas/casos_base.json contra el motor completo.
  *
- * Cuando el motor este listo (Bloque 1) estas pruebas se amplian para comparar
- * el texto generado contra pruebas/salidas_esperadas/.
+ * Criterio de aceptación 1: los que deben pasar pasan y los que deben fallar
+ * fallan con el error esperado.
  */
 
 const test = require('node:test');
 const assert = require('node:assert');
 
 const { rutaDesdeRaiz, leerJson, leerTexto, listarArchivos, existe } = require('../scripts/lib/archivos');
-const { normalizarParaComparar } = require('../src/core/texto.js');
+const { cargarModelos } = require('../scripts/lib/modelos');
+const { normalizarParaComparar, textoPlano } = require('../src/core/texto.js');
+const { generarTexto } = require('../src/core/generar.js');
 
 const { casos } = leerJson(rutaDesdeRaiz('pruebas', 'casos_base.json'));
+const { paises } = leerJson(rutaDesdeRaiz('data', 'paises.json'));
+const modelos = cargarModelos();
 
 const generan = casos.filter((caso) => caso.esperado.resultado === 'genera');
 const fallan = casos.filter((caso) => caso.esperado.resultado === 'falla');
 
-test('hay once casos y todos declaran un resultado conocido', () => {
+function correr(caso) {
+  const pais = paises.find((p) => p.codigo === caso.entrada.pais);
+  return generarTexto(caso.entrada, pais, modelos, {
+    fechaReferencia: caso.fecha_referencia,
+    usuarioEnEquipo: caso.usuario_en_equipo === true,
+  });
+}
+
+function salidaEsperada(caso) {
+  return normalizarParaComparar(leerTexto(rutaDesdeRaiz('pruebas', 'salidas_esperadas', caso.id + '.txt')));
+}
+
+test('hay once casos, cinco que generan y seis que fallan', () => {
   assert.strictEqual(casos.length, 11);
-  assert.strictEqual(generan.length + fallan.length, casos.length);
+  assert.strictEqual(generan.length, 5);
+  assert.strictEqual(fallan.length, 6);
 });
 
-test('los identificadores no se repiten', () => {
-  const ids = casos.map((caso) => caso.id);
-  assert.strictEqual(new Set(ids).size, ids.length);
-});
+for (const caso of generan) {
+  test(caso.id + ' genera exactamente la salida esperada', () => {
+    const resultado = correr(caso);
+    assert.deepStrictEqual(resultado.errores, [], caso.id + ' no debería tener errores');
+    assert.ok(resultado.valido);
+    assert.strictEqual(normalizarParaComparar(resultado.texto), salidaEsperada(caso));
+  });
 
-test('cada caso trae id, descripcion y entrada con pais y tipo', () => {
-  for (const caso of casos) {
-    assert.ok(caso.id, 'un caso no tiene id');
-    assert.ok(caso.descripcion, caso.id + ' no tiene descripcion');
-    assert.ok(caso.entrada && caso.entrada.pais, caso.id + ' no tiene pais');
-    assert.ok(caso.entrada.tipo, caso.id + ' no tiene tipo');
-  }
-});
-
-test('cada caso que genera tiene su salida esperada', () => {
-  for (const caso of generan) {
-    const ruta = rutaDesdeRaiz('pruebas', 'salidas_esperadas', caso.id + '.txt');
-    assert.ok(existe(ruta), 'falta pruebas/salidas_esperadas/' + caso.id + '.txt');
-    assert.ok(normalizarParaComparar(leerTexto(ruta)).length > 0, caso.id + ' tiene salida esperada vacia');
-  }
-});
-
-test('cada caso que falla declara los campos con error y no tiene salida esperada', () => {
-  for (const caso of fallan) {
-    assert.ok(Array.isArray(caso.esperado.errores), caso.id + ' no declara errores');
-    assert.ok(caso.esperado.errores.length > 0, caso.id + ' declara una lista de errores vacia');
-    assert.ok(
-      !existe(rutaDesdeRaiz('pruebas', 'salidas_esperadas', caso.id + '.txt')),
-      caso.id + ' debe fallar pero tiene salida esperada'
-    );
-  }
-});
-
-test('no sobran archivos en salidas_esperadas', () => {
-  const archivos = listarArchivos(rutaDesdeRaiz('pruebas', 'salidas_esperadas'), '.txt').map((n) =>
-    n.replace(/\.txt$/, '')
-  );
-  assert.deepStrictEqual(archivos.sort(), generan.map((caso) => caso.id).sort());
-});
-
-test('los textos que cada caso debe contener no estan vacios', () => {
-  for (const caso of generan) {
-    assert.ok(Array.isArray(caso.esperado.contiene), caso.id + ' no declara que debe contener');
+  test(caso.id + ' contiene los textos que exige el caso', () => {
+    // Se busca sobre el texto plano: los fragmentos del caso describen lo que
+    // el documento dice, sin las marcas de negrita.
+    const plano = textoPlano(correr(caso).texto);
     for (const fragmento of caso.esperado.contiene) {
-      assert.ok(String(fragmento).trim().length > 0, caso.id + ' declara un fragmento vacio');
+      assert.ok(plano.indexOf(fragmento) !== -1, caso.id + ' no contiene: ' + fragmento);
     }
+  });
+}
+
+for (const caso of fallan) {
+  test(caso.id + ' falla con el error esperado y no produce texto', () => {
+    const resultado = correr(caso);
+    assert.ok(!resultado.valido, caso.id + ' debería fallar');
+    assert.strictEqual(resultado.texto, '', caso.id + ' no debería producir texto');
+
+    const campos = Array.from(new Set(resultado.errores.map((e) => e.campo))).sort();
+    assert.deepStrictEqual(campos, caso.esperado.errores.slice().sort());
+  });
+
+  test(caso.id + ' explica cada error en lenguaje claro', () => {
+    for (const error of correr(caso).errores) {
+      assert.ok(error.mensaje && error.mensaje.length > 10, 'mensaje muy corto en ' + error.campo);
+      assert.ok(/[.!?]$/.test(error.mensaje), 'el mensaje de ' + error.campo + ' no termina en punto');
+    }
+  });
+}
+
+test('ningún documento generado conserva marcas sin resolver', () => {
+  for (const caso of generan) {
+    const texto = correr(caso).texto;
+    assert.ok(texto.indexOf('{{') === -1 && texto.indexOf('}}') === -1, caso.id + ' dejó llaves');
+    assert.ok(texto.indexOf('[[') === -1 && texto.indexOf(']]') === -1, caso.id + ' dejó corchetes');
+    assert.ok(texto.indexOf('%%') === -1, caso.id + ' dejó un comentario');
+  }
+});
+
+test('ningún documento generado tiene tablas', () => {
+  // Regla 5: solo párrafos y viñetas; el sitio de publicación no muestra tablas.
+  for (const caso of generan) {
+    assert.ok(correr(caso).texto.indexOf('|') === -1, caso.id + ' parece traer una tabla');
+  }
+});
+
+test('no sobran ni faltan archivos en salidas_esperadas', () => {
+  const archivos = listarArchivos(rutaDesdeRaiz('pruebas', 'salidas_esperadas'), '.txt').map((n) => n.replace(/\.txt$/, ''));
+  assert.deepStrictEqual(archivos.sort(), generan.map((caso) => caso.id).sort());
+  for (const caso of fallan) {
+    assert.ok(!existe(rutaDesdeRaiz('pruebas', 'salidas_esperadas', caso.id + '.txt')), caso.id + ' no debería tener salida esperada');
   }
 });

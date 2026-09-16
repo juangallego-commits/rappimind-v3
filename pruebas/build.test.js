@@ -14,25 +14,30 @@ const { cargarModelos } = require('../scripts/lib/modelos');
 const { tieneRetornoDeCarro, normalizarTexto } = require('../src/core/texto.js');
 const { construir, DIST } = require('../scripts/build.js');
 
-const ESPERADOS = [
-  'App.html',
-  'Codigo.js',
-  'Estilos.html',
-  'Index.html',
-  'Modelos.js',
-  'MotorCliente.html',
-  'PaisesSemilla.js',
-  'Secciones.js',
-  'appsscript.json',
-  'texto.js',
-];
+/** Lo que debe quedar en dist/: el codigo de src/ mas lo que genera el build. */
+function archivosEsperados() {
+  const codigo = listarArchivos(rutaDesdeRaiz('src', 'core'), '.js').concat(
+    listarArchivos(rutaDesdeRaiz('src', 'server'), '.js')
+  );
+  const generados = [
+    'App.html',
+    'Estilos.html',
+    'Index.html',
+    'Modelos.js',
+    'MotorCliente.html',
+    'PaisesSemilla.js',
+    'Secciones.js',
+    'appsscript.json',
+  ];
+  return codigo.concat(generados).sort();
+}
 
 test.before(() => {
   construir();
 });
 
 test('dist/ queda con los archivos que sube clasp', () => {
-  assert.deepStrictEqual(listarArchivos(DIST).sort(), ESPERADOS.slice().sort());
+  assert.deepStrictEqual(listarArchivos(DIST).sort(), archivosEsperados());
 });
 
 test('el manifiesto llega a dist/ con la web app configurada', () => {

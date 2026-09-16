@@ -2,40 +2,46 @@
 
 /**
  * npm run previsualizar: imprime el texto final de cada caso de
- * pruebas/casos_base.json.
+ * pruebas/casos_base.json, y para los que deben fallar muestra los errores.
  *
- * El motor de render llega en el Bloque 1. Mientras tanto este comando resume
- * los casos cargados, que es lo que permite verificar que los insumos se leen
- * bien en cualquier sistema operativo.
+ * Es la forma rapida de ver, sin desplegar nada, que sale hoy del motor.
  */
 
-const { rutaDesdeRaiz, leerJson, leerTexto, existe } = require('./lib/archivos');
+const { rutaDesdeRaiz, leerJson } = require('./lib/archivos');
 const { cargarModelos } = require('./lib/modelos');
+const { generarTexto } = require('../src/core/generar.js');
 
 function main() {
+  const soloCaso = process.argv[2];
   const { casos } = leerJson(rutaDesdeRaiz('pruebas', 'casos_base.json'));
-  const { modelos, bloques } = cargarModelos();
+  const { paises } = leerJson(rutaDesdeRaiz('data', 'paises.json'));
+  const modelos = cargarModelos();
 
-  console.log('Modelos: ' + Object.keys(modelos).join(', '));
-  console.log('Bloques: ' + Object.keys(bloques).length);
-  console.log('Casos: ' + casos.length);
-  console.log('');
+  const seleccionados = soloCaso ? casos.filter((caso) => caso.id === soloCaso) : casos;
+  if (seleccionados.length === 0) {
+    console.error('No hay ningún caso con id "' + soloCaso + '".');
+    process.exit(1);
+  }
 
-  for (const caso of casos) {
-    const esperada = rutaDesdeRaiz('pruebas', 'salidas_esperadas', caso.id + '.txt');
-    const generaDocumento = existe(esperada);
+  for (const caso of seleccionados) {
+    const pais = paises.find((p) => p.codigo === caso.entrada.pais);
+    const resultado = generarTexto(caso.entrada, pais, modelos, {
+      fechaReferencia: caso.fecha_referencia,
+      usuarioEnEquipo: caso.usuario_en_equipo === true,
+    });
 
-    console.log('--- ' + caso.id + ' · ' + caso.descripcion + ' ---');
-    console.log('pais: ' + caso.entrada.pais + ' · tipo: ' + caso.entrada.tipo);
+    console.log('='.repeat(72));
+    console.log(caso.id + ' · ' + caso.descripcion);
+    console.log('país: ' + caso.entrada.pais + ' · tipo: ' + caso.entrada.tipo + ' · esperado: ' + caso.esperado.resultado);
+    console.log('='.repeat(72));
 
-    if (generaDocumento) {
-      const texto = leerTexto(esperada);
-      console.log('salida esperada: ' + texto.split('\n').length + ' lineas');
-      console.log('El motor llega en el Bloque 1; por ahora se muestra la salida esperada.');
-      console.log('');
-      console.log(texto);
+    if (resultado.valido) {
+      console.log(resultado.texto);
     } else {
-      console.log('Este caso debe fallar la validacion (no tiene salida esperada).');
+      console.log('No genera. Errores:');
+      for (const error of resultado.errores) {
+        console.log('  - [' + error.campo + '] ' + error.mensaje);
+      }
     }
     console.log('');
   }

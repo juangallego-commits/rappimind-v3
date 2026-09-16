@@ -3,7 +3,7 @@
 | Bloque | Estado | Cómo probarlo | Qué necesito de Juan |
 |---|---|---|---|
 | 0 | cerrado | `npm test` (32 pruebas), `npm run build` y el flujo de Actions en verde | Crear el despliegue de la web app (lo hace el disparo manual) |
-| 1 | pendiente | | |
+| 1 | listo, en punto de control A | `npm test` (103 pruebas) y `npm run previsualizar` | Revisar 3 textos y `docs/PENDIENTES_LEGAL.md` |
 | 2 | pendiente | | |
 | 3 | pendiente | | |
 | 4 | pendiente | | |
@@ -65,3 +65,51 @@ al proyecto de Apps Script (run 2, commit `133cd32`).
 
 Si faltan el `scriptId` o el secreto, el flujo corre pruebas y build y se salta
 el `clasp push` avisándolo en el resumen, en vez de ponerse en rojo.
+
+## Bloque 1 · Motor, derivados y validaciones
+
+### Qué quedó
+
+`src/core/` completo, con 103 pruebas en verde:
+
+| Archivo | Qué hace |
+|---|---|
+| `texto.js` | Normalización: sin BOM, sin `\r`, y texto plano sin negritas |
+| `numeros.js` | Números en letras, apócope, montos, porcentajes y cantidades de Créditos |
+| `fechas.js` | Fechas y horas en español, comparación sin `Date`, listas con "y" |
+| `identificaciones.js` | Dígito verificador de los 8 países (NIT, RFC, RUC, CUIT, RUT, cédula) |
+| `derivados.js` | Los textos de Legal de la sección 5, marcados ORACIÓN o FRAGMENTO |
+| `esquemas.js` | Los 3 tipos: pasos, campos, visibilidad, obligatoriedad y filtro de entrada |
+| `validaciones.js` | Obligatorios, formatos, cruces, país en piloto y lista de tiendas |
+| `motor.js` | Los 7 pasos del render y la red de seguridad del texto final |
+| `generar.js` | Valida y, solo si todo está bien, renderiza |
+
+### Cómo probarlo
+
+```
+npm test
+npm run previsualizar            todos los casos
+npm run previsualizar CB01       un caso
+```
+
+Los 5 casos que deben generar producen un texto **idéntico carácter por
+carácter** a `pruebas/salidas_esperadas/`. Los 6 que deben fallar fallan
+exactamente en los campos que declara `pruebas/casos_base.json`, y no producen
+texto. Los 8 identificadores reales de las sociedades Rappi validan.
+
+### Punto de control A · qué necesito de Juan
+
+1. Revisar los 3 textos que te paso en el chat de Legal (Cashback CO, Carrera y
+   Cashback Day) y confirmar o corregir.
+2. Revisar `docs/PENDIENTES_LEGAL.md`, sobre todo los textos marcados como
+   nuevos: medios de pago con Créditos, segmentos nuevos, condiciones
+   opcionales, desempate y datos para la entrega.
+3. Confirmar los nombres de las secciones de `data/secciones.json`.
+4. Cashback Day: confirmar si el máximo de pedidos aplica a toda la campaña
+   (como está hoy) o por tienda.
+
+### Nota para el Bloque 2
+
+Las opciones del campo `secciones` todavía no salen de `data/secciones.json`:
+el motor usa los nombres que le llegan. Hay que conectarlo al armar el
+formulario.

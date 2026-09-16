@@ -45,6 +45,15 @@ function normalizarParaComparar(texto) {
   return recortarFinalDeLinea(texto).replace(/^\n+/, '').replace(/\n+$/, '');
 }
 
+/**
+ * El documento sin sus marcas de formato: lo que el documento dice, no como
+ * se ve. Se usa para buscar frases y para la red de seguridad, donde un "**"
+ * en medio no debe esconder un espacio de mas ni una frase rota.
+ */
+function textoPlano(texto) {
+  return normalizarTexto(texto).replace(/\*\*/g, '');
+}
+
 /** true si el texto trae algun retorno de carro. */
 function tieneRetornoDeCarro(texto) {
   return String(texto === null || texto === undefined ? '' : texto).indexOf('\r') !== -1;
@@ -56,6 +65,7 @@ if (typeof module !== 'undefined') {
     lineasDe: lineasDe,
     recortarFinalDeLinea: recortarFinalDeLinea,
     normalizarParaComparar: normalizarParaComparar,
+    textoPlano: textoPlano,
     tieneRetornoDeCarro: tieneRetornoDeCarro,
   };
 }

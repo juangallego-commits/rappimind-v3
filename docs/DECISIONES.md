@@ -51,3 +51,40 @@ imprimirse y se borran al terminar el trabajo.
 (`clasp push`), pero no toca la versión ni el despliegue: la URL que usan los
 comerciales no debe cambiar sola. Crear versión y apuntar el despliegue es el
 disparo manual del flujo.
+
+## Bloque 1
+
+**Las fechas se manejan como texto ISO, nunca como `Date`.** `src/core/fechas.js`
+compara y formatea sobre la cadena `AAAA-MM-DD`. Un `Date` se interpreta en la
+zona horaria de quien lo evalúa, y el documento saldría con un día de diferencia
+según corra en Node, en Apps Script o en el navegador. La fecha de referencia
+entra como parámetro, así que las pruebas no dependen del día en que se corren.
+
+**Los módulos de `src/core` se cargan distinto en Node y en Apps Script.** Cada
+archivo declara funciones globales y exporta al final. Arriba, un bloque
+`if (typeof module !== 'undefined' && typeof require === 'function')` trae las
+dependencias con `require` solo en Node. En Apps Script ese bloque no corre y el
+`var` hoisted no pisa la función global que ya existe, porque una declaración
+`var` sin asignación sobre un nombre ya definido no hace nada. Así el mismo
+archivo sirve en los tres entornos sin duplicar código.
+
+**El texto plano es la unidad de verificación, no el texto con formato.**
+`textoPlano()` quita las marcas `**` antes de buscar frases y antes de correr la
+red de seguridad. Un `" ."` roto no se debe esconder porque quede una negrita en
+el medio, y los fragmentos que exige cada caso de prueba describen lo que el
+documento dice, no cómo se ve.
+
+**La validación se detiene en el país.** Si el país está bloqueado, o está en
+piloto y quien pide no es del equipo, se devuelve solo ese error. Llenar la
+pantalla de "falta esto, falta lo otro" cuando el problema es que el país no
+está disponible no ayuda a nadie.
+
+**Los errores se identifican por campo, no por texto.** Cada error es
+`{campo, mensaje}`. El campo permite que la interfaz marque el input exacto, y
+las pruebas comparan campos, que es lo que declara `pruebas/casos_base.json`.
+
+**El dígito verificador del RFC se calcula con la posición en el alfabeto.** El
+mapeo de la especificación (0 a 9 valen 0 a 9, A a N valen 10 a 23, & vale 24,
+O a Z valen 25 a 36) es exactamente el índice en la cadena
+`'0123456789ABCDEFGHIJKLMN&OPQRSTUVWXYZ'`. Escribirlo como un desplazamiento
+condicional corría el valor de `&` y de la O a la Z en uno.

@@ -2,6 +2,11 @@
 
 Revisar con los textos de `pruebas/salidas_esperadas/`.
 
+El motor ya reproduce esos textos exactamente. Para verlos salir del motor y no
+del archivo: `npm run previsualizar CB01` (o CB02, CC01, CD01, MX01). Al
+implementar la sección 5 no apareció ningún error en los textos de Legal: todo
+lo que hay que confirmar es lo que ya está en esta lista.
+
 ## Cashback: cambios frente al modelo aprobado de julio
 1. El rol de Rappi pasó a la cláusula 1 (antes estaba al final), para que "Rappi" quede definido antes de usarse.
 2. Se agregó la frase: los términos con mayúscula inicial tienen el significado de los T&C de Uso de la Plataforma.
