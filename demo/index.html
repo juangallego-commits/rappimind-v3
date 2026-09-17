@@ -11617,6 +11617,10 @@ function tarjetaDeUno(tyc) {
   var partes = [crear('span', { clase: 'opcion-titulo', texto: tyc.nombre })];
   if (tyc.beneficio) partes.push(crear('span', { clase: 'opcion-nota', texto: tyc.beneficio }));
   partes.push(crear('span', { clase: 'opcion-nota', texto: descripcionDeTycGenerico(tyc) }));
+  // Lo que Legal dejo sin resolver se dice ya en la lista, no solo al abrirlo:
+  // el mismo T&C aparece dos veces con enlaces distintos, y quien lo ve por
+  // primera vez ahi es donde se confunde.
+  if (tyc.advertencia) partes.push(crear('span', { clase: 'opcion-nota', texto: tyc.advertencia }));
   partes.push(crear('span', {
     clase: 'opcion-nota',
     texto: revision.mensaje ? revision.mensaje : revision.vigencia,
