@@ -109,8 +109,8 @@ function avisoDePaisEnPruebas() {
   // de que hay que revisar va en el resumen, que es donde se decide publicar.
   return crear('div', { clase: 'aviso' }, [
     crear('p', {
-      texto: pais.nombre + ' está en pruebas: genera y revisa, pero todavía no publiques. ' +
-        'Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.',
+      texto: pais.nombre + estado.T(' está en pruebas: genera y revisa, pero todavía no publiques. ' +
+        'Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.'),
     }),
   ]);
 }
@@ -322,7 +322,9 @@ function pantallaPasos(raiz) {
   if (faltan > 0) {
     columna.appendChild(crear('p', {
       clase: 'pregunta-ayuda',
-      texto: faltan === 1 ? 'Queda 1 pregunta en este paso.' : 'Quedan ' + faltan + ' preguntas en este paso.',
+      texto: faltan === 1
+        ? estado.T('Queda 1 pregunta en este paso.')
+        : estado.T('Quedan varias preguntas en este paso.').replace('varias', faltan),
     }));
   }
 
@@ -382,7 +384,7 @@ function preguntaDeCatalogo(campo, campos, indice, pasos) {
     var negocio = estado.entrada().negocio || 'rappi';
     opciones = tiposDelPais(pais || { modelos: [] }, E.configuracion.tipos)
       .filter(function (t) { return (t.esDeTravel ? 'travel' : 'rappi') === negocio; })
-      .map(function (t) { return { valor: t.id, etiqueta: t.nombre, nota: t.descripcion }; });
+      .map(function (t) { return { valor: t.id, etiqueta: t.nombre, nota: estado.T(t.descripcion) }; });
   }
 
   for (var i = 0; i < opciones.length; i++) {
@@ -403,6 +405,15 @@ function preguntaDeCatalogo(campo, campos, indice, pasos) {
   }
 
   bloque.appendChild(grupo);
+
+  // Junto a los tipos, pero separado de ellos: hay campanas para las que Legal
+  // ya publico los T&C y no hay que generar nada. Es donde el comercial busca
+  // su campana, asi que es donde tiene que enterarse.
+  if (campo.id === 'tipo') {
+    var atajo = RM.tycGenericos.tarjetaDeAtajo();
+    if (atajo) bloque.appendChild(atajo);
+  }
+
   bloque.appendChild(crear('details', { clase: 'por-que' }, [
     crear('summary', { texto: '¿Por qué te preguntamos esto?' }),
     crear('p', { texto: pregunta.porQue }),

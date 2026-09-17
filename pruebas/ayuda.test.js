@@ -40,8 +40,48 @@ test('los contactos son los tres que pidió Anna, sin Dave', () => {
 test('no se inventó ningún correo de nadie', () => {
   for (const contacto of CONTACTOS) {
     assert.ok(contacto.correo.indexOf('@') === -1, contacto.nombre + ' tiene un correo inventado');
-    assert.ok(contacto.correo.indexOf('PENDIENTE') !== -1, contacto.nombre + ' debería quedar pendiente');
   }
+});
+
+/**
+ * La pantalla de Ayuda la van a leer los equipos legales de todos los países,
+ * así que no puede enseñar marcas de trabajo a medias como "[PENDIENTE: correo]".
+ * Un contacto sin correo dice dónde buscarlo.
+ */
+test('un contacto sin correo no enseña una marca de pendiente', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+
+  for (const contacto of CONTACTOS) {
+    assert.ok(contacto.correo.indexOf('PENDIENTE') === -1,
+      contacto.nombre + ' sigue con una marca de pendiente a la vista');
+    assert.ok(contacto.nombre && contacto.para, contacto.nombre + ' no dice para qué escribirle');
+  }
+
+  const pantalla = fs.readFileSync(path.join(__dirname, '..', 'src', 'client', 'js', '68-pantallas.js'), 'utf8');
+  assert.ok(pantalla.indexOf("CONTACTOS[c].correo || 'Escríbele por el canal de Legal.'") !== -1,
+    'la pantalla ya no ofrece una alternativa cuando el contacto no tiene correo');
+});
+
+/**
+ * La Ayuda tiene que decir lo que la herramienta hace hoy. Llegó a decir que
+ * Rappi Travel "todavía no" servía, cuando Travel ya tiene su filtro y sus dos
+ * tipos, y nombraba tipos con nombres viejos.
+ */
+test('la ayuda no contradice los tipos que existen de verdad', () => {
+  const { ESQUEMAS } = require('../src/core/esquemas.js');
+  const nombres = Object.keys(ESQUEMAS).map((id) => ESQUEMAS[id].nombre);
+  const texto = JSON.stringify(require('../src/core/ayuda.js'));
+
+  // Nombres viejos que ya no existen en ninguna parte.
+  for (const viejo of ['Cashback Day', 'Descuento por umbral']) {
+    assert.ok(nombres.indexOf(viejo) === -1, viejo + ' volvió a ser un tipo: actualiza esta prueba');
+    assert.ok(texto.indexOf(viejo) === -1, 'la ayuda todavía nombra "' + viejo + '"');
+  }
+
+  assert.ok(texto.indexOf('Mi campaña es de Rappi Travel') !== -1, 'desapareció la pregunta de Travel');
+  assert.ok(texto.indexOf('Todavía no. Travel tiene otra entidad legal') === -1,
+    'la ayuda sigue diciendo que Travel no sirve');
 });
 
 test('la guía de Squarespace lleva al enlace de promos.rappi.com', () => {

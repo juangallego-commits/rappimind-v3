@@ -135,6 +135,20 @@ function generarDatos() {
     ].join('\n')
   );
 
+  // Los T&C que Legal ya publico. No generan documento: la interfaz solo
+  // entrega el enlace, asi que estos datos tienen que llegar al navegador.
+  const tycGenericos = leerJson(rutaDesdeRaiz('data', 'tyc_genericos.json'));
+  escribirTexto(
+    path.join(DIST, 'TycGenericos.js'),
+    [
+      encabezado('data/tyc_genericos.json'),
+      'var TYC_GENERICOS = ' + comoLiteral(tycGenericos) + ';',
+      '',
+      "if (typeof module !== 'undefined') { module.exports = { TYC_GENERICOS: TYC_GENERICOS }; }",
+      '',
+    ].join('\n')
+  );
+
   const secciones = leerJson(rutaDesdeRaiz('data', 'secciones.json'));
   escribirTexto(
     path.join(DIST, 'Secciones.js'),
@@ -196,7 +210,7 @@ function generarHtml() {
   // y la pantalla se queda a medio pintar.
   const partesDelMotor = [];
 
-  for (const generado of ['Modelos.js', 'PaisesSemilla.js', 'Secciones.js', 'CategoriasTravel.js']) {
+  for (const generado of ['Modelos.js', 'PaisesSemilla.js', 'Secciones.js', 'CategoriasTravel.js', 'TycGenericos.js']) {
     partesDelMotor.push('// --- ' + generado + ' ---', leerTexto(path.join(DIST, generado)));
   }
 

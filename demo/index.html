@@ -314,6 +314,11 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 .opcion-nota { display: block; color: var(--gris-lapiz); font-size: 13px; margin-top: 2px; }
 .opcion[disabled] .opcion-nota { color: var(--rojo-alerta); }
 
+/* El atajo a los T&C que Legal ya publico. Va junto a los tipos de campana,
+   pero separado por una linea: no genera documento como los demas. */
+.atajo-tyc { margin-top: var(--e4); padding-top: var(--e4); border-top: 1px solid var(--borde); }
+.atajo-tyc .pregunta-ayuda { margin-bottom: var(--e2); }
+
 .casillas { display: grid; gap: var(--e2); border: 0; padding: 0; margin: 0; }
 .casilla { display: flex; gap: var(--e3); align-items: flex-start; cursor: pointer; padding: var(--e2) 0; }
 .casilla input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--naranja-accion); flex: none; }
@@ -457,11 +462,11 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 .selector-idioma button {
   border: 0; background: transparent; cursor: pointer;
   padding: 6px 12px; border-radius: 999px;
-  font: inherit; font-size: 0.82rem; font-weight: 600; color: var(--tinta-suave);
+  font: inherit; font-size: 0.82rem; font-weight: 600; color: var(--gris-lapiz);
 }
-.selector-idioma button:hover { background: var(--fondo); }
-.selector-idioma button[aria-pressed="true"] { background: var(--marca); color: #fff; }
-.selector-idioma button:focus-visible { outline: 2px solid var(--marca); outline-offset: 2px; }
+.selector-idioma button:hover { background: var(--niebla); }
+.selector-idioma button[aria-pressed="true"] { background: var(--naranja-marca); color: #fff; }
+.selector-idioma button:focus-visible { outline: 2px solid var(--naranja-marca); outline-offset: 2px; }
 
 /* --- Pantalla final ------------------------------------------------------ */
 
@@ -938,7 +943,7 @@ var PAISES_SEMILLA = [
     "ley_aplicable": "a Leis da República Federativa do Brasil",
     "jurisdiccion": "à Foro Central da comarca da cidade de São Paulo",
     "entidad_vigilancia": "el PROCON y la Secretaría Nacional del Consumidor (SENACON)",
-    "autoridad_datos": "a Autoridade Nacional de Proteção de Dados (ANPD) (confirmar)",
+    "autoridad_datos": "a Autoridade Nacional de Proteção de Dados (ANPD)",
     "url_tc_plataforma": "https://legal.rappi.com.co/brazil/termos-e-condicoes-de-uso-da-plataforma-rappi/",
     "url_privacidad": "https://legal.rappi.com.co/brazil/aviso-de-privacidade-e-politicas-de-uso-das-informacao-utilizadas-pela-rappi/",
     "url_tc_creditos": "https://legal.rappi.com.co/brazil/termos-e-condicoes-funcionamento-dos-creditos-da-plataforma-rappi/",
@@ -956,7 +961,8 @@ var PAISES_SEMILLA = [
       "separador_miles",
       "termino_dias",
       "texto_hora_local",
-      "texto_derechos_datos"
+      "texto_derechos_datos",
+      "autoridad_datos"
     ],
     "url_tc_turbo": ""
   }
@@ -1016,6 +1022,218 @@ var CATEGORIAS_TRAVEL = {
 };
 
 if (typeof module !== 'undefined') { module.exports = { CATEGORIAS_TRAVEL: CATEGORIAS_TRAVEL }; }
+
+// --- TycGenericos.js ---
+// Archivo generado por scripts/build.js. No editar a mano.
+// Fuente: data/tyc_genericos.json
+
+var TYC_GENERICOS = {
+  "version": "2026-09-17",
+  "fuente": "Excel \"T&C Generales 2026\", hoja \"T&C Generales 2026\", entregado por Juan Camilo Gallego el 17 de septiembre de 2026. Juan avisó que no lo había revisado.",
+  "nota": "Estos T&C ya están publicados por Legal. RappiMind no genera documento para ellos: solo entrega el enlace. Los textos de nombre, beneficio y paraQue están copiados tal cual del Excel, sin corregir.",
+  "revisiones": [
+    {
+      "ids": [
+        "descuento_productos_seleccionados",
+        "descuento_productos_seleccionados_bis"
+      ],
+      "que": "El mismo nombre aparece en las filas 4 y 16 del Excel, con enlaces distintos (/2026/descuentoprodselecc y /descuentosenprod). Se conservan los dos, sin decidir cuál es el bueno."
+    },
+    {
+      "ids": [
+        "cupon_valor_fijo",
+        "cupon_toda_la_tienda"
+      ],
+      "que": "Las filas 14 y 15 del Excel no traen Beneficio Ofrecido ni Descripción. Se dejaron vacíos."
+    },
+    {
+      "ids": [
+        "tarifa_servicio_gratis"
+      ],
+      "que": "Es el único que no cubre el año entero: va del 1 de febrero al 31 de octubre de 2026. Los demás terminan el 31 de diciembre."
+    },
+    {
+      "ids": [
+        "cupones_membresia_pro_black"
+      ],
+      "que": "La vigencia dice 2026 pero el enlace apunta a /colombia/2024/. Se conservó el enlace tal cual."
+    },
+    {
+      "ids": [
+        "codigo_descuento_eventos_externos"
+      ],
+      "que": "La Descripción del Excel repite el nombre de la campaña en vez de explicar para qué sirve."
+    },
+    {
+      "ids": [
+        "descuento_toda_la_tienda_pro",
+        "descuento_en_valor_pro"
+      ],
+      "que": "En el Excel los nombres terminan con un espacio de más. Se quitó el espacio, el texto no se tocó."
+    }
+  ],
+  "paises": {
+    "CO": [
+      {
+        "id": "descuento_toda_la_tienda",
+        "nombre": "Descuento en Toda la Tienda",
+        "beneficio": "Porcentaje de descuento sobre el valor total del pedido (el porcentaje específico dependerá de lo que indique el banner o pieza publicitaria en la app).",
+        "paraQue": "Esta es la legal \"comodín\". Úsala cuando la marca quiera dar un descuento general en toda su tienda (Ej: \"Hoy 20% OFF en toda la carta\"). Sirve para cualquier porcentaje porque el número exacto se pone en el banner, no en el texto.",
+        "enlace": "https://promos.rappi.com/colombia/2026/descuentoentiendaco",
+        "vigenciaInicio": "2026-01-01",
+        "vigenciaFin": "2026-12-31",
+        "filaExcel": 3
+      },
+      {
+        "id": "descuento_productos_seleccionados",
+        "nombre": "Descuento en Productos Seleccionados",
+        "beneficio": "Descuento porcentual directo (Precio tachado)",
+        "paraQue": "Respaldo legal para ofertas de \"precio tachado\" en la App. Úsalo cuando negocies descuentos directos en productos específicos para que el usuario vea la rebaja automáticamente en la tienda (sin cupones).",
+        "enlace": "https://promos.rappi.com/colombia/2026/descuentoprodselecc",
+        "vigenciaInicio": "2026-01-01",
+        "vigenciaFin": "2026-12-31",
+        "filaExcel": 4,
+        "advertencia": "Ojo: en la lista de Legal este T&C aparece dos veces, con enlaces distintos. Confirma con Legal cuál va en tu pieza antes de publicarla."
+      },
+      {
+        "id": "descuento_en_valor",
+        "nombre": "Descuento en Valor",
+        "beneficio": "Descuento de monto fijo (Dinero OFF)",
+        "paraQue": "Respaldo legal para descuentos de valor monetario específico. A diferencia del porcentual, este aplica cuando se rebaja una cantidad exacta de dinero al producto (ej. \"$5.000 OFF\"). Úsalo cuando la negociación sea por monto fijo directo en el precio del producto.",
+        "enlace": "https://promos.rappi.com/colombia/2026/dtoenvalor",
+        "vigenciaInicio": "2026-01-01",
+        "vigenciaFin": "2026-12-31",
+        "filaExcel": 5
+      },
+      {
+        "id": "descuento_usuarios_nuevos_turbo",
+        "nombre": "Descuento para Usuarios Nuevos en Turbo",
+        "beneficio": "Porcentaje de descuento sobre el valor de los productos (el porcentaje específico y el tope máximo dependerán de lo que indique el banner o pieza publicitaria en la app).",
+        "paraQue": "Esta es la legal \"comodín\" de ADQUISICIÓN para Turbo. Úsala cuando la campaña sea exclusiva para usuarios que NUNCA han comprado en Turbo (Ej: \"50% OFF en Fruver en tu 1ra compra\"). Sirve para cualquier categoría del Botón Turbo (Fruver, Licores, Snacks) pero NO aplica para Turbo Restaurantes.",
+        "enlace": "https://promos.rappi.com/colombia/2026/1/10/trminos-y-condiciones-campaa-de-descuento-para-usuarios-nuevos-en-turbo",
+        "vigenciaInicio": "2026-01-01",
+        "vigenciaFin": "2026-12-31",
+        "filaExcel": 6
+      },
+      {
+        "id": "envio_gratis",
+        "nombre": "Envío Gratis",
+        "beneficio": "Costo de envío $0",
+        "paraQue": "Respaldo legal para eliminar el costo de envio (cobro de domicilio) al usuario. (ej. \"Envío Gratis por compras superiores a $X\"). El descuento se refleja automáticamente en el check out.",
+        "enlace": "https://promos.rappi.com/colombia/enviogratis",
+        "vigenciaInicio": "2026-01-01",
+        "vigenciaFin": "2026-12-31",
+        "filaExcel": 7
+      },
+      {
+        "id": "tarifa_servicio_gratis",
+        "nombre": "Tarifa de Servicio Gratis",
+        "beneficio": "Tarifa de servicio $0 (Service Fee OFF)",
+        "paraQue": "Respaldo legal para no cobrar la tarifa de servicio. Ojo: No incluye el envío, solo la tarifa de servicio. Úsalo cuando se quiera eliminar esta barrera de costo adicional para el usuario.",
+        "enlace": "https://promos.rappi.com/colombia/tarifadeservicio",
+        "vigenciaInicio": "2026-02-01",
+        "vigenciaFin": "2026-10-31",
+        "filaExcel": 8
+      },
+      {
+        "id": "descuento_productos_seleccionados_pro",
+        "nombre": "Descuento en Productos Seleccionados Rappi Pro",
+        "beneficio": "Precio tachado exclusivo para suscriptores (Descuento Pro)",
+        "paraQue": "Respaldo legal para descuentos exclusivos de la membresía. Úsalo cuando se quiera dar un beneficio diferencial solo a usuarios Rappi Pro (segmentado). El usuario normal verá el precio full, el usuario Pro verá el precio tachado.",
+        "enlace": "https://promos.rappi.com/colombia/2026/descuento-en-productos-seleccionados-rappipro",
+        "vigenciaInicio": "2026-01-01",
+        "vigenciaFin": "2026-12-31",
+        "filaExcel": 9
+      },
+      {
+        "id": "descuento_toda_la_tienda_pro",
+        "nombre": "Descuento en Toda la Tienda Rappi Pro",
+        "beneficio": "% OFF en todo el menú para suscriptores (Exclusivo Pro)",
+        "paraQue": "Respaldo legal para descuentos generales en el menú exclusivos para miembros rappi pro. Úsalo para negociaciones donde se quiera premiar la fidelidad del usuario Pro. El descuento aplica a todo el catálogo de la tienda participante, pero solo es visible y aplicable para usuarios con la membresía activa.",
+        "enlace": "https://promos.rappi.com/colombia/2026/descuento-en-toda-la-tienda-rappipro",
+        "vigenciaInicio": "2026-01-01",
+        "vigenciaFin": "2026-12-31",
+        "filaExcel": 10
+      },
+      {
+        "id": "descuento_en_valor_pro",
+        "nombre": "Descuento en Valor Rappi Pro",
+        "beneficio": "Descuento de monto fijo exclusivo para suscriptores ($ OFF)",
+        "paraQue": "Respaldo legal para descuentos de dinero fijo exclusivos para miembros rappi pro. Similar al \"Descuento en Valor\" normal, pero el beneficio de restar un monto exacto (ej. \"$10.000 OFF\") solo aplica y es visible para usuarios Rappi Pro.",
+        "enlace": "https://promos.rappi.com/colombia/2026/descuento-en-valor-rappi-pro",
+        "vigenciaInicio": "2026-01-01",
+        "vigenciaFin": "2026-12-31",
+        "filaExcel": 11
+      },
+      {
+        "id": "descuento_membresia_pro",
+        "nombre": "Descuento en la Membresía Rappi Pro",
+        "beneficio": "Descuento en el valor de la suscripción (Fee de Membresía OFF)",
+        "paraQue": "Respaldo legal para vender la membresía Rappi Pro más barata. Úsalo exclusivamente cuando la oferta sea sobre el precio de la suscripcion. No sirve para descuentos en comida o productos.",
+        "enlace": "https://promos.rappi.com/colombia/2026/descuentos-en-membresia-rappipro",
+        "vigenciaInicio": "2026-01-01",
+        "vigenciaFin": "2026-12-31",
+        "filaExcel": 12
+      },
+      {
+        "id": "cupones_membresia_pro_black",
+        "nombre": "Cupones de Descuento para Membresía Rappi Pro y Black",
+        "beneficio": "Descuento en la suscripción vía Código (Cupón)",
+        "paraQue": "Respaldo legal para códigos promocionales que rebajan el precio de la membresía. Úsalo para estrategias donde entregas un código alfanumérico que el usuario debe redimir manualmente para pagar menos por su plan Rappi Pro.",
+        "enlace": "https://promos.rappi.com/colombia/2024/trminos-y-condiciones-cupones-de-descuento-para-la-membresa-rappi-pro-y-rappi-pro-black",
+        "vigenciaInicio": "2026-01-01",
+        "vigenciaFin": "2026-12-31",
+        "filaExcel": 13,
+        "advertencia": "El enlace apunta a la versión de 2024 aunque la vigencia dice 2026. Confírmalo con Legal antes de publicar la pieza."
+      },
+      {
+        "id": "cupon_valor_fijo",
+        "nombre": "Cupon de descuento - Valor fijo",
+        "beneficio": "",
+        "paraQue": "",
+        "enlace": "https://promos.rappi.com/colombia/cuponvalorfijoco",
+        "vigenciaInicio": "2026-01-01",
+        "vigenciaFin": "2026-12-31",
+        "filaExcel": 14,
+        "advertencia": "La lista de Legal no dice qué beneficio cubre ni para qué sirve. Confírmalo con Legal antes de publicar la pieza."
+      },
+      {
+        "id": "cupon_toda_la_tienda",
+        "nombre": "Cupon de descuento - Toda la tienda",
+        "beneficio": "",
+        "paraQue": "",
+        "enlace": "https://promos.rappi.com/colombia/cupondescuentoco",
+        "vigenciaInicio": "2026-01-01",
+        "vigenciaFin": "2026-12-31",
+        "filaExcel": 15,
+        "advertencia": "La lista de Legal no dice qué beneficio cubre ni para qué sirve. Confírmalo con Legal antes de publicar la pieza."
+      },
+      {
+        "id": "descuento_productos_seleccionados_bis",
+        "nombre": "Descuento en Productos Seleccionados",
+        "beneficio": "Descuento porcentual directo (Precio tachado)",
+        "paraQue": "Respaldo legal para ofertas de \"precio tachado\" en la App. Úsalo cuando negocies descuentos directos en productos específicos para que el usuario vea la rebaja automáticamente en la tienda (sin cupones).",
+        "enlace": "https://promos.rappi.com/colombia/descuentosenprod",
+        "vigenciaInicio": "2026-01-01",
+        "vigenciaFin": "2026-12-31",
+        "filaExcel": 16,
+        "advertencia": "Ojo: en la lista de Legal este T&C aparece dos veces, con enlaces distintos. Confirma con Legal cuál va en tu pieza antes de publicarla."
+      },
+      {
+        "id": "codigo_descuento_eventos_externos",
+        "nombre": "Codigo de descuento para eventos externos (ej. codigo de 20%  para boletas al vino al parque)",
+        "beneficio": "Descuento en producto o servicio que ofrece un externo por medio de un canal de venta independiente",
+        "paraQue": "Codigo de descuento para eventos externos (ej. codigo de 20%  para boletas al vino al parque)",
+        "enlace": "https://promos.rappi.com/colombia/2026/9/7/trminos-y-condiciones-cupones-off",
+        "vigenciaInicio": "2026-01-01",
+        "vigenciaFin": "2026-12-31",
+        "filaExcel": 17
+      }
+    ]
+  }
+};
+
+if (typeof module !== 'undefined') { module.exports = { TYC_GENERICOS: TYC_GENERICOS }; }
 
 // --- src/core/ampliacion.js ---
 'use strict';
@@ -1405,8 +1623,9 @@ var AVISO_AZAR = {
   validas: [
     'Cashback: quien compra recibe un porcentaje de vuelta en Créditos. Todos los que cumplen reciben el beneficio.',
     'Carrera de Compras: gana quien más compre durante la vigencia. El resultado depende del esfuerzo del participante, no de la suerte.',
-    'Descuento por umbral: quien supere cierto monto recibe el beneficio. La regla es la misma para todos.',
-    'Cashback Day: varias tiendas hacen cashback el mismo día, cada una con su propio presupuesto.',
+    'Cashback Multitienda: varias tiendas hacen cashback dentro de la misma jornada, cada una con su propio porcentaje, su tope y su presupuesto.',
+    '15 minutos o Cashback: Rappi promete un tiempo de entrega en el botón Turbo y, si la orden llega tarde, devuelve en Créditos parte de lo que el usuario pagó.',
+    'Cashback Travel y Descuento Travel: las dos formas de campaña de vuelos, hoteles, autos y paquetes.',
   ],
   noValidas: [
     'Sorteo entre todos los participantes, aunque sea "entre quienes compren".',
@@ -1428,17 +1647,17 @@ var CONTACTOS = [
   {
     nombre: 'Juan Camilo Gallego',
     para: 'Dudas legales de fondo, campañas que no encajan en ningún tipo, y aprobación de textos nuevos.',
-    correo: '[PENDIENTE: correo]',
+    correo: '',
   },
   {
     nombre: 'Anna Habermann',
     para: 'Cómo plantear la campaña con el aliado y qué se puede prometer en las piezas de marketing.',
-    correo: '[PENDIENTE: correo]',
+    correo: '',
   },
   {
     nombre: 'Paula Barahona',
     para: 'Revisión de campañas de un país distinto a Colombia y coordinación con los equipos locales.',
-    correo: '[PENDIENTE: correo]',
+    correo: '',
   },
 ];
 
@@ -1613,7 +1832,7 @@ var PREGUNTAS_FRECUENTES = [
   },
   {
     pregunta: '¿Puedo poner varias tiendas en una misma campaña?',
-    respuesta: 'Sí, con el tipo Cashback Day. Cada tienda entra con su razón social, su NIT y su presupuesto, porque cada una organiza su propio beneficio y responde por él.',
+    respuesta: 'Sí, con el tipo Cashback Multitienda. Cada tienda entra con su razón social, su NIT y su presupuesto, porque cada una organiza su propio beneficio y responde por él.',
   },
   {
     pregunta: '¿Qué es un Maker y en qué cambia las cosas?',
@@ -1625,11 +1844,15 @@ var PREGUNTAS_FRECUENTES = [
   },
   {
     pregunta: 'Mi campaña es de Rappi Travel. ¿Sirve esta herramienta?',
-    respuesta: 'Todavía no. Travel tiene otra entidad legal y su propio documento. La herramienta te manda al formulario de Legal en cuanto lo indicas.',
+    respuesta: 'Sí. Después de elegir el país, la primera pregunta es si la campaña es de Rappi o de Rappi Travel. Travel tiene su propia entidad legal, sus propios tipos (Cashback Travel y Descuento Travel) y un filtro de nueve preguntas antes de empezar, porque hay casos de viajes que sí tiene que redactar Legal.',
   },
   {
     pregunta: '¿Dónde quedan guardados los documentos?',
     respuesta: 'En una carpeta de Drive por país, nunca en una carpeta general. Tú quedas como lector del documento y el enlace te llega por correo.',
+  },
+  {
+    pregunta: 'Mi campaña es un descuento o un cupón y no la veo en la lista de tipos.',
+    respuesta: 'Buena noticia: para esas campañas no hay que generar nada. En Colombia, Legal ya publicó los T&C generales de los descuentos, los cupones, el envío gratis y la tarifa de servicio gratis. Debajo de la lista de tipos de campaña hay una opción que te lleva a ellos, y ahí copias el enlace que va en la pieza.',
   },
 ];
 
@@ -8191,6 +8414,8 @@ var TEXTOS_PT = {
   'Tu T&C': 'Seu T&C',
   'Sin empezar': 'Ainda não começou',
   'Completo': 'Completo',
+  'Falta 1 dato': 'Falta 1 dado',
+  'Faltan varios datos': 'Faltam varios dados',
   'Atrás': 'Voltar',
   'Siguiente': 'Avançar',
   'Revisar y generar': 'Revisar e gerar',
@@ -8229,6 +8454,19 @@ var TEXTOS_PT = {
   'Generando el documento.': 'Gerando o documento.',
   'Mis campañas': 'Minhas campanhas',
 
+  'Queda 1 pregunta en este paso.': 'Falta 1 pergunta nesta etapa.',
+  'Quedan varias preguntas en este paso.': 'Faltam varias perguntas nesta etapa.',
+  'En 2 minutos recibirás un email con el documento generado y listo para publicar en Squarespace. Recuerda seguir las instrucciones para asegurar que los T&Cs queden publicados exitosamente.':
+    'Em 2 minutos você recebe um e-mail com o documento gerado e pronto para publicar no Squarespace. Siga as instruções para garantir que os T&C fiquem publicados corretamente.',
+
+  /* --- El aviso de pais en pruebas ---------------------------------------- */
+  ' está en pruebas: genera y revisa, pero todavía no publiques. Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.':
+    ' está em testes: gere e revise, mas ainda não publique. Os dados jurídicos deste país foram propostos pela ferramenta e ninguém os confirmou.',
+
+  /* --- Las descripciones de los tipos de campana --------------------------- */
+  'Descuento en porcentaje, envío gratis o tarifa de servicio gratis en una tienda aliada de Brasil. El usuario ve el beneficio aplicado al pagar, no recibe Créditos. Solo para Brasil.':
+    'Desconto em porcentagem, frete grátis ou taxa de serviço grátis em uma loja parceira do Brasil. O usuário vê o benefício aplicado no pagamento, não recebe Créditos. Só para o Brasil.',
+
   /* --- Historial ----------------------------------------------------------- */
   'Cargando...': 'Carregando...',
 };
@@ -8263,6 +8501,148 @@ if (typeof module !== 'undefined') {
     TEXTOS_PT: TEXTOS_PT,
     traducirInterfaz: traducirInterfaz,
     cadenasTraducidas: cadenasTraducidas,
+  };
+}
+
+// --- src/core/tyc_genericos.js ---
+'use strict';
+
+/**
+ * Los T&C generales que Legal ya publico.
+ *
+ * En Colombia hay campanas para las que NO hay que generar nada: descuentos,
+ * cupones, envio gratis y tarifa de servicio gratis ya tienen T&C publicados
+ * por Legal, con su enlace fijo. El comercial solo tiene que poner ese enlace
+ * en la pieza.
+ *
+ * Es casi la mitad de la demanda real: los descuentos que no son cashback son
+ * 319 de 711 promociones (docs/PENDIENTES_LEGAL.md). Hasta hoy la herramienta
+ * no los cubria y esa gente terminaba escribiendole a Legal para pedir algo que
+ * ya existia.
+ *
+ * Aqui no se redacta ni se corrige nada: los textos salen tal cual de
+ * data/tyc_genericos.json, que es la transcripcion del Excel de Legal.
+ *
+ * En Apps Script TYC_GENERICOS es global: lo genera el build desde
+ * data/tyc_genericos.json. En Node se carga el JSON directamente.
+ */
+if (typeof module !== 'undefined' && typeof require === 'function' && typeof TYC_GENERICOS === 'undefined') {
+  var TYC_GENERICOS = require('../../data/tyc_genericos.json');
+}
+
+if (typeof module !== 'undefined' && typeof require === 'function') {
+  var moduloDeFechas = require('./fechas.js');
+  var formatearFecha = moduloDeFechas.formatearFecha;
+  var comoNumeroFecha = moduloDeFechas.comoNumeroFecha;
+}
+
+/** Los T&C generales publicados para un pais, en el orden del Excel. */
+function tycGenericosDelPais(codigoPais) {
+  if (typeof TYC_GENERICOS === 'undefined' || !TYC_GENERICOS) return [];
+  var porPais = TYC_GENERICOS.paises || {};
+  return porPais[String(codigoPais || '').trim().toUpperCase()] || [];
+}
+
+/** Si este pais tiene algun T&C general publicado. Hoy solo Colombia. */
+function hayTycGenericos(codigoPais) {
+  return tycGenericosDelPais(codigoPais).length > 0;
+}
+
+function tycGenericoPorId(codigoPais, id) {
+  var lista = tycGenericosDelPais(codigoPais);
+  for (var i = 0; i < lista.length; i++) {
+    if (lista[i].id === id) return lista[i];
+  }
+  return null;
+}
+
+/**
+ * En que estado esta la vigencia de un T&C general, hoy.
+ *
+ * Importa porque un T&C vencido sigue estando en la lista de Legal: la Tarifa
+ * de Servicio Gratis vence el 31 de octubre de 2026 y las demas el 31 de
+ * diciembre. Ofrecer el enlace de uno vencido como si nada seria mandar a
+ * publicar una pieza respaldada por un documento que ya no rige.
+ *
+ * Devuelve { estado, usable, mensaje, vigencia }. El estado es un
+ * identificador interno; lo que se lee en pantalla es mensaje y vigencia.
+ */
+function estadoDeTycGenerico(tyc, hoyIso) {
+  var inicio = comoNumeroFecha(tyc && tyc.vigenciaInicio);
+  var fin = comoNumeroFecha(tyc && tyc.vigenciaFin);
+  var hoy = comoNumeroFecha(hoyIso);
+
+  var vigencia = vigenciaEnPalabras(tyc);
+
+  // Sin fechas no se puede afirmar nada, y afirmar de menos es mejor que
+  // afirmar de mas: se ofrece, pero diciendo que la vigencia no consta.
+  if (inicio === null || fin === null) {
+    return {
+      estado: 'sin_vigencia',
+      usable: true,
+      vigencia: vigencia,
+      mensaje: 'La lista de Legal no dice hasta cuándo rige este T&C. Confírmalo con Legal antes de publicar la pieza.',
+    };
+  }
+
+  if (hoy === null) {
+    return { estado: 'vigente', usable: true, vigencia: vigencia, mensaje: '' };
+  }
+
+  if (hoy < inicio) {
+    return {
+      estado: 'aun_no_arranca',
+      usable: false,
+      vigencia: vigencia,
+      mensaje: 'Todavía no está vigente: arranca el ' + formatearFecha(tyc.vigenciaInicio) +
+        '. Si tu campaña sale antes, escríbele a Legal.',
+    };
+  }
+
+  if (hoy > fin) {
+    return {
+      estado: 'vencido',
+      usable: false,
+      vigencia: vigencia,
+      mensaje: 'Venció el ' + formatearFecha(tyc.vigenciaFin) +
+        '. No lo uses todavía: escríbele a Legal para que publique la versión nueva.',
+    };
+  }
+
+  return { estado: 'vigente', usable: true, vigencia: vigencia, mensaje: '' };
+}
+
+/** "Del 1 de enero de 2026 al 31 de diciembre de 2026." */
+function vigenciaEnPalabras(tyc) {
+  var inicio = formatearFecha(tyc && tyc.vigenciaInicio);
+  var fin = formatearFecha(tyc && tyc.vigenciaFin);
+  if (!inicio && !fin) return 'Vigencia sin confirmar.';
+  if (!fin) return 'Desde el ' + inicio + '.';
+  if (!inicio) return 'Hasta el ' + fin + '.';
+  return 'Del ' + inicio + ' al ' + fin + '.';
+}
+
+/**
+ * Para que sirve un T&C general, en palabras.
+ *
+ * Dos filas del Excel de Legal llegaron sin descripcion (las de los cupones).
+ * No se inventa una: se dice que falta, porque un comercial que lee una
+ * descripcion inventada publica una pieza creyendo que esta cubierta.
+ */
+function descripcionDeTycGenerico(tyc) {
+  var texto = String((tyc && tyc.paraQue) || '').trim();
+  if (texto) return texto;
+  return 'La lista de Legal no dice para qué sirve este T&C. Confírmalo con Legal antes de publicar la pieza.';
+}
+
+if (typeof module !== 'undefined') {
+  module.exports = {
+    tycGenericosDelPais: tycGenericosDelPais,
+    hayTycGenericos: hayTycGenericos,
+    tycGenericoPorId: tycGenericoPorId,
+    estadoDeTycGenerico: estadoDeTycGenerico,
+    vigenciaEnPalabras: vigenciaEnPalabras,
+    descripcionDeTycGenerico: descripcionDeTycGenerico,
   };
 }
 
@@ -8417,6 +8797,42 @@ function validarOrganizador(entrada, pais) {
   if (estaVacio(entrada.organizadorId)) return [];
   var revision = validarIdentificacion(pais.codigo, entrada.organizadorId);
   return revision.valido ? [] : [error('organizadorId', revision.mensaje)];
+}
+
+/**
+ * Las marcas que delatan una anotacion interna dentro de un valor del pais.
+ *
+ * La fila de Brasil llego a tener la autoridad de datos escrita como
+ * "a Autoridade Nacional de Protecao de Dados (ANPD) (confirmar)". Ese valor se
+ * imprime tal cual en la clausula de datos personales, asi que un T&C publicado
+ * habria salido con la palabra "(confirmar)" dentro. Para marcar lo que falta
+ * esta la columna por_confirmar_en_pruebas, no el texto.
+ */
+var MARCAS_DE_ANOTACION = /\((confirmar|revisar|pendiente|verificar|por confirmar)\)|\bTODO\b|\?\?\?/i;
+
+/**
+ * Un valor del pais con una anotacion interna adentro no se publica.
+ *
+ * Se revisan solo las columnas que de verdad salen impresas: las que un modelo
+ * puede pedir con un placeholder.
+ */
+function validarAnotacionesDelPais(pais) {
+  var errores = [];
+  if (!pais) return errores;
+
+  for (var llave in pais) {
+    if (!Object.prototype.hasOwnProperty.call(pais, llave)) continue;
+    if (llave === 'por_confirmar_en_pruebas' || llave === '_fila' || llave === 'modelos') continue;
+
+    var valor = pais[llave];
+    if (typeof valor !== 'string') continue;
+    if (!MARCAS_DE_ANOTACION.test(valor)) continue;
+
+    errores.push(error('pais',
+      'La configuración de ' + (pais.nombre || pais.codigo) + ' tiene una nota interna dentro de un dato que se imprime: "' +
+      valor.trim() + '". Eso saldría publicado en el documento. Quítala de la pestaña Paises y marca ese dato en la columna de pendientes.'));
+  }
+  return errores;
 }
 
 /** Cruces propios del Cashback. */
@@ -8798,6 +9214,8 @@ function validarSolicitud(entrada, pais, contexto) {
   errores = errores.concat(validarOrganizador(entrada, pais));
   errores = errores.concat(validarCreditos(entrada));
   errores = errores.concat(validarNegocio(entrada, esquema));
+
+  errores = errores.concat(validarAnotacionesDelPais(pais));
 
   // El cashback por ETA tiene los mismos dos numeros y el mismo riesgo: un tope
   // mayor que el presupuesto deja que la primera orden se lleve la campana.
@@ -9261,6 +9679,8 @@ var estado = {
   filtroRespondido: false,
   filtroDeTravelRespondido: false,
   motivoDeLegal: null,
+  // Cuál de los T&C que Legal ya publicó está mirando. Null = la lista entera.
+  tycGenericoElegido: null,
   errores: {},
   // Qué preguntas respondió de verdad el comercial. Un valor por defecto NO
   // cuenta como respuesta: la pregunta se muestra igual, con la opción ya
@@ -9306,6 +9726,7 @@ function reiniciarFormulario(base, yaRespondidas) {
   estado.filtroRespondido = false;
   estado.filtroDeTravelRespondido = false;
   estado.motivoDeLegal = null;
+  estado.tycGenericoElegido = null;
   estado.resultado = null;
   estado.ultimoTextoVistaPrevia = '';
 }
@@ -9942,7 +10363,7 @@ function dibujarRespondida(campo, textoValor, alEditar) {
   return crear('div', { clase: 'ficha-seccion', 'data-campo': campo.id }, [
     crear('div', { clase: 'ficha-encabezado' }, [
       crear('h3', { texto: pregunta.pregunta }),
-      crear('button', { clase: 'boton-texto', type: 'button', texto: 'Cambiar', onclick: alEditar }),
+      crear('button', { clase: 'boton-texto', type: 'button', texto: RM.estado.T('Cambiar'), onclick: alEditar }),
     ]),
     crear('p', { clase: 'pregunta-ayuda', texto: textoValor }),
   ]);
@@ -10089,7 +10510,9 @@ function refrescarDocumento() {
   if (cuenta) {
     cuenta.textContent = resultado.huecos.length === 0
       ? estado.T('Completo')
-      : 'Faltan ' + resultado.huecos.length + (resultado.huecos.length === 1 ? ' dato' : ' datos');
+      : (resultado.huecos.length === 1
+        ? estado.T('Falta 1 dato')
+        : estado.T('Faltan varios datos').replace('varios', resultado.huecos.length));
   }
   E.ultimoTextoVistaPrevia = resultado.texto;
 }
@@ -10108,7 +10531,7 @@ function pantallaInicio(raiz) {
     },
     {
       titulo: estado.T('Publica los T&Cs'),
-      detalle: 'En 2 minutos recibirás un email con el documento generado y listo para publicar en Squarespace. Recuerda seguir las instrucciones para asegurar que los T&Cs queden publicados exitosamente.',
+      detalle: estado.T('En 2 minutos recibirás un email con el documento generado y listo para publicar en Squarespace. Recuerda seguir las instrucciones para asegurar que los T&Cs queden publicados exitosamente.'),
     },
   ];
 
@@ -10461,8 +10884,8 @@ function avisoDePaisEnPruebas() {
   // de que hay que revisar va en el resumen, que es donde se decide publicar.
   return crear('div', { clase: 'aviso' }, [
     crear('p', {
-      texto: pais.nombre + ' está en pruebas: genera y revisa, pero todavía no publiques. ' +
-        'Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.',
+      texto: pais.nombre + estado.T(' está en pruebas: genera y revisa, pero todavía no publiques. ' +
+        'Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.'),
     }),
   ]);
 }
@@ -10674,7 +11097,9 @@ function pantallaPasos(raiz) {
   if (faltan > 0) {
     columna.appendChild(crear('p', {
       clase: 'pregunta-ayuda',
-      texto: faltan === 1 ? 'Queda 1 pregunta en este paso.' : 'Quedan ' + faltan + ' preguntas en este paso.',
+      texto: faltan === 1
+        ? estado.T('Queda 1 pregunta en este paso.')
+        : estado.T('Quedan varias preguntas en este paso.').replace('varias', faltan),
     }));
   }
 
@@ -10734,7 +11159,7 @@ function preguntaDeCatalogo(campo, campos, indice, pasos) {
     var negocio = estado.entrada().negocio || 'rappi';
     opciones = tiposDelPais(pais || { modelos: [] }, E.configuracion.tipos)
       .filter(function (t) { return (t.esDeTravel ? 'travel' : 'rappi') === negocio; })
-      .map(function (t) { return { valor: t.id, etiqueta: t.nombre, nota: t.descripcion }; });
+      .map(function (t) { return { valor: t.id, etiqueta: t.nombre, nota: estado.T(t.descripcion) }; });
   }
 
   for (var i = 0; i < opciones.length; i++) {
@@ -10755,6 +11180,15 @@ function preguntaDeCatalogo(campo, campos, indice, pasos) {
   }
 
   bloque.appendChild(grupo);
+
+  // Junto a los tipos, pero separado de ellos: hay campanas para las que Legal
+  // ya publico los T&C y no hay que generar nada. Es donde el comercial busca
+  // su campana, asi que es donde tiene que enterarse.
+  if (campo.id === 'tipo') {
+    var atajo = RM.tycGenericos.tarjetaDeAtajo();
+    if (atajo) bloque.appendChild(atajo);
+  }
+
   bloque.appendChild(crear('details', { clase: 'por-que' }, [
     crear('summary', { texto: '¿Por qué te preguntamos esto?' }),
     crear('p', { texto: pregunta.porQue }),
@@ -11056,6 +11490,238 @@ RM.pasos = {
   comoTexto: comoTexto,
   columnaDocumento: columnaDocumento,
   calculadora: calculadora,
+};
+
+})();
+// --- src/client/js/63-tyc-genericos.js ---
+(function () {
+'use strict';
+
+/**
+ * Los T&C que Legal ya publico.
+ *
+ * Hay campanas para las que NO hay que generar nada: descuentos, cupones,
+ * envio gratis y tarifa de servicio gratis ya tienen T&C publicados por Legal,
+ * con su enlace fijo. Son casi la mitad de la demanda real y hasta hoy la
+ * herramienta no los cubria: el comercial llegaba, no encontraba su tipo de
+ * campana y terminaba escribiendole a Legal para pedir algo que ya existia.
+ *
+ * Por eso esta pantalla se lee como una buena noticia y no como una negativa:
+ * no le estamos quitando nada, le estamos ahorrando el documento entero. Lo
+ * unico que se lleva de aqui es el enlace, y tiene que quedar clarisimo que ese
+ * enlace es el que va en la pieza.
+ *
+ * Los datos salen de data/tyc_genericos.json y la logica de src/core/
+ * tyc_genericos.js. Aqui no se redacta ni se corrige ningun texto de Legal.
+ */
+
+var RM = window.RM;
+var crear = RM.util.crear;
+var estado = RM.estado;
+var E = estado.estado;
+
+/** El pais de la campana, o Colombia si todavia no se eligio ninguno. */
+function codigoDelPais() {
+  var pais = RM.flujo.paisElegido();
+  return pais ? pais.codigo : '';
+}
+
+function hoy() {
+  return (E.configuracion && E.configuracion.hoy) || RM.util.hoyEnElNavegador();
+}
+
+/**
+ * La tarjeta que lleva aqui desde la lista de tipos de campana.
+ *
+ * Va junto a los tipos, porque ahi es donde el comercial busca su campana, pero
+ * separada de ellos: los demas generan un documento y este no. Devuelve null
+ * cuando no hay nada que ofrecer, que es lo unico peor que no ofrecerlo.
+ */
+function tarjetaDeAtajo() {
+  var codigo = codigoDelPais();
+  if (!hayTycGenericos(codigo)) return null;
+  // Rappi Travel tiene su propia lista y sus propios T&C: mezclarlos aqui
+  // seria ofrecerle al comercial un enlace que no cubre su campana.
+  if ((estado.entrada().negocio || 'rappi') === 'travel') return null;
+
+  var caja = crear('div', { clase: 'atajo-tyc' }, [
+    crear('p', { clase: 'pregunta-ayuda', texto: '¿No ves tu campaña en la lista?' }),
+  ]);
+
+  var grupo = crear('div', { clase: 'opciones' });
+  grupo.appendChild(crear('button', {
+    clase: 'opcion', type: 'button',
+    onclick: function () {
+      E.tycGenericoElegido = null;
+      RM.app.ir('tycGenericos');
+    },
+  }, [
+    crear('span', { clase: 'opcion-titulo', texto: 'Descuentos, cupones, envío gratis y tarifa de servicio' }),
+    crear('span', {
+      clase: 'opcion-nota',
+      texto: 'Buena noticia: para estas campañas Legal ya publicó los T&C. No generas ningún documento, te damos el enlace listo para la pieza.',
+    }),
+  ]));
+
+  caja.appendChild(grupo);
+  return caja;
+}
+
+// --- La pantalla -------------------------------------------------------------
+
+function pantalla(raiz) {
+  var codigo = codigoDelPais();
+  var lista = tycGenericosDelPais(codigo);
+
+  if (lista.length === 0) {
+    raiz.appendChild(crear('div', { clase: 'pagina pagina-angosta' }, [
+      crear('h1', { texto: 'Todavía no hay T&C generales para este país' }),
+      crear('p', { texto: 'Los T&C generales publicados son por ahora los de Colombia. Elige un tipo de campaña y la herramienta te arma el documento.' }),
+      crear('div', { clase: 'fila-botones' }, [botonVolverALosTipos()]),
+    ]));
+    return;
+  }
+
+  var elegido = E.tycGenericoElegido ? tycGenericoPorId(codigo, E.tycGenericoElegido) : null;
+  raiz.appendChild(elegido ? detalle(elegido) : listado(lista));
+}
+
+/** Paso 1: los T&C publicados, con su descripcion y su vigencia. */
+function listado(lista) {
+  var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
+    crear('h1', { texto: 'Para esta campaña no necesitas crear T&C' }),
+    crear('p', {
+      texto: 'Legal ya dispuso los términos y condiciones de estas campañas y ya están publicados. ' +
+        'No tienes que generar ningún documento ni esperar a que alguien lo revise: elige el que ' +
+        'corresponde a tu campaña y te damos el enlace que va en la pieza.',
+    }),
+  ]);
+
+  var grupo = crear('div', { clase: 'opciones' });
+  for (var i = 0; i < lista.length; i++) {
+    grupo.appendChild(tarjetaDeUno(lista[i]));
+  }
+  contenido.appendChild(grupo);
+
+  contenido.appendChild(crear('p', {
+    clase: 'pregunta-ayuda',
+    texto: 'Si tu campaña es un cashback, una carrera de compras o un concurso, no es ninguno de estos: vuelve a los tipos y la herramienta te arma el documento.',
+  }));
+  contenido.appendChild(crear('div', { clase: 'fila-botones' }, [botonVolverALosTipos()]));
+  return contenido;
+}
+
+function tarjetaDeUno(tyc) {
+  var revision = estadoDeTycGenerico(tyc, hoy());
+
+  var partes = [crear('span', { clase: 'opcion-titulo', texto: tyc.nombre })];
+  if (tyc.beneficio) partes.push(crear('span', { clase: 'opcion-nota', texto: tyc.beneficio }));
+  partes.push(crear('span', { clase: 'opcion-nota', texto: descripcionDeTycGenerico(tyc) }));
+  partes.push(crear('span', {
+    clase: 'opcion-nota',
+    texto: revision.mensaje ? revision.mensaje : revision.vigencia,
+  }));
+
+  // Un T&C vencido o que todavia no arranca se queda a la vista con su razon,
+  // no desaparece: si desapareciera, el comercial creeria que la herramienta no
+  // lo tiene y volveria a escribirle a Legal.
+  return crear('button', {
+    clase: 'opcion', type: 'button',
+    disabled: !revision.usable,
+    onclick: function () {
+      E.tycGenericoElegido = tyc.id;
+      RM.app.dibujar();
+      window.scrollTo(0, 0);
+    },
+  }, partes);
+}
+
+/** Paso 2: el enlace, que es lo unico que el comercial se lleva de aqui. */
+function detalle(tyc) {
+  var revision = estadoDeTycGenerico(tyc, hoy());
+
+  var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
+    crear('h1', { texto: tyc.nombre }),
+  ]);
+
+  if (!revision.usable) {
+    contenido.appendChild(crear('div', { clase: 'aviso aviso-serio' }, [
+      crear('p', { texto: revision.mensaje }),
+    ]));
+    contenido.appendChild(crear('div', { clase: 'fila-botones' }, [botonVolverALaLista(), botonVolverALosTipos()]));
+    return contenido;
+  }
+
+  contenido.appendChild(crear('div', { clase: 'aviso' }, [
+    crear('h3', { texto: 'Listo, no tienes que generar nada' }),
+    crear('p', { texto: 'Legal ya publicó estos T&C. Copia el enlace de abajo y ponlo en la pieza: ese es el enlace que va, tal cual.' }),
+  ]));
+
+  contenido.appendChild(RM.util.paraCopiar(
+    'Enlace para la pieza',
+    tyc.enlace,
+    'Pégalo tal cual, sin acortarlo y sin cambiarle nada.'
+  ));
+
+  contenido.appendChild(crear('div', { clase: 'fila-botones' }, [
+    crear('a', { clase: 'boton boton-secundario', href: tyc.enlace, target: '_blank', rel: 'noopener' }, [
+      document.createTextNode('Abrir los T&C'), RM.util.icono('abrir', 16),
+    ]),
+  ]));
+
+  var ficha = crear('div', { clase: 'ficha' });
+  ficha.appendChild(seccionDeFicha('Para qué sirve', descripcionDeTycGenerico(tyc)));
+  if (tyc.beneficio) ficha.appendChild(seccionDeFicha('Qué beneficio cubre', tyc.beneficio));
+  ficha.appendChild(seccionDeFicha('Vigencia', revision.vigencia));
+  if (revision.mensaje) ficha.appendChild(seccionDeFicha('Ojo con la vigencia', revision.mensaje));
+  contenido.appendChild(ficha);
+
+  // Lo que Legal dejo sin resolver en su lista se dice aqui, no se arregla:
+  // corregirlo por cuenta propia seria publicar una pieza con un respaldo que
+  // nadie aprobo.
+  if (tyc.advertencia) {
+    contenido.appendChild(crear('div', { clase: 'aviso aviso-serio' }, [
+      crear('p', { texto: tyc.advertencia }),
+    ]));
+  }
+
+  contenido.appendChild(crear('div', { clase: 'fila-botones' }, [botonVolverALaLista(), botonVolverALosTipos()]));
+  return contenido;
+}
+
+function seccionDeFicha(titulo, texto) {
+  return crear('div', { clase: 'ficha-seccion' }, [
+    crear('h3', { texto: titulo }),
+    crear('p', { clase: 'pregunta-ayuda', texto: texto }),
+  ]);
+}
+
+function botonVolverALaLista() {
+  return crear('button', {
+    clase: 'boton boton-secundario', type: 'button', texto: 'Ver los otros T&C publicados',
+    onclick: function () {
+      E.tycGenericoElegido = null;
+      RM.app.dibujar();
+      window.scrollTo(0, 0);
+    },
+  });
+}
+
+/** La salida de aqui. Sin ella, quien entro por equivocacion queda encerrado. */
+function botonVolverALosTipos() {
+  return crear('button', {
+    clase: 'boton boton-secundario', type: 'button', texto: 'Volver a los tipos de campaña',
+    onclick: function () {
+      E.tycGenericoElegido = null;
+      E.campoAbierto = 'tipo';
+      RM.app.ir('pasos');
+    },
+  });
+}
+
+RM.tycGenericos = {
+  pantalla: pantalla,
+  tarjetaDeAtajo: tarjetaDeAtajo,
 };
 
 })();
@@ -12002,7 +12668,7 @@ function pantallaAyuda(raiz) {
   if (AVISO_AZAR.borrador) {
     aviso.appendChild(crear('p', {
       clase: 'pregunta-ayuda',
-      texto: 'Borrador pendiente de revisión de Juan Camilo Gallego.',
+      texto: 'Si algo de esta página no coincide con lo que ves en la herramienta, avísanos por el canal.',
     }));
   }
   contenido.appendChild(aviso);
@@ -12069,7 +12735,12 @@ function pantallaAyuda(raiz) {
     contactos.appendChild(crear('div', { clase: 'ficha-seccion' }, [
       crear('h3', { texto: CONTACTOS[c].nombre }),
       crear('p', { clase: 'pregunta-ayuda', texto: CONTACTOS[c].para }),
-      crear('p', { clase: 'pregunta-ayuda', texto: CONTACTOS[c].correo }),
+      crear('p', {
+        clase: 'pregunta-ayuda',
+        // Sin correo se dice donde buscarlo, en vez de ensenar un hueco en una
+        // pantalla que van a leer los equipos legales de todos los paises.
+        texto: CONTACTOS[c].correo || 'Escríbele por el canal de Legal.',
+      }),
     ]));
   }
   contenido.appendChild(contactos);
@@ -12366,6 +13037,7 @@ var PANTALLAS = {
   filtroTravel: function (raiz) { RM.flujo.pantallaFiltroTravel(raiz); },
   legal: function (raiz) { RM.flujo.pantallaLegal(raiz); },
   pasos: function (raiz) { RM.pasos.pantallaPasos(raiz); },
+  tycGenericos: function (raiz) { RM.tycGenericos.pantalla(raiz); },
   resumen: function (raiz) { RM.resumen.pantallaResumen(raiz); },
   listo: function (raiz) { RM.resumen.pantallaListo(raiz); },
   historial: function (raiz) { RM.pantallas.pantallaHistorial(raiz); },

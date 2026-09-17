@@ -19,6 +19,7 @@ var PANTALLAS = {
   filtroTravel: function (raiz) { RM.flujo.pantallaFiltroTravel(raiz); },
   legal: function (raiz) { RM.flujo.pantallaLegal(raiz); },
   pasos: function (raiz) { RM.pasos.pantallaPasos(raiz); },
+  tycGenericos: function (raiz) { RM.tycGenericos.pantalla(raiz); },
   resumen: function (raiz) { RM.resumen.pantallaResumen(raiz); },
   listo: function (raiz) { RM.resumen.pantallaListo(raiz); },
   historial: function (raiz) { RM.pantallas.pantallaHistorial(raiz); },

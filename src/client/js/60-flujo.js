@@ -128,7 +128,9 @@ function refrescarDocumento() {
   if (cuenta) {
     cuenta.textContent = resultado.huecos.length === 0
       ? estado.T('Completo')
-      : 'Faltan ' + resultado.huecos.length + (resultado.huecos.length === 1 ? ' dato' : ' datos');
+      : (resultado.huecos.length === 1
+        ? estado.T('Falta 1 dato')
+        : estado.T('Faltan varios datos').replace('varios', resultado.huecos.length));
   }
   E.ultimoTextoVistaPrevia = resultado.texto;
 }
@@ -147,7 +149,7 @@ function pantallaInicio(raiz) {
     },
     {
       titulo: estado.T('Publica los T&Cs'),
-      detalle: 'En 2 minutos recibirás un email con el documento generado y listo para publicar en Squarespace. Recuerda seguir las instrucciones para asegurar que los T&Cs queden publicados exitosamente.',
+      detalle: estado.T('En 2 minutos recibirás un email con el documento generado y listo para publicar en Squarespace. Recuerda seguir las instrucciones para asegurar que los T&Cs queden publicados exitosamente.'),
     },
   ];
 

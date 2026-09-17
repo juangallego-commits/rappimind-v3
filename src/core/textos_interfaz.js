@@ -80,6 +80,8 @@ var TEXTOS_PT = {
   'Tu T&C': 'Seu T&C',
   'Sin empezar': 'Ainda não começou',
   'Completo': 'Completo',
+  'Falta 1 dato': 'Falta 1 dado',
+  'Faltan varios datos': 'Faltam varios dados',
   'Atrás': 'Voltar',
   'Siguiente': 'Avançar',
   'Revisar y generar': 'Revisar e gerar',
@@ -117,6 +119,19 @@ var TEXTOS_PT = {
   'Generando...': 'Gerando...',
   'Generando el documento.': 'Gerando o documento.',
   'Mis campañas': 'Minhas campanhas',
+
+  'Queda 1 pregunta en este paso.': 'Falta 1 pergunta nesta etapa.',
+  'Quedan varias preguntas en este paso.': 'Faltam varias perguntas nesta etapa.',
+  'En 2 minutos recibirás un email con el documento generado y listo para publicar en Squarespace. Recuerda seguir las instrucciones para asegurar que los T&Cs queden publicados exitosamente.':
+    'Em 2 minutos você recebe um e-mail com o documento gerado e pronto para publicar no Squarespace. Siga as instruções para garantir que os T&C fiquem publicados corretamente.',
+
+  /* --- El aviso de pais en pruebas ---------------------------------------- */
+  ' está en pruebas: genera y revisa, pero todavía no publiques. Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.':
+    ' está em testes: gere e revise, mas ainda não publique. Os dados jurídicos deste país foram propostos pela ferramenta e ninguém os confirmou.',
+
+  /* --- Las descripciones de los tipos de campana --------------------------- */
+  'Descuento en porcentaje, envío gratis o tarifa de servicio gratis en una tienda aliada de Brasil. El usuario ve el beneficio aplicado al pagar, no recibe Créditos. Solo para Brasil.':
+    'Desconto em porcentagem, frete grátis ou taxa de serviço grátis em uma loja parceira do Brasil. O usuário vê o benefício aplicado no pagamento, não recebe Créditos. Só para o Brasil.',
 
   /* --- Historial ----------------------------------------------------------- */
   'Cargando...': 'Carregando...',

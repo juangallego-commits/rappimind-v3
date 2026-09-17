@@ -22,6 +22,8 @@ var estado = {
   filtroRespondido: false,
   filtroDeTravelRespondido: false,
   motivoDeLegal: null,
+  // Cuál de los T&C que Legal ya publicó está mirando. Null = la lista entera.
+  tycGenericoElegido: null,
   errores: {},
   // Qué preguntas respondió de verdad el comercial. Un valor por defecto NO
   // cuenta como respuesta: la pregunta se muestra igual, con la opción ya
@@ -67,6 +69,7 @@ function reiniciarFormulario(base, yaRespondidas) {
   estado.filtroRespondido = false;
   estado.filtroDeTravelRespondido = false;
   estado.motivoDeLegal = null;
+  estado.tycGenericoElegido = null;
   estado.resultado = null;
   estado.ultimoTextoVistaPrevia = '';
 }

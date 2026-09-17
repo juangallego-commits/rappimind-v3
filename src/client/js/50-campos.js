@@ -325,7 +325,7 @@ function dibujarRespondida(campo, textoValor, alEditar) {
   return crear('div', { clase: 'ficha-seccion', 'data-campo': campo.id }, [
     crear('div', { clase: 'ficha-encabezado' }, [
       crear('h3', { texto: pregunta.pregunta }),
-      crear('button', { clase: 'boton-texto', type: 'button', texto: 'Cambiar', onclick: alEditar }),
+      crear('button', { clase: 'boton-texto', type: 'button', texto: RM.estado.T('Cambiar'), onclick: alEditar }),
     ]),
     crear('p', { clase: 'pregunta-ayuda', texto: textoValor }),
   ]);

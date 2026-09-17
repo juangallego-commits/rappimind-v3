@@ -311,7 +311,7 @@ function pantallaAyuda(raiz) {
   if (AVISO_AZAR.borrador) {
     aviso.appendChild(crear('p', {
       clase: 'pregunta-ayuda',
-      texto: 'Borrador pendiente de revisión de Juan Camilo Gallego.',
+      texto: 'Si algo de esta página no coincide con lo que ves en la herramienta, avísanos por el canal.',
     }));
   }
   contenido.appendChild(aviso);
@@ -378,7 +378,12 @@ function pantallaAyuda(raiz) {
     contactos.appendChild(crear('div', { clase: 'ficha-seccion' }, [
       crear('h3', { texto: CONTACTOS[c].nombre }),
       crear('p', { clase: 'pregunta-ayuda', texto: CONTACTOS[c].para }),
-      crear('p', { clase: 'pregunta-ayuda', texto: CONTACTOS[c].correo }),
+      crear('p', {
+        clase: 'pregunta-ayuda',
+        // Sin correo se dice donde buscarlo, en vez de ensenar un hueco en una
+        // pantalla que van a leer los equipos legales de todos los paises.
+        texto: CONTACTOS[c].correo || 'Escríbele por el canal de Legal.',
+      }),
     ]));
   }
   contenido.appendChild(contactos);

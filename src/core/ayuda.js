@@ -22,8 +22,9 @@ var AVISO_AZAR = {
   validas: [
     'Cashback: quien compra recibe un porcentaje de vuelta en Créditos. Todos los que cumplen reciben el beneficio.',
     'Carrera de Compras: gana quien más compre durante la vigencia. El resultado depende del esfuerzo del participante, no de la suerte.',
-    'Descuento por umbral: quien supere cierto monto recibe el beneficio. La regla es la misma para todos.',
-    'Cashback Day: varias tiendas hacen cashback el mismo día, cada una con su propio presupuesto.',
+    'Cashback Multitienda: varias tiendas hacen cashback dentro de la misma jornada, cada una con su propio porcentaje, su tope y su presupuesto.',
+    '15 minutos o Cashback: Rappi promete un tiempo de entrega en el botón Turbo y, si la orden llega tarde, devuelve en Créditos parte de lo que el usuario pagó.',
+    'Cashback Travel y Descuento Travel: las dos formas de campaña de vuelos, hoteles, autos y paquetes.',
   ],
   noValidas: [
     'Sorteo entre todos los participantes, aunque sea "entre quienes compren".',
@@ -45,17 +46,17 @@ var CONTACTOS = [
   {
     nombre: 'Juan Camilo Gallego',
     para: 'Dudas legales de fondo, campañas que no encajan en ningún tipo, y aprobación de textos nuevos.',
-    correo: '[PENDIENTE: correo]',
+    correo: '',
   },
   {
     nombre: 'Anna Habermann',
     para: 'Cómo plantear la campaña con el aliado y qué se puede prometer en las piezas de marketing.',
-    correo: '[PENDIENTE: correo]',
+    correo: '',
   },
   {
     nombre: 'Paula Barahona',
     para: 'Revisión de campañas de un país distinto a Colombia y coordinación con los equipos locales.',
-    correo: '[PENDIENTE: correo]',
+    correo: '',
   },
 ];
 
@@ -230,7 +231,7 @@ var PREGUNTAS_FRECUENTES = [
   },
   {
     pregunta: '¿Puedo poner varias tiendas en una misma campaña?',
-    respuesta: 'Sí, con el tipo Cashback Day. Cada tienda entra con su razón social, su NIT y su presupuesto, porque cada una organiza su propio beneficio y responde por él.',
+    respuesta: 'Sí, con el tipo Cashback Multitienda. Cada tienda entra con su razón social, su NIT y su presupuesto, porque cada una organiza su propio beneficio y responde por él.',
   },
   {
     pregunta: '¿Qué es un Maker y en qué cambia las cosas?',
@@ -242,11 +243,15 @@ var PREGUNTAS_FRECUENTES = [
   },
   {
     pregunta: 'Mi campaña es de Rappi Travel. ¿Sirve esta herramienta?',
-    respuesta: 'Todavía no. Travel tiene otra entidad legal y su propio documento. La herramienta te manda al formulario de Legal en cuanto lo indicas.',
+    respuesta: 'Sí. Después de elegir el país, la primera pregunta es si la campaña es de Rappi o de Rappi Travel. Travel tiene su propia entidad legal, sus propios tipos (Cashback Travel y Descuento Travel) y un filtro de nueve preguntas antes de empezar, porque hay casos de viajes que sí tiene que redactar Legal.',
   },
   {
     pregunta: '¿Dónde quedan guardados los documentos?',
     respuesta: 'En una carpeta de Drive por país, nunca en una carpeta general. Tú quedas como lector del documento y el enlace te llega por correo.',
+  },
+  {
+    pregunta: 'Mi campaña es un descuento o un cupón y no la veo en la lista de tipos.',
+    respuesta: 'Buena noticia: para esas campañas no hay que generar nada. En Colombia, Legal ya publicó los T&C generales de los descuentos, los cupones, el envío gratis y la tarifa de servicio gratis. Debajo de la lista de tipos de campaña hay una opción que te lleva a ellos, y ahí copias el enlace que va en la pieza.',
   },
 ];
 

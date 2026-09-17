@@ -28,6 +28,7 @@ function archivosEsperados() {
     'MotorCliente.html',
     'PaisesSemilla.js',
     'Secciones.js',
+    'TycGenericos.js',
     'appsscript.json',
   ];
   return codigo.concat(generados).sort();
@@ -118,7 +119,11 @@ test('MotorCliente.html corre solo en el navegador y arma la vista previa', () =
   vm.createContext(ambiente);
   vm.runInContext(guion[1], ambiente, { filename: 'MotorCliente.html' });
 
-  for (const nombre of ['MODELOS', 'PAISES_SEMILLA', 'SECCIONES', 'ESQUEMAS', 'PREGUNTAS']) {
+  // TYC_GENERICOS entra a esta lista porque la pantalla de los T&C que Legal ya
+  // publico se pinta enteramente en el navegador: si el dato se queda en el
+  // archivo suelto de dist/, que es del servidor, la pantalla sale sin una sola
+  // opcion que ofrecer, igual que paso con los tipos de campana.
+  for (const nombre of ['MODELOS', 'PAISES_SEMILLA', 'SECCIONES', 'TYC_GENERICOS', 'ESQUEMAS', 'PREGUNTAS']) {
     assert.notStrictEqual(ambiente[nombre], undefined, 'falta ' + nombre + ' en el navegador');
   }
   assert.ok(Object.keys(ambiente.MODELOS.modelos).length > 0, 'los textos legales no viajaron al navegador');

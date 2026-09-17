@@ -293,6 +293,11 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 .opcion-nota { display: block; color: var(--gris-lapiz); font-size: 13px; margin-top: 2px; }
 .opcion[disabled] .opcion-nota { color: var(--rojo-alerta); }
 
+/* El atajo a los T&C que Legal ya publico. Va junto a los tipos de campana,
+   pero separado por una linea: no genera documento como los demas. */
+.atajo-tyc { margin-top: var(--e4); padding-top: var(--e4); border-top: 1px solid var(--borde); }
+.atajo-tyc .pregunta-ayuda { margin-bottom: var(--e2); }
+
 .casillas { display: grid; gap: var(--e2); border: 0; padding: 0; margin: 0; }
 .casilla { display: flex; gap: var(--e3); align-items: flex-start; cursor: pointer; padding: var(--e2) 0; }
 .casilla input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--naranja-accion); flex: none; }
@@ -436,11 +441,11 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 .selector-idioma button {
   border: 0; background: transparent; cursor: pointer;
   padding: 6px 12px; border-radius: 999px;
-  font: inherit; font-size: 0.82rem; font-weight: 600; color: var(--tinta-suave);
+  font: inherit; font-size: 0.82rem; font-weight: 600; color: var(--gris-lapiz);
 }
-.selector-idioma button:hover { background: var(--fondo); }
-.selector-idioma button[aria-pressed="true"] { background: var(--marca); color: #fff; }
-.selector-idioma button:focus-visible { outline: 2px solid var(--marca); outline-offset: 2px; }
+.selector-idioma button:hover { background: var(--niebla); }
+.selector-idioma button[aria-pressed="true"] { background: var(--naranja-marca); color: #fff; }
+.selector-idioma button:focus-visible { outline: 2px solid var(--naranja-marca); outline-offset: 2px; }
 
 /* --- Pantalla final ------------------------------------------------------ */
 
