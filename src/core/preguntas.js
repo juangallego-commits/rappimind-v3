@@ -130,6 +130,7 @@ var PREGUNTAS = {
     pregunta: '¿Qué recibe el usuario?',
     ayuda: 'Las cuatro formas que Legal Brasil tiene aprobadas. Cada una cambia una sola frase del documento.',
     porQue: 'De aquí salen el párrafo de apertura y la viñeta que describe el beneficio. Es lo único que distingue los cuatro modelos aprobados entre sí.',
+    avanzaSola: true,
     placeholders: ['TEXTO_BENEFICIO_APERTURA', 'TEXTO_BENEFICIO_REGRA'],
     opciones: [
       { valor: 'desconto', etiqueta: 'Desconto % OFF', nota: 'Un porcentaje de descuento sobre el pedido, con tope en reales.' },
@@ -145,6 +146,7 @@ var PREGUNTAS = {
     pregunta: '¿Con qué medios se puede pagar?',
     ayuda: 'Marca todos los que apliquen. Los cuatro documentos aprobados los enumeran uno por uno.',
     porQue: 'El documento lista los medios de pago válidos con su nombre. Un medio que no esté en la lista no da derecho al beneficio.',
+    multiple: true,
     placeholders: ['TEXTO_METODO_PAGO'],
     opciones: [
       { valor: 'dinheiro', etiqueta: 'Dinheiro', nota: 'Efectivo.' },
@@ -175,6 +177,8 @@ var PREGUNTAS = {
     pregunta: '¿En qué secciones NO se pueden redimir los Créditos?',
     ayuda: 'Opcional. Marca las que queden por fuera. Las campañas publicadas excluyen Rappi Travel, SOAT, Cajero ATM y Rappi Favor.',
     porQue: 'El documento dice dónde se puede gastar el saldo. Una sección que no esté excluida aquí queda habilitada, y después no se puede cerrar.',
+    opcional: true,
+    multiple: true,
     placeholders: ['TEXTO_LUGAR_REDENCION'],
     opciones: [
       { valor: 'travel', etiqueta: 'Rappi Travel', nota: 'Vuelos, hoteles, autos y paquetes.' },
@@ -192,6 +196,10 @@ var PREGUNTAS = {
         ayuda: 'El nombre del socio como aparece en la app. Por ejemplo: Petz, Drogasmil, Raia.',
         porQue: 'El documento nombra al Parceiro en el párrafo de apertura y en la viñeta del beneficio.',
         ejemplo: 'Petz',
+        // Los placeholders de la variante son los del modelo brasileno. Sin
+        // ellos, "Asi queda en tu T&C" mostraba el valor colombiano (el tope en
+        // Creditos, el minimo en espanol) que el documento de Brasil no usa.
+        placeholders: ['PARCEIRO'],
         errores: { vacio: 'Escribe el parceiro donde aplica la campaña.' },
       },
     },
@@ -338,6 +346,7 @@ var PREGUNTAS = {
         pregunta: '¿Qué porcentaje de descuento das?',
         ayuda: 'El documento lo escribe como "até X%", así que es el descuento máximo.',
         porQue: 'Sale escrito en letras y en cifra dentro del documento, como lo exige el modelo aprobado.',
+        placeholders: ['TEXTO_BENEFICIO_APERTURA', 'TEXTO_TOPE_BENEFICIO'],
       },
       cashback_travel: {
         pregunta: '¿Qué porcentaje de la orden devuelves?',
@@ -377,6 +386,9 @@ var PREGUNTAS = {
         pregunta: '¿Cuál es el tope del beneficio, en reales?',
         ayuda: 'Lo máximo que la campaña cubre en un pedido. Si lo dejas en blanco, el documento no lleva tope.',
         porQue: 'Sin tope escrito, la campaña no tiene techo y el presupuesto se puede ir en pocos pedidos.',
+        // En Brasil el tope no es obligatorio, y lo opcional se ve opcional.
+        opcional: true,
+        placeholders: ['TEXTO_TOPE_BENEFICIO'],
       },
       cashback_travel: {
         pregunta: '¿Qué es lo máximo que recibe por orden?',
@@ -437,6 +449,7 @@ var PREGUNTAS = {
     errores: {
       vacio: 'Dinos cuántas veces puede ganar la misma persona.',
       cuantas: 'Escribe cuántos pedidos con beneficio puede hacer una persona.',
+      rango: 'Tiene que ser al menos un pedido.',
     },
   }),
 
@@ -469,6 +482,7 @@ var PREGUNTAS = {
         pregunta: '¿Hay un mínimo de compra, en reales?',
         ayuda: 'Opcional. De los cuatro documentos aprobados, tres lo llevan y el de taxa de serviço e frete grátis no.',
         porQue: 'El mínimo aparece dos veces en el documento: en el párrafo de apertura y en la viñeta del beneficio.',
+        placeholders: ['TEXTO_BENEFICIO_REGRA'],
       },
       cashback_travel: { paso: 'condiciones_travel', placeholders: ['TEXTO_CONDICIONES_TRAVEL'] },
       descuento_travel: { paso: 'condiciones_travel', placeholders: ['TEXTO_CONDICIONES_TRAVEL'] },
@@ -1382,7 +1396,7 @@ var NOMBRE_DEL_HUECO = {
   DOMICILIO_LEGAL: 'el domicilio de la empresa',
   PAIS_LEGAL: 'el país',
   TEXTO_MINIMO_APERTURA: 'el mínimo de compra',
-  TEXTO_BENEFICIO_APERTURA: 'qué recibe el usuario',
+  TEXTO_BENEFICIO_APERTURA: 'qué recibe el usuario, con su porcentaje si es desconto',
   TEXTO_BENEFICIO_REGRA: 'la regla del beneficio',
   TEXTO_TOPE_BENEFICIO: 'el tope del beneficio',
   PARCEIRO: 'el parceiro',

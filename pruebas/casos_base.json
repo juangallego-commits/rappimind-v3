@@ -1202,6 +1202,179 @@
           "metodoPago"
         ]
       }
+    },
+    {
+      "id": "BR01",
+      "descripcion": "Brasil, Desconto % OFF, como el T&C aprobado de Petz",
+      "fecha_referencia": "2026-09-17",
+      "usuario_en_equipo": true,
+      "entrada": {
+        "pais": "BR",
+        "negocio": "rappi",
+        "tipo": "promocao_br",
+        "fechaInicio": "2026-10-01",
+        "horaInicio": "00:01",
+        "fechaFin": "2026-10-31",
+        "horaFin": "23:59",
+        "metodosPagoBr": [
+          "dinheiro",
+          "paypal",
+          "rappipay",
+          "visa",
+          "mastercard"
+        ],
+        "declaracion": true,
+        "tienda": "Petz",
+        "beneficioBr": "desconto",
+        "porcentaje": 10,
+        "tope": 60,
+        "compraMinima": 300,
+        "maxPedidos": 1
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "receberão até dez por cento (10%) de desconto no pedido",
+          "limitado ao valor de R$60,00 (sessenta reais)",
+          "com valor acima de R$300,00 (trezentos reais)",
+          "há o limite de um (1) pedido por usuário"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          "..",
+          "()",
+          "undefined",
+          "NaN"
+        ]
+      }
+    },
+    {
+      "id": "BR02",
+      "descripcion": "Brasil, Frete Grátis con tope, como el T&C aprobado de Drogasmil",
+      "fecha_referencia": "2026-09-17",
+      "usuario_en_equipo": true,
+      "entrada": {
+        "pais": "BR",
+        "negocio": "rappi",
+        "tipo": "promocao_br",
+        "fechaInicio": "2026-10-01",
+        "horaInicio": "00:01",
+        "fechaFin": "2026-10-31",
+        "horaFin": "23:59",
+        "metodosPagoBr": [
+          "dinheiro",
+          "paypal",
+          "rappipay",
+          "visa",
+          "mastercard"
+        ],
+        "declaracion": true,
+        "tienda": "Drogasmil",
+        "beneficioBr": "frete_gratis",
+        "tope": 20,
+        "compraMinima": 120,
+        "maxPedidos": 2
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "frete grátis",
+          "R$20,00 (vinte reais)",
+          "há o limite de dois (2) pedidos por usuário"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          "..",
+          "()",
+          "undefined",
+          "NaN"
+        ]
+      }
+    },
+    {
+      "id": "BR03",
+      "descripcion": "Brasil, Taxa de serviço grátis con mínimo, como el T&C aprobado de Raia",
+      "fecha_referencia": "2026-09-17",
+      "usuario_en_equipo": true,
+      "entrada": {
+        "pais": "BR",
+        "negocio": "rappi",
+        "tipo": "promocao_br",
+        "fechaInicio": "2026-10-01",
+        "horaInicio": "00:01",
+        "fechaFin": "2026-10-31",
+        "horaFin": "23:59",
+        "metodosPagoBr": [
+          "dinheiro",
+          "paypal",
+          "rappipay",
+          "visa",
+          "mastercard"
+        ],
+        "declaracion": true,
+        "tienda": "Raia",
+        "beneficioBr": "taxa_servico",
+        "compraMinima": 80,
+        "maxPedidos": 1
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "taxa de serviço",
+          "R$80,00 (oitenta reais)"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          "..",
+          "()",
+          "undefined",
+          "NaN"
+        ]
+      }
+    },
+    {
+      "id": "BR04",
+      "descripcion": "Brasil, Taxa de serviço e frete grátis sin mínimo ni límite, como el T&C aprobado de Ri Happy",
+      "fecha_referencia": "2026-09-17",
+      "usuario_en_equipo": true,
+      "entrada": {
+        "pais": "BR",
+        "negocio": "rappi",
+        "tipo": "promocao_br",
+        "fechaInicio": "2026-10-01",
+        "horaInicio": "00:01",
+        "fechaFin": "2026-10-31",
+        "horaFin": "23:59",
+        "metodosPagoBr": [
+          "dinheiro",
+          "paypal",
+          "rappipay",
+          "visa",
+          "mastercard"
+        ],
+        "declaracion": true,
+        "tienda": "Ri Happy",
+        "beneficioBr": "taxa_e_frete",
+        "sinLimite": true
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "taxa de serviço e o frete grátis",
+          "não há limite de pedidos por usuário"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          "..",
+          "()",
+          "undefined",
+          "NaN"
+        ]
+      }
     }
   ]
 }

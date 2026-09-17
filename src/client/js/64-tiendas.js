@@ -239,7 +239,7 @@ function dibujar(alCambiar) {
 
   bloque.appendChild(bloqueDePegar(alCambiar));
   bloque.appendChild(crear('details', { clase: 'por-que' }, [
-    crear('summary', { texto: '¿Por qué te preguntamos esto?' }),
+    crear('summary', { texto: estado.T('¿Por qué te preguntamos esto?') }),
     crear('p', { texto: pregunta.porQue }),
   ]));
 

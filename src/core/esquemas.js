@@ -120,6 +120,7 @@ var CAMPOS_CREDITOS = [
     id: 'maxPedidos',
     etiqueta: 'Máximo de pedidos con beneficio',
     tipo: 'numero',
+    minimo: 1,
     paso: 'beneficio',
     visible: function (entrada) { return !entrada.sinLimite; },
     obligatorio: function (entrada) { return !entrada.sinLimite; },
@@ -843,10 +844,14 @@ var CAMPOS_BRASIL = [
       { valor: 'taxa_e_frete', etiqueta: 'Taxa de serviço e frete grátis' },
     ],
   },
+  // Los rangos no son adorno: sin ellos Brasil aceptaba 500% de desconto, un
+  // tope de R$0,00 y "o limite de zero (0) pedidos", y los imprimia.
   {
     id: 'porcentaje',
     etiqueta: 'Porcentaje de descuento',
     tipo: 'numero',
+    minimo: 1,
+    maximo: 100,
     paso: 'beneficio',
     visible: esDescontoBr,
     obligatorio: esDescontoBr,
@@ -855,13 +860,14 @@ var CAMPOS_BRASIL = [
     id: 'tope',
     etiqueta: 'Tope del beneficio',
     tipo: 'numero',
+    minimo: 1,
     paso: 'beneficio',
     // La taxa de servico no lleva tope en ninguno de los documentos aprobados.
     visible: llevaTopeBr,
     obligatorio: false,
   },
-  { id: 'compraMinima', etiqueta: 'Mínimo de compra', tipo: 'numero', paso: 'participantes', obligatorio: false },
-  { id: 'maxPedidos', etiqueta: 'Máximo de pedidos por usuario', tipo: 'numero', paso: 'beneficio', obligatorio: false },
+  { id: 'compraMinima', etiqueta: 'Mínimo de compra', tipo: 'numero', minimo: 1, paso: 'participantes', obligatorio: false },
+  { id: 'maxPedidos', etiqueta: 'Máximo de pedidos por usuario', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: false },
   { id: 'sinLimite', etiqueta: 'Sin límite de pedidos', tipo: 'casilla', paso: 'beneficio', obligatorio: false },
   { id: 'metodosPagoBr', etiqueta: 'Medios de pago', tipo: 'casillas', paso: 'beneficio', obligatorio: true },
 
@@ -910,7 +916,7 @@ var CAMPOS_CASHBACK_ETA = [
   { id: 'porcentaje', etiqueta: 'Porcentaje que se devuelve', tipo: 'numero', paso: 'beneficio', obligatorio: true },
   { id: 'tope', etiqueta: 'Tope por orden', tipo: 'numero', paso: 'beneficio', obligatorio: true },
   { id: 'presupuesto', etiqueta: 'Presupuesto total', tipo: 'numero', paso: 'beneficio', obligatorio: true },
-  { id: 'maxPedidos', etiqueta: 'Máximo de órdenes por persona', tipo: 'numero', paso: 'beneficio', obligatorio: false },
+  { id: 'maxPedidos', etiqueta: 'Máximo de órdenes por persona', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: false },
   { id: 'sinLimite', etiqueta: 'Sin límite de órdenes', tipo: 'casilla', paso: 'beneficio', obligatorio: false },
 
   {
@@ -1040,6 +1046,10 @@ var ESQUEMAS = {
     campos: CAMPOS_BRASIL,
     filtroDeEntrada: [],
     esDeBrasil: true,
+    // El documento va en portugues. Si la fila del pais no lo dice, no se
+    // genera: sin esto salia un T&C en portugues con las fechas y los montos
+    // en espanol, sin ningun error.
+    idioma: 'pt',
   },
   cashback_day: {
     id: 'cashback_day',

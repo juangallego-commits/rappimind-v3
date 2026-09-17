@@ -41,6 +41,29 @@ function hayTycGenericos(codigoPais) {
   return tycGenericosDelPais(codigoPais).length > 0;
 }
 
+/**
+ * Los T&C generales que hoy se pueden usar: los vigentes.
+ *
+ * Catorce de los quince vencen el 31 de diciembre de 2026 y el otro el 31 de
+ * octubre. Si nadie actualiza la lista, el 1 de enero de 2027 la tarjeta
+ * seguia diciendo "Buena noticia: Legal ya publico los T&C" y detras habia
+ * quince botones grises que no respondian al clic. Con esto, quien dibuja la
+ * pantalla puede decir la verdad: que vencieron y que hay que escribirle a
+ * Legal.
+ */
+function tycGenericosUsables(codigoPais, hoyIso) {
+  var lista = tycGenericosDelPais(codigoPais);
+  var usables = [];
+  for (var i = 0; i < lista.length; i++) {
+    if (estadoDeTycGenerico(lista[i], hoyIso).usable) usables.push(lista[i]);
+  }
+  return usables;
+}
+
+function hayTycGenericosUsables(codigoPais, hoyIso) {
+  return tycGenericosUsables(codigoPais, hoyIso).length > 0;
+}
+
 function tycGenericoPorId(codigoPais, id) {
   var lista = tycGenericosDelPais(codigoPais);
   for (var i = 0; i < lista.length; i++) {
@@ -132,6 +155,8 @@ if (typeof module !== 'undefined') {
   module.exports = {
     tycGenericosDelPais: tycGenericosDelPais,
     hayTycGenericos: hayTycGenericos,
+    tycGenericosUsables: tycGenericosUsables,
+    hayTycGenericosUsables: hayTycGenericosUsables,
     tycGenericoPorId: tycGenericoPorId,
     estadoDeTycGenerico: estadoDeTycGenerico,
     vigenciaEnPalabras: vigenciaEnPalabras,

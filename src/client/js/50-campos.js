@@ -92,7 +92,7 @@ function asiQueda(campoId, pais) {
   if (frases.length === 0) return null;
 
   return crear('div', { clase: 'asi-queda' }, [
-    crear('span', { clase: 'etiqueta', texto: 'Así queda en tu T&C:' }),
+    crear('span', { clase: 'etiqueta', texto: RM.estado.T('Así queda en tu T&C:') }),
     crear('span', { clase: 'frase', texto: frases.join(' ') }),
   ]);
 }
@@ -266,7 +266,7 @@ function dibujarPregunta(campo, config) {
   // Una pregunta opcional tiene que verse opcional. Sin esta marca el comercial
   // se queda atascado buscando que contestar.
   if (pregunta.opcional) {
-    titulo.appendChild(crear('span', { clase: 'marca-opcional', texto: 'Opcional' }));
+    titulo.appendChild(crear('span', { clase: 'marca-opcional', texto: RM.estado.T('Opcional') }));
   }
   bloque.appendChild(titulo);
   bloque.appendChild(crear('p', { clase: 'pregunta-ayuda' }, [conGlosario(pregunta.ayuda)]));

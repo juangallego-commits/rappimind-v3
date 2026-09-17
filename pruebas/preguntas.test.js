@@ -290,3 +290,52 @@ test('el paso de cada pregunta coincide con el del esquema', () => {
     }
   }
 });
+
+test('toda pregunta de una sola opción avanza sola', () => {
+  // Elegir una de varias tarjetas es una respuesta inequívoca. "O que o usuário
+  // ganha?" no avanzaba y, después de tres preguntas que sí lo hacían, parecía
+  // que el clic no había registrado.
+  const excepciones = ['maxPedidos']; // se maneja aparte, con su número.
+  for (const id of Object.keys(PREGUNTAS)) {
+    const pregunta = PREGUNTAS[id];
+    if (!pregunta.opciones || pregunta.multiple || excepciones.indexOf(id) !== -1) continue;
+    assert.ok(pregunta.avanzaSola, id + ' tiene opciones excluyentes y no avanza sola');
+  }
+});
+
+test('lo que no es obligatorio en algún esquema se ve como opcional', () => {
+  // Una pregunta que parece obligatoria y no lo es hace inventar datos. El tope
+  // de Brasil no era obligatorio y no llevaba la marca "Opcional"; el mínimo de
+  // compra, en la misma situación, sí.
+  const excepciones = ['maxPedidos', 'sinLimite']; // "¿Cuántas veces?" reúne los dos.
+  for (const tipoId of Object.keys(ESQUEMAS)) {
+    for (const campo of ESQUEMAS[tipoId].campos) {
+      if (campo.obligatorio !== false || campo.tipo === 'casilla' || excepciones.indexOf(campo.id) !== -1) continue;
+      const pregunta = preguntaDe(campo.id, tipoId);
+      if (!pregunta.pregunta) continue;
+      assert.ok(pregunta.opcional, campo.id + ' (' + tipoId + ') no es obligatorio y no se muestra como opcional');
+    }
+  }
+});
+
+test('en Brasil, "Así queda en tu T&C" muestra lo que el documento brasileño lleva', () => {
+  // "Así queda en tu T&C" muestra el valor de los placeholders de la pregunta.
+  // Las variantes de Brasil heredaban los de Colombia (TOPE, TEXTO_MINIMO_COMPRA),
+  // así que el KAM leía "sessenta (60) Créditos" en una campaña que no da
+  // Créditos, y una cláusula entera en español que su documento no lleva.
+  const modelos = cargarModelos();
+  let texto = modelos.modelos[ESQUEMAS.promocao_br.modelo];
+  // Una pasada de inclusiones basta: los bloques no incluyen otros bloques.
+  texto = texto.replace(/\[\[INCLUIR:([\w-]+)\]\]/g, (todo, bloque) => modelos.bloques[bloque] || '');
+
+  for (const campo of ESQUEMAS.promocao_br.campos) {
+    const pregunta = preguntaDe(campo.id, 'promocao_br');
+    if (!pregunta || !pregunta.placeholders || pregunta.placeholders.length === 0) continue;
+    // País, negocio y tipo no llenan un hueco del documento: su "Así queda" es el país.
+    if (['pais', 'negocio', 'tipo'].indexOf(campo.id) !== -1) continue;
+    for (const placeholder of pregunta.placeholders) {
+      assert.ok(texto.indexOf('{{' + placeholder + '}}') !== -1,
+        campo.id + ' (promocao_br) promete {{' + placeholder + '}}, que el modelo brasileño no usa');
+    }
+  }
+});

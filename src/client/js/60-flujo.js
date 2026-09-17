@@ -80,6 +80,8 @@ function erroresPorCampo() {
   var revision = validarSolicitud(estado.entrada(), pais, {
     fechaReferencia: E.configuracion.hoy || RM.util.hoyEnElNavegador(),
     usuarioEnEquipo: puedeVerPiloto(E.configuracion.rol),
+    // Los mensajes salen en el idioma de la interfaz; el documento no cambia.
+    idioma: estado.idiomaInterfaz(),
   });
 
   var porCampo = {};
@@ -130,7 +132,7 @@ function refrescarDocumento() {
       ? estado.T('Completo')
       : (resultado.huecos.length === 1
         ? estado.T('Falta 1 dato')
-        : estado.T('Faltan varios datos').replace('varios', resultado.huecos.length));
+        : estado.T('Faltan {n} datos').replace('{n}', resultado.huecos.length));
   }
   E.ultimoTextoVistaPrevia = resultado.texto;
 }
@@ -221,7 +223,7 @@ function pantallaFiltro(raiz) {
   function revisar() {
     for (var i = 0; i < preguntas.length; i++) {
       if (respuestas[preguntas[i].id] === true) {
-        E.motivoDeLegal = preguntas[i].razon;
+        E.motivoDeLegal = estado.T(preguntas[i].razon);
         RM.app.ir('legal');
         return;
       }
@@ -238,7 +240,7 @@ function pantallaFiltro(raiz) {
       var bloque = crear('div', { clase: 'pregunta' }, [
         crear('h2', { clase: 'pregunta-titulo', texto: estado.T(pregunta.texto) }),
       ]);
-      var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': pregunta.texto });
+      var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': estado.T(pregunta.texto) });
       [['no', 'No', false], ['si', 'Sí', true]].forEach(function (par) {
         grupo.appendChild(crear('button', {
           clase: 'opcion', type: 'button', texto: estado.T(par[1]),
@@ -287,7 +289,7 @@ function pantallaFiltroTravel(raiz) {
   function revisar() {
     for (var i = 0; i < FILTRO_DE_TRAVEL.length; i++) {
       if (respuestas[FILTRO_DE_TRAVEL[i].id] === true) {
-        E.motivoDeLegal = FILTRO_DE_TRAVEL[i].razon;
+        E.motivoDeLegal = estado.T(FILTRO_DE_TRAVEL[i].razon);
         RM.app.ir('legal');
         return;
       }
@@ -310,7 +312,7 @@ function pantallaFiltroTravel(raiz) {
       var bloque = crear('div', { clase: 'pregunta' }, [
         crear('h2', { clase: 'pregunta-titulo', texto: estado.T(pregunta.texto) }),
       ]);
-      var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': pregunta.texto });
+      var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': estado.T(pregunta.texto) });
       [['No', false], ['Sí', true]].forEach(function (par) {
         grupo.appendChild(crear('button', {
           clase: 'opcion', type: 'button', texto: estado.T(par[0]),
@@ -354,7 +356,7 @@ function pantallaLegal(raiz) {
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
     crear('h1', { texto: estado.T('Esta campaña la redacta Legal') }),
     crear('div', { clase: 'aviso' }, [
-      crear('p', { texto: E.motivoDeLegal || 'Tu campaña necesita revisión legal antes de publicarse.' }),
+      crear('p', { texto: E.motivoDeLegal || estado.T('Tu campaña necesita revisión legal antes de publicarse.') }),
     ]),
     crear('p', { texto: estado.T('No es un problema ni una negativa: es un caso que necesita que un abogado lo mire. Llena el formulario y el equipo legal te responde.') }),
     crear('div', { clase: 'fila-botones' }, [

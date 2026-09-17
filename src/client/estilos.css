@@ -243,7 +243,7 @@ button { font-size: 15px; cursor: pointer; }
 .campo { display: block; margin: 0 0 var(--e3); }
 .campo-caja { position: relative; display: flex; align-items: center; }
 
-input[type='text'], input[type='number'], input[type='date'], input[type='time'], select, textarea {
+input[type='text'], input[type='number'], input[type='date'], input[type='time'], input[type='search'], select, textarea {
   width: 100%;
   font-family: var(--cuerpo); font-size: 16px; color: var(--tinta);
   background: var(--papel);
@@ -293,10 +293,23 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 .opcion-nota { display: block; color: var(--gris-lapiz); font-size: 13px; margin-top: 2px; }
 .opcion[disabled] .opcion-nota { color: var(--rojo-alerta); }
 
+/* El buscador del historial. Sin la regla de arriba para type=search, el
+   campo salia con el ancho del navegador y cortaba su propio texto de ayuda:
+   "Busca por nombre, tienda o". */
+.buscador { max-width: 480px; }
+
 /* El atajo a los T&C que Legal ya publico. Va junto a los tipos de campana,
    pero separado por una linea: no genera documento como los demas. */
 .atajo-tyc { margin-top: var(--e4); padding-top: var(--e4); border-top: 1px solid var(--borde); }
 .atajo-tyc .pregunta-ayuda { margin-bottom: var(--e2); }
+
+/* Un T&C general vencido se queda a la vista, con su razon en rojo y el resto
+   en gris. No va con disabled: un boton deshabilitado no recibe foco y quien
+   navega con teclado o lector de pantalla pasaria de largo sin enterarse de
+   que existe ni de que vencio. */
+.opcion-vencida { opacity: 0.7; cursor: not-allowed; }
+.opcion-vencida .opcion-nota { color: var(--gris-lapiz); }
+.opcion-vencida .opcion-nota-vencido { color: var(--rojo-alerta); }
 
 .casillas { display: grid; gap: var(--e2); border: 0; padding: 0; margin: 0; }
 .casilla { display: flex; gap: var(--e3); align-items: flex-start; cursor: pointer; padding: var(--e2) 0; }

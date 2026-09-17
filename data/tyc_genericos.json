@@ -41,6 +41,12 @@
         "descuento_en_valor_pro"
       ],
       "que": "En el Excel los nombres terminan con un espacio de más. Se quitó el espacio, el texto no se tocó."
+    },
+    {
+      "ids": [
+        "codigo_descuento_eventos_externos"
+      ],
+      "que": "En el Excel el nombre y la descripción traen un doble espacio (\"20%  para\"). Se dejó un solo espacio, con el mismo criterio de las filas 10 y 11: es espacio en blanco, no texto. La descripción repite el nombre; la pantalla no la muestra dos veces."
     }
   ],
   "paises": {
@@ -190,9 +196,9 @@
       },
       {
         "id": "codigo_descuento_eventos_externos",
-        "nombre": "Codigo de descuento para eventos externos (ej. codigo de 20%  para boletas al vino al parque)",
+        "nombre": "Codigo de descuento para eventos externos (ej. codigo de 20% para boletas al vino al parque)",
         "beneficio": "Descuento en producto o servicio que ofrece un externo por medio de un canal de venta independiente",
-        "paraQue": "Codigo de descuento para eventos externos (ej. codigo de 20%  para boletas al vino al parque)",
+        "paraQue": "Codigo de descuento para eventos externos (ej. codigo de 20% para boletas al vino al parque)",
         "enlace": "https://promos.rappi.com/colombia/2026/9/7/trminos-y-condiciones-cupones-off",
         "vigenciaInicio": "2026-01-01",
         "vigenciaFin": "2026-12-31",

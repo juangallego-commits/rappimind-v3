@@ -17,6 +17,7 @@ const { cargarModelos } = require('../scripts/lib/modelos.js');
 const { paisDesdeFila } = require('../src/core/paises.js');
 const { esquemaDe } = require('../src/core/esquemas.js');
 const { nombreDeCampana } = require('../src/core/nombres.js');
+const { validarSolicitud } = require('../src/core/validaciones.js');
 const { rutaDesdeRaiz, leerJson } = require('../scripts/lib/archivos');
 
 const MODELOS = cargarModelos();
@@ -126,4 +127,61 @@ test('el documento no lleva tablas ni marcadores sin resolver', () => {
     assert.ok(texto.indexOf('{{') === -1 && texto.indexOf('[[') === -1, 'quedó un marcador sin resolver');
     assert.ok(texto.indexOf('|') === -1, 'el documento no puede llevar tablas');
   }
+});
+
+test('Brasil no acepta un porcentaje, un tope o un máximo de pedidos absurdos', () => {
+  // Sin rangos, el documento salía con "quinhentos por cento (500%)", "R$0,00
+  // (zero reais)" y "o limite de zero (0) pedidos", y era publicable.
+  const contexto = { fechaReferencia: '2026-09-17', usuarioEnEquipo: true };
+  function camposConError(extra) {
+    return validarSolicitud(campana(Object.assign({}, DESCONTO, extra)), BR, contexto).errores.map((e) => e.campo).sort();
+  }
+  assert.deepStrictEqual(camposConError({}), []);
+  assert.deepStrictEqual(camposConError({ porcentaje: 500 }), ['porcentaje']);
+  assert.deepStrictEqual(camposConError({ porcentaje: 0 }), ['porcentaje']);
+  assert.deepStrictEqual(camposConError({ tope: 0 }), ['tope']);
+  assert.deepStrictEqual(camposConError({ maxPedidos: 0 }), ['maxPedidos']);
+  assert.deepStrictEqual(camposConError({ compraMinima: 0 }), ['compraMinima']);
+});
+
+test('Brasil no genera si la fila del país no dice que el documento va en portugués', () => {
+  // Con la celda idioma vacía, el motor caía a español en silencio y salía
+  // "no período de 1 de octubre de 2026 às 12:01 a. m." sin ningún error.
+  const contexto = { fechaReferencia: '2026-09-17', usuarioEnEquipo: true };
+  const sinIdioma = Object.assign({}, BR, { idioma: '' });
+  const conOtro = Object.assign({}, BR, { idioma: 'PT-BR' });
+  for (const pais of [sinIdioma, conOtro]) {
+    const resultado = validarSolicitud(campana(DESCONTO), pais, contexto);
+    assert.strictEqual(resultado.valido, false);
+    assert.strictEqual(resultado.errores[0].campo, 'pais');
+    assert.ok(resultado.errores[0].mensaje.indexOf('columna idioma') !== -1, resultado.errores[0].mensaje);
+  }
+  assert.strictEqual(validarSolicitud(campana(DESCONTO), Object.assign({}, BR, { idioma: 'pt' }), contexto).valido, true);
+});
+
+test('un valor que no es un número queda como hueco, no como frase rota', () => {
+  // "o limite de  undefined (NaN) pedidos por usuário" salía en la vista previa
+  // si maxPedidos llegaba como texto por datos_json o por la API.
+  const resultado = renderizar('promocao_br', campana(Object.assign({}, DESCONTO, { maxPedidos: 'varias' })), BR, MODELOS);
+  assert.ok(resultado.texto.indexOf('undefined') === -1 && resultado.texto.indexOf('NaN') === -1, resultado.texto);
+  assert.ok(resultado.placeholdersVacios.indexOf('TEXTO_LIMITE_PEDIDOS') !== -1, JSON.stringify(resultado.placeholdersVacios));
+
+  // Y sin parceiro, la viñeta del beneficio es un hueco, no "do Parceiro , na plataforma".
+  const sinParceiro = renderizar('promocao_br', campana(Object.assign({}, DESCONTO, { tienda: '' })), BR, MODELOS);
+  assert.ok(sinParceiro.texto.indexOf('Parceiro ,') === -1, sinParceiro.texto);
+  assert.ok(sinParceiro.placeholdersVacios.indexOf('TEXTO_BENEFICIO_REGRA') !== -1);
+});
+
+test('un número negativo no tumba la vista previa', () => {
+  const { numeroEnLetrasPt } = require('../src/core/numeros_pt.js');
+  const { numeroEnLetras } = require('../src/core/numeros.js');
+  assert.strictEqual(numeroEnLetrasPt(-5), '');
+  assert.strictEqual(numeroEnLetras(-5), '');
+  assert.strictEqual(numeroEnLetrasPt(NaN), '');
+  // El motor no revienta (antes: RangeError, pantalla a medio pintar) y la
+  // validación es la que lo frena, con el mensaje escrito para el tope.
+  assert.doesNotThrow(() => renderizar('promocao_br', campana(Object.assign({}, DESCONTO, { tope: -5 })), BR, MODELOS));
+  const revision = validarSolicitud(campana(Object.assign({}, DESCONTO, { tope: -5 })), BR, { fechaReferencia: '2026-09-17', usuarioEnEquipo: true });
+  assert.deepStrictEqual(revision.errores.map((e) => e.campo), ['tope']);
+  assert.strictEqual(revision.errores[0].mensaje, 'El tope tiene que ser mayor que cero.');
 });

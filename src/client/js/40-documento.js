@@ -48,7 +48,7 @@ function dibujar(contenedor, texto, anterior) {
   if (!texto) {
     contenedor.appendChild(crear('p', {
       clase: 'hoja-vacia',
-      texto: 'Tu documento aparece aquí y se va llenando mientras respondes.',
+      texto: RM.estado.T('Tu documento aparece aquí y se va llenando mientras respondes.'),
     }));
     return null;
   }

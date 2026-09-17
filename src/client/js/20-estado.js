@@ -176,7 +176,10 @@ function T(texto) {
  * Toda pantalla que muestre el texto de una pregunta pasa por aqui.
  */
 function pregunta(campoId) {
-  return preguntaEnIdioma(preguntaDe(campoId, entrada().tipo), campoId, idiomaInterfaz());
+  // El tipo va dos veces a proposito: la variante en espanol y la variante en
+  // el otro idioma se eligen por separado. Sin el segundo, la interfaz en
+  // portugues preguntaba "em reais" para un tope en pesos.
+  return preguntaEnIdioma(preguntaDe(campoId, entrada().tipo), campoId, idiomaInterfaz(), entrada().tipo);
 }
 
 RM.estado = {

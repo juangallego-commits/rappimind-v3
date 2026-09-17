@@ -34,10 +34,15 @@ function salidaEsperada(caso) {
   return normalizarParaComparar(leerTexto(rutaDesdeRaiz('pruebas', 'salidas_esperadas', caso.id + '.txt')));
 }
 
-test('hay veinticinco casos, doce que generan y trece que fallan', () => {
-  assert.strictEqual(casos.length, 25);
-  assert.strictEqual(generan.length, 12);
+test('hay veintinueve casos, dieciséis que generan y trece que fallan', () => {
+  assert.strictEqual(casos.length, 29);
+  assert.strictEqual(generan.length, 16);
   assert.strictEqual(fallan.length, 13);
+
+  // Los cuatro de Brasil, uno por forma del beneficio: el texto aprobado por
+  // Legal Brasil queda protegido carácter por carácter, como el de Colombia.
+  const deBrasil = casos.filter((caso) => String(caso.id).indexOf('BR') === 0);
+  assert.strictEqual(deBrasil.length, 4);
 
   // Los catorce de Rappi Travel: siete que generan y siete que fallan.
   const deTravel = casos.filter((caso) => String(caso.id).indexOf('TV') === 0);

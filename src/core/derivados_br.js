@@ -84,6 +84,9 @@ function textoBeneficioAperturaBr(entrada) {
 function textoBeneficioRegraBr(entrada, pais) {
   var forma = formaDeBeneficioBr(entrada.beneficioBr);
   if (!forma) return '';
+  // Sin parceiro la vineta quedaba "nas lojas do Parceiro , na plataforma":
+  // mejor un hueco que una frase rota.
+  if (!String(entrada.tienda || '').trim()) return '';
 
   var nombre = forma.valor === 'desconto' ? 'o desconto'
     : (forma.valor === 'frete_gratis' ? 'o frete grátis'
@@ -127,6 +130,9 @@ function textoLimitePedidosBr(entrada) {
   if (!tieneValor(entrada.maxPedidos)) return '';
 
   var cantidad = Number(entrada.maxPedidos);
+  // Como su par en espanol: un valor que no es un numero queda como hueco, no
+  // como "o limite de  undefined (NaN) pedidos".
+  if (!isFinite(cantidad) || cantidad < 1) return '';
   var sustantivo = cantidad === 1 ? 'pedido' : 'pedidos';
   return 'Esclarece-se que há o limite de ' + letrasYCifra(cantidad) + ' ' + sustantivo +
     ' por usuário durante o período da promoção';

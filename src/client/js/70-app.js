@@ -150,6 +150,9 @@ function dibujar() {
   var raiz = RM.util.porId('app');
   vaciar(raiz);
   RM.campos.ocultarGlosario();
+  // El lang del documento sigue al idioma de la interfaz: sin esto, un lector
+  // de pantalla leia el portugues con las reglas del espanol.
+  document.documentElement.lang = estado.idiomaInterfaz();
 
   raiz.appendChild(barraSuperior());
 

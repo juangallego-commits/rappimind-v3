@@ -29,10 +29,37 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var travelDisponible = require('./paises.js').travelDisponible;
 
   var preguntaDe = require('./preguntas.js').preguntaDe;
+  var preguntaEnIdioma = require('./preguntas_pt.js').preguntaEnIdioma;
 }
 
 function error(campo, mensaje) {
   return { campo: campo, mensaje: mensaje };
+}
+
+/**
+ * El mensaje escrito para una pregunta, en el idioma de la interfaz.
+ *
+ * Cada pregunta trae sus mensajes en `errores` (vacio, pasado, orden, cero...),
+ * escritos para el comercial. Durante mucho tiempo solo se uso errores.vacio y
+ * el resto se armaba aqui a mano, generico y en espanol: un KAM de Brasil con
+ * la interfaz en portugues leia "La campaña no puede empezar en una fecha que
+ * ya pasó" en medio de una pantalla en portugues, y un comercial de Colombia
+ * leia "Tope por pedido debe ser al menos 1" en vez de la frase que alguien
+ * escribio para eso. El generico queda solo para cuando la pregunta no tiene
+ * ese mensaje.
+ *
+ * `claves` puede ser una sola o una lista en orden de preferencia.
+ */
+function mensajeDe(campoId, tipo, claves, idioma, generico) {
+  var pregunta = preguntaDe(campoId, tipo);
+  if (pregunta && typeof preguntaEnIdioma === 'function') {
+    pregunta = preguntaEnIdioma(pregunta, campoId, idioma, tipo);
+  }
+  var lista = Object.prototype.toString.call(claves) === '[object Array]' ? claves : [claves];
+  for (var i = 0; i < lista.length; i++) {
+    if (pregunta && pregunta.errores && pregunta.errores[lista[i]]) return pregunta.errores[lista[i]];
+  }
+  return generico;
 }
 
 function estaVacio(valor) {
@@ -70,7 +97,7 @@ function validarTipo(tipo, pais) {
 }
 
 /** Campos obligatorios visibles que quedaron vacios. */
-function validarObligatorios(entrada, esquema) {
+function validarObligatorios(entrada, esquema, idioma) {
   var errores = [];
   var visibles = camposVisibles(esquema.id, entrada);
 
@@ -85,18 +112,15 @@ function validarObligatorios(entrada, esquema) {
       // pregunta tiene uno en errores.vacio, y estuvieron sin usarse: el
       // comercial leia "Falta minutos del eta." en vez de "Escribe en cuantos
       // minutos prometes la entrega.".
-      var pregunta = preguntaDe(campo.id, esquema.id);
-      var mensaje = pregunta && pregunta.errores && pregunta.errores.vacio
-        ? pregunta.errores.vacio
-        : 'Falta ' + campo.etiqueta.toLowerCase() + '.';
-      errores.push(error(campo.id, mensaje));
+      errores.push(error(campo.id, mensajeDe(campo.id, esquema.id, 'vacio', idioma,
+        'Falta ' + campo.etiqueta.toLowerCase() + '.')));
     }
   }
   return errores;
 }
 
 /** Rangos, formatos de fecha y hora, y largo de los textos. */
-function validarFormatos(entrada, esquema) {
+function validarFormatos(entrada, esquema, idioma) {
   var errores = [];
   var visibles = camposVisibles(esquema.id, entrada);
 
@@ -110,35 +134,42 @@ function validarFormatos(entrada, esquema) {
       if (isNaN(numero)) {
         errores.push(error(campo.id, campo.etiqueta + ' debe ser un número.'));
       } else if (campo.minimo !== undefined && numero < campo.minimo) {
-        errores.push(error(campo.id, campo.etiqueta + ' debe ser al menos ' + campo.minimo + '.'));
+        // Un minimo de uno es "mayor que cero": si la pregunta escribio ese
+        // mensaje (errores.cero), se prefiere al de rango.
+        errores.push(error(campo.id, mensajeDe(campo.id, esquema.id, campo.minimo === 1 ? ['rango', 'cero'] : ['rango'], idioma,
+          campo.etiqueta + ' debe ser al menos ' + campo.minimo + '.')));
       } else if (campo.maximo !== undefined && numero > campo.maximo) {
-        errores.push(error(campo.id, campo.etiqueta + ' no puede pasar de ' + campo.maximo + '.'));
+        errores.push(error(campo.id, mensajeDe(campo.id, esquema.id, 'rango', idioma,
+          campo.etiqueta + ' no puede pasar de ' + campo.maximo + '.')));
       }
     } else if (campo.tipo === 'fecha' && !partesDeFecha(valor)) {
       errores.push(error(campo.id, campo.etiqueta + ' no es una fecha válida.'));
     } else if (campo.tipo === 'hora' && !partesDeHora(valor)) {
       errores.push(error(campo.id, campo.etiqueta + ' no es una hora válida.'));
     } else if (campo.tipo === 'texto' && campo.maximo !== undefined && String(valor).length > campo.maximo) {
-      errores.push(error(campo.id, campo.etiqueta + ' no puede pasar de ' + campo.maximo + ' caracteres.'));
+      errores.push(error(campo.id, mensajeDe(campo.id, esquema.id, 'largo', idioma,
+        campo.etiqueta + ' no puede pasar de ' + campo.maximo + ' caracteres.')));
     }
   }
   return errores;
 }
 
 /** Vigencia: fin posterior al inicio y nada anterior a la fecha de referencia. */
-function validarVigencia(entrada, fechaReferencia) {
+function validarVigencia(entrada, fechaReferencia, tipo, idioma) {
   var errores = [];
 
   var inicio = comoNumeroFechaHora(entrada.fechaInicio, entrada.horaInicio);
   var fin = comoNumeroFechaHora(entrada.fechaFin, entrada.horaFin);
   if (inicio !== null && fin !== null && fin <= inicio) {
-    errores.push(error('fechaFin', 'La campaña no puede terminar antes de empezar. Revisa la fecha y la hora de fin.'));
+    errores.push(error('fechaFin', mensajeDe('fechaFin', tipo, 'orden', idioma,
+      'La campaña no puede terminar antes de empezar. Revisa la fecha y la hora de fin.')));
   }
 
   var hoy = comoNumeroFecha(fechaReferencia);
   var dia = comoNumeroFecha(entrada.fechaInicio);
   if (hoy !== null && dia !== null && dia < hoy) {
-    errores.push(error('fechaInicio', 'La campaña no puede empezar en una fecha que ya pasó.'));
+    errores.push(error('fechaInicio', mensajeDe('fechaInicio', tipo, 'pasado', idioma,
+      'La campaña no puede empezar en una fecha que ya pasó.')));
   }
   return errores;
 }
@@ -186,26 +217,46 @@ function validarAnotacionesDelPais(pais) {
   return errores;
 }
 
+/**
+ * Un modelo escrito en otro idioma exige que el pais lo diga.
+ *
+ * El idioma del documento sale de la columna idioma de la pestaña Paises, que
+ * se edita a mano y manda sobre la semilla. Con esa celda vacia, el motor caia
+ * a espanol en silencio y el T&C de Brasil salia con "1 de octubre de 2026 às
+ * 12:01 a. m." y "diez por ciento (10%)" en medio del portugues, sin un solo
+ * error. Regla 2 de CLAUDE.md: si falta un dato, no se genera.
+ */
+function validarIdiomaDelPais(esquema, pais) {
+  if (!esquema || !esquema.idioma) return null;
+  var idiomaDelPais = String((pais && pais.idioma) || '').trim().toLowerCase();
+  if (idiomaDelPais === esquema.idioma) return null;
+  return error('pais', 'La configuración de ' + (pais.nombre || pais.codigo) +
+    ' no dice que el documento va en ' + (esquema.idioma === 'pt' ? 'portugués' : esquema.idioma) +
+    ': la columna idioma de la pestaña Paises tiene que decir "' + esquema.idioma +
+    '". Sin eso las fechas y los montos saldrían en español.');
+}
+
 /** Cruces propios del Cashback. */
-function validarCashback(entrada) {
+function validarCashback(entrada, tipo, idioma) {
   var errores = [];
   var tope = Number(entrada.tope);
   var presupuesto = Number(entrada.presupuesto);
 
   if (entrada.tope !== null && entrada.tope !== undefined && entrada.tope !== '' && tope <= 0) {
-    errores.push(error('tope', 'El tope por pedido debe ser mayor que cero.'));
+    errores.push(error('tope', mensajeDe('tope', tipo, 'cero', idioma, 'El tope por pedido debe ser mayor que cero.')));
   }
   if (entrada.presupuesto !== null && entrada.presupuesto !== undefined && entrada.presupuesto !== '' && presupuesto <= 0) {
-    errores.push(error('presupuesto', 'El presupuesto debe ser mayor que cero.'));
+    errores.push(error('presupuesto', mensajeDe('presupuesto', tipo, 'cero', idioma, 'El presupuesto debe ser mayor que cero.')));
   }
   if (tope > 0 && presupuesto > 0 && tope > presupuesto) {
-    errores.push(error('tope', 'El tope por pedido no puede ser mayor que el presupuesto total.'));
+    errores.push(error('tope', mensajeDe('tope', tipo, 'mayorQuePresupuesto', idioma,
+      'El tope por pedido no puede ser mayor que el presupuesto total.')));
   }
   return errores;
 }
 
 /** Cruces de los Creditos: carga y redencion frente a la vigencia. */
-function validarCreditos(entrada) {
+function validarCreditos(entrada, tipo, idioma) {
   var errores = [];
   var inicio = comoNumeroFecha(entrada.fechaInicio);
   var fin = comoNumeroFecha(entrada.fechaFin);
@@ -213,31 +264,35 @@ function validarCreditos(entrada) {
   if (entrada.carga === 'fecha') {
     var carga = comoNumeroFecha(entrada.fechaCarga);
     if (carga !== null && inicio !== null && carga < inicio) {
-      errores.push(error('fechaCarga', 'La fecha de carga no puede ser anterior al inicio de la campaña.'));
+      errores.push(error('fechaCarga', mensajeDe('fechaCarga', tipo, 'antes', idioma,
+        'La fecha de carga no puede ser anterior al inicio de la campaña.')));
     }
   }
 
   if (entrada.vigencia === 'fecha') {
     var redencion = comoNumeroFecha(entrada.fechaFinRedencion);
     if (redencion !== null && fin !== null && redencion <= fin) {
-      errores.push(error('fechaFinRedencion', 'La fecha límite de redención debe ser posterior al fin de la campaña.'));
+      errores.push(error('fechaFinRedencion', mensajeDe('fechaFinRedencion', tipo, 'orden', idioma,
+        'La fecha límite de redención debe ser posterior al fin de la campaña.')));
     }
   }
   return errores;
 }
 
 /** Cruces de la Carrera de Compras. */
-function validarCarrera(entrada) {
+function validarCarrera(entrada, tipo, idioma) {
   var errores = [];
 
   if (entrada.desempate && entrada.desempate === entrada.criterioGanador) {
-    errores.push(error('desempate', 'El desempate no puede ser el mismo criterio con el que se define el ganador. Elige otro.'));
+    errores.push(error('desempate', mensajeDe('desempate', tipo, 'igual', idioma,
+      'El desempate no puede ser el mismo criterio con el que se define el ganador. Elige otro.')));
   }
 
   var fin = comoNumeroFecha(entrada.fechaFin);
   var notificacion = comoNumeroFecha(entrada.fechaNotificacion);
   if (fin !== null && notificacion !== null && notificacion <= fin) {
-    errores.push(error('fechaNotificacion', 'La fecha de notificación debe ser posterior al fin de la campaña.'));
+    errores.push(error('fechaNotificacion', mensajeDe('fechaNotificacion', tipo, 'orden', idioma,
+      'La fecha de notificación debe ser posterior al fin de la campaña.')));
   }
   return errores;
 }
@@ -545,7 +600,9 @@ function validarNegocio(entrada, esquema) {
 /**
  * Valida la solicitud completa.
  *
- * contexto: { fechaReferencia, usuarioEnEquipo }
+ * contexto: { fechaReferencia, usuarioEnEquipo, idioma }
+ * `idioma` es el de la interfaz de quien pide (es o pt): los mensajes salen en
+ * ese idioma cuando la pregunta los tiene traducidos. El documento no cambia.
  * Devuelve { valido, errores: [{campo, mensaje}] }.
  */
 function validarSolicitud(entrada, pais, contexto) {
@@ -557,13 +614,17 @@ function validarSolicitud(entrada, pais, contexto) {
   if (errorTipo) return { valido: false, errores: [errorTipo] };
 
   var esquema = esquemaDe(entrada.tipo);
-  var errores = [];
+  var errorIdioma = validarIdiomaDelPais(esquema, pais);
+  if (errorIdioma) return { valido: false, errores: [errorIdioma] };
 
-  errores = errores.concat(validarObligatorios(entrada, esquema));
-  errores = errores.concat(validarFormatos(entrada, esquema));
-  errores = errores.concat(validarVigencia(entrada, opciones.fechaReferencia));
+  var errores = [];
+  var idioma = opciones.idioma;
+
+  errores = errores.concat(validarObligatorios(entrada, esquema, idioma));
+  errores = errores.concat(validarFormatos(entrada, esquema, idioma));
+  errores = errores.concat(validarVigencia(entrada, opciones.fechaReferencia, esquema.id, idioma));
   errores = errores.concat(validarOrganizador(entrada, pais));
-  errores = errores.concat(validarCreditos(entrada));
+  errores = errores.concat(validarCreditos(entrada, esquema.id, idioma));
   errores = errores.concat(validarNegocio(entrada, esquema));
 
   errores = errores.concat(validarAnotacionesDelPais(pais));
@@ -571,10 +632,10 @@ function validarSolicitud(entrada, pais, contexto) {
   // El cashback por ETA tiene los mismos dos numeros y el mismo riesgo: un tope
   // mayor que el presupuesto deja que la primera orden se lleve la campana.
   if (entrada.tipo === 'cashback' || entrada.tipo === 'cashback_eta') {
-    errores = errores.concat(validarCashback(entrada));
+    errores = errores.concat(validarCashback(entrada, esquema.id, idioma));
   }
   if (entrada.tipo === 'carrera_compras') {
-    errores = errores.concat(validarCarrera(entrada));
+    errores = errores.concat(validarCarrera(entrada, esquema.id, idioma));
   }
   if (entrada.tipo === 'cashback_day') {
     errores = errores.concat(validarTiendas(entrada, pais, esquema));
@@ -609,5 +670,7 @@ if (typeof module !== 'undefined') {
     avisosDeTravel: avisosDeTravel,
     NOMBRES_PROHIBIDOS_DE_TRAVEL: NOMBRES_PROHIBIDOS_DE_TRAVEL,
     estaVacio: estaVacio,
+    mensajeDe: mensajeDe,
+    validarIdiomaDelPais: validarIdiomaDelPais,
   };
 }

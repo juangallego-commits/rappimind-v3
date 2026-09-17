@@ -18,6 +18,16 @@
  * codigo se sigue leyendo en espanol, que es la regla 8 de CLAUDE.md, y una
  * cadena sin traducir sale en espanol en vez de romperse o quedar vacia.
  *
+ * Dos reglas que salieron de defectos reales:
+ *
+ *   1. La clave tiene que ser IDENTICA al literal que el codigo le pasa a T().
+ *      Un caracter de diferencia y la traduccion no se aplica, sin avisar. Por
+ *      eso pruebas/interfaz_pt.test.js busca cada clave, literal, en el codigo.
+ *   2. Un numero que se inserta va como marcador {n}, nunca como una palabra
+ *      del idioma. "Faltan varios datos" se traducia como "Faltam varios dados"
+ *      sin tilde, y ese "varios" sin tilde era lo que el replace() buscaba
+ *      para poner el numero: corregir la ortografia habria borrado el numero.
+ *
  * Ojo: esto es texto de producto, no texto legal. Las clausulas siguen saliendo
  * de modelos/ y nadie las traduce aqui.
  */
@@ -34,6 +44,7 @@ var TEXTOS_PT = {
   'Ayuda': 'Ajuda',
   'Administración': 'Administração',
   'Secciones': 'Seções',
+  'Idioma de la interfaz': 'Idioma da interface',
   'Cargando RappiMind...': 'Carregando o RappiMind...',
   'No pudimos abrir RappiMind': 'Não conseguimos abrir o RappiMind',
   'Si sigue pasando, avísale a Juan.': 'Se continuar acontecendo, avise o Juan.',
@@ -64,11 +75,16 @@ var TEXTOS_PT = {
   '¿Hay azar: sorteo, rifa, raspa y gana o ruleta?': 'Tem sorte envolvida: sorteio, rifa, raspadinha ou roleta?',
   '¿La tienda o la marca exige sus propios términos y condiciones?':
     'A loja ou a marca exige os próprios termos e condições?',
+  'Las dinámicas con azar necesitan permiso previo de la autoridad. Legal tiene que revisarlas antes de lanzarlas.':
+    'As dinâmicas com sorte precisam de autorização prévia da autoridade. O Jurídico precisa revisá-las antes do lançamento.',
+  'Si el aliado impone su documento, hay que revisarlo con Legal antes de publicarlo.':
+    'Se o parceiro impõe o próprio documento, ele precisa ser revisado com o Jurídico antes de publicar.',
   'Sí': 'Sim',
   'No': 'Não',
 
   /* --- Pantalla de Legal --------------------------------------------------- */
   'Esta campaña la redacta Legal': 'Esta campanha é redigida pelo Jurídico',
+  'Tu campaña necesita revisión legal antes de publicarse.': 'Sua campanha precisa de revisão jurídica antes de ser publicada.',
   'No es un problema ni una negativa: es un caso que necesita que un abogado lo mire. Llena el formulario y el equipo legal te responde.':
     'Não é um problema nem uma recusa: é um caso que precisa que um advogado olhe. Preencha o formulário e o time jurídico responde.',
   'Ir al formulario de Legal': 'Ir para o formulário do Jurídico',
@@ -81,17 +97,30 @@ var TEXTOS_PT = {
   'Sin empezar': 'Ainda não começou',
   'Completo': 'Completo',
   'Falta 1 dato': 'Falta 1 dado',
-  'Faltan varios datos': 'Faltam varios dados',
+  'Faltan {n} datos': 'Faltam {n} dados',
   'Atrás': 'Voltar',
   'Siguiente': 'Avançar',
   'Revisar y generar': 'Revisar e gerar',
   'Cambiar': 'Alterar',
+  'Opcional': 'Opcional',
+  'Así queda en tu T&C:': 'Assim fica no seu T&C:',
   'Ver cómo va mi T&C': 'Ver como está o meu T&C',
   'Cerrar': 'Fechar',
   'Vista previa del documento': 'Prévia do documento',
   '¿Por qué te preguntamos esto?': 'Por que perguntamos isso?',
   'Tu documento aparece aquí y se va llenando mientras respondes.':
     'Seu documento aparece aqui e vai se preenchendo enquanto você responde.',
+  'Paso {n} de {m}': 'Etapa {n} de {m}',
+  'Queda 1 pregunta en este paso.': 'Falta 1 pergunta nesta etapa.',
+  'Quedan {n} preguntas en este paso.': 'Faltam {n} perguntas nesta etapa.',
+  'Disponible.': 'Disponível.',
+  'En piloto: solo para el equipo de pruebas.': 'Em piloto: só para a equipe de testes.',
+  '¿Cuántas veces?': 'Quantas vezes?',
+  'Sin límite': 'Sem limite',
+  'Una sola vez': 'Uma só vez',
+  'Varias veces': 'Várias vezes',
+  '{n} veces': '{n} vezes',
+  'Confirmado': 'Confirmado',
 
   /* --- Los pasos ----------------------------------------------------------- */
   'Campaña': 'Campanha',
@@ -115,19 +144,36 @@ var TEXTOS_PT = {
   'Editar': 'Editar',
   'Falta': 'Falta',
   'Te falta:': 'Está faltando:',
+  'Elige el país de la campaña.': 'Escolha o país da campanha.',
   'Generar T&C': 'Gerar T&C',
   'Generando...': 'Gerando...',
   'Generando el documento.': 'Gerando o documento.',
-  'Mis campañas': 'Minhas campanhas',
-
-  'Queda 1 pregunta en este paso.': 'Falta 1 pergunta nesta etapa.',
-  'Quedan varias preguntas en este paso.': 'Faltam varias perguntas nesta etapa.',
+  'Tu T&C está listo': 'Seu T&C está pronto',
+  'No se creó ningún documento ni se envió ningún correo. Este es el texto que habría salido.':
+    'Nenhum documento foi criado nem nenhum e-mail foi enviado. Este é o texto que teria saído.',
+  'Lo que vas a pegar en Squarespace': 'O que você vai colar no Squarespace',
+  'Título del evento': 'Título do evento',
+  'Va tal cual en el título del evento. No lo cambies: es el mismo nombre que quedó en el documento.':
+    'Vai exatamente assim no título do evento. Não altere: é o mesmo nome que ficou no documento.',
+  'Dirección del evento': 'Endereço do evento',
+  'Las fechas del evento': 'As datas do evento',
+  'Inicio: {inicio}. Fin: {fin}. Tienen que ser iguales a la vigencia del documento.':
+    'Início: {inicio}. Fim: {fin}. Precisam ser iguais à vigência do documento.',
+  'Cómo publicarlo, paso a paso': 'Como publicar, passo a passo',
+  '¿Quién puede publicar?': 'Quem pode publicar?',
+  'Abrir el documento': 'Abrir o documento',
+  'Cuando ya esté publicado': 'Quando já estiver publicado',
+  'Hacer otra campaña': 'Fazer outra campanha',
+  'Ver mi historial': 'Ver o meu histórico',
   'En 2 minutos recibirás un email con el documento generado y listo para publicar en Squarespace. Recuerda seguir las instrucciones para asegurar que los T&Cs queden publicados exitosamente.':
     'Em 2 minutos você recebe um e-mail com o documento gerado e pronto para publicar no Squarespace. Siga as instruções para garantir que os T&C fiquem publicados corretamente.',
 
   /* --- El aviso de pais en pruebas ---------------------------------------- */
   ' está en pruebas: genera y revisa, pero todavía no publiques. Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.':
     ' está em testes: gere e revise, mas ainda não publique. Os dados jurídicos deste país foram propostos pela ferramenta e ninguém os confirmou.',
+  ' está en pruebas: no publiques este documento todavía': ' está em testes: não publique este documento ainda',
+  'Genera el documento, léelo y dinos si los datos legales de tu país están bien. Los propuso la herramienta por analogía con Colombia y no los ha confirmado nadie.':
+    'Gere o documento, leia e nos diga se os dados jurídicos do seu país estão certos. A ferramenta os propôs por analogia com a Colômbia e ninguém os confirmou.',
 
   /* --- Las descripciones de los tipos de campana --------------------------- */
   'Descuento en porcentaje, envío gratis o tarifa de servicio gratis en una tienda aliada de Brasil. El usuario ve el beneficio aplicado al pagar, no recibe Créditos. Solo para Brasil.':
@@ -151,21 +197,10 @@ function traducirInterfaz(texto, idioma) {
   return traducido === undefined ? texto : traducido;
 }
 
-/** Cuantas cadenas faltan por traducir, para la prueba que lo vigila. */
-function cadenasTraducidas(idioma) {
-  var diccionario = DICCIONARIOS[idioma] || {};
-  var cuantas = 0;
-  for (var llave in diccionario) {
-    if (Object.prototype.hasOwnProperty.call(diccionario, llave)) cuantas += 1;
-  }
-  return cuantas;
-}
-
 if (typeof module !== 'undefined') {
   module.exports = {
     IDIOMAS_DE_INTERFAZ: IDIOMAS_DE_INTERFAZ,
     TEXTOS_PT: TEXTOS_PT,
     traducirInterfaz: traducirInterfaz,
-    cadenasTraducidas: cadenasTraducidas,
   };
 }

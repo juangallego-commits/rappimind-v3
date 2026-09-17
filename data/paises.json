@@ -345,7 +345,12 @@
         "termino_dias",
         "texto_hora_local",
         "texto_derechos_datos",
-        "autoridad_datos"
+        "autoridad_datos",
+        "entidad_vigilancia",
+        "pais_legal",
+        "ley_aplicable",
+        "jurisdiccion",
+        "politica_privacidad"
       ],
       "url_tc_turbo": ""
     }

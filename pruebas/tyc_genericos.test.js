@@ -26,6 +26,7 @@ const assert = require('node:assert');
 
 const {
   tycGenericosDelPais, hayTycGenericos, tycGenericoPorId,
+  tycGenericosUsables, hayTycGenericosUsables,
   estadoDeTycGenerico, vigenciaEnPalabras, descripcionDeTycGenerico,
 } = require('../src/core/tyc_genericos.js');
 
@@ -224,4 +225,46 @@ test('los mensajes de la herramienta no se leen como una negativa', () => {
   for (const texto of textos) {
     assert.ok(texto.indexOf('no puedes') === -1, 'suena a negativa: ' + texto);
   }
+});
+
+test('cuando todos vencen, la herramienta lo sabe y no promete un enlace', () => {
+  // Catorce vencen el 31 de diciembre de 2026 y el otro el 31 de octubre. El
+  // 1 de enero de 2027 la tarjeta seguía diciendo "Buena noticia: Legal ya
+  // publicó los T&C" y detrás había quince botones grises.
+  assert.strictEqual(hayTycGenericosUsables('CO', '2026-09-17'), true);
+  assert.strictEqual(tycGenericosUsables('CO', '2026-09-17').length, 15);
+  assert.ok(!tycGenericosUsables('CO', '2026-11-01').some((t) => t.id === 'tarifa_servicio_gratis'));
+  assert.strictEqual(tycGenericosUsables('CO', '2026-11-01').length, 14);
+  assert.strictEqual(hayTycGenericosUsables('CO', '2027-01-01'), false);
+  // Sin fecha de referencia no se afirma que venció.
+  assert.strictEqual(hayTycGenericosUsables('CO', ''), true);
+});
+
+test('los textos del Excel no traen espacios de más', () => {
+  // Los espacios en blanco no son texto de Legal: se limpian, como el espacio
+  // final de las filas 10 y 11 y el doble espacio de la fila 17.
+  for (const t of DE_COLOMBIA) {
+    for (const campo of ['nombre', 'beneficio', 'paraQue', 'enlace']) {
+      const valor = t[campo] || '';
+      assert.ok(!/  /.test(valor), t.id + '.' + campo + ' tiene un doble espacio');
+      assert.strictEqual(valor, valor.trim(), t.id + '.' + campo + ' tiene espacios al borde');
+    }
+  }
+});
+
+test('el detalle avisa lo pendiente antes del enlace, no después', () => {
+  // La pantalla se lee como texto: el aviso serio con lo que Legal dejó sin
+  // resolver tiene que estar escrito antes del bloque para copiar el enlace.
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const codigo = fs.readFileSync(path.join(__dirname, '..', 'src', 'client', 'js', '63-tyc-genericos.js'), 'utf8');
+  const detalle = codigo.slice(codigo.indexOf('function detalle('));
+  const aviso = detalle.indexOf("'data-pendiente'");
+  const enlace = detalle.indexOf('paraCopiar(');
+  assert.ok(aviso !== -1 && enlace !== -1, 'no encontré el aviso o el enlace en detalle()');
+  assert.ok(aviso < enlace, 'el aviso de lo pendiente va después del enlace');
+  // Y la tarjeta vencida no usa disabled, que la saca del teclado.
+  const tarjeta = codigo.slice(codigo.indexOf('function tarjetaDeUno('), codigo.indexOf('function detalle('));
+  assert.ok(tarjeta.indexOf('disabled: !revision.usable') === -1, 'la tarjeta vencida usa disabled');
+  assert.ok(tarjeta.indexOf("'aria-disabled'") !== -1, 'la tarjeta vencida no marca aria-disabled');
 });

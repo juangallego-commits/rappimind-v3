@@ -97,6 +97,7 @@ function numeroEnLetras(n, apocope) {
   if (idiomaActivo() === 'pt') return numeroEnLetrasPt(n);
 
   var entero = Math.trunc(Number(n));
+  if (!isFinite(entero) || entero < 0) return '';
   if (entero === 0) return 'cero';
 
   var partes = [];

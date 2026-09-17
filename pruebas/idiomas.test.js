@@ -12,7 +12,7 @@ const test = require('node:test');
 const assert = require('node:assert');
 
 const { fijarIdioma, idiomaActivo, conElIdiomaDe, hayIdioma } = require('../src/core/idiomas.js');
-const { formatearFecha, formatearHora, listaY } = require('../src/core/fechas.js');
+const { formatearFecha, formatearHora, formatearFechaDelPais, formatearHoraDelPais, listaY } = require('../src/core/fechas.js');
 const {
   numeroEnLetras, letrasYCifra, letrasYCifraFemenino,
   porcentajeEnLetras, cantidadCreditos, montoConMoneda,
@@ -133,4 +133,40 @@ test('Colombia no cambia por haber generado antes un documento de Brasil', () =>
     porcentaje: porcentajeEnLetras(99),
     lista: listaY(['Bogotá', 'Cali']),
   }, antes);
+});
+
+test('las respuestas plegadas y el resumen escriben la fecha como el país, no como el idioma activo', () => {
+  // Fuera del documento el idioma activo es español, y un KAM de Brasil veía
+  // "1 de octubre de 2026" y "12:00 a. m." arriba de un T&C que decía
+  // "1 de outubro de 2026 às 00:00".
+  assert.strictEqual(formatearFechaDelPais('2026-10-01', BRASIL), '1 de outubro de 2026');
+  assert.strictEqual(formatearHoraDelPais('00:00', BRASIL), '00:00');
+  assert.strictEqual(formatearFechaDelPais('2026-10-01', COLOMBIA), '1 de octubre de 2026');
+  assert.strictEqual(formatearHoraDelPais('00:00', COLOMBIA), '12:00 a. m.');
+  // Y no deja el idioma cambiado para el siguiente que pregunte.
+  assert.strictEqual(idiomaActivo(), 'es');
+  assert.strictEqual(formatearFecha('2026-10-01'), '1 de octubre de 2026');
+});
+
+test('la lista de tiendas de un Cashback Multitienda también sale en el idioma del país', () => {
+  // expandirTiendas corría después de que calcularDerivados devolvía el idioma
+  // a español: en un país en portugués cada tienda habría dicho "doce millones
+  // (12.000.000) de Créditos" y "Rio, Sao Paulo y Curitiba".
+  const { renderizar } = require('../src/core/motor.js');
+  const { cargarModelos } = require('../scripts/lib/modelos.js');
+  const enPortugues = Object.assign({}, COLOMBIA, { idioma: 'pt' });
+  const resultado = renderizar('cashback_day', {
+    pais: 'CO', negocio: 'rappi', tipo: 'cashback_day',
+    fechaInicio: '2026-10-01', horaInicio: '00:00', fechaFin: '2026-10-01', horaFin: '23:59',
+    porcentaje: 20, tope: 20000, maxPedidos: 1, carga: 'dia_siguiente', vigencia: 'dias', diasVigencia: 30,
+    redencion: 'tienda', segmento: 'todos', metodoPago: 'todos', declaracion: true,
+    tiendas: [
+      { marca: 'Petz', razonSocial: 'Petz S.A.', id: '900111222-1', ciudades: 'Rio, Sao Paulo, Curitiba', presupuesto: 12000000 },
+      { marca: 'Raia', razonSocial: 'Raia S.A.', id: '900777888-2', ciudades: '', nacional: true, presupuesto: 5000000 },
+    ],
+  }, enPortugues, cargarModelos());
+  assert.ok(resultado.texto.indexOf('Sao Paulo e Curitiba') !== -1, resultado.texto);
+  assert.ok(resultado.texto.indexOf('milhões') !== -1, resultado.texto);
+  assert.ok(resultado.texto.indexOf('millones') === -1 && resultado.texto.indexOf('Sao Paulo y Curitiba') === -1);
+  assert.strictEqual(idiomaActivo(), 'es');
 });

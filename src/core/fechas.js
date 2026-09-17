@@ -11,6 +11,7 @@
 /* En Node las dependencias se cargan con require; en Apps Script ya son globales. */
 if (typeof module !== 'undefined' && typeof require === 'function') {
   var textosDelIdioma = require('./idiomas.js').textosDelIdioma;
+  var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
 }
 
 /* Se conserva por compatibilidad: los meses de verdad salen del idioma activo. */
@@ -42,6 +43,22 @@ function formatearFecha(iso) {
   var p = partesDeFecha(iso);
   if (!p) return '';
   return p.dia + ' de ' + textosDelIdioma().meses[p.mes - 1] + ' de ' + p.anio;
+}
+
+/**
+ * La fecha y la hora como las escribe el pais de la campana, fuera del documento.
+ *
+ * El idioma se enciende solo mientras se calcula el documento. Fuera de ahi
+ * (las respuestas plegadas y el resumen) todo salia en espanol, y un KAM de
+ * Brasil veia "1 de octubre de 2026" y "12:00 a. m." arriba de un documento que
+ * decia "1 de outubro de 2026 às 00:00".
+ */
+function formatearFechaDelPais(iso, pais) {
+  return conElIdiomaDe(pais, function () { return formatearFecha(iso); });
+}
+
+function formatearHoraDelPais(texto, pais) {
+  return conElIdiomaDe(pais, function () { return formatearHora(texto); });
 }
 
 /** Descompone una hora HH:MM. Devuelve null si no es valida. */
@@ -122,6 +139,8 @@ if (typeof module !== 'undefined') {
     partesDeHora: partesDeHora,
     formatearFecha: formatearFecha,
     formatearHora: formatearHora,
+    formatearFechaDelPais: formatearFechaDelPais,
+    formatearHoraDelPais: formatearHoraDelPais,
     comoNumeroFecha: comoNumeroFecha,
     comoNumeroFechaHora: comoNumeroFechaHora,
     listaY: listaY,

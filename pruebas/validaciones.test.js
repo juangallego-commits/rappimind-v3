@@ -198,3 +198,24 @@ test('cada error trae campo y mensaje', () => {
     assert.ok(error.mensaje, 'un error sin mensaje');
   }
 });
+
+test('los mensajes de rango, orden y fecha pasada son los escritos para cada pregunta', () => {
+  // Cada pregunta trae sus mensajes en errores (pasado, orden, cero...) y solo
+  // se usaba errores.vacio: el resto se armaba a mano y en genérico.
+  function mensajeDe(cambios, campo, contexto) {
+    const resultado = validarSolicitud(solicitudBase(cambios), CO, contexto || CONTEXTO);
+    const error = resultado.errores.filter((e) => e.campo === campo)[0];
+    return error ? error.mensaje : null;
+  }
+  assert.strictEqual(mensajeDe({ fechaInicio: '2026-09-01', fechaFin: '2026-09-02' }, 'fechaInicio'),
+    'Esa fecha ya pasó. Los T&C se publican antes de que la campaña empiece, así que elige hoy o un día futuro.');
+  assert.strictEqual(mensajeDe({ fechaFin: '2026-09-19' }, 'fechaFin'),
+    'La campaña no puede terminar antes de empezar. Revisa la fecha y la hora de fin.');
+  assert.strictEqual(mensajeDe({ tope: 0 }, 'tope'), 'El tope tiene que ser mayor que cero.');
+  assert.strictEqual(mensajeDe({ tope: 2000000 }, 'tope'),
+    'El tope por pedido es mayor que el presupuesto total. Con eso, el primer pedido se lleva toda la campaña. Revisa los dos números.');
+  assert.strictEqual(mensajeDe({ porcentaje: 101 }, 'porcentaje'),
+    'El porcentaje va de 1 a 100. Si necesitas varios porcentajes o un rango, eso es otra campaña: escríbele a Legal.');
+  assert.strictEqual(mensajeDe({ vigencia: 'fecha', fechaFinRedencion: '2026-09-21' }, 'fechaFinRedencion'),
+    'Los Créditos tienen que vencerse después de que termine la campaña. Si no, quien compre el último día no alcanza a usarlos.');
+});

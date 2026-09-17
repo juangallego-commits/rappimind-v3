@@ -21,13 +21,13 @@ function comoTexto(campo) {
 
   if (campo.id === 'maxPedidos') {
     var opcion = flujo.opcionDeVeces();
-    if (opcion === 'sin_limite') return 'Sin límite';
-    if (opcion === 'una') return 'Una sola vez';
-    if (opcion === 'varias') return valor ? valor + ' veces' : 'Varias veces';
+    if (opcion === 'sin_limite') return estado.T('Sin límite');
+    if (opcion === 'una') return estado.T('Una sola vez');
+    if (opcion === 'varias') return valor ? estado.T('{n} veces').replace('{n}', valor) : estado.T('Varias veces');
     return '';
   }
   if (valor === null || valor === undefined || valor === '') return '';
-  if (campo.tipo === 'casilla') return valor ? 'Confirmado' : '';
+  if (campo.tipo === 'casilla') return valor ? estado.T('Confirmado') : '';
 
   // País y tipo traen sus nombres del servidor, no del esquema.
   if (campo.id === 'pais') {
@@ -56,8 +56,10 @@ function comoTexto(campo) {
     if (elegida) return elegida.etiqueta;
   }
 
-  if (campo.tipo === 'fecha') return formatearFecha(valor);
-  if (campo.tipo === 'hora') return formatearHora(valor);
+  // En el idioma del pais, como en el documento: una campana de Brasil decia
+  // "1 de octubre de 2026" arriba y "1 de outubro de 2026" en el T&C de al lado.
+  if (campo.tipo === 'fecha') return formatearFechaDelPais(valor, flujo.paisElegido());
+  if (campo.tipo === 'hora') return formatearHoraDelPais(valor, flujo.paisElegido());
 
   // La identificación se muestra como va en el documento, no como se escribió.
   if (campo.tipo === 'identificacion') {
@@ -70,8 +72,8 @@ function comoTexto(campo) {
   }
   if (campo.id === 'porcentaje') return valor + '%';
   if (pregunta.moneda) {
-    var pais = flujo.paisElegido();
-    return (pais ? pais.moneda_simbolo : '$') + formatearMiles(valor, pais ? pais.separador_miles : '.');
+    var paisMoneda = flujo.paisElegido();
+    return (paisMoneda ? paisMoneda.moneda_simbolo : '$') + formatearMiles(valor, paisMoneda ? paisMoneda.separador_miles : '.');
   }
   return String(valor);
 }
@@ -109,8 +111,7 @@ function avisoDePaisEnPruebas() {
   // de que hay que revisar va en el resumen, que es donde se decide publicar.
   return crear('div', { clase: 'aviso' }, [
     crear('p', {
-      texto: pais.nombre + estado.T(' está en pruebas: genera y revisa, pero todavía no publiques. ' +
-        'Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.'),
+      texto: pais.nombre + estado.T(' está en pruebas: genera y revisa, pero todavía no publiques. Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.'),
     }),
   ]);
 }
@@ -172,7 +173,7 @@ function calculadora() {
  */
 function barraDeProgreso(pasos) {
   var compacta = crear('p', { clase: 'progreso-compacto' }, [
-    crear('span', { clase: 'progreso-cuenta', texto: 'Paso ' + (E.pasoActual + 1) + ' de ' + pasos.length }),
+    crear('span', { clase: 'progreso-cuenta', texto: estado.T('Paso {n} de {m}').replace('{n}', E.pasoActual + 1).replace('{m}', pasos.length) }),
     document.createTextNode(' \u00B7 '),
     crear('strong', { texto: estado.T(pasos[E.pasoActual].nombre) }),
     crear('span', {
@@ -324,7 +325,7 @@ function pantallaPasos(raiz) {
       clase: 'pregunta-ayuda',
       texto: faltan === 1
         ? estado.T('Queda 1 pregunta en este paso.')
-        : estado.T('Quedan varias preguntas en este paso.').replace('varias', faltan),
+        : estado.T('Quedan {n} preguntas en este paso.').replace('{n}', faltan),
     }));
   }
 
@@ -375,7 +376,7 @@ function preguntaDeCatalogo(campo, campos, indice, pasos) {
   var opciones;
   if (campo.id === 'pais') {
     opciones = E.configuracion.paises.map(function (p) {
-      return { valor: p.codigo, etiqueta: p.nombre, nota: p.estado === 'piloto' ? 'En piloto: solo para el equipo de pruebas.' : 'Disponible.' };
+      return { valor: p.codigo, etiqueta: p.nombre, nota: p.estado === 'piloto' ? estado.T('En piloto: solo para el equipo de pruebas.') : estado.T('Disponible.') };
     });
   } else {
     // Solo los tipos del negocio elegido: Rappi y Rappi Travel son dos empresas
@@ -415,7 +416,7 @@ function preguntaDeCatalogo(campo, campos, indice, pasos) {
   }
 
   bloque.appendChild(crear('details', { clase: 'por-que' }, [
-    crear('summary', { texto: '¿Por qué te preguntamos esto?' }),
+    crear('summary', { texto: estado.T('¿Por qué te preguntamos esto?') }),
     crear('p', { texto: pregunta.porQue }),
   ]));
   return bloque;
@@ -467,7 +468,7 @@ function preguntaDeVeces(campos, indice, pasos, errores) {
       if (frase) bloque.appendChild(frase);
     });
     bloque.appendChild(crear('label', { clase: 'campo' }, [
-      crear('p', { clase: 'pregunta-ayuda', texto: '¿Cuántas veces?' }),
+      crear('p', { clase: 'pregunta-ayuda', texto: estado.T('¿Cuántas veces?') }),
       crear('div', { clase: 'campo-caja' }, [cuantas]),
     ]));
   }
@@ -480,7 +481,7 @@ function preguntaDeVeces(campos, indice, pasos, errores) {
   if (frase) bloque.appendChild(frase);
 
   bloque.appendChild(crear('details', { clase: 'por-que' }, [
-    crear('summary', { texto: '¿Por qué te preguntamos esto?' }),
+    crear('summary', { texto: estado.T('¿Por qué te preguntamos esto?') }),
     crear('p', { texto: pregunta.porQue }),
   ]));
   return bloque;

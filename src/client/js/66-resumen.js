@@ -38,11 +38,12 @@ function seccionesDelResumen() {
 /** Lo que falta, en palabras del comercial. */
 function loQueFalta() {
   var pais = flujo.paisElegido();
-  if (!pais) return ['Elige el país de la campaña.'];
+  if (!pais) return [estado.T('Elige el país de la campaña.')];
 
   var revision = validarSolicitud(estado.entrada(), pais, {
     fechaReferencia: E.configuracion.hoy || RM.util.hoyEnElNavegador(),
     usuarioEnEquipo: puedeVerPiloto(E.configuracion.rol),
+    idioma: estado.idiomaInterfaz(),
   });
   return revision.errores.map(function (error) { return error.mensaje; });
 }
@@ -61,18 +62,21 @@ function pantallaResumen(raiz) {
   // decide publicar.
   var pais = flujo.paisElegido();
   if (paisEnPruebas(pais)) {
-    var faltantes = datosPorConfirmar(pais);
+    // OJO: esta lista no se puede llamar `faltantes`. Se llamo asi, y como var
+    // es de toda la funcion, pisaba la lista de arriba: en un pais en pruebas
+    // "Te falta:" mostraba los datos legales por confirmar del pais en vez de
+    // lo que le faltaba al comercial, que era marcar la casilla.
+    var porConfirmar = datosPorConfirmar(pais);
     var aviso = crear('div', { clase: 'aviso' }, [
-      crear('h3', { texto: pais.nombre + ' está en pruebas: no publiques este documento todavía' }),
+      crear('h3', { texto: pais.nombre + estado.T(' está en pruebas: no publiques este documento todavía') }),
       crear('p', {
-        texto: 'Genera el documento, léelo y dinos si los datos legales de tu país están bien. ' +
-          'Los propuso la herramienta por analogía con Colombia y no los ha confirmado nadie.',
+        texto: estado.T('Genera el documento, léelo y dinos si los datos legales de tu país están bien. Los propuso la herramienta por analogía con Colombia y no los ha confirmado nadie.'),
       }),
     ]);
-    if (faltantes.length > 0) {
-      var lista = crear('ul');
-      for (var f = 0; f < faltantes.length; f++) lista.appendChild(crear('li', { texto: faltantes[f] }));
-      aviso.appendChild(lista);
+    if (porConfirmar.length > 0) {
+      var listaPorConfirmar = crear('ul');
+      for (var f = 0; f < porConfirmar.length; f++) listaPorConfirmar.appendChild(crear('li', { texto: porConfirmar[f] }));
+      aviso.appendChild(listaPorConfirmar);
     }
     columna.appendChild(aviso);
   }
@@ -115,8 +119,8 @@ function pantallaResumen(raiz) {
     crear('label', { clase: 'casilla' }, [
       declaracion,
       crear('span', {}, [
-        document.createTextNode(preguntaDe('declaracion').ayuda),
-        crear('small', { texto: preguntaDe('declaracion').porQue }),
+        document.createTextNode(estado.pregunta('declaracion').ayuda),
+        crear('small', { texto: estado.pregunta('declaracion').porQue }),
       ]),
     ]),
   ]));
@@ -180,7 +184,7 @@ function generar(boton) {
  */
 function bloqueDeQuienPublica(codigoDePais, tipo) {
   var accesos = ACCESOS_SQUARESPACE[codigoDePais];
-  var caja = crear('div', { clase: 'aviso' }, [crear('h3', { texto: '¿Quién puede publicar?' })]);
+  var caja = crear('div', { clase: 'aviso' }, [crear('h3', { texto: estado.T('¿Quién puede publicar?') })]);
 
   var esConcurso = tipo === 'carrera_compras';
   var personas = accesos ? (esConcurso ? accesos.concursos : accesos.cashback) || [] : [];
@@ -219,34 +223,35 @@ function bloqueDePublicacion(resultado) {
   // Lo que hay que pegar en Squarespace, listo para copiar. El titulo y la
   // direccion salen de las respuestas: escribirlos a mano es como el titulo
   // termino diciendo 99% cuando la clausula decia 50%.
-  contenido.appendChild(crear('h2', { texto: 'Lo que vas a pegar en Squarespace' }));
+  contenido.appendChild(crear('h2', { texto: estado.T('Lo que vas a pegar en Squarespace') }));
   var entrada = estado.entrada();
 
   contenido.appendChild(RM.util.paraCopiar(
-    'Título del evento',
+    estado.T('Título del evento'),
     resultado.nombreCampana || '',
-    'Va tal cual en el título del evento. No lo cambies: es el mismo nombre que quedó en el documento.'
+    estado.T('Va tal cual en el título del evento. No lo cambies: es el mismo nombre que quedó en el documento.')
   ));
 
   var pais = flujo.paisElegido();
   var rutaDelPais = (pais && pais.nombre ? pais.nombre : '').toLowerCase();
   contenido.appendChild(RM.util.paraCopiar(
-    'Dirección del evento',
+    estado.T('Dirección del evento'),
     resultado.direccionSugerida || '',
     'Va en la pestaña Opciones, en "URL del evento". La parte de ' + rutaDelPais + ' la pone Squarespace sola: reemplaza solo lo que va después.'
   ));
 
   if (entrada.fechaInicio && entrada.fechaFin) {
     contenido.appendChild(crear('div', { clase: 'aviso' }, [
-      crear('h3', { texto: 'Las fechas del evento' }),
+      crear('h3', { texto: estado.T('Las fechas del evento') }),
       crear('p', {
-        texto: 'Inicio: ' + formatearFecha(entrada.fechaInicio) + '. Fin: ' + formatearFecha(entrada.fechaFin) +
-          '. Tienen que ser iguales a la vigencia del documento.',
+        texto: estado.T('Inicio: {inicio}. Fin: {fin}. Tienen que ser iguales a la vigencia del documento.')
+          .replace('{inicio}', formatearFechaDelPais(entrada.fechaInicio, pais))
+          .replace('{fin}', formatearFechaDelPais(entrada.fechaFin, pais)),
       }),
     ]));
   }
 
-  contenido.appendChild(crear('h2', { texto: 'Cómo publicarlo, paso a paso' }));
+  contenido.appendChild(crear('h2', { texto: estado.T('Cómo publicarlo, paso a paso') }));
   var pasos = crear('ol', { clase: 'pasos-publicar' });
   for (var i = 0; i < PASOS_SQUARESPACE.length; i++) {
     pasos.appendChild(crear('li', {}, [
@@ -265,13 +270,13 @@ function bloqueDePublicacion(resultado) {
 function pantallaListo(raiz) {
   var resultado = E.resultado || {};
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
-    crear('h1', { texto: 'Tu T&C está listo' }),
+    crear('h1', { texto: estado.T('Tu T&C está listo') }),
   ]);
 
   if (resultado.demostracion) {
     contenido.appendChild(crear('div', { clase: 'aviso' }, [
-      crear('h3', { texto: 'Modo demostración' }),
-      crear('p', { texto: 'No se creó ningún documento ni se envió ningún correo. Este es el texto que habría salido.' }),
+      crear('h3', { texto: estado.T('Modo demostración') }),
+      crear('p', { texto: estado.T('No se creó ningún documento ni se envió ningún correo. Este es el texto que habría salido.') }),
     ]));
     var hoja = crear('div', { clase: 'hoja' });
     RM.documento.dibujar(hoja, resultado.texto, '');
@@ -279,7 +284,7 @@ function pantallaListo(raiz) {
     contenido.appendChild(bloqueDePublicacion(resultado));
     contenido.appendChild(crear('div', { clase: 'fila-botones' }, [
       crear('button', {
-        clase: 'boton boton-secundario', type: 'button', texto: 'Hacer otra campaña',
+        clase: 'boton boton-secundario', type: 'button', texto: estado.T('Hacer otra campaña'),
         onclick: function () { estado.reiniciarFormulario({}); RM.app.ir('inicio'); },
       }),
     ]));
@@ -295,7 +300,7 @@ function pantallaListo(raiz) {
   contenido.appendChild(crear('div', { clase: 'fila-botones' }, [
     resultado.linkDoc
       ? crear('a', { clase: 'boton', href: resultado.linkDoc, target: '_blank', rel: 'noopener' }, [
-          document.createTextNode('Abrir el documento'), RM.util.icono('abrir', 16),
+          document.createTextNode(estado.T('Abrir el documento')), RM.util.icono('abrir', 16),
         ])
       : null,
   ]));
@@ -303,7 +308,7 @@ function pantallaListo(raiz) {
   contenido.appendChild(bloqueDePublicacion(resultado));
 
   // Link publicado.
-  contenido.appendChild(crear('h2', { texto: 'Cuando ya esté publicado' }));
+  contenido.appendChild(crear('h2', { texto: estado.T('Cuando ya esté publicado') }));
   var campo = crear('input', {
     type: 'text', id: 'link-publicado',
     placeholder: 'https://promos.rappi.com/',
@@ -352,11 +357,11 @@ function pantallaListo(raiz) {
 
   contenido.appendChild(crear('div', { clase: 'fila-botones' }, [
     crear('button', {
-      clase: 'boton boton-secundario', type: 'button', texto: 'Hacer otra campaña',
+      clase: 'boton boton-secundario', type: 'button', texto: estado.T('Hacer otra campaña'),
       onclick: function () { estado.reiniciarFormulario({}); RM.app.ir('inicio'); },
     }),
     crear('button', {
-      clase: 'boton boton-secundario', type: 'button', texto: 'Ver mi historial',
+      clase: 'boton boton-secundario', type: 'button', texto: estado.T('Ver mi historial'),
       onclick: function () { RM.app.ir('historial'); },
     }),
   ]));

@@ -79,6 +79,9 @@ function seUneConE(valorDelUltimoTramo) {
 /** Numero en letras hasta 999.999.999.999. */
 function numeroEnLetrasPt(n) {
   var entero = Math.trunc(Number(n));
+  // Un negativo entraba en recursion sin fin y tumbaba la vista previa; algo
+  // que no es un numero queda como hueco, no como " undefined (NaN)".
+  if (!isFinite(entero) || entero < 0) return '';
   if (entero === 0) return 'zero';
 
   var milhoes = Math.floor(entero / 1000000);

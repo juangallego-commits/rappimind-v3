@@ -24,6 +24,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 
   var moduloDerivados = require('./derivados.js');
   var calcularDerivados = moduloDerivados.calcularDerivados;
+  var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
   var valoresDeTienda = moduloDerivados.valoresDeTienda;
 }
 
@@ -170,7 +171,10 @@ function renderizar(nombreModelo, entrada, pais, modelos) {
   var texto = quitarComentarios(inclusiones.texto);
   var valores = calcularDerivados(entrada, pais);
 
-  texto = expandirTiendas(texto, entrada.tiendas || [], pais);
+  // Con el idioma del pais, igual que los derivados: la lista de tiendas se
+  // expandia despues de que calcularDerivados devolvia el idioma a espanol, y
+  // en un pais en portugues habria salido "doce millones de Créditos" por tienda.
+  texto = conElIdiomaDe(pais, function () { return expandirTiendas(texto, entrada.tiendas || [], pais); });
   texto = resolverOpcionales(texto, valores);
 
   var reemplazo = reemplazarPlaceholders(texto, valores);
@@ -223,7 +227,7 @@ function renderizarVistaPrevia(nombreModelo, entrada, pais, modelos) {
       return '\u2022 {{TIENDA_MARCA}}';
     });
   } else {
-    texto = expandirTiendas(texto, tiendas, pais);
+    texto = conElIdiomaDe(pais, function () { return expandirTiendas(texto, tiendas, pais); });
   }
 
   texto = resolverOpcionales(texto, valores);

@@ -88,8 +88,10 @@ const SERVIDOR_SIMULADO = `
       var usados = [];
       for (var s = 0; s < solicitudes.length; s++) usados.push(solicitudes[s].nombre_campana);
       var esquema = esquemaDe(entrada.tipo);
-      entrada.sufijoNombre = sufijoLibreDeNombre(nombreDeCampana(entrada, esquema), usados);
-      var nombreCampana = nombreDeCampana(entrada, esquema);
+      // Con el pais, como en Api.js: sin el, el titulo para Squarespace de una
+      // campana de Brasil decia "1 oct 2026" y el documento "1 OUT 2026".
+      entrada.sufijoNombre = sufijoLibreDeNombre(nombreDeCampana(entrada, esquema, pais), usados);
+      var nombreCampana = nombreDeCampana(entrada, esquema, pais);
       solicitudes.push({
         id: id, fecha: hoy() + ' 10:00:00', email: 'demostracion@rappi.com',
         pais: pais.codigo, tipo: entrada.tipo,

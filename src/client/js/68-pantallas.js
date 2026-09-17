@@ -19,7 +19,7 @@ function pantallaHistorial(raiz) {
   ]);
 
   var buscador = crear('input', {
-    type: 'search', placeholder: 'Busca por nombre, tienda o país', 'aria-label': 'Buscar en tu historial',
+    clase: 'buscador', type: 'search', placeholder: 'Busca por nombre, tienda o país', 'aria-label': 'Buscar en tu historial',
   });
   buscador.addEventListener('input', RM.util.conRetraso(function () { cargar(buscador.value); }, 250));
 
@@ -33,7 +33,7 @@ function pantallaHistorial(raiz) {
 
   function cargar(busqueda) {
     RM.util.vaciar(destino);
-    destino.appendChild(crear('p', { clase: 'pregunta-ayuda', texto: 'Cargando...' }));
+    destino.appendChild(crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Cargando...') }));
 
     RM.servidor.llamar('historial', busqueda || '').then(function (respuesta) {
       RM.util.vaciar(destino);
@@ -57,7 +57,7 @@ function pantallaHistorial(raiz) {
       var tabla = crear('table', { clase: 'tabla' });
       tabla.appendChild(crear('thead', {}, [
         crear('tr', {}, [
-          crear('th', { texto: 'Campaña' }),
+          crear('th', { texto: estado.T('Campaña') }),
           crear('th', { texto: 'País' }),
           crear('th', { texto: 'Fecha' }),
           crear('th', { texto: 'Estado' }),
@@ -300,7 +300,7 @@ function nombreDelPais(codigo) {
 
 function pantallaAyuda(raiz) {
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
-    crear('h1', { texto: 'Ayuda' }),
+    crear('h1', { texto: estado.T('Ayuda') }),
   ]);
 
   // 1. El aviso de azar, primero y destacado.
@@ -345,7 +345,7 @@ function pantallaAyuda(raiz) {
   }
   contenido.appendChild(pasos);
 
-  contenido.appendChild(crear('h3', { texto: '¿Quién puede publicar?' }));
+  contenido.appendChild(crear('h3', { texto: estado.T('¿Quién puede publicar?') }));
   contenido.appendChild(crear('p', {
     texto: 'No todo el mundo tiene usuario de Squarespace: la cuenta la tienen unas pocas personas por país. Si no eres una de ellas, pásales el documento y la dirección que te dio la herramienta, o pídelo por el canal.',
   }));
@@ -403,12 +403,12 @@ function pantallaAyuda(raiz) {
 // --- Administración ----------------------------------------------------------
 
 function pantallaAdmin(raiz) {
-  var contenido = crear('div', { clase: 'pagina' }, [crear('h1', { texto: 'Administración' })]);
+  var contenido = crear('div', { clase: 'pagina' }, [crear('h1', { texto: estado.T('Administración') })]);
   var destino = crear('div', {});
   contenido.appendChild(destino);
   raiz.appendChild(contenido);
 
-  destino.appendChild(crear('p', { clase: 'pregunta-ayuda', texto: 'Cargando...' }));
+  destino.appendChild(crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Cargando...') }));
 
   RM.servidor.llamar('adminEstado').then(function (datos) {
     RM.util.vaciar(destino);
@@ -604,7 +604,7 @@ function seccionSolicitudes() {
 
       var tabla = crear('table', { clase: 'tabla' }, [
         crear('thead', {}, [crear('tr', {}, [
-          crear('th', { texto: 'Id' }), crear('th', { texto: 'Campaña' }), crear('th', { texto: 'Quién' }),
+          crear('th', { texto: 'Id' }), crear('th', { texto: estado.T('Campaña') }), crear('th', { texto: 'Quién' }),
           crear('th', { texto: 'País' }), crear('th', { texto: 'Tipo' }), crear('th', { texto: 'Estado' }),
         ])]),
       ]);

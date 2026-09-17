@@ -264,7 +264,7 @@ button { font-size: 15px; cursor: pointer; }
 .campo { display: block; margin: 0 0 var(--e3); }
 .campo-caja { position: relative; display: flex; align-items: center; }
 
-input[type='text'], input[type='number'], input[type='date'], input[type='time'], select, textarea {
+input[type='text'], input[type='number'], input[type='date'], input[type='time'], input[type='search'], select, textarea {
   width: 100%;
   font-family: var(--cuerpo); font-size: 16px; color: var(--tinta);
   background: var(--papel);
@@ -314,10 +314,23 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 .opcion-nota { display: block; color: var(--gris-lapiz); font-size: 13px; margin-top: 2px; }
 .opcion[disabled] .opcion-nota { color: var(--rojo-alerta); }
 
+/* El buscador del historial. Sin la regla de arriba para type=search, el
+   campo salia con el ancho del navegador y cortaba su propio texto de ayuda:
+   "Busca por nombre, tienda o". */
+.buscador { max-width: 480px; }
+
 /* El atajo a los T&C que Legal ya publico. Va junto a los tipos de campana,
    pero separado por una linea: no genera documento como los demas. */
 .atajo-tyc { margin-top: var(--e4); padding-top: var(--e4); border-top: 1px solid var(--borde); }
 .atajo-tyc .pregunta-ayuda { margin-bottom: var(--e2); }
+
+/* Un T&C general vencido se queda a la vista, con su razon en rojo y el resto
+   en gris. No va con disabled: un boton deshabilitado no recibe foco y quien
+   navega con teclado o lector de pantalla pasaria de largo sin enterarse de
+   que existe ni de que vencio. */
+.opcion-vencida { opacity: 0.7; cursor: not-allowed; }
+.opcion-vencida .opcion-nota { color: var(--gris-lapiz); }
+.opcion-vencida .opcion-nota-vencido { color: var(--rojo-alerta); }
 
 .casillas { display: grid; gap: var(--e2); border: 0; padding: 0; margin: 0; }
 .casilla { display: flex; gap: var(--e3); align-items: flex-start; cursor: pointer; padding: var(--e2) 0; }
@@ -962,7 +975,12 @@ var PAISES_SEMILLA = [
       "termino_dias",
       "texto_hora_local",
       "texto_derechos_datos",
-      "autoridad_datos"
+      "autoridad_datos",
+      "entidad_vigilancia",
+      "pais_legal",
+      "ley_aplicable",
+      "jurisdiccion",
+      "politica_privacidad"
     ],
     "url_tc_turbo": ""
   }
@@ -1070,6 +1088,12 @@ var TYC_GENERICOS = {
         "descuento_en_valor_pro"
       ],
       "que": "En el Excel los nombres terminan con un espacio de más. Se quitó el espacio, el texto no se tocó."
+    },
+    {
+      "ids": [
+        "codigo_descuento_eventos_externos"
+      ],
+      "que": "En el Excel el nombre y la descripción traen un doble espacio (\"20%  para\"). Se dejó un solo espacio, con el mismo criterio de las filas 10 y 11: es espacio en blanco, no texto. La descripción repite el nombre; la pantalla no la muestra dos veces."
     }
   ],
   "paises": {
@@ -1219,9 +1243,9 @@ var TYC_GENERICOS = {
       },
       {
         "id": "codigo_descuento_eventos_externos",
-        "nombre": "Codigo de descuento para eventos externos (ej. codigo de 20%  para boletas al vino al parque)",
+        "nombre": "Codigo de descuento para eventos externos (ej. codigo de 20% para boletas al vino al parque)",
         "beneficio": "Descuento en producto o servicio que ofrece un externo por medio de un canal de venta independiente",
-        "paraQue": "Codigo de descuento para eventos externos (ej. codigo de 20%  para boletas al vino al parque)",
+        "paraQue": "Codigo de descuento para eventos externos (ej. codigo de 20% para boletas al vino al parque)",
         "enlace": "https://promos.rappi.com/colombia/2026/9/7/trminos-y-condiciones-cupones-off",
         "vigenciaInicio": "2026-01-01",
         "vigenciaFin": "2026-12-31",
@@ -2474,6 +2498,9 @@ function textoBeneficioAperturaBr(entrada) {
 function textoBeneficioRegraBr(entrada, pais) {
   var forma = formaDeBeneficioBr(entrada.beneficioBr);
   if (!forma) return '';
+  // Sin parceiro la vineta quedaba "nas lojas do Parceiro , na plataforma":
+  // mejor un hueco que una frase rota.
+  if (!String(entrada.tienda || '').trim()) return '';
 
   var nombre = forma.valor === 'desconto' ? 'o desconto'
     : (forma.valor === 'frete_gratis' ? 'o frete grátis'
@@ -2517,6 +2544,9 @@ function textoLimitePedidosBr(entrada) {
   if (!tieneValor(entrada.maxPedidos)) return '';
 
   var cantidad = Number(entrada.maxPedidos);
+  // Como su par en espanol: un valor que no es un numero queda como hueco, no
+  // como "o limite de  undefined (NaN) pedidos".
+  if (!isFinite(cantidad) || cantidad < 1) return '';
   var sustantivo = cantidad === 1 ? 'pedido' : 'pedidos';
   return 'Esclarece-se que há o limite de ' + letrasYCifra(cantidad) + ' ' + sustantivo +
     ' por usuário durante o período da promoção';
@@ -3548,6 +3578,7 @@ var CAMPOS_CREDITOS = [
     id: 'maxPedidos',
     etiqueta: 'Máximo de pedidos con beneficio',
     tipo: 'numero',
+    minimo: 1,
     paso: 'beneficio',
     visible: function (entrada) { return !entrada.sinLimite; },
     obligatorio: function (entrada) { return !entrada.sinLimite; },
@@ -4271,10 +4302,14 @@ var CAMPOS_BRASIL = [
       { valor: 'taxa_e_frete', etiqueta: 'Taxa de serviço e frete grátis' },
     ],
   },
+  // Los rangos no son adorno: sin ellos Brasil aceptaba 500% de desconto, un
+  // tope de R$0,00 y "o limite de zero (0) pedidos", y los imprimia.
   {
     id: 'porcentaje',
     etiqueta: 'Porcentaje de descuento',
     tipo: 'numero',
+    minimo: 1,
+    maximo: 100,
     paso: 'beneficio',
     visible: esDescontoBr,
     obligatorio: esDescontoBr,
@@ -4283,13 +4318,14 @@ var CAMPOS_BRASIL = [
     id: 'tope',
     etiqueta: 'Tope del beneficio',
     tipo: 'numero',
+    minimo: 1,
     paso: 'beneficio',
     // La taxa de servico no lleva tope en ninguno de los documentos aprobados.
     visible: llevaTopeBr,
     obligatorio: false,
   },
-  { id: 'compraMinima', etiqueta: 'Mínimo de compra', tipo: 'numero', paso: 'participantes', obligatorio: false },
-  { id: 'maxPedidos', etiqueta: 'Máximo de pedidos por usuario', tipo: 'numero', paso: 'beneficio', obligatorio: false },
+  { id: 'compraMinima', etiqueta: 'Mínimo de compra', tipo: 'numero', minimo: 1, paso: 'participantes', obligatorio: false },
+  { id: 'maxPedidos', etiqueta: 'Máximo de pedidos por usuario', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: false },
   { id: 'sinLimite', etiqueta: 'Sin límite de pedidos', tipo: 'casilla', paso: 'beneficio', obligatorio: false },
   { id: 'metodosPagoBr', etiqueta: 'Medios de pago', tipo: 'casillas', paso: 'beneficio', obligatorio: true },
 
@@ -4338,7 +4374,7 @@ var CAMPOS_CASHBACK_ETA = [
   { id: 'porcentaje', etiqueta: 'Porcentaje que se devuelve', tipo: 'numero', paso: 'beneficio', obligatorio: true },
   { id: 'tope', etiqueta: 'Tope por orden', tipo: 'numero', paso: 'beneficio', obligatorio: true },
   { id: 'presupuesto', etiqueta: 'Presupuesto total', tipo: 'numero', paso: 'beneficio', obligatorio: true },
-  { id: 'maxPedidos', etiqueta: 'Máximo de órdenes por persona', tipo: 'numero', paso: 'beneficio', obligatorio: false },
+  { id: 'maxPedidos', etiqueta: 'Máximo de órdenes por persona', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: false },
   { id: 'sinLimite', etiqueta: 'Sin límite de órdenes', tipo: 'casilla', paso: 'beneficio', obligatorio: false },
 
   {
@@ -4468,6 +4504,10 @@ var ESQUEMAS = {
     campos: CAMPOS_BRASIL,
     filtroDeEntrada: [],
     esDeBrasil: true,
+    // El documento va en portugues. Si la fila del pais no lo dice, no se
+    // genera: sin esto salia un T&C en portugues con las fechas y los montos
+    // en espanol, sin ningun error.
+    idioma: 'pt',
   },
   cashback_day: {
     id: 'cashback_day',
@@ -4538,6 +4578,7 @@ if (typeof module !== 'undefined') {
 /* En Node las dependencias se cargan con require; en Apps Script ya son globales. */
 if (typeof module !== 'undefined' && typeof require === 'function') {
   var textosDelIdioma = require('./idiomas.js').textosDelIdioma;
+  var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
 }
 
 /* Se conserva por compatibilidad: los meses de verdad salen del idioma activo. */
@@ -4569,6 +4610,22 @@ function formatearFecha(iso) {
   var p = partesDeFecha(iso);
   if (!p) return '';
   return p.dia + ' de ' + textosDelIdioma().meses[p.mes - 1] + ' de ' + p.anio;
+}
+
+/**
+ * La fecha y la hora como las escribe el pais de la campana, fuera del documento.
+ *
+ * El idioma se enciende solo mientras se calcula el documento. Fuera de ahi
+ * (las respuestas plegadas y el resumen) todo salia en espanol, y un KAM de
+ * Brasil veia "1 de octubre de 2026" y "12:00 a. m." arriba de un documento que
+ * decia "1 de outubro de 2026 às 00:00".
+ */
+function formatearFechaDelPais(iso, pais) {
+  return conElIdiomaDe(pais, function () { return formatearFecha(iso); });
+}
+
+function formatearHoraDelPais(texto, pais) {
+  return conElIdiomaDe(pais, function () { return formatearHora(texto); });
 }
 
 /** Descompone una hora HH:MM. Devuelve null si no es valida. */
@@ -4649,6 +4706,8 @@ if (typeof module !== 'undefined') {
     partesDeHora: partesDeHora,
     formatearFecha: formatearFecha,
     formatearHora: formatearHora,
+    formatearFechaDelPais: formatearFechaDelPais,
+    formatearHoraDelPais: formatearHoraDelPais,
     comoNumeroFecha: comoNumeroFecha,
     comoNumeroFechaHora: comoNumeroFechaHora,
     listaY: listaY,
@@ -5147,6 +5206,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 
   var moduloDerivados = require('./derivados.js');
   var calcularDerivados = moduloDerivados.calcularDerivados;
+  var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
   var valoresDeTienda = moduloDerivados.valoresDeTienda;
 }
 
@@ -5293,7 +5353,10 @@ function renderizar(nombreModelo, entrada, pais, modelos) {
   var texto = quitarComentarios(inclusiones.texto);
   var valores = calcularDerivados(entrada, pais);
 
-  texto = expandirTiendas(texto, entrada.tiendas || [], pais);
+  // Con el idioma del pais, igual que los derivados: la lista de tiendas se
+  // expandia despues de que calcularDerivados devolvia el idioma a espanol, y
+  // en un pais en portugues habria salido "doce millones de Créditos" por tienda.
+  texto = conElIdiomaDe(pais, function () { return expandirTiendas(texto, entrada.tiendas || [], pais); });
   texto = resolverOpcionales(texto, valores);
 
   var reemplazo = reemplazarPlaceholders(texto, valores);
@@ -5346,7 +5409,7 @@ function renderizarVistaPrevia(nombreModelo, entrada, pais, modelos) {
       return '\u2022 {{TIENDA_MARCA}}';
     });
   } else {
-    texto = expandirTiendas(texto, tiendas, pais);
+    texto = conElIdiomaDe(pais, function () { return expandirTiendas(texto, tiendas, pais); });
   }
 
   texto = resolverOpcionales(texto, valores);
@@ -5716,6 +5779,7 @@ function numeroEnLetras(n, apocope) {
   if (idiomaActivo() === 'pt') return numeroEnLetrasPt(n);
 
   var entero = Math.trunc(Number(n));
+  if (!isFinite(entero) || entero < 0) return '';
   if (entero === 0) return 'cero';
 
   var partes = [];
@@ -5929,6 +5993,9 @@ function seUneConE(valorDelUltimoTramo) {
 /** Numero en letras hasta 999.999.999.999. */
 function numeroEnLetrasPt(n) {
   var entero = Math.trunc(Number(n));
+  // Un negativo entraba en recursion sin fin y tumbaba la vista previa; algo
+  // que no es un numero queda como hueco, no como " undefined (NaN)".
+  if (!isFinite(entero) || entero < 0) return '';
   if (entero === 0) return 'zero';
 
   var milhoes = Math.floor(entero / 1000000);
@@ -6227,6 +6294,10 @@ var NOMBRE_DEL_DATO = {
   texto_derechos_datos: 'los derechos del titular sobre sus datos personales',
   autoridad_datos: 'la autoridad de protección de datos',
   entidad_vigilancia: 'la autoridad de protección al consumidor',
+  pais_legal: 'el nombre del país como va escrito en el documento',
+  ley_aplicable: 'la ley aplicable',
+  jurisdiccion: 'la jurisdicción',
+  politica_privacidad: 'el nombre de la política de privacidad',
   moneda_nombre: 'el nombre de la moneda',
   edad_minima: 'la edad mínima para participar',
   texto_persona: 'cómo se nombra a la persona natural',
@@ -6420,6 +6491,7 @@ var PREGUNTAS = {
     pregunta: '¿Qué recibe el usuario?',
     ayuda: 'Las cuatro formas que Legal Brasil tiene aprobadas. Cada una cambia una sola frase del documento.',
     porQue: 'De aquí salen el párrafo de apertura y la viñeta que describe el beneficio. Es lo único que distingue los cuatro modelos aprobados entre sí.',
+    avanzaSola: true,
     placeholders: ['TEXTO_BENEFICIO_APERTURA', 'TEXTO_BENEFICIO_REGRA'],
     opciones: [
       { valor: 'desconto', etiqueta: 'Desconto % OFF', nota: 'Un porcentaje de descuento sobre el pedido, con tope en reales.' },
@@ -6435,6 +6507,7 @@ var PREGUNTAS = {
     pregunta: '¿Con qué medios se puede pagar?',
     ayuda: 'Marca todos los que apliquen. Los cuatro documentos aprobados los enumeran uno por uno.',
     porQue: 'El documento lista los medios de pago válidos con su nombre. Un medio que no esté en la lista no da derecho al beneficio.',
+    multiple: true,
     placeholders: ['TEXTO_METODO_PAGO'],
     opciones: [
       { valor: 'dinheiro', etiqueta: 'Dinheiro', nota: 'Efectivo.' },
@@ -6465,6 +6538,8 @@ var PREGUNTAS = {
     pregunta: '¿En qué secciones NO se pueden redimir los Créditos?',
     ayuda: 'Opcional. Marca las que queden por fuera. Las campañas publicadas excluyen Rappi Travel, SOAT, Cajero ATM y Rappi Favor.',
     porQue: 'El documento dice dónde se puede gastar el saldo. Una sección que no esté excluida aquí queda habilitada, y después no se puede cerrar.',
+    opcional: true,
+    multiple: true,
     placeholders: ['TEXTO_LUGAR_REDENCION'],
     opciones: [
       { valor: 'travel', etiqueta: 'Rappi Travel', nota: 'Vuelos, hoteles, autos y paquetes.' },
@@ -6482,6 +6557,10 @@ var PREGUNTAS = {
         ayuda: 'El nombre del socio como aparece en la app. Por ejemplo: Petz, Drogasmil, Raia.',
         porQue: 'El documento nombra al Parceiro en el párrafo de apertura y en la viñeta del beneficio.',
         ejemplo: 'Petz',
+        // Los placeholders de la variante son los del modelo brasileno. Sin
+        // ellos, "Asi queda en tu T&C" mostraba el valor colombiano (el tope en
+        // Creditos, el minimo en espanol) que el documento de Brasil no usa.
+        placeholders: ['PARCEIRO'],
         errores: { vacio: 'Escribe el parceiro donde aplica la campaña.' },
       },
     },
@@ -6628,6 +6707,7 @@ var PREGUNTAS = {
         pregunta: '¿Qué porcentaje de descuento das?',
         ayuda: 'El documento lo escribe como "até X%", así que es el descuento máximo.',
         porQue: 'Sale escrito en letras y en cifra dentro del documento, como lo exige el modelo aprobado.',
+        placeholders: ['TEXTO_BENEFICIO_APERTURA', 'TEXTO_TOPE_BENEFICIO'],
       },
       cashback_travel: {
         pregunta: '¿Qué porcentaje de la orden devuelves?',
@@ -6667,6 +6747,9 @@ var PREGUNTAS = {
         pregunta: '¿Cuál es el tope del beneficio, en reales?',
         ayuda: 'Lo máximo que la campaña cubre en un pedido. Si lo dejas en blanco, el documento no lleva tope.',
         porQue: 'Sin tope escrito, la campaña no tiene techo y el presupuesto se puede ir en pocos pedidos.',
+        // En Brasil el tope no es obligatorio, y lo opcional se ve opcional.
+        opcional: true,
+        placeholders: ['TEXTO_TOPE_BENEFICIO'],
       },
       cashback_travel: {
         pregunta: '¿Qué es lo máximo que recibe por orden?',
@@ -6727,6 +6810,7 @@ var PREGUNTAS = {
     errores: {
       vacio: 'Dinos cuántas veces puede ganar la misma persona.',
       cuantas: 'Escribe cuántos pedidos con beneficio puede hacer una persona.',
+      rango: 'Tiene que ser al menos un pedido.',
     },
   }),
 
@@ -6759,6 +6843,7 @@ var PREGUNTAS = {
         pregunta: '¿Hay un mínimo de compra, en reales?',
         ayuda: 'Opcional. De los cuatro documentos aprobados, tres lo llevan y el de taxa de serviço e frete grátis no.',
         porQue: 'El mínimo aparece dos veces en el documento: en el párrafo de apertura y en la viñeta del beneficio.',
+        placeholders: ['TEXTO_BENEFICIO_REGRA'],
       },
       cashback_travel: { paso: 'condiciones_travel', placeholders: ['TEXTO_CONDICIONES_TRAVEL'] },
       descuento_travel: { paso: 'condiciones_travel', placeholders: ['TEXTO_CONDICIONES_TRAVEL'] },
@@ -7672,7 +7757,7 @@ var NOMBRE_DEL_HUECO = {
   DOMICILIO_LEGAL: 'el domicilio de la empresa',
   PAIS_LEGAL: 'el país',
   TEXTO_MINIMO_APERTURA: 'el mínimo de compra',
-  TEXTO_BENEFICIO_APERTURA: 'qué recibe el usuario',
+  TEXTO_BENEFICIO_APERTURA: 'qué recibe el usuario, con su porcentaje si es desconto',
   TEXTO_BENEFICIO_REGRA: 'la regla del beneficio',
   TEXTO_TOPE_BENEFICIO: 'el tope del beneficio',
   PARCEIRO: 'el parceiro',
@@ -7809,12 +7894,20 @@ if (typeof module !== 'undefined') {
  * Las preguntas en portugues.
  *
  * Solo las que ve un KAM de Brasil, que son las del tipo promocao_br mas las
- * tres de arranque. Traducir las ochenta y nueve preguntas seria traducir
- * pantallas que en Brasil no existen: el pais solo tiene habilitado su propio
- * tipo, asi que nadie de alla vera nunca las de Carrera de Compras ni las de
- * Travel.
+ * tres de arranque, y una traduccion generica de las preguntas que Brasil
+ * comparte con los demas tipos (la tienda, el porcentaje, el tope, el minimo y
+ * las veces), por si alguien deja la interfaz en portugues y arma una campana
+ * de otro pais. Traducir las ochenta y nueve preguntas seria traducir pantallas
+ * que en Brasil no existen: el pais solo tiene habilitado su propio tipo.
  *
  * Lo que no esta aqui sale en espanol, que se entiende, en vez de romperse.
+ *
+ * La estructura es la misma de PREGUNTAS: lo que va en la raiz vale para
+ * cualquier tipo de campana, y lo que va en `variantes.promocao_br` solo para
+ * Brasil. La distincion importa: "em reais" y "parceiro" son de Brasil, y
+ * cuando iban en la raiz, quien tenia la interfaz en portugues y elegia
+ * Colombia y Cashback leia "Qual é o teto do benefício, em reais?" para un
+ * tope en pesos.
  *
  * OJO: esta traduccion es de producto, no de Legal, y la escribi yo. Conviene
  * que la lea alguien que hable portugues antes de que la usen los KAM de Brasil.
@@ -7848,17 +7941,26 @@ var PREGUNTAS_PT = {
   },
 
   tienda: {
-    pregunta: 'Em qual parceiro a campanha vale?',
-    ayuda: 'O nome do parceiro como aparece no aplicativo. Por exemplo: Petz, Drogasmil, Raia.',
-    porQue: 'O documento nomeia o Parceiro no parágrafo de abertura e na regra do benefício.',
-    ejemplo: 'Petz',
-    errores: { vacio: 'Escreva o parceiro em que a campanha vale.' },
+    pregunta: 'Em qual loja a campanha vale?',
+    ayuda: 'A marca comercial como aparece no aplicativo.',
+    porQue: 'O documento nomeia a loja e a define como Loja Participante. Se o nome não coincidir com o do aplicativo, o usuário não a encontra.',
+    errores: { vacio: 'Escreva a loja em que a campanha vale.' },
+    variantes: {
+      promocao_br: {
+        pregunta: 'Em qual parceiro a campanha vale?',
+        ayuda: 'O nome do parceiro como aparece no aplicativo. Por exemplo: Petz, Drogasmil, Raia.',
+        porQue: 'O documento nomeia o Parceiro no parágrafo de abertura e na regra do benefício.',
+        ejemplo: 'Petz',
+        errores: { vacio: 'Escreva o parceiro em que a campanha vale.' },
+      },
+    },
   },
 
   fechaInicio: {
     pregunta: 'Em que dia a campanha começa?',
     ayuda: 'Pode ser hoje. Publique os T&C antes de começar.',
     porQue: 'Os Termos e Condições precisam estar publicados antes de a campanha começar. Se já começou ontem, não dá mais para publicar a tempo.',
+    aviso: 'Faltam menos de 48 horas. Dá tempo, mas publique os T&C hoje mesmo.',
     errores: {
       vacio: 'Escolha o dia em que a campanha começa.',
       pasado: 'Essa data já passou. Os T&C se publicam antes de a campanha começar, então escolha hoje ou um dia futuro.',
@@ -7867,9 +7969,18 @@ var PREGUNTAS_PT = {
 
   horaInicio: {
     pregunta: 'A que horas começa?',
-    ayuda: 'Os documentos aprovados começam às 00:01.',
+    ayuda: 'Por padrão começa à meia-noite.',
     porQue: 'A hora exata define a partir de quando um pedido vale para a campanha. Um pedido um minuto antes não dá benefício.',
     errores: { vacio: 'Escolha a hora de início.' },
+    variantes: {
+      promocao_br: {
+        // El formulario preselecciona 00:00, como en todos los paises. Los cuatro
+        // T&C aprobados de Brasil arrancan a las 00:01, y si Legal Brasil exige
+        // esa hora hay que cambiar el valor por defecto, no solo la ayuda. Esta
+        // anotado en docs/PENDIENTES_LEGAL.md.
+        ayuda: 'Deixamos 00:00 por padrão. Os quatro documentos aprovados começam às 00:01: altere se o Jurídico do Brasil exigir esse horário.',
+      },
+    },
   },
 
   fechaFin: {
@@ -7884,9 +7995,14 @@ var PREGUNTAS_PT = {
 
   horaFin: {
     pregunta: 'A que horas termina?',
-    ayuda: 'Os documentos aprovados terminam às 23:59.',
+    ayuda: 'Por padrão termina às 23:59.',
     porQue: 'Define até que minuto um pedido conta. Os pedidos posteriores são processados como pedidos normais.',
     errores: { vacio: 'Escolha a hora de término.' },
+    variantes: {
+      promocao_br: {
+        ayuda: 'Os documentos aprovados terminam às 23:59.',
+      },
+    },
   },
 
   beneficioBr: {
@@ -7903,36 +8019,66 @@ var PREGUNTAS_PT = {
   },
 
   porcentaje: {
-    pregunta: 'Qual é a porcentagem de desconto?',
-    ayuda: 'Só o número. O documento escreve "até X%", ou seja, é o desconto máximo.',
-    porQue: 'Sai escrito por extenso e em número dentro do documento, como o modelo aprovado exige.',
+    pregunta: 'Qual porcentagem do pedido você devolve em Créditos?',
+    ayuda: 'Só o número. Com 20, um pedido de 50.000 recebe 10.000 em Créditos.',
+    porQue: 'É a promessa central da campanha. Uma vez publicado, o usuário pode exigir exatamente essa porcentagem.',
     errores: {
-      vacio: 'Escreva a porcentagem de desconto, sem o sinal de porcentagem.',
+      vacio: 'Escreva a porcentagem que você devolve, sem o sinal de porcentagem.',
       rango: 'A porcentagem vai de 1 a 100.',
+    },
+    variantes: {
+      promocao_br: {
+        pregunta: 'Qual é a porcentagem de desconto?',
+        ayuda: 'Só o número. O documento escreve "até X%", ou seja, é o desconto máximo.',
+        porQue: 'Sai escrito por extenso e em número dentro do documento, como o modelo aprovado exige.',
+        errores: {
+          vacio: 'Escreva a porcentagem de desconto, sem o sinal de porcentagem.',
+          rango: 'A porcentagem vai de 1 a 100.',
+        },
+      },
     },
   },
 
   tope: {
-    pregunta: 'Qual é o teto do benefício, em reais?',
-    ayuda: 'O máximo que a campanha cobre em um pedido. Se deixar em branco, o documento sai sem teto.',
-    porQue: 'Sem um teto escrito, a campanha não tem limite e o orçamento pode ir embora em poucos pedidos.',
+    pregunta: 'Qual é o máximo que alguém recebe por pedido?',
+    ayuda: 'Mesmo que o pedido seja grande, não recebe mais do que isso.',
+    porQue: 'Sem teto, um pedido enorme leva o orçamento inteiro. O teto é o que torna viável um cashback alto.',
     errores: {
-      vacio: 'Escreva o teto do benefício, em reais.',
-      rango: 'O teto precisa ser maior que zero.',
+      vacio: 'Escreva o máximo de Créditos que uma pessoa recebe por pedido.',
+      cero: 'O teto precisa ser maior que zero.',
+      mayorQuePresupuesto: 'O teto por pedido é maior que o orçamento total. Assim, o primeiro pedido leva a campanha inteira. Revise os dois números.',
+    },
+    variantes: {
+      promocao_br: {
+        pregunta: 'Qual é o teto do benefício, em reais?',
+        ayuda: 'O máximo que a campanha cobre em um pedido. Se deixar em branco, o documento sai sem teto.',
+        porQue: 'Sem um teto escrito, a campanha não tem limite e o orçamento pode ir embora em poucos pedidos.',
+        errores: {
+          vacio: 'Escreva o teto do benefício, em reais.',
+          cero: 'O teto precisa ser maior que zero.',
+        },
+      },
     },
   },
 
   compraMinima: {
-    pregunta: 'Existe um mínimo de compra, em reais?',
-    ayuda: 'Opcional. Dos quatro documentos aprovados, três têm mínimo e o de taxa de serviço e frete grátis não.',
-    porQue: 'O mínimo aparece duas vezes no documento: no parágrafo de abertura e na regra do benefício.',
-    errores: { vacio: 'Se não quiser exigir um mínimo, deixe o campo em branco.' },
+    pregunta: 'É preciso gastar um mínimo para participar?',
+    ayuda: 'É opcional: se não exigir um mínimo, deixe o campo em branco e siga.',
+    porQue: 'Se você exigir, precisa ficar escrito. Se não aparecer no documento, não dá para aplicar depois.',
+    errores: { cero: 'Se não quiser exigir um mínimo, deixe o campo em branco.' },
+    variantes: {
+      promocao_br: {
+        pregunta: 'Existe um mínimo de compra, em reais?',
+        ayuda: 'Opcional. Dos quatro documentos aprovados, três têm mínimo e o de taxa de serviço e frete grátis não.',
+        porQue: 'O mínimo aparece duas vezes no documento: no parágrafo de abertura e na regra do benefício.',
+      },
+    },
   },
 
   maxPedidos: {
-    pregunta: 'Quantos pedidos a mesma pessoa pode fazer?',
-    ayuda: 'Os documentos aprovados usam um, dois, ou sem limite.',
-    porQue: 'O documento escreve por extenso e em número: "o limite de 1 (um) pedido por usuário".',
+    pregunta: 'Quantas vezes a mesma pessoa pode ganhar?',
+    ayuda: 'Metade das campanhas permite uma só vez por usuário.',
+    porQue: 'Sem limite, poucos usuários podem consumir o orçamento em horas. Com limite, o benefício chega a mais gente.',
     opciones: {
       una: { etiqueta: 'Uma só vez', nota: 'O segundo pedido já não dá benefício.' },
       varias: { etiqueta: 'Várias vezes', nota: 'Você diz quantas.' },
@@ -7940,7 +8086,15 @@ var PREGUNTAS_PT = {
     },
     errores: {
       vacio: 'Diga quantas vezes a mesma pessoa pode ganhar.',
-      cantidad: 'Escreva quantos pedidos com benefício uma pessoa pode fazer.',
+      cuantas: 'Escreva quantos pedidos com benefício uma pessoa pode fazer.',
+      rango: 'Precisa ser pelo menos um pedido.',
+    },
+    variantes: {
+      promocao_br: {
+        pregunta: 'Quantos pedidos a mesma pessoa pode fazer?',
+        ayuda: 'Os documentos aprovados usam um, dois, ou sem limite.',
+        porQue: 'O documento escreve por extenso e em número: "o limite de 1 (um) pedido por usuário".',
+      },
     },
   },
 
@@ -7969,37 +8123,72 @@ var PREGUNTAS_PT = {
 
 var PREGUNTAS_POR_IDIOMA = { pt: PREGUNTAS_PT };
 
+var TEXTOS_TRADUCIBLES = ['pregunta', 'ayuda', 'porQue', 'ejemplo', 'razonDeshabilitado', 'aviso'];
+
+function copiaPlana(objeto) {
+  var copia = {};
+  for (var llave in objeto) {
+    if (Object.prototype.hasOwnProperty.call(objeto, llave)) copia[llave] = objeto[llave];
+  }
+  return copia;
+}
+
 /**
- * La pregunta traducida al idioma de la interfaz.
+ * La traduccion de un campo para un tipo de campana: la raiz, y encima lo que
+ * diga `variantes[tipo]`. Los errores y las opciones se mezclan llave por
+ * llave, para que la variante solo tenga que escribir lo que cambia.
+ */
+function traduccionPara(base, tipo) {
+  var variante = base.variantes && tipo ? base.variantes[tipo] : null;
+  var mezclada = copiaPlana(base);
+  delete mezclada.variantes;
+  if (!variante) return mezclada;
+
+  for (var llave in variante) {
+    if (!Object.prototype.hasOwnProperty.call(variante, llave)) continue;
+    if (llave === 'errores' || llave === 'opciones') {
+      var unidas = copiaPlana(mezclada[llave] || {});
+      for (var sub in variante[llave]) {
+        if (Object.prototype.hasOwnProperty.call(variante[llave], sub)) unidas[sub] = variante[llave][sub];
+      }
+      mezclada[llave] = unidas;
+    } else {
+      mezclada[llave] = variante[llave];
+    }
+  }
+  return mezclada;
+}
+
+/**
+ * La pregunta traducida al idioma de la interfaz, para el tipo de campana que
+ * se esta llenando.
  *
  * Campo por campo: lo que no este traducido se queda en espanol. Las opciones se
  * traducen por su valor, no por su posicion, para que agregar una opcion nueva
  * en espanol no desalinee las etiquetas del otro idioma.
+ *
+ * `pregunta` es lo que devuelve preguntaDe(campo, tipo), ya con la variante del
+ * tipo aplicada en espanol; `tipo` hace falta otra vez para elegir la variante
+ * en el otro idioma.
  */
-function preguntaEnIdioma(pregunta, campoId, idioma) {
+function preguntaEnIdioma(pregunta, campoId, idioma, tipo) {
   if (!pregunta || !idioma || idioma === 'es') return pregunta;
 
   var diccionario = PREGUNTAS_POR_IDIOMA[idioma];
-  var traduccion = diccionario ? diccionario[campoId] : null;
-  if (!traduccion) return pregunta;
+  var base = diccionario ? diccionario[campoId] : null;
+  if (!base) return pregunta;
+  var traduccion = traduccionPara(base, tipo);
 
-  var mezclada = {};
-  for (var llave in pregunta) {
-    if (Object.prototype.hasOwnProperty.call(pregunta, llave)) mezclada[llave] = pregunta[llave];
-  }
+  var mezclada = copiaPlana(pregunta);
 
-  var textos = ['pregunta', 'ayuda', 'porQue', 'ejemplo', 'razonDeshabilitado', 'aviso'];
-  for (var t = 0; t < textos.length; t++) {
-    if (traduccion[textos[t]]) mezclada[textos[t]] = traduccion[textos[t]];
+  for (var t = 0; t < TEXTOS_TRADUCIBLES.length; t++) {
+    if (traduccion[TEXTOS_TRADUCIBLES[t]]) mezclada[TEXTOS_TRADUCIBLES[t]] = traduccion[TEXTOS_TRADUCIBLES[t]];
   }
 
   if (traduccion.errores) {
-    var errores = {};
-    for (var e in pregunta.errores) {
-      if (Object.prototype.hasOwnProperty.call(pregunta.errores, e)) errores[e] = pregunta.errores[e];
-    }
-    for (var e2 in traduccion.errores) {
-      if (Object.prototype.hasOwnProperty.call(traduccion.errores, e2)) errores[e2] = traduccion.errores[e2];
+    var errores = copiaPlana(pregunta.errores || {});
+    for (var e in traduccion.errores) {
+      if (Object.prototype.hasOwnProperty.call(traduccion.errores, e)) errores[e] = traduccion.errores[e];
     }
     mezclada.errores = errores;
   }
@@ -8026,6 +8215,7 @@ if (typeof module !== 'undefined') {
   module.exports = {
     PREGUNTAS_PT: PREGUNTAS_PT,
     preguntaEnIdioma: preguntaEnIdioma,
+    traduccionPara: traduccionPara,
   };
 }
 
@@ -8350,6 +8540,16 @@ if (typeof module !== 'undefined') {
  * codigo se sigue leyendo en espanol, que es la regla 8 de CLAUDE.md, y una
  * cadena sin traducir sale en espanol en vez de romperse o quedar vacia.
  *
+ * Dos reglas que salieron de defectos reales:
+ *
+ *   1. La clave tiene que ser IDENTICA al literal que el codigo le pasa a T().
+ *      Un caracter de diferencia y la traduccion no se aplica, sin avisar. Por
+ *      eso pruebas/interfaz_pt.test.js busca cada clave, literal, en el codigo.
+ *   2. Un numero que se inserta va como marcador {n}, nunca como una palabra
+ *      del idioma. "Faltan varios datos" se traducia como "Faltam varios dados"
+ *      sin tilde, y ese "varios" sin tilde era lo que el replace() buscaba
+ *      para poner el numero: corregir la ortografia habria borrado el numero.
+ *
  * Ojo: esto es texto de producto, no texto legal. Las clausulas siguen saliendo
  * de modelos/ y nadie las traduce aqui.
  */
@@ -8366,6 +8566,7 @@ var TEXTOS_PT = {
   'Ayuda': 'Ajuda',
   'Administración': 'Administração',
   'Secciones': 'Seções',
+  'Idioma de la interfaz': 'Idioma da interface',
   'Cargando RappiMind...': 'Carregando o RappiMind...',
   'No pudimos abrir RappiMind': 'Não conseguimos abrir o RappiMind',
   'Si sigue pasando, avísale a Juan.': 'Se continuar acontecendo, avise o Juan.',
@@ -8396,11 +8597,16 @@ var TEXTOS_PT = {
   '¿Hay azar: sorteo, rifa, raspa y gana o ruleta?': 'Tem sorte envolvida: sorteio, rifa, raspadinha ou roleta?',
   '¿La tienda o la marca exige sus propios términos y condiciones?':
     'A loja ou a marca exige os próprios termos e condições?',
+  'Las dinámicas con azar necesitan permiso previo de la autoridad. Legal tiene que revisarlas antes de lanzarlas.':
+    'As dinâmicas com sorte precisam de autorização prévia da autoridade. O Jurídico precisa revisá-las antes do lançamento.',
+  'Si el aliado impone su documento, hay que revisarlo con Legal antes de publicarlo.':
+    'Se o parceiro impõe o próprio documento, ele precisa ser revisado com o Jurídico antes de publicar.',
   'Sí': 'Sim',
   'No': 'Não',
 
   /* --- Pantalla de Legal --------------------------------------------------- */
   'Esta campaña la redacta Legal': 'Esta campanha é redigida pelo Jurídico',
+  'Tu campaña necesita revisión legal antes de publicarse.': 'Sua campanha precisa de revisão jurídica antes de ser publicada.',
   'No es un problema ni una negativa: es un caso que necesita que un abogado lo mire. Llena el formulario y el equipo legal te responde.':
     'Não é um problema nem uma recusa: é um caso que precisa que um advogado olhe. Preencha o formulário e o time jurídico responde.',
   'Ir al formulario de Legal': 'Ir para o formulário do Jurídico',
@@ -8413,17 +8619,30 @@ var TEXTOS_PT = {
   'Sin empezar': 'Ainda não começou',
   'Completo': 'Completo',
   'Falta 1 dato': 'Falta 1 dado',
-  'Faltan varios datos': 'Faltam varios dados',
+  'Faltan {n} datos': 'Faltam {n} dados',
   'Atrás': 'Voltar',
   'Siguiente': 'Avançar',
   'Revisar y generar': 'Revisar e gerar',
   'Cambiar': 'Alterar',
+  'Opcional': 'Opcional',
+  'Así queda en tu T&C:': 'Assim fica no seu T&C:',
   'Ver cómo va mi T&C': 'Ver como está o meu T&C',
   'Cerrar': 'Fechar',
   'Vista previa del documento': 'Prévia do documento',
   '¿Por qué te preguntamos esto?': 'Por que perguntamos isso?',
   'Tu documento aparece aquí y se va llenando mientras respondes.':
     'Seu documento aparece aqui e vai se preenchendo enquanto você responde.',
+  'Paso {n} de {m}': 'Etapa {n} de {m}',
+  'Queda 1 pregunta en este paso.': 'Falta 1 pergunta nesta etapa.',
+  'Quedan {n} preguntas en este paso.': 'Faltam {n} perguntas nesta etapa.',
+  'Disponible.': 'Disponível.',
+  'En piloto: solo para el equipo de pruebas.': 'Em piloto: só para a equipe de testes.',
+  '¿Cuántas veces?': 'Quantas vezes?',
+  'Sin límite': 'Sem limite',
+  'Una sola vez': 'Uma só vez',
+  'Varias veces': 'Várias vezes',
+  '{n} veces': '{n} vezes',
+  'Confirmado': 'Confirmado',
 
   /* --- Los pasos ----------------------------------------------------------- */
   'Campaña': 'Campanha',
@@ -8447,19 +8666,36 @@ var TEXTOS_PT = {
   'Editar': 'Editar',
   'Falta': 'Falta',
   'Te falta:': 'Está faltando:',
+  'Elige el país de la campaña.': 'Escolha o país da campanha.',
   'Generar T&C': 'Gerar T&C',
   'Generando...': 'Gerando...',
   'Generando el documento.': 'Gerando o documento.',
-  'Mis campañas': 'Minhas campanhas',
-
-  'Queda 1 pregunta en este paso.': 'Falta 1 pergunta nesta etapa.',
-  'Quedan varias preguntas en este paso.': 'Faltam varias perguntas nesta etapa.',
+  'Tu T&C está listo': 'Seu T&C está pronto',
+  'No se creó ningún documento ni se envió ningún correo. Este es el texto que habría salido.':
+    'Nenhum documento foi criado nem nenhum e-mail foi enviado. Este é o texto que teria saído.',
+  'Lo que vas a pegar en Squarespace': 'O que você vai colar no Squarespace',
+  'Título del evento': 'Título do evento',
+  'Va tal cual en el título del evento. No lo cambies: es el mismo nombre que quedó en el documento.':
+    'Vai exatamente assim no título do evento. Não altere: é o mesmo nome que ficou no documento.',
+  'Dirección del evento': 'Endereço do evento',
+  'Las fechas del evento': 'As datas do evento',
+  'Inicio: {inicio}. Fin: {fin}. Tienen que ser iguales a la vigencia del documento.':
+    'Início: {inicio}. Fim: {fin}. Precisam ser iguais à vigência do documento.',
+  'Cómo publicarlo, paso a paso': 'Como publicar, passo a passo',
+  '¿Quién puede publicar?': 'Quem pode publicar?',
+  'Abrir el documento': 'Abrir o documento',
+  'Cuando ya esté publicado': 'Quando já estiver publicado',
+  'Hacer otra campaña': 'Fazer outra campanha',
+  'Ver mi historial': 'Ver o meu histórico',
   'En 2 minutos recibirás un email con el documento generado y listo para publicar en Squarespace. Recuerda seguir las instrucciones para asegurar que los T&Cs queden publicados exitosamente.':
     'Em 2 minutos você recebe um e-mail com o documento gerado e pronto para publicar no Squarespace. Siga as instruções para garantir que os T&C fiquem publicados corretamente.',
 
   /* --- El aviso de pais en pruebas ---------------------------------------- */
   ' está en pruebas: genera y revisa, pero todavía no publiques. Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.':
     ' está em testes: gere e revise, mas ainda não publique. Os dados jurídicos deste país foram propostos pela ferramenta e ninguém os confirmou.',
+  ' está en pruebas: no publiques este documento todavía': ' está em testes: não publique este documento ainda',
+  'Genera el documento, léelo y dinos si los datos legales de tu país están bien. Los propuso la herramienta por analogía con Colombia y no los ha confirmado nadie.':
+    'Gere o documento, leia e nos diga se os dados jurídicos do seu país estão certos. A ferramenta os propôs por analogia com a Colômbia e ninguém os confirmou.',
 
   /* --- Las descripciones de los tipos de campana --------------------------- */
   'Descuento en porcentaje, envío gratis o tarifa de servicio gratis en una tienda aliada de Brasil. El usuario ve el beneficio aplicado al pagar, no recibe Créditos. Solo para Brasil.':
@@ -8483,22 +8719,11 @@ function traducirInterfaz(texto, idioma) {
   return traducido === undefined ? texto : traducido;
 }
 
-/** Cuantas cadenas faltan por traducir, para la prueba que lo vigila. */
-function cadenasTraducidas(idioma) {
-  var diccionario = DICCIONARIOS[idioma] || {};
-  var cuantas = 0;
-  for (var llave in diccionario) {
-    if (Object.prototype.hasOwnProperty.call(diccionario, llave)) cuantas += 1;
-  }
-  return cuantas;
-}
-
 if (typeof module !== 'undefined') {
   module.exports = {
     IDIOMAS_DE_INTERFAZ: IDIOMAS_DE_INTERFAZ,
     TEXTOS_PT: TEXTOS_PT,
     traducirInterfaz: traducirInterfaz,
-    cadenasTraducidas: cadenasTraducidas,
   };
 }
 
@@ -8544,6 +8769,29 @@ function tycGenericosDelPais(codigoPais) {
 /** Si este pais tiene algun T&C general publicado. Hoy solo Colombia. */
 function hayTycGenericos(codigoPais) {
   return tycGenericosDelPais(codigoPais).length > 0;
+}
+
+/**
+ * Los T&C generales que hoy se pueden usar: los vigentes.
+ *
+ * Catorce de los quince vencen el 31 de diciembre de 2026 y el otro el 31 de
+ * octubre. Si nadie actualiza la lista, el 1 de enero de 2027 la tarjeta
+ * seguia diciendo "Buena noticia: Legal ya publico los T&C" y detras habia
+ * quince botones grises que no respondian al clic. Con esto, quien dibuja la
+ * pantalla puede decir la verdad: que vencieron y que hay que escribirle a
+ * Legal.
+ */
+function tycGenericosUsables(codigoPais, hoyIso) {
+  var lista = tycGenericosDelPais(codigoPais);
+  var usables = [];
+  for (var i = 0; i < lista.length; i++) {
+    if (estadoDeTycGenerico(lista[i], hoyIso).usable) usables.push(lista[i]);
+  }
+  return usables;
+}
+
+function hayTycGenericosUsables(codigoPais, hoyIso) {
+  return tycGenericosUsables(codigoPais, hoyIso).length > 0;
 }
 
 function tycGenericoPorId(codigoPais, id) {
@@ -8637,6 +8885,8 @@ if (typeof module !== 'undefined') {
   module.exports = {
     tycGenericosDelPais: tycGenericosDelPais,
     hayTycGenericos: hayTycGenericos,
+    tycGenericosUsables: tycGenericosUsables,
+    hayTycGenericosUsables: hayTycGenericosUsables,
     tycGenericoPorId: tycGenericoPorId,
     estadoDeTycGenerico: estadoDeTycGenerico,
     vigenciaEnPalabras: vigenciaEnPalabras,
@@ -8676,10 +8926,37 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var travelDisponible = require('./paises.js').travelDisponible;
 
   var preguntaDe = require('./preguntas.js').preguntaDe;
+  var preguntaEnIdioma = require('./preguntas_pt.js').preguntaEnIdioma;
 }
 
 function error(campo, mensaje) {
   return { campo: campo, mensaje: mensaje };
+}
+
+/**
+ * El mensaje escrito para una pregunta, en el idioma de la interfaz.
+ *
+ * Cada pregunta trae sus mensajes en `errores` (vacio, pasado, orden, cero...),
+ * escritos para el comercial. Durante mucho tiempo solo se uso errores.vacio y
+ * el resto se armaba aqui a mano, generico y en espanol: un KAM de Brasil con
+ * la interfaz en portugues leia "La campaña no puede empezar en una fecha que
+ * ya pasó" en medio de una pantalla en portugues, y un comercial de Colombia
+ * leia "Tope por pedido debe ser al menos 1" en vez de la frase que alguien
+ * escribio para eso. El generico queda solo para cuando la pregunta no tiene
+ * ese mensaje.
+ *
+ * `claves` puede ser una sola o una lista en orden de preferencia.
+ */
+function mensajeDe(campoId, tipo, claves, idioma, generico) {
+  var pregunta = preguntaDe(campoId, tipo);
+  if (pregunta && typeof preguntaEnIdioma === 'function') {
+    pregunta = preguntaEnIdioma(pregunta, campoId, idioma, tipo);
+  }
+  var lista = Object.prototype.toString.call(claves) === '[object Array]' ? claves : [claves];
+  for (var i = 0; i < lista.length; i++) {
+    if (pregunta && pregunta.errores && pregunta.errores[lista[i]]) return pregunta.errores[lista[i]];
+  }
+  return generico;
 }
 
 function estaVacio(valor) {
@@ -8717,7 +8994,7 @@ function validarTipo(tipo, pais) {
 }
 
 /** Campos obligatorios visibles que quedaron vacios. */
-function validarObligatorios(entrada, esquema) {
+function validarObligatorios(entrada, esquema, idioma) {
   var errores = [];
   var visibles = camposVisibles(esquema.id, entrada);
 
@@ -8732,18 +9009,15 @@ function validarObligatorios(entrada, esquema) {
       // pregunta tiene uno en errores.vacio, y estuvieron sin usarse: el
       // comercial leia "Falta minutos del eta." en vez de "Escribe en cuantos
       // minutos prometes la entrega.".
-      var pregunta = preguntaDe(campo.id, esquema.id);
-      var mensaje = pregunta && pregunta.errores && pregunta.errores.vacio
-        ? pregunta.errores.vacio
-        : 'Falta ' + campo.etiqueta.toLowerCase() + '.';
-      errores.push(error(campo.id, mensaje));
+      errores.push(error(campo.id, mensajeDe(campo.id, esquema.id, 'vacio', idioma,
+        'Falta ' + campo.etiqueta.toLowerCase() + '.')));
     }
   }
   return errores;
 }
 
 /** Rangos, formatos de fecha y hora, y largo de los textos. */
-function validarFormatos(entrada, esquema) {
+function validarFormatos(entrada, esquema, idioma) {
   var errores = [];
   var visibles = camposVisibles(esquema.id, entrada);
 
@@ -8757,35 +9031,42 @@ function validarFormatos(entrada, esquema) {
       if (isNaN(numero)) {
         errores.push(error(campo.id, campo.etiqueta + ' debe ser un número.'));
       } else if (campo.minimo !== undefined && numero < campo.minimo) {
-        errores.push(error(campo.id, campo.etiqueta + ' debe ser al menos ' + campo.minimo + '.'));
+        // Un minimo de uno es "mayor que cero": si la pregunta escribio ese
+        // mensaje (errores.cero), se prefiere al de rango.
+        errores.push(error(campo.id, mensajeDe(campo.id, esquema.id, campo.minimo === 1 ? ['rango', 'cero'] : ['rango'], idioma,
+          campo.etiqueta + ' debe ser al menos ' + campo.minimo + '.')));
       } else if (campo.maximo !== undefined && numero > campo.maximo) {
-        errores.push(error(campo.id, campo.etiqueta + ' no puede pasar de ' + campo.maximo + '.'));
+        errores.push(error(campo.id, mensajeDe(campo.id, esquema.id, 'rango', idioma,
+          campo.etiqueta + ' no puede pasar de ' + campo.maximo + '.')));
       }
     } else if (campo.tipo === 'fecha' && !partesDeFecha(valor)) {
       errores.push(error(campo.id, campo.etiqueta + ' no es una fecha válida.'));
     } else if (campo.tipo === 'hora' && !partesDeHora(valor)) {
       errores.push(error(campo.id, campo.etiqueta + ' no es una hora válida.'));
     } else if (campo.tipo === 'texto' && campo.maximo !== undefined && String(valor).length > campo.maximo) {
-      errores.push(error(campo.id, campo.etiqueta + ' no puede pasar de ' + campo.maximo + ' caracteres.'));
+      errores.push(error(campo.id, mensajeDe(campo.id, esquema.id, 'largo', idioma,
+        campo.etiqueta + ' no puede pasar de ' + campo.maximo + ' caracteres.')));
     }
   }
   return errores;
 }
 
 /** Vigencia: fin posterior al inicio y nada anterior a la fecha de referencia. */
-function validarVigencia(entrada, fechaReferencia) {
+function validarVigencia(entrada, fechaReferencia, tipo, idioma) {
   var errores = [];
 
   var inicio = comoNumeroFechaHora(entrada.fechaInicio, entrada.horaInicio);
   var fin = comoNumeroFechaHora(entrada.fechaFin, entrada.horaFin);
   if (inicio !== null && fin !== null && fin <= inicio) {
-    errores.push(error('fechaFin', 'La campaña no puede terminar antes de empezar. Revisa la fecha y la hora de fin.'));
+    errores.push(error('fechaFin', mensajeDe('fechaFin', tipo, 'orden', idioma,
+      'La campaña no puede terminar antes de empezar. Revisa la fecha y la hora de fin.')));
   }
 
   var hoy = comoNumeroFecha(fechaReferencia);
   var dia = comoNumeroFecha(entrada.fechaInicio);
   if (hoy !== null && dia !== null && dia < hoy) {
-    errores.push(error('fechaInicio', 'La campaña no puede empezar en una fecha que ya pasó.'));
+    errores.push(error('fechaInicio', mensajeDe('fechaInicio', tipo, 'pasado', idioma,
+      'La campaña no puede empezar en una fecha que ya pasó.')));
   }
   return errores;
 }
@@ -8833,26 +9114,46 @@ function validarAnotacionesDelPais(pais) {
   return errores;
 }
 
+/**
+ * Un modelo escrito en otro idioma exige que el pais lo diga.
+ *
+ * El idioma del documento sale de la columna idioma de la pestaña Paises, que
+ * se edita a mano y manda sobre la semilla. Con esa celda vacia, el motor caia
+ * a espanol en silencio y el T&C de Brasil salia con "1 de octubre de 2026 às
+ * 12:01 a. m." y "diez por ciento (10%)" en medio del portugues, sin un solo
+ * error. Regla 2 de CLAUDE.md: si falta un dato, no se genera.
+ */
+function validarIdiomaDelPais(esquema, pais) {
+  if (!esquema || !esquema.idioma) return null;
+  var idiomaDelPais = String((pais && pais.idioma) || '').trim().toLowerCase();
+  if (idiomaDelPais === esquema.idioma) return null;
+  return error('pais', 'La configuración de ' + (pais.nombre || pais.codigo) +
+    ' no dice que el documento va en ' + (esquema.idioma === 'pt' ? 'portugués' : esquema.idioma) +
+    ': la columna idioma de la pestaña Paises tiene que decir "' + esquema.idioma +
+    '". Sin eso las fechas y los montos saldrían en español.');
+}
+
 /** Cruces propios del Cashback. */
-function validarCashback(entrada) {
+function validarCashback(entrada, tipo, idioma) {
   var errores = [];
   var tope = Number(entrada.tope);
   var presupuesto = Number(entrada.presupuesto);
 
   if (entrada.tope !== null && entrada.tope !== undefined && entrada.tope !== '' && tope <= 0) {
-    errores.push(error('tope', 'El tope por pedido debe ser mayor que cero.'));
+    errores.push(error('tope', mensajeDe('tope', tipo, 'cero', idioma, 'El tope por pedido debe ser mayor que cero.')));
   }
   if (entrada.presupuesto !== null && entrada.presupuesto !== undefined && entrada.presupuesto !== '' && presupuesto <= 0) {
-    errores.push(error('presupuesto', 'El presupuesto debe ser mayor que cero.'));
+    errores.push(error('presupuesto', mensajeDe('presupuesto', tipo, 'cero', idioma, 'El presupuesto debe ser mayor que cero.')));
   }
   if (tope > 0 && presupuesto > 0 && tope > presupuesto) {
-    errores.push(error('tope', 'El tope por pedido no puede ser mayor que el presupuesto total.'));
+    errores.push(error('tope', mensajeDe('tope', tipo, 'mayorQuePresupuesto', idioma,
+      'El tope por pedido no puede ser mayor que el presupuesto total.')));
   }
   return errores;
 }
 
 /** Cruces de los Creditos: carga y redencion frente a la vigencia. */
-function validarCreditos(entrada) {
+function validarCreditos(entrada, tipo, idioma) {
   var errores = [];
   var inicio = comoNumeroFecha(entrada.fechaInicio);
   var fin = comoNumeroFecha(entrada.fechaFin);
@@ -8860,31 +9161,35 @@ function validarCreditos(entrada) {
   if (entrada.carga === 'fecha') {
     var carga = comoNumeroFecha(entrada.fechaCarga);
     if (carga !== null && inicio !== null && carga < inicio) {
-      errores.push(error('fechaCarga', 'La fecha de carga no puede ser anterior al inicio de la campaña.'));
+      errores.push(error('fechaCarga', mensajeDe('fechaCarga', tipo, 'antes', idioma,
+        'La fecha de carga no puede ser anterior al inicio de la campaña.')));
     }
   }
 
   if (entrada.vigencia === 'fecha') {
     var redencion = comoNumeroFecha(entrada.fechaFinRedencion);
     if (redencion !== null && fin !== null && redencion <= fin) {
-      errores.push(error('fechaFinRedencion', 'La fecha límite de redención debe ser posterior al fin de la campaña.'));
+      errores.push(error('fechaFinRedencion', mensajeDe('fechaFinRedencion', tipo, 'orden', idioma,
+        'La fecha límite de redención debe ser posterior al fin de la campaña.')));
     }
   }
   return errores;
 }
 
 /** Cruces de la Carrera de Compras. */
-function validarCarrera(entrada) {
+function validarCarrera(entrada, tipo, idioma) {
   var errores = [];
 
   if (entrada.desempate && entrada.desempate === entrada.criterioGanador) {
-    errores.push(error('desempate', 'El desempate no puede ser el mismo criterio con el que se define el ganador. Elige otro.'));
+    errores.push(error('desempate', mensajeDe('desempate', tipo, 'igual', idioma,
+      'El desempate no puede ser el mismo criterio con el que se define el ganador. Elige otro.')));
   }
 
   var fin = comoNumeroFecha(entrada.fechaFin);
   var notificacion = comoNumeroFecha(entrada.fechaNotificacion);
   if (fin !== null && notificacion !== null && notificacion <= fin) {
-    errores.push(error('fechaNotificacion', 'La fecha de notificación debe ser posterior al fin de la campaña.'));
+    errores.push(error('fechaNotificacion', mensajeDe('fechaNotificacion', tipo, 'orden', idioma,
+      'La fecha de notificación debe ser posterior al fin de la campaña.')));
   }
   return errores;
 }
@@ -9192,7 +9497,9 @@ function validarNegocio(entrada, esquema) {
 /**
  * Valida la solicitud completa.
  *
- * contexto: { fechaReferencia, usuarioEnEquipo }
+ * contexto: { fechaReferencia, usuarioEnEquipo, idioma }
+ * `idioma` es el de la interfaz de quien pide (es o pt): los mensajes salen en
+ * ese idioma cuando la pregunta los tiene traducidos. El documento no cambia.
  * Devuelve { valido, errores: [{campo, mensaje}] }.
  */
 function validarSolicitud(entrada, pais, contexto) {
@@ -9204,13 +9511,17 @@ function validarSolicitud(entrada, pais, contexto) {
   if (errorTipo) return { valido: false, errores: [errorTipo] };
 
   var esquema = esquemaDe(entrada.tipo);
-  var errores = [];
+  var errorIdioma = validarIdiomaDelPais(esquema, pais);
+  if (errorIdioma) return { valido: false, errores: [errorIdioma] };
 
-  errores = errores.concat(validarObligatorios(entrada, esquema));
-  errores = errores.concat(validarFormatos(entrada, esquema));
-  errores = errores.concat(validarVigencia(entrada, opciones.fechaReferencia));
+  var errores = [];
+  var idioma = opciones.idioma;
+
+  errores = errores.concat(validarObligatorios(entrada, esquema, idioma));
+  errores = errores.concat(validarFormatos(entrada, esquema, idioma));
+  errores = errores.concat(validarVigencia(entrada, opciones.fechaReferencia, esquema.id, idioma));
   errores = errores.concat(validarOrganizador(entrada, pais));
-  errores = errores.concat(validarCreditos(entrada));
+  errores = errores.concat(validarCreditos(entrada, esquema.id, idioma));
   errores = errores.concat(validarNegocio(entrada, esquema));
 
   errores = errores.concat(validarAnotacionesDelPais(pais));
@@ -9218,10 +9529,10 @@ function validarSolicitud(entrada, pais, contexto) {
   // El cashback por ETA tiene los mismos dos numeros y el mismo riesgo: un tope
   // mayor que el presupuesto deja que la primera orden se lleve la campana.
   if (entrada.tipo === 'cashback' || entrada.tipo === 'cashback_eta') {
-    errores = errores.concat(validarCashback(entrada));
+    errores = errores.concat(validarCashback(entrada, esquema.id, idioma));
   }
   if (entrada.tipo === 'carrera_compras') {
-    errores = errores.concat(validarCarrera(entrada));
+    errores = errores.concat(validarCarrera(entrada, esquema.id, idioma));
   }
   if (entrada.tipo === 'cashback_day') {
     errores = errores.concat(validarTiendas(entrada, pais, esquema));
@@ -9256,6 +9567,8 @@ if (typeof module !== 'undefined') {
     avisosDeTravel: avisosDeTravel,
     NOMBRES_PROHIBIDOS_DE_TRAVEL: NOMBRES_PROHIBIDOS_DE_TRAVEL,
     estaVacio: estaVacio,
+    mensajeDe: mensajeDe,
+    validarIdiomaDelPais: validarIdiomaDelPais,
   };
 }
 
@@ -9331,8 +9644,10 @@ if (typeof module !== 'undefined') {
       var usados = [];
       for (var s = 0; s < solicitudes.length; s++) usados.push(solicitudes[s].nombre_campana);
       var esquema = esquemaDe(entrada.tipo);
-      entrada.sufijoNombre = sufijoLibreDeNombre(nombreDeCampana(entrada, esquema), usados);
-      var nombreCampana = nombreDeCampana(entrada, esquema);
+      // Con el pais, como en Api.js: sin el, el titulo para Squarespace de una
+      // campana de Brasil decia "1 oct 2026" y el documento "1 OUT 2026".
+      entrada.sufijoNombre = sufijoLibreDeNombre(nombreDeCampana(entrada, esquema, pais), usados);
+      var nombreCampana = nombreDeCampana(entrada, esquema, pais);
       solicitudes.push({
         id: id, fecha: hoy() + ' 10:00:00', email: 'demostracion@rappi.com',
         pais: pais.codigo, tipo: entrada.tipo,
@@ -9831,7 +10146,10 @@ function T(texto) {
  * Toda pantalla que muestre el texto de una pregunta pasa por aqui.
  */
 function pregunta(campoId) {
-  return preguntaEnIdioma(preguntaDe(campoId, entrada().tipo), campoId, idiomaInterfaz());
+  // El tipo va dos veces a proposito: la variante en espanol y la variante en
+  // el otro idioma se eligen por separado. Sin el segundo, la interfaz en
+  // portugues preguntaba "em reais" para un tope en pesos.
+  return preguntaEnIdioma(preguntaDe(campoId, entrada().tipo), campoId, idiomaInterfaz(), entrada().tipo);
 }
 
 RM.estado = {
@@ -9963,7 +10281,7 @@ function dibujar(contenedor, texto, anterior) {
   if (!texto) {
     contenedor.appendChild(crear('p', {
       clase: 'hoja-vacia',
-      texto: 'Tu documento aparece aquí y se va llenando mientras respondes.',
+      texto: RM.estado.T('Tu documento aparece aquí y se va llenando mientras respondes.'),
     }));
     return null;
   }
@@ -10128,7 +10446,7 @@ function asiQueda(campoId, pais) {
   if (frases.length === 0) return null;
 
   return crear('div', { clase: 'asi-queda' }, [
-    crear('span', { clase: 'etiqueta', texto: 'Así queda en tu T&C:' }),
+    crear('span', { clase: 'etiqueta', texto: RM.estado.T('Así queda en tu T&C:') }),
     crear('span', { clase: 'frase', texto: frases.join(' ') }),
   ]);
 }
@@ -10302,7 +10620,7 @@ function dibujarPregunta(campo, config) {
   // Una pregunta opcional tiene que verse opcional. Sin esta marca el comercial
   // se queda atascado buscando que contestar.
   if (pregunta.opcional) {
-    titulo.appendChild(crear('span', { clase: 'marca-opcional', texto: 'Opcional' }));
+    titulo.appendChild(crear('span', { clase: 'marca-opcional', texto: RM.estado.T('Opcional') }));
   }
   bloque.appendChild(titulo);
   bloque.appendChild(crear('p', { clase: 'pregunta-ayuda' }, [conGlosario(pregunta.ayuda)]));
@@ -10460,6 +10778,8 @@ function erroresPorCampo() {
   var revision = validarSolicitud(estado.entrada(), pais, {
     fechaReferencia: E.configuracion.hoy || RM.util.hoyEnElNavegador(),
     usuarioEnEquipo: puedeVerPiloto(E.configuracion.rol),
+    // Los mensajes salen en el idioma de la interfaz; el documento no cambia.
+    idioma: estado.idiomaInterfaz(),
   });
 
   var porCampo = {};
@@ -10510,7 +10830,7 @@ function refrescarDocumento() {
       ? estado.T('Completo')
       : (resultado.huecos.length === 1
         ? estado.T('Falta 1 dato')
-        : estado.T('Faltan varios datos').replace('varios', resultado.huecos.length));
+        : estado.T('Faltan {n} datos').replace('{n}', resultado.huecos.length));
   }
   E.ultimoTextoVistaPrevia = resultado.texto;
 }
@@ -10601,7 +10921,7 @@ function pantallaFiltro(raiz) {
   function revisar() {
     for (var i = 0; i < preguntas.length; i++) {
       if (respuestas[preguntas[i].id] === true) {
-        E.motivoDeLegal = preguntas[i].razon;
+        E.motivoDeLegal = estado.T(preguntas[i].razon);
         RM.app.ir('legal');
         return;
       }
@@ -10618,7 +10938,7 @@ function pantallaFiltro(raiz) {
       var bloque = crear('div', { clase: 'pregunta' }, [
         crear('h2', { clase: 'pregunta-titulo', texto: estado.T(pregunta.texto) }),
       ]);
-      var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': pregunta.texto });
+      var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': estado.T(pregunta.texto) });
       [['no', 'No', false], ['si', 'Sí', true]].forEach(function (par) {
         grupo.appendChild(crear('button', {
           clase: 'opcion', type: 'button', texto: estado.T(par[1]),
@@ -10667,7 +10987,7 @@ function pantallaFiltroTravel(raiz) {
   function revisar() {
     for (var i = 0; i < FILTRO_DE_TRAVEL.length; i++) {
       if (respuestas[FILTRO_DE_TRAVEL[i].id] === true) {
-        E.motivoDeLegal = FILTRO_DE_TRAVEL[i].razon;
+        E.motivoDeLegal = estado.T(FILTRO_DE_TRAVEL[i].razon);
         RM.app.ir('legal');
         return;
       }
@@ -10690,7 +11010,7 @@ function pantallaFiltroTravel(raiz) {
       var bloque = crear('div', { clase: 'pregunta' }, [
         crear('h2', { clase: 'pregunta-titulo', texto: estado.T(pregunta.texto) }),
       ]);
-      var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': pregunta.texto });
+      var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': estado.T(pregunta.texto) });
       [['No', false], ['Sí', true]].forEach(function (par) {
         grupo.appendChild(crear('button', {
           clase: 'opcion', type: 'button', texto: estado.T(par[0]),
@@ -10734,7 +11054,7 @@ function pantallaLegal(raiz) {
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
     crear('h1', { texto: estado.T('Esta campaña la redacta Legal') }),
     crear('div', { clase: 'aviso' }, [
-      crear('p', { texto: E.motivoDeLegal || 'Tu campaña necesita revisión legal antes de publicarse.' }),
+      crear('p', { texto: E.motivoDeLegal || estado.T('Tu campaña necesita revisión legal antes de publicarse.') }),
     ]),
     crear('p', { texto: estado.T('No es un problema ni una negativa: es un caso que necesita que un abogado lo mire. Llena el formulario y el equipo legal te responde.') }),
     crear('div', { clase: 'fila-botones' }, [
@@ -10794,13 +11114,13 @@ function comoTexto(campo) {
 
   if (campo.id === 'maxPedidos') {
     var opcion = flujo.opcionDeVeces();
-    if (opcion === 'sin_limite') return 'Sin límite';
-    if (opcion === 'una') return 'Una sola vez';
-    if (opcion === 'varias') return valor ? valor + ' veces' : 'Varias veces';
+    if (opcion === 'sin_limite') return estado.T('Sin límite');
+    if (opcion === 'una') return estado.T('Una sola vez');
+    if (opcion === 'varias') return valor ? estado.T('{n} veces').replace('{n}', valor) : estado.T('Varias veces');
     return '';
   }
   if (valor === null || valor === undefined || valor === '') return '';
-  if (campo.tipo === 'casilla') return valor ? 'Confirmado' : '';
+  if (campo.tipo === 'casilla') return valor ? estado.T('Confirmado') : '';
 
   // País y tipo traen sus nombres del servidor, no del esquema.
   if (campo.id === 'pais') {
@@ -10829,8 +11149,10 @@ function comoTexto(campo) {
     if (elegida) return elegida.etiqueta;
   }
 
-  if (campo.tipo === 'fecha') return formatearFecha(valor);
-  if (campo.tipo === 'hora') return formatearHora(valor);
+  // En el idioma del pais, como en el documento: una campana de Brasil decia
+  // "1 de octubre de 2026" arriba y "1 de outubro de 2026" en el T&C de al lado.
+  if (campo.tipo === 'fecha') return formatearFechaDelPais(valor, flujo.paisElegido());
+  if (campo.tipo === 'hora') return formatearHoraDelPais(valor, flujo.paisElegido());
 
   // La identificación se muestra como va en el documento, no como se escribió.
   if (campo.tipo === 'identificacion') {
@@ -10843,8 +11165,8 @@ function comoTexto(campo) {
   }
   if (campo.id === 'porcentaje') return valor + '%';
   if (pregunta.moneda) {
-    var pais = flujo.paisElegido();
-    return (pais ? pais.moneda_simbolo : '$') + formatearMiles(valor, pais ? pais.separador_miles : '.');
+    var paisMoneda = flujo.paisElegido();
+    return (paisMoneda ? paisMoneda.moneda_simbolo : '$') + formatearMiles(valor, paisMoneda ? paisMoneda.separador_miles : '.');
   }
   return String(valor);
 }
@@ -10882,8 +11204,7 @@ function avisoDePaisEnPruebas() {
   // de que hay que revisar va en el resumen, que es donde se decide publicar.
   return crear('div', { clase: 'aviso' }, [
     crear('p', {
-      texto: pais.nombre + estado.T(' está en pruebas: genera y revisa, pero todavía no publiques. ' +
-        'Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.'),
+      texto: pais.nombre + estado.T(' está en pruebas: genera y revisa, pero todavía no publiques. Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.'),
     }),
   ]);
 }
@@ -10945,7 +11266,7 @@ function calculadora() {
  */
 function barraDeProgreso(pasos) {
   var compacta = crear('p', { clase: 'progreso-compacto' }, [
-    crear('span', { clase: 'progreso-cuenta', texto: 'Paso ' + (E.pasoActual + 1) + ' de ' + pasos.length }),
+    crear('span', { clase: 'progreso-cuenta', texto: estado.T('Paso {n} de {m}').replace('{n}', E.pasoActual + 1).replace('{m}', pasos.length) }),
     document.createTextNode(' \u00B7 '),
     crear('strong', { texto: estado.T(pasos[E.pasoActual].nombre) }),
     crear('span', {
@@ -11097,7 +11418,7 @@ function pantallaPasos(raiz) {
       clase: 'pregunta-ayuda',
       texto: faltan === 1
         ? estado.T('Queda 1 pregunta en este paso.')
-        : estado.T('Quedan varias preguntas en este paso.').replace('varias', faltan),
+        : estado.T('Quedan {n} preguntas en este paso.').replace('{n}', faltan),
     }));
   }
 
@@ -11148,7 +11469,7 @@ function preguntaDeCatalogo(campo, campos, indice, pasos) {
   var opciones;
   if (campo.id === 'pais') {
     opciones = E.configuracion.paises.map(function (p) {
-      return { valor: p.codigo, etiqueta: p.nombre, nota: p.estado === 'piloto' ? 'En piloto: solo para el equipo de pruebas.' : 'Disponible.' };
+      return { valor: p.codigo, etiqueta: p.nombre, nota: p.estado === 'piloto' ? estado.T('En piloto: solo para el equipo de pruebas.') : estado.T('Disponible.') };
     });
   } else {
     // Solo los tipos del negocio elegido: Rappi y Rappi Travel son dos empresas
@@ -11188,7 +11509,7 @@ function preguntaDeCatalogo(campo, campos, indice, pasos) {
   }
 
   bloque.appendChild(crear('details', { clase: 'por-que' }, [
-    crear('summary', { texto: '¿Por qué te preguntamos esto?' }),
+    crear('summary', { texto: estado.T('¿Por qué te preguntamos esto?') }),
     crear('p', { texto: pregunta.porQue }),
   ]));
   return bloque;
@@ -11240,7 +11561,7 @@ function preguntaDeVeces(campos, indice, pasos, errores) {
       if (frase) bloque.appendChild(frase);
     });
     bloque.appendChild(crear('label', { clase: 'campo' }, [
-      crear('p', { clase: 'pregunta-ayuda', texto: '¿Cuántas veces?' }),
+      crear('p', { clase: 'pregunta-ayuda', texto: estado.T('¿Cuántas veces?') }),
       crear('div', { clase: 'campo-caja' }, [cuantas]),
     ]));
   }
@@ -11253,7 +11574,7 @@ function preguntaDeVeces(campos, indice, pasos, errores) {
   if (frase) bloque.appendChild(frase);
 
   bloque.appendChild(crear('details', { clase: 'por-que' }, [
-    crear('summary', { texto: '¿Por qué te preguntamos esto?' }),
+    crear('summary', { texto: estado.T('¿Por qué te preguntamos esto?') }),
     crear('p', { texto: pregunta.porQue }),
   ]));
   return bloque;
@@ -11546,6 +11867,10 @@ function tarjetaDeAtajo() {
     crear('p', { clase: 'pregunta-ayuda', texto: '¿No ves tu campaña en la lista?' }),
   ]);
 
+  // La buena noticia solo se da si hay algo que dar. Catorce de los quince
+  // vencen el 31 de diciembre de 2026: si nadie actualiza la lista, la tarjeta
+  // no puede seguir prometiendo un enlace que ya no rige.
+  var quedan = hayTycGenericosUsables(codigo, hoy());
   var grupo = crear('div', { clase: 'opciones' });
   grupo.appendChild(crear('button', {
     clase: 'opcion', type: 'button',
@@ -11557,7 +11882,9 @@ function tarjetaDeAtajo() {
     crear('span', { clase: 'opcion-titulo', texto: 'Descuentos, cupones, envío gratis y tarifa de servicio' }),
     crear('span', {
       clase: 'opcion-nota',
-      texto: 'Buena noticia: para estas campañas Legal ya publicó los T&C. No generas ningún documento, te damos el enlace listo para la pieza.',
+      texto: quedan
+        ? 'Buena noticia: para estas campañas Legal ya publicó los T&C. No generas ningún documento, te damos el enlace listo para la pieza.'
+        : 'Legal tenía T&C publicados para estas campañas, pero ya vencieron y todavía no hay versión nueva. Entra para ver cuáles eran y escríbele a Legal antes de sacar la pieza.',
     }),
   ]));
 
@@ -11581,19 +11908,35 @@ function pantalla(raiz) {
   }
 
   var elegido = E.tycGenericoElegido ? tycGenericoPorId(codigo, E.tycGenericoElegido) : null;
-  raiz.appendChild(elegido ? detalle(elegido) : listado(lista));
+  raiz.appendChild(elegido ? detalle(elegido) : listado(lista, codigo));
 }
 
 /** Paso 1: los T&C publicados, con su descripcion y su vigencia. */
-function listado(lista) {
-  var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
-    crear('h1', { texto: 'Para esta campaña no necesitas crear T&C' }),
-    crear('p', {
-      texto: 'Legal ya dispuso los términos y condiciones de estas campañas y ya están publicados. ' +
-        'No tienes que generar ningún documento ni esperar a que alguien lo revise: elige el que ' +
-        'corresponde a tu campaña y te damos el enlace que va en la pieza.',
-    }),
-  ]);
+function listado(lista, codigo) {
+  var quedan = hayTycGenericosUsables(codigo, hoy());
+  var contenido = crear('div', { clase: 'pagina pagina-angosta' }, quedan
+    ? [
+      crear('h1', { texto: 'Para esta campaña no necesitas crear T&C' }),
+      crear('p', {
+        texto: 'Legal ya dispuso los términos y condiciones de estas campañas y ya están publicados. ' +
+          'No tienes que generar ningún documento ni esperar a que alguien lo revise: elige el que ' +
+          'corresponde a tu campaña y te damos el enlace que va en la pieza.',
+      }),
+    ]
+    : [
+      crear('h1', { texto: 'Los T&C generales vencieron' }),
+      crear('p', {
+        texto: 'Legal tenía publicados los términos y condiciones de estas campañas, pero ya vencieron y ' +
+          'todavía no hay versión nueva. No uses ninguno de estos enlaces: escríbele a Legal para que publique la versión nueva.',
+      }),
+      E.configuracion.urlFormularioLegal
+        ? crear('div', { clase: 'fila-botones' }, [
+          crear('a', { clase: 'boton', href: E.configuracion.urlFormularioLegal, target: '_blank', rel: 'noopener' }, [
+            document.createTextNode(estado.T('Ir al formulario de Legal')), RM.util.icono('abrir', 16),
+          ]),
+        ])
+        : null,
+    ]);
 
   var grupo = crear('div', { clase: 'opciones' });
   for (var i = 0; i < lista.length; i++) {
@@ -11609,28 +11952,38 @@ function listado(lista) {
   return contenido;
 }
 
+/** La descripcion, salvo cuando el Excel repite el nombre: no se muestra dos veces. */
+function descripcionSinRepetir(tyc) {
+  var descripcion = descripcionDeTycGenerico(tyc);
+  return descripcion === tyc.nombre ? null : descripcion;
+}
+
 function tarjetaDeUno(tyc) {
   var revision = estadoDeTycGenerico(tyc, hoy());
 
   var partes = [crear('span', { clase: 'opcion-titulo', texto: tyc.nombre })];
   if (tyc.beneficio) partes.push(crear('span', { clase: 'opcion-nota', texto: tyc.beneficio }));
-  partes.push(crear('span', { clase: 'opcion-nota', texto: descripcionDeTycGenerico(tyc) }));
+  var descripcion = descripcionSinRepetir(tyc);
+  if (descripcion) partes.push(crear('span', { clase: 'opcion-nota', texto: descripcion }));
   // Lo que Legal dejo sin resolver se dice ya en la lista, no solo al abrirlo:
   // el mismo T&C aparece dos veces con enlaces distintos, y quien lo ve por
   // primera vez ahi es donde se confunde.
   if (tyc.advertencia) partes.push(crear('span', { clase: 'opcion-nota', texto: tyc.advertencia }));
   partes.push(crear('span', {
-    clase: 'opcion-nota',
+    clase: 'opcion-nota' + (revision.usable ? '' : ' opcion-nota-vencido'),
     texto: revision.mensaje ? revision.mensaje : revision.vigencia,
   }));
 
   // Un T&C vencido o que todavia no arranca se queda a la vista con su razon,
   // no desaparece: si desapareciera, el comercial creeria que la herramienta no
-  // lo tiene y volveria a escribirle a Legal.
+  // lo tiene y volveria a escribirle a Legal. Y no va con disabled: un boton
+  // deshabilitado no recibe foco, y quien navega con teclado o con lector de
+  // pantalla pasaria de largo sin enterarse de que existe ni de que vencio.
   return crear('button', {
-    clase: 'opcion', type: 'button',
-    disabled: !revision.usable,
+    clase: 'opcion' + (revision.usable ? '' : ' opcion-vencida'), type: 'button',
+    'aria-disabled': revision.usable ? null : 'true',
     onclick: function () {
+      if (!revision.usable) return;
       E.tycGenericoElegido = tyc.id;
       RM.app.dibujar();
       window.scrollTo(0, 0);
@@ -11654,10 +12007,34 @@ function detalle(tyc) {
     return contenido;
   }
 
-  contenido.appendChild(crear('div', { clase: 'aviso' }, [
-    crear('h3', { texto: 'Listo, no tienes que generar nada' }),
-    crear('p', { texto: 'Legal ya publicó estos T&C. Copia el enlace de abajo y ponlo en la pieza: ese es el enlace que va, tal cual.' }),
-  ]));
+  // Lo que Legal dejo sin resolver en su lista se dice ANTES del enlace, no
+  // despues: estaba al final, debajo de una caja que ordenaba "copia el enlace
+  // y ponlo en la pieza, tal cual", y en una pantalla normal no se veia sin
+  // hacer scroll. El comercial copiaba y se iba sin leer "confirma con Legal
+  // cuál va". Aqui no se arregla nada del Excel: corregirlo por cuenta propia
+  // seria publicar una pieza con un respaldo que nadie aprobo.
+  var pendientes = [];
+  if (tyc.advertencia) pendientes.push(tyc.advertencia);
+  if (!String(tyc.paraQue || '').trim()) pendientes.push(descripcionDeTycGenerico(tyc));
+  if (revision.mensaje) pendientes.push(revision.mensaje);
+
+  if (pendientes.length > 0) {
+    var avisoPendiente = crear('div', { clase: 'aviso aviso-serio', 'data-pendiente': '1' }, [
+      crear('h3', { texto: 'Antes de usar este enlace, confirma con Legal' }),
+    ]);
+    for (var p = 0; p < pendientes.length; p++) avisoPendiente.appendChild(crear('p', { texto: pendientes[p] }));
+    contenido.appendChild(avisoPendiente);
+  }
+
+  contenido.appendChild(crear('div', { clase: 'aviso' }, pendientes.length > 0
+    ? [
+      crear('h3', { texto: 'Este es el enlace que Legal tiene publicado' }),
+      crear('p', { texto: 'No generas ningún documento. Cuando Legal te confirme lo de arriba, este es el enlace que va en la pieza.' }),
+    ]
+    : [
+      crear('h3', { texto: 'Listo, no tienes que generar nada' }),
+      crear('p', { texto: 'Legal ya publicó estos T&C. Copia el enlace de abajo y ponlo en la pieza: ese es el enlace que va, tal cual.' }),
+    ]));
 
   contenido.appendChild(RM.util.paraCopiar(
     'Enlace para la pieza',
@@ -11672,20 +12049,11 @@ function detalle(tyc) {
   ]));
 
   var ficha = crear('div', { clase: 'ficha' });
-  ficha.appendChild(seccionDeFicha('Para qué sirve', descripcionDeTycGenerico(tyc)));
+  var descripcion = descripcionSinRepetir(tyc);
+  if (descripcion) ficha.appendChild(seccionDeFicha('Para qué sirve', descripcion));
   if (tyc.beneficio) ficha.appendChild(seccionDeFicha('Qué beneficio cubre', tyc.beneficio));
   ficha.appendChild(seccionDeFicha('Vigencia', revision.vigencia));
-  if (revision.mensaje) ficha.appendChild(seccionDeFicha('Ojo con la vigencia', revision.mensaje));
   contenido.appendChild(ficha);
-
-  // Lo que Legal dejo sin resolver en su lista se dice aqui, no se arregla:
-  // corregirlo por cuenta propia seria publicar una pieza con un respaldo que
-  // nadie aprobo.
-  if (tyc.advertencia) {
-    contenido.appendChild(crear('div', { clase: 'aviso aviso-serio' }, [
-      crear('p', { texto: tyc.advertencia }),
-    ]));
-  }
 
   contenido.appendChild(crear('div', { clase: 'fila-botones' }, [botonVolverALaLista(), botonVolverALosTipos()]));
   return contenido;
@@ -11970,7 +12338,7 @@ function dibujar(alCambiar) {
 
   bloque.appendChild(bloqueDePegar(alCambiar));
   bloque.appendChild(crear('details', { clase: 'por-que' }, [
-    crear('summary', { texto: '¿Por qué te preguntamos esto?' }),
+    crear('summary', { texto: estado.T('¿Por qué te preguntamos esto?') }),
     crear('p', { texto: pregunta.porQue }),
   ]));
 
@@ -12022,11 +12390,12 @@ function seccionesDelResumen() {
 /** Lo que falta, en palabras del comercial. */
 function loQueFalta() {
   var pais = flujo.paisElegido();
-  if (!pais) return ['Elige el país de la campaña.'];
+  if (!pais) return [estado.T('Elige el país de la campaña.')];
 
   var revision = validarSolicitud(estado.entrada(), pais, {
     fechaReferencia: E.configuracion.hoy || RM.util.hoyEnElNavegador(),
     usuarioEnEquipo: puedeVerPiloto(E.configuracion.rol),
+    idioma: estado.idiomaInterfaz(),
   });
   return revision.errores.map(function (error) { return error.mensaje; });
 }
@@ -12045,18 +12414,21 @@ function pantallaResumen(raiz) {
   // decide publicar.
   var pais = flujo.paisElegido();
   if (paisEnPruebas(pais)) {
-    var faltantes = datosPorConfirmar(pais);
+    // OJO: esta lista no se puede llamar `faltantes`. Se llamo asi, y como var
+    // es de toda la funcion, pisaba la lista de arriba: en un pais en pruebas
+    // "Te falta:" mostraba los datos legales por confirmar del pais en vez de
+    // lo que le faltaba al comercial, que era marcar la casilla.
+    var porConfirmar = datosPorConfirmar(pais);
     var aviso = crear('div', { clase: 'aviso' }, [
-      crear('h3', { texto: pais.nombre + ' está en pruebas: no publiques este documento todavía' }),
+      crear('h3', { texto: pais.nombre + estado.T(' está en pruebas: no publiques este documento todavía') }),
       crear('p', {
-        texto: 'Genera el documento, léelo y dinos si los datos legales de tu país están bien. ' +
-          'Los propuso la herramienta por analogía con Colombia y no los ha confirmado nadie.',
+        texto: estado.T('Genera el documento, léelo y dinos si los datos legales de tu país están bien. Los propuso la herramienta por analogía con Colombia y no los ha confirmado nadie.'),
       }),
     ]);
-    if (faltantes.length > 0) {
-      var lista = crear('ul');
-      for (var f = 0; f < faltantes.length; f++) lista.appendChild(crear('li', { texto: faltantes[f] }));
-      aviso.appendChild(lista);
+    if (porConfirmar.length > 0) {
+      var listaPorConfirmar = crear('ul');
+      for (var f = 0; f < porConfirmar.length; f++) listaPorConfirmar.appendChild(crear('li', { texto: porConfirmar[f] }));
+      aviso.appendChild(listaPorConfirmar);
     }
     columna.appendChild(aviso);
   }
@@ -12099,8 +12471,8 @@ function pantallaResumen(raiz) {
     crear('label', { clase: 'casilla' }, [
       declaracion,
       crear('span', {}, [
-        document.createTextNode(preguntaDe('declaracion').ayuda),
-        crear('small', { texto: preguntaDe('declaracion').porQue }),
+        document.createTextNode(estado.pregunta('declaracion').ayuda),
+        crear('small', { texto: estado.pregunta('declaracion').porQue }),
       ]),
     ]),
   ]));
@@ -12164,7 +12536,7 @@ function generar(boton) {
  */
 function bloqueDeQuienPublica(codigoDePais, tipo) {
   var accesos = ACCESOS_SQUARESPACE[codigoDePais];
-  var caja = crear('div', { clase: 'aviso' }, [crear('h3', { texto: '¿Quién puede publicar?' })]);
+  var caja = crear('div', { clase: 'aviso' }, [crear('h3', { texto: estado.T('¿Quién puede publicar?') })]);
 
   var esConcurso = tipo === 'carrera_compras';
   var personas = accesos ? (esConcurso ? accesos.concursos : accesos.cashback) || [] : [];
@@ -12203,34 +12575,35 @@ function bloqueDePublicacion(resultado) {
   // Lo que hay que pegar en Squarespace, listo para copiar. El titulo y la
   // direccion salen de las respuestas: escribirlos a mano es como el titulo
   // termino diciendo 99% cuando la clausula decia 50%.
-  contenido.appendChild(crear('h2', { texto: 'Lo que vas a pegar en Squarespace' }));
+  contenido.appendChild(crear('h2', { texto: estado.T('Lo que vas a pegar en Squarespace') }));
   var entrada = estado.entrada();
 
   contenido.appendChild(RM.util.paraCopiar(
-    'Título del evento',
+    estado.T('Título del evento'),
     resultado.nombreCampana || '',
-    'Va tal cual en el título del evento. No lo cambies: es el mismo nombre que quedó en el documento.'
+    estado.T('Va tal cual en el título del evento. No lo cambies: es el mismo nombre que quedó en el documento.')
   ));
 
   var pais = flujo.paisElegido();
   var rutaDelPais = (pais && pais.nombre ? pais.nombre : '').toLowerCase();
   contenido.appendChild(RM.util.paraCopiar(
-    'Dirección del evento',
+    estado.T('Dirección del evento'),
     resultado.direccionSugerida || '',
     'Va en la pestaña Opciones, en "URL del evento". La parte de ' + rutaDelPais + ' la pone Squarespace sola: reemplaza solo lo que va después.'
   ));
 
   if (entrada.fechaInicio && entrada.fechaFin) {
     contenido.appendChild(crear('div', { clase: 'aviso' }, [
-      crear('h3', { texto: 'Las fechas del evento' }),
+      crear('h3', { texto: estado.T('Las fechas del evento') }),
       crear('p', {
-        texto: 'Inicio: ' + formatearFecha(entrada.fechaInicio) + '. Fin: ' + formatearFecha(entrada.fechaFin) +
-          '. Tienen que ser iguales a la vigencia del documento.',
+        texto: estado.T('Inicio: {inicio}. Fin: {fin}. Tienen que ser iguales a la vigencia del documento.')
+          .replace('{inicio}', formatearFechaDelPais(entrada.fechaInicio, pais))
+          .replace('{fin}', formatearFechaDelPais(entrada.fechaFin, pais)),
       }),
     ]));
   }
 
-  contenido.appendChild(crear('h2', { texto: 'Cómo publicarlo, paso a paso' }));
+  contenido.appendChild(crear('h2', { texto: estado.T('Cómo publicarlo, paso a paso') }));
   var pasos = crear('ol', { clase: 'pasos-publicar' });
   for (var i = 0; i < PASOS_SQUARESPACE.length; i++) {
     pasos.appendChild(crear('li', {}, [
@@ -12249,13 +12622,13 @@ function bloqueDePublicacion(resultado) {
 function pantallaListo(raiz) {
   var resultado = E.resultado || {};
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
-    crear('h1', { texto: 'Tu T&C está listo' }),
+    crear('h1', { texto: estado.T('Tu T&C está listo') }),
   ]);
 
   if (resultado.demostracion) {
     contenido.appendChild(crear('div', { clase: 'aviso' }, [
-      crear('h3', { texto: 'Modo demostración' }),
-      crear('p', { texto: 'No se creó ningún documento ni se envió ningún correo. Este es el texto que habría salido.' }),
+      crear('h3', { texto: estado.T('Modo demostración') }),
+      crear('p', { texto: estado.T('No se creó ningún documento ni se envió ningún correo. Este es el texto que habría salido.') }),
     ]));
     var hoja = crear('div', { clase: 'hoja' });
     RM.documento.dibujar(hoja, resultado.texto, '');
@@ -12263,7 +12636,7 @@ function pantallaListo(raiz) {
     contenido.appendChild(bloqueDePublicacion(resultado));
     contenido.appendChild(crear('div', { clase: 'fila-botones' }, [
       crear('button', {
-        clase: 'boton boton-secundario', type: 'button', texto: 'Hacer otra campaña',
+        clase: 'boton boton-secundario', type: 'button', texto: estado.T('Hacer otra campaña'),
         onclick: function () { estado.reiniciarFormulario({}); RM.app.ir('inicio'); },
       }),
     ]));
@@ -12279,7 +12652,7 @@ function pantallaListo(raiz) {
   contenido.appendChild(crear('div', { clase: 'fila-botones' }, [
     resultado.linkDoc
       ? crear('a', { clase: 'boton', href: resultado.linkDoc, target: '_blank', rel: 'noopener' }, [
-          document.createTextNode('Abrir el documento'), RM.util.icono('abrir', 16),
+          document.createTextNode(estado.T('Abrir el documento')), RM.util.icono('abrir', 16),
         ])
       : null,
   ]));
@@ -12287,7 +12660,7 @@ function pantallaListo(raiz) {
   contenido.appendChild(bloqueDePublicacion(resultado));
 
   // Link publicado.
-  contenido.appendChild(crear('h2', { texto: 'Cuando ya esté publicado' }));
+  contenido.appendChild(crear('h2', { texto: estado.T('Cuando ya esté publicado') }));
   var campo = crear('input', {
     type: 'text', id: 'link-publicado',
     placeholder: 'https://promos.rappi.com/',
@@ -12336,11 +12709,11 @@ function pantallaListo(raiz) {
 
   contenido.appendChild(crear('div', { clase: 'fila-botones' }, [
     crear('button', {
-      clase: 'boton boton-secundario', type: 'button', texto: 'Hacer otra campaña',
+      clase: 'boton boton-secundario', type: 'button', texto: estado.T('Hacer otra campaña'),
       onclick: function () { estado.reiniciarFormulario({}); RM.app.ir('inicio'); },
     }),
     crear('button', {
-      clase: 'boton boton-secundario', type: 'button', texto: 'Ver mi historial',
+      clase: 'boton boton-secundario', type: 'button', texto: estado.T('Ver mi historial'),
       onclick: function () { RM.app.ir('historial'); },
     }),
   ]));
@@ -12378,7 +12751,7 @@ function pantallaHistorial(raiz) {
   ]);
 
   var buscador = crear('input', {
-    type: 'search', placeholder: 'Busca por nombre, tienda o país', 'aria-label': 'Buscar en tu historial',
+    clase: 'buscador', type: 'search', placeholder: 'Busca por nombre, tienda o país', 'aria-label': 'Buscar en tu historial',
   });
   buscador.addEventListener('input', RM.util.conRetraso(function () { cargar(buscador.value); }, 250));
 
@@ -12392,7 +12765,7 @@ function pantallaHistorial(raiz) {
 
   function cargar(busqueda) {
     RM.util.vaciar(destino);
-    destino.appendChild(crear('p', { clase: 'pregunta-ayuda', texto: 'Cargando...' }));
+    destino.appendChild(crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Cargando...') }));
 
     RM.servidor.llamar('historial', busqueda || '').then(function (respuesta) {
       RM.util.vaciar(destino);
@@ -12416,7 +12789,7 @@ function pantallaHistorial(raiz) {
       var tabla = crear('table', { clase: 'tabla' });
       tabla.appendChild(crear('thead', {}, [
         crear('tr', {}, [
-          crear('th', { texto: 'Campaña' }),
+          crear('th', { texto: estado.T('Campaña') }),
           crear('th', { texto: 'País' }),
           crear('th', { texto: 'Fecha' }),
           crear('th', { texto: 'Estado' }),
@@ -12659,7 +13032,7 @@ function nombreDelPais(codigo) {
 
 function pantallaAyuda(raiz) {
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
-    crear('h1', { texto: 'Ayuda' }),
+    crear('h1', { texto: estado.T('Ayuda') }),
   ]);
 
   // 1. El aviso de azar, primero y destacado.
@@ -12704,7 +13077,7 @@ function pantallaAyuda(raiz) {
   }
   contenido.appendChild(pasos);
 
-  contenido.appendChild(crear('h3', { texto: '¿Quién puede publicar?' }));
+  contenido.appendChild(crear('h3', { texto: estado.T('¿Quién puede publicar?') }));
   contenido.appendChild(crear('p', {
     texto: 'No todo el mundo tiene usuario de Squarespace: la cuenta la tienen unas pocas personas por país. Si no eres una de ellas, pásales el documento y la dirección que te dio la herramienta, o pídelo por el canal.',
   }));
@@ -12762,12 +13135,12 @@ function pantallaAyuda(raiz) {
 // --- Administración ----------------------------------------------------------
 
 function pantallaAdmin(raiz) {
-  var contenido = crear('div', { clase: 'pagina' }, [crear('h1', { texto: 'Administración' })]);
+  var contenido = crear('div', { clase: 'pagina' }, [crear('h1', { texto: estado.T('Administración') })]);
   var destino = crear('div', {});
   contenido.appendChild(destino);
   raiz.appendChild(contenido);
 
-  destino.appendChild(crear('p', { clase: 'pregunta-ayuda', texto: 'Cargando...' }));
+  destino.appendChild(crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Cargando...') }));
 
   RM.servidor.llamar('adminEstado').then(function (datos) {
     RM.util.vaciar(destino);
@@ -12963,7 +13336,7 @@ function seccionSolicitudes() {
 
       var tabla = crear('table', { clase: 'tabla' }, [
         crear('thead', {}, [crear('tr', {}, [
-          crear('th', { texto: 'Id' }), crear('th', { texto: 'Campaña' }), crear('th', { texto: 'Quién' }),
+          crear('th', { texto: 'Id' }), crear('th', { texto: estado.T('Campaña') }), crear('th', { texto: 'Quién' }),
           crear('th', { texto: 'País' }), crear('th', { texto: 'Tipo' }), crear('th', { texto: 'Estado' }),
         ])]),
       ]);
@@ -13170,6 +13543,9 @@ function dibujar() {
   var raiz = RM.util.porId('app');
   vaciar(raiz);
   RM.campos.ocultarGlosario();
+  // El lang del documento sigue al idioma de la interfaz: sin esto, un lector
+  // de pantalla leia el portugues con las reglas del espanol.
+  document.documentElement.lang = estado.idiomaInterfaz();
 
   raiz.appendChild(barraSuperior());
 

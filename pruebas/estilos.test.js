@@ -67,3 +67,12 @@ test('el botón del idioma elegido se distingue del otro', () => {
   assert.ok(/background:\s*var\(--naranja-marca\)/.test(regla[0]), regla[0]);
   assert.ok(/color:\s*#fff/.test(regla[0]), regla[0]);
 });
+
+test('el buscador del historial recibe el mismo estilo que los demás campos', () => {
+  // En "Mis campañas" el campo de búsqueda salía con el ancho por defecto del
+  // navegador y cortaba su propio texto de ayuda: "Busca por nombre, tienda o".
+  const css = fs.readFileSync(path.join(__dirname, '..', 'src', 'client', 'estilos.css'), 'utf8');
+  const reglaDeCampos = css.split('\n').find((linea) => linea.indexOf("input[type='text']") === 0);
+  assert.ok(reglaDeCampos && reglaDeCampos.indexOf("input[type='search']") !== -1, 'input[type=search] no entra en la regla de los campos');
+  assert.ok(/\.buscador\s*\{[^}]*max-width/.test(css), 'el buscador no tiene un ancho máximo');
+});
