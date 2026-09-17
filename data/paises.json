@@ -11,6 +11,7 @@
         "cashback",
         "carrera_compras",
         "cashback_day",
+        "cashback_eta",
         "cashback_travel",
         "descuento_travel"
       ],
@@ -48,7 +49,8 @@
       "travel_url_tc": "https://travel.rappi.com.co/terms",
       "travel_politica_privacidad": "la política de privacidad",
       "travel_url_privacidad": "https://travel.rappi.com.co/private-policy",
-      "travel_entidad_vigilancia": "la Superintendencia de Industria y Comercio y la Superintendencia de Transporte, según corresponda"
+      "travel_entidad_vigilancia": "la Superintendencia de Industria y Comercio y la Superintendencia de Transporte, según corresponda",
+      "url_tc_turbo": "https://legal.rappi.com.co/colombia/terminos-y-condiciones-del-boton-turbo/"
     },
     {
       "codigo": "MX",
@@ -84,7 +86,8 @@
         "termino_dias",
         "texto_hora_local",
         "texto_derechos_datos"
-      ]
+      ],
+      "url_tc_turbo": ""
     },
     {
       "codigo": "PE",
@@ -120,7 +123,8 @@
         "termino_dias",
         "texto_hora_local",
         "texto_derechos_datos"
-      ]
+      ],
+      "url_tc_turbo": ""
     },
     {
       "codigo": "AR",
@@ -156,7 +160,8 @@
         "termino_dias",
         "texto_hora_local",
         "texto_derechos_datos"
-      ]
+      ],
+      "url_tc_turbo": ""
     },
     {
       "codigo": "CL",
@@ -192,7 +197,8 @@
         "termino_dias",
         "texto_hora_local",
         "texto_derechos_datos"
-      ]
+      ],
+      "url_tc_turbo": ""
     },
     {
       "codigo": "EC",
@@ -228,7 +234,8 @@
         "termino_dias",
         "texto_hora_local",
         "texto_derechos_datos"
-      ]
+      ],
+      "url_tc_turbo": ""
     },
     {
       "codigo": "UY",
@@ -264,7 +271,8 @@
         "termino_dias",
         "texto_hora_local",
         "texto_derechos_datos"
-      ]
+      ],
+      "url_tc_turbo": ""
     },
     {
       "codigo": "CR",
@@ -300,7 +308,8 @@
         "termino_dias",
         "texto_hora_local",
         "texto_derechos_datos"
-      ]
+      ],
+      "url_tc_turbo": ""
     },
     {
       "codigo": "BR",
@@ -336,7 +345,8 @@
         "termino_dias",
         "texto_hora_local",
         "texto_derechos_datos"
-      ]
+      ],
+      "url_tc_turbo": ""
     }
   ]
 }

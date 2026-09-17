@@ -46,7 +46,7 @@ test('setup crea la base, la carpeta, las pestañas y los países', () => {
   assert.ok(resumen.carpetaId);
   assert.strictEqual(leerPaises().length, 9);
   assert.strictEqual(paisPorCodigo(leerPaises(), 'CO').estado, 'activo');
-  assert.deepStrictEqual(paisPorCodigo(leerPaises(), 'CO').modelos, ['cashback', 'carrera_compras', 'cashback_day', 'cashback_travel', 'descuento_travel']);
+  assert.deepStrictEqual(paisPorCodigo(leerPaises(), 'CO').modelos, ['cashback', 'carrera_compras', 'cashback_day', 'cashback_eta', 'cashback_travel', 'descuento_travel']);
   assert.ok(Object.keys(mundo.carpetas).length >= 10, 'faltan carpetas por país');
 });
 
@@ -665,9 +665,9 @@ test('el estado inicial conserva las listas, no las vuelve texto', () => {
   assert.ok(Array.isArray(colombia.modelos), 'pais.modelos llegó como ' + typeof colombia.modelos);
   assert.ok(colombia.modelos.indexOf('cashback_travel') !== -1, JSON.stringify(colombia.modelos));
 
-  // Y con esa lista, la pantalla tiene los cinco tipos que ofrecer.
+  // Y con esa lista, la pantalla tiene los seis tipos que ofrecer.
   const disponibles = tiposDelPais(colombia, inicial.tipos);
-  assert.strictEqual(disponibles.length, 5, disponibles.map((t) => t.id).join(', '));
+  assert.strictEqual(disponibles.length, 6, disponibles.map((t) => t.id).join(', '));
 });
 
 test('el historial conserva las listas de cada solicitud', () => {

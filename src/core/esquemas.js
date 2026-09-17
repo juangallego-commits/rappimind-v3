@@ -876,6 +876,99 @@ function llevaTopeBr(entrada) {
   return entrada.beneficioBr === 'desconto' || entrada.beneficioBr === 'frete_gratis';
 }
 
+
+/* --- Cashback por incumplimiento del ETA (Turbo) --------------------------
+ *
+ * El beneficio no se gana comprando: se gana cuando Rappi no cumple el tiempo
+ * de entrega que prometio. Por eso este tipo no tiene aliado organizador ni
+ * tienda unica: participan todas las tiendas Turbo de una ciudad, y quien pone
+ * el presupuesto es Rappi.
+ *
+ * Base: los T&C publicados de Bogota (16/09/2026) y Barranquilla (1/09/2026).
+ */
+var CAMPOS_CASHBACK_ETA = [
+  { id: 'pais', etiqueta: 'País', tipo: 'lista', paso: 'campana', obligatorio: true },
+  {
+    id: 'negocio',
+    etiqueta: 'Negocio',
+    tipo: 'lista',
+    paso: 'campana',
+    obligatorio: true,
+    opciones: [
+      { valor: 'rappi', etiqueta: 'Rappi' },
+      { valor: 'travel', etiqueta: 'Rappi Travel' },
+    ],
+  },
+  { id: 'tipo', etiqueta: 'Tipo de campaña', tipo: 'tarjetas', paso: 'campana', obligatorio: true },
+  { id: 'ciudades', etiqueta: 'Ciudad', tipo: 'texto', paso: 'campana', obligatorio: true },
+
+  { id: 'fechaInicio', etiqueta: 'Fecha de la campaña', tipo: 'fecha', paso: 'vigencia', obligatorio: true },
+  { id: 'horaInicio', etiqueta: 'Hora de inicio', tipo: 'hora', paso: 'vigencia', obligatorio: true },
+  { id: 'horaFin', etiqueta: 'Hora de fin', tipo: 'hora', paso: 'vigencia', obligatorio: true },
+
+  { id: 'etaMinutos', etiqueta: 'Minutos del ETA', tipo: 'numero', minimo: 1, maximo: 240, paso: 'beneficio', obligatorio: true },
+  { id: 'porcentaje', etiqueta: 'Porcentaje que se devuelve', tipo: 'numero', paso: 'beneficio', obligatorio: true },
+  { id: 'tope', etiqueta: 'Tope por orden', tipo: 'numero', paso: 'beneficio', obligatorio: true },
+  { id: 'presupuesto', etiqueta: 'Presupuesto total', tipo: 'numero', paso: 'beneficio', obligatorio: true },
+  { id: 'maxPedidos', etiqueta: 'Máximo de órdenes por persona', tipo: 'numero', paso: 'beneficio', obligatorio: false },
+  { id: 'sinLimite', etiqueta: 'Sin límite de órdenes', tipo: 'casilla', paso: 'beneficio', obligatorio: false },
+
+  {
+    id: 'carga',
+    etiqueta: '¿Cuándo se cargan los Créditos?',
+    tipo: 'lista',
+    paso: 'creditos',
+    obligatorio: true,
+    opciones: [
+      { valor: 'inmediata', etiqueta: 'Inmediata' },
+      { valor: 'dia_siguiente', etiqueta: 'Al día siguiente' },
+      { valor: 'fecha', etiqueta: 'En una fecha' },
+    ],
+  },
+  {
+    id: 'fechaCarga',
+    etiqueta: 'Fecha de carga',
+    tipo: 'fecha',
+    paso: 'creditos',
+    visible: function (entrada) { return entrada.carga === 'fecha'; },
+    obligatorio: function (entrada) { return entrada.carga === 'fecha'; },
+  },
+  {
+    id: 'vigencia',
+    etiqueta: 'Vigencia de los Créditos',
+    tipo: 'lista',
+    paso: 'creditos',
+    obligatorio: true,
+    opciones: [
+      { valor: 'dias', etiqueta: 'Por días' },
+      { valor: 'fecha', etiqueta: 'Hasta una fecha' },
+    ],
+  },
+  {
+    id: 'diasVigencia',
+    etiqueta: 'Días de vigencia',
+    tipo: 'numero',
+    minimo: 1,
+    maximo: 365,
+    paso: 'creditos',
+    visible: function (entrada) { return entrada.vigencia === 'dias'; },
+    obligatorio: function (entrada) { return entrada.vigencia === 'dias'; },
+  },
+  {
+    id: 'fechaFinRedencion',
+    etiqueta: 'Fecha límite de redención',
+    tipo: 'fecha',
+    paso: 'creditos',
+    visible: function (entrada) { return entrada.vigencia === 'fecha'; },
+    obligatorio: function (entrada) { return entrada.vigencia === 'fecha'; },
+  },
+  { id: 'exclusionesEta', etiqueta: 'Secciones excluidas', tipo: 'casillas', paso: 'creditos', obligatorio: false },
+
+  { id: 'metodoPago', etiqueta: 'Medio de pago', tipo: 'lista', paso: 'participantes', obligatorio: true },
+
+  { id: 'declaracion', etiqueta: 'Declaración', tipo: 'casilla', paso: 'confirmacion', obligatorio: true },
+];
+
 var ESQUEMAS = {
   cashback: {
     id: 'cashback',
@@ -930,6 +1023,15 @@ var ESQUEMAS = {
     filtroDeEntrada: [],
     esDeTravel: true,
   },
+  cashback_eta: {
+    id: 'cashback_eta',
+    nombre: '15 minutos o Cashback',
+    descripcion: 'Rappi promete un tiempo de entrega en el botón Turbo de una ciudad. Si la orden llega tarde, el usuario recibe en Créditos un porcentaje de lo que pagó. No hay tienda aliada que fondee: el presupuesto lo pone Rappi.',
+    modelo: 'cashback_eta',
+    campos: CAMPOS_CASHBACK_ETA,
+    filtroDeEntrada: [],
+    esPorEta: true,
+  },
   promocao_br: {
     id: 'promocao_br',
     nombre: 'Promoção Brasil',
@@ -982,6 +1084,7 @@ if (typeof module !== 'undefined') {
     ESQUEMAS: ESQUEMAS,
     CAMPOS_POR_TIENDA: CAMPOS_POR_TIENDA,
     CAMPOS_BRASIL: CAMPOS_BRASIL,
+    CAMPOS_CASHBACK_ETA: CAMPOS_CASHBACK_ETA,
     categoriasDe: categoriasDe,
     hayAereasDeTravel: hayAereasDeTravel,
     hayAlojamientoDeTravel: hayAlojamientoDeTravel,

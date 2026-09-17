@@ -186,7 +186,7 @@ test('cada país solo ofrece los tipos que tiene habilitados', () => {
   // Colombia tiene los tres de delivery más los dos de Rappi Travel.
   assert.deepStrictEqual(
     co.map((t) => t.id).sort(),
-    ['carrera_compras', 'cashback', 'cashback_day', 'cashback_travel', 'descuento_travel']
+    ['carrera_compras', 'cashback', 'cashback_day', 'cashback_eta', 'cashback_travel', 'descuento_travel']
   );
   assert.deepStrictEqual(mx.map((t) => t.id), ['cashback']);
 });

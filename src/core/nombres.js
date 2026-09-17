@@ -63,6 +63,15 @@ function tramoDeBeneficio(entrada, esquema) {
   var porcentaje = Number(entrada.porcentaje);
   var conPorcentaje = isFinite(porcentaje) && porcentaje > 0;
 
+  // El cashback por ETA: el titulo dice los minutos y el porcentaje, que es lo
+  // que el usuario ve prometido. Asi se llaman los documentos publicados.
+  if (esquema.id === 'cashback_eta') {
+    var minutos = Math.trunc(Number(entrada.etaMinutos));
+    if (!isFinite(minutos) || minutos <= 0) return '';
+    var promesa = minutos + (minutos === 1 ? ' minuto' : ' minutos');
+    return conPorcentaje ? promesa + ' o ' + porcentaje + '% Cashback' : promesa + ' o Cashback';
+  }
+
   // Brasil: el titulo dice el beneficio como lo nombran los documentos
   // aprobados ("10% OFF", "Frete gratis"), no el nombre del tipo.
   if (esquema.id === 'promocao_br') {
@@ -122,6 +131,11 @@ function nombreDeCampanaEnElIdioma(entrada, esquema) {
   // tipo. En Travel la tienda es la marca aliada y, si no hay, el Organizador.
   var tienda = String(datos.tienda || datos.marcaAliado || '').trim();
   if (!tienda && esquema && esquema.esDeTravel) tienda = String(datos.organizadorRazonSocial || '').trim();
+  // En el cashback por ETA no hay una tienda: hay una modalidad y una ciudad.
+  if (!tienda && esquema && esquema.esPorEta) {
+    var ciudad = String(datos.ciudades || '').trim();
+    tienda = ciudad ? 'Turbo Restaurantes ' + ciudad : '';
+  }
   if (tienda) tramos.push(tienda);
 
   var beneficio = tramoDeBeneficio(datos, esquema);

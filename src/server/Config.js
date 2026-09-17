@@ -25,7 +25,7 @@ var PESTANAS = {
   Paises: [
     'codigo', 'nombre', 'estado', 'idioma', 'modelos', 'entidad_legal', 'id_fiscal',
     'domicilio_legal', 'pais_legal', 'ley_aplicable', 'jurisdiccion', 'entidad_vigilancia',
-    'autoridad_datos', 'url_tc_plataforma', 'url_privacidad', 'url_tc_creditos',
+    'autoridad_datos', 'url_tc_plataforma', 'url_privacidad', 'url_tc_creditos', 'url_tc_turbo',
     'moneda_nombre', 'politica_privacidad', 'edad_minima', 'tipo_id_organizador',
     'moneda_simbolo', 'separador_miles', 'termino_dias', 'texto_persona',
     'texto_hora_local', 'texto_derechos_datos', 'por_confirmar_en_pruebas',

@@ -157,6 +157,34 @@ var PREGUNTAS = {
     errores: { vacio: 'Marca al menos un medio de pago.' },
   }),
 
+  etaMinutos: p({
+    paso: 'beneficio',
+    pregunta: '¿En cuántos minutos prometes la entrega?',
+    ayuda: 'El ETA que el usuario ve en la app al hacer la orden. Las campañas publicadas usan quince minutos.',
+    porQue: 'Este número es la promesa: si la orden llega después, Rappi paga el Cashback. Sale escrito en letras y en cifra en tres cláusulas del documento.',
+    ejemplo: '15',
+    placeholders: ['TEXTO_ETA'],
+    errores: {
+      vacio: 'Escribe en cuántos minutos prometes la entrega.',
+      rango: 'El ETA tiene que estar entre 1 y 240 minutos.',
+    },
+  }),
+
+  exclusionesEta: p({
+    paso: 'creditos',
+    pregunta: '¿En qué secciones NO se pueden redimir los Créditos?',
+    ayuda: 'Opcional. Marca las que queden por fuera. Las campañas publicadas excluyen Rappi Travel, SOAT, Cajero ATM y Rappi Favor.',
+    porQue: 'El documento dice dónde se puede gastar el saldo. Una sección que no esté excluida aquí queda habilitada, y después no se puede cerrar.',
+    placeholders: ['TEXTO_LUGAR_REDENCION'],
+    opciones: [
+      { valor: 'travel', etiqueta: 'Rappi Travel', nota: 'Vuelos, hoteles, autos y paquetes.' },
+      { valor: 'soat', etiqueta: 'Seguro Soat', nota: 'El seguro obligatorio de vehículos.' },
+      { valor: 'atm', etiqueta: 'Cajero ATM', nota: 'El retiro de efectivo.' },
+      { valor: 'favor', etiqueta: 'Rappi Favor', nota: 'Los mandados y diligencias.' },
+    ],
+    errores: { vacio: 'Marca las secciones excluidas, o sigue sin marcar ninguna.' },
+  }),
+
   tienda: p({
     variantes: {
       promocao_br: {
@@ -192,6 +220,15 @@ var PREGUNTAS = {
   }),
 
   ciudades: p({
+    variantes: {
+      cashback_eta: {
+        pregunta: '¿En qué ciudad corre la campaña?',
+        ayuda: 'Una sola ciudad. Las campañas publicadas son por ciudad, porque el botón Turbo se habilita ciudad por ciudad.',
+        porQue: 'El documento nombra la ciudad tres veces: en el territorio, en las Tiendas Participantes y en el título.',
+        ejemplo: 'Bogotá',
+        errores: { vacio: 'Escribe la ciudad donde corre la campaña.' },
+      },
+    },
     paso: 'campana',
     pregunta: '¿En qué ciudades?',
     ayuda: 'Sepáralas con comas. Por ejemplo: Bogotá, Medellín, Cali.',
@@ -281,6 +318,12 @@ var PREGUNTAS = {
 
   porcentaje: p({
     variantes: {
+      cashback_eta: {
+        pregunta: '¿Qué porcentaje devuelves si la orden llega tarde?',
+        ayuda: 'Las campañas publicadas devuelven el cien por ciento de lo que el usuario pagó por los productos.',
+        porQue: 'Es lo que el usuario recibe en Créditos cuando Rappi no cumple el tiempo prometido.',
+      },
+
       promocao_br: {
         pregunta: '¿Qué porcentaje de descuento das?',
         ayuda: 'El documento lo escribe como "até X%", así que es el descuento máximo.',
@@ -314,6 +357,12 @@ var PREGUNTAS = {
 
   tope: p({
     variantes: {
+      cashback_eta: {
+        pregunta: '¿Cuál es el tope por orden?',
+        ayuda: 'Lo máximo que una sola orden puede recibir en Créditos, por grande que sea. Las campañas publicadas usan cien mil.',
+        porQue: 'Sin tope, una sola orden grande se lleva buena parte del presupuesto de la campaña.',
+      },
+
       promocao_br: {
         pregunta: '¿Cuál es el tope del beneficio, en reales?',
         ayuda: 'Lo máximo que la campaña cubre en un pedido. Si lo dejas en blanco, el documento no lleva tope.',
@@ -343,6 +392,13 @@ var PREGUNTAS = {
   }),
 
   presupuesto: p({
+    variantes: {
+      cashback_eta: {
+        pregunta: '¿Cuántos Créditos hay para toda la campaña?',
+        ayuda: 'Un número entero de Créditos. Cuando se agota, la campaña termina sola aunque no se haya cumplido la hora.',
+        porQue: 'El documento lo llama las Existencias y dice que agotarlas termina la campaña automáticamente.',
+      },
+    },
     paso: 'beneficio',
     pregunta: '¿Cuánto es el presupuesto total de la campaña?',
     ayuda: 'Cuando se acabe, la campaña termina sola. Lo habitual va de 5 a 40 millones.',
@@ -358,6 +414,12 @@ var PREGUNTAS = {
 
   maxPedidos: p({
     variantes: {
+      cashback_eta: {
+        pregunta: '¿Cuántas órdenes puede reclamar la misma persona?',
+        ayuda: 'Las campañas publicadas permiten una sola durante toda la vigencia.',
+        porQue: 'El documento lo escribe en letras y en cifra, y es lo que frena que una misma cuenta agote el presupuesto.',
+      },
+
       promocao_br: {
         pregunta: '¿Cuántos pedidos puede hacer la misma persona?',
         ayuda: 'Los documentos aprobados usan uno, dos, o sin límite.',
@@ -1317,6 +1379,14 @@ var PREGUNTAS = {
  * Es lo que dice el espacio en blanco del documento: "falta el porcentaje".
  */
 var NOMBRE_DEL_HUECO = {
+  TEXTO_ETA: 'el tiempo de entrega prometido',
+  TEXTO_CIUDAD_ETA: 'la ciudad',
+  TEXTO_LIMITE_ORDENES: 'el máximo de órdenes por persona',
+  MODALIDAD_TURBO: 'la modalidad del botón turbo',
+  URL_TC_TURBO: 'el enlace de los términos del botón turbo',
+  ID_FISCAL: 'la identificación de la empresa',
+  DOMICILIO_LEGAL: 'el domicilio de la empresa',
+  PAIS_LEGAL: 'el país',
   TEXTO_MINIMO_APERTURA: 'el mínimo de compra',
   TEXTO_BENEFICIO_APERTURA: 'qué recibe el usuario',
   TEXTO_BENEFICIO_REGRA: 'la regla del beneficio',

@@ -206,3 +206,29 @@ Y un dato que falta en `data/paises.json`: Brasil tiene vacío
 sobre sus datos. En Colombia dice "tus derechos a conocer, actualizar,
 rectificar y suprimir...". Para Brasil tendría que salir de la LGPD, y esa
 redacción es de Legal.
+
+## 15 minutos o Cashback, de los T&C publicados de Bogotá y Barranquilla (17 de septiembre)
+
+El modelo quedó armado y genera. Las mejoras aplicadas están en
+`docs/MEJORAS_ETA.md`, con su antes y su después. Tres cosas para ti:
+
+1. **Este modelo no tiene organizador aliado.** Participan todas las tiendas
+   Turbo de una ciudad, el presupuesto lo pone Rappi y la cláusula del beneficio
+   dice "Rappi se obliga a cumplir con el ETA exhibido dentro de la Plataforma
+   Rappi". Mi lectura es que no choca con la regla 1, porque el documento nunca
+   usa la palabra "Organizador" y lo que Rappi promete es su propio tiempo de
+   entrega, que es una garantía de servicio y no una promoción de un tercero.
+   Por eso **no** lo anoté como excepción. Si prefieres que quede escrita como
+   la de Brasil, dímelo.
+
+2. **Faltaba la cláusula de tratamiento de datos personales**, en los dos
+   documentos publicados. Se la puse, con el mismo bloque que usan los demás
+   modelos de Colombia. Si hay una razón para que no estuviera, la saco.
+
+3. **"Rappi se obliga a cumplir con el ETA"** es una obligación de resultado con
+   su remedio tasado. No la toqué. La dejo señalada por si conviene matizarla
+   con las causas que no dependen de Rappi.
+
+Y una pregunta de producto: hoy la modalidad está fija en "Turbo Restaurantes",
+que es lo que dicen los dos documentos publicados. Si existen otras (Turbo
+Mercados, por ejemplo), se vuelve una pregunta con opciones.

@@ -35,6 +35,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 
   var calcularDerivadosTravel = require('./derivados_travel.js').calcularDerivadosTravel;
   var calcularDerivadosBr = require('./derivados_br.js').calcularDerivadosBr;
+  var calcularDerivadosEta = require('./derivados_eta.js').calcularDerivadosEta;
   var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
 }
 
@@ -92,6 +93,8 @@ var MEDIO_NOTIFICACION_POR_OPCION = {
 /** Llaves de paises.json que entran al documento tal cual. */
 var VALORES_DEL_PAIS = {
   ENTIDAD_LEGAL: 'entidad_legal',
+  ID_FISCAL: 'id_fiscal',
+  DOMICILIO_LEGAL: 'domicilio_legal',
   PAIS_LEGAL: 'pais_legal',
   LEY_APLICABLE: 'ley_aplicable',
   JURISDICCION: 'jurisdiccion',
@@ -100,6 +103,7 @@ var VALORES_DEL_PAIS = {
   URL_TC_PLATAFORMA: 'url_tc_plataforma',
   URL_PRIVACIDAD: 'url_privacidad',
   URL_TC_CREDITOS: 'url_tc_creditos',
+  URL_TC_TURBO: 'url_tc_turbo',
   POLITICA_PRIVACIDAD: 'politica_privacidad',
   TEXTO_DERECHOS_DATOS: 'texto_derechos_datos',
   EDAD_MINIMA: 'edad_minima',
@@ -352,6 +356,15 @@ function calcularDerivadosEnElIdiomaDelPais(entrada, pais) {
     var deTravel = calcularDerivadosTravel(entrada, pais);
     for (var llaveTravel in deTravel) {
       if (Object.prototype.hasOwnProperty.call(deTravel, llaveTravel)) valores[llaveTravel] = deTravel[llaveTravel];
+    }
+  }
+
+  // El cashback por ETA no tiene aliado ni tienda unica: participan todas las
+  // tiendas Turbo de una ciudad y el presupuesto lo pone Rappi.
+  if (esquemaActual && esquemaActual.esPorEta) {
+    var deEta = calcularDerivadosEta(entrada, pais);
+    for (var llaveEta in deEta) {
+      if (Object.prototype.hasOwnProperty.call(deEta, llaveEta)) valores[llaveEta] = deEta[llaveEta];
     }
   }
 
