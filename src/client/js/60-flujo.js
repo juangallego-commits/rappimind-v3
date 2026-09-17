@@ -112,7 +112,7 @@ function refrescarDocumento() {
   if (!pais || !modelo) {
     for (var v = 0; v < contenedores.length; v++) RM.documento.dibujar(contenedores[v], '', '');
     var sinTipo = RM.util.porId('cuenta-huecos');
-    if (sinTipo) sinTipo.textContent = 'Sin empezar';
+    if (sinTipo) sinTipo.textContent = estado.T('Sin empezar');
     E.ultimoTextoVistaPrevia = '';
     return;
   }
@@ -127,7 +127,7 @@ function refrescarDocumento() {
   var cuenta = RM.util.porId('cuenta-huecos');
   if (cuenta) {
     cuenta.textContent = resultado.huecos.length === 0
-      ? 'Completo'
+      ? estado.T('Completo')
       : 'Faltan ' + resultado.huecos.length + (resultado.huecos.length === 1 ? ' dato' : ' datos');
   }
   E.ultimoTextoVistaPrevia = resultado.texto;
@@ -138,22 +138,22 @@ function refrescarDocumento() {
 function pantallaInicio(raiz) {
   var pasos = [
     {
-      titulo: 'Cuéntanos de tu campaña',
-      detalle: 'Te hacemos preguntas simples, una por una. Ninguna te pide escribir texto legal.',
+      titulo: estado.T('Cuéntanos de tu campaña'),
+      detalle: estado.T('Te hacemos preguntas simples, una por una. Ninguna te pide escribir texto legal.'),
     },
     {
-      titulo: 'Revisa cómo va quedando',
-      detalle: 'El documento se escribe solo, al lado, mientras respondes. Lo que ves es lo que sale.',
+      titulo: estado.T('Revisa cómo va quedando'),
+      detalle: estado.T('El documento se escribe solo, al lado, mientras respondes. Lo que ves es lo que sale.'),
     },
     {
-      titulo: 'Publica los T&Cs',
+      titulo: estado.T('Publica los T&Cs'),
       detalle: 'En 2 minutos recibirás un email con el documento generado y listo para publicar en Squarespace. Recuerda seguir las instrucciones para asegurar que los T&Cs queden publicados exitosamente.',
     },
   ];
 
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
-    crear('h1', { texto: 'Genera los Términos y Condiciones de tu campaña' }),
-    crear('p', { clase: 'pregunta-ayuda', texto: 'Sin escribirle a Legal y sin redactar una sola cláusula. Toma menos de cinco minutos.' }),
+    crear('h1', { texto: estado.T('Genera los Términos y Condiciones de tu campaña') }),
+    crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Sin escribirle a Legal y sin redactar una sola cláusula. Toma menos de cinco minutos.') }),
   ]);
 
   var lista = crear('ol', { clase: 'pasos-publicar' });
@@ -167,7 +167,7 @@ function pantallaInicio(raiz) {
 
   var acciones = crear('div', { clase: 'fila-botones' }, [
     crear('button', {
-      clase: 'boton', type: 'button', texto: 'Empezar',
+      clase: 'boton', type: 'button', texto: estado.T('Empezar'),
       onclick: function () {
         // Empezar es empezar de cero. Para retomar lo de antes está el otro botón.
         estado.reiniciarFormulario(RM.app.valoresIniciales(), {});
@@ -179,7 +179,7 @@ function pantallaInicio(raiz) {
   var borrador = estado.leerBorrador();
   if (borrador) {
     acciones.appendChild(crear('button', {
-      clase: 'boton boton-secundario', type: 'button', texto: 'Seguir con lo que dejaste a medias',
+      clase: 'boton boton-secundario', type: 'button', texto: estado.T('Seguir con lo que dejaste a medias'),
       onclick: function () {
         estado.reiniciarFormulario(borrador.entrada, borrador.respondidas || {});
         E.pasoActual = borrador.pasoActual || 0;
@@ -192,7 +192,7 @@ function pantallaInicio(raiz) {
 
   if (!estado.almacenamientoDisponible()) {
     contenido.appendChild(crear('div', { clase: 'aviso' }, [
-      crear('p', { texto: 'Tu navegador no deja guardar borradores, así que no cierres esta pestaña hasta generar el documento.' }),
+      crear('p', { texto: estado.T('Tu navegador no deja guardar borradores, así que no cierres esta pestaña hasta generar el documento.') }),
     ]));
   }
 
@@ -203,8 +203,8 @@ function pantallaInicio(raiz) {
 
 function pantallaFiltro(raiz) {
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
-    crear('h1', { texto: '¿Esta campaña la puedo hacer aquí?' }),
-    crear('p', { clase: 'pregunta-ayuda', texto: 'Dos preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano.' }),
+    crear('h1', { texto: estado.T('¿Esta campaña la puedo hacer aquí?') }),
+    crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Dos preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano.') }),
   ]);
 
   // Primero el tipo, porque el filtro depende de él.
@@ -234,12 +234,12 @@ function pantallaFiltro(raiz) {
   for (var i = 0; i < preguntas.length; i++) {
     (function (pregunta) {
       var bloque = crear('div', { clase: 'pregunta' }, [
-        crear('h2', { clase: 'pregunta-titulo', texto: pregunta.texto }),
+        crear('h2', { clase: 'pregunta-titulo', texto: estado.T(pregunta.texto) }),
       ]);
       var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': pregunta.texto });
       [['no', 'No', false], ['si', 'Sí', true]].forEach(function (par) {
         grupo.appendChild(crear('button', {
-          clase: 'opcion', type: 'button', texto: par[1],
+          clase: 'opcion', type: 'button', texto: estado.T(par[1]),
           role: 'radio', 'aria-checked': 'false', 'aria-pressed': 'false',
           onclick: function () {
             respuestas[pregunta.id] = par[2];
@@ -306,12 +306,12 @@ function pantallaFiltroTravel(raiz) {
   for (var i = 0; i < FILTRO_DE_TRAVEL.length; i++) {
     (function (pregunta) {
       var bloque = crear('div', { clase: 'pregunta' }, [
-        crear('h2', { clase: 'pregunta-titulo', texto: pregunta.texto }),
+        crear('h2', { clase: 'pregunta-titulo', texto: estado.T(pregunta.texto) }),
       ]);
       var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': pregunta.texto });
       [['No', false], ['Sí', true]].forEach(function (par) {
         grupo.appendChild(crear('button', {
-          clase: 'opcion', type: 'button', texto: par[0],
+          clase: 'opcion', type: 'button', texto: estado.T(par[0]),
           role: 'radio', 'aria-checked': 'false', 'aria-pressed': 'false',
           onclick: function () {
             respuestas[pregunta.id] = par[1];
@@ -350,19 +350,19 @@ function pantallaFiltroTravel(raiz) {
 function pantallaLegal(raiz) {
   var url = E.configuracion.urlFormularioLegal;
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
-    crear('h1', { texto: 'Esta campaña la redacta Legal' }),
+    crear('h1', { texto: estado.T('Esta campaña la redacta Legal') }),
     crear('div', { clase: 'aviso' }, [
       crear('p', { texto: E.motivoDeLegal || 'Tu campaña necesita revisión legal antes de publicarse.' }),
     ]),
-    crear('p', { texto: 'No es un problema ni una negativa: es un caso que necesita que un abogado lo mire. Llena el formulario y el equipo legal te responde.' }),
+    crear('p', { texto: estado.T('No es un problema ni una negativa: es un caso que necesita que un abogado lo mire. Llena el formulario y el equipo legal te responde.') }),
     crear('div', { clase: 'fila-botones' }, [
       url
         ? crear('a', { clase: 'boton', href: url, target: '_blank', rel: 'noopener' }, [
-            document.createTextNode('Ir al formulario de Legal'), RM.util.icono('abrir', 16),
+            document.createTextNode(estado.T('Ir al formulario de Legal')), RM.util.icono('abrir', 16),
           ])
-        : crear('p', { clase: 'pregunta-ayuda', texto: 'Falta configurar el enlace del formulario de Legal. Avísale a Juan.' }),
+        : crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Falta configurar el enlace del formulario de Legal. Avísale a Juan.') }),
       crear('button', {
-        clase: 'boton boton-secundario', type: 'button', texto: 'Volver al inicio',
+        clase: 'boton boton-secundario', type: 'button', texto: estado.T('Volver al inicio'),
         onclick: function () { RM.app.ir('inicio'); },
       }),
     ]),

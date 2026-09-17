@@ -153,7 +153,7 @@ function barraDeProgreso(pasos) {
   var compacta = crear('p', { clase: 'progreso-compacto' }, [
     crear('span', { clase: 'progreso-cuenta', texto: 'Paso ' + (E.pasoActual + 1) + ' de ' + pasos.length }),
     document.createTextNode(' \u00B7 '),
-    crear('strong', { texto: pasos[E.pasoActual].nombre }),
+    crear('strong', { texto: estado.T(pasos[E.pasoActual].nombre) }),
     crear('span', {
       clase: 'progreso-linea',
       role: 'progressbar',
@@ -170,7 +170,7 @@ function barraDeProgreso(pasos) {
       var clase = indice < E.pasoActual ? 'hecho' : (indice === E.pasoActual ? 'actual' : '');
       lista.appendChild(crear('li', { clase: clase }, [
         crear('button', {
-          type: 'button', texto: paso.nombre,
+          type: 'button', texto: estado.T(paso.nombre),
           disabled: indice > E.pasoActual,
           'aria-current': indice === E.pasoActual ? 'step' : null,
           onclick: function () { E.pasoActual = indice; E.campoAbierto = null; RM.app.dibujar(); },
@@ -185,10 +185,10 @@ function barraDeProgreso(pasos) {
 function columnaDocumento() {
   return crear('div', { clase: 'columna-documento' }, [
     crear('div', { clase: 'documento-encabezado' }, [
-      crear('h2', { texto: 'Tu T&C' }),
+      crear('h2', { texto: estado.T('Tu T&C') }),
       crear('span', { clase: 'cuenta', id: 'cuenta-huecos' }),
     ]),
-    crear('div', { clase: 'hoja', 'data-hoja': '1', tabindex: '0', role: 'region', 'aria-label': 'Vista previa del documento' }),
+    crear('div', { clase: 'hoja', 'data-hoja': '1', tabindex: '0', role: 'region', 'aria-label': estado.T('Vista previa del documento') }),
   ]);
 }
 
@@ -238,7 +238,7 @@ function pantallaPasos(raiz) {
 
   var columna = crear('div', { clase: 'columna-preguntas' });
   columna.appendChild(barraDeProgreso(pasos));
-  columna.appendChild(crear('h1', { texto: pasoActual.titulo || pasoActual.nombre }));
+  columna.appendChild(crear('h1', { texto: estado.T(pasoActual.titulo || pasoActual.nombre) }));
 
   // Respondidas, en una línea.
   var respondidas = crear('div', { clase: 'ficha' });
@@ -301,14 +301,14 @@ function pantallaPasos(raiz) {
   columna.appendChild(crear('div', { clase: 'fila-botones' }, [
     E.pasoActual > 0 || indiceAbierto > 0
       ? crear('button', {
-          clase: 'boton boton-secundario', type: 'button', texto: 'Atrás',
+          clase: 'boton boton-secundario', type: 'button', texto: estado.T('Atrás'),
           onclick: function () { retroceder(campos, indiceAbierto, pasos); },
         })
       : null,
     crear('button', {
       clase: 'boton', type: 'button',
       texto: entrada.tipo && indiceAbierto === campos.length - 1 && E.pasoActual === pasos.length - 1
-        ? 'Revisar y generar' : 'Siguiente',
+        ? estado.T('Revisar y generar') : estado.T('Siguiente'),
       onclick: function () { avanzar(campos, indiceAbierto, pasos); },
     }),
   ]));

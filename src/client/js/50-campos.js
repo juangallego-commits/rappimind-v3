@@ -312,7 +312,7 @@ function dibujarPregunta(campo, config) {
   if (frase) bloque.appendChild(frase);
 
   bloque.appendChild(crear('details', { clase: 'por-que' }, [
-    crear('summary', { texto: '¿Por qué te preguntamos esto?' }),
+    crear('summary', { texto: RM.estado.T('¿Por qué te preguntamos esto?') }),
     crear('p', {}, [conGlosario(pregunta.porQue)]),
   ]));
 

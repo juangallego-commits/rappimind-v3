@@ -128,6 +128,40 @@ function borrarBorrador() {
   }
 }
 
+/* --- El idioma de la interfaz ---------------------------------------------
+ *
+ * No es el idioma del documento. El documento sale en el idioma del pais y eso
+ * no se elige, porque dejarlo elegir seria dejar publicar un T&C brasileno en
+ * espanol. Esto es otra cosa: en que idioma lee el formulario quien lo llena.
+ *
+ * Es una preferencia de esa persona, asi que vive en su navegador. Si el
+ * navegador no deja guardar, se pierde al recargar y no pasa nada mas.
+ */
+var LLAVE_IDIOMA = 'rappimind.idioma';
+
+function idiomaInterfaz() {
+  if (estado.idiomaInterfaz) return estado.idiomaInterfaz;
+  try {
+    var guardado = window.localStorage.getItem(LLAVE_IDIOMA);
+    if (guardado === 'pt' || guardado === 'es') { estado.idiomaInterfaz = guardado; return guardado; }
+  } catch (error) { /* sin almacenamiento, se queda en espanol */ }
+  estado.idiomaInterfaz = 'es';
+  return 'es';
+}
+
+function fijarIdiomaInterfaz(codigo) {
+  estado.idiomaInterfaz = codigo === 'pt' ? 'pt' : 'es';
+  try {
+    window.localStorage.setItem(LLAVE_IDIOMA, estado.idiomaInterfaz);
+  } catch (error) { /* sin almacenamiento, dura lo que dure la pestana */ }
+  return estado.idiomaInterfaz;
+}
+
+/** Traduce un texto de la interfaz al idioma elegido. */
+function T(texto) {
+  return traducirInterfaz(texto, idiomaInterfaz());
+}
+
 /**
  * La pregunta de un campo, en la variante del tipo de campana elegido.
  *
@@ -139,12 +173,15 @@ function borrarBorrador() {
  * Toda pantalla que muestre el texto de una pregunta pasa por aqui.
  */
 function pregunta(campoId) {
-  return preguntaDe(campoId, entrada().tipo);
+  return preguntaEnIdioma(preguntaDe(campoId, entrada().tipo), campoId, idiomaInterfaz());
 }
 
 RM.estado = {
   estado: estado,
   pregunta: pregunta,
+  T: T,
+  idiomaInterfaz: idiomaInterfaz,
+  fijarIdiomaInterfaz: fijarIdiomaInterfaz,
   entrada: entrada,
   fijar: fijar,
   fijarVarios: fijarVarios,

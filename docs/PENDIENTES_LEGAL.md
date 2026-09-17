@@ -232,3 +232,21 @@ El modelo quedó armado y genera. Las mejoras aplicadas están en
 Y una pregunta de producto: hoy la modalidad está fija en "Turbo Restaurantes",
 que es lo que dicen los dos documentos publicados. Si existen otras (Turbo
 Mercados, por ejemplo), se vuelve una pregunta con opciones.
+
+## La interfaz en portugués (17 de septiembre)
+
+El formulario ya se puede leer en portugués, con el botón de abajo a la derecha.
+Dos cosas que conviene que sepas:
+
+1. **La traducción la escribí yo, y es de producto, no de Legal.** Ninguna
+   cláusula se tradujo: el documento sigue saliendo de `modelos/`. Lo que está en
+   portugués son los enunciados de las preguntas, las ayudas, los mensajes de
+   error y los botones. Aun así, conviene que lo lea alguien que hable portugués
+   antes de que lo usen los KAM de Brasil: una ayuda mal traducida puede inducir
+   una respuesta equivocada, y esa respuesta sí sale impresa.
+
+2. **Solo están traducidas las preguntas que un KAM de Brasil recorre de
+   verdad**, que son las del tipo `promocao_br` más las tres de arranque.
+   Traducir las ochenta y nueve preguntas sería traducir pantallas que en Brasil
+   no existen, porque el país solo tiene habilitado su propio tipo. Lo que no
+   está traducido sale en español, que se entiende, en vez de romperse.

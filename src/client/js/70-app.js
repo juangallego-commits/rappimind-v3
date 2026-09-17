@@ -33,11 +33,11 @@ var NAVEGACION = [
 ];
 
 function barraSuperior() {
-  var nav = crear('nav', { 'aria-label': 'Secciones' });
+  var nav = crear('nav', { 'aria-label': estado.T('Secciones') });
   for (var i = 0; i < NAVEGACION.length; i++) {
     (function (seccion) {
       nav.appendChild(crear('button', {
-        clase: 'enlace-nav', type: 'button', texto: seccion.nombre,
+        clase: 'enlace-nav', type: 'button', texto: estado.T(seccion.nombre),
         'aria-current': E.pantalla === seccion.id ? 'page' : null,
         onclick: function () { ir(seccion.id); },
       }));
@@ -46,7 +46,7 @@ function barraSuperior() {
 
   if (E.configuracion && E.configuracion.rol === 'admin') {
     nav.appendChild(crear('button', {
-      clase: 'enlace-nav', type: 'button', texto: 'Administración',
+      clase: 'enlace-nav', type: 'button', texto: estado.T('Administración'),
       'aria-current': E.pantalla === 'admin' ? 'page' : null,
       onclick: function () { ir('admin'); },
     }));
@@ -66,19 +66,19 @@ function barraSuperior() {
 function agregarHojaDeCelular(raiz) {
   var cortina = crear('div', { clase: 'cortina' });
   var hoja = crear('div', {
-    clase: 'hoja-deslizable', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Vista previa del documento',
+    clase: 'hoja-deslizable', role: 'dialog', 'aria-modal': 'true', 'aria-label': estado.T('Vista previa del documento'),
   }, [
     crear('div', { clase: 'asa' }),
     crear('div', { clase: 'hoja', 'data-hoja': '1' }),
     crear('div', { clase: 'fila-botones', style: 'padding: 0 16px 16px' }, [
-      crear('button', { clase: 'boton boton-secundario', type: 'button', texto: 'Cerrar', onclick: cerrar }),
+      crear('button', { clase: 'boton boton-secundario', type: 'button', texto: estado.T('Cerrar'), onclick: cerrar }),
     ]),
   ]);
 
   var boton = crear('button', {
     clase: 'boton-flotante', type: 'button',
     onclick: abrir,
-  }, [RM.util.icono('documento', 18), document.createTextNode('Ver cómo va mi T&C')]);
+  }, [RM.util.icono('documento', 18), document.createTextNode(estado.T('Ver cómo va mi T&C'))]);
 
   function abrir() {
     cortina.classList.add('abierta');
@@ -102,6 +102,38 @@ function agregarHojaDeCelular(raiz) {
   raiz.appendChild(hoja);
 }
 
+/**
+ * El selector de idioma de la interfaz, fijo abajo a la derecha.
+ *
+ * Cambia en que idioma se lee el formulario, no en que idioma sale el documento.
+ * El documento va siempre en el idioma del pais, y eso no se elige.
+ */
+function selectorDeIdioma() {
+  var caja = crear('div', {
+    clase: 'selector-idioma', role: 'group',
+    'aria-label': estado.T('Idioma de la interfaz'),
+  });
+
+  for (var i = 0; i < IDIOMAS_DE_INTERFAZ.length; i++) {
+    (function (idioma) {
+      var elegido = estado.idiomaInterfaz() === idioma.codigo;
+      caja.appendChild(crear('button', {
+        type: 'button', texto: idioma.bandera,
+        title: idioma.nombre,
+        'aria-label': idioma.nombre,
+        'aria-pressed': String(elegido),
+        onclick: function () {
+          if (estado.idiomaInterfaz() === idioma.codigo) return;
+          estado.fijarIdiomaInterfaz(idioma.codigo);
+          dibujar();
+          RM.util.anunciar(idioma.nombre);
+        },
+      }));
+    })(IDIOMAS_DE_INTERFAZ[i]);
+  }
+  return caja;
+}
+
 function mostrarError(mensaje) {
   var caja = RM.util.porId('error-global');
   if (!caja) return;
@@ -123,8 +155,8 @@ function dibujar() {
   if (E.configuracion && E.configuracion.demostracion) {
     raiz.appendChild(crear('div', { clase: 'pagina', style: 'padding-bottom:0' }, [
       crear('div', { clase: 'aviso' }, [
-        crear('h3', { texto: 'Modo demostración' }),
-        crear('p', { texto: 'No se crea ningún documento, no se manda ningún correo y nada queda guardado. Al final verás el texto que habría salido.' }),
+        crear('h3', { texto: estado.T('Modo demostración') }),
+        crear('p', { texto: estado.T('No se crea ningún documento, no se manda ningún correo y nada queda guardado. Al final verás el texto que habría salido.') }),
       ]),
     ]));
   }
@@ -133,6 +165,8 @@ function dibujar() {
 
   var pintar = PANTALLAS[E.pantalla] || PANTALLAS.inicio;
   pintar(raiz);
+
+  raiz.appendChild(selectorDeIdioma());
 }
 
 function ir(pantalla) {
@@ -163,7 +197,7 @@ function arrancar() {
   var raiz = RM.util.porId('app');
   vaciar(raiz);
   raiz.appendChild(crear('div', { clase: 'pagina pagina-angosta' }, [
-    crear('p', { clase: 'pregunta-ayuda', texto: 'Cargando RappiMind...' }),
+    crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Cargando RappiMind...') }),
   ]));
 
   RM.servidor.llamar('estadoInicial').then(function (configuracion) {
@@ -174,9 +208,9 @@ function arrancar() {
     vaciar(raiz);
     raiz.appendChild(crear('div', { clase: 'pagina pagina-angosta' }, [
       crear('div', { clase: 'aviso aviso-serio' }, [
-        crear('h3', { texto: 'No pudimos abrir RappiMind' }),
+        crear('h3', { texto: estado.T('No pudimos abrir RappiMind') }),
         crear('p', { texto: error.message }),
-        crear('p', { clase: 'pregunta-ayuda', texto: 'Si sigue pasando, avísale a Juan.' }),
+        crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Si sigue pasando, avísale a Juan.') }),
       ]),
     ]));
   });

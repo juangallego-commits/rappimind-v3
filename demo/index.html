@@ -441,6 +441,28 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 .hoja-deslizable.abierta { transform: translateY(0); }
 .asa { width: 36px; height: 4px; border-radius: 2px; background: var(--borde); margin: var(--e3) auto; flex: none; }
 
+/* --- Selector de idioma de la interfaz ------------------------------------
+ *
+ * Abajo a la derecha, fijo, siempre a la vista. No compite con el contenido
+ * porque es pequeno y discreto, pero un KAM de Sao Paulo tiene que encontrarlo
+ * sin buscarlo.
+ */
+.selector-idioma {
+  position: fixed; right: var(--e4); bottom: var(--e4); z-index: 38;
+  display: flex; align-items: center; gap: 2px;
+  padding: 4px; border-radius: 999px;
+  background: var(--papel); border: 1px solid var(--borde);
+  box-shadow: 0 2px 12px rgba(22, 24, 29, 0.12);
+}
+.selector-idioma button {
+  border: 0; background: transparent; cursor: pointer;
+  padding: 6px 12px; border-radius: 999px;
+  font: inherit; font-size: 0.82rem; font-weight: 600; color: var(--tinta-suave);
+}
+.selector-idioma button:hover { background: var(--fondo); }
+.selector-idioma button[aria-pressed="true"] { background: var(--marca); color: #fff; }
+.selector-idioma button:focus-visible { outline: 2px solid var(--marca); outline-offset: 2px; }
+
 /* --- Pantalla final ------------------------------------------------------ */
 
 .pasos-publicar { counter-reset: paso; list-style: none; padding: 0; margin: var(--e4) 0 0; }
@@ -484,6 +506,8 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
   }
   .barra-superior nav::-webkit-scrollbar { display: none; }
   .enlace-nav { white-space: nowrap; padding: var(--e2); font-size: 13px; }
+
+  .selector-idioma { bottom: 76px; }
 
   .boton-flotante {
     display: flex; align-items: center; justify-content: center; gap: var(--e2);
@@ -6310,6 +6334,16 @@ var PREGUNTAS = {
   // --- El beneficio -------------------------------------------------------
 
   porcentaje: p({
+    paso: 'beneficio',
+    pregunta: '¿Qué porcentaje del pedido devuelves en Créditos?',
+    ayuda: 'Solo el número. Con 20, un pedido de $50.000 recibe $10.000 en Créditos.',
+    porQue: 'Es la promesa central de la campaña. Una vez publicado, el usuario puede exigir exactamente ese porcentaje.',
+    ejemplo: '99',
+    placeholders: ['PORCENTAJE'],
+    errores: {
+      vacio: 'Escribe el porcentaje que devuelves, sin el signo de porcentaje.',
+      rango: 'El porcentaje va de 1 a 100. Si necesitas varios porcentajes o un rango, eso es otra campaña: escríbele a Legal.',
+    },
     variantes: {
       cashback_eta: {
         pregunta: '¿Qué porcentaje devuelves si la orden llega tarde?',
@@ -6322,18 +6356,6 @@ var PREGUNTAS = {
         ayuda: 'El documento lo escribe como "até X%", así que es el descuento máximo.',
         porQue: 'Sale escrito en letras y en cifra dentro del documento, como lo exige el modelo aprobado.',
       },
-    },
-    paso: 'beneficio',
-    pregunta: '¿Qué porcentaje del pedido devuelves en Créditos?',
-    ayuda: 'Solo el número. Con 20, un pedido de $50.000 recibe $10.000 en Créditos.',
-    porQue: 'Es la promesa central de la campaña. Una vez publicado, el usuario puede exigir exactamente ese porcentaje.',
-    ejemplo: '99',
-    placeholders: ['PORCENTAJE'],
-    errores: {
-      vacio: 'Escribe el porcentaje que devuelves, sin el signo de porcentaje.',
-      rango: 'El porcentaje va de 1 a 100. Si necesitas varios porcentajes o un rango, eso es otra campaña: escríbele a Legal.',
-    },
-    variantes: {
       cashback_travel: {
         pregunta: '¿Qué porcentaje de la orden devuelves?',
         ayuda: 'Sin el signo de porcentaje. En Travel lo más usado va de 5 a 20.',
@@ -6349,19 +6371,6 @@ var PREGUNTAS = {
   }),
 
   tope: p({
-    variantes: {
-      cashback_eta: {
-        pregunta: '¿Cuál es el tope por orden?',
-        ayuda: 'Lo máximo que una sola orden puede recibir en Créditos, por grande que sea. Las campañas publicadas usan cien mil.',
-        porQue: 'Sin tope, una sola orden grande se lleva buena parte del presupuesto de la campaña.',
-      },
-
-      promocao_br: {
-        pregunta: '¿Cuál es el tope del beneficio, en reales?',
-        ayuda: 'Lo máximo que la campaña cubre en un pedido. Si lo dejas en blanco, el documento no lleva tope.',
-        porQue: 'Sin tope escrito, la campaña no tiene techo y el presupuesto se puede ir en pocos pedidos.',
-      },
-    },
     paso: 'beneficio',
     pregunta: '¿Qué es lo máximo que recibe alguien por pedido?',
     ayuda: 'Aunque el pedido sea grande, no recibe más de esto. Lo más usado es 25.000.',
@@ -6375,6 +6384,17 @@ var PREGUNTAS = {
       mayorQuePresupuesto: 'El tope por pedido es mayor que el presupuesto total. Con eso, el primer pedido se lleva toda la campaña. Revisa los dos números.',
     },
     variantes: {
+      cashback_eta: {
+        pregunta: '¿Cuál es el tope por orden?',
+        ayuda: 'Lo máximo que una sola orden puede recibir en Créditos, por grande que sea. Las campañas publicadas usan cien mil.',
+        porQue: 'Sin tope, una sola orden grande se lleva buena parte del presupuesto de la campaña.',
+      },
+
+      promocao_br: {
+        pregunta: '¿Cuál es el tope del beneficio, en reales?',
+        ayuda: 'Lo máximo que la campaña cubre en un pedido. Si lo dejas en blanco, el documento no lleva tope.',
+        porQue: 'Sin tope escrito, la campaña no tiene techo y el presupuesto se puede ir en pocos pedidos.',
+      },
       cashback_travel: {
         pregunta: '¿Qué es lo máximo que recibe por orden?',
         ayuda: 'Aunque la orden sea grande, no recibe más de esto. En Travel va de 50.000 a 300.000.',
@@ -6449,13 +6469,6 @@ var PREGUNTAS = {
   }),
 
   compraMinima: p({
-    variantes: {
-      promocao_br: {
-        pregunta: '¿Hay un mínimo de compra, en reales?',
-        ayuda: 'Opcional. De los cuatro documentos aprobados, tres lo llevan y el de taxa de serviço e frete grátis no.',
-        porQue: 'El mínimo aparece dos veces en el documento: en el párrafo de apertura y en la viñeta del beneficio.',
-      },
-    },
     // Va en el paso de participantes, no en el del beneficio: es un requisito
     // para participar. El esquema manda, y este archivo tiene que decir lo
     // mismo, porque de aqui sale docs/PREGUNTAS_KAM.md.
@@ -6469,6 +6482,11 @@ var PREGUNTAS = {
     placeholders: ['TEXTO_MINIMO_COMPRA', 'TEXTO_UMBRAL'],
     errores: { cero: 'Si no quieres exigir un mínimo, deja el campo vacío.' },
     variantes: {
+      promocao_br: {
+        pregunta: '¿Hay un mínimo de compra, en reales?',
+        ayuda: 'Opcional. De los cuatro documentos aprobados, tres lo llevan y el de taxa de serviço e frete grátis no.',
+        porQue: 'El mínimo aparece dos veces en el documento: en el párrafo de apertura y en la viñeta del beneficio.',
+      },
       cashback_travel: { paso: 'condiciones_travel', placeholders: ['TEXTO_CONDICIONES_TRAVEL'] },
       descuento_travel: { paso: 'condiciones_travel', placeholders: ['TEXTO_CONDICIONES_TRAVEL'] },
     },
@@ -7511,6 +7529,233 @@ if (typeof module !== 'undefined') {
   };
 }
 
+// --- src/core/preguntas_pt.js ---
+'use strict';
+
+/**
+ * Las preguntas en portugues.
+ *
+ * Solo las que ve un KAM de Brasil, que son las del tipo promocao_br mas las
+ * tres de arranque. Traducir las ochenta y nueve preguntas seria traducir
+ * pantallas que en Brasil no existen: el pais solo tiene habilitado su propio
+ * tipo, asi que nadie de alla vera nunca las de Carrera de Compras ni las de
+ * Travel.
+ *
+ * Lo que no esta aqui sale en espanol, que se entiende, en vez de romperse.
+ *
+ * OJO: esta traduccion es de producto, no de Legal, y la escribi yo. Conviene
+ * que la lea alguien que hable portugues antes de que la usen los KAM de Brasil.
+ * Anotado en docs/PENDIENTES_LEGAL.md.
+ */
+
+var PREGUNTAS_PT = {
+  pais: {
+    pregunta: 'Em qual país a campanha acontece?',
+    ayuda: 'Se o seu país não aparecer na lista, ainda não está habilitado.',
+    porQue: 'Cada país tem a sua própria entidade legal da Rappi, a sua moeda e a sua autoridade de defesa do consumidor. O documento muda inteiro conforme o país.',
+    errores: { vacio: 'Escolha o país da campanha.' },
+  },
+
+  negocio: {
+    pregunta: 'A campanha é da Rappi ou da Rappi Travel?',
+    ayuda: 'Rappi é a entrega de sempre. Rappi Travel são voos, hotéis, carros e pacotes.',
+    porQue: 'São duas empresas diferentes, e o documento inteiro muda conforme qual seja.',
+    opciones: {
+      rappi: { etiqueta: 'Rappi', nota: 'Restaurantes, supermercados, farmácias e tudo o que chega por entrega.' },
+      travel: { etiqueta: 'Rappi Travel', nota: 'Voos, hotéis, carros, pacotes, passeios e assistência ao viajante.' },
+    },
+    errores: { vacio: 'Diga se a campanha é da Rappi ou da Rappi Travel.' },
+  },
+
+  tipo: {
+    pregunta: 'Que tipo de campanha você vai fazer?',
+    ayuda: 'Escolha a que se parece com a sua campanha. Cada opção explica do que se trata.',
+    porQue: 'Cada tipo usa um modelo jurídico diferente, aprovado pelo Jurídico. Escolher errado significa gerar o documento errado.',
+    errores: { vacio: 'Escolha o tipo de campanha.' },
+  },
+
+  tienda: {
+    pregunta: 'Em qual parceiro a campanha vale?',
+    ayuda: 'O nome do parceiro como aparece no aplicativo. Por exemplo: Petz, Drogasmil, Raia.',
+    porQue: 'O documento nomeia o Parceiro no parágrafo de abertura e na regra do benefício.',
+    ejemplo: 'Petz',
+    errores: { vacio: 'Escreva o parceiro em que a campanha vale.' },
+  },
+
+  fechaInicio: {
+    pregunta: 'Em que dia a campanha começa?',
+    ayuda: 'Pode ser hoje. Publique os T&C antes de começar.',
+    porQue: 'Os Termos e Condições precisam estar publicados antes de a campanha começar. Se já começou ontem, não dá mais para publicar a tempo.',
+    errores: {
+      vacio: 'Escolha o dia em que a campanha começa.',
+      pasado: 'Essa data já passou. Os T&C se publicam antes de a campanha começar, então escolha hoje ou um dia futuro.',
+    },
+  },
+
+  horaInicio: {
+    pregunta: 'A que horas começa?',
+    ayuda: 'Os documentos aprovados começam às 00:01.',
+    porQue: 'A hora exata define a partir de quando um pedido vale para a campanha. Um pedido um minuto antes não dá benefício.',
+    errores: { vacio: 'Escolha a hora de início.' },
+  },
+
+  fechaFin: {
+    pregunta: 'Em que dia termina?',
+    ayuda: 'Deixamos igual ao dia de início. Altere se a campanha durar mais.',
+    porQue: 'Depois desta data a campanha não dá mais benefício.',
+    errores: {
+      vacio: 'Escolha o dia em que a campanha termina.',
+      orden: 'A campanha não pode terminar antes de começar. Revise a data e a hora de término.',
+    },
+  },
+
+  horaFin: {
+    pregunta: 'A que horas termina?',
+    ayuda: 'Os documentos aprovados terminam às 23:59.',
+    porQue: 'Define até que minuto um pedido conta. Os pedidos posteriores são processados como pedidos normais.',
+    errores: { vacio: 'Escolha a hora de término.' },
+  },
+
+  beneficioBr: {
+    pregunta: 'O que o usuário ganha?',
+    ayuda: 'As quatro formas que o Jurídico do Brasil tem aprovadas. Cada uma muda uma única frase do documento.',
+    porQue: 'Daqui saem o parágrafo de abertura e a regra que descreve o benefício. É a única coisa que diferencia os quatro modelos aprovados entre si.',
+    opciones: {
+      desconto: { etiqueta: 'Desconto % OFF', nota: 'Uma porcentagem de desconto no pedido, com teto em reais.' },
+      frete_gratis: { etiqueta: 'Frete grátis', nota: 'A entrega sem custo, até o teto que você definir.' },
+      taxa_servico: { etiqueta: 'Taxa de serviço grátis', nota: 'A taxa de serviço sem custo. Os documentos aprovados não colocam teto nela.' },
+      taxa_e_frete: { etiqueta: 'Taxa de serviço e frete grátis', nota: 'As duas coisas juntas. É a única que os documentos aprovados usam sem mínimo de compra.' },
+    },
+    errores: { vacio: 'Escolha o que o usuário ganha.' },
+  },
+
+  porcentaje: {
+    pregunta: 'Qual é a porcentagem de desconto?',
+    ayuda: 'Só o número. O documento escreve "até X%", ou seja, é o desconto máximo.',
+    porQue: 'Sai escrito por extenso e em número dentro do documento, como o modelo aprovado exige.',
+    errores: {
+      vacio: 'Escreva a porcentagem de desconto, sem o sinal de porcentagem.',
+      rango: 'A porcentagem vai de 1 a 100.',
+    },
+  },
+
+  tope: {
+    pregunta: 'Qual é o teto do benefício, em reais?',
+    ayuda: 'O máximo que a campanha cobre em um pedido. Se deixar em branco, o documento sai sem teto.',
+    porQue: 'Sem um teto escrito, a campanha não tem limite e o orçamento pode ir embora em poucos pedidos.',
+    errores: {
+      vacio: 'Escreva o teto do benefício, em reais.',
+      rango: 'O teto precisa ser maior que zero.',
+    },
+  },
+
+  compraMinima: {
+    pregunta: 'Existe um mínimo de compra, em reais?',
+    ayuda: 'Opcional. Dos quatro documentos aprovados, três têm mínimo e o de taxa de serviço e frete grátis não.',
+    porQue: 'O mínimo aparece duas vezes no documento: no parágrafo de abertura e na regra do benefício.',
+    errores: { vacio: 'Se não quiser exigir um mínimo, deixe o campo em branco.' },
+  },
+
+  maxPedidos: {
+    pregunta: 'Quantos pedidos a mesma pessoa pode fazer?',
+    ayuda: 'Os documentos aprovados usam um, dois, ou sem limite.',
+    porQue: 'O documento escreve por extenso e em número: "o limite de 1 (um) pedido por usuário".',
+    opciones: {
+      una: { etiqueta: 'Uma só vez', nota: 'O segundo pedido já não dá benefício.' },
+      varias: { etiqueta: 'Várias vezes', nota: 'Você diz quantas.' },
+      sin_limite: { etiqueta: 'Sem limite', nota: 'Só o orçamento freia.' },
+    },
+    errores: {
+      vacio: 'Diga quantas vezes a mesma pessoa pode ganhar.',
+      cantidad: 'Escreva quantos pedidos com benefício uma pessoa pode fazer.',
+    },
+  },
+
+  metodosPagoBr: {
+    pregunta: 'Com quais meios de pagamento vale?',
+    ayuda: 'Marque todos os que se aplicam. Os quatro documentos aprovados listam um por um.',
+    porQue: 'O documento lista os meios de pagamento válidos pelo nome. Um meio que não estiver na lista não dá direito ao benefício.',
+    opciones: {
+      dinheiro: { etiqueta: 'Dinheiro', nota: 'Pagamento em espécie.' },
+      paypal: { etiqueta: 'Paypal', nota: 'A conta PayPal do usuário.' },
+      rappipay: { etiqueta: 'RappiPay', nota: 'O meio de pagamento da própria Rappi.' },
+      visa: { etiqueta: 'Cartão de crédito Visa', nota: 'Cartão de crédito Visa.' },
+      mastercard: { etiqueta: 'Cartão de crédito Mastercard', nota: 'Cartão de crédito Mastercard.' },
+      voucher_refeicao: { etiqueta: 'Voucher Refeição', nota: 'Vale-refeição.' },
+    },
+    errores: { vacio: 'Marque pelo menos um meio de pagamento.' },
+  },
+
+  declaracion: {
+    pregunta: 'Confirme que as informações estão corretas',
+    ayuda: 'Confirmo que as informações são verdadeiras e correspondem à campanha aprovada.',
+    porQue: 'O documento é gerado com o que você escreveu e publicado exatamente assim. Ninguém do Jurídico revisa antes.',
+    errores: { vacio: 'Marque a caixa para confirmar que as informações estão corretas.' },
+  },
+};
+
+var PREGUNTAS_POR_IDIOMA = { pt: PREGUNTAS_PT };
+
+/**
+ * La pregunta traducida al idioma de la interfaz.
+ *
+ * Campo por campo: lo que no este traducido se queda en espanol. Las opciones se
+ * traducen por su valor, no por su posicion, para que agregar una opcion nueva
+ * en espanol no desalinee las etiquetas del otro idioma.
+ */
+function preguntaEnIdioma(pregunta, campoId, idioma) {
+  if (!pregunta || !idioma || idioma === 'es') return pregunta;
+
+  var diccionario = PREGUNTAS_POR_IDIOMA[idioma];
+  var traduccion = diccionario ? diccionario[campoId] : null;
+  if (!traduccion) return pregunta;
+
+  var mezclada = {};
+  for (var llave in pregunta) {
+    if (Object.prototype.hasOwnProperty.call(pregunta, llave)) mezclada[llave] = pregunta[llave];
+  }
+
+  var textos = ['pregunta', 'ayuda', 'porQue', 'ejemplo', 'razonDeshabilitado', 'aviso'];
+  for (var t = 0; t < textos.length; t++) {
+    if (traduccion[textos[t]]) mezclada[textos[t]] = traduccion[textos[t]];
+  }
+
+  if (traduccion.errores) {
+    var errores = {};
+    for (var e in pregunta.errores) {
+      if (Object.prototype.hasOwnProperty.call(pregunta.errores, e)) errores[e] = pregunta.errores[e];
+    }
+    for (var e2 in traduccion.errores) {
+      if (Object.prototype.hasOwnProperty.call(traduccion.errores, e2)) errores[e2] = traduccion.errores[e2];
+    }
+    mezclada.errores = errores;
+  }
+
+  if (traduccion.opciones && pregunta.opciones) {
+    var opciones = [];
+    for (var o = 0; o < pregunta.opciones.length; o++) {
+      var opcion = pregunta.opciones[o];
+      var deIdioma = traduccion.opciones[opcion.valor];
+      if (!deIdioma) { opciones.push(opcion); continue; }
+      opciones.push({
+        valor: opcion.valor,
+        etiqueta: deIdioma.etiqueta || opcion.etiqueta,
+        nota: deIdioma.nota || opcion.nota,
+      });
+    }
+    mezclada.opciones = opciones;
+  }
+
+  return mezclada;
+}
+
+if (typeof module !== 'undefined') {
+  module.exports = {
+    PREGUNTAS_PT: PREGUNTAS_PT,
+    preguntaEnIdioma: preguntaEnIdioma,
+  };
+}
+
 // --- src/core/tablas.js ---
 'use strict';
 
@@ -7808,6 +8053,164 @@ if (typeof module !== 'undefined') {
     normalizarParaComparar: normalizarParaComparar,
     textoPlano: textoPlano,
     tieneRetornoDeCarro: tieneRetornoDeCarro,
+  };
+}
+
+// --- src/core/textos_interfaz.js ---
+'use strict';
+
+/**
+ * La interfaz en portugues.
+ *
+ * El idioma de la interfaz NO es el idioma del documento. Son dos cosas
+ * distintas a proposito:
+ *
+ *   - El documento sale en el idioma del pais (src/core/idiomas.js). Eso no se
+ *     elige: un T&C de Brasil va en portugues siempre, y uno de Colombia en
+ *     espanol siempre. Dejar elegirlo seria dejar publicar un documento
+ *     brasileno en espanol.
+ *   - La interfaz sale en el idioma que prefiera quien la usa. Un KAM de Sao
+ *     Paulo quiere el formulario en portugues, y esa es una preferencia suya
+ *     que se guarda en su navegador.
+ *
+ * Como funciona: la clave del diccionario es el propio texto en espanol. Asi el
+ * codigo se sigue leyendo en espanol, que es la regla 8 de CLAUDE.md, y una
+ * cadena sin traducir sale en espanol en vez de romperse o quedar vacia.
+ *
+ * Ojo: esto es texto de producto, no texto legal. Las clausulas siguen saliendo
+ * de modelos/ y nadie las traduce aqui.
+ */
+
+var IDIOMAS_DE_INTERFAZ = [
+  { codigo: 'es', nombre: 'Español', bandera: 'ES' },
+  { codigo: 'pt', nombre: 'Português', bandera: 'BR' },
+];
+
+var TEXTOS_PT = {
+  /* --- Navegacion y marco ------------------------------------------------ */
+  'Generar': 'Gerar',
+  'Mis campañas': 'Minhas campanhas',
+  'Ayuda': 'Ajuda',
+  'Administración': 'Administração',
+  'Secciones': 'Seções',
+  'Cargando RappiMind...': 'Carregando o RappiMind...',
+  'No pudimos abrir RappiMind': 'Não conseguimos abrir o RappiMind',
+  'Si sigue pasando, avísale a Juan.': 'Se continuar acontecendo, avise o Juan.',
+  'Modo demostración': 'Modo demonstração',
+  'No se crea ningún documento, no se manda ningún correo y nada queda guardado. Al final verás el texto que habría salido.':
+    'Nenhum documento é criado, nenhum e-mail é enviado e nada fica salvo. No final você vê o texto que teria saído.',
+
+  /* --- Inicio ------------------------------------------------------------- */
+  'Genera los Términos y Condiciones de tu campaña': 'Gere os Termos e Condições da sua campanha',
+  'Sin escribirle a Legal y sin redactar una sola cláusula. Toma menos de cinco minutos.':
+    'Sem escrever para o Jurídico e sem redigir uma única cláusula. Leva menos de cinco minutos.',
+  'Cuéntanos de tu campaña': 'Conte para nós sobre a sua campanha',
+  'Te hacemos preguntas simples, una por una. Ninguna te pide escribir texto legal.':
+    'Fazemos perguntas simples, uma por uma. Nenhuma pede que você escreva texto jurídico.',
+  'Revisa cómo va quedando': 'Veja como está ficando',
+  'El documento se escribe solo, al lado, mientras respondes. Lo que ves es lo que sale.':
+    'O documento se escreve sozinho, ao lado, enquanto você responde. O que você vê é o que sai.',
+  'Publica los T&Cs': 'Publique os T&C',
+  'Empezar': 'Começar',
+  'Seguir con lo que dejaste a medias': 'Continuar de onde você parou',
+  'Tu navegador no deja guardar borradores, así que no cierres esta pestaña hasta generar el documento.':
+    'Seu navegador não permite salvar rascunhos, então não feche esta aba até gerar o documento.',
+
+  /* --- Filtro de entrada -------------------------------------------------- */
+  '¿Esta campaña la puedo hacer aquí?': 'Posso fazer esta campanha por aqui?',
+  'Dos preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano.':
+    'Duas perguntas rápidas. Se alguma for sim, a sua campanha precisa que o Jurídico a redija manualmente.',
+  '¿Hay azar: sorteo, rifa, raspa y gana o ruleta?': 'Tem sorte envolvida: sorteio, rifa, raspadinha ou roleta?',
+  '¿La tienda o la marca exige sus propios términos y condiciones?':
+    'A loja ou a marca exige os próprios termos e condições?',
+  'Sí': 'Sim',
+  'No': 'Não',
+
+  /* --- Pantalla de Legal --------------------------------------------------- */
+  'Esta campaña la redacta Legal': 'Esta campanha é redigida pelo Jurídico',
+  'No es un problema ni una negativa: es un caso que necesita que un abogado lo mire. Llena el formulario y el equipo legal te responde.':
+    'Não é um problema nem uma recusa: é um caso que precisa que um advogado olhe. Preencha o formulário e o time jurídico responde.',
+  'Ir al formulario de Legal': 'Ir para o formulário do Jurídico',
+  'Volver al inicio': 'Voltar ao início',
+  'Falta configurar el enlace del formulario de Legal. Avísale a Juan.':
+    'Falta configurar o link do formulário do Jurídico. Avise o Juan.',
+
+  /* --- El formulario por pasos -------------------------------------------- */
+  'Tu T&C': 'Seu T&C',
+  'Sin empezar': 'Ainda não começou',
+  'Completo': 'Completo',
+  'Atrás': 'Voltar',
+  'Siguiente': 'Avançar',
+  'Revisar y generar': 'Revisar e gerar',
+  'Cambiar': 'Alterar',
+  'Ver cómo va mi T&C': 'Ver como está o meu T&C',
+  'Cerrar': 'Fechar',
+  'Vista previa del documento': 'Prévia do documento',
+  '¿Por qué te preguntamos esto?': 'Por que perguntamos isso?',
+  'Tu documento aparece aquí y se va llenando mientras respondes.':
+    'Seu documento aparece aqui e vai se preenchendo enquanto você responde.',
+
+  /* --- Los pasos ----------------------------------------------------------- */
+  'Campaña': 'Campanha',
+  'Organizador': 'Organizador',
+  'Cuándo': 'Quando',
+  'Beneficio': 'Benefício',
+  'Créditos': 'Créditos',
+  'Participantes': 'Participantes',
+  'Revisar': 'Revisar',
+  'Tu campaña': 'Sua campanha',
+  'Cuándo corre la campaña': 'Quando a campanha acontece',
+  'El beneficio': 'O benefício',
+  'Quién puede participar': 'Quem pode participar',
+  'Quién organiza la campaña': 'Quem organiza a campanha',
+  'Revisa y genera': 'Revise e gere',
+
+  /* --- Resumen y final ----------------------------------------------------- */
+  'Revisa antes de generar': 'Revise antes de gerar',
+  'Este es el resumen de lo que respondiste. Puedes cambiar cualquier cosa antes de generar el documento.':
+    'Este é o resumo do que você respondeu. Você pode alterar qualquer coisa antes de gerar o documento.',
+  'Editar': 'Editar',
+  'Falta': 'Falta',
+  'Te falta:': 'Está faltando:',
+  'Generar T&C': 'Gerar T&C',
+  'Generando...': 'Gerando...',
+  'Generando el documento.': 'Gerando o documento.',
+  'Mis campañas': 'Minhas campanhas',
+
+  /* --- Historial ----------------------------------------------------------- */
+  'Cargando...': 'Carregando...',
+};
+
+var DICCIONARIOS = { pt: TEXTOS_PT };
+
+/**
+ * Traduce un texto de interfaz. Sin traduccion devuelve el espanol, que es la
+ * degradacion correcta: se entiende, aunque no este en el idioma pedido.
+ */
+function traducirInterfaz(texto, idioma) {
+  if (!idioma || idioma === 'es') return texto;
+  var diccionario = DICCIONARIOS[idioma];
+  if (!diccionario) return texto;
+  var traducido = diccionario[texto];
+  return traducido === undefined ? texto : traducido;
+}
+
+/** Cuantas cadenas faltan por traducir, para la prueba que lo vigila. */
+function cadenasTraducidas(idioma) {
+  var diccionario = DICCIONARIOS[idioma] || {};
+  var cuantas = 0;
+  for (var llave in diccionario) {
+    if (Object.prototype.hasOwnProperty.call(diccionario, llave)) cuantas += 1;
+  }
+  return cuantas;
+}
+
+if (typeof module !== 'undefined') {
+  module.exports = {
+    IDIOMAS_DE_INTERFAZ: IDIOMAS_DE_INTERFAZ,
+    TEXTOS_PT: TEXTOS_PT,
+    traducirInterfaz: traducirInterfaz,
+    cadenasTraducidas: cadenasTraducidas,
   };
 }
 
@@ -8912,6 +9315,40 @@ function borrarBorrador() {
   }
 }
 
+/* --- El idioma de la interfaz ---------------------------------------------
+ *
+ * No es el idioma del documento. El documento sale en el idioma del pais y eso
+ * no se elige, porque dejarlo elegir seria dejar publicar un T&C brasileno en
+ * espanol. Esto es otra cosa: en que idioma lee el formulario quien lo llena.
+ *
+ * Es una preferencia de esa persona, asi que vive en su navegador. Si el
+ * navegador no deja guardar, se pierde al recargar y no pasa nada mas.
+ */
+var LLAVE_IDIOMA = 'rappimind.idioma';
+
+function idiomaInterfaz() {
+  if (estado.idiomaInterfaz) return estado.idiomaInterfaz;
+  try {
+    var guardado = window.localStorage.getItem(LLAVE_IDIOMA);
+    if (guardado === 'pt' || guardado === 'es') { estado.idiomaInterfaz = guardado; return guardado; }
+  } catch (error) { /* sin almacenamiento, se queda en espanol */ }
+  estado.idiomaInterfaz = 'es';
+  return 'es';
+}
+
+function fijarIdiomaInterfaz(codigo) {
+  estado.idiomaInterfaz = codigo === 'pt' ? 'pt' : 'es';
+  try {
+    window.localStorage.setItem(LLAVE_IDIOMA, estado.idiomaInterfaz);
+  } catch (error) { /* sin almacenamiento, dura lo que dure la pestana */ }
+  return estado.idiomaInterfaz;
+}
+
+/** Traduce un texto de la interfaz al idioma elegido. */
+function T(texto) {
+  return traducirInterfaz(texto, idiomaInterfaz());
+}
+
 /**
  * La pregunta de un campo, en la variante del tipo de campana elegido.
  *
@@ -8923,12 +9360,15 @@ function borrarBorrador() {
  * Toda pantalla que muestre el texto de una pregunta pasa por aqui.
  */
 function pregunta(campoId) {
-  return preguntaDe(campoId, entrada().tipo);
+  return preguntaEnIdioma(preguntaDe(campoId, entrada().tipo), campoId, idiomaInterfaz());
 }
 
 RM.estado = {
   estado: estado,
   pregunta: pregunta,
+  T: T,
+  idiomaInterfaz: idiomaInterfaz,
+  fijarIdiomaInterfaz: fijarIdiomaInterfaz,
   entrada: entrada,
   fijar: fijar,
   fijarVarios: fijarVarios,
@@ -9437,7 +9877,7 @@ function dibujarPregunta(campo, config) {
   if (frase) bloque.appendChild(frase);
 
   bloque.appendChild(crear('details', { clase: 'por-que' }, [
-    crear('summary', { texto: '¿Por qué te preguntamos esto?' }),
+    crear('summary', { texto: RM.estado.T('¿Por qué te preguntamos esto?') }),
     crear('p', {}, [conGlosario(pregunta.porQue)]),
   ]));
 
@@ -9581,7 +10021,7 @@ function refrescarDocumento() {
   if (!pais || !modelo) {
     for (var v = 0; v < contenedores.length; v++) RM.documento.dibujar(contenedores[v], '', '');
     var sinTipo = RM.util.porId('cuenta-huecos');
-    if (sinTipo) sinTipo.textContent = 'Sin empezar';
+    if (sinTipo) sinTipo.textContent = estado.T('Sin empezar');
     E.ultimoTextoVistaPrevia = '';
     return;
   }
@@ -9596,7 +10036,7 @@ function refrescarDocumento() {
   var cuenta = RM.util.porId('cuenta-huecos');
   if (cuenta) {
     cuenta.textContent = resultado.huecos.length === 0
-      ? 'Completo'
+      ? estado.T('Completo')
       : 'Faltan ' + resultado.huecos.length + (resultado.huecos.length === 1 ? ' dato' : ' datos');
   }
   E.ultimoTextoVistaPrevia = resultado.texto;
@@ -9607,22 +10047,22 @@ function refrescarDocumento() {
 function pantallaInicio(raiz) {
   var pasos = [
     {
-      titulo: 'Cuéntanos de tu campaña',
-      detalle: 'Te hacemos preguntas simples, una por una. Ninguna te pide escribir texto legal.',
+      titulo: estado.T('Cuéntanos de tu campaña'),
+      detalle: estado.T('Te hacemos preguntas simples, una por una. Ninguna te pide escribir texto legal.'),
     },
     {
-      titulo: 'Revisa cómo va quedando',
-      detalle: 'El documento se escribe solo, al lado, mientras respondes. Lo que ves es lo que sale.',
+      titulo: estado.T('Revisa cómo va quedando'),
+      detalle: estado.T('El documento se escribe solo, al lado, mientras respondes. Lo que ves es lo que sale.'),
     },
     {
-      titulo: 'Publica los T&Cs',
+      titulo: estado.T('Publica los T&Cs'),
       detalle: 'En 2 minutos recibirás un email con el documento generado y listo para publicar en Squarespace. Recuerda seguir las instrucciones para asegurar que los T&Cs queden publicados exitosamente.',
     },
   ];
 
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
-    crear('h1', { texto: 'Genera los Términos y Condiciones de tu campaña' }),
-    crear('p', { clase: 'pregunta-ayuda', texto: 'Sin escribirle a Legal y sin redactar una sola cláusula. Toma menos de cinco minutos.' }),
+    crear('h1', { texto: estado.T('Genera los Términos y Condiciones de tu campaña') }),
+    crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Sin escribirle a Legal y sin redactar una sola cláusula. Toma menos de cinco minutos.') }),
   ]);
 
   var lista = crear('ol', { clase: 'pasos-publicar' });
@@ -9636,7 +10076,7 @@ function pantallaInicio(raiz) {
 
   var acciones = crear('div', { clase: 'fila-botones' }, [
     crear('button', {
-      clase: 'boton', type: 'button', texto: 'Empezar',
+      clase: 'boton', type: 'button', texto: estado.T('Empezar'),
       onclick: function () {
         // Empezar es empezar de cero. Para retomar lo de antes está el otro botón.
         estado.reiniciarFormulario(RM.app.valoresIniciales(), {});
@@ -9648,7 +10088,7 @@ function pantallaInicio(raiz) {
   var borrador = estado.leerBorrador();
   if (borrador) {
     acciones.appendChild(crear('button', {
-      clase: 'boton boton-secundario', type: 'button', texto: 'Seguir con lo que dejaste a medias',
+      clase: 'boton boton-secundario', type: 'button', texto: estado.T('Seguir con lo que dejaste a medias'),
       onclick: function () {
         estado.reiniciarFormulario(borrador.entrada, borrador.respondidas || {});
         E.pasoActual = borrador.pasoActual || 0;
@@ -9661,7 +10101,7 @@ function pantallaInicio(raiz) {
 
   if (!estado.almacenamientoDisponible()) {
     contenido.appendChild(crear('div', { clase: 'aviso' }, [
-      crear('p', { texto: 'Tu navegador no deja guardar borradores, así que no cierres esta pestaña hasta generar el documento.' }),
+      crear('p', { texto: estado.T('Tu navegador no deja guardar borradores, así que no cierres esta pestaña hasta generar el documento.') }),
     ]));
   }
 
@@ -9672,8 +10112,8 @@ function pantallaInicio(raiz) {
 
 function pantallaFiltro(raiz) {
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
-    crear('h1', { texto: '¿Esta campaña la puedo hacer aquí?' }),
-    crear('p', { clase: 'pregunta-ayuda', texto: 'Dos preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano.' }),
+    crear('h1', { texto: estado.T('¿Esta campaña la puedo hacer aquí?') }),
+    crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Dos preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano.') }),
   ]);
 
   // Primero el tipo, porque el filtro depende de él.
@@ -9703,12 +10143,12 @@ function pantallaFiltro(raiz) {
   for (var i = 0; i < preguntas.length; i++) {
     (function (pregunta) {
       var bloque = crear('div', { clase: 'pregunta' }, [
-        crear('h2', { clase: 'pregunta-titulo', texto: pregunta.texto }),
+        crear('h2', { clase: 'pregunta-titulo', texto: estado.T(pregunta.texto) }),
       ]);
       var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': pregunta.texto });
       [['no', 'No', false], ['si', 'Sí', true]].forEach(function (par) {
         grupo.appendChild(crear('button', {
-          clase: 'opcion', type: 'button', texto: par[1],
+          clase: 'opcion', type: 'button', texto: estado.T(par[1]),
           role: 'radio', 'aria-checked': 'false', 'aria-pressed': 'false',
           onclick: function () {
             respuestas[pregunta.id] = par[2];
@@ -9775,12 +10215,12 @@ function pantallaFiltroTravel(raiz) {
   for (var i = 0; i < FILTRO_DE_TRAVEL.length; i++) {
     (function (pregunta) {
       var bloque = crear('div', { clase: 'pregunta' }, [
-        crear('h2', { clase: 'pregunta-titulo', texto: pregunta.texto }),
+        crear('h2', { clase: 'pregunta-titulo', texto: estado.T(pregunta.texto) }),
       ]);
       var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': pregunta.texto });
       [['No', false], ['Sí', true]].forEach(function (par) {
         grupo.appendChild(crear('button', {
-          clase: 'opcion', type: 'button', texto: par[0],
+          clase: 'opcion', type: 'button', texto: estado.T(par[0]),
           role: 'radio', 'aria-checked': 'false', 'aria-pressed': 'false',
           onclick: function () {
             respuestas[pregunta.id] = par[1];
@@ -9819,19 +10259,19 @@ function pantallaFiltroTravel(raiz) {
 function pantallaLegal(raiz) {
   var url = E.configuracion.urlFormularioLegal;
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
-    crear('h1', { texto: 'Esta campaña la redacta Legal' }),
+    crear('h1', { texto: estado.T('Esta campaña la redacta Legal') }),
     crear('div', { clase: 'aviso' }, [
       crear('p', { texto: E.motivoDeLegal || 'Tu campaña necesita revisión legal antes de publicarse.' }),
     ]),
-    crear('p', { texto: 'No es un problema ni una negativa: es un caso que necesita que un abogado lo mire. Llena el formulario y el equipo legal te responde.' }),
+    crear('p', { texto: estado.T('No es un problema ni una negativa: es un caso que necesita que un abogado lo mire. Llena el formulario y el equipo legal te responde.') }),
     crear('div', { clase: 'fila-botones' }, [
       url
         ? crear('a', { clase: 'boton', href: url, target: '_blank', rel: 'noopener' }, [
-            document.createTextNode('Ir al formulario de Legal'), RM.util.icono('abrir', 16),
+            document.createTextNode(estado.T('Ir al formulario de Legal')), RM.util.icono('abrir', 16),
           ])
-        : crear('p', { clase: 'pregunta-ayuda', texto: 'Falta configurar el enlace del formulario de Legal. Avísale a Juan.' }),
+        : crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Falta configurar el enlace del formulario de Legal. Avísale a Juan.') }),
       crear('button', {
-        clase: 'boton boton-secundario', type: 'button', texto: 'Volver al inicio',
+        clase: 'boton boton-secundario', type: 'button', texto: estado.T('Volver al inicio'),
         onclick: function () { RM.app.ir('inicio'); },
       }),
     ]),
@@ -10013,7 +10453,7 @@ function barraDeProgreso(pasos) {
   var compacta = crear('p', { clase: 'progreso-compacto' }, [
     crear('span', { clase: 'progreso-cuenta', texto: 'Paso ' + (E.pasoActual + 1) + ' de ' + pasos.length }),
     document.createTextNode(' \u00B7 '),
-    crear('strong', { texto: pasos[E.pasoActual].nombre }),
+    crear('strong', { texto: estado.T(pasos[E.pasoActual].nombre) }),
     crear('span', {
       clase: 'progreso-linea',
       role: 'progressbar',
@@ -10030,7 +10470,7 @@ function barraDeProgreso(pasos) {
       var clase = indice < E.pasoActual ? 'hecho' : (indice === E.pasoActual ? 'actual' : '');
       lista.appendChild(crear('li', { clase: clase }, [
         crear('button', {
-          type: 'button', texto: paso.nombre,
+          type: 'button', texto: estado.T(paso.nombre),
           disabled: indice > E.pasoActual,
           'aria-current': indice === E.pasoActual ? 'step' : null,
           onclick: function () { E.pasoActual = indice; E.campoAbierto = null; RM.app.dibujar(); },
@@ -10045,10 +10485,10 @@ function barraDeProgreso(pasos) {
 function columnaDocumento() {
   return crear('div', { clase: 'columna-documento' }, [
     crear('div', { clase: 'documento-encabezado' }, [
-      crear('h2', { texto: 'Tu T&C' }),
+      crear('h2', { texto: estado.T('Tu T&C') }),
       crear('span', { clase: 'cuenta', id: 'cuenta-huecos' }),
     ]),
-    crear('div', { clase: 'hoja', 'data-hoja': '1', tabindex: '0', role: 'region', 'aria-label': 'Vista previa del documento' }),
+    crear('div', { clase: 'hoja', 'data-hoja': '1', tabindex: '0', role: 'region', 'aria-label': estado.T('Vista previa del documento') }),
   ]);
 }
 
@@ -10098,7 +10538,7 @@ function pantallaPasos(raiz) {
 
   var columna = crear('div', { clase: 'columna-preguntas' });
   columna.appendChild(barraDeProgreso(pasos));
-  columna.appendChild(crear('h1', { texto: pasoActual.titulo || pasoActual.nombre }));
+  columna.appendChild(crear('h1', { texto: estado.T(pasoActual.titulo || pasoActual.nombre) }));
 
   // Respondidas, en una línea.
   var respondidas = crear('div', { clase: 'ficha' });
@@ -10161,14 +10601,14 @@ function pantallaPasos(raiz) {
   columna.appendChild(crear('div', { clase: 'fila-botones' }, [
     E.pasoActual > 0 || indiceAbierto > 0
       ? crear('button', {
-          clase: 'boton boton-secundario', type: 'button', texto: 'Atrás',
+          clase: 'boton boton-secundario', type: 'button', texto: estado.T('Atrás'),
           onclick: function () { retroceder(campos, indiceAbierto, pasos); },
         })
       : null,
     crear('button', {
       clase: 'boton', type: 'button',
       texto: entrada.tipo && indiceAbierto === campos.length - 1 && E.pasoActual === pasos.length - 1
-        ? 'Revisar y generar' : 'Siguiente',
+        ? estado.T('Revisar y generar') : estado.T('Siguiente'),
       onclick: function () { avanzar(campos, indiceAbierto, pasos); },
     }),
   ]));
@@ -10848,8 +11288,8 @@ function pantallaResumen(raiz) {
   var completo = faltantes.length === 0;
 
   var columna = crear('div', { clase: 'columna-preguntas' }, [
-    crear('h1', { texto: 'Revisa antes de generar' }),
-    crear('p', { clase: 'pregunta-ayuda', texto: 'Este es el resumen de lo que respondiste. Puedes cambiar cualquier cosa antes de generar el documento.' }),
+    crear('h1', { texto: estado.T('Revisa antes de generar') }),
+    crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Este es el resumen de lo que respondiste. Puedes cambiar cualquier cosa antes de generar el documento.') }),
   ]);
 
   var ficha = crear('div', { clase: 'ficha' });
@@ -10860,13 +11300,13 @@ function pantallaResumen(raiz) {
       var lista = crear('dl');
       for (var f = 0; f < seccion.filas.length; f++) {
         lista.appendChild(crear('dt', { texto: seccion.filas[f].etiqueta }));
-        lista.appendChild(crear('dd', { texto: seccion.filas[f].valor || 'Falta' }));
+        lista.appendChild(crear('dd', { texto: seccion.filas[f].valor || estado.T('Falta') }));
       }
       ficha.appendChild(crear('div', { clase: 'ficha-seccion' }, [
         crear('div', { clase: 'ficha-encabezado' }, [
-          crear('h3', { texto: seccion.paso.nombre }),
+          crear('h3', { texto: estado.T(seccion.paso.nombre) }),
           crear('button', {
-            clase: 'boton-texto', type: 'button', texto: 'Editar',
+            clase: 'boton-texto', type: 'button', texto: estado.T('Editar'),
             onclick: function () {
               E.pasoActual = seccion.indice;
               E.campoAbierto = seccion.filas[0].campo.id;
@@ -10900,20 +11340,20 @@ function pantallaResumen(raiz) {
     var listaFalta = crear('ul', { clase: 'te-falta' });
     for (var i = 0; i < faltantes.length; i++) listaFalta.appendChild(crear('li', { texto: faltantes[i] }));
     columna.appendChild(crear('div', {}, [
-      crear('h3', { texto: 'Te falta:' }),
+      crear('h3', { texto: estado.T('Te falta:') }),
       listaFalta,
     ]));
   }
 
   var boton = crear('button', {
-    clase: 'boton', type: 'button', texto: 'Generar T&C',
+    clase: 'boton', type: 'button', texto: estado.T('Generar T&C'),
     disabled: !completo,
     onclick: function () { generar(boton); },
   });
 
   columna.appendChild(crear('div', { clase: 'fila-botones' }, [
     crear('button', {
-      clase: 'boton boton-secundario', type: 'button', texto: 'Atrás',
+      clase: 'boton boton-secundario', type: 'button', texto: estado.T('Atrás'),
       onclick: function () { RM.app.ir('pasos'); },
     }),
     boton,
@@ -10928,13 +11368,13 @@ function pantallaResumen(raiz) {
 
 function generar(boton) {
   boton.disabled = true;
-  boton.textContent = 'Generando...';
-  RM.util.anunciar('Generando el documento.');
+  boton.textContent = estado.T('Generando...');
+  RM.util.anunciar(estado.T('Generando el documento.'));
 
   RM.servidor.llamar('generar', estado.entrada()).then(function (resultado) {
     if (!resultado.valido) {
       boton.disabled = false;
-      boton.textContent = 'Generar T&C';
+      boton.textContent = estado.T('Generar T&C');
       RM.app.mostrarError(resultado.errores.map(function (e) { return e.mensaje; }).join(' '));
       return;
     }
@@ -10943,7 +11383,7 @@ function generar(boton) {
     RM.app.ir('listo');
   }).catch(function (error) {
     boton.disabled = false;
-    boton.textContent = 'Generar T&C';
+    boton.textContent = estado.T('Generar T&C');
     RM.app.mostrarError('No pudimos generar el documento: ' + error.message);
   });
 }
@@ -11758,11 +12198,11 @@ var NAVEGACION = [
 ];
 
 function barraSuperior() {
-  var nav = crear('nav', { 'aria-label': 'Secciones' });
+  var nav = crear('nav', { 'aria-label': estado.T('Secciones') });
   for (var i = 0; i < NAVEGACION.length; i++) {
     (function (seccion) {
       nav.appendChild(crear('button', {
-        clase: 'enlace-nav', type: 'button', texto: seccion.nombre,
+        clase: 'enlace-nav', type: 'button', texto: estado.T(seccion.nombre),
         'aria-current': E.pantalla === seccion.id ? 'page' : null,
         onclick: function () { ir(seccion.id); },
       }));
@@ -11771,7 +12211,7 @@ function barraSuperior() {
 
   if (E.configuracion && E.configuracion.rol === 'admin') {
     nav.appendChild(crear('button', {
-      clase: 'enlace-nav', type: 'button', texto: 'Administración',
+      clase: 'enlace-nav', type: 'button', texto: estado.T('Administración'),
       'aria-current': E.pantalla === 'admin' ? 'page' : null,
       onclick: function () { ir('admin'); },
     }));
@@ -11791,19 +12231,19 @@ function barraSuperior() {
 function agregarHojaDeCelular(raiz) {
   var cortina = crear('div', { clase: 'cortina' });
   var hoja = crear('div', {
-    clase: 'hoja-deslizable', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Vista previa del documento',
+    clase: 'hoja-deslizable', role: 'dialog', 'aria-modal': 'true', 'aria-label': estado.T('Vista previa del documento'),
   }, [
     crear('div', { clase: 'asa' }),
     crear('div', { clase: 'hoja', 'data-hoja': '1' }),
     crear('div', { clase: 'fila-botones', style: 'padding: 0 16px 16px' }, [
-      crear('button', { clase: 'boton boton-secundario', type: 'button', texto: 'Cerrar', onclick: cerrar }),
+      crear('button', { clase: 'boton boton-secundario', type: 'button', texto: estado.T('Cerrar'), onclick: cerrar }),
     ]),
   ]);
 
   var boton = crear('button', {
     clase: 'boton-flotante', type: 'button',
     onclick: abrir,
-  }, [RM.util.icono('documento', 18), document.createTextNode('Ver cómo va mi T&C')]);
+  }, [RM.util.icono('documento', 18), document.createTextNode(estado.T('Ver cómo va mi T&C'))]);
 
   function abrir() {
     cortina.classList.add('abierta');
@@ -11827,6 +12267,38 @@ function agregarHojaDeCelular(raiz) {
   raiz.appendChild(hoja);
 }
 
+/**
+ * El selector de idioma de la interfaz, fijo abajo a la derecha.
+ *
+ * Cambia en que idioma se lee el formulario, no en que idioma sale el documento.
+ * El documento va siempre en el idioma del pais, y eso no se elige.
+ */
+function selectorDeIdioma() {
+  var caja = crear('div', {
+    clase: 'selector-idioma', role: 'group',
+    'aria-label': estado.T('Idioma de la interfaz'),
+  });
+
+  for (var i = 0; i < IDIOMAS_DE_INTERFAZ.length; i++) {
+    (function (idioma) {
+      var elegido = estado.idiomaInterfaz() === idioma.codigo;
+      caja.appendChild(crear('button', {
+        type: 'button', texto: idioma.bandera,
+        title: idioma.nombre,
+        'aria-label': idioma.nombre,
+        'aria-pressed': String(elegido),
+        onclick: function () {
+          if (estado.idiomaInterfaz() === idioma.codigo) return;
+          estado.fijarIdiomaInterfaz(idioma.codigo);
+          dibujar();
+          RM.util.anunciar(idioma.nombre);
+        },
+      }));
+    })(IDIOMAS_DE_INTERFAZ[i]);
+  }
+  return caja;
+}
+
 function mostrarError(mensaje) {
   var caja = RM.util.porId('error-global');
   if (!caja) return;
@@ -11848,8 +12320,8 @@ function dibujar() {
   if (E.configuracion && E.configuracion.demostracion) {
     raiz.appendChild(crear('div', { clase: 'pagina', style: 'padding-bottom:0' }, [
       crear('div', { clase: 'aviso' }, [
-        crear('h3', { texto: 'Modo demostración' }),
-        crear('p', { texto: 'No se crea ningún documento, no se manda ningún correo y nada queda guardado. Al final verás el texto que habría salido.' }),
+        crear('h3', { texto: estado.T('Modo demostración') }),
+        crear('p', { texto: estado.T('No se crea ningún documento, no se manda ningún correo y nada queda guardado. Al final verás el texto que habría salido.') }),
       ]),
     ]));
   }
@@ -11858,6 +12330,8 @@ function dibujar() {
 
   var pintar = PANTALLAS[E.pantalla] || PANTALLAS.inicio;
   pintar(raiz);
+
+  raiz.appendChild(selectorDeIdioma());
 }
 
 function ir(pantalla) {
@@ -11888,7 +12362,7 @@ function arrancar() {
   var raiz = RM.util.porId('app');
   vaciar(raiz);
   raiz.appendChild(crear('div', { clase: 'pagina pagina-angosta' }, [
-    crear('p', { clase: 'pregunta-ayuda', texto: 'Cargando RappiMind...' }),
+    crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Cargando RappiMind...') }),
   ]));
 
   RM.servidor.llamar('estadoInicial').then(function (configuracion) {
@@ -11899,9 +12373,9 @@ function arrancar() {
     vaciar(raiz);
     raiz.appendChild(crear('div', { clase: 'pagina pagina-angosta' }, [
       crear('div', { clase: 'aviso aviso-serio' }, [
-        crear('h3', { texto: 'No pudimos abrir RappiMind' }),
+        crear('h3', { texto: estado.T('No pudimos abrir RappiMind') }),
         crear('p', { texto: error.message }),
-        crear('p', { clase: 'pregunta-ayuda', texto: 'Si sigue pasando, avísale a Juan.' }),
+        crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Si sigue pasando, avísale a Juan.') }),
       ]),
     ]));
   });

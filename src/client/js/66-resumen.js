@@ -52,8 +52,8 @@ function pantallaResumen(raiz) {
   var completo = faltantes.length === 0;
 
   var columna = crear('div', { clase: 'columna-preguntas' }, [
-    crear('h1', { texto: 'Revisa antes de generar' }),
-    crear('p', { clase: 'pregunta-ayuda', texto: 'Este es el resumen de lo que respondiste. Puedes cambiar cualquier cosa antes de generar el documento.' }),
+    crear('h1', { texto: estado.T('Revisa antes de generar') }),
+    crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Este es el resumen de lo que respondiste. Puedes cambiar cualquier cosa antes de generar el documento.') }),
   ]);
 
   var ficha = crear('div', { clase: 'ficha' });
@@ -64,13 +64,13 @@ function pantallaResumen(raiz) {
       var lista = crear('dl');
       for (var f = 0; f < seccion.filas.length; f++) {
         lista.appendChild(crear('dt', { texto: seccion.filas[f].etiqueta }));
-        lista.appendChild(crear('dd', { texto: seccion.filas[f].valor || 'Falta' }));
+        lista.appendChild(crear('dd', { texto: seccion.filas[f].valor || estado.T('Falta') }));
       }
       ficha.appendChild(crear('div', { clase: 'ficha-seccion' }, [
         crear('div', { clase: 'ficha-encabezado' }, [
-          crear('h3', { texto: seccion.paso.nombre }),
+          crear('h3', { texto: estado.T(seccion.paso.nombre) }),
           crear('button', {
-            clase: 'boton-texto', type: 'button', texto: 'Editar',
+            clase: 'boton-texto', type: 'button', texto: estado.T('Editar'),
             onclick: function () {
               E.pasoActual = seccion.indice;
               E.campoAbierto = seccion.filas[0].campo.id;
@@ -104,20 +104,20 @@ function pantallaResumen(raiz) {
     var listaFalta = crear('ul', { clase: 'te-falta' });
     for (var i = 0; i < faltantes.length; i++) listaFalta.appendChild(crear('li', { texto: faltantes[i] }));
     columna.appendChild(crear('div', {}, [
-      crear('h3', { texto: 'Te falta:' }),
+      crear('h3', { texto: estado.T('Te falta:') }),
       listaFalta,
     ]));
   }
 
   var boton = crear('button', {
-    clase: 'boton', type: 'button', texto: 'Generar T&C',
+    clase: 'boton', type: 'button', texto: estado.T('Generar T&C'),
     disabled: !completo,
     onclick: function () { generar(boton); },
   });
 
   columna.appendChild(crear('div', { clase: 'fila-botones' }, [
     crear('button', {
-      clase: 'boton boton-secundario', type: 'button', texto: 'Atrás',
+      clase: 'boton boton-secundario', type: 'button', texto: estado.T('Atrás'),
       onclick: function () { RM.app.ir('pasos'); },
     }),
     boton,
@@ -132,13 +132,13 @@ function pantallaResumen(raiz) {
 
 function generar(boton) {
   boton.disabled = true;
-  boton.textContent = 'Generando...';
-  RM.util.anunciar('Generando el documento.');
+  boton.textContent = estado.T('Generando...');
+  RM.util.anunciar(estado.T('Generando el documento.'));
 
   RM.servidor.llamar('generar', estado.entrada()).then(function (resultado) {
     if (!resultado.valido) {
       boton.disabled = false;
-      boton.textContent = 'Generar T&C';
+      boton.textContent = estado.T('Generar T&C');
       RM.app.mostrarError(resultado.errores.map(function (e) { return e.mensaje; }).join(' '));
       return;
     }
@@ -147,7 +147,7 @@ function generar(boton) {
     RM.app.ir('listo');
   }).catch(function (error) {
     boton.disabled = false;
-    boton.textContent = 'Generar T&C';
+    boton.textContent = estado.T('Generar T&C');
     RM.app.mostrarError('No pudimos generar el documento: ' + error.message);
   });
 }

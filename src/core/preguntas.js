@@ -317,6 +317,16 @@ var PREGUNTAS = {
   // --- El beneficio -------------------------------------------------------
 
   porcentaje: p({
+    paso: 'beneficio',
+    pregunta: '¿Qué porcentaje del pedido devuelves en Créditos?',
+    ayuda: 'Solo el número. Con 20, un pedido de $50.000 recibe $10.000 en Créditos.',
+    porQue: 'Es la promesa central de la campaña. Una vez publicado, el usuario puede exigir exactamente ese porcentaje.',
+    ejemplo: '99',
+    placeholders: ['PORCENTAJE'],
+    errores: {
+      vacio: 'Escribe el porcentaje que devuelves, sin el signo de porcentaje.',
+      rango: 'El porcentaje va de 1 a 100. Si necesitas varios porcentajes o un rango, eso es otra campaña: escríbele a Legal.',
+    },
     variantes: {
       cashback_eta: {
         pregunta: '¿Qué porcentaje devuelves si la orden llega tarde?',
@@ -329,18 +339,6 @@ var PREGUNTAS = {
         ayuda: 'El documento lo escribe como "até X%", así que es el descuento máximo.',
         porQue: 'Sale escrito en letras y en cifra dentro del documento, como lo exige el modelo aprobado.',
       },
-    },
-    paso: 'beneficio',
-    pregunta: '¿Qué porcentaje del pedido devuelves en Créditos?',
-    ayuda: 'Solo el número. Con 20, un pedido de $50.000 recibe $10.000 en Créditos.',
-    porQue: 'Es la promesa central de la campaña. Una vez publicado, el usuario puede exigir exactamente ese porcentaje.',
-    ejemplo: '99',
-    placeholders: ['PORCENTAJE'],
-    errores: {
-      vacio: 'Escribe el porcentaje que devuelves, sin el signo de porcentaje.',
-      rango: 'El porcentaje va de 1 a 100. Si necesitas varios porcentajes o un rango, eso es otra campaña: escríbele a Legal.',
-    },
-    variantes: {
       cashback_travel: {
         pregunta: '¿Qué porcentaje de la orden devuelves?',
         ayuda: 'Sin el signo de porcentaje. En Travel lo más usado va de 5 a 20.',
@@ -356,19 +354,6 @@ var PREGUNTAS = {
   }),
 
   tope: p({
-    variantes: {
-      cashback_eta: {
-        pregunta: '¿Cuál es el tope por orden?',
-        ayuda: 'Lo máximo que una sola orden puede recibir en Créditos, por grande que sea. Las campañas publicadas usan cien mil.',
-        porQue: 'Sin tope, una sola orden grande se lleva buena parte del presupuesto de la campaña.',
-      },
-
-      promocao_br: {
-        pregunta: '¿Cuál es el tope del beneficio, en reales?',
-        ayuda: 'Lo máximo que la campaña cubre en un pedido. Si lo dejas en blanco, el documento no lleva tope.',
-        porQue: 'Sin tope escrito, la campaña no tiene techo y el presupuesto se puede ir en pocos pedidos.',
-      },
-    },
     paso: 'beneficio',
     pregunta: '¿Qué es lo máximo que recibe alguien por pedido?',
     ayuda: 'Aunque el pedido sea grande, no recibe más de esto. Lo más usado es 25.000.',
@@ -382,6 +367,17 @@ var PREGUNTAS = {
       mayorQuePresupuesto: 'El tope por pedido es mayor que el presupuesto total. Con eso, el primer pedido se lleva toda la campaña. Revisa los dos números.',
     },
     variantes: {
+      cashback_eta: {
+        pregunta: '¿Cuál es el tope por orden?',
+        ayuda: 'Lo máximo que una sola orden puede recibir en Créditos, por grande que sea. Las campañas publicadas usan cien mil.',
+        porQue: 'Sin tope, una sola orden grande se lleva buena parte del presupuesto de la campaña.',
+      },
+
+      promocao_br: {
+        pregunta: '¿Cuál es el tope del beneficio, en reales?',
+        ayuda: 'Lo máximo que la campaña cubre en un pedido. Si lo dejas en blanco, el documento no lleva tope.',
+        porQue: 'Sin tope escrito, la campaña no tiene techo y el presupuesto se puede ir en pocos pedidos.',
+      },
       cashback_travel: {
         pregunta: '¿Qué es lo máximo que recibe por orden?',
         ayuda: 'Aunque la orden sea grande, no recibe más de esto. En Travel va de 50.000 a 300.000.',
@@ -456,13 +452,6 @@ var PREGUNTAS = {
   }),
 
   compraMinima: p({
-    variantes: {
-      promocao_br: {
-        pregunta: '¿Hay un mínimo de compra, en reales?',
-        ayuda: 'Opcional. De los cuatro documentos aprobados, tres lo llevan y el de taxa de serviço e frete grátis no.',
-        porQue: 'El mínimo aparece dos veces en el documento: en el párrafo de apertura y en la viñeta del beneficio.',
-      },
-    },
     // Va en el paso de participantes, no en el del beneficio: es un requisito
     // para participar. El esquema manda, y este archivo tiene que decir lo
     // mismo, porque de aqui sale docs/PREGUNTAS_KAM.md.
@@ -476,6 +465,11 @@ var PREGUNTAS = {
     placeholders: ['TEXTO_MINIMO_COMPRA', 'TEXTO_UMBRAL'],
     errores: { cero: 'Si no quieres exigir un mínimo, deja el campo vacío.' },
     variantes: {
+      promocao_br: {
+        pregunta: '¿Hay un mínimo de compra, en reales?',
+        ayuda: 'Opcional. De los cuatro documentos aprobados, tres lo llevan y el de taxa de serviço e frete grátis no.',
+        porQue: 'El mínimo aparece dos veces en el documento: en el párrafo de apertura y en la viñeta del beneficio.',
+      },
       cashback_travel: { paso: 'condiciones_travel', placeholders: ['TEXTO_CONDICIONES_TRAVEL'] },
       descuento_travel: { paso: 'condiciones_travel', placeholders: ['TEXTO_CONDICIONES_TRAVEL'] },
     },

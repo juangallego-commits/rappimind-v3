@@ -420,6 +420,28 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 .hoja-deslizable.abierta { transform: translateY(0); }
 .asa { width: 36px; height: 4px; border-radius: 2px; background: var(--borde); margin: var(--e3) auto; flex: none; }
 
+/* --- Selector de idioma de la interfaz ------------------------------------
+ *
+ * Abajo a la derecha, fijo, siempre a la vista. No compite con el contenido
+ * porque es pequeno y discreto, pero un KAM de Sao Paulo tiene que encontrarlo
+ * sin buscarlo.
+ */
+.selector-idioma {
+  position: fixed; right: var(--e4); bottom: var(--e4); z-index: 38;
+  display: flex; align-items: center; gap: 2px;
+  padding: 4px; border-radius: 999px;
+  background: var(--papel); border: 1px solid var(--borde);
+  box-shadow: 0 2px 12px rgba(22, 24, 29, 0.12);
+}
+.selector-idioma button {
+  border: 0; background: transparent; cursor: pointer;
+  padding: 6px 12px; border-radius: 999px;
+  font: inherit; font-size: 0.82rem; font-weight: 600; color: var(--tinta-suave);
+}
+.selector-idioma button:hover { background: var(--fondo); }
+.selector-idioma button[aria-pressed="true"] { background: var(--marca); color: #fff; }
+.selector-idioma button:focus-visible { outline: 2px solid var(--marca); outline-offset: 2px; }
+
 /* --- Pantalla final ------------------------------------------------------ */
 
 .pasos-publicar { counter-reset: paso; list-style: none; padding: 0; margin: var(--e4) 0 0; }
@@ -463,6 +485,8 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
   }
   .barra-superior nav::-webkit-scrollbar { display: none; }
   .enlace-nav { white-space: nowrap; padding: var(--e2); font-size: 13px; }
+
+  .selector-idioma { bottom: 76px; }
 
   .boton-flotante {
     display: flex; align-items: center; justify-content: center; gap: var(--e2);
