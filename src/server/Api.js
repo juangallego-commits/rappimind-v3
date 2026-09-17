@@ -340,7 +340,7 @@ function adminEstado() {
     paises: filasPlanas(leerPaises()),
     equipo: filasPlanas(leerEquipo()),
     estados: ESTADOS,
-    roles: ['comercial', 'pruebas', 'legal', 'admin'],
+    roles: ROLES,
   };
 }
 
@@ -380,6 +380,73 @@ function adminGuardarMiembro(miembro) {
   return { valido: true };
 }
 
+/**
+ * Agrega varias personas de una sola vez, pegando sus correos.
+ *
+ * Existe para abrir la herramienta a los equipos legales de los demas paises:
+ * un pais en piloto solo lo ve quien tenga rol legal, pruebas o admin, asi que
+ * sin esto habia que agregar treinta personas de una en una.
+ *
+ * Acepta correos separados por comas, por punto y coma o por saltos de linea,
+ * que es como llegan pegados de un chat o de un correo. Lo que ya existe se
+ * deja como esta: si alguien ya es administrador, esto no lo degrada.
+ */
+function adminAgregarMiembros(texto, rol, pais) {
+  exigirAdministrador();
+
+  if (ROLES.indexOf(rol) === -1) {
+    return { valido: false, errores: [{ campo: 'rol', mensaje: 'Ese rol no existe.' }] };
+  }
+
+  var correos = separarCorreos(texto);
+  if (correos.length === 0) {
+    return { valido: false, errores: [{ campo: 'correos', mensaje: 'Pega al menos un correo.' }] };
+  }
+
+  var equipo = leerEquipo();
+  var agregados = [];
+  var yaEstaban = [];
+  var rechazados = [];
+
+  for (var i = 0; i < correos.length; i++) {
+    var correo = correos[i];
+    if (!correoEsDelDominio(correo)) { rechazados.push(correo); continue; }
+    if (miembroPorCorreo(equipo, correo)) { yaEstaban.push(correo); continue; }
+
+    agregarFila('Equipo', {
+      email: correo,
+      nombre: '',
+      rol: rol,
+      pais: String(pais || '').toUpperCase(),
+      activo: 'sí',
+    });
+    agregados.push(correo);
+    // Se relee para que dos correos repetidos en el mismo pegado no entren dos veces.
+    equipo = leerEquipo();
+  }
+
+  registrar('admin_equipo_masivo', agregados.length + ' agregados como ' + rol);
+  return {
+    valido: true,
+    agregados: agregados,
+    yaEstaban: yaEstaban,
+    rechazados: rechazados,
+  };
+}
+
+/** Correos pegados de cualquier forma: comas, punto y coma o saltos de linea. */
+function separarCorreos(texto) {
+  var partes = String(texto || '').split(/[,;\s]+/);
+  var limpios = [];
+  for (var i = 0; i < partes.length; i++) {
+    var correo = partes[i].trim().toLowerCase();
+    // Lo que viene pegado de un chat trae a veces picos o parentesis.
+    correo = correo.replace(/^[<(\[]+/, '').replace(/[>)\]]+$/, '');
+    if (correo && limpios.indexOf(correo) === -1) limpios.push(correo);
+  }
+  return limpios;
+}
+
 function adminSolicitudes(busqueda) {
   exigirAdministrador();
   return filasPlanas(buscarEnSolicitudes(leerSolicitudes(), busqueda).reverse());
@@ -409,6 +476,8 @@ if (typeof module !== 'undefined') {
     adminEstado: adminEstado,
     adminGuardarEstadoDePais: adminGuardarEstadoDePais,
     adminGuardarMiembro: adminGuardarMiembro,
+    adminAgregarMiembros: adminAgregarMiembros,
+    separarCorreos: separarCorreos,
     adminSolicitudes: adminSolicitudes,
     adminSolicitudesCsv: adminSolicitudesCsv,
   };

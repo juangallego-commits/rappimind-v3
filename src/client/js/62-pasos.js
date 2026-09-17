@@ -94,6 +94,27 @@ function opcionesDeCasillas(campo) {
   return nombres.map(function (nombre) { return { valor: nombre, etiqueta: nombre, nota: 'Sección de la app.' }; });
 }
 
+/**
+ * El aviso de que este pais esta en pruebas y con que datos.
+ *
+ * Un pais en piloto tiene valores legales que puso la herramienta por analogia
+ * con Colombia, no aprobados por nadie. Quien esta probando tiene que saberlo
+ * antes de leer el documento y darlo por bueno.
+ */
+function avisoDePaisEnPruebas() {
+  var pais = flujo.paisElegido();
+  if (!paisEnPruebas(pais)) return null;
+
+  // Compacto, porque acompana las quince preguntas del formulario. El detalle
+  // de que hay que revisar va en el resumen, que es donde se decide publicar.
+  return crear('div', { clase: 'aviso' }, [
+    crear('p', {
+      texto: pais.nombre + ' está en pruebas: genera y revisa, pero todavía no publiques. ' +
+        'Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.',
+    }),
+  ]);
+}
+
 /** Aviso contextual de un campo, si aplica. */
 function avisoDe(campo) {
   if (campo.id !== 'fechaInicio') return null;
@@ -240,6 +261,11 @@ function pantallaPasos(raiz) {
   columna.appendChild(barraDeProgreso(pasos));
   columna.appendChild(crear('h1', { texto: estado.T(pasoActual.titulo || pasoActual.nombre) }));
 
+  // El aviso del pais en pruebas acompana todo el formulario: al elegir el pais
+  // el asistente avanza solo, asi que colgarlo de esa pregunta era no mostrarlo.
+  var enPruebas = avisoDePaisEnPruebas();
+  if (enPruebas) columna.appendChild(enPruebas);
+
   // Respondidas, en una línea.
   var respondidas = crear('div', { clase: 'ficha' });
   var cuantasRespondidas = 0;
@@ -287,6 +313,8 @@ function pantallaPasos(raiz) {
     var extra = campoAbierto.id === 'tope' || campoAbierto.id === 'presupuesto' || campoAbierto.id === 'porcentaje'
       ? calculadora() : null;
     if (extra) columna.appendChild(extra);
+
+
   }
 
   // Cuántas faltan en este paso.

@@ -5796,6 +5796,9 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 
 var ESTADOS = ['activo', 'piloto', 'bloqueado'];
 
+/* Los roles del equipo. De legal para arriba se ven los paises en piloto. */
+var ROLES = ['comercial', 'pruebas', 'legal', 'admin'];
+
 /** Columnas que en el Sheet son una lista separada por comas. */
 var COLUMNAS_DE_LISTA = ['modelos', 'por_confirmar_en_pruebas'];
 
@@ -5990,6 +5993,51 @@ function travelDisponible(pais, hoyIso) {
 }
 
 /** Solo pruebas, legal y admin pueden generar en paises en piloto. */
+/**
+ * Como se llama, en palabras, cada dato que un pais tiene sin confirmar.
+ *
+ * La columna por_confirmar_en_pruebas del Sheet lleva los nombres tecnicos. Esto
+ * los pasa a algo que un abogado pueda leer y reconocer dentro del documento.
+ */
+var NOMBRE_DEL_DATO = {
+  separador_miles: 'cómo se separan los miles en un monto',
+  termino_dias: 'cómo se llaman los días (calendario, corridos, naturales)',
+  texto_hora_local: 'cómo se nombra la hora local',
+  texto_derechos_datos: 'los derechos del titular sobre sus datos personales',
+  autoridad_datos: 'la autoridad de protección de datos',
+  entidad_vigilancia: 'la autoridad de protección al consumidor',
+  moneda_nombre: 'el nombre de la moneda',
+  edad_minima: 'la edad mínima para participar',
+  texto_persona: 'cómo se nombra a la persona natural',
+  travel_rnt: 'el número del Registro Nacional de Turismo',
+  travel_rnt_vence: 'cuándo vence el Registro Nacional de Turismo',
+  travel_entidad_vigilancia: 'la entidad que vigila a Rappi Travel',
+};
+
+/**
+ * Lo que este pais tiene sin confirmar, en palabras, o lista vacia.
+ *
+ * Existe para que un abogado que entra a probar sepa que esta mirando: los
+ * valores de un pais en piloto los puso la herramienta por analogia con
+ * Colombia, no los aprobo nadie. Sin decirselo, lee el documento, le parece
+ * bien, y confirma algo que nadie escribio.
+ */
+function datosPorConfirmar(pais) {
+  var llaves = (pais && pais.por_confirmar_en_pruebas) || [];
+  var nombres = [];
+  for (var i = 0; i < llaves.length; i++) {
+    var llave = String(llaves[i]).trim();
+    if (!llave) continue;
+    nombres.push(NOMBRE_DEL_DATO[llave] || llave.replace(/_/g, ' '));
+  }
+  return nombres;
+}
+
+/** Si a este pais hay que ponerle el aviso de que esta en pruebas. */
+function paisEnPruebas(pais) {
+  return !!pais && pais.estado === 'piloto';
+}
+
 function puedeVerPiloto(rol) {
   return rol === 'pruebas' || rol === 'legal' || rol === 'admin';
 }
@@ -5997,6 +6045,7 @@ function puedeVerPiloto(rol) {
 if (typeof module !== 'undefined') {
   module.exports = {
     ESTADOS: ESTADOS,
+    ROLES: ROLES,
     paisDesdeFila: paisDesdeFila,
     paisComoFila: paisComoFila,
     paisPorCodigo: paisPorCodigo,
@@ -6006,6 +6055,9 @@ if (typeof module !== 'undefined') {
     miembroPorCorreo: miembroPorCorreo,
     rolDe: rolDe,
     puedeVerPiloto: puedeVerPiloto,
+    NOMBRE_DEL_DATO: NOMBRE_DEL_DATO,
+    datosPorConfirmar: datosPorConfirmar,
+    paisEnPruebas: paisEnPruebas,
     comoLista: comoLista,
     TIPOS_DE_TRAVEL: TIPOS_DE_TRAVEL,
     DATOS_DE_TRAVEL_OBLIGATORIOS: DATOS_DE_TRAVEL_OBLIGATORIOS,
@@ -10394,6 +10446,27 @@ function opcionesDeCasillas(campo) {
   return nombres.map(function (nombre) { return { valor: nombre, etiqueta: nombre, nota: 'Sección de la app.' }; });
 }
 
+/**
+ * El aviso de que este pais esta en pruebas y con que datos.
+ *
+ * Un pais en piloto tiene valores legales que puso la herramienta por analogia
+ * con Colombia, no aprobados por nadie. Quien esta probando tiene que saberlo
+ * antes de leer el documento y darlo por bueno.
+ */
+function avisoDePaisEnPruebas() {
+  var pais = flujo.paisElegido();
+  if (!paisEnPruebas(pais)) return null;
+
+  // Compacto, porque acompana las quince preguntas del formulario. El detalle
+  // de que hay que revisar va en el resumen, que es donde se decide publicar.
+  return crear('div', { clase: 'aviso' }, [
+    crear('p', {
+      texto: pais.nombre + ' está en pruebas: genera y revisa, pero todavía no publiques. ' +
+        'Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.',
+    }),
+  ]);
+}
+
 /** Aviso contextual de un campo, si aplica. */
 function avisoDe(campo) {
   if (campo.id !== 'fechaInicio') return null;
@@ -10540,6 +10613,11 @@ function pantallaPasos(raiz) {
   columna.appendChild(barraDeProgreso(pasos));
   columna.appendChild(crear('h1', { texto: estado.T(pasoActual.titulo || pasoActual.nombre) }));
 
+  // El aviso del pais en pruebas acompana todo el formulario: al elegir el pais
+  // el asistente avanza solo, asi que colgarlo de esa pregunta era no mostrarlo.
+  var enPruebas = avisoDePaisEnPruebas();
+  if (enPruebas) columna.appendChild(enPruebas);
+
   // Respondidas, en una línea.
   var respondidas = crear('div', { clase: 'ficha' });
   var cuantasRespondidas = 0;
@@ -10587,6 +10665,8 @@ function pantallaPasos(raiz) {
     var extra = campoAbierto.id === 'tope' || campoAbierto.id === 'presupuesto' || campoAbierto.id === 'porcentaje'
       ? calculadora() : null;
     if (extra) columna.appendChild(extra);
+
+
   }
 
   // Cuántas faltan en este paso.
@@ -11291,6 +11371,27 @@ function pantallaResumen(raiz) {
     crear('h1', { texto: estado.T('Revisa antes de generar') }),
     crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Este es el resumen de lo que respondiste. Puedes cambiar cualquier cosa antes de generar el documento.') }),
   ]);
+
+  // El aviso se repite aqui a proposito: entre elegir el pais y llegar al
+  // resumen pasan quince preguntas, y este es el momento en que de verdad se
+  // decide publicar.
+  var pais = flujo.paisElegido();
+  if (paisEnPruebas(pais)) {
+    var faltantes = datosPorConfirmar(pais);
+    var aviso = crear('div', { clase: 'aviso' }, [
+      crear('h3', { texto: pais.nombre + ' está en pruebas: no publiques este documento todavía' }),
+      crear('p', {
+        texto: 'Genera el documento, léelo y dinos si los datos legales de tu país están bien. ' +
+          'Los propuso la herramienta por analogía con Colombia y no los ha confirmado nadie.',
+      }),
+    ]);
+    if (faltantes.length > 0) {
+      var lista = crear('ul');
+      for (var f = 0; f < faltantes.length; f++) lista.appendChild(crear('li', { texto: faltantes[f] }));
+      aviso.appendChild(lista);
+    }
+    columna.appendChild(aviso);
+  }
 
   var ficha = crear('div', { clase: 'ficha' });
   var secciones = seccionesDelResumen();
@@ -12094,6 +12195,87 @@ function seccionEquipo(datos) {
       }),
     ]),
     mensaje,
+    seccionCargaMasiva(datos),
+  ]);
+}
+
+/**
+ * Agregar mucha gente de una sola vez, pegando sus correos.
+ *
+ * Nacio para abrir la herramienta a los equipos legales de los demas paises: un
+ * pais en piloto solo lo ve quien tenga rol legal, pruebas o admin, y agregar a
+ * treinta personas de una en una no lo hace nadie a las once de la noche.
+ */
+function seccionCargaMasiva(datos) {
+  var correos = crear('textarea', {
+    rows: '4',
+    placeholder: 'ana@rappi.com, bruno@rappi.com\ncarla@rappi.com',
+    'aria-label': 'Correos, separados por comas o por líneas',
+  });
+
+  var rol = crear('select', { 'aria-label': 'Rol para todos' });
+  for (var r = 0; r < datos.roles.length; r++) {
+    rol.appendChild(crear('option', {
+      value: datos.roles[r], texto: datos.roles[r],
+      // Legal es el que abre los países en piloto, que es para lo que existe esto.
+      selected: datos.roles[r] === 'legal',
+    }));
+  }
+
+  var pais = crear('input', { type: 'text', placeholder: 'CO', 'aria-label': 'País de todos, opcional' });
+  var resultado = crear('div', {});
+  var boton = crear('button', { clase: 'boton', type: 'button', texto: 'Agregar a todos' });
+
+  boton.addEventListener('click', function () {
+    boton.disabled = true;
+    boton.textContent = 'Agregando...';
+    RM.util.vaciar(resultado);
+
+    RM.servidor.llamar('adminAgregarMiembros', correos.value, rol.value, pais.value).then(function (respuesta) {
+      boton.disabled = false;
+      boton.textContent = 'Agregar a todos';
+
+      if (!respuesta.valido) {
+        resultado.appendChild(crear('p', { clase: 'mensaje-error', texto: respuesta.errores[0].mensaje }));
+        return;
+      }
+
+      var lineas = [];
+      if (respuesta.agregados.length > 0) {
+        lineas.push(respuesta.agregados.length + (respuesta.agregados.length === 1 ? ' persona agregada' : ' personas agregadas') + ' como ' + rol.value + '.');
+      }
+      if (respuesta.yaEstaban.length > 0) {
+        lineas.push(respuesta.yaEstaban.length + (respuesta.yaEstaban.length === 1 ? ' ya estaba' : ' ya estaban') + ' en el equipo, no se tocó su rol: ' + respuesta.yaEstaban.join(', '));
+      }
+      if (respuesta.rechazados.length > 0) {
+        lineas.push('Sin agregar, porque no son correos de Rappi: ' + respuesta.rechazados.join(', '));
+      }
+      if (lineas.length === 0) lineas.push('No había nada que agregar.');
+
+      for (var i = 0; i < lineas.length; i++) {
+        resultado.appendChild(crear('p', {
+          clase: i === 0 && respuesta.agregados.length > 0 ? 'mensaje-ok' : 'pregunta-ayuda',
+          texto: lineas[i],
+        }));
+      }
+      correos.value = '';
+      RM.util.anunciar(lineas[0]);
+    }).catch(function (error) {
+      boton.disabled = false;
+      boton.textContent = 'Agregar a todos';
+      resultado.appendChild(crear('p', { clase: 'mensaje-error', texto: 'No pudimos agregarlos: ' + error.message }));
+    });
+  });
+
+  return crear('div', {}, [
+    crear('h3', { texto: 'Agregar muchos de una vez' }),
+    crear('p', {
+      clase: 'pregunta-ayuda',
+      texto: 'Pega los correos separados por comas o uno por línea. Quien ya esté en el equipo se deja como está, así que esto nunca le baja el rol a nadie. Con rol legal, la persona ve los países en piloto.',
+    }),
+    correos,
+    crear('div', { clase: 'fila-botones' }, [rol, pais, boton]),
+    resultado,
   ]);
 }
 

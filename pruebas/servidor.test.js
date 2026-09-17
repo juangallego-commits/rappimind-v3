@@ -701,3 +701,108 @@ test('el historial conserva las listas de cada solicitud', () => {
   assert.ok(Array.isArray(guardado.secciones), 'las secciones llegaron como ' + typeof guardado.secciones);
   assert.deepStrictEqual(guardado.secciones, ['Restaurantes', 'Turbo']);
 });
+
+// --- abrir la herramienta a los equipos legales de los demás países --------
+
+/**
+ * Un país en piloto solo lo ve quien tenga rol legal, pruebas o admin. Para que
+ * los equipos legales de los ocho países puedan probar hay que agregarlos, y
+ * agregarlos de uno en uno no lo hace nadie.
+ */
+test('pegar una lista de correos agrega a todos de una vez', () => {
+  conSetup();
+
+  const respuesta = adminAgregarMiembros(
+    'ana@rappi.com, bruno@rappi.com\ncarla@rappi.com; diego@rappi.com',
+    'legal',
+    'mx'
+  );
+
+  assert.strictEqual(respuesta.valido, true, JSON.stringify(respuesta.errores));
+  assert.strictEqual(respuesta.agregados.length, 4, respuesta.agregados.join(', '));
+
+  const equipo = leerEquipo();
+  assert.strictEqual(rolDe(equipo, 'ana@rappi.com'), 'legal');
+  assert.strictEqual(rolDe(equipo, 'diego@rappi.com'), 'legal');
+  assert.strictEqual(miembroPorCorreo(equipo, 'carla@rappi.com').pais, 'MX');
+});
+
+test('con rol legal, la persona ya ve los países en piloto', () => {
+  const mundo = conSetup();
+  adminAgregarMiembros('ana@rappi.com', 'legal', 'mx');
+
+  mundo.correo = 'ana@rappi.com';
+  const inicial = estadoInicial();
+  const codigos = inicial.paises.map((p) => p.codigo);
+
+  assert.ok(codigos.indexOf('MX') !== -1, 'no ve México: ' + codigos.join(', '));
+  assert.ok(codigos.indexOf('BR') !== -1, 'no ve Brasil: ' + codigos.join(', '));
+  assert.ok(codigos.length > 1, 'solo ve un país');
+});
+
+test('sin rol, la persona solo ve los países activos', () => {
+  const mundo = conSetup();
+  mundo.correo = 'nadie@rappi.com';
+
+  const codigos = estadoInicial().paises.map((p) => p.codigo);
+  assert.deepStrictEqual(codigos, ['CO'], 'un comercial nuevo debería ver solo Colombia');
+});
+
+test('la carga masiva nunca le baja el rol a quien ya estaba', () => {
+  const mundo = conSetup({ correo: 'juan.gallego@rappi.com' });
+  assert.strictEqual(rolDe(leerEquipo(), 'juan.gallego@rappi.com'), 'admin');
+
+  const respuesta = adminAgregarMiembros('juan.gallego@rappi.com, nueva@rappi.com', 'comercial', '');
+
+  assert.deepStrictEqual(respuesta.yaEstaban, ['juan.gallego@rappi.com']);
+  assert.strictEqual(rolDe(leerEquipo(), 'juan.gallego@rappi.com'), 'admin', 'le bajaron el rol al administrador');
+  assert.strictEqual(rolDe(leerEquipo(), 'nueva@rappi.com'), 'comercial');
+});
+
+test('los correos que no son de Rappi se rechazan, y los demás sí entran', () => {
+  conSetup();
+  const respuesta = adminAgregarMiembros('ana@rappi.com, alguien@gmail.com', 'legal', '');
+
+  assert.deepStrictEqual(respuesta.agregados, ['ana@rappi.com']);
+  assert.deepStrictEqual(respuesta.rechazados, ['alguien@gmail.com']);
+});
+
+test('un correo repetido en el mismo pegado entra una sola vez', () => {
+  conSetup();
+  const respuesta = adminAgregarMiembros('ana@rappi.com, ANA@rappi.com\nana@rappi.com', 'legal', '');
+
+  assert.strictEqual(respuesta.agregados.length, 1, respuesta.agregados.join(', '));
+  const cuantas = leerEquipo().filter((m) => m.email === 'ana@rappi.com').length;
+  assert.strictEqual(cuantas, 1, 'quedó duplicado en la hoja');
+});
+
+test('los correos llegan pegados de un chat, con picos y espacios', () => {
+  conSetup();
+  const respuesta = adminAgregarMiembros('  <ana@rappi.com>  ;\n\n (bruno@rappi.com) ', 'legal', '');
+  assert.deepStrictEqual(respuesta.agregados, ['ana@rappi.com', 'bruno@rappi.com']);
+});
+
+test('un rol que no existe se rechaza', () => {
+  conSetup();
+  const respuesta = adminAgregarMiembros('ana@rappi.com', 'jefe', '');
+  assert.strictEqual(respuesta.valido, false);
+  assert.strictEqual(respuesta.errores[0].campo, 'rol');
+});
+
+test('sin correos, dice qué falta', () => {
+  conSetup();
+  const respuesta = adminAgregarMiembros('   ', 'legal', '');
+  assert.strictEqual(respuesta.valido, false);
+  assert.ok(respuesta.errores[0].mensaje.indexOf('Pega al menos un correo') !== -1);
+});
+
+test('la respuesta cruza a google.script.run sin fechas', () => {
+  conSetup();
+  const respuesta = adminAgregarMiembros('ana@rappi.com', 'legal', '');
+  // Listas de texto, nada de objetos Date: si no, la pantalla recibiría null.
+  assert.ok(Array.isArray(respuesta.agregados));
+  for (const valor of respuesta.agregados.concat(respuesta.yaEstaban, respuesta.rechazados)) {
+    assert.strictEqual(typeof valor, 'string', 'un valor no primitivo en la respuesta');
+  }
+});
+

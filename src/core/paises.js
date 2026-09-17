@@ -20,6 +20,9 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 
 var ESTADOS = ['activo', 'piloto', 'bloqueado'];
 
+/* Los roles del equipo. De legal para arriba se ven los paises en piloto. */
+var ROLES = ['comercial', 'pruebas', 'legal', 'admin'];
+
 /** Columnas que en el Sheet son una lista separada por comas. */
 var COLUMNAS_DE_LISTA = ['modelos', 'por_confirmar_en_pruebas'];
 
@@ -214,6 +217,51 @@ function travelDisponible(pais, hoyIso) {
 }
 
 /** Solo pruebas, legal y admin pueden generar en paises en piloto. */
+/**
+ * Como se llama, en palabras, cada dato que un pais tiene sin confirmar.
+ *
+ * La columna por_confirmar_en_pruebas del Sheet lleva los nombres tecnicos. Esto
+ * los pasa a algo que un abogado pueda leer y reconocer dentro del documento.
+ */
+var NOMBRE_DEL_DATO = {
+  separador_miles: 'cómo se separan los miles en un monto',
+  termino_dias: 'cómo se llaman los días (calendario, corridos, naturales)',
+  texto_hora_local: 'cómo se nombra la hora local',
+  texto_derechos_datos: 'los derechos del titular sobre sus datos personales',
+  autoridad_datos: 'la autoridad de protección de datos',
+  entidad_vigilancia: 'la autoridad de protección al consumidor',
+  moneda_nombre: 'el nombre de la moneda',
+  edad_minima: 'la edad mínima para participar',
+  texto_persona: 'cómo se nombra a la persona natural',
+  travel_rnt: 'el número del Registro Nacional de Turismo',
+  travel_rnt_vence: 'cuándo vence el Registro Nacional de Turismo',
+  travel_entidad_vigilancia: 'la entidad que vigila a Rappi Travel',
+};
+
+/**
+ * Lo que este pais tiene sin confirmar, en palabras, o lista vacia.
+ *
+ * Existe para que un abogado que entra a probar sepa que esta mirando: los
+ * valores de un pais en piloto los puso la herramienta por analogia con
+ * Colombia, no los aprobo nadie. Sin decirselo, lee el documento, le parece
+ * bien, y confirma algo que nadie escribio.
+ */
+function datosPorConfirmar(pais) {
+  var llaves = (pais && pais.por_confirmar_en_pruebas) || [];
+  var nombres = [];
+  for (var i = 0; i < llaves.length; i++) {
+    var llave = String(llaves[i]).trim();
+    if (!llave) continue;
+    nombres.push(NOMBRE_DEL_DATO[llave] || llave.replace(/_/g, ' '));
+  }
+  return nombres;
+}
+
+/** Si a este pais hay que ponerle el aviso de que esta en pruebas. */
+function paisEnPruebas(pais) {
+  return !!pais && pais.estado === 'piloto';
+}
+
 function puedeVerPiloto(rol) {
   return rol === 'pruebas' || rol === 'legal' || rol === 'admin';
 }
@@ -221,6 +269,7 @@ function puedeVerPiloto(rol) {
 if (typeof module !== 'undefined') {
   module.exports = {
     ESTADOS: ESTADOS,
+    ROLES: ROLES,
     paisDesdeFila: paisDesdeFila,
     paisComoFila: paisComoFila,
     paisPorCodigo: paisPorCodigo,
@@ -230,6 +279,9 @@ if (typeof module !== 'undefined') {
     miembroPorCorreo: miembroPorCorreo,
     rolDe: rolDe,
     puedeVerPiloto: puedeVerPiloto,
+    NOMBRE_DEL_DATO: NOMBRE_DEL_DATO,
+    datosPorConfirmar: datosPorConfirmar,
+    paisEnPruebas: paisEnPruebas,
     comoLista: comoLista,
     TIPOS_DE_TRAVEL: TIPOS_DE_TRAVEL,
     DATOS_DE_TRAVEL_OBLIGATORIOS: DATOS_DE_TRAVEL_OBLIGATORIOS,

@@ -56,6 +56,27 @@ function pantallaResumen(raiz) {
     crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Este es el resumen de lo que respondiste. Puedes cambiar cualquier cosa antes de generar el documento.') }),
   ]);
 
+  // El aviso se repite aqui a proposito: entre elegir el pais y llegar al
+  // resumen pasan quince preguntas, y este es el momento en que de verdad se
+  // decide publicar.
+  var pais = flujo.paisElegido();
+  if (paisEnPruebas(pais)) {
+    var faltantes = datosPorConfirmar(pais);
+    var aviso = crear('div', { clase: 'aviso' }, [
+      crear('h3', { texto: pais.nombre + ' está en pruebas: no publiques este documento todavía' }),
+      crear('p', {
+        texto: 'Genera el documento, léelo y dinos si los datos legales de tu país están bien. ' +
+          'Los propuso la herramienta por analogía con Colombia y no los ha confirmado nadie.',
+      }),
+    ]);
+    if (faltantes.length > 0) {
+      var lista = crear('ul');
+      for (var f = 0; f < faltantes.length; f++) lista.appendChild(crear('li', { texto: faltantes[f] }));
+      aviso.appendChild(lista);
+    }
+    columna.appendChild(aviso);
+  }
+
   var ficha = crear('div', { clase: 'ficha' });
   var secciones = seccionesDelResumen();
 

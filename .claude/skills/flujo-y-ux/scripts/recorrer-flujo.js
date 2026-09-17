@@ -236,6 +236,42 @@ async function recorrer() {
     trasLaCiudad.length === 1 && trasLaCiudad[0].indexOf('día arranca') !== -1,
     trasLaCiudad.join(' | '));
 
+  // --- 3c. El aviso de que un pais esta en pruebas -------------------------
+  //
+  // Los ocho paises en piloto llevan valores legales que propuso la herramienta
+  // y que no ha confirmado nadie. Quien prueba tiene que saberlo antes de leer
+  // el documento y darlo por bueno.
+  await desdeElInicio();
+  await decirQueNoATodo();
+  await clic('México');
+
+  const avisoDePruebas = await pagina.evaluate(() => {
+    const a = document.querySelector('.columna-preguntas .aviso');
+    return a ? a.innerText : '';
+  });
+  revisar('un país en pruebas lo dice mientras se llena el formulario',
+    avisoDePruebas.indexOf('está en pruebas') !== -1 && avisoDePruebas.indexOf('no publiques') !== -1,
+    avisoDePruebas.slice(0, 200));
+
+  // Y sigue ahi una pregunta despues: al elegir el pais el asistente avanza
+  // solo, asi que colgarlo de esa pregunta era no mostrarlo nunca.
+  await clic('Rappi');
+  const avisoQueSigue = await pagina.evaluate(() => {
+    const a = document.querySelector('.columna-preguntas .aviso');
+    return a ? a.innerText : '';
+  });
+  revisar('el aviso acompaña todo el formulario, no solo la pregunta del país',
+    avisoQueSigue.indexOf('está en pruebas') !== -1, avisoQueSigue.slice(0, 200));
+
+  await desdeElInicio();
+  await decirQueNoATodo();
+  await clic('Colombia');
+  const sinAviso = await pagina.evaluate(() => {
+    const a = document.querySelector('.columna-preguntas .aviso');
+    return a ? a.innerText : '';
+  });
+  revisar('un país que no está en piloto no lleva el aviso', sinAviso === '', sinAviso.slice(0, 120));
+
   // --- 4. Los caminos que terminan en Legal --------------------------------
   await desdeElInicio();
   await decirQueNoATodo();

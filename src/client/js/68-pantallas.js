@@ -504,6 +504,87 @@ function seccionEquipo(datos) {
       }),
     ]),
     mensaje,
+    seccionCargaMasiva(datos),
+  ]);
+}
+
+/**
+ * Agregar mucha gente de una sola vez, pegando sus correos.
+ *
+ * Nacio para abrir la herramienta a los equipos legales de los demas paises: un
+ * pais en piloto solo lo ve quien tenga rol legal, pruebas o admin, y agregar a
+ * treinta personas de una en una no lo hace nadie a las once de la noche.
+ */
+function seccionCargaMasiva(datos) {
+  var correos = crear('textarea', {
+    rows: '4',
+    placeholder: 'ana@rappi.com, bruno@rappi.com\ncarla@rappi.com',
+    'aria-label': 'Correos, separados por comas o por líneas',
+  });
+
+  var rol = crear('select', { 'aria-label': 'Rol para todos' });
+  for (var r = 0; r < datos.roles.length; r++) {
+    rol.appendChild(crear('option', {
+      value: datos.roles[r], texto: datos.roles[r],
+      // Legal es el que abre los países en piloto, que es para lo que existe esto.
+      selected: datos.roles[r] === 'legal',
+    }));
+  }
+
+  var pais = crear('input', { type: 'text', placeholder: 'CO', 'aria-label': 'País de todos, opcional' });
+  var resultado = crear('div', {});
+  var boton = crear('button', { clase: 'boton', type: 'button', texto: 'Agregar a todos' });
+
+  boton.addEventListener('click', function () {
+    boton.disabled = true;
+    boton.textContent = 'Agregando...';
+    RM.util.vaciar(resultado);
+
+    RM.servidor.llamar('adminAgregarMiembros', correos.value, rol.value, pais.value).then(function (respuesta) {
+      boton.disabled = false;
+      boton.textContent = 'Agregar a todos';
+
+      if (!respuesta.valido) {
+        resultado.appendChild(crear('p', { clase: 'mensaje-error', texto: respuesta.errores[0].mensaje }));
+        return;
+      }
+
+      var lineas = [];
+      if (respuesta.agregados.length > 0) {
+        lineas.push(respuesta.agregados.length + (respuesta.agregados.length === 1 ? ' persona agregada' : ' personas agregadas') + ' como ' + rol.value + '.');
+      }
+      if (respuesta.yaEstaban.length > 0) {
+        lineas.push(respuesta.yaEstaban.length + (respuesta.yaEstaban.length === 1 ? ' ya estaba' : ' ya estaban') + ' en el equipo, no se tocó su rol: ' + respuesta.yaEstaban.join(', '));
+      }
+      if (respuesta.rechazados.length > 0) {
+        lineas.push('Sin agregar, porque no son correos de Rappi: ' + respuesta.rechazados.join(', '));
+      }
+      if (lineas.length === 0) lineas.push('No había nada que agregar.');
+
+      for (var i = 0; i < lineas.length; i++) {
+        resultado.appendChild(crear('p', {
+          clase: i === 0 && respuesta.agregados.length > 0 ? 'mensaje-ok' : 'pregunta-ayuda',
+          texto: lineas[i],
+        }));
+      }
+      correos.value = '';
+      RM.util.anunciar(lineas[0]);
+    }).catch(function (error) {
+      boton.disabled = false;
+      boton.textContent = 'Agregar a todos';
+      resultado.appendChild(crear('p', { clase: 'mensaje-error', texto: 'No pudimos agregarlos: ' + error.message }));
+    });
+  });
+
+  return crear('div', {}, [
+    crear('h3', { texto: 'Agregar muchos de una vez' }),
+    crear('p', {
+      clase: 'pregunta-ayuda',
+      texto: 'Pega los correos separados por comas o uno por línea. Quien ya esté en el equipo se deja como está, así que esto nunca le baja el rol a nadie. Con rol legal, la persona ve los países en piloto.',
+    }),
+    correos,
+    crear('div', { clase: 'fila-botones' }, [rol, pais, boton]),
+    resultado,
   ]);
 }
 
