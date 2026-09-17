@@ -8543,12 +8543,11 @@ function pantallaInicio(raiz) {
 function pantallaFiltro(raiz) {
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
     crear('h1', { texto: '¿Esta campaña la puedo hacer aquí?' }),
-    crear('p', { clase: 'pregunta-ayuda', texto: 'Tres preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano.' }),
+    crear('p', { clase: 'pregunta-ayuda', texto: 'Dos preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano.' }),
   ]);
 
   // Primero el tipo, porque el filtro depende de él.
   var preguntas = [
-    { id: 'travel', texto: '¿Es una campaña de Rappi Travel?', razon: 'Las campañas de Rappi Travel tienen una entidad legal distinta y un documento propio.' },
     { id: 'azar', texto: '¿Hay azar: sorteo, rifa, raspa y gana o ruleta?', razon: 'Las dinámicas con azar necesitan permiso previo de la autoridad. Legal tiene que revisarlas antes de lanzarlas.' },
     { id: 'tycPropios', texto: '¿La tienda o la marca exige sus propios términos y condiciones?', razon: 'Si el aliado impone su documento, hay que revisarlo con Legal antes de publicarlo.' },
   ];
@@ -9184,6 +9183,17 @@ function preguntaDeVeces(campos, indice, pasos, errores) {
  * campana se acaba con el tipo, y quedarse quieto dejaba al comercial mirando
  * la pregunta que acababa de contestar.
  */
+/** true si el pais elegido ofrece algun tipo de Rappi Travel. */
+function hayTravelEnElPais() {
+  var pais = flujo.paisElegido();
+  if (!pais) return false;
+  var disponibles = tiposDelPais(pais, E.configuracion.tipos);
+  for (var i = 0; i < disponibles.length; i++) {
+    if (disponibles[i].esDeTravel) return true;
+  }
+  return false;
+}
+
 function seguirDespuesDeUnaTarjeta() {
   var ahora = situacionActual();
   for (var i = 0; i < ahora.campos.length; i++) {
@@ -9211,6 +9221,17 @@ function alResponder(campoId, valor, campos, indice) {
   if (campoId === 'negocio') {
     estado.fijar('tipo', null);
     E.respondidas.tipo = false;
+
+    // Rappi Travel solo existe donde el pais lo tiene habilitado. En los demas
+    // sigue siendo un caso de Legal, y hay que decirlo aqui: mandarlo al
+    // formulario de Travel seria ofrecerle algo que no se le puede dar.
+    if (valor === 'travel' && !hayTravelEnElPais()) {
+      E.motivoDeLegal = 'Rappi Travel todavía no está habilitado en ' +
+        ((flujo.paisElegido() || {}).nombre || 'tu país') +
+        '. Las campañas de viajes de ese país las redacta Legal a mano.';
+      RM.app.ir('legal');
+      return true;
+    }
 
     // Rappi Travel tiene su propio filtro de nueve preguntas. Va aqui, apenas
     // se sabe que la campana es de viajes, para no hacerle llenar media

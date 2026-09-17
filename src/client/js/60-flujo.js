@@ -204,12 +204,11 @@ function pantallaInicio(raiz) {
 function pantallaFiltro(raiz) {
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
     crear('h1', { texto: '¿Esta campaña la puedo hacer aquí?' }),
-    crear('p', { clase: 'pregunta-ayuda', texto: 'Tres preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano.' }),
+    crear('p', { clase: 'pregunta-ayuda', texto: 'Dos preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano.' }),
   ]);
 
   // Primero el tipo, porque el filtro depende de él.
   var preguntas = [
-    { id: 'travel', texto: '¿Es una campaña de Rappi Travel?', razon: 'Las campañas de Rappi Travel tienen una entidad legal distinta y un documento propio.' },
     { id: 'azar', texto: '¿Hay azar: sorteo, rifa, raspa y gana o ruleta?', razon: 'Las dinámicas con azar necesitan permiso previo de la autoridad. Legal tiene que revisarlas antes de lanzarlas.' },
     { id: 'tycPropios', texto: '¿La tienda o la marca exige sus propios términos y condiciones?', razon: 'Si el aliado impone su documento, hay que revisarlo con Legal antes de publicarlo.' },
   ];
