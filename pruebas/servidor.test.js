@@ -59,7 +59,7 @@ test('setup es idempotente: la segunda vez no crea nada', () => {
 
   assert.strictEqual(leerPaises().length, paisesAntes);
   assert.strictEqual(leerEquipo().length, equipoAntes);
-  assert.ok(resumen.pasos.join(' ').indexOf('ya tenía datos') !== -1);
+  assert.ok(resumen.pasos.join(' ').indexOf('Paises ya estaba al día') !== -1, resumen.pasos.join(' | '));
 });
 
 test('setup nunca pisa lo que ya está en Paises', () => {
@@ -470,6 +470,106 @@ test('una hoja vieja se pone al día sola, sin correr setup otra vez', () => {
   assert.strictEqual(fila.nombre_campana, 'Jumbo · 20% Cashback · 20 sep 2026');
   assert.strictEqual(fila.resp_tienda, 'Jumbo', 'la columna nueva no se agregó sola');
   assert.strictEqual(fila.id, resultado.id, 'los datos quedaron corridos de columna');
+});
+
+/**
+ * El caso real de Rappi Travel en produccion.
+ *
+ * Juan corrio setup() cuando Travel no existia. Despues se agregaron los dos
+ * tipos de Travel y las nueve columnas travel_* a la semilla, pero la pestana
+ * Paises ya tenia datos, asi que setup no la tocaba: en la app, elegir Rappi
+ * Travel en Colombia decia que Travel no estaba habilitado.
+ */
+function hojaDePaisesComoEstabaAntesDeTravel() {
+  const hoja = hojaPorNombre('Paises');
+  const encabezadosViejos = PESTANAS.Paises.filter((c) => c.indexOf('travel_') !== 0);
+
+  const filas = [encabezadosViejos.slice()];
+  for (const semilla of PAISES_SEMILLA) {
+    const fila = paisComoFila(semilla);
+    // Antes de Travel, la columna modelos no traia los dos tipos de viajes.
+    fila.modelos = comoLista(fila.modelos).filter((m) => m.indexOf('travel') === -1).join(', ');
+    filas.push(encabezadosViejos.map((c) => (fila[c] === undefined ? '' : fila[c])));
+  }
+  hoja.valores = filas;
+  return hoja;
+}
+
+test('una pestaña de Países de antes de Travel se pone al día al correr setup', () => {
+  conSetup();
+  hojaDePaisesComoEstabaAntesDeTravel();
+
+  // Asi estaba: Colombia sin los tipos de Travel y sin sus datos legales.
+  const antes = paisPorCodigo(leerPaises(), 'CO');
+  assert.strictEqual(antes.modelos.indexOf('cashback_travel'), -1);
+  assert.strictEqual(travelDisponible(antes, '2026-09-17').disponible, false);
+
+  setup();
+
+  const despues = paisPorCodigo(leerPaises(), 'CO');
+  assert.ok(despues.modelos.indexOf('cashback_travel') !== -1, 'no se agregó el cashback de Travel');
+  assert.ok(despues.modelos.indexOf('descuento_travel') !== -1, 'no se agregó el descuento de Travel');
+  assert.strictEqual(despues.travel_entidad, 'Travel Moustache S.A.S.');
+  assert.strictEqual(travelDisponible(despues, '2026-09-17').disponible, true,
+    travelDisponible(despues, '2026-09-17').motivo);
+
+  // Y los tipos de siempre siguen ahí, en su orden.
+  assert.deepStrictEqual(despues.modelos.slice(0, 3), ['cashback', 'carrera_compras', 'cashback_day']);
+});
+
+test('poner al día los países no pisa lo que Legal cambió a mano', () => {
+  conSetup();
+  const hoja = hojaDePaisesComoEstabaAntesDeTravel();
+
+  // Legal ajusta a mano la razon social y bloquea un pais. Eso manda.
+  const encabezados = hoja.valores[0];
+  const filaCo = hoja.valores.findIndex((f) => f[encabezados.indexOf('codigo')] === 'CO');
+  hoja.valores[filaCo][encabezados.indexOf('entidad_legal')] = 'Rappi S.A.S. (en reorganización)';
+  hoja.valores[filaCo][encabezados.indexOf('estado')] = 'bloqueado';
+
+  setup();
+
+  const colombia = paisPorCodigo(leerPaises(), 'CO');
+  assert.strictEqual(colombia.entidad_legal, 'Rappi S.A.S. (en reorganización)');
+  assert.strictEqual(colombia.estado, 'bloqueado');
+  // Pero lo que faltaba sí se completó.
+  assert.ok(colombia.modelos.indexOf('cashback_travel') !== -1);
+  assert.strictEqual(colombia.travel_rnt, '79000');
+});
+
+test('el vencimiento del RNT se lee bien aunque el Sheet lo vuelva fecha', () => {
+  conSetup();
+  const hoja = hojaPorNombre('Paises');
+  const encabezados = hoja.valores[0];
+  const filaCo = hoja.valores.findIndex((f) => f[encabezados.indexOf('codigo')] === 'CO');
+
+  // Esto es lo que hace Google Sheets solo con una celda que diga 2027-03-31.
+  hoja.valores[filaCo][encabezados.indexOf('travel_rnt_vence')] = new Date(2027, 2, 31);
+
+  const colombia = paisPorCodigo(leerPaises(), 'CO');
+  assert.strictEqual(colombia.travel_rnt_vence, '2027-03-31', 'la fecha llegó como objeto Date');
+  assert.strictEqual(travelDisponible(colombia, '2026-09-17').disponible, true);
+
+  // Y un registro vencido sí bloquea, que es para lo que existe la fecha.
+  const vencido = travelDisponible(colombia, '2027-06-01');
+  assert.strictEqual(vencido.disponible, false);
+  assert.ok(vencido.motivo.indexOf('Registro Nacional de Turismo') !== -1, vencido.motivo);
+});
+
+test('poner al día no borra un modelo que alguien quitó a propósito', () => {
+  conSetup();
+  const hoja = hojaPorNombre('Paises');
+  const encabezados = hoja.valores[0];
+  const filaCo = hoja.valores.findIndex((f) => f[encabezados.indexOf('codigo')] === 'CO');
+
+  // Se deja Colombia solo con cashback, a mano.
+  hoja.valores[filaCo][encabezados.indexOf('modelos')] = 'cashback';
+  setup();
+
+  // Los de la semilla se agregan, pero el orden de quien editó se respeta.
+  const colombia = paisPorCodigo(leerPaises(), 'CO');
+  assert.strictEqual(colombia.modelos[0], 'cashback');
+  assert.ok(colombia.modelos.indexOf('cashback_travel') !== -1);
 });
 
 // --- ampliar una campaña en curso ------------------------------------------

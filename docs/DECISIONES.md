@@ -319,3 +319,33 @@ Dos decisiones salieron de ahí:
    primera dibujaba la pantalla y la segunda decidía a dónde ir al pulsar
    Siguiente, así que Siguiente se saltaba el negocio y marcaba el tipo como
    respondido sin que nadie lo hubiera elegido.
+
+## La pestaña Países se pone al día sola al correr setup
+
+**Fecha:** 17 de septiembre de 2026.
+
+`setup()` sembraba los países solo si la pestaña estaba vacía, y si tenía datos
+la saltaba entera con un "no se tocó". Eso dejó un agujero real: la pestaña se
+sembró antes de que existiera Rappi Travel, después se agregaron los dos tipos
+de Travel y las nueve columnas `travel_*` a `data/paises.json`, y la fila de
+Colombia del Sheet se quedó como estaba. En la app, elegir Rappi Travel en
+Colombia decía que Travel no estaba habilitado, porque para la herramienta no lo
+estaba.
+
+Ahora `setup()` pone la pestaña al día, sin sobrescribir: la pestaña Países es de
+Legal, y un valor escrito ahí manda sobre la semilla.
+
+- `modelos`: se agregan los que la semilla tenga y la fila no. Nunca se quita
+  ninguno, porque quitarlo pudo ser a propósito.
+- Las demás columnas: se rellenan solo si la celda está vacía.
+- Los países que no estén en la pestaña se agregan completos.
+
+Del mismo caso salió otro arreglo: Google Sheets convierte sola en fecha una
+celda que diga `2027-03-31`, y `travel_rnt_vence` es una de esas. Comparada como
+texto, "Wed Mar 31 2027" nunca es mayor que "2026-09-17", así que el aviso de
+vencimiento del Registro Nacional de Turismo no se disparaba nunca.
+`paisDesdeFila()` vuelve a texto cualquier fecha que llegue del Sheet.
+
+Y al elegir Rappi Travel, la pantalla de Legal ahora dice la razón exacta: no es
+lo mismo que el país no tenga habilitados los tipos de Travel que los tenga pero
+le falte el RNT. Lo segundo se arregla llenando el Sheet.

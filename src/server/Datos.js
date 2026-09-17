@@ -145,6 +145,7 @@ if (typeof module !== 'undefined') {
     abrirBase: abrirBase,
     hojaPorNombre: hojaPorNombre,
     objetosDe: objetosDe,
+    encabezadosDeLaHoja: encabezadosDeLaHoja,
     agregarFila: agregarFila,
     actualizarFila: actualizarFila,
     leerPaises: leerPaises,

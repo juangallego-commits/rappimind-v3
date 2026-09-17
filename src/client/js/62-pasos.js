@@ -475,6 +475,25 @@ function hayTravelEnElPais() {
   return false;
 }
 
+/**
+ * Por que este pais no puede hacer Travel hoy, o cadena vacia si si puede.
+ *
+ * Son dos cosas distintas y el comercial merece saber cual: que el pais no
+ * tenga habilitados los tipos de Travel, o que los tenga pero le falte un dato
+ * legal (el RNT, la razon social de la agencia). Lo segundo se arregla llenando
+ * el Sheet, asi que el mensaje lo dice con nombre propio en vez de mandarlo a
+ * redactar el documento a mano.
+ */
+function razonParaNoHacerTravel() {
+  var pais = flujo.paisElegido();
+  if (!hayTravelEnElPais()) {
+    return 'Rappi Travel todavía no está habilitado en ' + ((pais || {}).nombre || 'tu país') +
+      '. Las campañas de viajes de ese país las redacta Legal a mano.';
+  }
+  var revision = travelDisponible(pais, E.configuracion.hoy || RM.util.hoyEnElNavegador());
+  return revision.disponible ? '' : revision.motivo;
+}
+
 function seguirDespuesDeUnaTarjeta() {
   var ahora = situacionActual();
   for (var i = 0; i < ahora.campos.length; i++) {
@@ -506,12 +525,13 @@ function alResponder(campoId, valor, campos, indice) {
     // Rappi Travel solo existe donde el pais lo tiene habilitado. En los demas
     // sigue siendo un caso de Legal, y hay que decirlo aqui: mandarlo al
     // formulario de Travel seria ofrecerle algo que no se le puede dar.
-    if (valor === 'travel' && !hayTravelEnElPais()) {
-      E.motivoDeLegal = 'Rappi Travel todavía no está habilitado en ' +
-        ((flujo.paisElegido() || {}).nombre || 'tu país') +
-        '. Las campañas de viajes de ese país las redacta Legal a mano.';
-      RM.app.ir('legal');
-      return true;
+    if (valor === 'travel') {
+      var porQueNo = razonParaNoHacerTravel();
+      if (porQueNo) {
+        E.motivoDeLegal = porQueNo;
+        RM.app.ir('legal');
+        return true;
+      }
     }
 
     // Rappi Travel tiene su propio filtro de nueve preguntas. Va aqui, apenas

@@ -11,6 +11,7 @@
 if (typeof module !== 'undefined' && typeof require === 'function') {
   var moduloTablas = require('./tablas.js');
   var comoBooleano = moduloTablas.comoBooleano;
+  var fechaComoTexto = moduloTablas.fechaComoTexto;
 
   var moduloFechas = require('./fechas.js');
   var listaY = moduloFechas.listaY;
@@ -39,7 +40,14 @@ function paisDesdeFila(fila) {
   for (var llave in fila) {
     if (!Object.prototype.hasOwnProperty.call(fila, llave)) continue;
     if (llave === '_fila') continue;
-    pais[llave] = fila[llave];
+
+    // Google Sheets convierte sola en fecha una celda que diga 2027-03-31, y
+    // travel_rnt_vence es una de esas. Comparada como texto, "Wed Mar 31 2027"
+    // nunca es mayor que "2026-09-17", asi que el aviso de vencimiento del
+    // Registro Nacional de Turismo no se disparaba nunca.
+    pais[llave] = Object.prototype.toString.call(fila[llave]) === '[object Date]'
+      ? fechaComoTexto(fila[llave])
+      : fila[llave];
   }
 
   for (var i = 0; i < COLUMNAS_DE_LISTA.length; i++) {

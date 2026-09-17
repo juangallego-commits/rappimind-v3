@@ -115,11 +115,28 @@ function asegurarPestanas(base, pasos) {
   }
 }
 
-/** Carga los paises solo si la pestana esta vacia. Nunca pisa lo que ya hay. */
+/**
+ * Carga los paises, y si la pestana ya tenia datos la pone al dia.
+ *
+ * Antes se saltaba la pestana entera cuando ya tenia filas, y eso dejo un
+ * agujero real: Juan corrio setup() cuando Rappi Travel no existia, despues se
+ * agregaron los dos tipos de Travel y las nueve columnas travel_* a la semilla,
+ * y la fila de Colombia del Sheet se quedo como estaba. En la app, elegir Rappi
+ * Travel en Colombia decia que Travel no estaba habilitado, porque para la
+ * herramienta no lo estaba.
+ *
+ * Poner al dia no es sobrescribir. La pestana Paises es de Legal: Juan puede
+ * cambiar ahi una razon social o bloquear un pais sin desplegar nada, y eso
+ * manda sobre la semilla. Asi que solo pasan dos cosas:
+ *
+ *   - modelos: se agregan los que la semilla tenga y la fila no. Nunca se quita
+ *     ninguno, porque quitarlo pudo ser a proposito.
+ *   - las demas columnas: se rellenan solo si la celda esta vacia.
+ */
 function sembrarPaises(pasos) {
   var hoja = hojaPorNombre('Paises');
   if (hoja.getLastRow() > 1) {
-    pasos.push('Paises ya tenía datos, no se tocó');
+    ponerPaisesAlDia(hoja, pasos);
     return;
   }
 
@@ -132,6 +149,72 @@ function sembrarPaises(pasos) {
     hoja.getRange(2, 1, filas.length, encabezados.length).setValues(filas);
     pasos.push(filas.length + ' países cargados');
   }
+}
+
+/** Los modelos de la fila, mas los de la semilla que falten, en ese orden. */
+function modelosUnidos(deLaFila, deLaSemilla) {
+  var unidos = comoLista(deLaFila).slice();
+  var semilla = comoLista(deLaSemilla);
+  for (var i = 0; i < semilla.length; i++) {
+    if (unidos.indexOf(semilla[i]) === -1) unidos.push(semilla[i]);
+  }
+  return unidos;
+}
+
+function celdaVacia(valor) {
+  return !String(valor === null || valor === undefined ? '' : valor).trim();
+}
+
+/** Completa las filas que ya existen y agrega los paises nuevos. */
+function ponerPaisesAlDia(hoja, pasos) {
+  // Primero las columnas: sin encabezado no hay donde escribir el dato.
+  encabezadosDeLaHoja(hoja, 'Paises');
+
+  var filas = objetosDe('Paises');
+  var completados = 0;
+  var agregados = 0;
+
+  for (var i = 0; i < PAISES_SEMILLA.length; i++) {
+    var semilla = paisComoFila(PAISES_SEMILLA[i]);
+    var codigo = String(semilla.codigo || '').trim().toUpperCase();
+
+    var fila = null;
+    for (var f = 0; f < filas.length; f++) {
+      if (String(filas[f].codigo || '').trim().toUpperCase() === codigo) { fila = filas[f]; break; }
+    }
+
+    if (!fila) {
+      agregarFila('Paises', semilla);
+      agregados += 1;
+      continue;
+    }
+
+    var cambios = {};
+    for (var llave in semilla) {
+      if (!Object.prototype.hasOwnProperty.call(semilla, llave)) continue;
+
+      if (llave === 'modelos') {
+        var unidos = modelosUnidos(fila.modelos, semilla.modelos);
+        if (unidos.length !== comoLista(fila.modelos).length) cambios.modelos = unidos.join(', ');
+        continue;
+      }
+      if (celdaVacia(fila[llave]) && !celdaVacia(semilla[llave])) cambios[llave] = semilla[llave];
+    }
+
+    var hayCambios = false;
+    for (var c in cambios) {
+      if (Object.prototype.hasOwnProperty.call(cambios, c)) hayCambios = true;
+    }
+    if (hayCambios) {
+      actualizarFila('Paises', fila._fila, cambios);
+      completados += 1;
+    }
+  }
+
+  if (agregados > 0) pasos.push(agregados + ' países nuevos agregados');
+  pasos.push(completados === 0
+    ? 'Paises ya estaba al día'
+    : completados + (completados === 1 ? ' país completado' : ' países completados') + ' con lo que faltaba de la semilla');
 }
 
 function asegurarCarpetasPorPais(raiz, pasos) {
