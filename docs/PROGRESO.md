@@ -751,7 +751,21 @@ conversaciones separadas, así que se pueden mandar el mismo día.
    "orden" para lo mismo; y los dos nombres "Cupon de descuento - Valor fijo" y
    "Cupon de descuento - Toda la tienda" llevan un guion que la regla 8 prohíbe,
    pero vienen así del Sheet de Legal.
-8. **Desplegar.** Ninguno de estos arreglos llega a la herramienta hasta que se
-   despliegue; avísame y lo disparo. Y esta vez sí conviene **correr `setup()`**
-   después: pone al día la lista de datos por confirmar de Brasil en la pestaña
-   Paises (de cinco a diez). No crea columnas ni toca lo que Legal editó.
+8. **Correr `setup()` una vez.** Ya está desplegado (ver abajo), pero `setup()`
+   es lo único que no puedo correr yo. Pone al día la lista de datos por
+   confirmar de Brasil en la pestaña Paises, de cinco a diez. No crea columnas ni
+   toca nada de lo que Legal editó a mano.
+
+### Desplegado
+
+El 17 de septiembre, con la autorización de Juan. Todo lo de esta sesión está en
+`main` y en la herramienta:
+
+| Qué | Dónde |
+|---|---|
+| Código en el proyecto de Apps Script | `clasp push` de la ejecución 55 |
+| Versión publicada | la 18, con el despliegue de siempre |
+| URL de los comerciales | la misma; no cambia al actualizar la versión |
+
+Las pruebas y el build volvieron a correr dentro de GitHub antes de subir nada:
+421 en verde. Falta `setup()`, que lo corre Juan.
