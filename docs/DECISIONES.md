@@ -525,3 +525,52 @@ frontera 2, y ya dejó una pantalla sin una sola opción que ofrecer.
     (`capturar-pantallas.js`), que además deja `textos.json` con el texto literal
     de cada pantalla. El encargo de la interfaz se arma desde ahí, no a mano, así
     que siempre describe la versión que se está revisando.
+13. **La fecha de fin de una campaña sale del esquema, no de la entrada.** Un
+    tipo que no pregunta `fechaFin` (el cashback por ETA es de un solo día)
+    termina el día que empieza: `fechaFinDeLaCampana(entrada, esquema)`. Leer
+    `entrada.fechaFin` era leer un dato que la interfaz fijaba una vez y nunca
+    actualizaba. El servidor y la demo guardan `fecha_fin` con esa función, y un
+    tipo sin tienda guarda la tienda vacía aunque quede una de otro intento.
+14. **`tieneValor` vive una sola vez, en `texto.js`.** Estaba en tres archivos de
+    derivados; en Apps Script las tres copias se pisaban en silencio. Una prueba
+    de `build.test.js` prohíbe dos funciones de nivel superior con el mismo
+    nombre entre `src/core/` y `src/server/`.
+15. **Los detectores de `duplicados.test.js` son expresiones regulares, no un
+    analizador sintáctico.** Un analizador de verdad necesitaría una dependencia
+    (acorn) o `--expose-internals`, y el proyecto no tiene dependencias. Se
+    aceptan sus límites (vacía cadenas y comentarios antes de contar, en ese
+    orden) y cada falso negativo que aparezca se agrega como caso.
+16. **Ampliar valida con `ampliacion: true`.** Al rearmar el documento de una
+    campaña en curso, el inicio en el pasado y la primera comunicación de Travel
+    que ya salió no son errores. Las demás reglas siguen: fin después del inicio,
+    tope contra presupuesto, RNT vigente.
+17. **"Usar como base" y toda solicitud nueva pasan por `sinRastroDeAmpliacion`**:
+    sin `modificaciones` ni `sufijoNombre`. Se aplica en el servidor
+    (`datosDeSolicitud`, `previsualizar`, `generar`) y en la demo, no en la
+    pantalla, porque es una frontera. El campo `nombreCampana` ya no se copia con
+    " (copia)": nadie lo leía.
+18. **`por_confirmar_en_pruebas` se pone al día como `modelos`**: unión de la hoja
+    con la semilla. Esa columna la mantiene la herramienta. Lo que se quite de la
+    semilla hay que quitarlo también de la hoja, como con los modelos.
+19. **Las notas internas se cazan con tres patrones**: una palabra de nota entre
+    paréntesis o corchetes con lo que sea alrededor, las marcas de programador
+    solo en mayúsculas (TODO, TBD, FIXME, XXX, PENDIENTE), y los signos de duda y
+    la sintaxis de los modelos. "todo el territorio" y "puedes revisar" no cuentan.
+20. **El equipo se valida de verdad.** El país tiene que existir en la pestaña
+    Paises y el rol en `ROLES`; una persona con `activo` en "no" se reactiva en
+    su misma fila, desde la pantalla y desde la carga masiva; los correos pegados
+    se sacan por su forma (`separarCorreos`, en `paises.js`), y
+    `correoEsDelDominio` exige la forma completa `algo@rappi.com`. Las dos
+    funciones viven en el core para que la demostración use exactamente las
+    mismas.
+21. **Cada archivo del cliente es su propio ámbito y solo comparte por `RM.algo`.**
+    Ya estaba en la skill de fronteras, y aun así una función de `62-pasos.js` se
+    llamó desde `66-resumen.js` y reventó en el navegador, no en `npm test`.
+    `pruebas/cliente.test.js` caza la llamada directa a una función de otro archivo.
+22. **La demostración tiene que simular todo lo que la interfaz pide.**
+    `pruebas/demo.test.js` compara cada `RM.servidor.llamar('x')` del cliente con
+    el servidor simulado de `scripts/demo.js`.
+23. **Un modelo en español no se genera en un país que escribe en otro idioma.**
+    `validarIdiomaDelPais` revisa las dos direcciones: el modelo en portugués
+    exige `pt` en la fila del país, y un país con `pt` rechaza los modelos en
+    español hasta que exista el modelo en portugués.

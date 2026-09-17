@@ -5,9 +5,10 @@ Copia todo lo que está entre las líneas y pégalo como primer mensaje.
 ---
 
 Vas a retomar RappiMind v3. La sesión anterior (17 de septiembre) revisó con ojos
-críticos todo lo que se había construido la noche anterior, arregló veinticinco
-defectos con su prueba, y dejó escritos los tres encargos para Claude chat en
-`docs/encargos/`. Yo ya mandé esos encargos (o los voy a mandar) y voy a traer las
+críticos todo lo que se había construido la noche anterior, arregló cuarenta y un
+defectos con su prueba (en dos vueltas: la interfaz y Brasil primero; el servidor,
+el Sheet y el cashback por ETA después), y dejó escritos los tres encargos para
+Claude chat en `docs/encargos/`. Yo ya mandé esos encargos (o los voy a mandar) y voy a traer las
 respuestas. Tu trabajo en esta sesión es **convertir esas respuestas en cambios**,
 sin traducir nada a mano y sin decidir nada legal por tu cuenta.
 
@@ -19,14 +20,14 @@ Lee completos, en este orden:
 2. `.claude/skills/flujo-y-ux/SKILL.md` y `.claude/skills/frontera-apps-script/SKILL.md`.
 3. `docs/PROGRESO.md`, de abajo hacia arriba. La última entrada es la de la
    revisión crítica: ahí está lo que se arregló y lo que quedó pendiente.
-4. `docs/DECISIONES.md`, las doce decisiones del final, para no deshacerlas.
+4. `docs/DECISIONES.md`, las decisiones 1 a 23 del final, para no deshacerlas.
 
 Después mira el estado real, no lo que digan los documentos:
 
 ```
-npm test                                                        # deben pasar 390
+npm test                                                        # deben pasar 421
 npm run demo
-node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js        # 38 revisiones
+node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js        # 40 revisiones
 node .claude/skills/flujo-y-ux/scripts/recorrer-en-portugues.js # 25 revisiones
 ```
 
@@ -84,6 +85,13 @@ Todo en `docs/PENDIENTES_LEGAL.md`. Lo que más urge:
   con su nota en `revisiones`.
 - **Brasil**: la hora de inicio (00:00 contra 00:01), "um (1)" contra "1 (um)", y
   los cuatro casos dorados `BR01` a `BR04` contra los aprobados.
+- **El cashback por ETA**: los dos casos dorados `ETA01` y `ETA02` contra los
+  publicados de Bogotá y Barranquilla, y la mezcla de "tú" con "el
+  Usuario/Consumidor" que dejan los bloques compartidos (puntos 8 a 10 de
+  `docs/PENDIENTES_LEGAL.md`). Si yo decido cambiar un bloque compartido, dime
+  el texto exacto: no lo redactes tú.
+- **Después de desplegar hay que correr `setup()`** una vez: pone al día la lista
+  de datos por confirmar de Brasil en la pestaña Paises. Yo lo corro; recuérdamelo.
 - **Los T&C generales vencen** el 31 de octubre (uno) y el 31 de diciembre (los
   demás). Si Legal publica versiones nuevas, hay que actualizar el archivo antes.
 

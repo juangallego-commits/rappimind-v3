@@ -107,7 +107,11 @@ build lo revisa en `revisarColisionesDeNombre()`.
 Y dos cosas más del mismo mundo:
 
 - Los archivos de `src/client/js/` se envuelven en una función al construir,
-  porque si no comparten un solo ámbito y dos `var estado` se pisan.
+  porque si no comparten un solo ámbito y dos `var estado` se pisan. Por lo
+  mismo, una función declarada en un archivo **no existe en el siguiente**: se
+  comparte por `RM.algo` o revienta en el navegador, no en `npm test`
+  (`avisoDePaisEnPruebas is not defined`). `pruebas/cliente.test.js` caza la
+  llamada directa a una función de otro archivo.
 - Los de `src/core/` **no** se envuelven: Apps Script los necesita globales.
   Cada uno termina con el bloque `if (typeof module !== 'undefined')` para que
   Node también los pueda cargar.

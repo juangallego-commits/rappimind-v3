@@ -624,15 +624,82 @@ importan, en lo que habría visto un comercial:
 Además Brasil tiene ahora sus cuatro casos dorados (`BR01` a `BR04`): el texto
 aprobado queda protegido carácter por carácter, como el de Colombia.
 
+### La segunda vuelta: el servidor, el Sheet y el cashback por ETA
+
+Dos revisores más, sobre lo que la primera vuelta no alcanzó (el servidor, la
+pestaña Equipo, el flujo en celular y el cashback por ETA). Reproduje cada
+hallazgo antes de darlo por cierto; salieron dieciséis más, y cada uno tiene su
+prueba. Los que un comercial o un administrador habría visto:
+
+1. **Ampliar una campaña solo funcionaba el primer día.** Una campaña publicada
+   que arrancó el 10 mostraba el botón "Ampliar" el 16, el comercial llenaba el
+   presupuesto nuevo y recibía "Esa fecha ya pasó". La ampliación rearma el
+   documento completo y la validación tropezaba con la fecha de inicio. Ahora
+   ampliar sabe que la campaña ya arrancó (y en Travel, que la primera
+   comunicación ya salió).
+2. **"Usar como base" arrastraba la ampliación de la campaña vieja.** Copiar un
+   Cashback Travel que se había ampliado dejaba al final del documento nuevo la
+   nota "Modificación del 16 de septiembre de 2026...", y la primera ampliación
+   de la copia se titulaba "versión 3". La copia ahora arranca limpia.
+3. **En celular, el selector ES/BR tapaba el último botón** ("Revisar y
+   generar", "Generar T&C", "Seguir con lo que dejaste a medias") al llegar al
+   final de la página. Se reservó el espacio que faltaba y el recorrido lo mide.
+4. **La pantalla final de un país en pruebas no decía "no publiques".** El aviso
+   estaba en el formulario y en el resumen, pero no en la pantalla que explica
+   cómo publicar, que es donde se decide. Ya está. Y al ponerlo se rompió el
+   navegador con `avisoDePaisEnPruebas is not defined`, porque cada archivo del
+   cliente es su propio ámbito: lo cazó el recorrido, no `npm test`, así que ahora
+   hay una prueba para eso también.
+5. **El cashback por ETA se rompía al cambiar el día.** Es un tipo de un solo
+   día que no pregunta la fecha de fin, pero la validación leía una fecha de fin
+   vieja que la pantalla fijaba una vez: al mover el día, el resumen decía "la
+   campaña no puede terminar antes de empezar" y no había ninguna pregunta donde
+   arreglarlo. Con la misma raíz: la fecha límite de redención se comparaba con
+   esa fecha vieja, y el Sheet guardaba `fecha_fin` vacía. Además dejaba dos
+   ciudades ("en la ciudad de Bogotá, Medellín"), dejaba elegir "Varias órdenes"
+   sin escribir cuántas (el documento salía con "un máximo de  órdenes"; en Brasil
+   igual), y el nombre arrastraba la tienda de un intento anterior ("Jumbo · 15
+   minutos o 100%..."). Ahora tiene sus dos casos dorados, `ETA01` (Bogotá) y
+   `ETA02` (Barranquilla).
+6. **"Agregar a todos" reventaba en la demostración** (no existía en el servidor
+   simulado), y en producción rechazaba los nombres: pegar "Ana Pérez
+   <ana@rappi.com>" tal como sale de Gmail respondía "Sin agregar, porque no son
+   correos de Rappi: ana, pérez". Ahora saca los correos por su forma.
+7. **El equipo aceptaba un país inventado y un rol inexistente**, y un legal con
+   país "MZ" o vacío no veía ninguna campaña sin que nadie se enterara. Y volver a
+   agregar a alguien que estaba con `activo` en "no" creaba una segunda fila con
+   el mismo correo. Ahora el país y el rol se validan y la persona se reactiva en
+   su fila.
+8. **Setup no ponía al día la lista de datos por confirmar** de una hoja que ya
+   existía: la de Brasil creció de cinco a diez esta sesión, y el aviso al
+   abogado brasileño se habría quedado con la vieja. Ahora esa columna se une con
+   la semilla, como la de modelos.
+9. **Las notas internas en la fila de un país se cazaban solo si venían exactas.**
+   "(confirmar)" sí; "[confirmar]", "(a confirmar)", "TBD" o "(?)" se habrían
+   publicado dentro del T&C. Ahora se cazan las variantes, sin confundirse con
+   "todo el territorio" o "(SIC)".
+10. **Un modelo en español habilitado en Brasil habría salido mezclado** ("vinte
+    por cento" y "horário de Brasília" dentro de un articulado en español) sin un
+    solo error, en cuanto Legal llenara la celda que hoy lo frena. La revisión de
+    idioma ahora va en las dos direcciones.
+11. **Y tres más chicas**: `tieneValor` estaba en tres archivos y en Apps Script
+    se pisaban; el detector de `var` repetido se tragaba la línea cuando una
+    cadena traía una URL; y `previsualizar(null)` reventaba en demostración.
+
 ### Cómo probarlo
 
 ```
-npm test                                                        # 390 pruebas
+npm test                                                        # 421 pruebas
 npm run demo
-node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js        # 38 revisiones
+node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js        # 40 revisiones
 node .claude/skills/flujo-y-ux/scripts/recorrer-en-portugues.js # 25 revisiones
 node .claude/skills/flujo-y-ux/scripts/capturar-pantallas.js    # las 33 capturas y textos.json
 ```
+
+Para ver el arreglo de ampliar en la demostración: **Mis campañas**, una campaña
+publicada y en curso, **Ampliar**. Para ver el de celular: la demostración con la
+ventana angosta, al final de cualquier pantalla con botones, el selector ES/BR
+ya no se monta sobre ellos.
 
 Los recorridos ahora cubren los T&C generales (la tarjeta, la lista, el repetido,
 la vuelta a los tipos) y el camino de Brasil en portugués hasta el resumen, con
@@ -675,7 +742,16 @@ conversaciones separadas, así que se pueden mandar el mismo día.
    inicio (00:00 por defecto contra 00:01 en los aprobados) y "um (1) pedido"
    contra "1 (um) pedido".
 6. **Los cuatro documentos dorados de Brasil** (`pruebas/salidas_esperadas/BR01.txt`
-   a `BR04.txt`) contra los cuatro T&C aprobados que mandó Legal Brasil.
-7. Correr `setup()` después del despliegue no hace falta por esto: no hay
-   columnas nuevas. Sí hay que **desplegar** para que los arreglos lleguen a la
-   herramienta; avísame y lo disparo.
+   a `BR04.txt`) contra los cuatro T&C aprobados que mandó Legal Brasil. Y los dos
+   del cashback por ETA (`ETA01.txt`, Bogotá; `ETA02.txt`, Barranquilla) contra
+   los dos publicados.
+7. **Tres decisiones de texto legal nuevas** en `docs/PENDIENTES_LEGAL.md`
+   (puntos 8, 9 y 12): el documento del ETA mezcla "tú" con "el
+   Usuario/Consumidor" porque los bloques compartidos tutean; usa "pedido" y
+   "orden" para lo mismo; y los dos nombres "Cupon de descuento - Valor fijo" y
+   "Cupon de descuento - Toda la tienda" llevan un guion que la regla 8 prohíbe,
+   pero vienen así del Sheet de Legal.
+8. **Desplegar.** Ninguno de estos arreglos llega a la herramienta hasta que se
+   despliegue; avísame y lo disparo. Y esta vez sí conviene **correr `setup()`**
+   después: pone al día la lista de datos por confirmar de Brasil en la pestaña
+   Paises (de cinco a diez). No crea columnas ni toca lo que Legal editó.

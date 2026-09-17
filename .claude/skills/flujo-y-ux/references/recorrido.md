@@ -123,15 +123,18 @@ al lado.
 El resultado: el enlace del documento, el paso a paso de Squarespace y quién
 tiene usuario para publicar en ese país (`bloqueDeQuienPublica`). Es la pantalla
 donde el comercial deja la herramienta y se va a publicar, así que lo que
-necesita tiene que estar ahí, copiable, sin volver a buscar.
+necesita tiene que estar ahí, copiable, sin volver a buscar. En un país en
+pruebas lleva arriba el mismo aviso de "no publiques" del formulario.
 
 ## historial ("Mis campañas")
 
 Las campañas del comercial, con lo que puede hacer con cada una:
 
-- **Usar como base**: copia las respuestas, borra las fechas y la declaración y
-  agrega " (copia)" al nombre. Las fechas casi nunca sirven para la campaña
-  nueva.
+- **Usar como base**: copia las respuestas y borra las fechas y la declaración.
+  Las fechas casi nunca sirven para la campaña nueva. El servidor devuelve las
+  respuestas sin la nota de una ampliación anterior ni su consecutivo
+  (`sinRastroDeAmpliacion`): la campaña nueva arranca limpia, en versión 1. El
+  nombre no se copia porque no existe como respuesta: lo arma la herramienta.
 - **Ampliar**: solo si la campaña está publicada y en curso. Las reglas están en
   `src/core/ampliacion.js`: la vigencia solo se mueve hacia adelante y los
   números solo suben, porque bajarlos cambiaría las condiciones de quien ya

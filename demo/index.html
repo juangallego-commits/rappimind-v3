@@ -496,7 +496,9 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 /* --- Celular ------------------------------------------------------------ */
 
 @media (max-width: 900px) {
-  .pagina { padding: var(--e5) var(--e4) 96px; }
+  /* Abajo caben el boton flotante (16 + 52) y encima el selector de idioma
+     (76 + 42). Con menos, la ultima fila de botones quedaba debajo del ES/BR. */
+  .pagina { padding: var(--e5) var(--e4) 136px; }
   .dos-columnas { grid-template-columns: 1fr; gap: var(--e5); }
   .columna-documento { display: none; }
   h1 { font-size: 23px; }
@@ -1441,6 +1443,25 @@ function aplicarAmpliacion(entrada, cambios, hoyIso) {
   return nueva;
 }
 
+/**
+ * Las respuestas de una campana sin lo que le dejo una ampliacion.
+ *
+ * "Usar como base" devolvia datos_json tal cual, y despues de ampliar ese JSON
+ * trae `modificaciones` (la nota que el modelo imprime al final del documento)
+ * y `sufijoNombre` (el consecutivo del nombre). La campana nueva salia con la
+ * nota de modificacion de la vieja adentro, y su primera ampliacion decia
+ * "version 3". Tambien se aplica al generar, por si un borrador viejo la trae.
+ */
+function sinRastroDeAmpliacion(entrada) {
+  var limpia = {};
+  for (var llave in entrada) {
+    if (!Object.prototype.hasOwnProperty.call(entrada, llave)) continue;
+    if (llave === 'modificaciones' || llave === 'sufijoNombre') continue;
+    limpia[llave] = entrada[llave];
+  }
+  return limpia;
+}
+
 /** Lo que el comercial lee en el historial cuando no puede ampliar. */
 function textoDeAmpliacion(solicitud, entrada, ahoraIso, ahoraHora) {
   var estado = puedeAmpliar(solicitud, entrada, ahoraIso, ahoraHora);
@@ -1458,6 +1479,7 @@ if (typeof module !== 'undefined') {
     validarAmpliacion: validarAmpliacion,
     aplicarAmpliacion: aplicarAmpliacion,
     textoDeAmpliacion: textoDeAmpliacion,
+    sinRastroDeAmpliacion: sinRastroDeAmpliacion,
   };
 }
 
@@ -2052,6 +2074,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var calcularDerivadosBr = require('./derivados_br.js').calcularDerivadosBr;
   var calcularDerivadosEta = require('./derivados_eta.js').calcularDerivadosEta;
   var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
+  var tieneValor = require('./texto.js').tieneValor;
 }
 
 // --- Textos fijos de Legal -------------------------------------------------
@@ -2127,10 +2150,6 @@ var VALORES_DEL_PAIS = {
 };
 
 // --- Ayudas ----------------------------------------------------------------
-
-function tieneValor(valor) {
-  return valor !== null && valor !== undefined && valor !== '';
-}
 
 /** FRAGMENTO: territorio de la campana. */
 function textoTerritorio(entrada, pais) {
@@ -2435,6 +2454,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var letrasYCifra = moduloNumeros.letrasYCifra;
 
   var listaY = require('./fechas.js').listaY;
+  var tieneValor = require('./texto.js').tieneValor;
 }
 
 /** Las cuatro formas del beneficio, tal como las nombran los documentos. */
@@ -2461,12 +2481,6 @@ var METODOS_DE_PAGO_BR = [
   { valor: 'mastercard', etiqueta: 'Cartão de crédito Mastercard' },
   { valor: 'voucher_refeicao', etiqueta: 'Voucher Refeição' },
 ];
-
-function tieneValor(valor) {
-  if (valor === null || valor === undefined || valor === '') return false;
-  if (Object.prototype.toString.call(valor) === '[object Array]') return valor.length > 0;
-  return true;
-}
 
 /**
  * El trozo del parrafo de apertura que habla del minimo de compra.
@@ -2617,6 +2631,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var cantidadCreditos = moduloNumeros.cantidadCreditos;
 
   var listaY = require('./fechas.js').listaY;
+  var tieneValor = require('./texto.js').tieneValor;
 }
 
 /** La modalidad del boton Turbo. Los dos documentos publicados usan esta. */
@@ -2629,12 +2644,6 @@ var SECCIONES_EXCLUIBLES_ETA = [
   { valor: 'atm', nombre: 'Cajero ATM' },
   { valor: 'favor', nombre: 'Rappi Favor' },
 ];
-
-function tieneValor(valor) {
-  if (valor === null || valor === undefined || valor === '') return false;
-  if (Object.prototype.toString.call(valor) === '[object Array]') return valor.length > 0;
-  return true;
-}
 
 /**
  * FRAGMENTO: el tiempo prometido, en letras y cifra.
@@ -4325,12 +4334,19 @@ var CAMPOS_BRASIL = [
     obligatorio: false,
   },
   { id: 'compraMinima', etiqueta: 'Mínimo de compra', tipo: 'numero', minimo: 1, paso: 'participantes', obligatorio: false },
-  { id: 'maxPedidos', etiqueta: 'Máximo de pedidos por usuario', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: false },
+  // Obligatorio salvo con "Sin limite": con "Varias veces" y sin numero, el
+  // resumen dejaba pulsar Generar y era el servidor el que devolvia un error
+  // generico del documento.
+  { id: 'maxPedidos', etiqueta: 'Máximo de pedidos por usuario', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: sinLimiteNoLoPide },
   { id: 'sinLimite', etiqueta: 'Sin límite de pedidos', tipo: 'casilla', paso: 'beneficio', obligatorio: false },
   { id: 'metodosPagoBr', etiqueta: 'Medios de pago', tipo: 'casillas', paso: 'beneficio', obligatorio: true },
 
   { id: 'declaracion', etiqueta: 'Declaración', tipo: 'casilla', paso: 'confirmacion', obligatorio: true },
 ];
+
+function sinLimiteNoLoPide(entrada) {
+  return !entrada.sinLimite;
+}
 
 function esDescontoBr(entrada) {
   return entrada.beneficioBr === 'desconto';
@@ -4374,7 +4390,7 @@ var CAMPOS_CASHBACK_ETA = [
   { id: 'porcentaje', etiqueta: 'Porcentaje que se devuelve', tipo: 'numero', paso: 'beneficio', obligatorio: true },
   { id: 'tope', etiqueta: 'Tope por orden', tipo: 'numero', paso: 'beneficio', obligatorio: true },
   { id: 'presupuesto', etiqueta: 'Presupuesto total', tipo: 'numero', paso: 'beneficio', obligatorio: true },
-  { id: 'maxPedidos', etiqueta: 'Máximo de órdenes por persona', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: false },
+  { id: 'maxPedidos', etiqueta: 'Máximo de órdenes por persona', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: sinLimiteNoLoPide },
   { id: 'sinLimite', etiqueta: 'Sin límite de órdenes', tipo: 'casilla', paso: 'beneficio', obligatorio: false },
 
   {
@@ -4523,6 +4539,15 @@ var ESQUEMAS = {
   },
 };
 
+/** Si un tipo hace esa pregunta. El ETA, por ejemplo, no pregunta la fecha de fin. */
+function tieneCampo(esquema, id) {
+  if (!esquema || !esquema.campos) return false;
+  for (var i = 0; i < esquema.campos.length; i++) {
+    if (esquema.campos[i].id === id) return true;
+  }
+  return false;
+}
+
 /** Devuelve el esquema de un tipo, o null. */
 function esquemaDe(tipo) {
   return Object.prototype.hasOwnProperty.call(ESQUEMAS, tipo) ? ESQUEMAS[tipo] : null;
@@ -4558,6 +4583,7 @@ if (typeof module !== 'undefined') {
     hayAlojamientoDeTravel: hayAlojamientoDeTravel,
     hayAutosDeTravel: hayAutosDeTravel,
     esquemaDe: esquemaDe,
+    tieneCampo: tieneCampo,
     camposVisibles: camposVisibles,
     resolverAtributo: resolverAtributo,
     siempre: siempre,
@@ -5485,6 +5511,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var textosDelIdioma = moduloIdiomas.textosDelIdioma;
   var conElIdiomaDe = moduloIdiomas.conElIdiomaDe;
   var partesDeFecha = require('./fechas.js').partesDeFecha;
+  var MODALIDAD_TURBO_POR_DEFECTO = require('./derivados_eta.js').MODALIDAD_TURBO_POR_DEFECTO;
 }
 
 var SEPARADOR_NOMBRE = ' · ';
@@ -5588,9 +5615,12 @@ function nombreDeCampanaEnElIdioma(entrada, esquema) {
   var tienda = String(datos.tienda || datos.marcaAliado || '').trim();
   if (!tienda && esquema && esquema.esDeTravel) tienda = String(datos.organizadorRazonSocial || '').trim();
   // En el cashback por ETA no hay una tienda: hay una modalidad y una ciudad.
-  if (!tienda && esquema && esquema.esPorEta) {
+  // Y una tienda que quedo en la entrada de un tipo anterior no cuenta: el
+  // titulo decia "El Corral · 15 minutos o 100% Cashback" sin que el ETA
+  // preguntara nunca por El Corral.
+  if (esquema && esquema.esPorEta) {
     var ciudad = String(datos.ciudades || '').trim();
-    tienda = ciudad ? 'Turbo Restaurantes ' + ciudad : '';
+    tienda = ciudad ? MODALIDAD_TURBO_POR_DEFECTO + ' ' + ciudad : '';
   }
   if (tienda) tramos.push(tienda);
 
@@ -6202,6 +6232,55 @@ function miembroPorCorreo(equipo, correo) {
 }
 
 /**
+ * La fila de alguien en el equipo, este activo o no.
+ *
+ * Es para escribir, no para dar permisos. Al volver a agregar a alguien que
+ * tenia activo en "no", buscar solo entre los activos no lo encontraba y la
+ * pestaña Equipo quedaba con dos filas del mismo correo.
+ */
+function filaDeMiembro(equipo, correo) {
+  var buscado = String(correo || '').trim().toLowerCase();
+  for (var i = 0; i < equipo.length; i++) {
+    if (equipo[i].email === buscado) return equipo[i];
+  }
+  return null;
+}
+
+/** Solo se atiende a cuentas del dominio, y con forma de correo completa. */
+function esCorreoDelDominio(correo) {
+  return /^[\w.+-]+@rappi\.com$/i.test(String(correo || '').trim());
+}
+
+var FORMA_DE_CORREO = /[\w.+-]+@[\w-]+(\.[\w-]+)+/g;
+
+/**
+ * Los correos que vienen en un texto pegado de cualquier parte.
+ *
+ * Pegado de Gmail o de Slack, el texto trae nombres, picos y "mailto:":
+ * "Ana Pérez <ana@rappi.com>, Bruno Díaz <bruno@rappi.com>". Partirlo por
+ * espacios devolvia "ana" y "pérez" como correos rechazados. Aqui se sacan los
+ * correos por su forma. Lo que sobra y parece un correo mal escrito
+ * ("ana.rappi.com", "ana@rappi") tambien se devuelve, para que se rechace con
+ * su nombre; las palabras sueltas, como los nombres, se ignoran.
+ */
+function separarCorreos(texto) {
+  var original = String(texto || '');
+  var correos = original.match(FORMA_DE_CORREO) || [];
+  var sobrantes = original.replace(FORMA_DE_CORREO, ' ').split(/[\s,;<>()\[\]"]+/);
+
+  var limpios = [];
+  function agregar(candidato) {
+    var correo = String(candidato || '').trim().toLowerCase();
+    if (correo && limpios.indexOf(correo) === -1) limpios.push(correo);
+  }
+  for (var i = 0; i < correos.length; i++) agregar(correos[i]);
+  for (var s = 0; s < sobrantes.length; s++) {
+    if (/@|\w\.\w/.test(sobrantes[s])) agregar(sobrantes[s]);
+  }
+  return limpios;
+}
+
+/**
  * Rol efectivo de quien pide. Quien no esta en el equipo es comercial.
  * Roles: comercial, pruebas, legal, admin.
  */
@@ -6345,6 +6424,9 @@ if (typeof module !== 'undefined') {
     tiposDelPais: tiposDelPais,
     miembroDesdeFila: miembroDesdeFila,
     miembroPorCorreo: miembroPorCorreo,
+    filaDeMiembro: filaDeMiembro,
+    esCorreoDelDominio: esCorreoDelDominio,
+    separarCorreos: separarCorreos,
     rolDe: rolDe,
     puedeVerPiloto: puedeVerPiloto,
     NOMBRE_DEL_DATO: NOMBRE_DEL_DATO,
@@ -6595,7 +6677,13 @@ var PREGUNTAS = {
         ayuda: 'Una sola ciudad. Las campañas publicadas son por ciudad, porque el botón Turbo se habilita ciudad por ciudad.',
         porQue: 'El documento nombra la ciudad tres veces: en el territorio, en las Tiendas Participantes y en el título.',
         ejemplo: 'Bogotá',
-        errores: { vacio: 'Escribe la ciudad donde corre la campaña.' },
+        // Sin los chips del cashback: con ellos se podian agregar dos ciudades
+        // a una pregunta que pide una sola.
+        sugerencias: null,
+        errores: {
+          vacio: 'Escribe la ciudad donde corre la campaña.',
+          unaSola: 'Escribe una sola ciudad. El ETA se promete ciudad por ciudad: para otra ciudad, haz otra campaña.',
+        },
       },
     },
     paso: 'campana',
@@ -6680,7 +6768,10 @@ var PREGUNTAS = {
     porQue: 'Define hasta qué minuto cuenta un pedido. Los pedidos posteriores se procesan como pedidos normales.',
     porDefecto: '23:59',
     placeholders: ['HORA_FIN'],
-    errores: { vacio: 'Elige la hora de fin.' },
+    errores: {
+      vacio: 'Elige la hora de fin.',
+      orden: 'La hora de fin tiene que ser después de la de inicio: la campaña es de un solo día.',
+    },
   }),
 
   // --- El beneficio -------------------------------------------------------
@@ -6741,6 +6832,11 @@ var PREGUNTAS = {
         pregunta: '¿Cuál es el tope por orden?',
         ayuda: 'Lo máximo que una sola orden puede recibir en Créditos, por grande que sea. Las campañas publicadas usan cien mil.',
         porQue: 'Sin tope, una sola orden grande se lleva buena parte del presupuesto de la campaña.',
+        errores: {
+          vacio: 'Escribe el máximo de Créditos que recibe una orden.',
+          cero: 'El tope tiene que ser mayor que cero.',
+          mayorQuePresupuesto: 'El tope por orden es mayor que el presupuesto total. Con eso, la primera orden se lleva toda la campaña. Revisa los dos números.',
+        },
       },
 
       promocao_br: {
@@ -6787,6 +6883,16 @@ var PREGUNTAS = {
         pregunta: '¿Cuántas órdenes puede reclamar la misma persona?',
         ayuda: 'Las campañas publicadas permiten una sola durante toda la vigencia.',
         porQue: 'El documento lo escribe en letras y en cifra, y es lo que frena que una misma cuenta agote el presupuesto.',
+        opciones: [
+          { valor: 'una', etiqueta: 'Una sola orden', nota: 'Lo que usan las campañas publicadas. La segunda orden ya no reclama.' },
+          { valor: 'varias', etiqueta: 'Varias órdenes', nota: 'Tú dices cuántas.' },
+          { valor: 'sin_limite', etiqueta: 'Sin límite', nota: 'Solo lo frenan las existencias.' },
+        ],
+        errores: {
+          vacio: 'Dinos cuántas órdenes puede reclamar la misma persona.',
+          cuantas: 'Escribe cuántas órdenes puede reclamar una persona.',
+          rango: 'Tiene que ser al menos una orden.',
+        },
       },
 
       promocao_br: {
@@ -8464,6 +8570,20 @@ if (typeof module !== 'undefined') {
  */
 
 /** Quita la marca BOM y convierte \r\n y \r sueltos en \n. */
+/**
+ * Si un dato viene con algo adentro. Una lista vacia no cuenta.
+ *
+ * Esta aqui, una sola vez, porque estuvo definida tres veces (en derivados.js,
+ * derivados_br.js y derivados_eta.js) con dos criterios distintos para las
+ * listas. En Apps Script y en el navegador la ultima definicion pisa a las
+ * otras, asi que el mismo dato se evaluaba distinto en Node y en produccion.
+ */
+function tieneValor(valor) {
+  if (valor === null || valor === undefined || valor === '') return false;
+  if (Object.prototype.toString.call(valor) === '[object Array]') return valor.length > 0;
+  return true;
+}
+
 function normalizarTexto(texto) {
   if (texto === null || texto === undefined) return '';
   var limpio = String(texto);
@@ -8510,6 +8630,7 @@ function tieneRetornoDeCarro(texto) {
 
 if (typeof module !== 'undefined') {
   module.exports = {
+    tieneValor: tieneValor,
     normalizarTexto: normalizarTexto,
     lineasDe: lineasDe,
     recortarFinalDeLinea: recortarFinalDeLinea,
@@ -8911,6 +9032,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var moduloEsquemas = require('./esquemas.js');
   var esquemaDe = moduloEsquemas.esquemaDe;
   var camposVisibles = moduloEsquemas.camposVisibles;
+  var tieneCampo = moduloEsquemas.tieneCampo;
   var resolverAtributo = moduloEsquemas.resolverAtributo;
 
   var moduloFechas = require('./fechas.js');
@@ -9051,16 +9173,45 @@ function validarFormatos(entrada, esquema, idioma) {
   return errores;
 }
 
-/** Vigencia: fin posterior al inicio y nada anterior a la fecha de referencia. */
-function validarVigencia(entrada, fechaReferencia, tipo, idioma) {
+/**
+ * El dia en que termina la campana.
+ *
+ * Un tipo que no pregunta la fecha de fin (el cashback por ETA es de un solo
+ * dia) termina el dia que empieza. Leer entrada.fechaFin ahi era leer un dato
+ * que la interfaz fijaba una vez y nunca actualizaba: al cambiar el dia de
+ * inicio, el resumen decia "la campana no puede terminar antes de empezar" y
+ * no habia ninguna pregunta donde arreglarlo.
+ */
+function fechaFinDeLaCampana(entrada, esquema) {
+  if (esquema && !tieneCampo(esquema, 'fechaFin')) return entrada.fechaInicio;
+  return entrada.fechaFin;
+}
+
+/**
+ * Vigencia: fin posterior al inicio y nada anterior a la fecha de referencia.
+ *
+ * esAmpliacion: la campana ya arranco y se esta ampliando. Ahi el inicio en el
+ * pasado es lo normal, no un error. Sin esta excepcion, ampliar solo funcionaba
+ * el mismo dia del inicio, porque el documento nuevo se vuelve a validar
+ * completo y "Esa fecha ya paso" tumbaba la ampliacion desde el segundo dia.
+ */
+function validarVigencia(entrada, fechaReferencia, esquema, idioma, esAmpliacion) {
   var errores = [];
+  var tipo = esquema ? esquema.id : undefined;
+  var preguntaElFin = !esquema || tieneCampo(esquema, 'fechaFin');
 
   var inicio = comoNumeroFechaHora(entrada.fechaInicio, entrada.horaInicio);
-  var fin = comoNumeroFechaHora(entrada.fechaFin, entrada.horaFin);
+  var fin = comoNumeroFechaHora(fechaFinDeLaCampana(entrada, esquema), entrada.horaFin);
   if (inicio !== null && fin !== null && fin <= inicio) {
-    errores.push(error('fechaFin', mensajeDe('fechaFin', tipo, 'orden', idioma,
-      'La campaña no puede terminar antes de empezar. Revisa la fecha y la hora de fin.')));
+    // El error va a la pregunta que existe: en un tipo de un solo dia, la hora.
+    errores.push(preguntaElFin
+      ? error('fechaFin', mensajeDe('fechaFin', tipo, 'orden', idioma,
+        'La campaña no puede terminar antes de empezar. Revisa la fecha y la hora de fin.'))
+      : error('horaFin', mensajeDe('horaFin', tipo, 'orden', idioma,
+        'La hora de fin tiene que ser después de la de inicio.')));
   }
+
+  if (esAmpliacion) return errores;
 
   var hoy = comoNumeroFecha(fechaReferencia);
   var dia = comoNumeroFecha(entrada.fechaInicio);
@@ -9087,7 +9238,25 @@ function validarOrganizador(entrada, pais) {
  * habria salido con la palabra "(confirmar)" dentro. Para marcar lo que falta
  * esta la columna por_confirmar_en_pruebas, no el texto.
  */
-var MARCAS_DE_ANOTACION = /\((confirmar|revisar|pendiente|verificar|por confirmar)\)|\bTODO\b|\?\?\?/i;
+var MARCAS_DE_ANOTACION = [
+  // Entre parentesis o corchetes, con lo que sea alrededor: "(a confirmar)",
+  // "[pendiente]", "(revisar con Legal)", "(por definir)".
+  /[\[(][^\])]*\b(confirmar|revisar|pendiente|verificar|definir|ojo|dudoso)\b[^\])]*[\])]/i,
+  // Las marcas de programador, solo en mayusculas: "todo" es una palabra normal.
+  /\b(TODO|TBD|FIXME|XXX|PENDIENTE)\b/,
+  // Signos de duda, y la sintaxis de los modelos, que en un valor del pais no
+  // pinta nada.
+  /\?\?|\(\?\)|\{\{|\[\[/,
+];
+
+/** true si el valor trae una anotacion interna. */
+function tieneMarcaDeAnotacion(valor) {
+  var texto = String(valor || '');
+  for (var i = 0; i < MARCAS_DE_ANOTACION.length; i++) {
+    if (MARCAS_DE_ANOTACION[i].test(texto)) return true;
+  }
+  return false;
+}
 
 /**
  * Un valor del pais con una anotacion interna adentro no se publica.
@@ -9105,7 +9274,7 @@ function validarAnotacionesDelPais(pais) {
 
     var valor = pais[llave];
     if (typeof valor !== 'string') continue;
-    if (!MARCAS_DE_ANOTACION.test(valor)) continue;
+    if (!tieneMarcaDeAnotacion(valor)) continue;
 
     errores.push(error('pais',
       'La configuración de ' + (pais.nombre || pais.codigo) + ' tiene una nota interna dentro de un dato que se imprime: "' +
@@ -9124,13 +9293,40 @@ function validarAnotacionesDelPais(pais) {
  * error. Regla 2 de CLAUDE.md: si falta un dato, no se genera.
  */
 function validarIdiomaDelPais(esquema, pais) {
-  if (!esquema || !esquema.idioma) return null;
+  if (!esquema) return null;
   var idiomaDelPais = String((pais && pais.idioma) || '').trim().toLowerCase();
-  if (idiomaDelPais === esquema.idioma) return null;
-  return error('pais', 'La configuración de ' + (pais.nombre || pais.codigo) +
-    ' no dice que el documento va en ' + (esquema.idioma === 'pt' ? 'portugués' : esquema.idioma) +
-    ': la columna idioma de la pestaña Paises tiene que decir "' + esquema.idioma +
-    '". Sin eso las fechas y los montos saldrían en español.');
+
+  if (esquema.idioma) {
+    if (idiomaDelPais === esquema.idioma) return null;
+    return error('pais', 'La configuración de ' + (pais.nombre || pais.codigo) +
+      ' no dice que el documento va en ' + nombreDelIdioma(esquema.idioma) +
+      ': la columna idioma de la pestaña Paises tiene que decir "' + esquema.idioma +
+      '". Sin eso las fechas y los montos saldrían en español.');
+  }
+
+  // Al reves tambien. Un modelo en espanol habilitado en un pais que genera en
+  // otro idioma saldria mezclado: "vinte por cento" y "horário de Brasília"
+  // dentro de un articulado en espanol, sin un solo error.
+  if (!idiomaDelPais || idiomaDelPais === 'es') return null;
+  return error('tipo', 'Este tipo de campaña está escrito en español y la configuración de ' +
+    (pais.nombre || pais.codigo) + ' dice que sus documentos van en ' + nombreDelIdioma(idiomaDelPais) +
+    '. Hasta que Legal tenga este modelo en ese idioma, no se puede generar ahí.');
+}
+
+function nombreDelIdioma(codigo) {
+  return codigo === 'pt' ? 'portugués' : codigo === 'es' ? 'español' : codigo;
+}
+
+/**
+ * El cashback por ETA es de una sola ciudad.
+ *
+ * La pregunta lo dice, pero los chips de ciudades heredados del cashback dejaban
+ * agregar dos, y el documento salia "en la ciudad de Bogotá, Medellín".
+ */
+function validarEta(entrada, tipo, idioma) {
+  if (separarPorComas(entrada.ciudades).length <= 1) return [];
+  return [error('ciudades', mensajeDe('ciudades', tipo, 'unaSola', idioma,
+    'Escribe una sola ciudad. Para otra ciudad, haz otra campaña.'))];
 }
 
 /** Cruces propios del Cashback. */
@@ -9153,10 +9349,11 @@ function validarCashback(entrada, tipo, idioma) {
 }
 
 /** Cruces de los Creditos: carga y redencion frente a la vigencia. */
-function validarCreditos(entrada, tipo, idioma) {
+function validarCreditos(entrada, esquema, idioma) {
   var errores = [];
+  var tipo = esquema ? esquema.id : undefined;
   var inicio = comoNumeroFecha(entrada.fechaInicio);
-  var fin = comoNumeroFecha(entrada.fechaFin);
+  var fin = comoNumeroFecha(fechaFinDeLaCampana(entrada, esquema));
 
   if (entrada.carga === 'fecha') {
     var carga = comoNumeroFecha(entrada.fechaCarga);
@@ -9321,7 +9518,7 @@ function validarOrganizadorDeTravel(entrada, pais) {
 }
 
 /** Las reglas propias de los dos tipos de Travel. Seccion 10 del modelo base. */
-function validarTravel(entrada, pais, fechaReferencia) {
+function validarTravel(entrada, pais, fechaReferencia, esAmpliacion) {
   var errores = [];
   var esDescuento = entrada.tipo === 'descuento_travel';
 
@@ -9382,10 +9579,11 @@ function validarTravel(entrada, pais, fechaReferencia) {
     errores.push(error('metodoPago', 'Si pueden participar quienes pagan con RappiCard, el medio de pago tiene que ser "digitales, excepto efectivo". Si no, el documento se contradice.'));
   }
 
-  // La primera comunicacion nunca puede haber salido ya: el T&C se publica antes.
+  // La primera comunicacion nunca puede haber salido ya: el T&C se publica
+  // antes. Salvo al ampliar, que la campana ya esta corriendo.
   var hoy = comoNumeroFecha(fechaReferencia);
   var primera = comoNumeroFecha(entrada.fechaPrimeraComunicacion);
-  if (hoy !== null && primera !== null && primera < hoy) {
+  if (!esAmpliacion && hoy !== null && primera !== null && primera < hoy) {
     errores.push(error('fechaPrimeraComunicacion', 'La primera comunicación no puede ser una fecha que ya pasó: el T&C se publica antes de que salga la primera pieza.'));
   }
 
@@ -9497,9 +9695,11 @@ function validarNegocio(entrada, esquema) {
 /**
  * Valida la solicitud completa.
  *
- * contexto: { fechaReferencia, usuarioEnEquipo, idioma }
+ * contexto: { fechaReferencia, usuarioEnEquipo, idioma, ampliacion }
  * `idioma` es el de la interfaz de quien pide (es o pt): los mensajes salen en
  * ese idioma cuando la pregunta los tiene traducidos. El documento no cambia.
+ * `ampliacion` es true cuando se rearma el documento de una campana que ya
+ * arranco: las fechas que ya pasaron dejan de ser un error.
  * Devuelve { valido, errores: [{campo, mensaje}] }.
  */
 function validarSolicitud(entrada, pais, contexto) {
@@ -9519,9 +9719,9 @@ function validarSolicitud(entrada, pais, contexto) {
 
   errores = errores.concat(validarObligatorios(entrada, esquema, idioma));
   errores = errores.concat(validarFormatos(entrada, esquema, idioma));
-  errores = errores.concat(validarVigencia(entrada, opciones.fechaReferencia, esquema.id, idioma));
+  errores = errores.concat(validarVigencia(entrada, opciones.fechaReferencia, esquema, idioma, !!opciones.ampliacion));
   errores = errores.concat(validarOrganizador(entrada, pais));
-  errores = errores.concat(validarCreditos(entrada, esquema.id, idioma));
+  errores = errores.concat(validarCreditos(entrada, esquema, idioma));
   errores = errores.concat(validarNegocio(entrada, esquema));
 
   errores = errores.concat(validarAnotacionesDelPais(pais));
@@ -9530,6 +9730,9 @@ function validarSolicitud(entrada, pais, contexto) {
   // mayor que el presupuesto deja que la primera orden se lleve la campana.
   if (entrada.tipo === 'cashback' || entrada.tipo === 'cashback_eta') {
     errores = errores.concat(validarCashback(entrada, esquema.id, idioma));
+  }
+  if (esquema.esPorEta) {
+    errores = errores.concat(validarEta(entrada, esquema.id, idioma));
   }
   if (entrada.tipo === 'carrera_compras') {
     errores = errores.concat(validarCarrera(entrada, esquema.id, idioma));
@@ -9543,7 +9746,7 @@ function validarSolicitud(entrada, pais, contexto) {
     if (!estadoTravel.disponible) {
       return { valido: false, errores: [error('tipo', estadoTravel.motivo)] };
     }
-    errores = errores.concat(validarTravel(entrada, pais, opciones.fechaReferencia));
+    errores = errores.concat(validarTravel(entrada, pais, opciones.fechaReferencia, !!opciones.ampliacion));
   }
 
   return { valido: errores.length === 0, errores: errores };
@@ -9558,6 +9761,7 @@ if (typeof module !== 'undefined') {
     validarTipo: validarTipo,
     validarObligatorios: validarObligatorios,
     validarVigencia: validarVigencia,
+    tieneMarcaDeAnotacion: tieneMarcaDeAnotacion,
     validarTiendas: validarTiendas,
     validarNegocio: validarNegocio,
     validarTravel: validarTravel,
@@ -9569,6 +9773,8 @@ if (typeof module !== 'undefined') {
     estaVacio: estaVacio,
     mensajeDe: mensajeDe,
     validarIdiomaDelPais: validarIdiomaDelPais,
+    fechaFinDeLaCampana: fechaFinDeLaCampana,
+    validarEta: validarEta,
   };
 }
 
@@ -9629,13 +9835,15 @@ if (typeof module !== 'undefined') {
     },
 
     previsualizar: function (entrada) {
-      var pais = paisPorCodigo(paises, entrada && entrada.pais);
-      return generarTexto(entrada || {}, pais, MODELOS, { fechaReferencia: hoy(), usuarioEnEquipo: true });
+      entrada = sinRastroDeAmpliacion(entrada || {});
+      var pais = paisPorCodigo(paises, entrada.pais);
+      return generarTexto(entrada, pais, MODELOS, { fechaReferencia: hoy(), usuarioEnEquipo: true });
     },
 
     generar: function (entrada) {
-      var pais = paisPorCodigo(paises, entrada && entrada.pais);
-      var resultado = generarTexto(entrada || {}, pais, MODELOS, { fechaReferencia: hoy(), usuarioEnEquipo: true });
+      entrada = sinRastroDeAmpliacion(entrada || {});
+      var pais = paisPorCodigo(paises, entrada.pais);
+      var resultado = generarTexto(entrada, pais, MODELOS, { fechaReferencia: hoy(), usuarioEnEquipo: true });
       if (!resultado.valido) return { valido: false, errores: resultado.errores };
 
       consecutivo += 1;
@@ -9653,9 +9861,9 @@ if (typeof module !== 'undefined') {
         pais: pais.codigo, tipo: entrada.tipo,
         version_modelo: MODELOS.versiones[esquemaDe(entrada.tipo).modelo] || '',
         nombre_campana: nombreCampana, direccion_sugerida: direccionDeCampana(nombreCampana),
-        tienda: entrada.tienda || '',
+        tienda: tieneCampo(esquema, 'tienda') ? (entrada.tienda || '') : '',
         organizador: entrada.organizadorRazonSocial || '', id_organizador: entrada.organizadorId || '',
-        fecha_inicio: entrada.fechaInicio || '', fecha_fin: entrada.fechaFin || '',
+        fecha_inicio: entrada.fechaInicio || '', fecha_fin: fechaFinDeLaCampana(entrada, esquema) || '',
         link_doc: '', estado: 'generado', link_publicado: '', fecha_publicacion: '',
         datos_json: JSON.stringify(entrada), _fila: solicitudes.length + 2,
       });
@@ -9685,7 +9893,7 @@ if (typeof module !== 'undefined') {
 
     datosDeSolicitud: function (id) {
       for (var i = 0; i < solicitudes.length; i++) {
-        if (solicitudes[i].id === id) return { valido: true, entrada: JSON.parse(solicitudes[i].datos_json) };
+        if (solicitudes[i].id === id) return { valido: true, entrada: sinRastroDeAmpliacion(JSON.parse(solicitudes[i].datos_json)) };
       }
       return { valido: false, errores: [{ campo: 'id', mensaje: 'No encontramos esa solicitud.' }] };
     },
@@ -9726,11 +9934,38 @@ if (typeof module !== 'undefined') {
 
     adminGuardarMiembro: function (miembro) {
       var correo = String(miembro.email || '').trim().toLowerCase();
-      if (!/@rappi\.com$/.test(correo)) return { valido: false, errores: [{ campo: 'email', mensaje: 'El correo debe ser @rappi.com.' }] };
-      var existente = miembroPorCorreo(equipo, correo);
-      var fila = { email: correo, nombre: miembro.nombre || '', rol: miembro.rol || 'comercial', pais: String(miembro.pais || '').toUpperCase(), activo: true };
+      if (!esCorreoDelDominio(correo)) return { valido: false, errores: [{ campo: 'email', mensaje: 'El correo debe ser @rappi.com.' }] };
+      var rol = String(miembro.rol || 'comercial').trim().toLowerCase();
+      if (ROLES.indexOf(rol) === -1) return { valido: false, errores: [{ campo: 'rol', mensaje: 'Ese rol no existe.' }] };
+      var pais = String(miembro.pais || '').trim().toUpperCase();
+      if (pais && !paisPorCodigo(paises, pais)) return { valido: false, errores: [{ campo: 'pais', mensaje: 'No encontramos el país "' + pais + '". Escribe el código de dos letras de la pestaña Paises, como CO o MX, o déjalo vacío.' }] };
+      var existente = filaDeMiembro(equipo, correo);
+      var fila = { email: correo, nombre: miembro.nombre || '', rol: rol, pais: pais, activo: true };
       if (existente) { for (var k in fila) existente[k] = fila[k]; } else { equipo.push(fila); }
       return { valido: true };
+    },
+
+    // El mismo contrato que Api.js: { valido, agregados, yaEstaban, rechazados }.
+    adminAgregarMiembros: function (texto, rol, pais) {
+      if (ROLES.indexOf(rol) === -1) return { valido: false, errores: [{ campo: 'rol', mensaje: 'Ese rol no existe.' }] };
+      var codigoPais = String(pais || '').trim().toUpperCase();
+      if (codigoPais && !paisPorCodigo(paises, codigoPais)) return { valido: false, errores: [{ campo: 'pais', mensaje: 'No encontramos el país "' + codigoPais + '". Escribe el código de dos letras de la pestaña Paises, como CO o MX, o déjalo vacío.' }] };
+      var correos = separarCorreos(texto);
+      if (correos.length === 0) return { valido: false, errores: [{ campo: 'correos', mensaje: 'Pega al menos un correo.' }] };
+
+      var agregados = [];
+      var yaEstaban = [];
+      var rechazados = [];
+      for (var i = 0; i < correos.length; i++) {
+        var correo = correos[i];
+        if (!esCorreoDelDominio(correo)) { rechazados.push(correo); continue; }
+        var fila = filaDeMiembro(equipo, correo);
+        if (fila && fila.activo) { yaEstaban.push(correo); continue; }
+        var datos = { email: correo, nombre: fila ? fila.nombre : '', rol: rol, pais: codigoPais, activo: true };
+        if (fila) { for (var k in datos) fila[k] = datos[k]; } else { equipo.push(datos); }
+        agregados.push(correo);
+      }
+      return { valido: true, agregados: agregados, yaEstaban: yaEstaban, rechazados: rechazados };
     },
 
     adminSolicitudes: function (busqueda) {
@@ -11645,8 +11880,14 @@ function alResponder(campoId, valor, campos, indice) {
   E.respondidas[campoId] = true;
 
   // Al elegir el día de inicio se propone el mismo día de fin: tres de cada
-  // cuatro campañas de cashback duran un solo día.
-  if (campoId === 'fechaInicio' && !estado.entrada().fechaFin) estado.fijar('fechaFin', valor);
+  // cuatro campañas de cashback duran un solo día. Y si el tipo no pregunta la
+  // fecha de fin (el ETA es de un solo día), el fin ES el inicio y se mantiene
+  // igual siempre: antes se fijaba una sola vez, y al cambiar el día de inicio
+  // quedaba una fecha de fin vieja que ninguna pregunta dejaba corregir.
+  if (campoId === 'fechaInicio') {
+    var preguntaElFin = tieneCampo(esquemaDe(estado.entrada().tipo), 'fechaFin');
+    if (!estado.entrada().fechaFin || !preguntaElFin) estado.fijar('fechaFin', valor);
+  }
   if (campoId === 'pais') estado.fijar('tipo', null);
 
   // Cambiar de negocio invalida el tipo elegido: los tipos de Rappi no son los
@@ -11809,6 +12050,7 @@ RM.pasos = {
   comoTexto: comoTexto,
   columnaDocumento: columnaDocumento,
   calculadora: calculadora,
+  avisoDePaisEnPruebas: avisoDePaisEnPruebas,
 };
 
 })();
@@ -12623,6 +12865,9 @@ function pantallaListo(raiz) {
   var resultado = E.resultado || {};
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
     crear('h1', { texto: estado.T('Tu T&C está listo') }),
+    // En un pais en pruebas el aviso de "no publiques" tiene que estar en la
+    // pantalla que explica como publicar, no solo en las de antes.
+    RM.pasos.avisoDePaisEnPruebas(),
   ]);
 
   if (resultado.demostracion) {
@@ -12960,7 +13205,6 @@ function usarComoBase(id) {
     base.fechaFinRedencion = '';
     base.fechaNotificacion = '';
     base.declaracion = false;
-    base.nombreCampana = (base.nombreCampana || '') + ' (copia)';
 
     estado.reiniciarFormulario(base);
     E.filtroRespondido = true;

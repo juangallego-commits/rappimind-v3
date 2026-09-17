@@ -446,3 +446,33 @@ Salieron al revisar lo construido la noche anterior. Ninguno cambia texto legal.
    partir de esas fechas la herramienta deja de ofrecerlos y manda a Legal. Si
    Legal publica las versiones nuevas, hay que actualizar `data/tyc_genericos.json`
    antes, o el 2 de enero ningún comercial de descuentos va a tener enlace.
+8. **ETA, "tú" y "el Usuario/Consumidor" en el mismo documento.** El modelo del
+   cashback por ETA está escrito en tercera persona ("el Usuario/Consumidor"),
+   como los publicados de Bogotá y Barranquilla, pero incluye los bloques
+   compartidos de acreditación, vigencia de los Créditos, datos personales y ley,
+   que le hablan al lector de "tú" ("se acreditarán en tu Billetera", "se te
+   informará a través de la Plataforma"). El documento sale mezclado. Es texto
+   legal: hay que decidir si esos bloques se reescriben en tercera persona para
+   este modelo o si el ETA tutea como los demás. Se ve en
+   `pruebas/salidas_esperadas/ETA01.txt`.
+9. **ETA, "pedido" y "orden" para lo mismo.** El bloque compartido de
+   acreditación habla de "cada pedido" y las definiciones del ETA de "la orden"
+   y de "un porcentaje o valor del pedido". Los publicados usan "orden". Misma
+   decisión que la anterior: es del bloque compartido, no del modelo.
+10. **ETA, los dos casos dorados.** `ETA01.txt` (Bogotá) y `ETA02.txt`
+    (Barranquilla) son lo que el motor produce hoy con los datos de los dos T&C
+    publicados. Protegen el texto de que se mueva sin querer; no dicen que sea el
+    aprobado. Las diferencias a propósito con los publicados están en
+    `docs/MEJORAS_ETA.md`. Conviene compararlos con los dos originales.
+11. **Brasil, la fila del país tiene valores en español que hoy no se imprimen.**
+    `pais_legal` dice "a República Federativa del Brasil" (mezcla) y
+    `entidad_vigilancia` dice "el PROCON y la Secretaría Nacional del Consumidor
+    (SENACON)". El modelo brasileño no los usa, así que no salen en el documento,
+    y ya están en la lista de datos por confirmar (pregunta 3 del encargo 01).
+    Si algún día un modelo de Brasil los pide, saldrían así.
+12. **T&C generales, dos nombres con guion.** "Cupon de descuento - Valor fijo" y
+    "Cupon de descuento - Toda la tienda" son los únicos textos visibles de toda
+    la herramienta con un guion como signo de puntuación (regla 8 de
+    `CLAUDE.md`). Están copiados tal cual del Sheet de Legal. Si ese es el nombre
+    oficial de las piezas, se quedan; si no, quedarían como "Cupón de descuento:
+    valor fijo" y "Cupón de descuento: toda la tienda". Decisión de Juan.
