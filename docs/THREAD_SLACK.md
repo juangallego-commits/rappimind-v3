@@ -67,8 +67,10 @@ Un par de cosas que todavia NO hace, para que no las busquen:
 • No publica sola en Squarespace. Genera el documento y ustedes lo pegan.
 • No cubre sorteos ni rifas ni nada con azar. Eso sigue llegando a Legal, y la
   herramienta lo desvia sola con un formulario.
-• No cubre descuentos que no sean cashback en los paises hispanos. En Colombia
-  eso es casi la mitad de lo que piden, asi que es lo siguiente que vamos a hacer.
+• Descuentos y cupones: en Colombia ya no genera documento, entrega el enlace
+  del T&C general que ya publicamos (son quince). En los demas paises todavia no
+  cubre descuentos que no sean cashback: si tienen T&C generales publicados,
+  mandenmelos y los metemos igual.
 
 El link se los paso por interno para no dejarlo abierto en el canal.
 

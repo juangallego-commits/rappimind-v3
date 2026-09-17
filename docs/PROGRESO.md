@@ -563,3 +563,119 @@ Todo está en `docs/PENDIENTES_LEGAL.md`, sección "T&C generales de Colombia":
   ya no está en la de 2026, y es el tipo que RappiMind sí genera.
 - **Que alguien abra los quince enlaces.** La red de este entorno bloquea
   `promos.rappi.com`, así que están bien copiados pero sin verificar.
+
+## 17 de septiembre · La revisión crítica de la noche anterior, y los tres encargos
+
+### Qué se revisó y qué se encontró
+
+Todo lo que entró entre `aff1bb2` y `393f7bb` se leyó con ojos críticos, por grupos
+de archivos y con agentes en paralelo que tenían prohibido tocar el repositorio:
+cada hallazgo se reprodujo en Node o en el navegador antes de darlo por cierto, y
+lo arreglé yo con su prueba. Salieron veinticinco defectos reales. Los que más
+importan, en lo que habría visto un comercial:
+
+1. **El resumen mentía en los países en pruebas.** En Brasil, México o cualquier
+   país en piloto, la lista "Te falta:" mostraba los datos legales por confirmar
+   del país ("cómo se separan los miles en un monto...") en vez de lo que le
+   faltaba al comercial, que casi siempre era marcar la casilla. La causa: una
+   variable declarada dos veces en la misma función, y la segunda pisaba a la
+   primera. Ahora hay una prueba que caza ese patrón en todo el cliente y el
+   servidor.
+2. **Brasil aceptaba un 500% de descuento, un tope de R$0 y cero pedidos**, y los
+   imprimía en un documento publicable. Ahora tiene rangos como Colombia.
+3. **Con la interfaz en portugués, una campaña de Colombia preguntaba "em reais"
+   y "parceiro"**, porque la traducción se aplicaba por pregunta sin mirar el tipo
+   de campaña. Las traducciones ahora tienen variantes por tipo, igual que las
+   preguntas en español.
+4. **Ningún mensaje de error salía en portugués**, y en español solo se usaba el
+   mensaje de "vacío": un KAM de Brasil leía "Escribe el parceiro donde aplica la
+   campaña." en medio de una pantalla en portugués, y un comercial de Colombia leía
+   "Tope por pedido debe ser al menos 1" en vez de la frase que alguien escribió
+   para eso. Ahora la validación usa los mensajes escritos para cada pregunta, en
+   el idioma de la interfaz.
+5. **Textos en español regados por el camino de Brasil**: el desplegable "¿Por qué
+   te preguntamos esto?" en país y tipo, las notas de los países, "Así queda en tu
+   T&C", "Opcional", "Paso 2 de 4", "Una sola vez", la vista previa vacía, la razón
+   de la pantalla de Legal, el aviso del resumen, la casilla de declaración y la
+   pantalla final entera. Y las fechas y horas de las respuestas plegadas salían en
+   español ("1 de octubre de 2026", "12:00 a. m.") al lado de un documento que
+   decía "1 de outubro de 2026 às 00:00".
+6. **"Así queda en tu T&C" en Brasil mostraba texto de Colombia**: el tope como
+   "sessenta (60) Créditos" en una campaña que no da Créditos, y la cláusula del
+   mínimo en español. Las variantes de Brasil heredaban los placeholders de
+   Colombia.
+7. **Brasil sin la columna `idioma` generaba un documento en portugués con las
+   fechas y los montos en español, sin ningún error.** Ahora no genera y dice qué
+   celda de la pestaña Paises falta.
+8. **Los T&C generales avisaban tarde.** En el T&C repetido, el "confirma con
+   Legal cuál va" quedaba debajo del enlace y fuera de la pantalla, después de una
+   caja que decía "copia el enlace y ponlo en la pieza, tal cual". Ahora lo
+   pendiente va antes del enlace. Y el 1 de enero de 2027, cuando venzan los
+   quince, la tarjeta ya no dirá "Buena noticia": dirá que vencieron y ofrecerá el
+   formulario de Legal.
+9. **Cosas más chicas**: el contador "Faltam 3 dados" dependía de una falta de
+   ortografía en la traducción; el tope de Brasil no se veía como opcional; "O que
+   o usuário ganha?" no avanzaba sola; un número negativo tumbaba la vista previa;
+   sin parceiro la viñeta quedaba "do Parceiro , na plataforma"; el buscador de
+   Mis campañas cortaba su propio texto de ayuda; la demostración armaba el título
+   de Squarespace sin el país ("1 oct 2026" contra "1 OUT 2026"); y varias
+   traducciones existían y nadie las usaba.
+
+Además Brasil tiene ahora sus cuatro casos dorados (`BR01` a `BR04`): el texto
+aprobado queda protegido carácter por carácter, como el de Colombia.
+
+### Cómo probarlo
+
+```
+npm test                                                        # 390 pruebas
+npm run demo
+node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js        # 38 revisiones
+node .claude/skills/flujo-y-ux/scripts/recorrer-en-portugues.js # 25 revisiones
+node .claude/skills/flujo-y-ux/scripts/capturar-pantallas.js    # las 33 capturas y textos.json
+```
+
+Los recorridos ahora cubren los T&C generales (la tarjeta, la lista, el repetido,
+la vuelta a los tipos) y el camino de Brasil en portugués hasta el resumen, con
+sus mensajes de error y sus fechas.
+
+### Los tres encargos para Claude chat
+
+Están en `docs/encargos/`, un archivo por encargo, cada uno con una línea de
+instrucciones al principio y después el mensaje entero para pegar:
+
+| Archivo | Qué le pide | Qué adjuntar |
+|---|---|---|
+| `01-revision-legal.md` | Las 49 preguntas legales (22 bloqueantes), con un bloque final "PARA EL REPOSITORIO" con los nombres de nuestros campos | Nada |
+| `02-revision-interfaz.md` | La revisión del copy y del recorrido de las 33 pantallas, con "ACTUAL" copiado letra por letra para buscar y reemplazar | Dieciséis capturas, listadas en orden en el propio archivo |
+| `03-leyendas.md` | El catálogo de leyendas, con las cuatro piezas reales, el criterio de Legal CO 2024 y las fichas en el formato de `modelos/` | Los dos playbooks en pptx |
+
+**En qué orden mandarlos.** Primero el 01: es el más rápido de mandar (no lleva
+adjuntos), sus respuestas son las que destraban a los ocho países en pruebas y a
+Brasil, y son las mismas preguntas que van a llegar por el canal de Legal Global.
+Segundo el 03, que es el más importante y el más largo de responder: cuanto antes
+arranque, antes vuelve. Tercero el 02, que ya no tiene nada de lo que sabíamos
+roto (las capturas se regeneraron esta noche con todo arreglado). Las tres son
+conversaciones separadas, así que se pueden mandar el mismo día.
+
+### Qué necesito de Juan
+
+1. **Abrir los quince enlaces** de los T&C generales de Colombia. La red de este
+   entorno bloquea `promos.rappi.com`; están copiados letra por letra del Sheet
+   "T&C Generales 2026", pero nadie ha comprobado que abran. Y de paso el de
+   privacidad de Ecuador, que dice "persolanes".
+2. **El T&C general de Cashback** (`promos.rappi.com/colombia/2025/cashbackco`)
+   salió de la lista de 2026. Si sigue publicado, hay dos respaldos para la misma
+   campaña. Está como pregunta 47 del encargo 01.
+3. **La hoja 2 del Excel de 2024** ya está transcrita dentro de los encargos 01 y
+   03 (la saqué del Sheet de tu Drive). Falta que digas si el criterio sigue
+   vigente: es la pregunta 49 del encargo 01.
+4. **El thread de Slack** está listo en `docs/THREAD_SLACK.md`, con una línea
+   corregida: ya no dice que los descuentos no están cubiertos en Colombia.
+5. **Brasil, dos decisiones nuevas** en `docs/PENDIENTES_LEGAL.md`: la hora de
+   inicio (00:00 por defecto contra 00:01 en los aprobados) y "um (1) pedido"
+   contra "1 (um) pedido".
+6. **Los cuatro documentos dorados de Brasil** (`pruebas/salidas_esperadas/BR01.txt`
+   a `BR04.txt`) contra los cuatro T&C aprobados que mandó Legal Brasil.
+7. Correr `setup()` después del despliegue no hace falta por esto: no hay
+   columnas nuevas. Sí hay que **desplegar** para que los arreglos lleguen a la
+   herramienta; avísame y lo disparo.

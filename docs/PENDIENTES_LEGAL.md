@@ -409,3 +409,40 @@ También quedan sin verificar los quince enlaces: la red de este entorno bloquea
 `promos.rappi.com`. Está comprobado que están copiados letra por letra del Excel,
 pero no que las páginas abran. Alguien con acceso tiene que darles clic antes de
 que un comercial pegue uno en una pieza.
+
+## De la revisión crítica del 17 de septiembre (noche)
+
+Salieron al revisar lo construido la noche anterior. Ninguno cambia texto legal.
+
+1. **Brasil, la hora de inicio.** El formulario preselecciona 00:00 en todos los
+   países. Los cuatro T&C aprobados de Brasil arrancan a las 00:01. La ayuda en
+   portugués lo dice ahora con todas las letras ("Deixamos 00:00 por padrão. Os
+   quatro documentos aprovados começam às 00:01"), pero si Legal Brasil exige
+   00:01, hay que cambiar el valor por defecto para Brasil, no solo la ayuda.
+2. **Brasil, "um (1) pedido" o "1 (um) pedido".** La ayuda cita el documento como
+   "o limite de 1 (um) pedido por usuário" (cifra primero, como los montos
+   brasileños) y el motor imprime "um (1) pedido". Los cuatro aprobados no están en
+   el repositorio: hace falta que Legal Brasil diga cuál es la forma aprobada, y se
+   corrige la que esté mal.
+3. **Brasil, los cuatro casos dorados.** `pruebas/salidas_esperadas/BR01.txt` a
+   `BR04.txt` son el documento que el motor produce hoy para Desconto, Frete
+   Grátis, Taxa de serviço y Taxa e frete. Protegen el texto de que se mueva sin
+   querer; no dicen que sea el aprobado. Conviene compararlos con los cuatro T&C
+   que mandó Legal Brasil.
+4. **Brasil, montos de un real y con centavos.** El motor escribiría "R$1,00 (um
+   reais)" para un tope de 1, y trunca los centavos sin avisar ("R$20,50" sale
+   como "R$20,00"). Desde la pantalla no se puede escribir ninguno de los dos (el
+   campo solo acepta dígitos), así que no urge, pero queda anotado.
+5. **Brasil, los datos en español de la fila del país** (la entidad de vigilancia,
+   el nombre del país, la ley aplicable, la jurisdicción y el nombre de la política
+   de privacidad) ahora aparecen nombrados en el aviso del resumen como datos por
+   confirmar. Son la pregunta 3 del encargo 01.
+6. **T&C generales, la fila 17.** El nombre y la descripción traían un doble
+   espacio ("20%  para"). Se dejó un solo espacio, con el mismo criterio de las
+   filas 10 y 11: es espacio en blanco, no texto. La descripción repite el nombre,
+   y la pantalla ya no la muestra dos veces.
+7. **T&C generales, el 1 de noviembre y el 1 de enero.** La Tarifa de Servicio
+   Gratis vence el 31 de octubre de 2026 y los otros catorce el 31 de diciembre. A
+   partir de esas fechas la herramienta deja de ofrecerlos y manda a Legal. Si
+   Legal publica las versiones nuevas, hay que actualizar `data/tyc_genericos.json`
+   antes, o el 2 de enero ningún comercial de descuentos va a tener enlace.

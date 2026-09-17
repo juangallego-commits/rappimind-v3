@@ -472,3 +472,56 @@ navegador, así que `data/tyc_genericos.json` se convierte en `dist/TycGenericos
 y el build lo mete dentro del HTML del motor, como los modelos y los países. Un
 archivo suelto en `dist/` es del servidor y el navegador nunca lo ve: esa es la
 frontera 2, y ya dejó una pantalla sin una sola opción que ofrecer.
+
+## La revisión crítica del 17 de septiembre: doce decisiones técnicas
+
+**Fecha:** 17 de septiembre de 2026.
+
+1. **Los mensajes de validación salen en el idioma de la interfaz.**
+   `validarSolicitud` recibe `contexto.idioma` y `mensajeDe()` busca el mensaje
+   escrito para la pregunta (`errores.vacio`, `pasado`, `orden`, `cero`,
+   `rango`...) en ese idioma, con el genérico solo de respaldo. Antes solo se usaba
+   `vacio`, y el resto se armaba a mano. El servidor sigue validando en español:
+   es la red de seguridad, no la pantalla, y el cliente ya validó antes.
+2. **Las traducciones de preguntas tienen variantes por tipo**, con la misma
+   estructura de `PREGUNTAS`: `PREGUNTAS_PT.tope.variantes.promocao_br`. Lo que va
+   en la raíz vale para cualquier tipo; "em reais" y "parceiro" son de Brasil.
+   `preguntaEnIdioma` recibe el tipo, y `estado.pregunta()` lo pasa dos veces a
+   propósito.
+3. **Un número dentro de un texto traducido va como marcador `{n}`**, nunca como
+   una palabra del idioma que luego se reemplaza. "Faltam varios dados" sin tilde
+   sostenía el `replace('varios', n)`: corregir la ortografía borraba el número.
+4. **Cada llave de `TEXTOS_PT` tiene que aparecer literal en el código, y ningún
+   texto visible del cliente con traducción se escribe sin `T()`.** Las dos cosas
+   son pruebas mecánicas en `pruebas/interfaz_pt.test.js`, porque un carácter de
+   diferencia entre la llave y el literal deja la traducción muerta sin avisar.
+   De ahí que los textos largos vayan en un solo literal y no partidos con `+`.
+5. **Un `var` no se declara dos veces en la misma función.** Hay un detector en
+   `pruebas/duplicados.test.js` que cuenta ámbitos de función a mano y corre sobre
+   el cliente, el core y el servidor. También detecta llaves repetidas en los
+   diccionarios de portugués.
+6. **Las fechas y horas fuera del documento se escriben con el idioma del país**
+   (`formatearFechaDelPais`, `formatearHoraDelPais`). El idioma activo solo se
+   enciende al calcular el documento; las respuestas plegadas y el resumen tienen
+   que pedirlo aparte.
+7. **El idioma también envuelve la expansión de tiendas** en el motor. La promesa
+   de "todo lo impreso pasa por `calcularDerivados`" no cubría `[[#TIENDAS]]`.
+8. **Un modelo en otro idioma lo declara en su esquema (`idioma: 'pt'`) y la
+   validación exige que la fila del país coincida.** Si la celda `idioma` está
+   vacía o dice otra cosa, no se genera. Caer a español en silencio es lo que
+   hubiera publicado un T&C en portugués con "1 de octubre de 2026 às 12:01 a. m.".
+9. **Las variantes de Brasil llevan sus propios placeholders**, los del modelo
+   brasileño. Heredar los de Colombia hacía que "Así queda en tu T&C" mostrara
+   valores que el documento no usa. Hay una prueba que compara cada placeholder
+   prometido con el texto del modelo.
+10. **Brasil tiene casos dorados** (`BR01` a `BR04`, uno por forma del beneficio).
+    Un cambio en un bloque brasileño ya no pasa en verde por casualidad.
+11. **Los T&C generales distinguen "existe" de "se puede usar hoy"**
+    (`hayTycGenericosUsables`). Un T&C vencido se queda a la vista con
+    `aria-disabled`, no con `disabled`, para que el teclado y el lector de
+    pantalla lo encuentren; y lo que Legal dejó pendiente se dice antes del
+    enlace, no después.
+12. **Las capturas se regeneran con un script de la skill**
+    (`capturar-pantallas.js`), que además deja `textos.json` con el texto literal
+    de cada pantalla. El encargo de la interfaz se arma desde ahí, no a mano, así
+    que siempre describe la versión que se está revisando.
