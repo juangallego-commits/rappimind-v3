@@ -76,27 +76,69 @@ lo ha mirado con ojos críticos: `data/tyc_genericos.json`,
 Cuando encuentres algo, arréglalo, escribe la prueba que lo caza, y explícame en
 una frase qué habría pasado si no lo arreglas.
 
-### 2. El prompt para Claude chat
+### 2. Prepárame los tres encargos para Claude chat
 
-Tengo tres encargos que quiero mandarle a Claude chat, que no tiene acceso al
-repositorio. Ya hay material preparado, pero quiero que lo revises, lo mejores y
-me lo dejes en **un solo mensaje por encargo**, listo para copiar y pegar:
+Esto es la mitad del trabajo de esta sesión, no un añadido al final.
 
-- **Las preguntas legales**: `docs/PAQUETE_REVISION_LEGAL.md`, 44 preguntas, 23
-  bloqueantes. Revísalo y dime si falta alguna o si alguna quedó mal planteada.
-- **La revisión de la interfaz**: `docs/REVISION_FRONT.md`, con 33 capturas en
-  `docs/capturas/revision/` y el texto de cada pantalla.
-- **Las leyendas de las piezas**: `docs/PAQUETE_LEYENDAS.md`, más
-  `docs/LEYENDAS_PIEZAS_REALES.md`, que es lo más importante de los tres.
+Claude chat es otra conversación, **sin acceso a este repositorio y sin memoria
+de nada de esto**. Yo voy a abrir tres conversaciones separadas y a pegar un
+mensaje en cada una. Tu trabajo es dejar esos tres mensajes escritos y completos.
 
-Sobre las leyendas, léete `docs/LEYENDAS_PIEZAS_REALES.md` con cuidado. Son
-cuatro piezas publicadas de verdad, y entre las cuatro hay un enlace sin
-rellenar, una marca equivocada, una ciudad equivocada, dos años distintos y
-cuatro contradicciones de fecha entre el texto grande y el chico. Ninguno es un
-error de criterio legal: todos son de copiar y pegar la letra pequeña de otra
-campaña. Y los datos que salen mal son los mismos que el comercial ya le da a
-RappiMind. Eso es el argumento entero de por qué esto lo tiene que generar la
-herramienta.
+**Dónde los dejas.** Un archivo por encargo, y nada más que eso adentro:
+
+- `docs/encargos/01-revision-legal.md`
+- `docs/encargos/02-revision-interfaz.md`
+- `docs/encargos/03-leyendas.md`
+
+Cada archivo empieza con una línea mía de instrucciones (qué adjuntar, si hay que
+adjuntar algo) y después, separado, **el mensaje entero para pegar**. Nada de
+"ver el archivo X" dentro del mensaje: si hace falta un dato, va escrito ahí.
+
+**El material que ya existe** y que tienes que revisar, mejorar y convertir en
+esos tres mensajes:
+
+| Encargo | Material de partida | Qué le pido a Claude chat |
+|---|---|---|
+| 01 | `docs/PAQUETE_REVISION_LEGAL.md` | Que responda las 44 preguntas legales, las 23 bloqueantes primero |
+| 02 | `docs/REVISION_FRONT.md` y las 33 capturas | Que revise el copy y la experiencia de cada pantalla |
+| 03 | `docs/PAQUETE_LEYENDAS.md` y `docs/LEYENDAS_PIEZAS_REALES.md` | Que arme el catálogo de leyendas para las piezas |
+
+**Revísalos de verdad antes de convertirlos.** Los escribieron agentes en
+paralelo y nadie los ha mirado con ojos críticos. Si una pregunta está mal
+planteada, si falta contexto para poder responderla, o si hay algo que ya
+resolvimos y quedó como pendiente, arréglalo.
+
+**Tres cosas que tienes que resolver y que hoy no están resueltas:**
+
+1. **Las capturas.** Claude chat no puede leerlas del repositorio: yo las tengo
+   que subir a mano. Dime en la línea de instrucciones **exactamente cuáles
+   subir y en qué orden**, y que el mensaje las nombre igual que los archivos,
+   para que él pueda referirse a ellas. Si son 33 y eso es demasiado, elige las
+   que valgan la pena y dime por qué esas.
+2. **En qué orden los mando.** Los tres encargos no pesan lo mismo ni me
+   desbloquean lo mismo. Dime cuál mando primero y por qué.
+3. **Qué formato quiero de vuelta.** En cada encargo, dile a Claude chat cómo
+   quiero la respuesta para que yo pueda traértela y tú puedas convertirla en
+   código o en modelos sin traducir nada a mano. Para las leyendas, eso
+   significa pedirlas con los marcadores `{{ }}` que ya usan los modelos de
+   `modelos/`.
+
+**Sobre el de las leyendas, que es el más importante de los tres.** Léete
+`docs/LEYENDAS_PIEZAS_REALES.md` con cuidado. Son cuatro piezas publicadas de
+verdad, y entre las cuatro hay un enlace sin rellenar, una marca equivocada, una
+ciudad equivocada, dos años distintos y cuatro contradicciones de fecha entre el
+texto grande y el chico. Ninguno es un error de criterio legal: todos son de
+copiar y pegar la letra pequeña de otra campaña. Y los datos que salen mal son
+los mismos que el comercial ya le da a RappiMind. Ese es el argumento entero de
+por qué esto lo tiene que generar la herramienta, y tiene que estar dentro del
+mensaje, no solo en tu cabeza.
+
+Ojo con una cosa que ya sabemos y que Claude chat no puede adivinar: los dos
+playbooks que me pasaron **no traen ni una sola leyenda de cashback**, que es el
+55% de lo que genera la herramienta, ni límites de caracteres, ni tipos de pieza.
+Así que buena parte de lo que le pidas lo va a **proponer**, no copiar. Exígele
+que marque con claridad qué viene del playbook y qué es propuesta suya, porque
+eso cambia quién lo tiene que aprobar.
 
 ### 3. Lo que quedó pendiente y sigue abierto
 
