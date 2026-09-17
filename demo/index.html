@@ -1744,6 +1744,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var esquemaDe = moduloEsquemas2.esquemaDe;
 
   var calcularDerivadosTravel = require('./derivados_travel.js').calcularDerivadosTravel;
+  var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
 }
 
 // --- Textos fijos de Legal -------------------------------------------------
@@ -1981,8 +1982,19 @@ function valoresDeTienda(tienda, pais) {
 /**
  * Calcula todos los valores del documento a partir de la entrada y del pais.
  * No valida: validar es trabajo de validaciones.js.
+ *
+ * Este es el unico sitio donde se enciende el idioma. Todo lo que sale impreso
+ * pasa por aqui, asi que basta con fijar el idioma del pais al entrar y
+ * devolverlo a espanol al salir: no hay que pasarle el idioma a cada una de las
+ * cincuenta y cuatro llamadas a fechas y numeros que hay aqui dentro.
  */
 function calcularDerivados(entrada, pais) {
+  return conElIdiomaDe(pais, function () {
+    return calcularDerivadosEnElIdiomaDelPais(entrada, pais);
+  });
+}
+
+function calcularDerivadosEnElIdiomaDelPais(entrada, pais) {
   var valores = {};
 
   // El nombre no lo escribe nadie: sale de las respuestas, asi que el titulo
@@ -3706,13 +3718,19 @@ if (typeof module !== 'undefined') {
 'use strict';
 
 /**
- * Fechas, horas y listas en espanol.
+ * Fechas, horas y listas, en el idioma del pais.
  *
  * Las fechas se manejan como texto ISO (AAAA-MM-DD) y nunca como objetos Date:
  * asi no dependen de la zona horaria del servidor ni del navegador, que es la
  * causa clasica de que un documento salga con un dia de diferencia.
  */
 
+/* En Node las dependencias se cargan con require; en Apps Script ya son globales. */
+if (typeof module !== 'undefined' && typeof require === 'function') {
+  var textosDelIdioma = require('./idiomas.js').textosDelIdioma;
+}
+
+/* Se conserva por compatibilidad: los meses de verdad salen del idioma activo. */
 var MESES = [
   'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
   'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
@@ -3736,11 +3754,11 @@ function esBisiesto(anio) {
   return (anio % 4 === 0 && anio % 100 !== 0) || anio % 400 === 0;
 }
 
-/** "2026-09-17" -> "17 de septiembre de 2026". */
+/** "2026-09-17" -> "17 de septiembre de 2026", o "17 de setembro de 2026". */
 function formatearFecha(iso) {
   var p = partesDeFecha(iso);
   if (!p) return '';
-  return p.dia + ' de ' + MESES[p.mes - 1] + ' de ' + p.anio;
+  return p.dia + ' de ' + textosDelIdioma().meses[p.mes - 1] + ' de ' + p.anio;
 }
 
 /** Descompone una hora HH:MM. Devuelve null si no es valida. */
@@ -3753,13 +3771,27 @@ function partesDeHora(texto) {
   return { hora: hora, minuto: minuto };
 }
 
-/** "09:00" -> "9:00 a. m."; "23:59" -> "11:59 p. m."; "12:00" -> "12:00 p. m.". */
+/**
+ * La hora como la escribe cada pais.
+ *
+ * En espanol, reloj de doce horas: "09:00" -> "9:00 a. m."; "23:59" -> "11:59 p. m.".
+ * En portugues, reloj de veinticuatro con cero inicial: "00:01" -> "00:01";
+ * "23:59" -> "23:59". Asi va en los T&C aprobados de Brasil.
+ */
 function formatearHora(texto) {
   var p = partesDeHora(texto);
   if (!p) return '';
-  var sufijo = p.hora < 12 ? 'a. m.' : 'p. m.';
+  var idioma = textosDelIdioma();
+  var minutos = p.minuto < 10 ? '0' + p.minuto : String(p.minuto);
+
+  if (idioma.reloj === 24) {
+    var horas = p.hora < 10 ? '0' + p.hora : String(p.hora);
+    return horas + idioma.separadorDeHora + minutos;
+  }
+
+  var sufijo = p.hora < 12 ? idioma.sufijoAntesDelMediodia : idioma.sufijoDespuesDelMediodia;
   var hora12 = p.hora % 12 || 12;
-  return hora12 + ':' + (p.minuto < 10 ? '0' + p.minuto : String(p.minuto)) + ' ' + sufijo;
+  return hora12 + ':' + minutos + ' ' + sufijo;
 }
 
 /** Comparable para ordenar y comparar fechas ISO sin usar Date. */
@@ -3777,7 +3809,7 @@ function comoNumeroFechaHora(iso, hora) {
   return f * 10000 + h.hora * 100 + h.minuto;
 }
 
-/** "a", "a y b", "a, b y c". */
+/** "a", "a y b", "a, b y c". En portugues la conjuncion es "e". */
 function listaY(elementos) {
   var limpios = [];
   for (var i = 0; i < elementos.length; i++) {
@@ -3786,7 +3818,7 @@ function listaY(elementos) {
   }
   if (limpios.length === 0) return '';
   if (limpios.length === 1) return limpios[0];
-  return limpios.slice(0, -1).join(', ') + ' y ' + limpios[limpios.length - 1];
+  return limpios.slice(0, -1).join(', ') + ' ' + textosDelIdioma().conjuncionDeLista + ' ' + limpios[limpios.length - 1];
 }
 
 /** Separa un texto con comas en una lista limpia. */
@@ -4145,6 +4177,128 @@ if (typeof module !== 'undefined') {
     validarRucEc: validarRucEc,
     validarRutUy: validarRutUy,
     validarCedulaCr: validarCedulaCr,
+  };
+}
+
+// --- src/core/idiomas.js ---
+'use strict';
+
+/**
+ * El idioma del documento.
+ *
+ * Cada pais trae su idioma en la columna `idioma` del Sheet (es o pt). De ahi
+ * salen las piezas de forma del documento: los meses, la hora, los conectores
+ * de una lista y los numeros escritos en letras.
+ *
+ * Lo que NO sale de aqui es el texto legal. Las clausulas viven en `modelos/` y
+ * las frases fijas en `derivados.js`, y las traduce Legal, nunca este archivo.
+ * Aqui solo esta la maquinaria: "17 de setembro de 2026" y "duzentos e
+ * cinquenta (250)".
+ *
+ * Como se usa: `calcularDerivados` fija el idioma del pais al empezar el
+ * documento y lo devuelve a espanol al terminar. Las funciones de fechas.js y
+ * numeros.js preguntan por el idioma activo, en vez de recibirlo en cada una de
+ * sus cincuenta y cuatro llamadas. Si nadie lo fija, el idioma es espanol, que
+ * es el 99,7% de las solicitudes reales.
+ */
+
+var IDIOMA_POR_DEFECTO = 'es';
+
+var IDIOMAS = {
+  es: {
+    codigo: 'es',
+    nombre: 'español',
+    meses: [
+      'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
+    ],
+    // "17 de septiembre de 2026"
+    formatoFecha: 'dia de mes de anio',
+    // Reloj de doce horas con a. m. y p. m., como en los modelos aprobados.
+    reloj: 12,
+    sufijoAntesDelMediodia: 'a. m.',
+    sufijoDespuesDelMediodia: 'p. m.',
+    conjuncionDeLista: 'y',
+    // El nombre del saldo de la Billetera, tal como va impreso.
+    creditos: 'Créditos',
+    porCiento: 'por ciento',
+    // "doce millones (12.000.000) de Créditos"
+    deAntesDelSustantivo: 'de',
+    terminacionDeMillon: /(millón|millones)$/,
+  },
+
+  pt: {
+    codigo: 'pt',
+    nombre: 'portugués',
+    meses: [
+      'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+      'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
+    ],
+    // "17 de setembro de 2026", igual que en espanol.
+    formatoFecha: 'dia de mes de anio',
+    // Reloj de veinticuatro horas con dos puntos y cero inicial: 00:01, 23:59.
+    // Asi va en los cuatro T&C aprobados que mando Legal Brasil, que mandan
+    // sobre cualquier convencion tipografica.
+    reloj: 24,
+    separadorDeHora: ':',
+    conjuncionDeLista: 'e',
+    creditos: 'Créditos',
+    porCiento: 'por cento',
+    deAntesDelSustantivo: 'de',
+    terminacionDeMillon: /(milhão|milhões)$/,
+  },
+};
+
+/* El idioma que esta generando el documento en este momento. */
+var IDIOMA_ACTIVO = IDIOMA_POR_DEFECTO;
+
+function hayIdioma(codigo) {
+  return Object.prototype.hasOwnProperty.call(IDIOMAS, String(codigo || '').trim().toLowerCase());
+}
+
+/** Fija el idioma y devuelve el que estaba, para poder restaurarlo. */
+function fijarIdioma(codigo) {
+  var anterior = IDIOMA_ACTIVO;
+  var pedido = String(codigo || '').trim().toLowerCase();
+  IDIOMA_ACTIVO = hayIdioma(pedido) ? pedido : IDIOMA_POR_DEFECTO;
+  return anterior;
+}
+
+function idiomaActivo() {
+  return IDIOMA_ACTIVO;
+}
+
+/** Las piezas del idioma que esta activo. */
+function textosDelIdioma() {
+  return IDIOMAS[IDIOMA_ACTIVO] || IDIOMAS[IDIOMA_POR_DEFECTO];
+}
+
+/**
+ * Corre una funcion con el idioma de un pais y devuelve el idioma a como estaba,
+ * pase lo que pase.
+ *
+ * El try/finally no es adorno: si generar un documento en portugues lanza un
+ * error a mitad de camino, el siguiente documento saldria con los meses en
+ * portugues y nadie entenderia por que.
+ */
+function conElIdiomaDe(pais, funcion) {
+  var anterior = fijarIdioma(pais && pais.idioma ? pais.idioma : IDIOMA_POR_DEFECTO);
+  try {
+    return funcion();
+  } finally {
+    IDIOMA_ACTIVO = anterior;
+  }
+}
+
+if (typeof module !== 'undefined') {
+  module.exports = {
+    IDIOMAS: IDIOMAS,
+    IDIOMA_POR_DEFECTO: IDIOMA_POR_DEFECTO,
+    hayIdioma: hayIdioma,
+    fijarIdioma: fijarIdioma,
+    idiomaActivo: idiomaActivo,
+    textosDelIdioma: textosDelIdioma,
+    conElIdiomaDe: conElIdiomaDe,
   };
 }
 
@@ -4609,7 +4763,25 @@ if (typeof module !== 'undefined') {
  *
  * El comportamiento esperado esta fijado por docs/referencia/motor_prototipo.py,
  * que es el prototipo con el que Legal valido los modelos.
+ *
+ * El espanol vive aqui entero. Cuando el idioma activo es otro, estas funciones
+ * delegan en el archivo de ese idioma (numeros_pt.js) sin tocar una sola letra
+ * de lo de abajo: los textos de Colombia no se pueden mover ni un caracter por
+ * una campana de Brasil.
  */
+
+/* En Node las dependencias se cargan con require; en Apps Script ya son globales. */
+if (typeof module !== 'undefined' && typeof require === 'function') {
+  var moduloIdiomas = require('./idiomas.js');
+  var idiomaActivo = moduloIdiomas.idiomaActivo;
+  var textosDelIdioma = moduloIdiomas.textosDelIdioma;
+
+  var moduloPt = require('./numeros_pt.js');
+  var numeroEnLetrasPt = moduloPt.numeroEnLetrasPt;
+  var enFemeninoPt = moduloPt.enFemeninoPt;
+  var letrasYCifraPt = moduloPt.letrasYCifraPt;
+  var letrasYCifraFemeninoPt = moduloPt.letrasYCifraFemeninoPt;
+}
 
 var UNIDADES = [
   'cero', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve',
@@ -4676,6 +4848,9 @@ function apocopar(texto) {
  * Con apocope true devuelve la forma que va pegada a un sustantivo masculino.
  */
 function numeroEnLetras(n, apocope) {
+  // En portugues no hay apocope: "um" va igual solo que ante sustantivo.
+  if (idiomaActivo() === 'pt') return numeroEnLetrasPt(n);
+
   var entero = Math.trunc(Number(n));
   if (entero === 0) return 'cero';
 
@@ -4706,6 +4881,7 @@ function numeroEnLetras(n, apocope) {
  * Quien llama agrega el sustantivo: letrasYCifra(1) + ' pedido'.
  */
 function letrasYCifra(n) {
+  if (idiomaActivo() === 'pt') return letrasYCifraPt(n);
   var entero = Math.trunc(Number(n));
   return numeroEnLetras(entero, true) + ' (' + entero + ')';
 }
@@ -4722,6 +4898,8 @@ function letrasYCifra(n) {
  * tienen femenino. Esta funcion no toca el texto masculino: se pide aparte.
  */
 function enFemenino(texto) {
+  if (idiomaActivo() === 'pt') return enFemeninoPt(texto);
+
   var t = String(texto);
   // Las centenas concuerdan aunque lleven decenas detras: "doscientas treinta".
   // "quinientos" no lleva la silaba "cien", asi que va aparte.
@@ -4738,6 +4916,7 @@ function enFemenino(texto) {
  * "una (1) orden", "doscientas (200) ordenes".
  */
 function letrasYCifraFemenino(n) {
+  if (idiomaActivo() === 'pt') return letrasYCifraFemeninoPt(n);
   var entero = Math.trunc(Number(n));
   return enFemenino(numeroEnLetras(entero)) + ' (' + entero + ')';
 }
@@ -4755,9 +4934,10 @@ function formatearMiles(n, separador) {
  * "doce millones (12.000.000) de Créditos".
  */
 function cantidadCreditos(n, pais) {
+  var idioma = textosDelIdioma();
   var letras = numeroEnLetras(n, true);
-  var de = /(millón|millones)$/.test(letras) ? ' de' : '';
-  return letras + ' (' + formatearMiles(n, pais.separador_miles) + ')' + de + ' Créditos';
+  var de = idioma.terminacionDeMillon.test(letras) ? ' ' + idioma.deAntesDelSustantivo : '';
+  return letras + ' (' + formatearMiles(n, pais.separador_miles) + ')' + de + ' ' + idioma.creditos;
 }
 
 /** Monto con moneda: "cincuenta mil pesos M/Cte. ($50.000)". */
@@ -4779,8 +4959,9 @@ function montoConMoneda(n, pais) {
  */
 function porcentajeEnLetras(p) {
   var entero = Math.trunc(Number(p));
-  var letras = entero === 100 ? 'cien' : numeroEnLetras(entero);
-  return letras + ' por ciento (' + entero + '%)';
+  var esPt = idiomaActivo() === 'pt';
+  var letras = entero === 100 ? (esPt ? 'cem' : 'cien') : numeroEnLetras(entero);
+  return letras + ' ' + textosDelIdioma().porCiento + ' (' + entero + '%)';
 }
 
 if (typeof module !== 'undefined') {
@@ -4795,6 +4976,153 @@ if (typeof module !== 'undefined') {
     cantidadCreditos: cantidadCreditos,
     montoConMoneda: montoConMoneda,
     porcentajeEnLetras: porcentajeEnLetras,
+  };
+}
+
+// --- src/core/numeros_pt.js ---
+'use strict';
+
+/**
+ * Numeros en letras en portugues de Brasil.
+ *
+ * Vive aparte de numeros.js a proposito. Los numeros en espanol estan fijados
+ * por docs/referencia/motor_prototipo.py, que es el prototipo con el que Legal
+ * valido los modelos de Colombia, y esos textos no se pueden mover ni un
+ * caracter. Mezclar los dos idiomas en las mismas funciones habria puesto en
+ * riesgo mil ciento ochenta y cuatro documentos por una campana de Brasil.
+ *
+ * Esto es ortografia, no texto legal: cuanto vale un numero escrito en letras
+ * no lo decide un abogado. Lo que si decide Legal Brasil es como se llama el
+ * saldo de la Billetera y como se escribe la hora en un T&C, y eso esta anotado
+ * en docs/PENDIENTES_LEGAL.md.
+ */
+
+var UNIDADES_PT = [
+  'zero', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove',
+  'dez', 'onze', 'doze', 'treze', 'catorze', 'quinze', 'dezesseis', 'dezessete',
+  'dezoito', 'dezenove',
+];
+
+var DEZENAS_PT = {
+  20: 'vinte',
+  30: 'trinta',
+  40: 'quarenta',
+  50: 'cinquenta',
+  60: 'sessenta',
+  70: 'setenta',
+  80: 'oitenta',
+  90: 'noventa',
+};
+
+var CENTENAS_PT = {
+  100: 'cento',
+  200: 'duzentos',
+  300: 'trezentos',
+  400: 'quatrocentos',
+  500: 'quinhentos',
+  600: 'seiscentos',
+  700: 'setecentos',
+  800: 'oitocentos',
+  900: 'novecentos',
+};
+
+/**
+ * Numeros de 0 a 999 en letras.
+ *
+ * En portugues la "e" va entre todos los tramos: duzentos e trinta e um. Y cien
+ * exacto es "cem"; con algo detras es "cento e ...".
+ */
+function letrasHasta999Pt(n) {
+  if (n < 20) return UNIDADES_PT[n];
+  if (n < 100) {
+    var dezena = Math.floor(n / 10) * 10;
+    var unidade = n % 10;
+    return DEZENAS_PT[dezena] + (unidade === 0 ? '' : ' e ' + UNIDADES_PT[unidade]);
+  }
+  if (n === 100) return 'cem';
+  var centena = Math.floor(n / 100) * 100;
+  var resto = n % 100;
+  return CENTENAS_PT[centena] + (resto === 0 ? '' : ' e ' + letrasHasta999Pt(resto));
+}
+
+/**
+ * Si el ultimo tramo se une con "e" o solo con un espacio.
+ *
+ * La regla del portugues: lleva "e" cuando el tramo final es menor que cien o
+ * es una centena redonda. Por eso "mil e quinhentos" pero "mil duzentos e
+ * cinquenta", y "dois mil e um" pero "dois mil trezentos e vinte".
+ */
+function seUneConE(valorDelUltimoTramo) {
+  if (valorDelUltimoTramo === 0) return false;
+  if (valorDelUltimoTramo < 100) return true;
+  return valorDelUltimoTramo % 100 === 0;
+}
+
+/** Numero en letras hasta 999.999.999.999. */
+function numeroEnLetrasPt(n) {
+  var entero = Math.trunc(Number(n));
+  if (entero === 0) return 'zero';
+
+  var milhoes = Math.floor(entero / 1000000);
+  var resto = entero % 1000000;
+  var milhares = Math.floor(resto / 1000);
+  var unidades = resto % 1000;
+
+  var partes = [];
+  if (milhoes) {
+    partes.push(milhoes === 1 ? 'um milhão' : numeroEnLetrasPt(milhoes) + ' milhões');
+  }
+  if (milhares) {
+    // "mil", nunca "um mil".
+    partes.push(milhares === 1 ? 'mil' : letrasHasta999Pt(milhares) + ' mil');
+  }
+  if (unidades) partes.push(letrasHasta999Pt(unidades));
+
+  if (partes.length === 1) return partes[0];
+
+  // La "e" solo decide el ultimo empalme, y la decide el valor de ese ultimo
+  // tramo: "um milhão e duzentos mil" pero "um milhão duzentos e cinquenta mil".
+  var valorDelUltimo = unidades || milhares;
+  var union = seUneConE(valorDelUltimo) ? ' e ' : ' ';
+
+  var cabeza = partes.slice(0, -1).join(' ');
+  return cabeza + union + partes[partes.length - 1];
+}
+
+/**
+ * La forma femenina de un numero escrito en letras.
+ *
+ * En portugues concuerdan el uno, el dos y las centenas de doscientos para
+ * arriba: uma, duas, duzentas. Mil y milhões no tienen femenino.
+ */
+function enFemeninoPt(texto) {
+  var t = String(texto);
+  t = t.replace(/quinhentos/g, 'quinhentas');
+  t = t.replace(/(duz|trez|quatroc|seisc|setec|oitoc|novec)entos/g, '$1entas');
+  t = t.replace(/(^|\s)dois$/, '$1duas');
+  t = t.replace(/(^|\s)um$/, '$1uma');
+  return t;
+}
+
+/** "duzentos e cinquenta (250)". Quien llama agrega el sustantivo. */
+function letrasYCifraPt(n) {
+  var entero = Math.trunc(Number(n));
+  return numeroEnLetrasPt(entero) + ' (' + entero + ')';
+}
+
+/** "duzentas e cinquenta (250)", para un sustantivo femenino. */
+function letrasYCifraFemeninoPt(n) {
+  var entero = Math.trunc(Number(n));
+  return enFemeninoPt(numeroEnLetrasPt(entero)) + ' (' + entero + ')';
+}
+
+if (typeof module !== 'undefined') {
+  module.exports = {
+    letrasHasta999Pt: letrasHasta999Pt,
+    numeroEnLetrasPt: numeroEnLetrasPt,
+    enFemeninoPt: enFemeninoPt,
+    letrasYCifraPt: letrasYCifraPt,
+    letrasYCifraFemeninoPt: letrasYCifraFemeninoPt,
   };
 }
 

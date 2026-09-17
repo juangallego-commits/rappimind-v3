@@ -163,3 +163,46 @@ de la sección 13 de ese documento.
     "OPERADOR DE PRUEBA S.A.S. · 50% CASHBACK TRAVEL · 15 OCT 2026". Se lee raro con el
     "S.A.S." adentro. Si prefieres, pongo "Rappi Travel" cuando no hay marca, o hago la
     marca obligatoria.
+
+## Brasil, de los cuatro T&C aprobados (17 de septiembre)
+
+Documentos revisados: `Desconto % OFF`, `Frete Grátis`, `Taxa de serviço mínimo
+de compra` y `Taxa de serviço e entrega grátis`. El mapa completo está en
+`docs/MODELO_BASE_BRASIL.md`. No se tocó ni se tradujo una sola línea.
+
+Cinco cosas que hay que decidir antes de armar el modelo:
+
+1. **En los cuatro documentos, Rappi aparece como quien concede y cancela la
+   promoción**, y no se nombra a ningún organizador distinto. Dicen "O Rappi se
+   reserva o direito de encerrar esta promoção", "O Rappi se reserva o direito
+   de modificar as condições ou cancelar esta promoção" y "O Rappi se reserva ao
+   direito de cancelar a promoção". Eso choca de frente con la regla número uno
+   de este proyecto, que es que Rappi nunca es el organizador y que el
+   organizador es siempre la tienda o la marca que fondea. En los modelos de
+   Colombia el Organizador está nombrado y definido desde la cláusula 1. **Esta
+   es la decisión más importante de Brasil** y no la puedo tomar yo: o el modelo
+   brasileño se alinea con la regla, o Brasil es una excepción explícita.
+
+2. **"em caso de fraude ou desviação da doação para terceiros"**, en los cuatro.
+   La palabra "doação" (donación) no encaja con una promoción de descuento;
+   parece arrastrada de otra plantilla. Si es un error, lo corrige Legal Brasil,
+   no yo.
+
+3. **"o frete grátis não será aplicado caso o valor seja superior a 20,00 (vinte
+   reais)"**, en Frete Grátis. Le falta el `R$` y "o valor" es ambiguo: por el
+   contexto es el valor del envío, pero leído solo puede entenderse como el
+   valor del pedido, que diría lo contrario de lo que la campaña quiere.
+
+4. **El cierre no lleva enlaces.** Dice "Consulte nossos Termos de Uso e
+   Condições da Plataforma Rappi e Aviso de Privacidade de Dados", sin ninguna
+   dirección. En Colombia esos dos van con su enlace. ¿Se agregan los de Brasil,
+   o el documento brasileño va sin ellos a propósito?
+
+5. **"São Paulo/SP"** aparece al final de uno solo de los cuatro. ¿Va siempre,
+   nunca, o depende?
+
+Y un dato que falta en `data/paises.json`: Brasil tiene vacío
+`texto_derechos_datos`, que es la frase que enumera los derechos del titular
+sobre sus datos. En Colombia dice "tus derechos a conocer, actualizar,
+rectificar y suprimir...". Para Brasil tendría que salir de la LGPD, y esa
+redacción es de Legal.

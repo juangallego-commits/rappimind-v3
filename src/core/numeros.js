@@ -8,7 +8,25 @@
  *
  * El comportamiento esperado esta fijado por docs/referencia/motor_prototipo.py,
  * que es el prototipo con el que Legal valido los modelos.
+ *
+ * El espanol vive aqui entero. Cuando el idioma activo es otro, estas funciones
+ * delegan en el archivo de ese idioma (numeros_pt.js) sin tocar una sola letra
+ * de lo de abajo: los textos de Colombia no se pueden mover ni un caracter por
+ * una campana de Brasil.
  */
+
+/* En Node las dependencias se cargan con require; en Apps Script ya son globales. */
+if (typeof module !== 'undefined' && typeof require === 'function') {
+  var moduloIdiomas = require('./idiomas.js');
+  var idiomaActivo = moduloIdiomas.idiomaActivo;
+  var textosDelIdioma = moduloIdiomas.textosDelIdioma;
+
+  var moduloPt = require('./numeros_pt.js');
+  var numeroEnLetrasPt = moduloPt.numeroEnLetrasPt;
+  var enFemeninoPt = moduloPt.enFemeninoPt;
+  var letrasYCifraPt = moduloPt.letrasYCifraPt;
+  var letrasYCifraFemeninoPt = moduloPt.letrasYCifraFemeninoPt;
+}
 
 var UNIDADES = [
   'cero', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve',
@@ -75,6 +93,9 @@ function apocopar(texto) {
  * Con apocope true devuelve la forma que va pegada a un sustantivo masculino.
  */
 function numeroEnLetras(n, apocope) {
+  // En portugues no hay apocope: "um" va igual solo que ante sustantivo.
+  if (idiomaActivo() === 'pt') return numeroEnLetrasPt(n);
+
   var entero = Math.trunc(Number(n));
   if (entero === 0) return 'cero';
 
@@ -105,6 +126,7 @@ function numeroEnLetras(n, apocope) {
  * Quien llama agrega el sustantivo: letrasYCifra(1) + ' pedido'.
  */
 function letrasYCifra(n) {
+  if (idiomaActivo() === 'pt') return letrasYCifraPt(n);
   var entero = Math.trunc(Number(n));
   return numeroEnLetras(entero, true) + ' (' + entero + ')';
 }
@@ -121,6 +143,8 @@ function letrasYCifra(n) {
  * tienen femenino. Esta funcion no toca el texto masculino: se pide aparte.
  */
 function enFemenino(texto) {
+  if (idiomaActivo() === 'pt') return enFemeninoPt(texto);
+
   var t = String(texto);
   // Las centenas concuerdan aunque lleven decenas detras: "doscientas treinta".
   // "quinientos" no lleva la silaba "cien", asi que va aparte.
@@ -137,6 +161,7 @@ function enFemenino(texto) {
  * "una (1) orden", "doscientas (200) ordenes".
  */
 function letrasYCifraFemenino(n) {
+  if (idiomaActivo() === 'pt') return letrasYCifraFemeninoPt(n);
   var entero = Math.trunc(Number(n));
   return enFemenino(numeroEnLetras(entero)) + ' (' + entero + ')';
 }
@@ -154,9 +179,10 @@ function formatearMiles(n, separador) {
  * "doce millones (12.000.000) de Créditos".
  */
 function cantidadCreditos(n, pais) {
+  var idioma = textosDelIdioma();
   var letras = numeroEnLetras(n, true);
-  var de = /(millón|millones)$/.test(letras) ? ' de' : '';
-  return letras + ' (' + formatearMiles(n, pais.separador_miles) + ')' + de + ' Créditos';
+  var de = idioma.terminacionDeMillon.test(letras) ? ' ' + idioma.deAntesDelSustantivo : '';
+  return letras + ' (' + formatearMiles(n, pais.separador_miles) + ')' + de + ' ' + idioma.creditos;
 }
 
 /** Monto con moneda: "cincuenta mil pesos M/Cte. ($50.000)". */
@@ -178,8 +204,9 @@ function montoConMoneda(n, pais) {
  */
 function porcentajeEnLetras(p) {
   var entero = Math.trunc(Number(p));
-  var letras = entero === 100 ? 'cien' : numeroEnLetras(entero);
-  return letras + ' por ciento (' + entero + '%)';
+  var esPt = idiomaActivo() === 'pt';
+  var letras = entero === 100 ? (esPt ? 'cem' : 'cien') : numeroEnLetras(entero);
+  return letras + ' ' + textosDelIdioma().porCiento + ' (' + entero + '%)';
 }
 
 if (typeof module !== 'undefined') {

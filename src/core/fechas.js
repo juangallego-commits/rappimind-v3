@@ -1,13 +1,19 @@
 'use strict';
 
 /**
- * Fechas, horas y listas en espanol.
+ * Fechas, horas y listas, en el idioma del pais.
  *
  * Las fechas se manejan como texto ISO (AAAA-MM-DD) y nunca como objetos Date:
  * asi no dependen de la zona horaria del servidor ni del navegador, que es la
  * causa clasica de que un documento salga con un dia de diferencia.
  */
 
+/* En Node las dependencias se cargan con require; en Apps Script ya son globales. */
+if (typeof module !== 'undefined' && typeof require === 'function') {
+  var textosDelIdioma = require('./idiomas.js').textosDelIdioma;
+}
+
+/* Se conserva por compatibilidad: los meses de verdad salen del idioma activo. */
 var MESES = [
   'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
   'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
@@ -31,11 +37,11 @@ function esBisiesto(anio) {
   return (anio % 4 === 0 && anio % 100 !== 0) || anio % 400 === 0;
 }
 
-/** "2026-09-17" -> "17 de septiembre de 2026". */
+/** "2026-09-17" -> "17 de septiembre de 2026", o "17 de setembro de 2026". */
 function formatearFecha(iso) {
   var p = partesDeFecha(iso);
   if (!p) return '';
-  return p.dia + ' de ' + MESES[p.mes - 1] + ' de ' + p.anio;
+  return p.dia + ' de ' + textosDelIdioma().meses[p.mes - 1] + ' de ' + p.anio;
 }
 
 /** Descompone una hora HH:MM. Devuelve null si no es valida. */
@@ -48,13 +54,27 @@ function partesDeHora(texto) {
   return { hora: hora, minuto: minuto };
 }
 
-/** "09:00" -> "9:00 a. m."; "23:59" -> "11:59 p. m."; "12:00" -> "12:00 p. m.". */
+/**
+ * La hora como la escribe cada pais.
+ *
+ * En espanol, reloj de doce horas: "09:00" -> "9:00 a. m."; "23:59" -> "11:59 p. m.".
+ * En portugues, reloj de veinticuatro con cero inicial: "00:01" -> "00:01";
+ * "23:59" -> "23:59". Asi va en los T&C aprobados de Brasil.
+ */
 function formatearHora(texto) {
   var p = partesDeHora(texto);
   if (!p) return '';
-  var sufijo = p.hora < 12 ? 'a. m.' : 'p. m.';
+  var idioma = textosDelIdioma();
+  var minutos = p.minuto < 10 ? '0' + p.minuto : String(p.minuto);
+
+  if (idioma.reloj === 24) {
+    var horas = p.hora < 10 ? '0' + p.hora : String(p.hora);
+    return horas + idioma.separadorDeHora + minutos;
+  }
+
+  var sufijo = p.hora < 12 ? idioma.sufijoAntesDelMediodia : idioma.sufijoDespuesDelMediodia;
   var hora12 = p.hora % 12 || 12;
-  return hora12 + ':' + (p.minuto < 10 ? '0' + p.minuto : String(p.minuto)) + ' ' + sufijo;
+  return hora12 + ':' + minutos + ' ' + sufijo;
 }
 
 /** Comparable para ordenar y comparar fechas ISO sin usar Date. */
@@ -72,7 +92,7 @@ function comoNumeroFechaHora(iso, hora) {
   return f * 10000 + h.hora * 100 + h.minuto;
 }
 
-/** "a", "a y b", "a, b y c". */
+/** "a", "a y b", "a, b y c". En portugues la conjuncion es "e". */
 function listaY(elementos) {
   var limpios = [];
   for (var i = 0; i < elementos.length; i++) {
@@ -81,7 +101,7 @@ function listaY(elementos) {
   }
   if (limpios.length === 0) return '';
   if (limpios.length === 1) return limpios[0];
-  return limpios.slice(0, -1).join(', ') + ' y ' + limpios[limpios.length - 1];
+  return limpios.slice(0, -1).join(', ') + ' ' + textosDelIdioma().conjuncionDeLista + ' ' + limpios[limpios.length - 1];
 }
 
 /** Separa un texto con comas en una lista limpia. */

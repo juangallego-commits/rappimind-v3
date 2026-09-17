@@ -349,3 +349,40 @@ vencimiento del Registro Nacional de Turismo no se disparaba nunca.
 Y al elegir Rappi Travel, la pantalla de Legal ahora dice la razón exacta: no es
 lo mismo que el país no tenga habilitados los tipos de Travel que los tenga pero
 le falte el RNT. Lo segundo se arregla llenando el Sheet.
+
+## El idioma del documento sale del país, y se enciende en un solo sitio
+
+**Fecha:** 17 de septiembre de 2026.
+
+La columna `idioma` existía en el Sheet desde el principio (`es` en ocho países,
+`pt` en Brasil) pero no la usaba nadie. Ahora gobierna las piezas de forma del
+documento: los meses, la hora, la conjunción de las listas y los números
+escritos en letras.
+
+Tres decisiones:
+
+1. **El español no se toca.** Los números en portugués viven en
+   `src/core/numeros_pt.js`, aparte. `numeros.js` delega cuando el idioma activo
+   es otro, sin cambiar una letra de lo de abajo: los textos de Colombia están
+   fijados por `docs/referencia/motor_prototipo.py` y una campaña de Brasil no
+   puede moverlos. Hay una prueba que genera un documento de Brasil y después
+   comprueba que Colombia sale idéntico.
+
+2. **El idioma se enciende en `calcularDerivados`, y solo ahí.** Es el único
+   punto por donde pasa todo lo que sale impreso, así que basta con fijar el
+   idioma del país al entrar y devolverlo a español al salir. La alternativa era
+   pasarle el idioma a cada una de las cincuenta y cuatro llamadas a fechas y
+   números que hay en los derivados, lo que obligaba a tocar mucho texto legal
+   aprobado. El `try/finally` de `conElIdiomaDe()` no es adorno: si un documento
+   de Brasil revienta a mitad, el siguiente saldría con los meses en portugués.
+
+3. **Si el idioma no existe, se cae a español.** Es el fallo seguro correcto:
+   Colombia es el 99,7% de las solicitudes reales.
+
+La hora en portugués se escribe `00:01` y `23:59`, con cero inicial y dos
+puntos. Primero la escribí como `9h` y `23h59`, que es la convención
+tipográfica brasileña, y la corregí al ver los cuatro T&C aprobados que mandó
+Legal Brasil: el texto de Legal manda sobre cualquier convención.
+
+Lo que **no** sale del idioma es el texto legal. Las cláusulas siguen en
+`modelos/` y las frases fijas en `derivados.js`, y las traduce Legal.

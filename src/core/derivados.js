@@ -34,6 +34,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var esquemaDe = moduloEsquemas2.esquemaDe;
 
   var calcularDerivadosTravel = require('./derivados_travel.js').calcularDerivadosTravel;
+  var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
 }
 
 // --- Textos fijos de Legal -------------------------------------------------
@@ -271,8 +272,19 @@ function valoresDeTienda(tienda, pais) {
 /**
  * Calcula todos los valores del documento a partir de la entrada y del pais.
  * No valida: validar es trabajo de validaciones.js.
+ *
+ * Este es el unico sitio donde se enciende el idioma. Todo lo que sale impreso
+ * pasa por aqui, asi que basta con fijar el idioma del pais al entrar y
+ * devolverlo a espanol al salir: no hay que pasarle el idioma a cada una de las
+ * cincuenta y cuatro llamadas a fechas y numeros que hay aqui dentro.
  */
 function calcularDerivados(entrada, pais) {
+  return conElIdiomaDe(pais, function () {
+    return calcularDerivadosEnElIdiomaDelPais(entrada, pais);
+  });
+}
+
+function calcularDerivadosEnElIdiomaDelPais(entrada, pais) {
   var valores = {};
 
   // El nombre no lo escribe nadie: sale de las respuestas, asi que el titulo
