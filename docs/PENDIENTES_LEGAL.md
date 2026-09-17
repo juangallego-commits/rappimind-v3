@@ -282,3 +282,130 @@ Salieron al armar el paquete de revisión, y ninguna estaba anotada antes.
    LGPD, que no me corresponde inventar. Así que Brasil se quedó como el
    documento aprobado, sin esa cláusula. Si debe llevarla, necesito de Legal
    Brasil la frase que enumera los derechos del titular.
+
+## T&C generales de Colombia que ya están publicados (17 de septiembre)
+
+Vienen del Excel **"T&C Generales 2026"**, hoja `T&C Generales 2026`, quince filas
+desde la fila 3. Quedaron transcritos en `data/tyc_genericos.json` y la
+herramienta ya los ofrece: el comercial que va a hacer un descuento o un cupón no
+genera documento, copia el enlace.
+
+Juan avisó que no había revisado el archivo. **No corregí nada**: todo lo que
+sigue está tal cual salió del Excel, y lo que confunde se le dice al comercial en
+pantalla en vez de resolverlo por cuenta propia.
+
+1. **"Descuento en Productos Seleccionados" está dos veces**, en las filas 4 y 16,
+   con el mismo nombre, el mismo beneficio, la misma descripción y **enlaces
+   distintos**: `/colombia/2026/descuentoprodselecc` y `/colombia/descuentosenprod`.
+   Los dos quedaron en la lista, con un aviso que le dice al comercial que
+   confirme cuál va. **Necesito saber cuál es el bueno y si el otro se retira.**
+2. **Las filas 14 y 15** (Cupón de descuento por valor fijo y Cupón de descuento
+   de toda la tienda) **no traen Beneficio Ofrecido ni Descripción**. Se quedaron
+   vacías y la pantalla dice que Legal no explicó para qué sirven. Son dos de los
+   quince, y cupones es de lo que más se pide.
+3. **"Tarifa de Servicio Gratis" vence el 31 de octubre de 2026** y arranca el 1
+   de febrero; los otros catorce van del 1 de enero al 31 de diciembre. La
+   herramienta ya lo respeta: a partir del 1 de noviembre deja de ofrecerlo y dice
+   que venció. **Si se va a renovar, hay que actualizar el archivo.**
+4. **"Cupones de Descuento para Membresía Rappi Pro y Black" tiene vigencia 2026
+   pero su enlace apunta a `/colombia/2024/`.** Es el único de los quince cuyo
+   enlace es de un año distinto al de su vigencia. Se conservó el enlace tal cual,
+   con un aviso en pantalla.
+5. **La descripción de "Codigo de descuento para eventos externos" repite el
+   nombre de la campaña** en vez de explicar para qué sirve.
+6. **Los enlaces no siguen un patrón**: nueve llevan el año (`/2026/...`), cinco no
+   lo llevan (`/colombia/enviogratis`, `/colombia/tarifadeservicio`,
+   `/colombia/cuponvalorfijoco`, `/colombia/cupondescuentoco`,
+   `/colombia/descuentosenprod`) y uno es de 2024. Los cuatro sin año coinciden
+   letra por letra con los del archivo de 2024, así que 2026 está reusando las
+   direcciones viejas de esos cuatro.
+7. **Detalles de forma que dejé como están**: "Cupon" y "Codigo" sin tilde en las
+   filas 14, 15 y 17; los nombres de las filas 14 y 15 usan un guion como
+   puntuación ("Cupon de descuento - Valor fijo"), que es justo lo que la regla 8
+   de `CLAUDE.md` no deja hacer en lo que se ve en pantalla; y las filas 10 y 11
+   traían un espacio de más al final del nombre (ese sí lo quité, porque es
+   espacio en blanco, no texto).
+
+**No pude abrir ninguno de los quince enlaces**: la red de este entorno bloquea
+`promos.rappi.com` y `legal.rappi.com.co`. Así que está verificado que el enlace
+está bien copiado del Excel, pero **no** que la página exista ni que su título
+coincida. Alguien con acceso tiene que abrirlos.
+
+### Qué cambió entre el archivo de 2024 y el de 2026
+
+El archivo viejo (`Legal - Términos y condiciones generales -V- 05.09.2024`) trae
+dos listas: la hoja 1 está encabezada **"Términos y condiciones generales 2025"**
+y la hoja 2, en las filas 22 a 44, trae la de **2024** con las mismas campañas y
+las direcciones de ese año. O sea que el archivo llamado 2024 es en realidad el de
+2025 con el histórico de 2024 al lado.
+
+**Salieron de la lista en 2026** (estaban en 2024 y 2025 y ya no están):
+
+- **Cashback** (`/2025/cashbackco`). Tiene sentido: es el tipo que RappiMind
+  genera. Conviene confirmarlo, porque si el T&C general de cashback sigue
+  publicado, hay dos respaldos distintos para la misma campaña.
+- **Campañas 2x1** (`/2025/promo2x1`) y **campañas 3x2** (`/2025/promo3x2`).
+- **Botón Turbo** (`legal.rappi.com.co/colombia/terminos-y-condiciones-del-boton-turbo/`).
+- **Hora Loca Turbo del 31 de julio**, que era de un solo día de 2024.
+- **Cajero ATM y Rappi Favor** (`/colombia/terminosycondicionesbotones`).
+- **T&C de funcionamiento de Créditos** (`/colombia/funcionamiento-creditos-plataforma-rappi`).
+- Las cuatro filas de **Travel** (descuentos en hoteles, carros y paquetes;
+  cashback RappiCard; cashback por ser Pro; cashback para Travel), que en 2024
+  tampoco tenían enlace: estaban nombradas y vacías.
+
+**Entraron en 2026** (no estaban antes):
+
+- **Descuento para Usuarios Nuevos en Turbo**.
+- **Cupones de Descuento para Membresía Rappi Pro y Black** (con enlace de 2024).
+- **Código de descuento para eventos externos**.
+- La **segunda** "Descuento en Productos Seleccionados" de la fila 16.
+
+**Cambiaron de nombre, con el mismo enlace de fondo**: "Descuento en tienda
+específica" pasó a **"Descuento en Toda la Tienda"**; "Descuento en porcentaje
+sobre productos seleccionados" a **"Descuento en Productos Seleccionados"**;
+"Descuento en pesos sobre productos seleccionados" a **"Descuento en Valor"**; y
+los dos cupones ("descuento en porcentaje sobre el valor total de la orden" y
+"descuento en pesos...") a **"Cupon de descuento - Toda la tienda"** y
+**"Cupon de descuento - Valor fijo"**.
+
+**Lo que es nuevo del formato**: el archivo de 2026 trae por primera vez vigencia
+de inicio y fin, beneficio ofrecido y descripción. El de 2024 era solo nombre y
+enlace. Esa descripción es lo que hoy lee el comercial en pantalla para elegir,
+así que las dos filas que llegaron sin ella se notan.
+
+La otra hoja del archivo viejo ("Hoja 2", arriba) es una tabla distinta: **cuándo
+hace falta un T&C específico** (cashback con vigencia de Créditos distinta de seis
+meses, cupones que se redimen fuera de Rappi, concursos) y **qué tiene que decir
+la pieza publicitaria** (siempre el mínimo de compra, siempre el máximo de
+cashback, siempre a qué usuarios aplica). Eso no está en el archivo de 2026 y no
+lo metí en la herramienta, pero es exactamente el criterio que decide si una
+campaña necesita documento propio o le basta el general. **Si sigue vigente,
+vale la pena que entre.**
+
+## Dos cosas de los T&C generales que quiero que mires (17 de septiembre, noche)
+
+Salieron al comparar el Excel de 2026 con el de 2024. Están además de las siete
+inconsistencias que ya quedaron anotadas arriba.
+
+1. **El T&C general de Cashback salió de la lista de 2026.** En la versión
+   anterior estaba, con el enlace `promos.rappi.com/colombia/2025/cashbackco`.
+   Cashback es justamente el tipo que RappiMind sí genera, así que si ese
+   documento sigue publicado hay dos respaldos distintos para la misma campaña:
+   el genérico viejo y el que genera la herramienta. ¿Se dio de baja a
+   propósito, o se cayó de la lista?
+
+2. **La hoja 2 del archivo anterior tiene una tabla que no está en el de 2026** y
+   que vale mucho: dice cuándo hace falta un T&C específico y qué tiene que decir
+   la pieza publicitaria. Por ejemplo, que siempre va el mínimo de compra,
+   siempre el tope del cashback y siempre a qué usuarios aplica.
+
+   Eso es exactamente el criterio que decide si una campaña necesita documento
+   propio o le basta el genérico, que es la pregunta que la herramienta le tiene
+   que responder al comercial. Y es también material para el encargo de las
+   leyendas, porque describe lo que la pieza está obligada a decir. Si sigue
+   vigente, debería entrar.
+
+También quedan sin verificar los quince enlaces: la red de este entorno bloquea
+`promos.rappi.com`. Está comprobado que están copiados letra por letra del Excel,
+pero no que las páginas abran. Alguien con acceso tiene que darles clic antes de
+que un comercial pegue uno en una pieza.

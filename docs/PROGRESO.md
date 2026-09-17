@@ -487,7 +487,7 @@ publicados de Bogotá y Barranquilla. Las mejoras están en `docs/MEJORAS_ETA.md
 ### Cómo probarlo
 
 `npm test` (300 pruebas) y, para el recorrido completo, `npm run demo` y después
-`node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js` (27 revisiones).
+`node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js` (30 revisiones).
 
 ### Lo que necesito de Juan
 
@@ -500,3 +500,66 @@ publicados de Bogotá y Barranquilla. Las mejoras están en `docs/MEJORAS_ETA.md
 - Correr `setup()` después del despliegue: Colombia estrena un tipo, Brasil
   estrena estado y modelo, y la pestaña Países estrena la columna del enlace del
   botón Turbo.
+
+## 17 de septiembre · Los T&C que Legal ya publicó
+
+### Lo que quedó
+
+**Para un descuento o un cupón en Colombia ya no hay que generar nada.** Legal
+tiene quince T&C generales publicados y la herramienta ahora los entrega. El
+comercial elige el suyo, copia el enlace y ese es el que va en la pieza. Es casi
+la mitad de la demanda real (los descuentos que no son cashback son 319 de 711
+promociones) y hasta hoy esa gente llegaba, no encontraba su campaña en la lista
+y terminaba escribiéndole a Legal para pedir algo que ya existía.
+
+**Por dónde llega.** Debajo de la lista de tipos de campaña, separado por una
+línea, aparece "¿No ves tu campaña en la lista?" y una tarjeta:
+*Descuentos, cupones, envío gratis y tarifa de servicio*. Al abrirla salen los
+quince, cada uno con su beneficio, su descripción y su vigencia. Al elegir uno
+sale el enlace con botón de copiar, el botón para abrirlo y la ficha con para qué
+sirve. Se sale de ahí con "Volver a los tipos de campaña", que devuelve al
+asistente abierto en la pregunta del tipo.
+
+**Está escrito como buena noticia**, no como negativa: "Para esta campaña no
+necesitas crear T&C" y "Listo, no tienes que generar nada". Le estamos ahorrando
+el documento entero.
+
+**La vigencia se respeta.** La Tarifa de Servicio Gratis vence el 31 de octubre de
+2026 y las demás el 31 de diciembre. A partir del 1 de noviembre esa tarjeta se
+queda a la vista pero deshabilitada, diciendo cuándo venció y que hay que
+escribirle a Legal. Igual con uno que todavía no haya arrancado.
+
+**La tarjeta no aparece donde no hay nada que dar**: ni en los países sin T&C
+generales publicados (hoy todos menos Colombia) ni en Rappi Travel.
+
+### Dónde está
+
+- `data/tyc_genericos.json`: los quince, transcritos del Excel de Legal, con lo
+  que hay que revisar anotado en el campo `revisiones`.
+- `src/core/tyc_genericos.js`: vigencia, búsqueda por identificador y el texto
+  para cuando Legal no dejó descripción.
+- `src/client/js/63-tyc-genericos.js`: la pantalla y la tarjeta de entrada.
+- `scripts/build.js` genera `dist/TycGenericos.js` y lo mete dentro de
+  `MotorCliente.html`, porque la pantalla se pinta entera en el navegador.
+
+### Cómo probarlo
+
+`npm test` (358 pruebas) y, para el recorrido, `npm run demo` y después
+`node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js`. En la demostración:
+Empezar, No, No, Colombia, Rappi, y ahí está la tarjeta debajo de los tipos.
+
+### Lo que necesito de Juan
+
+Todo está en `docs/PENDIENTES_LEGAL.md`, sección "T&C generales de Colombia":
+
+- **Cuál de los dos "Descuento en Productos Seleccionados"** es el bueno. El Excel
+  lo trae dos veces con enlaces distintos y dejé los dos con un aviso.
+- **El beneficio y la descripción de los dos cupones** de las filas 14 y 15, que
+  llegaron vacías.
+- **Si la Tarifa de Servicio Gratis se renueva** después del 31 de octubre.
+- **Si el enlace de los cupones de membresía** debe seguir apuntando a la versión
+  de 2024 teniendo vigencia 2026.
+- **Si el T&C general de Cashback sigue publicado.** Estaba en la lista de 2025 y
+  ya no está en la de 2026, y es el tipo que RappiMind sí genera.
+- **Que alguien abra los quince enlaces.** La red de este entorno bloquea
+  `promos.rappi.com`, así que están bien copiados pero sin verificar.

@@ -165,8 +165,7 @@
         "enlace": "https://promos.rappi.com/colombia/cuponvalorfijoco",
         "vigenciaInicio": "2026-01-01",
         "vigenciaFin": "2026-12-31",
-        "filaExcel": 14,
-        "advertencia": "La lista de Legal no dice qué beneficio cubre ni para qué sirve. Confírmalo con Legal antes de publicar la pieza."
+        "filaExcel": 14
       },
       {
         "id": "cupon_toda_la_tienda",
@@ -176,8 +175,7 @@
         "enlace": "https://promos.rappi.com/colombia/cupondescuentoco",
         "vigenciaInicio": "2026-01-01",
         "vigenciaFin": "2026-12-31",
-        "filaExcel": 15,
-        "advertencia": "La lista de Legal no dice qué beneficio cubre ni para qué sirve. Confírmalo con Legal antes de publicar la pieza."
+        "filaExcel": 15
       },
       {
         "id": "descuento_productos_seleccionados_bis",

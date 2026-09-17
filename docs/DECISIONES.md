@@ -428,3 +428,47 @@ deshagan solos.
 **El monto se escribe al revés que en Colombia.** En español va
 "cincuenta mil pesos M/Cte. ($50.000)"; en los documentos de Brasil va
 "R$300,00 (trezentos reais)", la cifra primero. Sale del idioma, no del país.
+
+## Los T&C que Legal ya publicó (17 de septiembre)
+
+**No generan documento, y por eso no son un tipo de campaña.** Un descuento o un
+cupón en Colombia ya tiene su T&C publicado. Meterlo en `ESQUEMAS` habría
+significado un modelo vacío, un esquema sin campos y un camino que termina sin
+documento, o sea mentirle al motor. Los datos viven aparte, en
+`data/tyc_genericos.json`, y la lógica en `src/core/tyc_genericos.js`.
+
+**El comercial llega desde la lista de tipos**, no desde el menú ni desde la
+ayuda. Ahí es donde busca su campaña y donde hoy se daba por vencido: no
+encontraba "descuento", cerraba y le escribía a Legal. La tarjeta va debajo de
+los tipos, separada por una línea y con su propio encabezado, porque no es un
+tipo más: los demás generan un documento y este entrega un enlace.
+
+**Solo aparece donde hay algo que dar.** Si el país no tiene T&C generales
+publicados (hoy todos menos Colombia), o si el negocio es Rappi Travel, la
+tarjeta no se dibuja. Ofrecer un camino que muere cinco pantallas después es la
+peor versión.
+
+**La vigencia manda.** Un T&C vencido sigue estando en la lista de Legal. La
+Tarifa de Servicio Gratis vence el 31 de octubre de 2026 y las demás el 31 de
+diciembre, así que a partir del 1 de noviembre esa tarjeta se queda a la vista,
+deshabilitada, diciendo cuándo venció y a quién escribirle. Deshabilitada y no
+escondida: si desapareciera, el comercial creería que la herramienta no la tiene
+y volvería a pedírsela a Legal, que es justo lo que se quiere evitar.
+
+**Lo que el Excel trajo mal se muestra, no se arregla.** El mismo T&C aparece dos
+veces con enlaces distintos y dos filas llegaron sin descripción. Elegir cuál
+enlace es el bueno o escribir la descripción que falta sería decidir por Legal
+sobre un documento que se publica. Los dos quedan en la lista con un aviso, y lo
+que hay que resolver está en `docs/PENDIENTES_LEGAL.md` y en el campo
+`revisiones` del propio archivo de datos.
+
+**Los identificadores son estables y no salen del nombre.** El duplicado de la
+fila 16 se llama `descuento_productos_seleccionados_bis` porque comparte nombre
+con el de la fila 4. Si mañana Legal retira uno de los dos, el otro conserva su
+identificador y no hay que tocar nada más.
+
+**El dato entra a `MotorCliente.html`.** La pantalla se pinta entera en el
+navegador, así que `data/tyc_genericos.json` se convierte en `dist/TycGenericos.js`
+y el build lo mete dentro del HTML del motor, como los modelos y los países. Un
+archivo suelto en `dist/` es del servidor y el navegador nunca lo ve: esa es la
+frontera 2, y ya dejó una pantalla sin una sola opción que ofrecer.
