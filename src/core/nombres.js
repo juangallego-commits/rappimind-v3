@@ -25,19 +25,30 @@
 
 /* En Node las dependencias se cargan con require; en Apps Script ya son globales. */
 if (typeof module !== 'undefined' && typeof require === 'function') {
+  var moduloIdiomas = require('./idiomas.js');
+  var textosDelIdioma = moduloIdiomas.textosDelIdioma;
+  var conElIdiomaDe = moduloIdiomas.conElIdiomaDe;
   var partesDeFecha = require('./fechas.js').partesDeFecha;
 }
 
 var SEPARADOR_NOMBRE = ' · ';
 
 /** Meses cortos para el nombre. En el documento van completos, no aqui. */
+/* Se conserva por compatibilidad: los meses de verdad salen del idioma activo. */
 var MESES_CORTOS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 
-/** "2026-09-20" -> "20 sep 2026". Cadena vacia si la fecha no sirve. */
+/**
+ * "2026-09-20" -> "20 sep 2026", o "20 set 2026" en Brasil.
+ *
+ * El nombre va impreso como titulo del documento, asi que tiene que estar en el
+ * mismo idioma que el articulado. Un titulo que diga "1 oct" sobre un texto que
+ * dice "1 de outubro" se lee como un descuido.
+ */
 function fechaCortaDeNombre(iso) {
   var partes = partesDeFecha(iso);
   if (!partes) return '';
-  return partes.dia + ' ' + MESES_CORTOS[partes.mes - 1] + ' ' + partes.anio;
+  var cortos = textosDelIdioma().mesesCortos || MESES_CORTOS;
+  return partes.dia + ' ' + cortos[partes.mes - 1] + ' ' + partes.anio;
 }
 
 /**
@@ -51,6 +62,16 @@ function tramoDeBeneficio(entrada, esquema) {
   if (!nombreDelTipo) return '';
   var porcentaje = Number(entrada.porcentaje);
   var conPorcentaje = isFinite(porcentaje) && porcentaje > 0;
+
+  // Brasil: el titulo dice el beneficio como lo nombran los documentos
+  // aprobados ("10% OFF", "Frete gratis"), no el nombre del tipo.
+  if (esquema.id === 'promocao_br') {
+    if (entrada.beneficioBr === 'desconto') return conPorcentaje ? porcentaje + '% OFF' : 'Desconto';
+    if (entrada.beneficioBr === 'frete_gratis') return 'Frete grátis';
+    if (entrada.beneficioBr === 'taxa_servico') return 'Taxa de serviço grátis';
+    if (entrada.beneficioBr === 'taxa_e_frete') return 'Taxa de serviço e frete grátis';
+    return '';
+  }
 
   if (esquema.id === 'cashback') {
     return conPorcentaje ? porcentaje + '% ' + nombreDelTipo : nombreDelTipo;
@@ -82,7 +103,18 @@ function tramoDeBeneficio(entrada, esquema) {
  * Devuelve cadena vacia mientras falte algun dato: la vista previa lo muestra
  * como un hueco, igual que cualquier otro.
  */
-function nombreDeCampana(entrada, esquema) {
+function nombreDeCampana(entrada, esquema, pais) {
+  // El nombre va impreso como titulo del documento y como nombre del archivo en
+  // Drive, asi que tiene que estar en el mismo idioma que el articulado. Con
+  // pais se arma en su idioma; sin pais, en espanol, que es el 99,7% de los
+  // casos y lo que hacian todas las llamadas de antes.
+  if (pais) {
+    return conElIdiomaDe(pais, function () { return nombreDeCampanaEnElIdioma(entrada, esquema); });
+  }
+  return nombreDeCampanaEnElIdioma(entrada, esquema);
+}
+
+function nombreDeCampanaEnElIdioma(entrada, esquema) {
   var datos = entrada || {};
   var tramos = [];
 

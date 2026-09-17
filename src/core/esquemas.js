@@ -795,6 +795,87 @@ var CAMPOS_DESCUENTO_TRAVEL = [
   { id: 'sinUnidades', etiqueta: 'No depende de unidades', tipo: 'casilla', paso: 'beneficio', obligatorio: false },
 ];
 
+
+/* --- Brasil ---------------------------------------------------------------
+ *
+ * Un solo tipo con cuatro formas del beneficio: desconto, frete gratis, taxa de
+ * servico y las dos ultimas juntas. Los cuatro T&C aprobados que mando Legal
+ * Brasil son el mismo documento con ese unico tramo cambiado, asi que serian
+ * cuatro modelos identicos menos una frase. Ver docs/MODELO_BASE_BRASIL.md.
+ *
+ * Reusa los campos que ya significan lo mismo (la tienda, el minimo de compra,
+ * el tope, el maximo de pedidos) para no duplicar preguntas ni columnas de
+ * auditoria. Solo trae dos propios: la forma del beneficio y los medios de pago,
+ * que en Brasil son una lista concreta y no las tres opciones de Colombia.
+ */
+var CAMPOS_BRASIL = [
+  { id: 'pais', etiqueta: 'País', tipo: 'lista', paso: 'campana', obligatorio: true },
+  {
+    id: 'negocio',
+    etiqueta: 'Negocio',
+    tipo: 'lista',
+    paso: 'campana',
+    obligatorio: true,
+    opciones: [
+      { valor: 'rappi', etiqueta: 'Rappi' },
+      { valor: 'travel', etiqueta: 'Rappi Travel' },
+    ],
+  },
+  { id: 'tipo', etiqueta: 'Tipo de campaña', tipo: 'tarjetas', paso: 'campana', obligatorio: true },
+
+  { id: 'tienda', etiqueta: 'Parceiro', tipo: 'texto', paso: 'campana', obligatorio: true },
+
+  { id: 'fechaInicio', etiqueta: 'Fecha de inicio', tipo: 'fecha', paso: 'vigencia', obligatorio: true },
+  { id: 'horaInicio', etiqueta: 'Hora de inicio', tipo: 'hora', paso: 'vigencia', obligatorio: true },
+  { id: 'fechaFin', etiqueta: 'Fecha de fin', tipo: 'fecha', paso: 'vigencia', obligatorio: true },
+  { id: 'horaFin', etiqueta: 'Hora de fin', tipo: 'hora', paso: 'vigencia', obligatorio: true },
+
+  {
+    id: 'beneficioBr',
+    etiqueta: 'Forma del beneficio',
+    tipo: 'lista',
+    paso: 'beneficio',
+    obligatorio: true,
+    opciones: [
+      { valor: 'desconto', etiqueta: 'Desconto % OFF' },
+      { valor: 'frete_gratis', etiqueta: 'Frete grátis' },
+      { valor: 'taxa_servico', etiqueta: 'Taxa de serviço grátis' },
+      { valor: 'taxa_e_frete', etiqueta: 'Taxa de serviço e frete grátis' },
+    ],
+  },
+  {
+    id: 'porcentaje',
+    etiqueta: 'Porcentaje de descuento',
+    tipo: 'numero',
+    paso: 'beneficio',
+    visible: esDescontoBr,
+    obligatorio: esDescontoBr,
+  },
+  {
+    id: 'tope',
+    etiqueta: 'Tope del beneficio',
+    tipo: 'numero',
+    paso: 'beneficio',
+    // La taxa de servico no lleva tope en ninguno de los documentos aprobados.
+    visible: llevaTopeBr,
+    obligatorio: false,
+  },
+  { id: 'compraMinima', etiqueta: 'Mínimo de compra', tipo: 'numero', paso: 'participantes', obligatorio: false },
+  { id: 'maxPedidos', etiqueta: 'Máximo de pedidos por usuario', tipo: 'numero', paso: 'beneficio', obligatorio: false },
+  { id: 'sinLimite', etiqueta: 'Sin límite de pedidos', tipo: 'casilla', paso: 'beneficio', obligatorio: false },
+  { id: 'metodosPagoBr', etiqueta: 'Medios de pago', tipo: 'casillas', paso: 'beneficio', obligatorio: true },
+
+  { id: 'declaracion', etiqueta: 'Declaración', tipo: 'casilla', paso: 'confirmacion', obligatorio: true },
+];
+
+function esDescontoBr(entrada) {
+  return entrada.beneficioBr === 'desconto';
+}
+
+function llevaTopeBr(entrada) {
+  return entrada.beneficioBr === 'desconto' || entrada.beneficioBr === 'frete_gratis';
+}
+
 var ESQUEMAS = {
   cashback: {
     id: 'cashback',
@@ -849,6 +930,15 @@ var ESQUEMAS = {
     filtroDeEntrada: [],
     esDeTravel: true,
   },
+  promocao_br: {
+    id: 'promocao_br',
+    nombre: 'Promoção Brasil',
+    descripcion: 'Descuento en porcentaje, envío gratis o tarifa de servicio gratis en una tienda aliada de Brasil. El usuario ve el beneficio aplicado al pagar, no recibe Créditos. Solo para Brasil.',
+    modelo: 'promocao_br',
+    campos: CAMPOS_BRASIL,
+    filtroDeEntrada: [],
+    esDeBrasil: true,
+  },
   cashback_day: {
     id: 'cashback_day',
     nombre: 'Cashback Multitienda',
@@ -891,6 +981,7 @@ if (typeof module !== 'undefined') {
   module.exports = {
     ESQUEMAS: ESQUEMAS,
     CAMPOS_POR_TIENDA: CAMPOS_POR_TIENDA,
+    CAMPOS_BRASIL: CAMPOS_BRASIL,
     categoriasDe: categoriasDe,
     hayAereasDeTravel: hayAereasDeTravel,
     hayAlojamientoDeTravel: hayAlojamientoDeTravel,

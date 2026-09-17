@@ -11,6 +11,8 @@ Dueño de producto y aprobador legal: Juan Camilo Gallego.
 ## Reglas no negociables
 
 1. **Rappi nunca es el organizador** de una campaña. El organizador es siempre la tienda (aliado) o la marca (maker) que fondea. Rappi es plataforma de intermediación y responsable del tratamiento de datos. Que Rappi opere la mecánica o gestione la entrega de un premio no lo vuelve organizador.
+
+   **Única excepción, Brasil.** Los T&C aprobados de Brasil están escritos con Rappi como quien concede, modifica y cancela la promoción, y no nombran a un organizador distinto. Juan lo autorizó como excepción explícita el 17 de septiembre de 2026. Vale solo para el modelo de Brasil y no se extiende a ningún otro país ni sirve de precedente. Ver `docs/DECISIONES.md`.
 2. **Determinismo.** El comercial solo entrega hechos (listas, números, fechas, nombres). El texto legal sale únicamente de `modelos/`. El documento final tiene cero `{{ }}`, cero `[[ ]]`, cero valores vacíos y cero frases rotas. Si algo falta, el sistema no genera.
 3. **El texto legal es de Legal.** No redactes ni "mejores" cláusulas. Si un texto de `modelos/` o de la especificación parece tener un error, déjalo anotado en `docs/PENDIENTES_LEGAL.md` y sigue.
 4. **Oración vs fragmento.** Los derivados marcados ORACIÓN devuelven oración completa (mayúscula inicial y punto final). Los FRAGMENTO se insertan dentro de otra frase (sin mayúscula inicial ni punto final).

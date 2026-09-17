@@ -305,9 +305,11 @@
     {
       "codigo": "BR",
       "nombre": "Brasil",
-      "estado": "bloqueado",
+      "estado": "piloto",
       "idioma": "pt",
-      "modelos": [],
+      "modelos": [
+        "promocao_br"
+      ],
       "entidad_legal": "RAPPI BRASIL INTERMEDIAÇÃO DE NEGÓCIOS LTDA",
       "id_fiscal": "CNPJ 26.900.161/0001-25",
       "domicilio_legal": "São Paulo",
@@ -319,7 +321,7 @@
       "url_tc_plataforma": "https://legal.rappi.com.co/brazil/termos-e-condicoes-de-uso-da-plataforma-rappi/",
       "url_privacidad": "https://legal.rappi.com.co/brazil/aviso-de-privacidade-e-politicas-de-uso-das-informacao-utilizadas-pela-rappi/",
       "url_tc_creditos": "https://legal.rappi.com.co/brazil/termos-e-condicoes-funcionamento-dos-creditos-da-plataforma-rappi/",
-      "moneda_nombre": "reais BRL",
+      "moneda_nombre": "reais",
       "politica_privacidad": "a Aviso de Privacidade e Políticas de uso das Informação utilizadas pela Rappi",
       "edad_minima": "dezoito (18) anos",
       "tipo_id_organizador": "CNPJ",

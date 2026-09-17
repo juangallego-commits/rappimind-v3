@@ -125,7 +125,48 @@ var PREGUNTAS = {
   // tienda, el porcentaje y el dia de inicio. Ver src/core/nombres.js y el caso
   // que lo obligo, en docs/PENDIENTES_LEGAL.md.
 
+  beneficioBr: p({
+    paso: 'beneficio',
+    pregunta: '¿Qué recibe el usuario?',
+    ayuda: 'Las cuatro formas que Legal Brasil tiene aprobadas. Cada una cambia una sola frase del documento.',
+    porQue: 'De aquí salen el párrafo de apertura y la viñeta que describe el beneficio. Es lo único que distingue los cuatro modelos aprobados entre sí.',
+    placeholders: ['TEXTO_BENEFICIO_APERTURA', 'TEXTO_BENEFICIO_REGRA'],
+    opciones: [
+      { valor: 'desconto', etiqueta: 'Desconto % OFF', nota: 'Un porcentaje de descuento sobre el pedido, con tope en reales.' },
+      { valor: 'frete_gratis', etiqueta: 'Frete grátis', nota: 'El envío sin costo, hasta el tope que definas.' },
+      { valor: 'taxa_servico', etiqueta: 'Taxa de serviço grátis', nota: 'La tarifa de servicio sin costo. Los documentos aprobados no le ponen tope.' },
+      { valor: 'taxa_e_frete', etiqueta: 'Taxa de serviço e frete grátis', nota: 'Las dos cosas juntas. Es la única que los documentos aprobados usan sin mínimo de compra.' },
+    ],
+    errores: { vacio: 'Elige qué recibe el usuario.' },
+  }),
+
+  metodosPagoBr: p({
+    paso: 'beneficio',
+    pregunta: '¿Con qué medios se puede pagar?',
+    ayuda: 'Marca todos los que apliquen. Los cuatro documentos aprobados los enumeran uno por uno.',
+    porQue: 'El documento lista los medios de pago válidos con su nombre. Un medio que no esté en la lista no da derecho al beneficio.',
+    placeholders: ['TEXTO_METODO_PAGO'],
+    opciones: [
+      { valor: 'dinheiro', etiqueta: 'Dinheiro', nota: 'Efectivo.' },
+      { valor: 'paypal', etiqueta: 'Paypal', nota: 'La cuenta de PayPal del usuario.' },
+      { valor: 'rappipay', etiqueta: 'RappiPay', nota: 'El medio de pago propio de Rappi.' },
+      { valor: 'visa', etiqueta: 'Cartão de crédito Visa', nota: 'Tarjeta de crédito Visa.' },
+      { valor: 'mastercard', etiqueta: 'Cartão de crédito Mastercard', nota: 'Tarjeta de crédito Mastercard.' },
+      { valor: 'voucher_refeicao', etiqueta: 'Voucher Refeição', nota: 'Vale de comida.' },
+    ],
+    errores: { vacio: 'Marca al menos un medio de pago.' },
+  }),
+
   tienda: p({
+    variantes: {
+      promocao_br: {
+        pregunta: '¿En qué parceiro aplica?',
+        ayuda: 'El nombre del socio como aparece en la app. Por ejemplo: Petz, Drogasmil, Raia.',
+        porQue: 'El documento nombra al Parceiro en el párrafo de apertura y en la viñeta del beneficio.',
+        ejemplo: 'Petz',
+        errores: { vacio: 'Escribe el parceiro donde aplica la campaña.' },
+      },
+    },
     paso: 'campana',
     pregunta: '¿En qué tienda aplica?',
     ayuda: 'La marca comercial como aparece en la app. Por ejemplo: Pollo Dorado.',
@@ -239,6 +280,13 @@ var PREGUNTAS = {
   // --- El beneficio -------------------------------------------------------
 
   porcentaje: p({
+    variantes: {
+      promocao_br: {
+        pregunta: '¿Qué porcentaje de descuento das?',
+        ayuda: 'El documento lo escribe como "até X%", así que es el descuento máximo.',
+        porQue: 'Sale escrito en letras y en cifra dentro del documento, como lo exige el modelo aprobado.',
+      },
+    },
     paso: 'beneficio',
     pregunta: '¿Qué porcentaje del pedido devuelves en Créditos?',
     ayuda: 'Solo el número. Con 20, un pedido de $50.000 recibe $10.000 en Créditos.',
@@ -265,6 +313,13 @@ var PREGUNTAS = {
   }),
 
   tope: p({
+    variantes: {
+      promocao_br: {
+        pregunta: '¿Cuál es el tope del beneficio, en reales?',
+        ayuda: 'Lo máximo que la campaña cubre en un pedido. Si lo dejas en blanco, el documento no lleva tope.',
+        porQue: 'Sin tope escrito, la campaña no tiene techo y el presupuesto se puede ir en pocos pedidos.',
+      },
+    },
     paso: 'beneficio',
     pregunta: '¿Qué es lo máximo que recibe alguien por pedido?',
     ayuda: 'Aunque el pedido sea grande, no recibe más de esto. Lo más usado es 25.000.',
@@ -302,6 +357,13 @@ var PREGUNTAS = {
   }),
 
   maxPedidos: p({
+    variantes: {
+      promocao_br: {
+        pregunta: '¿Cuántos pedidos puede hacer la misma persona?',
+        ayuda: 'Los documentos aprobados usan uno, dos, o sin límite.',
+        porQue: 'El documento lo escribe en letras y en cifra: "o limite de 1 (um) pedido por usuário".',
+      },
+    },
     paso: 'beneficio',
     pregunta: '¿Cuántas veces puede ganar la misma persona?',
     ayuda: 'La mitad de las campañas permite una sola vez por usuario.',
@@ -332,6 +394,13 @@ var PREGUNTAS = {
   }),
 
   compraMinima: p({
+    variantes: {
+      promocao_br: {
+        pregunta: '¿Hay un mínimo de compra, en reales?',
+        ayuda: 'Opcional. De los cuatro documentos aprobados, tres lo llevan y el de taxa de serviço e frete grátis no.',
+        porQue: 'El mínimo aparece dos veces en el documento: en el párrafo de apertura y en la viñeta del beneficio.',
+      },
+    },
     // Va en el paso de participantes, no en el del beneficio: es un requisito
     // para participar. El esquema manda, y este archivo tiene que decir lo
     // mismo, porque de aqui sale docs/PREGUNTAS_KAM.md.
@@ -1248,6 +1317,11 @@ var PREGUNTAS = {
  * Es lo que dice el espacio en blanco del documento: "falta el porcentaje".
  */
 var NOMBRE_DEL_HUECO = {
+  TEXTO_MINIMO_APERTURA: 'el mínimo de compra',
+  TEXTO_BENEFICIO_APERTURA: 'qué recibe el usuario',
+  TEXTO_BENEFICIO_REGRA: 'la regla del beneficio',
+  TEXTO_TOPE_BENEFICIO: 'el tope del beneficio',
+  PARCEIRO: 'el parceiro',
   TEXTO_PRODUCTOS_TRAVEL: 'las categorías que participan',
   TEXTO_AMBITO_TRAVEL: 'si los viajes son nacionales o internacionales',
   TEXTO_DESTINOS_TRAVEL: 'los destinos',

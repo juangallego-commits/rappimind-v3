@@ -92,7 +92,9 @@ test('el porcentaje y el monto usan las palabras del país', () => {
   conElIdiomaDe(BRASIL, () => {
     assert.strictEqual(porcentajeEnLetras(50), 'cinquenta por cento (50%)');
     assert.strictEqual(porcentajeEnLetras(100), 'cem por cento (100%)');
-    assert.strictEqual(montoConMoneda(50000, BRASIL), 'cinquenta mil reais BRL (R$50.000)');
+    // La cifra primero y las letras entre paréntesis, como en los T&C aprobados.
+    assert.strictEqual(montoConMoneda(50000, BRASIL), 'R$50.000,00 (cinquenta mil reais)');
+    assert.strictEqual(montoConMoneda(300, BRASIL), 'R$300,00 (trezentos reais)');
     assert.strictEqual(cantidadCreditos(30000, BRASIL), 'trinta mil (30.000) Créditos');
     // El "de" antes del sustantivo cuando el número termina en millón.
     assert.strictEqual(cantidadCreditos(12000000, BRASIL), 'doze milhões (12.000.000) de Créditos');

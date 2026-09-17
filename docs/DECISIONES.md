@@ -386,3 +386,45 @@ Legal Brasil: el texto de Legal manda sobre cualquier convención.
 
 Lo que **no** sale del idioma es el texto legal. Las cláusulas siguen en
 `modelos/` y las frases fijas en `derivados.js`, y las traduce Legal.
+
+## Brasil: un solo modelo, y una excepción escrita sobre el organizador
+
+**Fecha:** 17 de septiembre de 2026.
+
+**La excepción.** Los cuatro T&C aprobados de Brasil están escritos con Rappi
+como quien concede, modifica y cancela la promoción, y no nombran a un
+organizador distinto. Eso contradice la regla 1 de `CLAUDE.md`. Juan lo autorizó
+como excepción explícita, solo para el modelo de Brasil. Quedó escrita dentro de
+la propia regla 1, para que nadie la encuentre por casualidad y la tome como
+precedente.
+
+**Un modelo, no cuatro.** Los cuatro documentos son la misma estructura palabra
+por palabra: las trece cláusulas de CONDIÇÕES GERAIS son idénticas y solo cambia
+el tramo que dice qué recibe el usuario. Cuatro modelos habrían sido cuatro
+copias que se desincronizan en cuanto alguien toque una.
+
+**Reusar campos en vez de duplicarlos.** El tipo `promocao_br` trae solo dos
+campos propios, la forma del beneficio y los medios de pago. Todo lo demás
+(la tienda, las fechas, el mínimo de compra, el tope, el máximo de pedidos) reusa
+los campos que ya significan lo mismo, con el mecanismo de `variantes` para que
+la pregunta se lea distinta. Así no se duplican preguntas ni columnas de
+auditoría.
+
+El campo de la forma del beneficio se llama `beneficioBr` y no `formaBeneficio`
+porque ese nombre ya existía en Rappi Travel con otras opciones, y la clave
+duplicada hacía que la de Travel ganara en silencio.
+
+**Brasil pasa de bloqueado a piloto**, que es el estado donde solo lo ve el
+equipo de pruebas. Es reversible desde el Sheet.
+
+**Las correcciones al texto.** Juan autorizó corregir el documento donde hubiera
+oportunidad de mejora. El criterio que usé: corregir errores verificables
+(erratas, palabras que no encajan, frases sin verbo, concordancias rotas,
+ambigüedades que cambian el sentido, diferencias de forma entre los cuatro) y
+**no tocar criterio jurídico**. Cada cambio está en `docs/CORRECCIONES_BRASIL.md`
+con su antes y su después, y hay una prueba por cada uno para que no se
+deshagan solos.
+
+**El monto se escribe al revés que en Colombia.** En español va
+"cincuenta mil pesos M/Cte. ($50.000)"; en los documentos de Brasil va
+"R$300,00 (trezentos reais)", la cifra primero. Sale del idioma, no del país.

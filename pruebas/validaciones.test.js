@@ -62,8 +62,17 @@ test('un país en piloto no aparece para quien no está en el equipo', () => {
 });
 
 test('un país bloqueado no genera para nadie', () => {
-  assert.ok(validarPais(BR, false));
-  assert.ok(validarPais(BR, true));
+  // Brasil pasó a piloto al entrar su modelo, así que el país bloqueado se
+  // construye aquí: la regla es de la validación, no de qué país esté cerrado hoy.
+  const bloqueado = Object.assign({}, BR, { estado: 'bloqueado' });
+  assert.ok(validarPais(bloqueado, false));
+  assert.ok(validarPais(bloqueado, true));
+});
+
+test('Brasil está en piloto: solo lo ve el equipo de pruebas', () => {
+  assert.strictEqual(BR.estado, 'piloto');
+  assert.ok(validarPais(BR, false), 'un comercial de fuera del equipo no debería poder generar en Brasil');
+  assert.strictEqual(validarPais(BR, true), null);
 });
 
 test('un país activo genera para cualquiera', () => {

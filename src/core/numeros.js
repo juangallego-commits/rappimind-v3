@@ -185,17 +185,21 @@ function cantidadCreditos(n, pais) {
   return letras + ' (' + formatearMiles(n, pais.separador_miles) + ')' + de + ' ' + idioma.creditos;
 }
 
-/** Monto con moneda: "cincuenta mil pesos M/Cte. ($50.000)". */
+/**
+ * Monto con moneda, en el orden que usa cada pais.
+ *
+ * Espanol: "cincuenta mil pesos M/Cte. ($50.000)", las letras primero.
+ * Portugues: "R$300,00 (trezentos reais)", la cifra primero y las letras entre
+ * parentesis, que es como lo escriben los cuatro T&C aprobados de Brasil.
+ */
 function montoConMoneda(n, pais) {
-  return (
-    numeroEnLetras(n) +
-    ' ' +
-    pais.moneda_nombre +
-    ' (' +
-    pais.moneda_simbolo +
-    formatearMiles(n, pais.separador_miles) +
-    ')'
-  );
+  var idioma = textosDelIdioma();
+  var cifra = pais.moneda_simbolo + formatearMiles(n, pais.separador_miles) + (idioma.decimalesDelMonto || '');
+
+  if (idioma.formatoMonto === 'cifra_primero') {
+    return cifra + ' (' + numeroEnLetras(n) + ' ' + pais.moneda_nombre + ')';
+  }
+  return numeroEnLetras(n) + ' ' + pais.moneda_nombre + ' (' + cifra + ')';
 }
 
 /**

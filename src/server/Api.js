@@ -131,7 +131,7 @@ function generar(entrada) {
     for (var n = 0; n < solicitudes.length; n++) nombresUsados.push(solicitudes[n].nombre_campana);
 
     var esquema = esquemaDe(entrada.tipo);
-    entrada.sufijoNombre = sufijoLibreDeNombre(nombreDeCampana(entrada, esquema), nombresUsados);
+    entrada.sufijoNombre = sufijoLibreDeNombre(nombreDeCampana(entrada, esquema, pais), nombresUsados);
     if (entrada.sufijoNombre > 1) {
       resultado = generarTexto(entrada, pais, MODELOS, {
         fechaReferencia: hoyIso(),
@@ -140,7 +140,7 @@ function generar(entrada) {
       if (!resultado.valido) return { valido: false, errores: resultado.errores };
     }
 
-    var nombreCampana = nombreDeCampana(entrada, esquema);
+    var nombreCampana = nombreDeCampana(entrada, esquema, pais);
     var direccion = direccionDeCampana(nombreCampana);
     var titulo = tituloDelDocumento(nombreCampana, pais.nombre, id);
     var carpeta = carpetaDelPais(pais.codigo, pais.nombre);

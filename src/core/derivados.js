@@ -34,6 +34,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var esquemaDe = moduloEsquemas2.esquemaDe;
 
   var calcularDerivadosTravel = require('./derivados_travel.js').calcularDerivadosTravel;
+  var calcularDerivadosBr = require('./derivados_br.js').calcularDerivadosBr;
   var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
 }
 
@@ -351,6 +352,16 @@ function calcularDerivadosEnElIdiomaDelPais(entrada, pais) {
     var deTravel = calcularDerivadosTravel(entrada, pais);
     for (var llaveTravel in deTravel) {
       if (Object.prototype.hasOwnProperty.call(deTravel, llaveTravel)) valores[llaveTravel] = deTravel[llaveTravel];
+    }
+  }
+
+  // Brasil tiene su propio modelo y sus propios textos, en portugues y con su
+  // excepcion sobre el organizador. Mismo patron que Travel: encima, sin tocar
+  // nada de delivery.
+  if (esquemaActual && esquemaActual.esDeBrasil) {
+    var deBrasil = calcularDerivadosBr(entrada, pais);
+    for (var llaveBr in deBrasil) {
+      if (Object.prototype.hasOwnProperty.call(deBrasil, llaveBr)) valores[llaveBr] = deBrasil[llaveBr];
     }
   }
 

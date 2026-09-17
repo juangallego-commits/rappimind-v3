@@ -39,6 +39,9 @@ var IDIOMAS = {
     // El nombre del saldo de la Billetera, tal como va impreso.
     creditos: 'Créditos',
     porCiento: 'por ciento',
+    // "cincuenta mil pesos M/Cte. ($50.000)": las letras primero.
+    formatoMonto: 'letras_primero',
+    mesesCortos: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
     // "doce millones (12.000.000) de Créditos"
     deAntesDelSustantivo: 'de',
     terminacionDeMillon: /(millón|millones)$/,
@@ -61,6 +64,11 @@ var IDIOMAS = {
     conjuncionDeLista: 'e',
     creditos: 'Créditos',
     porCiento: 'por cento',
+    // "R$300,00 (trezentos reais)": la cifra primero y las letras entre
+    // parentesis, como lo escriben los cuatro T&C aprobados de Brasil.
+    formatoMonto: 'cifra_primero',
+    decimalesDelMonto: ',00',
+    mesesCortos: ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'],
     deAntesDelSustantivo: 'de',
     terminacionDeMillon: /(milhão|milhões)$/,
   },
