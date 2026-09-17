@@ -28,3 +28,17 @@ Escritorio 1440x900, celular 390x844.
 
 Para volver a generarlas hace falta un navegador, que no es dependencia del
 proyecto. El recorrido vive fuera del repositorio.
+
+## La carpeta `revision/`
+
+Son las 33 capturas del recorrido completo que se le mandan a Claude chat para
+revisar el copy (encargo `docs/encargos/02-revision-interfaz.md`), más
+`textos.json` con el texto literal de cada pantalla. Se regeneran con:
+
+```
+npm run demo
+node .claude/skills/flujo-y-ux/scripts/capturar-pantallas.js
+```
+
+Hay que regenerarlas después de cualquier cambio de interfaz, porque el encargo
+se arma desde `textos.json` y tiene que describir la versión que se revisa.

@@ -86,6 +86,37 @@ const parceiroPt=await txt();
 ok('la pregunta del parceiro en portugués', parceiroPt.indexOf('Em qual parceiro a campanha vale?')!==-1, parceiroPt.replace(/\n+/g,' | ').slice(0,300));
 ok('el paso y los botones también', parceiroPt.indexOf('Avançar')!==-1 && parceiroPt.indexOf('Seu T&C')!==-1);
 
+// El "por qué" y las notas de los países también, en las preguntas que no pasan por dibujarPregunta.
+ok('el por qué del país y del tipo también en portugués',
+  paisPt.indexOf('¿Por qué te preguntamos esto?')===-1 && tipoPt.indexOf('¿Por qué te preguntamos esto?')===-1 && paisPt.indexOf('Por que perguntamos isso?')!==-1,
+  (paisPt+tipoPt).replace(/\n+/g,' | ').slice(0,300));
+ok('las notas de los países en portugués', paisPt.indexOf('Disponível.')!==-1 && paisPt.indexOf('Em piloto')!==-1 && paisPt.indexOf('En piloto')===-1);
+ok('el aviso de país en pruebas en portugués', parceiroPt.indexOf('está em testes')!==-1 && parceiroPt.indexOf('está en pruebas')===-1);
+ok('la vista previa vacía en portugués', paisPt.indexOf('Seu documento aparece aqui')!==-1 && paisPt.indexOf('Tu documento aparece aquí')===-1, paisPt.replace(/\n+/g,' | ').slice(0,300));
+
+// Un error de validación sale en portugués, no en español.
+await clic('Avançar'); await p.waitForTimeout(400);
+const conError=await txt();
+ok('el mensaje de campo vacío sale en portugués', conError.indexOf('Escreva o parceiro em que a campanha vale.')!==-1 && conError.indexOf('Escribe el parceiro')===-1, conError.replace(/\n+/g,' | ').slice(0,300));
+
+// Las fechas respondidas se escriben como el documento, en portugués.
+await p.fill('.pregunta input[type=text]', 'Petz'); await clic('Avançar'); await p.waitForTimeout(400);
+await p.fill('.pregunta input[type=date]', '2026-10-01'); await clic('Avançar'); await p.waitForTimeout(400);
+const conFecha=await txt();
+ok('la fecha respondida sale en portugués', conFecha.indexOf('1 de outubro de 2026')!==-1 && conFecha.indexOf('1 de octubre de 2026')===-1, conFecha.replace(/\n+/g,' | ').slice(0,400));
+ok('"Assim fica" en portugués', conFecha.indexOf('Assim fica no seu T&C:')!==-1 || conFecha.indexOf('Así queda')===-1);
+
+// El resumen de un país en pruebas dice qué falta de verdad, en portugués.
+await p.evaluate(()=>{window.RM.app.ir('resumen')}); await p.waitForTimeout(500);
+const resumenPt=await txt();
+ok('el resumen en portugués, con el aviso del país en pruebas', resumenPt.indexOf('está em testes')!==-1 && resumenPt.indexOf('Confirmo que as informações')!==-1, resumenPt.replace(/\n+/g,' | ').slice(0,400));
+const faltando=resumenPt.slice(resumenPt.indexOf('Está faltando:'), resumenPt.indexOf('Voltar'));
+ok('"Está faltando" lista lo que falta, no los datos del país',
+  faltando.indexOf('Está faltando:')===0 && faltando.indexOf('miles')===-1 && faltando.indexOf('Escolha')!==-1 && faltando.indexOf('Marque a caixa')!==-1,
+  faltando.replace(/\n+/g,' | ').slice(0,300));
+// De vuelta al primer paso, donde está la tienda respondida, para las comprobaciones que siguen.
+await p.evaluate(()=>{window.RM.estado.estado.pasoActual=0; window.RM.estado.estado.campoAbierto=null; window.RM.app.ir('pasos')}); await p.waitForTimeout(400);
+
 // Y al volver a español, todo vuelve.
 await p.evaluate(()=>[...document.querySelectorAll('.selector-idioma button')].find(b=>b.textContent.trim()==='ES').click());
 await p.waitForTimeout(400);

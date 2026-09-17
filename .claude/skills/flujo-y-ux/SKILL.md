@@ -164,7 +164,12 @@ terminó": al resumen, en blanco.
 
 1. **Recorre el camino completo en la demostración**, no solo la pantalla que
    tocaste. `npm run demo` y luego `scripts/recorrer-flujo.js` de esta skill,
-   que hace el recorrido entero y revisa los invariantes de arriba.
+   que hace el recorrido entero y revisa los invariantes de arriba. Si tocaste
+   algo que un KAM de Brasil ve, también `scripts/recorrer-en-portugues.js`.
+   Y para que Juan o Claude chat lo vean sin abrir la app,
+   `scripts/capturar-pantallas.js` regenera las 33 capturas de
+   `docs/capturas/revision/` y deja `textos.json` con el texto literal de cada
+   pantalla: de ahí se arma `docs/encargos/02-revision-interfaz.md`.
 2. **Recorre también el camino que no tocaste.** El defecto del filtro de Travel
    rompió Rappi Travel arreglando otra cosa. Si tocaste el negocio, prueba
    Rappi. Si tocaste Travel, prueba Colombia y México.
