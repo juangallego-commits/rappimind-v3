@@ -104,3 +104,13 @@ test('el nombre no se puede escribir a mano', () => {
   };
   assert.strictEqual(calcularDerivados(entrada, COLOMBIA).NOMBRE_CAMPANA, 'El Corral · 50% Cashback · 20 sep 2026');
 });
+
+test('el cashback por ETA no lleva tienda, aunque una haya quedado de otro tipo', () => {
+  // Al cambiar de Cashback a cashback por ETA, la tienda del intento anterior
+  // seguía en las respuestas y el nombre salía "Jumbo · 15 minutos o 100%...".
+  const { MODALIDAD_TURBO_POR_DEFECTO } = require('../src/core/derivados_eta.js');
+  const entrada = { tipo: 'cashback_eta', tienda: 'Jumbo', ciudades: 'Bogotá', etaMinutos: 15, porcentaje: 100, fechaInicio: '2026-09-16' };
+  const resultado = nombre(entrada);
+  assert.ok(resultado.indexOf('Jumbo') === -1, resultado);
+  assert.ok(resultado.indexOf(MODALIDAD_TURBO_POR_DEFECTO + ' Bogotá') === 0, resultado);
+});

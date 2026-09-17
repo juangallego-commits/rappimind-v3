@@ -37,6 +37,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var calcularDerivadosBr = require('./derivados_br.js').calcularDerivadosBr;
   var calcularDerivadosEta = require('./derivados_eta.js').calcularDerivadosEta;
   var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
+  var tieneValor = require('./texto.js').tieneValor;
 }
 
 // --- Textos fijos de Legal -------------------------------------------------
@@ -112,10 +113,6 @@ var VALORES_DEL_PAIS = {
 };
 
 // --- Ayudas ----------------------------------------------------------------
-
-function tieneValor(valor) {
-  return valor !== null && valor !== undefined && valor !== '';
-}
 
 /** FRAGMENTO: territorio de la campana. */
 function textoTerritorio(entrada, pais) {

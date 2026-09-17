@@ -29,6 +29,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var textosDelIdioma = moduloIdiomas.textosDelIdioma;
   var conElIdiomaDe = moduloIdiomas.conElIdiomaDe;
   var partesDeFecha = require('./fechas.js').partesDeFecha;
+  var MODALIDAD_TURBO_POR_DEFECTO = require('./derivados_eta.js').MODALIDAD_TURBO_POR_DEFECTO;
 }
 
 var SEPARADOR_NOMBRE = ' · ';
@@ -132,9 +133,12 @@ function nombreDeCampanaEnElIdioma(entrada, esquema) {
   var tienda = String(datos.tienda || datos.marcaAliado || '').trim();
   if (!tienda && esquema && esquema.esDeTravel) tienda = String(datos.organizadorRazonSocial || '').trim();
   // En el cashback por ETA no hay una tienda: hay una modalidad y una ciudad.
-  if (!tienda && esquema && esquema.esPorEta) {
+  // Y una tienda que quedo en la entrada de un tipo anterior no cuenta: el
+  // titulo decia "El Corral · 15 minutos o 100% Cashback" sin que el ETA
+  // preguntara nunca por El Corral.
+  if (esquema && esquema.esPorEta) {
     var ciudad = String(datos.ciudades || '').trim();
-    tienda = ciudad ? 'Turbo Restaurantes ' + ciudad : '';
+    tienda = ciudad ? MODALIDAD_TURBO_POR_DEFECTO + ' ' + ciudad : '';
   }
   if (tienda) tramos.push(tienda);
 

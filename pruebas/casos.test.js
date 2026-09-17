@@ -34,10 +34,15 @@ function salidaEsperada(caso) {
   return normalizarParaComparar(leerTexto(rutaDesdeRaiz('pruebas', 'salidas_esperadas', caso.id + '.txt')));
 }
 
-test('hay veintinueve casos, dieciséis que generan y trece que fallan', () => {
-  assert.strictEqual(casos.length, 29);
-  assert.strictEqual(generan.length, 16);
+test('hay treinta y un casos, dieciocho que generan y trece que fallan', () => {
+  assert.strictEqual(casos.length, 31);
+  assert.strictEqual(generan.length, 18);
   assert.strictEqual(fallan.length, 13);
+
+  // Los dos del cashback por ETA, los publicados de Bogotá y Barranquilla:
+  // un tipo sin fecha de fin que hasta hoy no tenía caso dorado.
+  const deEta = casos.filter((caso) => String(caso.id).indexOf('ETA') === 0);
+  assert.strictEqual(deEta.length, 2);
 
   // Los cuatro de Brasil, uno por forma del beneficio: el texto aprobado por
   // Legal Brasil queda protegido carácter por carácter, como el de Colombia.

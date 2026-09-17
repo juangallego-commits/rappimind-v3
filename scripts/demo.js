@@ -73,13 +73,15 @@ const SERVIDOR_SIMULADO = `
     },
 
     previsualizar: function (entrada) {
-      var pais = paisPorCodigo(paises, entrada && entrada.pais);
-      return generarTexto(entrada || {}, pais, MODELOS, { fechaReferencia: hoy(), usuarioEnEquipo: true });
+      entrada = sinRastroDeAmpliacion(entrada || {});
+      var pais = paisPorCodigo(paises, entrada.pais);
+      return generarTexto(entrada, pais, MODELOS, { fechaReferencia: hoy(), usuarioEnEquipo: true });
     },
 
     generar: function (entrada) {
-      var pais = paisPorCodigo(paises, entrada && entrada.pais);
-      var resultado = generarTexto(entrada || {}, pais, MODELOS, { fechaReferencia: hoy(), usuarioEnEquipo: true });
+      entrada = sinRastroDeAmpliacion(entrada || {});
+      var pais = paisPorCodigo(paises, entrada.pais);
+      var resultado = generarTexto(entrada, pais, MODELOS, { fechaReferencia: hoy(), usuarioEnEquipo: true });
       if (!resultado.valido) return { valido: false, errores: resultado.errores };
 
       consecutivo += 1;
@@ -97,9 +99,9 @@ const SERVIDOR_SIMULADO = `
         pais: pais.codigo, tipo: entrada.tipo,
         version_modelo: MODELOS.versiones[esquemaDe(entrada.tipo).modelo] || '',
         nombre_campana: nombreCampana, direccion_sugerida: direccionDeCampana(nombreCampana),
-        tienda: entrada.tienda || '',
+        tienda: tieneCampo(esquema, 'tienda') ? (entrada.tienda || '') : '',
         organizador: entrada.organizadorRazonSocial || '', id_organizador: entrada.organizadorId || '',
-        fecha_inicio: entrada.fechaInicio || '', fecha_fin: entrada.fechaFin || '',
+        fecha_inicio: entrada.fechaInicio || '', fecha_fin: fechaFinDeLaCampana(entrada, esquema) || '',
         link_doc: '', estado: 'generado', link_publicado: '', fecha_publicacion: '',
         datos_json: JSON.stringify(entrada), _fila: solicitudes.length + 2,
       });
@@ -129,7 +131,7 @@ const SERVIDOR_SIMULADO = `
 
     datosDeSolicitud: function (id) {
       for (var i = 0; i < solicitudes.length; i++) {
-        if (solicitudes[i].id === id) return { valido: true, entrada: JSON.parse(solicitudes[i].datos_json) };
+        if (solicitudes[i].id === id) return { valido: true, entrada: sinRastroDeAmpliacion(JSON.parse(solicitudes[i].datos_json)) };
       }
       return { valido: false, errores: [{ campo: 'id', mensaje: 'No encontramos esa solicitud.' }] };
     },
@@ -170,11 +172,38 @@ const SERVIDOR_SIMULADO = `
 
     adminGuardarMiembro: function (miembro) {
       var correo = String(miembro.email || '').trim().toLowerCase();
-      if (!/@rappi\\.com$/.test(correo)) return { valido: false, errores: [{ campo: 'email', mensaje: 'El correo debe ser @rappi.com.' }] };
-      var existente = miembroPorCorreo(equipo, correo);
-      var fila = { email: correo, nombre: miembro.nombre || '', rol: miembro.rol || 'comercial', pais: String(miembro.pais || '').toUpperCase(), activo: true };
+      if (!esCorreoDelDominio(correo)) return { valido: false, errores: [{ campo: 'email', mensaje: 'El correo debe ser @rappi.com.' }] };
+      var rol = String(miembro.rol || 'comercial').trim().toLowerCase();
+      if (ROLES.indexOf(rol) === -1) return { valido: false, errores: [{ campo: 'rol', mensaje: 'Ese rol no existe.' }] };
+      var pais = String(miembro.pais || '').trim().toUpperCase();
+      if (pais && !paisPorCodigo(paises, pais)) return { valido: false, errores: [{ campo: 'pais', mensaje: 'No encontramos el país "' + pais + '". Escribe el código de dos letras de la pestaña Paises, como CO o MX, o déjalo vacío.' }] };
+      var existente = filaDeMiembro(equipo, correo);
+      var fila = { email: correo, nombre: miembro.nombre || '', rol: rol, pais: pais, activo: true };
       if (existente) { for (var k in fila) existente[k] = fila[k]; } else { equipo.push(fila); }
       return { valido: true };
+    },
+
+    // El mismo contrato que Api.js: { valido, agregados, yaEstaban, rechazados }.
+    adminAgregarMiembros: function (texto, rol, pais) {
+      if (ROLES.indexOf(rol) === -1) return { valido: false, errores: [{ campo: 'rol', mensaje: 'Ese rol no existe.' }] };
+      var codigoPais = String(pais || '').trim().toUpperCase();
+      if (codigoPais && !paisPorCodigo(paises, codigoPais)) return { valido: false, errores: [{ campo: 'pais', mensaje: 'No encontramos el país "' + codigoPais + '". Escribe el código de dos letras de la pestaña Paises, como CO o MX, o déjalo vacío.' }] };
+      var correos = separarCorreos(texto);
+      if (correos.length === 0) return { valido: false, errores: [{ campo: 'correos', mensaje: 'Pega al menos un correo.' }] };
+
+      var agregados = [];
+      var yaEstaban = [];
+      var rechazados = [];
+      for (var i = 0; i < correos.length; i++) {
+        var correo = correos[i];
+        if (!esCorreoDelDominio(correo)) { rechazados.push(correo); continue; }
+        var fila = filaDeMiembro(equipo, correo);
+        if (fila && fila.activo) { yaEstaban.push(correo); continue; }
+        var datos = { email: correo, nombre: fila ? fila.nombre : '', rol: rol, pais: codigoPais, activo: true };
+        if (fila) { for (var k in datos) fila[k] = datos[k]; } else { equipo.push(datos); }
+        agregados.push(correo);
+      }
+      return { valido: true, agregados: agregados, yaEstaban: yaEstaban, rechazados: rechazados };
     },
 
     adminSolicitudes: function (busqueda) {

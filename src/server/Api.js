@@ -75,9 +75,12 @@ function estadoInicial() {
 /** Valida y renderiza sin crear nada. La verdad la tiene el servidor. */
 function previsualizar(entrada) {
   var quien = contextoDeQuienPide();
-  var pais = paisPorCodigo(leerPaises(), entrada && entrada.pais);
+  // Una solicitud nueva nunca trae modificaciones: si un borrador viejo las
+  // arrastra, no se imprimen.
+  entrada = sinRastroDeAmpliacion(entrada || {});
+  var pais = paisPorCodigo(leerPaises(), entrada.pais);
 
-  var resultado = generarTexto(entrada || {}, pais, MODELOS, {
+  var resultado = generarTexto(entrada, pais, MODELOS, {
     fechaReferencia: enModoDemostracion() ? entrada.fechaReferencia : hoyIso(),
     usuarioEnEquipo: quien.enEquipo,
   });
@@ -91,10 +94,11 @@ function previsualizar(entrada) {
  */
 function generar(entrada) {
   var quien = contextoDeQuienPide();
+  entrada = sinRastroDeAmpliacion(entrada || {});
   var paises = leerPaises();
-  var pais = paisPorCodigo(paises, entrada && entrada.pais);
+  var pais = paisPorCodigo(paises, entrada.pais);
 
-  var resultado = generarTexto(entrada || {}, pais, MODELOS, {
+  var resultado = generarTexto(entrada, pais, MODELOS, {
     fechaReferencia: enModoDemostracion() ? entrada.fechaReferencia : hoyIso(),
     usuarioEnEquipo: quien.enEquipo,
   });
@@ -156,11 +160,13 @@ function generar(entrada) {
       version_modelo: MODELOS.versiones[esquema.modelo] || '',
       nombre_campana: nombreCampana,
       direccion_sugerida: direccion,
-      tienda: entrada.tienda || '',
+      // Solo lo que el tipo pregunta: una tienda que quedo de otro tipo no es
+      // de esta campana, y un tipo de un solo dia termina el dia que empieza.
+      tienda: tieneCampo(esquema, 'tienda') ? (entrada.tienda || '') : '',
       organizador: entrada.organizadorRazonSocial || '',
       id_organizador: entrada.organizadorId || '',
       fecha_inicio: entrada.fechaInicio || '',
-      fecha_fin: entrada.fechaFin || '',
+      fecha_fin: fechaFinDeLaCampana(entrada, esquema) || '',
       link_doc: documento.url,
       estado: 'generado',
       link_publicado: '',
@@ -273,9 +279,12 @@ function ampliarCampana(id, cambios) {
 
   var ampliada = aplicarAmpliacion(entrada, revision.cambios, hoyIso());
   var pais = paisPorCodigo(leerPaises(), ampliada.pais);
+  // ampliacion: la campana ya arranco, asi que su inicio en el pasado no es
+  // un error. Sin esto, ampliar solo funcionaba el primer dia.
   var resultado = generarTexto(ampliada, pais, MODELOS, {
     fechaReferencia: hoyIso(),
     usuarioEnEquipo: quien.enEquipo,
+    ampliacion: true,
   });
   if (!resultado.valido) return { valido: false, errores: resultado.errores };
 
@@ -318,7 +327,9 @@ function datosDeSolicitud(id) {
   for (var i = 0; i < visibles.length; i++) {
     if (visibles[i].id !== id) continue;
     try {
-      return { valido: true, entrada: JSON.parse(visibles[i].datos_json || '{}') };
+      // Sin la nota de la ampliacion vieja ni su consecutivo: la campana nueva
+      // arranca limpia, en version 1.
+      return { valido: true, entrada: sinRastroDeAmpliacion(JSON.parse(visibles[i].datos_json || '{}')) };
     } catch (error) {
       return { valido: false, errores: [{ campo: 'id', mensaje: 'Los datos guardados de esa solicitud no se pueden leer.' }] };
     }
@@ -363,13 +374,22 @@ function adminGuardarMiembro(miembro) {
   if (!correoEsDelDominio(correo)) {
     return { valido: false, errores: [{ campo: 'email', mensaje: 'El correo debe ser @rappi.com.' }] };
   }
+  var rol = String(miembro.rol || 'comercial').trim().toLowerCase();
+  if (ROLES.indexOf(rol) === -1) {
+    return { valido: false, errores: [{ campo: 'rol', mensaje: 'Ese rol no existe.' }] };
+  }
+  var pais = String(miembro.pais || '').trim().toUpperCase();
+  var errorPais = errorDePaisDeMiembro(pais);
+  if (errorPais) return errorPais;
 
-  var existente = miembroPorCorreo(leerEquipo(), correo);
+  // Se busca sin filtrar por activo: reactivar a alguien actualiza su fila, no
+  // agrega otra con el mismo correo.
+  var existente = filaDeMiembro(leerEquipo(), correo);
   var fila = {
     email: correo,
     nombre: miembro.nombre || '',
-    rol: miembro.rol || 'comercial',
-    pais: String(miembro.pais || '').toUpperCase(),
+    rol: rol,
+    pais: pais,
     activo: miembro.activo === false ? 'no' : 'sí',
   };
 
@@ -378,6 +398,24 @@ function adminGuardarMiembro(miembro) {
 
   registrar('admin_equipo', correo + ' -> ' + fila.rol);
   return { valido: true };
+}
+
+/**
+ * El pais de un miembro es opcional, pero si viene tiene que existir.
+ *
+ * El historial compara el pais del miembro con el de cada solicitud: un legal
+ * con "MZ" o con el pais vacio no veia ninguna campana y nadie se enteraba.
+ */
+function errorDePaisDeMiembro(pais) {
+  if (!pais) return null;
+  if (paisPorCodigo(leerPaises(), pais)) return null;
+  return {
+    valido: false,
+    errores: [{
+      campo: 'pais',
+      mensaje: 'No encontramos el país "' + pais + '". Escribe el código de dos letras de la pestaña Paises, como CO o MX, o déjalo vacío.',
+    }],
+  };
 }
 
 /**
@@ -398,6 +436,10 @@ function adminAgregarMiembros(texto, rol, pais) {
     return { valido: false, errores: [{ campo: 'rol', mensaje: 'Ese rol no existe.' }] };
   }
 
+  var codigoPais = String(pais || '').trim().toUpperCase();
+  var errorPais = errorDePaisDeMiembro(codigoPais);
+  if (errorPais) return errorPais;
+
   var correos = separarCorreos(texto);
   if (correos.length === 0) {
     return { valido: false, errores: [{ campo: 'correos', mensaje: 'Pega al menos un correo.' }] };
@@ -411,15 +453,15 @@ function adminAgregarMiembros(texto, rol, pais) {
   for (var i = 0; i < correos.length; i++) {
     var correo = correos[i];
     if (!correoEsDelDominio(correo)) { rechazados.push(correo); continue; }
-    if (miembroPorCorreo(equipo, correo)) { yaEstaban.push(correo); continue; }
 
-    agregarFila('Equipo', {
-      email: correo,
-      nombre: '',
-      rol: rol,
-      pais: String(pais || '').toUpperCase(),
-      activo: 'sí',
-    });
+    var fila = filaDeMiembro(equipo, correo);
+    if (fila && fila.activo) { yaEstaban.push(correo); continue; }
+
+    // Quien estaba con activo en "no" vuelve a entrar con el rol pedido, en su
+    // misma fila. Para el equipo era como si no estuviera.
+    var datos = { email: correo, nombre: fila ? fila.nombre : '', rol: rol, pais: codigoPais, activo: 'sí' };
+    if (fila) actualizarFila('Equipo', fila._fila, datos);
+    else agregarFila('Equipo', datos);
     agregados.push(correo);
     // Se relee para que dos correos repetidos en el mismo pegado no entren dos veces.
     equipo = leerEquipo();
@@ -432,19 +474,6 @@ function adminAgregarMiembros(texto, rol, pais) {
     yaEstaban: yaEstaban,
     rechazados: rechazados,
   };
-}
-
-/** Correos pegados de cualquier forma: comas, punto y coma o saltos de linea. */
-function separarCorreos(texto) {
-  var partes = String(texto || '').split(/[,;\s]+/);
-  var limpios = [];
-  for (var i = 0; i < partes.length; i++) {
-    var correo = partes[i].trim().toLowerCase();
-    // Lo que viene pegado de un chat trae a veces picos o parentesis.
-    correo = correo.replace(/^[<(\[]+/, '').replace(/[>)\]]+$/, '');
-    if (correo && limpios.indexOf(correo) === -1) limpios.push(correo);
-  }
-  return limpios;
 }
 
 function adminSolicitudes(busqueda) {

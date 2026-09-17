@@ -257,6 +257,10 @@ function construir() {
   console.log('  modelos         : ' + conteoModelos.modelos + ' modelos, ' + conteoModelos.bloques + ' bloques');
   console.log('  paises          : ' + conteoDatos.paises);
   console.log('  archivos en dist: ' + listarArchivos(DIST).join(', '));
+  // Otra vez, ahora con todo dist/: los generados (Modelos.js, Secciones.js...)
+  // no entraban en la revision, y un src/core/secciones.js habria convivido con
+  // Secciones.js sin que el build dijera nada.
+  revisarColisionesDeNombre(listarArchivos(DIST));
 }
 
 if (require.main === module) {
@@ -268,4 +272,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { construir, DIST };
+module.exports = { construir, DIST, revisarColisionesDeNombre };

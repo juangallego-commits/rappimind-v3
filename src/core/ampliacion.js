@@ -181,6 +181,25 @@ function aplicarAmpliacion(entrada, cambios, hoyIso) {
   return nueva;
 }
 
+/**
+ * Las respuestas de una campana sin lo que le dejo una ampliacion.
+ *
+ * "Usar como base" devolvia datos_json tal cual, y despues de ampliar ese JSON
+ * trae `modificaciones` (la nota que el modelo imprime al final del documento)
+ * y `sufijoNombre` (el consecutivo del nombre). La campana nueva salia con la
+ * nota de modificacion de la vieja adentro, y su primera ampliacion decia
+ * "version 3". Tambien se aplica al generar, por si un borrador viejo la trae.
+ */
+function sinRastroDeAmpliacion(entrada) {
+  var limpia = {};
+  for (var llave in entrada) {
+    if (!Object.prototype.hasOwnProperty.call(entrada, llave)) continue;
+    if (llave === 'modificaciones' || llave === 'sufijoNombre') continue;
+    limpia[llave] = entrada[llave];
+  }
+  return limpia;
+}
+
 /** Lo que el comercial lee en el historial cuando no puede ampliar. */
 function textoDeAmpliacion(solicitud, entrada, ahoraIso, ahoraHora) {
   var estado = puedeAmpliar(solicitud, entrada, ahoraIso, ahoraHora);
@@ -198,5 +217,6 @@ if (typeof module !== 'undefined') {
     validarAmpliacion: validarAmpliacion,
     aplicarAmpliacion: aplicarAmpliacion,
     textoDeAmpliacion: textoDeAmpliacion,
+    sinRastroDeAmpliacion: sinRastroDeAmpliacion,
   };
 }

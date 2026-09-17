@@ -1375,6 +1375,106 @@
           "NaN"
         ]
       }
+    },
+    {
+      "id": "ETA01",
+      "descripcion": "Cashback por ETA, como el T&C publicado de Bogotá (16/09/2026)",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "CO",
+        "negocio": "rappi",
+        "tipo": "cashback_eta",
+        "etaMinutos": 15,
+        "porcentaje": 100,
+        "tope": 100000,
+        "maxPedidos": 1,
+        "sinLimite": false,
+        "carga": "dia_siguiente",
+        "vigencia": "dias",
+        "diasVigencia": 7,
+        "exclusionesEta": [
+          "travel",
+          "soat",
+          "atm",
+          "favor"
+        ],
+        "metodoPago": "sin_efectivo",
+        "declaracion": true,
+        "ciudades": "Bogotá",
+        "fechaInicio": "2026-09-16",
+        "horaInicio": "11:00",
+        "horaFin": "15:00",
+        "presupuesto": 37000000
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "fijado para esta Campaña en quince (15) minutos",
+          "en la ciudad de Bogotá, dentro de la República de Colombia",
+          "desde las 11:00 a. m. hasta las 3:00 p. m. del 16 de septiembre de 2026",
+          "cien por ciento (100%)",
+          "cien mil (100.000) Créditos",
+          "treinta y siete millones (37.000.000) de Créditos",
+          "Rappi se obliga a cumplir con el ETA exhibido"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          "..",
+          "()",
+          "undefined",
+          "NaN",
+          "Organizador"
+        ]
+      }
+    },
+    {
+      "id": "ETA02",
+      "descripcion": "Cashback por ETA, como el T&C publicado de Barranquilla (1/09/2026)",
+      "fecha_referencia": "2026-09-01",
+      "entrada": {
+        "pais": "CO",
+        "negocio": "rappi",
+        "tipo": "cashback_eta",
+        "etaMinutos": 15,
+        "porcentaje": 100,
+        "tope": 100000,
+        "maxPedidos": 1,
+        "sinLimite": false,
+        "carga": "dia_siguiente",
+        "vigencia": "dias",
+        "diasVigencia": 7,
+        "exclusionesEta": [
+          "travel",
+          "soat",
+          "atm",
+          "favor"
+        ],
+        "metodoPago": "sin_efectivo",
+        "declaracion": true,
+        "ciudades": "Barranquilla",
+        "fechaInicio": "2026-09-01",
+        "horaInicio": "07:00",
+        "horaFin": "23:00",
+        "presupuesto": 95087585
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "en la ciudad de Barranquilla, dentro de la República de Colombia",
+          "desde las 7:00 a. m. hasta las 11:00 p. m. del 1 de septiembre de 2026",
+          "noventa y cinco millones ochenta y siete mil quinientos ochenta y cinco (95.087.585) Créditos"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          "..",
+          "()",
+          "undefined",
+          "NaN",
+          "Organizador"
+        ]
+      }
     }
   ]
 }

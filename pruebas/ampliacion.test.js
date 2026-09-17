@@ -141,3 +141,16 @@ test('el historial dice en palabras por qué no se puede ampliar', () => {
   assert.ok(textoDeAmpliacion(PUBLICADA, campana(), '2026-11-05').indexOf('Usar como base') !== -1);
   assert.ok(textoDeAmpliacion({ link_publicado: '' }, campana(), '2026-10-15').indexOf('no está publicada') !== -1);
 });
+
+test('las respuestas para reusar salen sin la nota de la ampliación ni el consecutivo', () => {
+  // "Usar como base" devolvía datos_json tal cual: la campaña nueva imprimía
+  // la nota de modificación de la vieja y su primera ampliación decía versión 3.
+  const { sinRastroDeAmpliacion } = require('../src/core/ampliacion.js');
+  const ampliada = aplicarAmpliacion(campana({ sufijoNombre: 2 }), { presupuesto: 3000000 }, '2026-09-16');
+  assert.strictEqual(ampliada.modificaciones.length, 1);
+
+  const limpia = sinRastroDeAmpliacion(ampliada);
+  assert.strictEqual(limpia.modificaciones, undefined);
+  assert.strictEqual(limpia.sufijoNombre, undefined);
+  assert.strictEqual(limpia.presupuesto, 3000000, 'lo demás se conserva');
+});

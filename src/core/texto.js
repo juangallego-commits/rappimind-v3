@@ -15,6 +15,20 @@
  */
 
 /** Quita la marca BOM y convierte \r\n y \r sueltos en \n. */
+/**
+ * Si un dato viene con algo adentro. Una lista vacia no cuenta.
+ *
+ * Esta aqui, una sola vez, porque estuvo definida tres veces (en derivados.js,
+ * derivados_br.js y derivados_eta.js) con dos criterios distintos para las
+ * listas. En Apps Script y en el navegador la ultima definicion pisa a las
+ * otras, asi que el mismo dato se evaluaba distinto en Node y en produccion.
+ */
+function tieneValor(valor) {
+  if (valor === null || valor === undefined || valor === '') return false;
+  if (Object.prototype.toString.call(valor) === '[object Array]') return valor.length > 0;
+  return true;
+}
+
 function normalizarTexto(texto) {
   if (texto === null || texto === undefined) return '';
   var limpio = String(texto);
@@ -61,6 +75,7 @@ function tieneRetornoDeCarro(texto) {
 
 if (typeof module !== 'undefined') {
   module.exports = {
+    tieneValor: tieneValor,
     normalizarTexto: normalizarTexto,
     lineasDe: lineasDe,
     recortarFinalDeLinea: recortarFinalDeLinea,

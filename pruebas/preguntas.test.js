@@ -339,3 +339,11 @@ test('en Brasil, "Así queda en tu T&C" muestra lo que el documento brasileño l
     }
   }
 });
+
+test('la ciudad del cashback por ETA es un campo de texto, sin los chips de ciudades', () => {
+  // Los chips heredados del cashback dejaban agregar dos ciudades, y el
+  // documento salía "en la ciudad de Bogotá, Medellín".
+  assert.ok(preguntaDe('ciudades', 'cashback').sugerencias, 'el cashback sí sugiere ciudades');
+  assert.ok(!preguntaDe('ciudades', 'cashback_eta').sugerencias, 'el ETA no debería sugerir ciudades');
+  assert.ok(preguntaDe('ciudades', 'cashback_eta').errores.unaSola, 'falta el mensaje de una sola ciudad');
+});

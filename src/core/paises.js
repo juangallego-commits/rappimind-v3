@@ -138,6 +138,55 @@ function miembroPorCorreo(equipo, correo) {
 }
 
 /**
+ * La fila de alguien en el equipo, este activo o no.
+ *
+ * Es para escribir, no para dar permisos. Al volver a agregar a alguien que
+ * tenia activo en "no", buscar solo entre los activos no lo encontraba y la
+ * pestaña Equipo quedaba con dos filas del mismo correo.
+ */
+function filaDeMiembro(equipo, correo) {
+  var buscado = String(correo || '').trim().toLowerCase();
+  for (var i = 0; i < equipo.length; i++) {
+    if (equipo[i].email === buscado) return equipo[i];
+  }
+  return null;
+}
+
+/** Solo se atiende a cuentas del dominio, y con forma de correo completa. */
+function esCorreoDelDominio(correo) {
+  return /^[\w.+-]+@rappi\.com$/i.test(String(correo || '').trim());
+}
+
+var FORMA_DE_CORREO = /[\w.+-]+@[\w-]+(\.[\w-]+)+/g;
+
+/**
+ * Los correos que vienen en un texto pegado de cualquier parte.
+ *
+ * Pegado de Gmail o de Slack, el texto trae nombres, picos y "mailto:":
+ * "Ana Pérez <ana@rappi.com>, Bruno Díaz <bruno@rappi.com>". Partirlo por
+ * espacios devolvia "ana" y "pérez" como correos rechazados. Aqui se sacan los
+ * correos por su forma. Lo que sobra y parece un correo mal escrito
+ * ("ana.rappi.com", "ana@rappi") tambien se devuelve, para que se rechace con
+ * su nombre; las palabras sueltas, como los nombres, se ignoran.
+ */
+function separarCorreos(texto) {
+  var original = String(texto || '');
+  var correos = original.match(FORMA_DE_CORREO) || [];
+  var sobrantes = original.replace(FORMA_DE_CORREO, ' ').split(/[\s,;<>()\[\]"]+/);
+
+  var limpios = [];
+  function agregar(candidato) {
+    var correo = String(candidato || '').trim().toLowerCase();
+    if (correo && limpios.indexOf(correo) === -1) limpios.push(correo);
+  }
+  for (var i = 0; i < correos.length; i++) agregar(correos[i]);
+  for (var s = 0; s < sobrantes.length; s++) {
+    if (/@|\w\.\w/.test(sobrantes[s])) agregar(sobrantes[s]);
+  }
+  return limpios;
+}
+
+/**
  * Rol efectivo de quien pide. Quien no esta en el equipo es comercial.
  * Roles: comercial, pruebas, legal, admin.
  */
@@ -281,6 +330,9 @@ if (typeof module !== 'undefined') {
     tiposDelPais: tiposDelPais,
     miembroDesdeFila: miembroDesdeFila,
     miembroPorCorreo: miembroPorCorreo,
+    filaDeMiembro: filaDeMiembro,
+    esCorreoDelDominio: esCorreoDelDominio,
+    separarCorreos: separarCorreos,
     rolDe: rolDe,
     puedeVerPiloto: puedeVerPiloto,
     NOMBRE_DEL_DATO: NOMBRE_DEL_DATO,

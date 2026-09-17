@@ -345,6 +345,64 @@ async function recorrer() {
   revisar('volver de los T&C publicados deja abierta la pregunta del tipo',
     deVuelta.length === 1 && deVuelta[0].indexOf('tipo de campaña') !== -1, deVuelta.join(' | '));
 
+  // --- 6. La pantalla final de un pais en pruebas ---------------------------
+  //
+  // El aviso de "no publiques" estaba en el formulario y en el resumen, pero
+  // no en la pantalla que explica como publicar, que es donde se decide.
+  const campanaDeMexico = {
+    pais: 'MX', negocio: 'rappi', tipo: 'cashback', tienda: 'Oxxo', alcance: 'Nacional', ciudades: '',
+    segmento: 'todos', metodoPago: 'todos', declaracion: false,
+    fechaInicio: '2026-12-01', horaInicio: '00:00', fechaFin: '2026-12-02', horaFin: '23:59',
+    organizadorRazonSocial: 'Oxxo S.A. de C.V.', organizadorId: 'PRU200101AB5',
+    porcentaje: 20, tope: 200, presupuesto: 100000, maxPedidos: 1, sinLimite: false,
+    carga: 'inmediata', vigencia: 'dias', diasVigencia: 30, redencion: 'tienda', condiciones: [],
+  };
+  async function irAlResumenCon(unaPagina, campana) {
+    await unaPagina.goto(DEMO);
+    await unaPagina.waitForTimeout(800);
+    await unaPagina.evaluate((datos) => {
+      RM.estado.reiniciarFormulario(Object.assign(RM.app.valoresIniciales(), datos), {});
+      RM.estado.estado.filtroRespondido = true;
+      RM.app.ir('resumen');
+    }, campana);
+    await unaPagina.waitForTimeout(700);
+  }
+
+  await irAlResumenCon(pagina, campanaDeMexico);
+  await pagina.click('#declaracion');
+  await pagina.waitForTimeout(400);
+  await clic('Generar T&C');
+  await pagina.waitForTimeout(1200);
+  const pantallaFinal = await texto();
+  revisar('la pantalla final de un país en pruebas también dice "no publiques"',
+    pantallaFinal.indexOf('Tu T&C está listo') !== -1 && pantallaFinal.indexOf('no publiques') !== -1,
+    pantallaFinal.replace(/\n+/g, ' | ').slice(0, 300));
+
+  // --- 7. En celular, nada queda debajo del selector de idioma --------------
+  //
+  // El selector ES/BR es fijo abajo a la derecha. Con poco espacio reservado
+  // al final de la pagina, tapaba "Revisar y generar" y "Generar T&C".
+  const celular = await navegador.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  const movil = await celular.newPage();
+  movil.on('pageerror', function (e) { erroresDeJs.push('celular: ' + e.message); });
+  await irAlResumenCon(movil, Object.assign({}, campanaDeMexico, {
+    pais: 'CO', tienda: 'Jumbo', organizadorRazonSocial: 'Jumbo S.A.S.', organizadorId: '900111222-1', tope: 20000, presupuesto: 1000000,
+  }));
+  await movil.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await movil.waitForTimeout(400);
+  const tapados = await movil.evaluate(() => {
+    const rect = (el) => el.getBoundingClientRect();
+    const selector = document.querySelector('.selector-idioma');
+    if (!selector) return ['no hay selector de idioma'];
+    const s = rect(selector);
+    const solapa = (b) => !(b.right <= s.left || s.right <= b.left || b.bottom <= s.top || s.bottom <= b.top);
+    return [].slice.call(document.querySelectorAll('.fila-botones button, .fila-botones a'))
+      .filter((b) => b.offsetParent !== null && solapa(rect(b)))
+      .map((b) => b.textContent.trim());
+  });
+  revisar('en celular el selector de idioma no tapa los botones del final', tapados.length === 0, tapados.join(' | '));
+  await celular.close();
+
   revisar('ninguna pantalla lanzó un error de JavaScript',
     erroresDeJs.length === 0, erroresDeJs.join(' | '));
 

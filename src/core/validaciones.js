@@ -14,6 +14,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var moduloEsquemas = require('./esquemas.js');
   var esquemaDe = moduloEsquemas.esquemaDe;
   var camposVisibles = moduloEsquemas.camposVisibles;
+  var tieneCampo = moduloEsquemas.tieneCampo;
   var resolverAtributo = moduloEsquemas.resolverAtributo;
 
   var moduloFechas = require('./fechas.js');
@@ -154,16 +155,45 @@ function validarFormatos(entrada, esquema, idioma) {
   return errores;
 }
 
-/** Vigencia: fin posterior al inicio y nada anterior a la fecha de referencia. */
-function validarVigencia(entrada, fechaReferencia, tipo, idioma) {
+/**
+ * El dia en que termina la campana.
+ *
+ * Un tipo que no pregunta la fecha de fin (el cashback por ETA es de un solo
+ * dia) termina el dia que empieza. Leer entrada.fechaFin ahi era leer un dato
+ * que la interfaz fijaba una vez y nunca actualizaba: al cambiar el dia de
+ * inicio, el resumen decia "la campana no puede terminar antes de empezar" y
+ * no habia ninguna pregunta donde arreglarlo.
+ */
+function fechaFinDeLaCampana(entrada, esquema) {
+  if (esquema && !tieneCampo(esquema, 'fechaFin')) return entrada.fechaInicio;
+  return entrada.fechaFin;
+}
+
+/**
+ * Vigencia: fin posterior al inicio y nada anterior a la fecha de referencia.
+ *
+ * esAmpliacion: la campana ya arranco y se esta ampliando. Ahi el inicio en el
+ * pasado es lo normal, no un error. Sin esta excepcion, ampliar solo funcionaba
+ * el mismo dia del inicio, porque el documento nuevo se vuelve a validar
+ * completo y "Esa fecha ya paso" tumbaba la ampliacion desde el segundo dia.
+ */
+function validarVigencia(entrada, fechaReferencia, esquema, idioma, esAmpliacion) {
   var errores = [];
+  var tipo = esquema ? esquema.id : undefined;
+  var preguntaElFin = !esquema || tieneCampo(esquema, 'fechaFin');
 
   var inicio = comoNumeroFechaHora(entrada.fechaInicio, entrada.horaInicio);
-  var fin = comoNumeroFechaHora(entrada.fechaFin, entrada.horaFin);
+  var fin = comoNumeroFechaHora(fechaFinDeLaCampana(entrada, esquema), entrada.horaFin);
   if (inicio !== null && fin !== null && fin <= inicio) {
-    errores.push(error('fechaFin', mensajeDe('fechaFin', tipo, 'orden', idioma,
-      'La campaña no puede terminar antes de empezar. Revisa la fecha y la hora de fin.')));
+    // El error va a la pregunta que existe: en un tipo de un solo dia, la hora.
+    errores.push(preguntaElFin
+      ? error('fechaFin', mensajeDe('fechaFin', tipo, 'orden', idioma,
+        'La campaña no puede terminar antes de empezar. Revisa la fecha y la hora de fin.'))
+      : error('horaFin', mensajeDe('horaFin', tipo, 'orden', idioma,
+        'La hora de fin tiene que ser después de la de inicio.')));
   }
+
+  if (esAmpliacion) return errores;
 
   var hoy = comoNumeroFecha(fechaReferencia);
   var dia = comoNumeroFecha(entrada.fechaInicio);
@@ -190,7 +220,25 @@ function validarOrganizador(entrada, pais) {
  * habria salido con la palabra "(confirmar)" dentro. Para marcar lo que falta
  * esta la columna por_confirmar_en_pruebas, no el texto.
  */
-var MARCAS_DE_ANOTACION = /\((confirmar|revisar|pendiente|verificar|por confirmar)\)|\bTODO\b|\?\?\?/i;
+var MARCAS_DE_ANOTACION = [
+  // Entre parentesis o corchetes, con lo que sea alrededor: "(a confirmar)",
+  // "[pendiente]", "(revisar con Legal)", "(por definir)".
+  /[\[(][^\])]*\b(confirmar|revisar|pendiente|verificar|definir|ojo|dudoso)\b[^\])]*[\])]/i,
+  // Las marcas de programador, solo en mayusculas: "todo" es una palabra normal.
+  /\b(TODO|TBD|FIXME|XXX|PENDIENTE)\b/,
+  // Signos de duda, y la sintaxis de los modelos, que en un valor del pais no
+  // pinta nada.
+  /\?\?|\(\?\)|\{\{|\[\[/,
+];
+
+/** true si el valor trae una anotacion interna. */
+function tieneMarcaDeAnotacion(valor) {
+  var texto = String(valor || '');
+  for (var i = 0; i < MARCAS_DE_ANOTACION.length; i++) {
+    if (MARCAS_DE_ANOTACION[i].test(texto)) return true;
+  }
+  return false;
+}
 
 /**
  * Un valor del pais con una anotacion interna adentro no se publica.
@@ -208,7 +256,7 @@ function validarAnotacionesDelPais(pais) {
 
     var valor = pais[llave];
     if (typeof valor !== 'string') continue;
-    if (!MARCAS_DE_ANOTACION.test(valor)) continue;
+    if (!tieneMarcaDeAnotacion(valor)) continue;
 
     errores.push(error('pais',
       'La configuración de ' + (pais.nombre || pais.codigo) + ' tiene una nota interna dentro de un dato que se imprime: "' +
@@ -227,13 +275,40 @@ function validarAnotacionesDelPais(pais) {
  * error. Regla 2 de CLAUDE.md: si falta un dato, no se genera.
  */
 function validarIdiomaDelPais(esquema, pais) {
-  if (!esquema || !esquema.idioma) return null;
+  if (!esquema) return null;
   var idiomaDelPais = String((pais && pais.idioma) || '').trim().toLowerCase();
-  if (idiomaDelPais === esquema.idioma) return null;
-  return error('pais', 'La configuración de ' + (pais.nombre || pais.codigo) +
-    ' no dice que el documento va en ' + (esquema.idioma === 'pt' ? 'portugués' : esquema.idioma) +
-    ': la columna idioma de la pestaña Paises tiene que decir "' + esquema.idioma +
-    '". Sin eso las fechas y los montos saldrían en español.');
+
+  if (esquema.idioma) {
+    if (idiomaDelPais === esquema.idioma) return null;
+    return error('pais', 'La configuración de ' + (pais.nombre || pais.codigo) +
+      ' no dice que el documento va en ' + nombreDelIdioma(esquema.idioma) +
+      ': la columna idioma de la pestaña Paises tiene que decir "' + esquema.idioma +
+      '". Sin eso las fechas y los montos saldrían en español.');
+  }
+
+  // Al reves tambien. Un modelo en espanol habilitado en un pais que genera en
+  // otro idioma saldria mezclado: "vinte por cento" y "horário de Brasília"
+  // dentro de un articulado en espanol, sin un solo error.
+  if (!idiomaDelPais || idiomaDelPais === 'es') return null;
+  return error('tipo', 'Este tipo de campaña está escrito en español y la configuración de ' +
+    (pais.nombre || pais.codigo) + ' dice que sus documentos van en ' + nombreDelIdioma(idiomaDelPais) +
+    '. Hasta que Legal tenga este modelo en ese idioma, no se puede generar ahí.');
+}
+
+function nombreDelIdioma(codigo) {
+  return codigo === 'pt' ? 'portugués' : codigo === 'es' ? 'español' : codigo;
+}
+
+/**
+ * El cashback por ETA es de una sola ciudad.
+ *
+ * La pregunta lo dice, pero los chips de ciudades heredados del cashback dejaban
+ * agregar dos, y el documento salia "en la ciudad de Bogotá, Medellín".
+ */
+function validarEta(entrada, tipo, idioma) {
+  if (separarPorComas(entrada.ciudades).length <= 1) return [];
+  return [error('ciudades', mensajeDe('ciudades', tipo, 'unaSola', idioma,
+    'Escribe una sola ciudad. Para otra ciudad, haz otra campaña.'))];
 }
 
 /** Cruces propios del Cashback. */
@@ -256,10 +331,11 @@ function validarCashback(entrada, tipo, idioma) {
 }
 
 /** Cruces de los Creditos: carga y redencion frente a la vigencia. */
-function validarCreditos(entrada, tipo, idioma) {
+function validarCreditos(entrada, esquema, idioma) {
   var errores = [];
+  var tipo = esquema ? esquema.id : undefined;
   var inicio = comoNumeroFecha(entrada.fechaInicio);
-  var fin = comoNumeroFecha(entrada.fechaFin);
+  var fin = comoNumeroFecha(fechaFinDeLaCampana(entrada, esquema));
 
   if (entrada.carga === 'fecha') {
     var carga = comoNumeroFecha(entrada.fechaCarga);
@@ -424,7 +500,7 @@ function validarOrganizadorDeTravel(entrada, pais) {
 }
 
 /** Las reglas propias de los dos tipos de Travel. Seccion 10 del modelo base. */
-function validarTravel(entrada, pais, fechaReferencia) {
+function validarTravel(entrada, pais, fechaReferencia, esAmpliacion) {
   var errores = [];
   var esDescuento = entrada.tipo === 'descuento_travel';
 
@@ -485,10 +561,11 @@ function validarTravel(entrada, pais, fechaReferencia) {
     errores.push(error('metodoPago', 'Si pueden participar quienes pagan con RappiCard, el medio de pago tiene que ser "digitales, excepto efectivo". Si no, el documento se contradice.'));
   }
 
-  // La primera comunicacion nunca puede haber salido ya: el T&C se publica antes.
+  // La primera comunicacion nunca puede haber salido ya: el T&C se publica
+  // antes. Salvo al ampliar, que la campana ya esta corriendo.
   var hoy = comoNumeroFecha(fechaReferencia);
   var primera = comoNumeroFecha(entrada.fechaPrimeraComunicacion);
-  if (hoy !== null && primera !== null && primera < hoy) {
+  if (!esAmpliacion && hoy !== null && primera !== null && primera < hoy) {
     errores.push(error('fechaPrimeraComunicacion', 'La primera comunicación no puede ser una fecha que ya pasó: el T&C se publica antes de que salga la primera pieza.'));
   }
 
@@ -600,9 +677,11 @@ function validarNegocio(entrada, esquema) {
 /**
  * Valida la solicitud completa.
  *
- * contexto: { fechaReferencia, usuarioEnEquipo, idioma }
+ * contexto: { fechaReferencia, usuarioEnEquipo, idioma, ampliacion }
  * `idioma` es el de la interfaz de quien pide (es o pt): los mensajes salen en
  * ese idioma cuando la pregunta los tiene traducidos. El documento no cambia.
+ * `ampliacion` es true cuando se rearma el documento de una campana que ya
+ * arranco: las fechas que ya pasaron dejan de ser un error.
  * Devuelve { valido, errores: [{campo, mensaje}] }.
  */
 function validarSolicitud(entrada, pais, contexto) {
@@ -622,9 +701,9 @@ function validarSolicitud(entrada, pais, contexto) {
 
   errores = errores.concat(validarObligatorios(entrada, esquema, idioma));
   errores = errores.concat(validarFormatos(entrada, esquema, idioma));
-  errores = errores.concat(validarVigencia(entrada, opciones.fechaReferencia, esquema.id, idioma));
+  errores = errores.concat(validarVigencia(entrada, opciones.fechaReferencia, esquema, idioma, !!opciones.ampliacion));
   errores = errores.concat(validarOrganizador(entrada, pais));
-  errores = errores.concat(validarCreditos(entrada, esquema.id, idioma));
+  errores = errores.concat(validarCreditos(entrada, esquema, idioma));
   errores = errores.concat(validarNegocio(entrada, esquema));
 
   errores = errores.concat(validarAnotacionesDelPais(pais));
@@ -633,6 +712,9 @@ function validarSolicitud(entrada, pais, contexto) {
   // mayor que el presupuesto deja que la primera orden se lleve la campana.
   if (entrada.tipo === 'cashback' || entrada.tipo === 'cashback_eta') {
     errores = errores.concat(validarCashback(entrada, esquema.id, idioma));
+  }
+  if (esquema.esPorEta) {
+    errores = errores.concat(validarEta(entrada, esquema.id, idioma));
   }
   if (entrada.tipo === 'carrera_compras') {
     errores = errores.concat(validarCarrera(entrada, esquema.id, idioma));
@@ -646,7 +728,7 @@ function validarSolicitud(entrada, pais, contexto) {
     if (!estadoTravel.disponible) {
       return { valido: false, errores: [error('tipo', estadoTravel.motivo)] };
     }
-    errores = errores.concat(validarTravel(entrada, pais, opciones.fechaReferencia));
+    errores = errores.concat(validarTravel(entrada, pais, opciones.fechaReferencia, !!opciones.ampliacion));
   }
 
   return { valido: errores.length === 0, errores: errores };
@@ -661,6 +743,7 @@ if (typeof module !== 'undefined') {
     validarTipo: validarTipo,
     validarObligatorios: validarObligatorios,
     validarVigencia: validarVigencia,
+    tieneMarcaDeAnotacion: tieneMarcaDeAnotacion,
     validarTiendas: validarTiendas,
     validarNegocio: validarNegocio,
     validarTravel: validarTravel,
@@ -672,5 +755,7 @@ if (typeof module !== 'undefined') {
     estaVacio: estaVacio,
     mensajeDe: mensajeDe,
     validarIdiomaDelPais: validarIdiomaDelPais,
+    fechaFinDeLaCampana: fechaFinDeLaCampana,
+    validarEta: validarEta,
   };
 }

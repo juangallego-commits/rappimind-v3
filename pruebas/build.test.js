@@ -12,7 +12,7 @@ const path = require('path');
 const { rutaDesdeRaiz, leerTexto, listarArchivos, existe } = require('../scripts/lib/archivos');
 const { cargarModelos } = require('../scripts/lib/modelos');
 const { tieneRetornoDeCarro, normalizarTexto } = require('../src/core/texto.js');
-const { construir, DIST } = require('../scripts/build.js');
+const { construir, DIST, revisarColisionesDeNombre } = require('../scripts/build.js');
 
 /** Lo que debe quedar en dist/: el codigo de src/ mas lo que genera el build. */
 function archivosEsperados() {
@@ -139,4 +139,31 @@ test('MotorCliente.html corre solo en el navegador y arma la vista previa', () =
   );
   assert.ok(vista.texto.length > 0, 'la vista previa salio vacia');
   assert.ok(vista.huecos.length > 0, 'la vista previa no marco ningun hueco');
+});
+
+test('ninguna función de nivel superior se declara dos veces entre core y servidor', () => {
+  // En Apps Script todos los archivos comparten un ámbito: dos funciones con
+  // el mismo nombre se pisan y gana la del archivo que cargue de último, sin
+  // aviso. tieneValor llegó a estar en tres archivos de derivados a la vez.
+  const vistas = {};
+  const repetidas = [];
+  for (const carpeta of ['core', 'server']) {
+    for (const archivo of listarArchivos(rutaDesdeRaiz('src', carpeta), '.js')) {
+      const texto = leerTexto(rutaDesdeRaiz('src', carpeta, archivo));
+      const patron = /^function (\w+)\s*\(/gm;
+      let encontrado;
+      while ((encontrado = patron.exec(texto)) !== null) {
+        const nombre = encontrado[1];
+        if (vistas[nombre]) repetidas.push(nombre + ' (' + vistas[nombre] + ' y ' + carpeta + '/' + archivo + ')');
+        else vistas[nombre] = carpeta + '/' + archivo;
+      }
+    }
+  }
+  assert.deepStrictEqual(repetidas, [], repetidas.join('\n'));
+});
+
+test('el build se niega si dos archivos se llaman igual salvo por mayúsculas', () => {
+  // Apps Script no distingue Secciones.js de secciones.js: uno pisaría al otro.
+  assert.throws(() => revisarColisionesDeNombre(['core/Secciones.js', 'server/secciones.js']), /mayusculas/);
+  assert.doesNotThrow(() => revisarColisionesDeNombre(['core/a.js', 'server/b.js']));
 });

@@ -806,3 +806,159 @@ test('la respuesta cruza a google.script.run sin fechas', () => {
   }
 });
 
+
+// --- lo que salió de la revisión crítica del 17 de septiembre ---------------
+
+test('ampliar funciona aunque la campaña haya arrancado días atrás', () => {
+  // Ampliar rearma el documento completo, y la validación decía "Esa fecha ya
+  // pasó" por el inicio. Solo funcionaba el mismo día del inicio, que era
+  // justo lo único que se probaba.
+  const mundo = conSetup({ ahora: '2026-09-10T10:30:00Z' });
+  const original = generar(solicitudValida({ tienda: 'Jumbo', fechaInicio: '2026-09-10', fechaFin: '2026-09-30' }));
+  assert.ok(original.valido, JSON.stringify(original.errores));
+  marcarPublicado(original.id, 'https://promos.rappi.com/colombia/jumbo');
+
+  mundo.ahora = '2026-09-16T10:30:00Z';
+  const ampliada = ampliarCampana(original.id, { presupuesto: 3000000 });
+  assert.ok(ampliada.valido, JSON.stringify(ampliada.errores));
+  assert.strictEqual(ampliada.version, 2);
+});
+
+/** El caso TV01 de casos_base.json: un Cashback Travel de Colombia que genera. */
+function solicitudDeTravel() {
+  const { rutaDesdeRaiz, leerJson } = require('../scripts/lib/archivos');
+  const { casos } = leerJson(rutaDesdeRaiz('pruebas', 'casos_base.json'));
+  return Object.assign({}, casos.find((c) => c.id === 'TV01').entrada);
+}
+
+test('ampliar una campaña de Travel no tropieza con la primera comunicación, que ya salió', () => {
+  const mundo = conSetup();
+  const original = generar(solicitudDeTravel());
+  assert.ok(original.valido, JSON.stringify(original.errores));
+  marcarPublicado(original.id, 'https://promos.rappi.com/colombia/travel');
+
+  mundo.ahora = '2026-10-10T10:30:00Z';
+  const ampliada = ampliarCampana(original.id, { presupuesto: 6000000 });
+  assert.ok(ampliada.valido, JSON.stringify(ampliada.errores));
+});
+
+test('usar como base no arrastra la nota de la ampliación ni el consecutivo del nombre', () => {
+  // La copia de una campaña ampliada salía con "Modificación del 16 de
+  // septiembre..." al final del documento nuevo.
+  const mundo = conSetup();
+  const original = generar(solicitudDeTravel());
+  marcarPublicado(original.id, 'https://promos.rappi.com/colombia/travel');
+  mundo.ahora = '2026-10-10T10:30:00Z';
+  assert.ok(ampliarCampana(original.id, { presupuesto: 6000000 }).valido);
+
+  const base = datosDeSolicitud(original.id).entrada;
+  assert.strictEqual(base.modificaciones, undefined, 'la base trae las modificaciones de la vieja');
+  assert.strictEqual(base.sufijoNombre, undefined, 'la base trae el consecutivo de la vieja');
+
+  const copia = Object.assign(base, { fechaPrimeraComunicacion: '2026-11-20', fechaInicio: '2026-12-01', fechaFin: '2026-12-31' });
+  const vista = previsualizar(copia);
+  assert.ok(vista.valido, JSON.stringify(vista.errores));
+  assert.ok(vista.texto.indexOf('Modificación del') === -1, 'la copia imprime la nota de modificación de la vieja');
+});
+
+test('la primera ampliación de una copia es la versión 2', () => {
+  conSetup();
+  const original = generar(solicitudValida({ tienda: 'Jumbo', fechaInicio: '2026-09-16', fechaFin: '2026-09-30' }));
+  marcarPublicado(original.id, 'https://promos.rappi.com/colombia/jumbo');
+  assert.strictEqual(ampliarCampana(original.id, { presupuesto: 3000000 }).version, 2);
+
+  const copia = generar(Object.assign(datosDeSolicitud(original.id).entrada, { fechaInicio: '2026-09-16', fechaFin: '2026-10-30' }));
+  assert.ok(copia.valido, JSON.stringify(copia.errores));
+  marcarPublicado(copia.id, 'https://promos.rappi.com/colombia/jumbo-2');
+
+  const ampliada = ampliarCampana(copia.id, { presupuesto: 4000000 });
+  assert.ok(ampliada.valido, JSON.stringify(ampliada.errores));
+  assert.strictEqual(ampliada.version, 2, ampliada.titulo);
+});
+
+test('el país y el rol de un miembro tienen que existir', () => {
+  // El historial compara el país del miembro con el de cada solicitud: un
+  // legal con "MZ" no veía ninguna campaña y nadie se enteraba.
+  conSetup();
+  const paisMalo = adminAgregarMiembros('ana@rappi.com', 'legal', 'MZ');
+  assert.strictEqual(paisMalo.valido, false);
+  assert.strictEqual(paisMalo.errores[0].campo, 'pais');
+
+  const rolMalo = adminGuardarMiembro({ email: 'ana@rappi.com', rol: 'jefe' });
+  assert.strictEqual(rolMalo.valido, false);
+  assert.strictEqual(rolMalo.errores[0].campo, 'rol');
+
+  const paisInventado = adminGuardarMiembro({ email: 'ana@rappi.com', rol: 'legal', pais: 'ZZ' });
+  assert.strictEqual(paisInventado.valido, false);
+  assert.strictEqual(paisInventado.errores[0].campo, 'pais');
+
+  assert.strictEqual(leerEquipo().filter((m) => m.email === 'ana@rappi.com').length, 0, 'algo se guardó igual');
+  assert.ok(adminGuardarMiembro({ email: 'ana@rappi.com', rol: 'legal', pais: '' }).valido, 'sin país también vale');
+});
+
+test('reactivar a alguien no duplica su fila en Equipo', () => {
+  conSetup();
+  adminGuardarMiembro({ email: 'ana@rappi.com', rol: 'legal', pais: 'MX' });
+  adminGuardarMiembro({ email: 'ana@rappi.com', rol: 'legal', pais: 'MX', activo: false });
+  assert.strictEqual(miembroPorCorreo(leerEquipo(), 'ana@rappi.com'), null, 'debería estar inactiva');
+
+  adminGuardarMiembro({ email: 'ana@rappi.com', rol: 'pruebas', pais: 'MX' });
+  const filas = leerEquipo().filter((m) => m.email === 'ana@rappi.com');
+  assert.strictEqual(filas.length, 1, 'quedaron ' + filas.length + ' filas');
+  assert.strictEqual(filas[0].activo, true);
+  assert.strictEqual(filas[0].rol, 'pruebas');
+
+  // Por la carga masiva igual: vuelve a entrar con el rol pedido, en su fila.
+  adminGuardarMiembro({ email: 'bea@rappi.com', nombre: 'Bea', rol: 'legal', activo: false });
+  const respuesta = adminAgregarMiembros('bea@rappi.com', 'pruebas', 'CO');
+  assert.deepStrictEqual(respuesta.agregados, ['bea@rappi.com']);
+  const bea = leerEquipo().filter((m) => m.email === 'bea@rappi.com');
+  assert.strictEqual(bea.length, 1);
+  assert.strictEqual(bea[0].activo, true);
+  assert.strictEqual(bea[0].rol, 'pruebas');
+  assert.strictEqual(bea[0].nombre, 'Bea', 'el nombre que ya tenía se conserva');
+});
+
+test('los correos pegados de Gmail entran con nombre y todo', () => {
+  // "Ana Pérez <ana@rappi.com>" se partía por espacios y "ana" y "pérez"
+  // salían como correos rechazados: el admin leía "no son correos de Rappi" y
+  // dudaba de si los había agregado.
+  conSetup();
+  const respuesta = adminAgregarMiembros('Ana Pérez <ana@rappi.com>, Bruno Díaz <bruno@rappi.com>; mailto:carla@rappi.com', 'legal', '');
+  assert.deepStrictEqual(respuesta.agregados, ['ana@rappi.com', 'bruno@rappi.com', 'carla@rappi.com']);
+  assert.deepStrictEqual(respuesta.rechazados, []);
+
+  // Lo que parece un correo mal escrito sí se rechaza, con su nombre.
+  const malos = adminAgregarMiembros('diego.rappi.com, elena@rappi, fer@gmail.com, ANA@RAPPI.COM', 'legal', '');
+  assert.deepStrictEqual(malos.rechazados.slice().sort(), ['diego.rappi.com', 'elena@rappi', 'fer@gmail.com']);
+  assert.deepStrictEqual(malos.yaEstaban, ['ana@rappi.com']);
+  assert.deepStrictEqual(malos.agregados, []);
+});
+
+test('poner al día los países agrega los datos por confirmar nuevos de la semilla', () => {
+  // La lista de Brasil creció de cinco a diez datos, pero una hoja que ya
+  // existía se quedaba con la vieja y el aviso al abogado brasileño salía
+  // corto. Esa columna la mantiene la herramienta, como la de modelos.
+  conSetup();
+  const hoja = hojaPorNombre('Paises');
+  const encabezados = hoja.valores[0];
+  const filaBr = hoja.valores.findIndex((f) => f[encabezados.indexOf('codigo')] === 'BR');
+  hoja.valores[filaBr][encabezados.indexOf('por_confirmar_en_pruebas')] =
+    'separador_miles, termino_dias, texto_hora_local, texto_derechos_datos, autoridad_datos';
+
+  setup();
+
+  const brasil = paisPorCodigo(leerPaises(), 'BR');
+  const semilla = PAISES_SEMILLA.find((p) => p.codigo === 'BR').por_confirmar_en_pruebas;
+  for (const llave of semilla) {
+    assert.ok(brasil.por_confirmar_en_pruebas.indexOf(llave) !== -1, 'falta ' + llave);
+  }
+  assert.strictEqual(brasil.por_confirmar_en_pruebas.length, semilla.length);
+});
+
+test('previsualizar y generar aguantan una entrada vacía en modo demostración', () => {
+  nuevoMundo();
+  assert.doesNotThrow(() => previsualizar(null));
+  assert.doesNotThrow(() => generar(undefined));
+  assert.strictEqual(previsualizar(null).valido, false);
+});

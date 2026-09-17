@@ -21,6 +21,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var letrasYCifra = moduloNumeros.letrasYCifra;
 
   var listaY = require('./fechas.js').listaY;
+  var tieneValor = require('./texto.js').tieneValor;
 }
 
 /** Las cuatro formas del beneficio, tal como las nombran los documentos. */
@@ -47,12 +48,6 @@ var METODOS_DE_PAGO_BR = [
   { valor: 'mastercard', etiqueta: 'Cartão de crédito Mastercard' },
   { valor: 'voucher_refeicao', etiqueta: 'Voucher Refeição' },
 ];
-
-function tieneValor(valor) {
-  if (valor === null || valor === undefined || valor === '') return false;
-  if (Object.prototype.toString.call(valor) === '[object Array]') return valor.length > 0;
-  return true;
-}
 
 /**
  * El trozo del parrafo de apertura que habla del minimo de compra.

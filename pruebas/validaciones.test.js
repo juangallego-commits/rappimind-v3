@@ -219,3 +219,106 @@ test('los mensajes de rango, orden y fecha pasada son los escritos para cada pre
   assert.strictEqual(mensajeDe({ vigencia: 'fecha', fechaFinRedencion: '2026-09-21' }, 'fechaFinRedencion'),
     'Los Créditos tienen que vencerse después de que termine la campaña. Si no, quien compre el último día no alcanza a usarlos.');
 });
+
+// --- lo que salió de la revisión crítica del 17 de septiembre ---------------
+
+/** Una campaña de cashback por ETA válida, como la publicada de Bogotá. */
+function solicitudEta(cambios) {
+  return Object.assign({
+    pais: 'CO', negocio: 'rappi', tipo: 'cashback_eta', ciudades: 'Bogotá',
+    fechaInicio: '2026-09-20', horaInicio: '11:00', horaFin: '15:00',
+    etaMinutos: 15, porcentaje: 100, tope: 100000, presupuesto: 37000000,
+    maxPedidos: 1, sinLimite: false, carga: 'dia_siguiente', vigencia: 'dias', diasVigencia: 7,
+    exclusionesEta: ['travel', 'soat', 'atm', 'favor'], metodoPago: 'sin_efectivo', declaracion: true,
+  }, cambios || {});
+}
+
+test('un tipo de un solo día termina el día que empieza, y el error va a la hora de fin', () => {
+  // El cashback por ETA no pregunta la fecha de fin. La vigencia leía
+  // entrada.fechaFin, un dato que la interfaz fijaba una vez y nunca
+  // actualizaba: al cambiar el día, el resumen decía "la campaña no puede
+  // terminar antes de empezar" y no había ninguna pregunta donde arreglarlo.
+  const viejo = validarSolicitud(solicitudEta({ fechaFin: '2026-09-10' }), CO, CONTEXTO);
+  assert.deepStrictEqual(viejo.errores, [], 'una fecha de fin vieja y ajena al tipo no puede tumbar nada');
+
+  const alReves = validarSolicitud(solicitudEta({ horaInicio: '15:00', horaFin: '11:00' }), CO, CONTEXTO);
+  assert.deepStrictEqual(alReves.errores.map((e) => e.campo), ['horaFin']);
+  assert.strictEqual(alReves.errores[0].mensaje,
+    'La hora de fin tiene que ser después de la de inicio: la campaña es de un solo día.');
+});
+
+test('en un tipo de un solo día la redención se compara con ese día', () => {
+  const resultado = validarSolicitud(solicitudEta({
+    vigencia: 'fecha', diasVigencia: null, fechaFinRedencion: '2026-09-19', fechaFin: '2026-09-10',
+  }), CO, CONTEXTO);
+  assert.deepStrictEqual(resultado.errores.map((e) => e.campo), ['fechaFinRedencion']);
+});
+
+test('todo error apunta a una pregunta que el tipo hace', () => {
+  // Un error en un campo que el formulario no muestra es un callejón sin
+  // salida: el resumen dice que falta algo y no hay dónde arreglarlo.
+  const { esquemaDe, tieneCampo } = require('../src/core/esquemas.js');
+  const rotas = [
+    solicitudEta({ horaInicio: '15:00', horaFin: '11:00', fechaFin: '2026-09-10', ciudades: 'Bogotá, Medellín', maxPedidos: null, tope: 0 }),
+    solicitudBase({ fechaFin: '2026-09-19', tope: 0, porcentaje: 101 }),
+  ];
+  for (const entrada of rotas) {
+    const esquema = esquemaDe(entrada.tipo);
+    const errores = validarSolicitud(entrada, CO, CONTEXTO).errores;
+    assert.ok(errores.length > 0, 'el caso roto no falló');
+    for (const error of errores) {
+      assert.ok(tieneCampo(esquema, error.campo),
+        entrada.tipo + ': el error apunta a "' + error.campo + '", que el tipo no pregunta');
+    }
+  }
+});
+
+test('el cashback por ETA es de una sola ciudad', () => {
+  // Los chips de ciudades heredados del cashback dejaban agregar dos, y el
+  // documento salía "en la ciudad de Bogotá, Medellín".
+  const resultado = validarSolicitud(solicitudEta({ ciudades: 'Bogotá, Medellín' }), CO, CONTEXTO);
+  assert.deepStrictEqual(resultado.errores.map((e) => e.campo), ['ciudades']);
+  assert.ok(resultado.errores[0].mensaje.indexOf('una sola ciudad') !== -1, resultado.errores[0].mensaje);
+});
+
+test('"varias veces" sin el número no pasa, ni en ETA ni en Brasil', () => {
+  // "¿Cuántas veces?" dejaba elegir "Varias órdenes" y seguir sin escribir
+  // cuántas: maxPedidos quedaba vacío, sinLimite en falso, y el documento
+  // salía con "un máximo de  órdenes".
+  const eta = validarSolicitud(solicitudEta({ maxPedidos: null, sinLimite: false }), CO, CONTEXTO);
+  assert.deepStrictEqual(eta.errores.map((e) => e.campo), ['maxPedidos']);
+
+  const { casos } = leerJson(rutaDesdeRaiz('pruebas', 'casos_base.json'));
+  const br01 = casos.find((c) => c.id === 'BR01');
+  const brasil = validarSolicitud(Object.assign({}, br01.entrada, { maxPedidos: null, sinLimite: false }), BR,
+    { fechaReferencia: '2026-09-17', usuarioEnEquipo: true });
+  assert.deepStrictEqual(brasil.errores.map((e) => e.campo), ['maxPedidos']);
+});
+
+test('un modelo en español no se genera en un país que escribe en otro idioma', () => {
+  // Solo se revisaba la dirección modelo → país. Un modelo en español
+  // habilitado en Brasil habría salido mezclado: "vinte por cento" y "horário
+  // de Brasília" dentro de un articulado en español, sin un solo error.
+  const { validarIdiomaDelPais } = require('../src/core/validaciones.js');
+  const { esquemaDe } = require('../src/core/esquemas.js');
+
+  const error = validarIdiomaDelPais(esquemaDe('cashback'), BR);
+  assert.ok(error, 'no se quejó');
+  assert.ok(error.mensaje.indexOf('portugués') !== -1, error.mensaje);
+  assert.strictEqual(validarIdiomaDelPais(esquemaDe('cashback'), CO), null);
+  assert.strictEqual(validarIdiomaDelPais(esquemaDe('promocao_br'), BR), null);
+
+  const brasilConCashback = Object.assign({}, BR, { modelos: BR.modelos.concat(['cashback']), texto_derechos_datos: 'x' });
+  const resultado = validarSolicitud(solicitudBase({ pais: 'BR' }), brasilConCashback,
+    { fechaReferencia: '2026-09-16', usuarioEnEquipo: true });
+  assert.strictEqual(resultado.valido, false);
+  assert.strictEqual(resultado.errores[0].campo, 'tipo');
+});
+
+test('al ampliar, una fecha de inicio que ya pasó no es un error', () => {
+  // Ampliar rearma el documento completo. Sin esta excepción, solo funcionaba
+  // el mismo día del inicio.
+  const pasada = solicitudBase({ fechaInicio: '2026-09-10', fechaFin: '2026-09-30' });
+  assert.deepStrictEqual(validarSolicitud(pasada, CO, CONTEXTO).errores.map((e) => e.campo), ['fechaInicio']);
+  assert.deepStrictEqual(validarSolicitud(pasada, CO, Object.assign({ ampliacion: true }, CONTEXTO)).errores, []);
+});

@@ -228,7 +228,6 @@ function usarComoBase(id) {
     base.fechaFinRedencion = '';
     base.fechaNotificacion = '';
     base.declaracion = false;
-    base.nombreCampana = (base.nombreCampana || '') + ' (copia)';
 
     estado.reiniciarFormulario(base);
     E.filtroRespondido = true;

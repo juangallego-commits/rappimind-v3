@@ -134,11 +134,14 @@ test('ninguna pregunta en portugués está definida dos veces', () => {
  * `var` en su sitio, para poder contar ámbitos sin un analizador de verdad.
  */
 function sinCadenasNiComentarios(texto) {
+  // Las cadenas se vacían antes de quitar los comentarios de línea: una URL
+  // dentro de una cadena ('https://...') se leía como comentario y se tragaba
+  // el resto de la línea, con el `var` repetido que viniera después.
   return texto
     .replace(/\/\*[\s\S]*?\*\//g, (c) => c.replace(/[^\n]/g, ' '))
-    .replace(/\/\/[^\n]*/g, '')
     .replace(/'(?:[^'\\\n]|\\.)*'/g, "''")
-    .replace(/"(?:[^"\\\n]|\\.)*"/g, '""');
+    .replace(/"(?:[^"\\\n]|\\.)*"/g, '""')
+    .replace(/\/\/[^\n]*/g, '');
 }
 
 /**
@@ -209,4 +212,18 @@ test('ninguna función declara dos veces el mismo var', () => {
     }
   }
   assert.deepStrictEqual(problemas, [], problemas.join('\n'));
+});
+
+test('una URL dentro de una cadena no esconde el var repetido que viene después', () => {
+  // Las cadenas se vaciaban después de quitar los comentarios: 'https://...'
+  // se leía como un comentario y se tragaba el resto de la línea.
+  const caso = [
+    'function f() {',
+    "  var enlace = 'https://promos.rappi.com/'; var b = 1;",
+    '  var b = 2;',
+    '}',
+  ].join('\n');
+  const problemas = varsRepetidosPorFuncion(caso);
+  assert.strictEqual(problemas.length, 1, problemas.join(' | '));
+  assert.ok(problemas[0].indexOf('var b') === 0, problemas[0]);
 });

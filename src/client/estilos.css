@@ -475,7 +475,9 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 /* --- Celular ------------------------------------------------------------ */
 
 @media (max-width: 900px) {
-  .pagina { padding: var(--e5) var(--e4) 96px; }
+  /* Abajo caben el boton flotante (16 + 52) y encima el selector de idioma
+     (76 + 42). Con menos, la ultima fila de botones quedaba debajo del ES/BR. */
+  .pagina { padding: var(--e5) var(--e4) 136px; }
   .dos-columnas { grid-template-columns: 1fr; gap: var(--e5); }
   .columna-documento { display: none; }
   h1 { font-size: 23px; }

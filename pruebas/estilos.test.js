@@ -76,3 +76,17 @@ test('el buscador del historial recibe el mismo estilo que los demás campos', (
   assert.ok(reglaDeCampos && reglaDeCampos.indexOf("input[type='search']") !== -1, 'input[type=search] no entra en la regla de los campos');
   assert.ok(/\.buscador\s*\{[^}]*max-width/.test(css), 'el buscador no tiene un ancho máximo');
 });
+
+test('en celular la última fila de botones no queda debajo del selector de idioma', () => {
+  // El selector fijo (bottom 76px, 42px de alto) tapaba "Revisar y generar" y
+  // "Generar T&C" al llegar al final, porque la página solo reservaba 96px.
+  const celular = ESTILOS.slice(ESTILOS.indexOf('@media (max-width: 900px)'));
+  const selector = /\.selector-idioma\s*\{[^}]*bottom:\s*(\d+)px/.exec(celular);
+  const pagina = /\.pagina\s*\{[^}]*padding:[^;}]*\s(\d+)px\s*;?\s*\}/.exec(celular);
+  assert.ok(selector && pagina, 'no encontré las dos reglas del celular');
+
+  const altoDelSelector = 42;
+  const margen = 16;
+  assert.ok(Number(pagina[1]) >= Number(selector[1]) + altoDelSelector + margen,
+    'la página reserva ' + pagina[1] + 'px y el selector llega hasta ' + (Number(selector[1]) + altoDelSelector) + 'px');
+});

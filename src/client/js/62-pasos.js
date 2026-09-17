@@ -552,8 +552,14 @@ function alResponder(campoId, valor, campos, indice) {
   E.respondidas[campoId] = true;
 
   // Al elegir el día de inicio se propone el mismo día de fin: tres de cada
-  // cuatro campañas de cashback duran un solo día.
-  if (campoId === 'fechaInicio' && !estado.entrada().fechaFin) estado.fijar('fechaFin', valor);
+  // cuatro campañas de cashback duran un solo día. Y si el tipo no pregunta la
+  // fecha de fin (el ETA es de un solo día), el fin ES el inicio y se mantiene
+  // igual siempre: antes se fijaba una sola vez, y al cambiar el día de inicio
+  // quedaba una fecha de fin vieja que ninguna pregunta dejaba corregir.
+  if (campoId === 'fechaInicio') {
+    var preguntaElFin = tieneCampo(esquemaDe(estado.entrada().tipo), 'fechaFin');
+    if (!estado.entrada().fechaFin || !preguntaElFin) estado.fijar('fechaFin', valor);
+  }
   if (campoId === 'pais') estado.fijar('tipo', null);
 
   // Cambiar de negocio invalida el tipo elegido: los tipos de Rappi no son los
@@ -716,4 +722,5 @@ RM.pasos = {
   comoTexto: comoTexto,
   columnaDocumento: columnaDocumento,
   calculadora: calculadora,
+  avisoDePaisEnPruebas: avisoDePaisEnPruebas,
 };

@@ -83,7 +83,10 @@ test('un dato del país con una nota interna no deja generar', () => {
   assert.deepStrictEqual(validarSolicitud(entrada, colombia, opciones).errores, [],
     'el caso sano no debería fallar');
 
-  for (const nota of ['(confirmar)', '(revisar)', '(pendiente)', 'TODO', '???']) {
+  // Las variantes naturales de la misma nota se le escapaban: "[confirmar]",
+  // "(a confirmar)", "(revisar con Legal)", "TBD", "(?)".
+  for (const nota of ['(confirmar)', '(revisar)', '(pendiente)', 'TODO', '???', '[confirmar]', '(a confirmar)',
+    '(sin confirmar)', '(por definir)', '(revisar con Legal)', 'TBD', 'FIXME', '(?)', '??', '{{ANPD}}', '[[ANPD]]']) {
     const sucio = Object.assign({}, colombia, {
       autoridad_datos: 'la Superintendencia de Industria y Comercio ' + nota,
     });
@@ -103,3 +106,22 @@ test('ningún país trae hoy una nota interna en un dato que se imprime', () => 
   }
 });
 
+
+test('las palabras normales de un valor legal no se confunden con una nota', () => {
+  // "todo el territorio", "(SIC)" o "Ley 1480 de 2011 (Estatuto del Consumidor)"
+  // son texto legal legítimo: la marca TODO solo cuenta en mayúsculas y las
+  // palabras de nota solo entre paréntesis o corchetes.
+  const { tieneMarcaDeAnotacion } = require('../src/core/validaciones.js');
+  for (const valor of [
+    'todo el territorio nacional de la República de Colombia',
+    'la Superintendencia de Industria y Comercio (SIC)',
+    'Ley 1480 de 2011 (Estatuto del Consumidor)',
+    'puedes revisar la política en la Plataforma',
+    'Instituto Federal de Telecomunicaciones (IFT), pendiente de nada',
+  ]) {
+    assert.strictEqual(tieneMarcaDeAnotacion(valor), false, 'se confundió con: ' + valor);
+  }
+  for (const valor of ['la ANPD (a confirmar)', 'la ANPD [confirmar]', 'PROCON (?)', 'TBD', 'SENACON (revisar con Legal)']) {
+    assert.strictEqual(tieneMarcaDeAnotacion(valor), true, 'no cazó: ' + valor);
+  }
+});

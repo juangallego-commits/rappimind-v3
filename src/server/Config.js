@@ -89,9 +89,12 @@ function correoDelUsuario() {
   }
 }
 
-/** Solo se atiende a cuentas del dominio. */
+/**
+ * Solo se atiende a cuentas del dominio. La regla vive en el core
+ * (esCorreoDelDominio) para que la demostracion use la misma.
+ */
 function correoEsDelDominio(correo) {
-  return /@rappi\.com$/i.test(String(correo || '').trim());
+  return esCorreoDelDominio(correo);
 }
 
 /** Fecha de hoy en AAAA-MM-DD, en la zona horaria del proyecto. */

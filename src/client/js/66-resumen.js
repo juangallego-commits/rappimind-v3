@@ -271,6 +271,9 @@ function pantallaListo(raiz) {
   var resultado = E.resultado || {};
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
     crear('h1', { texto: estado.T('Tu T&C está listo') }),
+    // En un pais en pruebas el aviso de "no publiques" tiene que estar en la
+    // pantalla que explica como publicar, no solo en las de antes.
+    RM.pasos.avisoDePaisEnPruebas(),
   ]);
 
   if (resultado.demostracion) {

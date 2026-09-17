@@ -234,7 +234,13 @@ var PREGUNTAS = {
         ayuda: 'Una sola ciudad. Las campañas publicadas son por ciudad, porque el botón Turbo se habilita ciudad por ciudad.',
         porQue: 'El documento nombra la ciudad tres veces: en el territorio, en las Tiendas Participantes y en el título.',
         ejemplo: 'Bogotá',
-        errores: { vacio: 'Escribe la ciudad donde corre la campaña.' },
+        // Sin los chips del cashback: con ellos se podian agregar dos ciudades
+        // a una pregunta que pide una sola.
+        sugerencias: null,
+        errores: {
+          vacio: 'Escribe la ciudad donde corre la campaña.',
+          unaSola: 'Escribe una sola ciudad. El ETA se promete ciudad por ciudad: para otra ciudad, haz otra campaña.',
+        },
       },
     },
     paso: 'campana',
@@ -319,7 +325,10 @@ var PREGUNTAS = {
     porQue: 'Define hasta qué minuto cuenta un pedido. Los pedidos posteriores se procesan como pedidos normales.',
     porDefecto: '23:59',
     placeholders: ['HORA_FIN'],
-    errores: { vacio: 'Elige la hora de fin.' },
+    errores: {
+      vacio: 'Elige la hora de fin.',
+      orden: 'La hora de fin tiene que ser después de la de inicio: la campaña es de un solo día.',
+    },
   }),
 
   // --- El beneficio -------------------------------------------------------
@@ -380,6 +389,11 @@ var PREGUNTAS = {
         pregunta: '¿Cuál es el tope por orden?',
         ayuda: 'Lo máximo que una sola orden puede recibir en Créditos, por grande que sea. Las campañas publicadas usan cien mil.',
         porQue: 'Sin tope, una sola orden grande se lleva buena parte del presupuesto de la campaña.',
+        errores: {
+          vacio: 'Escribe el máximo de Créditos que recibe una orden.',
+          cero: 'El tope tiene que ser mayor que cero.',
+          mayorQuePresupuesto: 'El tope por orden es mayor que el presupuesto total. Con eso, la primera orden se lleva toda la campaña. Revisa los dos números.',
+        },
       },
 
       promocao_br: {
@@ -426,6 +440,16 @@ var PREGUNTAS = {
         pregunta: '¿Cuántas órdenes puede reclamar la misma persona?',
         ayuda: 'Las campañas publicadas permiten una sola durante toda la vigencia.',
         porQue: 'El documento lo escribe en letras y en cifra, y es lo que frena que una misma cuenta agote el presupuesto.',
+        opciones: [
+          { valor: 'una', etiqueta: 'Una sola orden', nota: 'Lo que usan las campañas publicadas. La segunda orden ya no reclama.' },
+          { valor: 'varias', etiqueta: 'Varias órdenes', nota: 'Tú dices cuántas.' },
+          { valor: 'sin_limite', etiqueta: 'Sin límite', nota: 'Solo lo frenan las existencias.' },
+        ],
+        errores: {
+          vacio: 'Dinos cuántas órdenes puede reclamar la misma persona.',
+          cuantas: 'Escribe cuántas órdenes puede reclamar una persona.',
+          rango: 'Tiene que ser al menos una orden.',
+        },
       },
 
       promocao_br: {

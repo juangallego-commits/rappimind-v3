@@ -867,12 +867,19 @@ var CAMPOS_BRASIL = [
     obligatorio: false,
   },
   { id: 'compraMinima', etiqueta: 'Mínimo de compra', tipo: 'numero', minimo: 1, paso: 'participantes', obligatorio: false },
-  { id: 'maxPedidos', etiqueta: 'Máximo de pedidos por usuario', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: false },
+  // Obligatorio salvo con "Sin limite": con "Varias veces" y sin numero, el
+  // resumen dejaba pulsar Generar y era el servidor el que devolvia un error
+  // generico del documento.
+  { id: 'maxPedidos', etiqueta: 'Máximo de pedidos por usuario', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: sinLimiteNoLoPide },
   { id: 'sinLimite', etiqueta: 'Sin límite de pedidos', tipo: 'casilla', paso: 'beneficio', obligatorio: false },
   { id: 'metodosPagoBr', etiqueta: 'Medios de pago', tipo: 'casillas', paso: 'beneficio', obligatorio: true },
 
   { id: 'declaracion', etiqueta: 'Declaración', tipo: 'casilla', paso: 'confirmacion', obligatorio: true },
 ];
+
+function sinLimiteNoLoPide(entrada) {
+  return !entrada.sinLimite;
+}
 
 function esDescontoBr(entrada) {
   return entrada.beneficioBr === 'desconto';
@@ -916,7 +923,7 @@ var CAMPOS_CASHBACK_ETA = [
   { id: 'porcentaje', etiqueta: 'Porcentaje que se devuelve', tipo: 'numero', paso: 'beneficio', obligatorio: true },
   { id: 'tope', etiqueta: 'Tope por orden', tipo: 'numero', paso: 'beneficio', obligatorio: true },
   { id: 'presupuesto', etiqueta: 'Presupuesto total', tipo: 'numero', paso: 'beneficio', obligatorio: true },
-  { id: 'maxPedidos', etiqueta: 'Máximo de órdenes por persona', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: false },
+  { id: 'maxPedidos', etiqueta: 'Máximo de órdenes por persona', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: sinLimiteNoLoPide },
   { id: 'sinLimite', etiqueta: 'Sin límite de órdenes', tipo: 'casilla', paso: 'beneficio', obligatorio: false },
 
   {
@@ -1065,6 +1072,15 @@ var ESQUEMAS = {
   },
 };
 
+/** Si un tipo hace esa pregunta. El ETA, por ejemplo, no pregunta la fecha de fin. */
+function tieneCampo(esquema, id) {
+  if (!esquema || !esquema.campos) return false;
+  for (var i = 0; i < esquema.campos.length; i++) {
+    if (esquema.campos[i].id === id) return true;
+  }
+  return false;
+}
+
 /** Devuelve el esquema de un tipo, o null. */
 function esquemaDe(tipo) {
   return Object.prototype.hasOwnProperty.call(ESQUEMAS, tipo) ? ESQUEMAS[tipo] : null;
@@ -1100,6 +1116,7 @@ if (typeof module !== 'undefined') {
     hayAlojamientoDeTravel: hayAlojamientoDeTravel,
     hayAutosDeTravel: hayAutosDeTravel,
     esquemaDe: esquemaDe,
+    tieneCampo: tieneCampo,
     camposVisibles: camposVisibles,
     resolverAtributo: resolverAtributo,
     siempre: siempre,

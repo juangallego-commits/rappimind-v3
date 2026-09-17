@@ -151,8 +151,15 @@ function sembrarPaises(pasos) {
   }
 }
 
-/** Los modelos de la fila, mas los de la semilla que falten, en ese orden. */
-function modelosUnidos(deLaFila, deLaSemilla) {
+/**
+ * Lo que dice la fila, mas lo de la semilla que falte, en ese orden.
+ *
+ * Para las dos columnas que son listas y que mantiene la herramienta: los
+ * modelos y los datos por confirmar. Sin esto, agregar un dato a la lista de
+ * por_confirmar_en_pruebas de la semilla no llegaba a una hoja que ya existia,
+ * y el aviso al abogado del pais en pruebas se quedaba corto.
+ */
+function listasUnidas(deLaFila, deLaSemilla) {
   var unidos = comoLista(deLaFila).slice();
   var semilla = comoLista(deLaSemilla);
   for (var i = 0; i < semilla.length; i++) {
@@ -211,9 +218,9 @@ function ponerPaisesAlDia(hoja, pasos) {
     for (var llave in semilla) {
       if (!Object.prototype.hasOwnProperty.call(semilla, llave)) continue;
 
-      if (llave === 'modelos') {
-        var unidos = modelosUnidos(fila.modelos, semilla.modelos);
-        if (unidos.length !== comoLista(fila.modelos).length) cambios.modelos = unidos.join(', ');
+      if (llave === 'modelos' || llave === 'por_confirmar_en_pruebas') {
+        var unidos = listasUnidas(fila[llave], semilla[llave]);
+        if (unidos.length !== comoLista(fila[llave]).length) cambios[llave] = unidos.join(', ');
         continue;
       }
       if (celdaVacia(fila[llave]) && !celdaVacia(semilla[llave])) {
