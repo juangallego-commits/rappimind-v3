@@ -27,6 +27,7 @@ Dueño de producto y aprobador legal: Juan Camilo Gallego.
 4. No hagas `git push --force`, no reescribas historial y no borres archivos de `modelos/` ni de `data/`.
 5. Si una decisión es de negocio o legal, pregunta. Si es técnica, decide y déjala escrita en `docs/DECISIONES.md`.
 6. Antes de tocar `src/server/`, `scripts/build.js` o cualquier cosa que viaje entre el servidor y la interfaz, lee la skill `.claude/skills/frontera-apps-script/`. Ahí están las cuatro fronteras donde el código se rompe en silencio y los cinco defectos reales que ya pasaron.
+7. Antes de tocar cualquier cosa que el comercial vea o recorra (`src/client/`, las preguntas, el filtro, la lista de tipos, el resumen, el historial o la ayuda), lee la skill `.claude/skills/flujo-y-ux/`. Ahí está el recorrido completo pantalla por pantalla y las reglas de producto que lo sostienen.
 
 ## Mapa del repo
 

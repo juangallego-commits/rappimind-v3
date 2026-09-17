@@ -297,3 +297,25 @@ respuesta quedaría en dos columnas del Sheet y el histórico se partiría en do
 **Por qué.** "Doscientos órdenes" está mal escrito en un documento legal. No se había
 visto porque los modelos de delivery solo hablan de pedidos y de Créditos, que son
 masculinos. El femenino es opt-in, así que ningún documento de delivery cambia.
+
+## Skill de flujo y experiencia, y una sola lista de preguntas de arranque
+
+**Fecha:** 17 de septiembre de 2026.
+
+El filtro general siguió preguntando "¿Es una campaña de Rappi Travel?" después
+de que esa pregunta se movió al paso de Campaña. Las dos mitades eran correctas
+por separado, así que ninguna prueba lo vio: lo que estaba roto era el camino
+completo, y con él toda la funcionalidad de Rappi Travel, que quedó inalcanzable.
+
+Dos decisiones salieron de ahí:
+
+1. **`.claude/skills/flujo-y-ux/`**, con el recorrido pantalla por pantalla, las
+   reglas de experiencia y por qué existe cada una, y un script que recorre el
+   flujo entero en la demostración y revisa los invariantes. Los defectos de
+   flujo no los caza `npm test`, porque cada archivo pasa sus pruebas.
+2. **Las tres preguntas de arranque (país, negocio, tipo) viven en una sola
+   función**, `camposDeArranque()` en `src/client/js/62-pasos.js`. Estaban
+   escritas dos veces, una con la pregunta del negocio y otra sin ella: la
+   primera dibujaba la pantalla y la segunda decidía a dónde ir al pulsar
+   Siguiente, así que Siguiente se saltaba el negocio y marcaba el tipo como
+   respondido sin que nadie lo hubiera elegido.

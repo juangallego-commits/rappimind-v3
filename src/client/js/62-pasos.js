@@ -192,6 +192,23 @@ function columnaDocumento() {
   ]);
 }
 
+/**
+ * Las tres preguntas con que arranca todo, antes de saber el tipo de campana.
+ *
+ * Vive en una sola funcion a proposito. Estuvo escrita dos veces, con y sin la
+ * pregunta del negocio, y las dos listas se usaban para lo mismo: dibujar la
+ * pantalla y decidir a donde ir al pulsar Siguiente. Con listas distintas el
+ * indice de la pregunta abierta apuntaba a otra pregunta y el asistente se
+ * saltaba la del negocio.
+ */
+function camposDeArranque() {
+  return [
+    { id: 'pais', tipo: 'lista', paso: 'campana', etiqueta: 'País' },
+    { id: 'negocio', tipo: 'lista', paso: 'campana', etiqueta: 'Negocio', opciones: preguntaDe('negocio').opciones },
+    { id: 'tipo', tipo: 'tarjetas', paso: 'campana', etiqueta: 'Tipo' },
+  ];
+}
+
 function pantallaPasos(raiz) {
   var entrada = estado.entrada();
   var pasos = flujo.pasosDelTipo(entrada);
@@ -204,13 +221,7 @@ function pantallaPasos(raiz) {
 
   var pasoActual = pasos[E.pasoActual];
   var campos = flujo.camposDelPaso(entrada, pasoActual.id);
-  if (campos.length === 0 && !entrada.tipo) {
-    campos = [
-      { id: 'pais', tipo: 'lista', paso: 'campana', etiqueta: 'País' },
-      { id: 'negocio', tipo: 'lista', paso: 'campana', etiqueta: 'Negocio', opciones: preguntaDe('negocio').opciones },
-      { id: 'tipo', tipo: 'tarjetas', paso: 'campana', etiqueta: 'Tipo' },
-    ];
-  }
+  if (campos.length === 0 && !entrada.tipo) campos = camposDeArranque();
 
   var errores = flujo.erroresPorCampo();
 
@@ -575,12 +586,7 @@ function situacionActual() {
   if (E.pasoActual >= pasos.length) E.pasoActual = pasos.length - 1;
 
   var campos = flujo.camposDelPaso(entrada, pasos[E.pasoActual].id);
-  if (campos.length === 0 && !entrada.tipo) {
-    campos = [
-      { id: 'pais', tipo: 'lista', paso: 'campana' },
-      { id: 'tipo', tipo: 'tarjetas', paso: 'campana' },
-    ];
-  }
+  if (campos.length === 0 && !entrada.tipo) campos = camposDeArranque();
   return { pasos: pasos, campos: campos };
 }
 
