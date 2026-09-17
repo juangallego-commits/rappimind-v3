@@ -574,3 +574,26 @@ frontera 2, y ya dejó una pantalla sin una sola opción que ofrecer.
     `validarIdiomaDelPais` revisa las dos direcciones: el modelo en portugués
     exige `pt` en la fila del país, y un país con `pt` rechaza los modelos en
     español hasta que exista el modelo en portugués.
+24. **El front se documenta congelando la aplicación, no describiéndola.**
+    `npm run front` arma la demostración, la recorre con un navegador sin
+    interfaz y guarda el DOM de cada pantalla en `docs/FRONT_ACTUAL.html`. Se
+    eligió eso, y no capturas ni un documento escrito a mano, porque el archivo
+    se sube como contexto a Claude chat: una imagen no se puede leer como texto
+    y un resumen se desactualiza en silencio. Lo que se lee ahí es el texto
+    literal de la interfaz, y el archivo se vuelve a generar de cero.
+25. **La hoja de estilos se acota a un marco por pantalla**
+    (`scripts/lib/estilos-acotados.js`). Cuarenta y cuatro pantallas en un mismo
+    documento comparten una sola hoja de estilos, así que cada regla se
+    reescribe para valer solo dentro de `.rm-pantalla`: `body` y `html` pasan a
+    ser el marco, `position: fixed` pasa a `absolute` y `100vh` pasa a una
+    variable del marco. Las reglas de `@media (max-width: 900px)` se acotan a
+    `.rm-pantalla.rm-celular`, no al ancho de la ventana, porque si no una
+    ventana angosta volvería celulares a las pantallas de escritorio. Una
+    consulta de ancho que el acotador no conozca revienta el build en vez de
+    colarse.
+26. **El archivo de contexto no lleva JavaScript.** Es HTML inerte: se abre con
+    doble clic, se puede subir a un proyecto de Claude chat y no depende de que
+    nada corra. Por eso el valor de cada campo se pasa a atributo antes de
+    serializar, y por eso la pantalla final se captura en su versión de
+    producción y no en la de la demostración.
+
