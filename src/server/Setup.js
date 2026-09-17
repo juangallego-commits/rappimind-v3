@@ -161,11 +161,28 @@ function modelosUnidos(deLaFila, deLaSemilla) {
   return unidos;
 }
 
+/**
+ * Las columnas cuya diferencia se avisa.
+ *
+ * Son las que deciden si un pais aparece en la lista y que puede generar. Una
+ * diferencia en el domicilio legal no vale la pena nombrarla; una en el estado
+ * es la razon por la que un pais no sale.
+ */
+var COLUMNAS_QUE_SE_AVISAN = ['estado', 'idioma'];
+
 function celdaVacia(valor) {
   return !String(valor === null || valor === undefined ? '' : valor).trim();
 }
 
-/** Completa las filas que ya existen y agrega los paises nuevos. */
+/**
+ * Completa las filas que ya existen y agrega los paises nuevos.
+ *
+ * Lo que la hoja ya tiene escrito manda, siempre. Pero callarse las diferencias
+ * confunde: Juan puso Brasil en piloto en la semilla, corrio setup, y Brasil
+ * siguio sin aparecer porque la hoja decia "bloqueado" desde el primer dia.
+ * Por eso el resumen nombra lo que encontro distinto y no toco, con su valor de
+ * un lado y del otro.
+ */
 function ponerPaisesAlDia(hoja, pasos) {
   // Primero las columnas: sin encabezado no hay donde escribir el dato.
   encabezadosDeLaHoja(hoja, 'Paises');
@@ -173,6 +190,7 @@ function ponerPaisesAlDia(hoja, pasos) {
   var filas = objetosDe('Paises');
   var completados = 0;
   var agregados = 0;
+  var diferencias = [];
 
   for (var i = 0; i < PAISES_SEMILLA.length; i++) {
     var semilla = paisComoFila(PAISES_SEMILLA[i]);
@@ -198,7 +216,19 @@ function ponerPaisesAlDia(hoja, pasos) {
         if (unidos.length !== comoLista(fila.modelos).length) cambios.modelos = unidos.join(', ');
         continue;
       }
-      if (celdaVacia(fila[llave]) && !celdaVacia(semilla[llave])) cambios[llave] = semilla[llave];
+      if (celdaVacia(fila[llave]) && !celdaVacia(semilla[llave])) {
+        cambios[llave] = semilla[llave];
+        continue;
+      }
+
+      // La hoja manda, pero se anota lo que quedo distinto para que nadie crea
+      // que setup lo iba a cambiar. Solo las columnas que de verdad importan
+      // para que un pais aparezca y genere.
+      if (COLUMNAS_QUE_SE_AVISAN.indexOf(llave) !== -1 &&
+          String(fila[llave]).trim() !== String(semilla[llave]).trim()) {
+        diferencias.push(codigo + '.' + llave + ': la hoja dice "' + String(fila[llave]).trim() +
+          '" y la semilla dice "' + String(semilla[llave]).trim() + '"');
+      }
     }
 
     var hayCambios = false;
@@ -211,6 +241,10 @@ function ponerPaisesAlDia(hoja, pasos) {
     }
   }
 
+  if (diferencias.length > 0) {
+    pasos.push('sin tocar, porque la hoja manda: ' + diferencias.join(' | ') +
+      '. Si quieres cambiarlo, hazlo en la pestaña Paises o en la pantalla de Administración');
+  }
   if (agregados > 0) pasos.push(agregados + ' países nuevos agregados');
   pasos.push(completados === 0
     ? 'Paises ya estaba al día'

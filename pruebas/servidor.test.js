@@ -517,6 +517,28 @@ test('una pestaña de Países de antes de Travel se pone al día al correr setup
   assert.deepStrictEqual(despues.modelos.slice(0, 3), ['cashback', 'carrera_compras', 'cashback_day']);
 });
 
+test('setup avisa lo que dejó sin tocar porque la hoja manda', () => {
+  // El caso real: Brasil pasó a piloto en la semilla, Juan corrió setup, y
+  // Brasil siguió sin aparecer porque la hoja decía "bloqueado" desde el primer
+  // día. La regla es correcta, pero callarse la diferencia confunde.
+  conSetup();
+  const hoja = hojaPorNombre('Paises');
+  const encabezados = hoja.valores[0];
+  const filaBr = hoja.valores.findIndex((f) => f[encabezados.indexOf('codigo')] === 'BR');
+  hoja.valores[filaBr][encabezados.indexOf('estado')] = 'bloqueado';
+
+  const resumen = setup();
+  const texto = resumen.pasos.join(' | ');
+
+  assert.ok(texto.indexOf('BR.estado') !== -1, texto);
+  assert.ok(texto.indexOf('la hoja dice "bloqueado"') !== -1, texto);
+  assert.ok(texto.indexOf('la semilla dice "piloto"') !== -1, texto);
+  assert.ok(texto.indexOf('Administración') !== -1, 'no dice dónde cambiarlo');
+
+  // Y no lo cambió: la hoja sigue mandando.
+  assert.strictEqual(paisPorCodigo(leerPaises(), 'BR').estado, 'bloqueado');
+});
+
 test('poner al día los países no pisa lo que Legal cambió a mano', () => {
   conSetup();
   const hoja = hojaDePaisesComoEstabaAntesDeTravel();
