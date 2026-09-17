@@ -326,7 +326,7 @@
       "ley_aplicable": "a Leis da República Federativa do Brasil",
       "jurisdiccion": "à Foro Central da comarca da cidade de São Paulo",
       "entidad_vigilancia": "el PROCON y la Secretaría Nacional del Consumidor (SENACON)",
-      "autoridad_datos": "a Autoridade Nacional de Proteção de Dados (ANPD) (confirmar)",
+      "autoridad_datos": "a Autoridade Nacional de Proteção de Dados (ANPD)",
       "url_tc_plataforma": "https://legal.rappi.com.co/brazil/termos-e-condicoes-de-uso-da-plataforma-rappi/",
       "url_privacidad": "https://legal.rappi.com.co/brazil/aviso-de-privacidade-e-politicas-de-uso-das-informacao-utilizadas-pela-rappi/",
       "url_tc_creditos": "https://legal.rappi.com.co/brazil/termos-e-condicoes-funcionamento-dos-creditos-da-plataforma-rappi/",
@@ -344,7 +344,8 @@
         "separador_miles",
         "termino_dias",
         "texto_hora_local",
-        "texto_derechos_datos"
+        "texto_derechos_datos",
+        "autoridad_datos"
       ],
       "url_tc_turbo": ""
     }

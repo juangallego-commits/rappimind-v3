@@ -56,3 +56,50 @@ test('un país sin nada marcado no genera aviso vacío', () => {
   assert.deepStrictEqual(datosPorConfirmar(null), []);
   assert.strictEqual(paisEnPruebas(null), false);
 });
+
+/**
+ * Una nota interna dentro de un dato que se imprime.
+ *
+ * La fila de Brasil tenía la autoridad de datos escrita como "a Autoridade
+ * Nacional de Proteção de Dados (ANPD) (confirmar)". Ese valor va tal cual a la
+ * cláusula de datos personales, así que un T&C publicado habría salido con la
+ * palabra "(confirmar)" adentro. No llegó a pasar porque el modelo brasileño no
+ * usa ese bloque, pero bastaba con que alguien se lo agregara.
+ */
+test('un dato del país con una nota interna no deja generar', () => {
+  const { validarSolicitud } = require('../src/core/validaciones.js');
+  const opciones = { fechaReferencia: '2026-08-01', usuarioEnEquipo: true };
+  const colombia = porCodigo('CO');
+
+  const entrada = {
+    pais: 'CO', negocio: 'rappi', tipo: 'cashback', tienda: 'El Corral',
+    alcance: 'Nacional', organizadorRazonSocial: 'El Corral S.A.S.', organizadorId: '900111222-1',
+    fechaInicio: '2026-09-20', fechaFin: '2026-09-20', horaInicio: '00:00', horaFin: '23:59',
+    segmento: 'todos', metodoPago: 'todos', porcentaje: 20, tope: 25000, presupuesto: 15000000,
+    maxPedidos: 1, carga: 'dia_siguiente', vigencia: 'dias', diasVigencia: 7,
+    redencion: 'tienda', declaracion: true,
+  };
+
+  assert.deepStrictEqual(validarSolicitud(entrada, colombia, opciones).errores, [],
+    'el caso sano no debería fallar');
+
+  for (const nota of ['(confirmar)', '(revisar)', '(pendiente)', 'TODO', '???']) {
+    const sucio = Object.assign({}, colombia, {
+      autoridad_datos: 'la Superintendencia de Industria y Comercio ' + nota,
+    });
+    const revision = validarSolicitud(entrada, sucio, opciones);
+    assert.strictEqual(revision.valido, false, 'no se quejó con la nota ' + nota);
+    assert.ok(revision.errores[0].mensaje.indexOf('nota interna') !== -1, revision.errores[0].mensaje);
+  }
+});
+
+test('ningún país trae hoy una nota interna en un dato que se imprime', () => {
+  const { validarSolicitud } = require('../src/core/validaciones.js');
+  for (const pais of PAISES) {
+    const revision = validarSolicitud({ pais: pais.codigo, tipo: 'cashback' }, pais,
+      { fechaReferencia: '2026-08-01', usuarioEnEquipo: true });
+    const anotaciones = revision.errores.filter((e) => e.mensaje.indexOf('nota interna') !== -1);
+    assert.deepStrictEqual(anotaciones, [], pais.nombre + ': ' + JSON.stringify(anotaciones));
+  }
+});
+

@@ -150,6 +150,42 @@ function validarOrganizador(entrada, pais) {
   return revision.valido ? [] : [error('organizadorId', revision.mensaje)];
 }
 
+/**
+ * Las marcas que delatan una anotacion interna dentro de un valor del pais.
+ *
+ * La fila de Brasil llego a tener la autoridad de datos escrita como
+ * "a Autoridade Nacional de Protecao de Dados (ANPD) (confirmar)". Ese valor se
+ * imprime tal cual en la clausula de datos personales, asi que un T&C publicado
+ * habria salido con la palabra "(confirmar)" dentro. Para marcar lo que falta
+ * esta la columna por_confirmar_en_pruebas, no el texto.
+ */
+var MARCAS_DE_ANOTACION = /\((confirmar|revisar|pendiente|verificar|por confirmar)\)|\bTODO\b|\?\?\?/i;
+
+/**
+ * Un valor del pais con una anotacion interna adentro no se publica.
+ *
+ * Se revisan solo las columnas que de verdad salen impresas: las que un modelo
+ * puede pedir con un placeholder.
+ */
+function validarAnotacionesDelPais(pais) {
+  var errores = [];
+  if (!pais) return errores;
+
+  for (var llave in pais) {
+    if (!Object.prototype.hasOwnProperty.call(pais, llave)) continue;
+    if (llave === 'por_confirmar_en_pruebas' || llave === '_fila' || llave === 'modelos') continue;
+
+    var valor = pais[llave];
+    if (typeof valor !== 'string') continue;
+    if (!MARCAS_DE_ANOTACION.test(valor)) continue;
+
+    errores.push(error('pais',
+      'La configuración de ' + (pais.nombre || pais.codigo) + ' tiene una nota interna dentro de un dato que se imprime: "' +
+      valor.trim() + '". Eso saldría publicado en el documento. Quítala de la pestaña Paises y marca ese dato en la columna de pendientes.'));
+  }
+  return errores;
+}
+
 /** Cruces propios del Cashback. */
 function validarCashback(entrada) {
   var errores = [];
@@ -529,6 +565,8 @@ function validarSolicitud(entrada, pais, contexto) {
   errores = errores.concat(validarOrganizador(entrada, pais));
   errores = errores.concat(validarCreditos(entrada));
   errores = errores.concat(validarNegocio(entrada, esquema));
+
+  errores = errores.concat(validarAnotacionesDelPais(pais));
 
   // El cashback por ETA tiene los mismos dos numeros y el mismo riesgo: un tope
   // mayor que el presupuesto deja que la primera orden se lleve la campana.

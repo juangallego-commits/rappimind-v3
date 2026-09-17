@@ -250,3 +250,35 @@ Dos cosas que conviene que sepas:
    Traducir las ochenta y nueve preguntas sería traducir pantallas que en Brasil
    no existen, porque el país solo tiene habilitado su propio tipo. Lo que no
    está traducido sale en español, que se entiende, en vez de romperse.
+
+## Tres cosas de la configuración de Brasil (17 de septiembre, noche)
+
+Salieron al armar el paquete de revisión, y ninguna estaba anotada antes.
+
+1. **La autoridad de datos llevaba una nota interna dentro del valor que se
+   imprime.** Decía "a Autoridade Nacional de Proteção de Dados (ANPD)
+   **(confirmar)**". Ese valor va tal cual a la cláusula de datos personales, así
+   que un T&C publicado habría salido con la palabra "(confirmar)" adentro. No
+   llegó a pasar porque el modelo brasileño no usa ese bloque, pero bastaba con
+   que alguien se lo agregara. Ya saqué la nota del valor y marqué el dato en la
+   columna de pendientes, que es para lo que existe. Y ahora hay una validación
+   que no deja generar si un dato del país trae una anotación así, en cualquier
+   país. **Sigue pendiente confirmar que la ANPD es la autoridad correcta.**
+
+2. **La fila de Brasil mezcla español y portugués.** El país imprime en
+   portugués, pero tiene estos valores en español:
+   - `entidad_vigilancia`: "el PROCON y la Secretaría Nacional del Consumidor (SENACON)"
+   - `pais_legal`: "a República Federativa **del** Brasil" (debería ser "do")
+   - `politica_privacidad`: "**a** Aviso de Privacidade e Políticas de uso das **Informação**"
+
+   No los traduje porque son nombres de entidades y de documentos publicados, y
+   ahí una traducción mía puede nombrar mal a una autoridad. Los necesito de
+   Legal Brasil escritos como se llaman de verdad.
+
+3. **El modelo de Brasil no lleva cláusula de tratamiento de datos personales, y
+   el del ETA sí se la puse.** Es una inconsistencia mía y quiero que la sepas.
+   La razón: en el ETA tenía el texto de Colombia para reusar; en Brasil el campo
+   `texto_derechos_datos` está **vacío** y la redacción tendría que salir de la
+   LGPD, que no me corresponde inventar. Así que Brasil se quedó como el
+   documento aprobado, sin esa cláusula. Si debe llevarla, necesito de Legal
+   Brasil la frase que enumera los derechos del titular.
