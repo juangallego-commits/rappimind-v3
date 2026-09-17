@@ -27,7 +27,7 @@ function seccionesDelResumen() {
     for (var c = 0; c < campos.length; c++) {
       var campo = campos[c];
       if (campo.id === 'declaracion') continue;
-      var pregunta = preguntaDe(campo.id);
+      var pregunta = estado.pregunta(campo.id);
       filas.push({ campo: campo, etiqueta: pregunta.pregunta, valor: RM.pasos.comoTexto(campo) });
     }
     if (filas.length > 0) secciones.push({ paso: pasos[i], indice: i, filas: filas });

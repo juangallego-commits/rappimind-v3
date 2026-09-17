@@ -17,7 +17,7 @@ var flujo = RM.flujo;
 function comoTexto(campo) {
   var entrada = estado.entrada();
   var valor = entrada[campo.id];
-  var pregunta = preguntaDe(campo.id);
+  var pregunta = estado.pregunta(campo.id);
 
   if (campo.id === 'maxPedidos') {
     var opcion = flujo.opcionDeVeces();
@@ -82,7 +82,7 @@ function opcionesDeshabilitadas(campo) {
   var criterio = estado.entrada().criterioGanador;
   if (!criterio) return null;
   var razon = {};
-  razon[criterio] = preguntaDe('desempate').razonDeshabilitado;
+  razon[criterio] = estado.pregunta('desempate').razonDeshabilitado;
   return razon;
 }
 
@@ -102,7 +102,7 @@ function avisoDe(campo) {
   var hoy = E.configuracion.hoy || RM.util.hoyEnElNavegador();
   var dias = RM.util.diasEntre(hoy, inicio);
   if (dias < 0 || dias > 1) return null;
-  return preguntaDe('fechaInicio').aviso;
+  return estado.pregunta('fechaInicio').aviso;
 }
 
 /** La calculadora de ejemplo del Cashback. */
@@ -333,7 +333,7 @@ function confirmacionDe(campo) {
 
 /** País y tipo: las opciones vienen del servidor, no del esquema. */
 function preguntaDeCatalogo(campo, campos, indice, pasos) {
-  var pregunta = preguntaDe(campo.id);
+  var pregunta = estado.pregunta(campo.id);
   var bloque = crear('div', { clase: 'pregunta' }, [
     crear('h2', { clase: 'pregunta-titulo', texto: pregunta.pregunta }),
     crear('p', { clase: 'pregunta-ayuda' }, [RM.campos.conGlosario(pregunta.ayuda)]),
@@ -384,7 +384,7 @@ function preguntaDeCatalogo(campo, campos, indice, pasos) {
 
 /** "¿Cuántas veces puede ganar la misma persona?" */
 function preguntaDeVeces(campos, indice, pasos, errores) {
-  var pregunta = preguntaDe('maxPedidos');
+  var pregunta = estado.pregunta('maxPedidos');
   var elegido = flujo.opcionDeVeces();
 
   var bloque = crear('div', { clase: 'pregunta' }, [

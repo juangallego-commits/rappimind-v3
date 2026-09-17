@@ -1259,8 +1259,11 @@ function columnasDeRespuestas() {
  * comercial leyo en pantalla, y la auditoria tiene que decir lo que el vio. El
  * esquema es el respaldo.
  */
-function etiquetaDeOpcion(campo, valor) {
-  var pregunta = campo && campo.id ? preguntaDe(campo.id) : null;
+function etiquetaDeOpcion(campo, valor, tipo) {
+  // Con el tipo, porque una misma pregunta puede tener opciones distintas en
+  // cada tipo de campana. Sin el, el metodo de pago de una campana quedaba
+  // guardado como "sin_efectivo" en vez de lo que el comercial leyo.
+  var pregunta = campo && campo.id ? preguntaDe(campo.id, tipo) : null;
   var listas = [pregunta && pregunta.opciones, campo && campo.opciones];
 
   for (var l = 0; l < listas.length; l++) {
@@ -1273,19 +1276,31 @@ function etiquetaDeOpcion(campo, valor) {
 }
 
 /** Un valor como se lee en el Sheet. Los numeros siguen siendo numeros. */
-function valorLegible(campo, valor) {
+function valorLegible(campo, valor, tipo) {
   if (valor === null || valor === undefined || valor === '') return '';
 
   if (campo.tipo === 'casilla') return valor ? 'Sí' : 'No';
   if (campo.tipo === 'numero') return typeof valor === 'number' ? valor : Number(valor);
 
+  // El tipo de campana se guarda con su nombre, no con su identificador: quien
+  // audita el Sheet quiere leer "15 minutos o Cashback", no "cashback_eta".
+  if (campo.id === 'tipo') {
+    var esquemaDelTipo = esquemaDe(valor);
+    return esquemaDelTipo ? esquemaDelTipo.nombre : String(valor);
+  }
+
   if (campo.tipo === 'casillas' || Object.prototype.toString.call(valor) === '[object Array]') {
     var lista = [];
-    for (var i = 0; i < valor.length; i++) lista.push(etiquetaDeOpcion(campo, valor[i]));
+    for (var i = 0; i < valor.length; i++) lista.push(etiquetaDeOpcion(campo, valor[i], tipo));
     return lista.join(', ');
   }
 
-  if (campo.opciones) return etiquetaDeOpcion(campo, valor);
+  // Las opciones pueden venir del esquema o de la pregunta. Mirar solo el
+  // esquema dejaba en crudo todo campo que reusara una pregunta con opciones.
+  var preguntaDelCampo = preguntaDe(campo.id, tipo);
+  if (campo.opciones || (preguntaDelCampo && preguntaDelCampo.opciones)) {
+    return etiquetaDeOpcion(campo, valor, tipo);
+  }
   return String(valor);
 }
 
@@ -1322,7 +1337,7 @@ function respuestasParaElSheet(entrada) {
   var campos = camposVisibles(datos.tipo, datos);
   for (var i = 0; i < campos.length; i++) {
     var campo = campos[i];
-    fila[PREFIJO_RESPUESTA + campo.id] = valorLegible(campo, datos[campo.id]);
+    fila[PREFIJO_RESPUESTA + campo.id] = valorLegible(campo, datos[campo.id], datos.tipo);
   }
 
   if (esquema.camposPorTienda) {
@@ -7826,6 +7841,8 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 
   var separarPorComas = moduloFechas.separarPorComas;
   var travelDisponible = require('./paises.js').travelDisponible;
+
+  var preguntaDe = require('./preguntas.js').preguntaDe;
 }
 
 function error(campo, mensaje) {
@@ -7878,7 +7895,15 @@ function validarObligatorios(entrada, esquema) {
     if (!resolverAtributo(campo.obligatorio, entrada, false)) continue;
 
     if (estaVacio(entrada[campo.id])) {
-      errores.push(error(campo.id, 'Falta ' + campo.etiqueta.toLowerCase() + '.'));
+      // El mensaje escrito para esa pregunta manda sobre el generico. Cada
+      // pregunta tiene uno en errores.vacio, y estuvieron sin usarse: el
+      // comercial leia "Falta minutos del eta." en vez de "Escribe en cuantos
+      // minutos prometes la entrega.".
+      var pregunta = preguntaDe(campo.id, esquema.id);
+      var mensaje = pregunta && pregunta.errores && pregunta.errores.vacio
+        ? pregunta.errores.vacio
+        : 'Falta ' + campo.etiqueta.toLowerCase() + '.';
+      errores.push(error(campo.id, mensaje));
     }
   }
   return errores;
@@ -8319,7 +8344,9 @@ function validarSolicitud(entrada, pais, contexto) {
   errores = errores.concat(validarCreditos(entrada));
   errores = errores.concat(validarNegocio(entrada, esquema));
 
-  if (entrada.tipo === 'cashback') {
+  // El cashback por ETA tiene los mismos dos numeros y el mismo riesgo: un tope
+  // mayor que el presupuesto deja que la primera orden se lleve la campana.
+  if (entrada.tipo === 'cashback' || entrada.tipo === 'cashback_eta') {
     errores = errores.concat(validarCashback(entrada));
   }
   if (entrada.tipo === 'carrera_compras') {
@@ -8885,8 +8912,23 @@ function borrarBorrador() {
   }
 }
 
+/**
+ * La pregunta de un campo, en la variante del tipo de campana elegido.
+ *
+ * Existe porque el mecanismo de variantes estaba construido y probado en Node,
+ * pero la interfaz llamaba a preguntaDe() sin el tipo, asi que nunca se veia:
+ * en el cashback por ETA, que es de una sola ciudad, la pantalla seguia
+ * preguntando "En que ciudades?" en plural.
+ *
+ * Toda pantalla que muestre el texto de una pregunta pasa por aqui.
+ */
+function pregunta(campoId) {
+  return preguntaDe(campoId, entrada().tipo);
+}
+
 RM.estado = {
   estado: estado,
+  pregunta: pregunta,
   entrada: entrada,
   fijar: fijar,
   fijarVarios: fijarVarios,
@@ -9163,7 +9205,7 @@ document.addEventListener('click', function (evento) {
 
 /** "Así queda en tu T&C": la frase real que produce el motor con lo respondido. */
 function asiQueda(campoId, pais) {
-  var pregunta = preguntaDe(campoId);
+  var pregunta = RM.estado.pregunta(campoId);
   if (!pregunta || !pregunta.placeholders || pregunta.placeholders.length === 0) return null;
 
   var valores = calcularDerivados(estado.entrada(), pais);
@@ -9340,7 +9382,7 @@ function controlCasillaUnica(campo, pregunta, alCambiar) {
  * opciones: { pais, error, confirmacion, deshabilitadas, alCambiar, alAvanzar }
  */
 function dibujarPregunta(campo, config) {
-  var pregunta = preguntaDe(campo.id);
+  var pregunta = RM.estado.pregunta(campo.id);
   if (!pregunta || !pregunta.pregunta) return null;
 
   var bloque = crear('div', { clase: 'pregunta' + (config.error ? ' campo-error' : ''), 'data-campo': campo.id });
@@ -9404,7 +9446,7 @@ function dibujarPregunta(campo, config) {
 
 /** Una respuesta ya dada, en una línea, con el botón para cambiarla. */
 function dibujarRespondida(campo, textoValor, alEditar) {
-  var pregunta = preguntaDe(campo.id);
+  var pregunta = RM.estado.pregunta(campo.id);
   return crear('div', { clase: 'ficha-seccion', 'data-campo': campo.id }, [
     crear('div', { clase: 'ficha-encabezado' }, [
       crear('h3', { texto: pregunta.pregunta }),
@@ -9835,7 +9877,7 @@ var flujo = RM.flujo;
 function comoTexto(campo) {
   var entrada = estado.entrada();
   var valor = entrada[campo.id];
-  var pregunta = preguntaDe(campo.id);
+  var pregunta = estado.pregunta(campo.id);
 
   if (campo.id === 'maxPedidos') {
     var opcion = flujo.opcionDeVeces();
@@ -9900,7 +9942,7 @@ function opcionesDeshabilitadas(campo) {
   var criterio = estado.entrada().criterioGanador;
   if (!criterio) return null;
   var razon = {};
-  razon[criterio] = preguntaDe('desempate').razonDeshabilitado;
+  razon[criterio] = estado.pregunta('desempate').razonDeshabilitado;
   return razon;
 }
 
@@ -9920,7 +9962,7 @@ function avisoDe(campo) {
   var hoy = E.configuracion.hoy || RM.util.hoyEnElNavegador();
   var dias = RM.util.diasEntre(hoy, inicio);
   if (dias < 0 || dias > 1) return null;
-  return preguntaDe('fechaInicio').aviso;
+  return estado.pregunta('fechaInicio').aviso;
 }
 
 /** La calculadora de ejemplo del Cashback. */
@@ -10151,7 +10193,7 @@ function confirmacionDe(campo) {
 
 /** País y tipo: las opciones vienen del servidor, no del esquema. */
 function preguntaDeCatalogo(campo, campos, indice, pasos) {
-  var pregunta = preguntaDe(campo.id);
+  var pregunta = estado.pregunta(campo.id);
   var bloque = crear('div', { clase: 'pregunta' }, [
     crear('h2', { clase: 'pregunta-titulo', texto: pregunta.pregunta }),
     crear('p', { clase: 'pregunta-ayuda' }, [RM.campos.conGlosario(pregunta.ayuda)]),
@@ -10202,7 +10244,7 @@ function preguntaDeCatalogo(campo, campos, indice, pasos) {
 
 /** "¿Cuántas veces puede ganar la misma persona?" */
 function preguntaDeVeces(campos, indice, pasos, errores) {
-  var pregunta = preguntaDe('maxPedidos');
+  var pregunta = estado.pregunta('maxPedidos');
   var elegido = flujo.opcionDeVeces();
 
   var bloque = crear('div', { clase: 'pregunta' }, [
@@ -10781,7 +10823,7 @@ function seccionesDelResumen() {
     for (var c = 0; c < campos.length; c++) {
       var campo = campos[c];
       if (campo.id === 'declaracion') continue;
-      var pregunta = preguntaDe(campo.id);
+      var pregunta = estado.pregunta(campo.id);
       filas.push({ campo: campo, etiqueta: pregunta.pregunta, valor: RM.pasos.comoTexto(campo) });
     }
     if (filas.length > 0) secciones.push({ paso: pasos[i], indice: i, filas: filas });

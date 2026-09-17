@@ -103,3 +103,23 @@ test('un tipo que no existe no escribe nada', () => {
   assert.deepStrictEqual(respuestasParaElSheet({ tipo: 'no_existe' }), {});
   assert.deepStrictEqual(respuestasParaElSheet(null), {});
 });
+
+test('el Sheet guarda lo que el comercial leyó, no el identificador interno', () => {
+  // El defecto: valorLegible solo miraba las opciones del esquema, así que un
+  // campo que reusa una pregunta con opciones quedaba en crudo. Quien audita
+  // veía "sin_efectivo" donde el comercial había elegido "Con todo menos efectivo".
+  const fila = respuestasParaElSheet({
+    pais: 'CO', negocio: 'rappi', tipo: 'cashback_eta', ciudades: 'Bogotá',
+    fechaInicio: '2026-09-16', horaInicio: '11:00', horaFin: '15:00',
+    etaMinutos: 15, porcentaje: 100, tope: 100000, presupuesto: 37000000, maxPedidos: 1,
+    carga: 'dia_siguiente', vigencia: 'dias', diasVigencia: 7,
+    exclusionesEta: ['travel', 'soat'], metodoPago: 'sin_efectivo', declaracion: true,
+  });
+
+  assert.strictEqual(fila.resp_metodoPago, 'Con todo menos efectivo');
+  assert.strictEqual(fila.resp_exclusionesEta, 'Rappi Travel, Seguro Soat');
+  // Y el tipo va con su nombre: quien audita no tiene por qué saber qué es
+  // "cashback_eta".
+  assert.strictEqual(fila.resp_tipo, '15 minutos o Cashback');
+});
+

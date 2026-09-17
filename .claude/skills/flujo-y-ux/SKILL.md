@@ -116,6 +116,28 @@ concepto en todo el flujo** (`grep` por la palabra en `src/client/js/` y
 un sitio. Lo mismo al revés: si borras una pregunta, revisa quién dependía de
 su respuesta.
 
+## La otra regla que nació de un defecto real
+
+**Un mecanismo que la interfaz no llama es un mecanismo que no existe.**
+
+`preguntaDe(campo, tipo)` permite que una misma pregunta se lea distinto en cada
+tipo de campaña: la tienda es "el parceiro" en Brasil, y la cobertura es "¿en qué
+ciudad?" en singular cuando el tipo es de una sola ciudad. El mecanismo estaba
+construido, exportado y probado en Node.
+
+Y no se veía en ninguna pantalla, porque toda la interfaz llamaba a
+`preguntaDe(campo)` **sin el tipo**. Las pruebas pasaban, las variantes existían,
+y el comercial seguía leyendo el texto genérico.
+
+Por eso el texto de una pregunta se pide siempre con `estado.pregunta(campoId)`,
+que pone el tipo actual por ti. Si escribes `preguntaDe(` en un archivo de
+`src/client/`, párate a pensar: casi siempre es un error.
+
+La lección general: cuando agregues un mecanismo que cambia lo que el comercial
+lee, **ábrelo en la demostración y compruébalo con los ojos** antes de darlo por
+hecho. Una prueba en Node confirma que el mecanismo funciona, no que alguien lo
+esté usando.
+
 ## Las trampas del motor del asistente
 
 El asistente no es un formulario: es una máquina de estado que se redibuja

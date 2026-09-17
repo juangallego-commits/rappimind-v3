@@ -128,8 +128,23 @@ function borrarBorrador() {
   }
 }
 
+/**
+ * La pregunta de un campo, en la variante del tipo de campana elegido.
+ *
+ * Existe porque el mecanismo de variantes estaba construido y probado en Node,
+ * pero la interfaz llamaba a preguntaDe() sin el tipo, asi que nunca se veia:
+ * en el cashback por ETA, que es de una sola ciudad, la pantalla seguia
+ * preguntando "En que ciudades?" en plural.
+ *
+ * Toda pantalla que muestre el texto de una pregunta pasa por aqui.
+ */
+function pregunta(campoId) {
+  return preguntaDe(campoId, entrada().tipo);
+}
+
 RM.estado = {
   estado: estado,
+  pregunta: pregunta,
   entrada: entrada,
   fijar: fijar,
   fijarVarios: fijarVarios,

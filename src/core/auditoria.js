@@ -59,8 +59,11 @@ function columnasDeRespuestas() {
  * comercial leyo en pantalla, y la auditoria tiene que decir lo que el vio. El
  * esquema es el respaldo.
  */
-function etiquetaDeOpcion(campo, valor) {
-  var pregunta = campo && campo.id ? preguntaDe(campo.id) : null;
+function etiquetaDeOpcion(campo, valor, tipo) {
+  // Con el tipo, porque una misma pregunta puede tener opciones distintas en
+  // cada tipo de campana. Sin el, el metodo de pago de una campana quedaba
+  // guardado como "sin_efectivo" en vez de lo que el comercial leyo.
+  var pregunta = campo && campo.id ? preguntaDe(campo.id, tipo) : null;
   var listas = [pregunta && pregunta.opciones, campo && campo.opciones];
 
   for (var l = 0; l < listas.length; l++) {
@@ -73,19 +76,31 @@ function etiquetaDeOpcion(campo, valor) {
 }
 
 /** Un valor como se lee en el Sheet. Los numeros siguen siendo numeros. */
-function valorLegible(campo, valor) {
+function valorLegible(campo, valor, tipo) {
   if (valor === null || valor === undefined || valor === '') return '';
 
   if (campo.tipo === 'casilla') return valor ? 'Sí' : 'No';
   if (campo.tipo === 'numero') return typeof valor === 'number' ? valor : Number(valor);
 
+  // El tipo de campana se guarda con su nombre, no con su identificador: quien
+  // audita el Sheet quiere leer "15 minutos o Cashback", no "cashback_eta".
+  if (campo.id === 'tipo') {
+    var esquemaDelTipo = esquemaDe(valor);
+    return esquemaDelTipo ? esquemaDelTipo.nombre : String(valor);
+  }
+
   if (campo.tipo === 'casillas' || Object.prototype.toString.call(valor) === '[object Array]') {
     var lista = [];
-    for (var i = 0; i < valor.length; i++) lista.push(etiquetaDeOpcion(campo, valor[i]));
+    for (var i = 0; i < valor.length; i++) lista.push(etiquetaDeOpcion(campo, valor[i], tipo));
     return lista.join(', ');
   }
 
-  if (campo.opciones) return etiquetaDeOpcion(campo, valor);
+  // Las opciones pueden venir del esquema o de la pregunta. Mirar solo el
+  // esquema dejaba en crudo todo campo que reusara una pregunta con opciones.
+  var preguntaDelCampo = preguntaDe(campo.id, tipo);
+  if (campo.opciones || (preguntaDelCampo && preguntaDelCampo.opciones)) {
+    return etiquetaDeOpcion(campo, valor, tipo);
+  }
   return String(valor);
 }
 
@@ -122,7 +137,7 @@ function respuestasParaElSheet(entrada) {
   var campos = camposVisibles(datos.tipo, datos);
   for (var i = 0; i < campos.length; i++) {
     var campo = campos[i];
-    fila[PREFIJO_RESPUESTA + campo.id] = valorLegible(campo, datos[campo.id]);
+    fila[PREFIJO_RESPUESTA + campo.id] = valorLegible(campo, datos[campo.id], datos.tipo);
   }
 
   if (esquema.camposPorTienda) {

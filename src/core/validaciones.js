@@ -27,6 +27,8 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 
   var separarPorComas = moduloFechas.separarPorComas;
   var travelDisponible = require('./paises.js').travelDisponible;
+
+  var preguntaDe = require('./preguntas.js').preguntaDe;
 }
 
 function error(campo, mensaje) {
@@ -79,7 +81,15 @@ function validarObligatorios(entrada, esquema) {
     if (!resolverAtributo(campo.obligatorio, entrada, false)) continue;
 
     if (estaVacio(entrada[campo.id])) {
-      errores.push(error(campo.id, 'Falta ' + campo.etiqueta.toLowerCase() + '.'));
+      // El mensaje escrito para esa pregunta manda sobre el generico. Cada
+      // pregunta tiene uno en errores.vacio, y estuvieron sin usarse: el
+      // comercial leia "Falta minutos del eta." en vez de "Escribe en cuantos
+      // minutos prometes la entrega.".
+      var pregunta = preguntaDe(campo.id, esquema.id);
+      var mensaje = pregunta && pregunta.errores && pregunta.errores.vacio
+        ? pregunta.errores.vacio
+        : 'Falta ' + campo.etiqueta.toLowerCase() + '.';
+      errores.push(error(campo.id, mensaje));
     }
   }
   return errores;
@@ -520,7 +530,9 @@ function validarSolicitud(entrada, pais, contexto) {
   errores = errores.concat(validarCreditos(entrada));
   errores = errores.concat(validarNegocio(entrada, esquema));
 
-  if (entrada.tipo === 'cashback') {
+  // El cashback por ETA tiene los mismos dos numeros y el mismo riesgo: un tope
+  // mayor que el presupuesto deja que la primera orden se lleve la campana.
+  if (entrada.tipo === 'cashback' || entrada.tipo === 'cashback_eta') {
     errores = errores.concat(validarCashback(entrada));
   }
   if (entrada.tipo === 'carrera_compras') {

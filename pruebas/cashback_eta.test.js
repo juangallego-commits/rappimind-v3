@@ -117,3 +117,29 @@ test('el documento no lleva tablas ni marcadores sin resolver', () => {
     assert.ok(texto.indexOf('|') === -1, 'el documento no puede llevar tablas');
   }
 });
+
+test('un tope mayor que el presupuesto se rechaza', () => {
+  const { validarSolicitud } = require('../src/core/validaciones.js');
+  const opciones = { fechaReferencia: '2026-08-01', usuarioEnEquipo: true };
+
+  const sano = validarSolicitud(campana(BOGOTA), CO, opciones);
+  assert.deepStrictEqual(sano.errores, [], JSON.stringify(sano.errores));
+
+  // Con un tope de 99 millones y un presupuesto de 37, la primera orden se
+  // llevaría toda la campaña.
+  const roto = validarSolicitud(campana(Object.assign({}, BOGOTA, { tope: 99000000 })), CO, opciones);
+  assert.strictEqual(roto.valido, false);
+  assert.strictEqual(roto.errores[0].campo, 'tope');
+});
+
+test('los mensajes de error son los que alguien escribió, no el genérico', () => {
+  const { validarSolicitud } = require('../src/core/validaciones.js');
+  const sinEta = campana(BOGOTA);
+  delete sinEta.etaMinutos;
+
+  const revision = validarSolicitud(sinEta, CO, { fechaReferencia: '2026-08-01', usuarioEnEquipo: true });
+  const delEta = revision.errores.filter((e) => e.campo === 'etaMinutos')[0];
+  assert.ok(delEta, 'no se quejó del ETA vacío');
+  assert.strictEqual(delEta.mensaje, 'Escribe en cuántos minutos prometes la entrega.');
+});
+

@@ -452,3 +452,51 @@ nombre de quien no es.
 De paso salieron dos defectos de navegación: avanzar después de haber cambiado de pantalla
 mandaba al resumen con el formulario vacío, y al elegir el tipo de una campaña de Travel el
 asistente se quedaba mirando la pregunta que el comercial acababa de contestar.
+
+## 17 de septiembre · Idioma por país, Brasil, el cashback por ETA y cuatro arreglos
+
+### Lo que quedó
+
+**El idioma sale del país.** La columna `idioma` del Sheet ya gobierna los meses,
+la hora, el conector de las listas y los números en letras. El portugués está
+completo, con sus reglas propias. El español no se movió ni un carácter y hay una
+prueba que lo vigila.
+
+**Brasil genera.** De los cuatro T&C aprobados salió un solo modelo con cuatro
+formas del beneficio. Brasil pasó de bloqueado a piloto. Las correcciones al
+texto están en `docs/CORRECCIONES_BRASIL.md`.
+
+**El cashback por incumplimiento del ETA**, para Colombia, de los documentos
+publicados de Bogotá y Barranquilla. Las mejoras están en `docs/MEJORAS_ETA.md`.
+
+### Cuatro arreglos que salieron de revisar lo anterior
+
+1. **Las variantes de las preguntas no se veían.** El mecanismo estaba construido
+   y probado, pero la interfaz llamaba a `preguntaDe()` sin el tipo. La pantalla
+   preguntaba "¿En qué ciudades?" en plural en una campaña de una sola ciudad.
+2. **Los mensajes de error escritos no se usaban.** Cada pregunta tiene su
+   `errores.vacio`, y la validación siempre armaba uno genérico: el comercial leía
+   "Falta minutos del eta." en vez de "Escribe en cuántos minutos prometes la
+   entrega.". Esto mejoró los mensajes de toda la herramienta, no solo del tipo
+   nuevo.
+3. **La auditoría guardaba identificadores en crudo.** En el Sheet quedaba
+   `sin_efectivo` donde el comercial había elegido "Con todo menos efectivo", y
+   `cashback_eta` donde debía decir "15 minutos o Cashback".
+4. **Faltaba la validación del tope contra el presupuesto** en el tipo nuevo.
+
+### Cómo probarlo
+
+`npm test` (300 pruebas) y, para el recorrido completo, `npm run demo` y después
+`node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js` (27 revisiones).
+
+### Lo que necesito de Juan
+
+- `docs/PAISES_EN_PILOTO.md`: los cuatro datos legales de cada uno de los ocho
+  países en piloto.
+- `docs/PENDIENTES_LEGAL.md`, sección Brasil: los cinco puntos, empezando por el
+  tope del envío.
+- `docs/PENDIENTES_LEGAL.md`, sección del ETA: si ese modelo debe quedar como una
+  segunda excepción a la regla 1.
+- Correr `setup()` después del despliegue: Colombia estrena un tipo, Brasil
+  estrena estado y modelo, y la pestaña Países estrena la columna del enlace del
+  botón Turbo.

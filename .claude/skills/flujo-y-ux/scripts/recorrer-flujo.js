@@ -201,6 +201,41 @@ async function recorrer() {
     enFormularioTravel.indexOf('Sin empezar') === -1,
     enFormularioTravel.replace(/\n+/g, ' | ').slice(0, 200));
 
+  // --- 3b. Las variantes: la misma pregunta, distinta segun el tipo --------
+  //
+  // El mecanismo de variantes estuvo construido y probado en Node sin que la
+  // interfaz lo usara: llamaba a preguntaDe() sin el tipo. En el cashback por
+  // ETA, que es de una sola ciudad, la pantalla seguia preguntando "En que
+  // ciudades?" en plural.
+  await desdeElInicio();
+  await decirQueNoATodo();
+  await clic('Colombia');
+  await clic('Rappi');
+  await clic('15 minutos o Cashback');
+
+  const enEta = await titulos();
+  revisar('la pregunta se adapta al tipo de campaña (variantes)',
+    enEta.length === 1 && enEta[0].indexOf('¿En qué ciudad corre la campaña?') !== -1,
+    enEta.join(' | '));
+
+  const ayudaEta = await texto();
+  revisar('la ayuda también sale en la variante del tipo',
+    ayudaEta.indexOf('el botón Turbo se habilita ciudad por ciudad') !== -1,
+    ayudaEta.replace(/\n+/g, ' | ').slice(0, 250));
+
+  const pasosDelEta = await pagina.evaluate(() =>
+    [].map.call(document.querySelectorAll('.progreso li'), (l) => l.textContent.trim()).join(' > '));
+  revisar('un tipo sin organizador no muestra el paso de Organizador',
+    pasosDelEta.indexOf('Organizador') === -1, pasosDelEta);
+
+  await pagina.fill('.pregunta input[type=text]', 'Bogotá');
+  await pagina.waitForTimeout(250);
+  await clic('Siguiente');
+  const trasLaCiudad = await titulos();
+  revisar('responder y avanzar lleva al paso siguiente',
+    trasLaCiudad.length === 1 && trasLaCiudad[0].indexOf('día arranca') !== -1,
+    trasLaCiudad.join(' | '));
+
   // --- 4. Los caminos que terminan en Legal --------------------------------
   await desdeElInicio();
   await decirQueNoATodo();

@@ -80,7 +80,7 @@ document.addEventListener('click', function (evento) {
 
 /** "Así queda en tu T&C": la frase real que produce el motor con lo respondido. */
 function asiQueda(campoId, pais) {
-  var pregunta = preguntaDe(campoId);
+  var pregunta = RM.estado.pregunta(campoId);
   if (!pregunta || !pregunta.placeholders || pregunta.placeholders.length === 0) return null;
 
   var valores = calcularDerivados(estado.entrada(), pais);
@@ -257,7 +257,7 @@ function controlCasillaUnica(campo, pregunta, alCambiar) {
  * opciones: { pais, error, confirmacion, deshabilitadas, alCambiar, alAvanzar }
  */
 function dibujarPregunta(campo, config) {
-  var pregunta = preguntaDe(campo.id);
+  var pregunta = RM.estado.pregunta(campo.id);
   if (!pregunta || !pregunta.pregunta) return null;
 
   var bloque = crear('div', { clase: 'pregunta' + (config.error ? ' campo-error' : ''), 'data-campo': campo.id });
@@ -321,7 +321,7 @@ function dibujarPregunta(campo, config) {
 
 /** Una respuesta ya dada, en una línea, con el botón para cambiarla. */
 function dibujarRespondida(campo, textoValor, alEditar) {
-  var pregunta = preguntaDe(campo.id);
+  var pregunta = RM.estado.pregunta(campo.id);
   return crear('div', { clase: 'ficha-seccion', 'data-campo': campo.id }, [
     crear('div', { clase: 'ficha-encabezado' }, [
       crear('h3', { texto: pregunta.pregunta }),
