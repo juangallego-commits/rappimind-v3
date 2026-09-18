@@ -1390,6 +1390,52 @@ var PREGUNTAS = {
     errores: { vacio: 'Dinos quién entrega el premio.' },
   }),
 
+  /*
+   * El acuerdo de transferencia de datos, decision 36 (i) de la respuesta del
+   * encargo 01. Todos los textos de aqui son de esa respuesta, copiados tal
+   * cual: el enunciado, la ayuda, el por que, las notas de las dos opciones y
+   * los nueve pasos del panel de Colombia.
+   *
+   * La nota de "Si, ya esta firmado" habla de la tabla de acuerdos marco, que es
+   * de Colombia, asi que solo sale ahi.
+   */
+  acuerdoDatos: p({
+    paso: 'premio',
+    pregunta: '¿El Organizador ya firmó el acuerdo de transferencia de datos?',
+    ayuda: 'Sin ese acuerdo firmado no se le pueden enviar los datos del ganador.',
+    porQue: 'Rappi responde por los datos de sus usuarios. Enviarlos a una marca sin acuerdo firmado nos expone ante la autoridad de datos personales.',
+    opcional: true,
+    avanzaSola: true,
+    opciones: [
+      { valor: 'firmado', etiqueta: 'Sí, ya está firmado', nota: 'Puedes seguir con la campaña.' },
+      { valor: 'no_o_no_se', etiqueta: 'No, o no sé', nota: 'Te mostramos cómo se firma. Puedes generar el T&C igual.' },
+    ],
+    // La nota de Colombia para la primera opción, que nombra la tabla de
+    // acuerdos marco. En los demás países esa tabla no existe.
+    notaFirmadoCO: 'La marca aparece en verde en la tabla de acuerdos marco.',
+    // El panel que sale al responder "No, o no sé".
+    panel: {
+      tituloCO: 'Cómo se firma en Colombia (una sola vez al año por marca)',
+      primeroCO: 'Primero mira si la marca ya está en verde en la tabla de acuerdos marco.',
+      pasosCO: [
+        'Pídele a la marca razón social, NIT, domicilio, nombre y cédula del representante legal o apoderado, y el correo para la firma. Si firma un apoderado, pide también el certificado de cámara de comercio o el poder.',
+        'Pídele nombre, cargo, correo y teléfono de las personas que van a manejar las Órdenes de Transferencia. Por Rappi, esa persona eres tú.',
+        'Mándale esa información a Legal para completar el Acuerdo Marco.',
+        'Envíale el acuerdo a la marca para revisión y explícale por qué se firma.',
+        'Cerrada la negociación, Legal lo manda a firma.',
+        'Cuando esté firmado, Legal lo carga en la tabla y la marca queda en verde.',
+        'En cada campaña llenas la Orden de Transferencia: campaña, número de ganadores, qué datos se envían, cuándo se entrega el premio y cuándo se borran los datos. La marca la acepta por correo y no se vuelve a firmar nada.',
+        'Cuando entregue el premio, la marca borra los datos y le manda a Rappi el certificado de supresión.',
+        'Si la marca no está en verde o la Orden no está aceptada, ni Producto ni Data te pueden entregar los datos.',
+        'Si no alcanzan a firmar antes de la entrega, cambia tu respuesta a "Rappi, como operador logístico": la marca le entrega los premios a Rappi y Rappi se los lleva al ganador.',
+      ],
+      // Los demás países no tienen tabla ni Orden de Transferencia: tienen el
+      // modelo de su Legal, y el enlace sale de la fila del país.
+      conModelo: 'En {país} el acuerdo se firma con el modelo de Legal de tu país. Ábrelo aquí y escríbele a Legal antes de comprometer la entrega del premio.',
+      sinModelo: 'En {país} todavía no hay modelo de acuerdo: escríbele a Legal antes de comprometer la entrega del premio.',
+    },
+  }),
+
   medioNotificacion: p({
     paso: 'premio',
     pregunta: '¿Cómo le avisas al ganador?',

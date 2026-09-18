@@ -533,14 +533,14 @@ del repositorio. Nada de esta lista se redactó aquí.
 Todo esto trae los enunciados y las ayudas escritos, pero es construir pantalla,
 no reemplazar una frase. Hay que hablarlo antes, como el encargo 03.
 
-8. **La pregunta del acuerdo de transferencia de datos** (decisión 36 (i)):
-   pregunta nueva en Carrera de Compras, solo con premio físico entregado por el
-   Organizador, con un panel distinto por país y los enlaces de los modelos de
-   acuerdo. Los enlaces por país están en las líneas 546 a 554 de la respuesta;
-   no se metieron a `data/paises.json` para no pedirte columnas nuevas en el
-   Sheet por unos datos que todavía no usa nadie. Ojo con una cosa: en el hilo,
-   dos personas no pudieron abrir la carpeta de Drive. Hay que revisar que los
-   KAM tengan acceso de lectura antes de enseñarles el enlace.
+8. ~~**La pregunta del acuerdo de transferencia de datos** (decisión 36 (i)).~~
+   **Construida el 18 de septiembre**, con la pregunta, los tres paneles (el
+   circuito de nueve pasos de Colombia, el corto de los países con modelo y el
+   de Chile y Costa Rica que no lo tienen), los enlaces en la columna nueva
+   `url_acuerdo_datos` y el aviso repetido en la pantalla final. Queda una cosa
+   que no es de código: **en el hilo, dos personas no pudieron abrir la carpeta
+   de Drive.** Hay que revisar que los KAM tengan acceso de lectura antes de
+   enseñarles el enlace, porque hoy la herramienta ya se los muestra.
 9. **El valor del premio** (decisión 36 (ii)): pregunta nueva y dos frases
    nuevas para la cláusula de premio. Los textos dicen "pesos M/Cte." y "IVA",
    que son de Colombia: como están, romperían el día que Carrera de Compras se
@@ -813,3 +813,28 @@ final. Lo que queda abierto:
 9. **El texto de la pregunta nueva en portugués lo escribí yo**, igual que el
    resto de la interfaz en portugués. Va en el mismo paquete que ya está anotado
    para que lo lea alguien de Brasil.
+
+## El acuerdo de transferencia de datos, lo que quedó abierto (18 de septiembre)
+
+La decisión 36 de la respuesta del encargo 01 se aplicó casi entera. Lo que falta:
+
+1. **La mitad de la falla (a) que necesita un texto tuyo.** La respuesta dice que
+   la pregunta "¿Quién entrega el premio?" no debería salir con premio en
+   Créditos, porque con Créditos no hay entrega que repartir: Rappi los acredita
+   en la Billetera. Para esconderla hace falta la frase que reemplaza la viñeta
+   de entrega, y la respuesta la trae marcada "texto nuevo, lo decides tú":
+   "Los Créditos serán acreditados por Rappi en la Billetera de Créditos del
+   ganador, por cuenta del Organizador, una vez aceptado el premio."
+   Sin tu visto bueno no se puede aplicar, porque la viñeta no es opcional y
+   esconder la pregunta la dejaría rota. Hoy la pregunta sigue saliendo con
+   Créditos y el documento dice que el Organizador se encarga de la entrega.
+2. **El acceso de los KAM a la carpeta de Drive.** En el hilo, dos personas no
+   pudieron abrirla. La herramienta ya les muestra el botón "Abrir el modelo de
+   acuerdo": si no tienen acceso, ese botón los lleva a una pantalla de permiso.
+3. **Una frase del circuito de Colombia cita una opción con otras palabras.** El
+   último paso dice: cambia tu respuesta a "Rappi, como operador logístico". La
+   opción del formulario se llama "Rappi como operador logístico", sin la coma.
+   No se tocó el texto legal por una coma, pero conviene que una de las dos ceda.
+4. **Carrera de Compras solo está habilitada en Colombia.** Los paneles de los
+   otros países están construidos y probados, pero nadie los va a ver hasta que
+   el tipo se habilite fuera de Colombia.

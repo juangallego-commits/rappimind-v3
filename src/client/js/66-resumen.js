@@ -359,6 +359,50 @@ function bloqueDeLeyendas(leyendas) {
   return caja;
 }
 
+/**
+ * El recordatorio del acuerdo de transferencia de datos en la pantalla final.
+ *
+ * La respuesta del encargo 01 pide que el aviso se repita aqui, y tiene razon:
+ * entre el formulario y la entrega del premio pasan semanas, y para entonces el
+ * comercial ya no se acuerda de que dijo "no se". Sin el acuerdo firmado, el dia
+ * de la entrega ni Producto ni Data le pueden dar los datos del ganador.
+ */
+function avisoDeAcuerdoDeDatos() {
+  if (estado.entrada().acuerdoDatos !== 'no_o_no_se') return null;
+
+  var pais = flujo.paisElegido();
+  var caja = crear('div', { clase: 'aviso' }, [
+    crear('h3', { texto: estado.T('Te falta el acuerdo de transferencia de datos') }),
+    crear('p', {
+      texto: estado.T('Tu T&C ya está, pero sin ese acuerdo firmado no te van a poder entregar los datos del ganador el día de la entrega. Arranca el trámite ahora, que toma tiempo.'),
+    }),
+  ]);
+
+  if (pais && pais.url_acuerdo_datos) {
+    caja.appendChild(crear('div', { clase: 'fila-botones' }, [
+      crear('a', {
+        clase: 'boton boton-secundario', href: pais.url_acuerdo_datos,
+        target: '_blank', rel: 'noopener',
+      }, [
+        document.createTextNode(estado.T('Abrir el modelo de acuerdo')), RM.util.icono('abrir', 16),
+      ]),
+    ]));
+  }
+  return caja;
+}
+
+/**
+ * Agrega un bloque solo si existe.
+ *
+ * appendChild(null) lanza una excepcion, y como esto corre a mitad de pintar la
+ * pantalla final, lo que ve el comercial es "No pudimos generar el documento"
+ * sobre un documento que si se genero. Paso con el aviso del acuerdo de datos,
+ * que solo sale en Carrera: en un cashback devolvia null y tumbaba la pantalla.
+ */
+function agregarSiHay(destino, bloque) {
+  if (bloque) destino.appendChild(bloque);
+}
+
 // --- Pantalla final ----------------------------------------------------------
 
 function pantallaListo(raiz) {
@@ -379,7 +423,8 @@ function pantallaListo(raiz) {
     RM.documento.dibujar(hoja, resultado.texto, '');
     contenido.appendChild(hoja);
     contenido.appendChild(bloqueDePublicacion(resultado));
-    contenido.appendChild(bloqueDeLeyendas(resultado.leyendas));
+    agregarSiHay(contenido, avisoDeAcuerdoDeDatos());
+    agregarSiHay(contenido, bloqueDeLeyendas(resultado.leyendas));
     contenido.appendChild(crear('div', { clase: 'fila-botones' }, [
       crear('button', {
         clase: 'boton boton-secundario', type: 'button', texto: estado.T('Hacer otra campaña'),
@@ -404,12 +449,13 @@ function pantallaListo(raiz) {
   ]));
 
   contenido.appendChild(bloqueDePublicacion(resultado));
+  agregarSiHay(contenido, avisoDeAcuerdoDeDatos());
 
   // Las leyendas van aqui, entre como publicar y el campo del enlace: el
   // comercial las copia en el mismo momento en que se lleva el documento, y
   // justo debajo esta el campo que las confirma.
   var cajaDeLeyendas = bloqueDeLeyendas(resultado.leyendas);
-  if (cajaDeLeyendas) contenido.appendChild(cajaDeLeyendas);
+  agregarSiHay(contenido, cajaDeLeyendas);
 
   // Link publicado.
   contenido.appendChild(crear('h2', { texto: estado.T('Cuando ya esté publicado') }));

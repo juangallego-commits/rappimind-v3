@@ -106,6 +106,22 @@ function opcionesDeLosDatos(campo) {
     return nombres.map(function (nombre) { return { valor: nombre, etiqueta: nombre, nota: 'Sección de la app.' }; });
   }
 
+  if (campo.id === 'acuerdoDatos') {
+    // La nota de "Sí, ya está firmado" nombra la tabla de acuerdos marco, que
+    // existe solo en Colombia. En los demás países esa frase no querría decir
+    // nada, así que la opción va sin nota.
+    var pregunta = estado.pregunta('acuerdoDatos');
+    return pregunta.opciones.map(function (opcion) {
+      if (opcion.valor !== 'firmado') return opcion;
+      var esColombia = pais && pais.codigo === 'CO';
+      return {
+        valor: opcion.valor,
+        etiqueta: opcion.etiqueta,
+        nota: esColombia ? pregunta.notaFirmadoCO : opcion.nota,
+      };
+    });
+  }
+
   if (campo.id === 'categoriaProducto') {
     // "Ninguna" va primero y viene marcada: es la respuesta de casi todas las
     // campanas, y la pregunta se muestra igual para que alguien la confirme.
@@ -148,8 +164,60 @@ function avisoDePaisEnPruebas() {
   ]);
 }
 
+/**
+ * El panel de como se firma el acuerdo de transferencia de datos.
+ *
+ * Sale al responder "No, o no se" a la pregunta del acuerdo. No es un regano:
+ * el T&C se genera igual, porque los datos del ganador salen despues del
+ * concurso. Lo que hace es decirle al comercial que tiene que arrancar ese
+ * tramite ya, para que no le llegue el dia de la entrega sin poder entregar.
+ *
+ * Colombia tiene su propio circuito, con la tabla de acuerdos marco y la Orden
+ * de Transferencia por campana. Los demas paises tienen el modelo de su Legal, y
+ * dos no tienen ninguno. Ver decision 36 (i) de la respuesta del encargo 01.
+ */
+function panelDeAcuerdoDeDatos() {
+  if (estado.entrada().acuerdoDatos !== 'no_o_no_se') return null;
+
+  var pais = flujo.paisElegido();
+  var panel = estado.pregunta('acuerdoDatos').panel;
+  if (!panel) return null;
+
+  var caja = crear('div', { clase: 'aviso' });
+
+  if (pais && pais.codigo === 'CO') {
+    caja.appendChild(crear('h3', { texto: panel.tituloCO }));
+    caja.appendChild(crear('p', { texto: panel.primeroCO }));
+    var lista = crear('ol');
+    for (var i = 0; i < panel.pasosCO.length; i++) {
+      lista.appendChild(crear('li', { texto: panel.pasosCO[i] }));
+    }
+    caja.appendChild(lista);
+    return caja;
+  }
+
+  var nombre = pais ? pais.nombre : '';
+  var tieneModelo = !!(pais && pais.url_acuerdo_datos);
+  caja.appendChild(crear('p', {
+    texto: (tieneModelo ? panel.conModelo : panel.sinModelo).replace('{país}', nombre),
+  }));
+  if (tieneModelo) {
+    caja.appendChild(crear('div', { clase: 'fila-botones' }, [
+      crear('a', {
+        clase: 'boton boton-secundario', href: pais.url_acuerdo_datos,
+        target: '_blank', rel: 'noopener',
+      }, [
+        document.createTextNode(estado.T('Abrir el modelo de acuerdo')), RM.util.icono('abrir', 16),
+      ]),
+    ]));
+  }
+  return caja;
+}
+
 /** Aviso contextual de un campo, si aplica. */
 function avisoDe(campo) {
+  // El panel del acuerdo cuelga de la misma pregunta, debajo de las opciones.
+  if (campo.id === 'acuerdoDatos') return panelDeAcuerdoDeDatos();
   if (campo.id !== 'fechaInicio') return null;
   var inicio = estado.entrada().fechaInicio;
   if (!inicio) return null;

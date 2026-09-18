@@ -480,6 +480,64 @@ async function recorrer() {
     pantallaFinal.indexOf('Tu T&C está listo') !== -1 && pantallaFinal.indexOf('no publiques') !== -1,
     pantallaFinal.replace(/\n+/g, ' | ').slice(0, 300));
 
+  // --- 6b. El acuerdo de transferencia de datos ----------------------------
+  //
+  // Solo sale en Carrera de Compras, con premio fisico que entrega el
+  // Organizador, que es la unica combinacion en la que Rappi le pasa al
+  // Organizador el nombre, la direccion y el documento del ganador.
+  //
+  // La pantalla final repite el aviso, y ahi estuvo el defecto: el bloque se
+  // agregaba con appendChild aunque fuera null, asi que en un cashback normal
+  // (que no lleva esa pregunta) la pantalla final moria a medio pintar con
+  // "No pudimos generar el documento" sobre un documento que si se genero.
+  const carreraConPremioFisico = {
+    pais: 'CO', negocio: 'rappi', tipo: 'carrera_compras', tienda: 'Carulla',
+    alcance: 'Nacional', ciudades: '', segmento: 'todos', metodoPago: 'todos', declaracion: false,
+    fechaInicio: '2026-11-01', horaInicio: '00:00', fechaFin: '2026-11-30', horaFin: '23:59',
+    organizadorRazonSocial: 'Organizador de Prueba Tres S.A.S.', organizadorId: '900555666-1',
+    productos: 'marca', makerMarca: 'Bimbo', criterioGanador: 'mayor_valor', numeroGanadores: 1,
+    desempate: 'primero', tipoPremio: 'fisico', descripcionPremio: 'Una bicicleta de montaña',
+    entregaPor: 'organizador', medioNotificacion: 'correo', fechaNotificacion: '2026-12-05',
+    plazoConfirmacion: 5, compraMinima: 30000,
+  };
+
+  async function abrirEnElAcuerdo(datos) {
+    await pagina.goto(DEMO);
+    await pagina.waitForTimeout(800);
+    await pagina.evaluate(function (campana) {
+      RM.estado.reiniciarFormulario(Object.assign(RM.app.valoresIniciales(), campana), {});
+      RM.estado.estado.filtroRespondido = true;
+      var pasos = RM.flujo.pasosDelTipo(RM.estado.entrada()).map(function (p) { return p.id; });
+      RM.estado.estado.pasoActual = pasos.indexOf('premio');
+      RM.estado.estado.campoAbierto = 'acuerdoDatos';
+      RM.app.ir('pasos');
+    }, datos);
+    await pagina.waitForTimeout(450);
+    return texto();
+  }
+
+  const acuerdoSinResponder = await abrirEnElAcuerdo(carreraConPremioFisico);
+  revisar('la pregunta del acuerdo de datos sale con premio físico del Organizador',
+    acuerdoSinResponder.indexOf('¿El Organizador ya firmó el acuerdo de transferencia de datos?') !== -1 &&
+    acuerdoSinResponder.indexOf('La marca aparece en verde en la tabla de acuerdos marco.') !== -1,
+    acuerdoSinResponder.replace(/\n+/g, ' | ').slice(0, 300));
+
+  const acuerdoEnColombia = await abrirEnElAcuerdo(
+    Object.assign({}, carreraConPremioFisico, { acuerdoDatos: 'no_o_no_se' }));
+  revisar('responder que no abre el circuito de Colombia, con sus pasos',
+    acuerdoEnColombia.indexOf('Cómo se firma en Colombia') !== -1 &&
+    acuerdoEnColombia.indexOf('Orden de Transferencia') !== -1 &&
+    acuerdoEnColombia.indexOf('certificado de supresión') !== -1 &&
+    acuerdoEnColombia.indexOf('[object') === -1,
+    acuerdoEnColombia.replace(/\n+/g, ' | ').slice(0, 400));
+
+  const acuerdoEnCreditos = await abrirEnElAcuerdo(Object.assign({}, carreraConPremioFisico, {
+    tipoPremio: 'creditos', creditosPremio: 500000, descripcionPremio: '',
+  }));
+  revisar('con premio en Créditos no se pregunta por el acuerdo',
+    acuerdoEnCreditos.indexOf('acuerdo de transferencia de datos') === -1,
+    acuerdoEnCreditos.replace(/\n+/g, ' | ').slice(0, 300));
+
   // --- 7. En celular, nada queda debajo del selector de idioma --------------
   //
   // El selector ES/BR es fijo abajo a la derecha. Con poco espacio reservado

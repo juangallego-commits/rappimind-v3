@@ -750,7 +750,8 @@ var PAISES_SEMILLA = [
     "url_tc_turbo": "https://legal.rappi.com.co/colombia/terminos-y-condiciones-del-boton-turbo/",
     "ruta_promos": "colombia",
     "url_tc_pro": "https://promos.rappi.com/colombia/prohome",
-    "nombre_modalidad_local": ""
+    "nombre_modalidad_local": "",
+    "url_acuerdo_datos": "https://drive.google.com/file/d/1qpV7hsIPT2HXidULMp6vjzO0M-HfMKEr/view"
   },
   {
     "codigo": "MX",
@@ -785,7 +786,8 @@ var PAISES_SEMILLA = [
     "url_tc_turbo": "",
     "ruta_promos": "",
     "url_tc_pro": "",
-    "nombre_modalidad_local": ""
+    "nombre_modalidad_local": "",
+    "url_acuerdo_datos": "https://docs.google.com/document/d/1hMNNU0lZh9LLSv-SWyAVVneaeoY0h6Q_o6jMxhP8J_c/edit"
   },
   {
     "codigo": "PE",
@@ -820,7 +822,8 @@ var PAISES_SEMILLA = [
     "url_tc_turbo": "",
     "ruta_promos": "",
     "url_tc_pro": "",
-    "nombre_modalidad_local": ""
+    "nombre_modalidad_local": "",
+    "url_acuerdo_datos": "https://drive.google.com/file/d/1M6F7SRilOTU19uGQS_bq6onGY6pJ_A2z/view"
   },
   {
     "codigo": "AR",
@@ -855,7 +858,8 @@ var PAISES_SEMILLA = [
     "url_tc_turbo": "",
     "ruta_promos": "",
     "url_tc_pro": "",
-    "nombre_modalidad_local": ""
+    "nombre_modalidad_local": "",
+    "url_acuerdo_datos": "https://drive.google.com/file/d/1lgI4Fq7rCdbK-NUlYGmtNzY46pX7lbl5/view"
   },
   {
     "codigo": "CL",
@@ -890,7 +894,8 @@ var PAISES_SEMILLA = [
     "url_tc_turbo": "",
     "ruta_promos": "",
     "url_tc_pro": "",
-    "nombre_modalidad_local": ""
+    "nombre_modalidad_local": "",
+    "url_acuerdo_datos": ""
   },
   {
     "codigo": "EC",
@@ -927,7 +932,8 @@ var PAISES_SEMILLA = [
     "url_tc_turbo": "",
     "ruta_promos": "",
     "url_tc_pro": "",
-    "nombre_modalidad_local": ""
+    "nombre_modalidad_local": "",
+    "url_acuerdo_datos": "https://drive.google.com/file/d/19e-Zehkq6f5TNea1KjVh_OoiG6yYKpgY/view"
   },
   {
     "codigo": "UY",
@@ -962,7 +968,8 @@ var PAISES_SEMILLA = [
     "url_tc_turbo": "",
     "ruta_promos": "",
     "url_tc_pro": "",
-    "nombre_modalidad_local": ""
+    "nombre_modalidad_local": "",
+    "url_acuerdo_datos": "https://drive.google.com/file/d/1k4HIOM92EZWKk_bPer7K-CojJeKc0Mzu/view"
   },
   {
     "codigo": "CR",
@@ -999,7 +1006,8 @@ var PAISES_SEMILLA = [
     "url_tc_turbo": "",
     "ruta_promos": "",
     "url_tc_pro": "",
-    "nombre_modalidad_local": ""
+    "nombre_modalidad_local": "",
+    "url_acuerdo_datos": ""
   },
   {
     "codigo": "BR",
@@ -1034,7 +1042,8 @@ var PAISES_SEMILLA = [
     "url_tc_turbo": "",
     "ruta_promos": "",
     "url_tc_pro": "",
-    "nombre_modalidad_local": ""
+    "nombre_modalidad_local": "",
+    "url_acuerdo_datos": ""
   }
 ];
 var PAISES_VERSION = "2026-09-18";
@@ -2409,10 +2418,30 @@ function derivadosCarrera(entrada, pais, valores) {
   }
 
   valores.TEXTO_ENTREGA = TEXTO_ENTREGA_POR_OPCION[entrada.entregaPor] || '';
-  // Solo se comparten datos cuando entrega el Organizador.
+
+  /*
+   * Los datos del ganador solo se transfieren cuando hay algo fisico que llevar
+   * a una direccion y lo lleva el Organizador.
+   *
+   * Antes bastaba con que entregara el Organizador. Con premio en Creditos, que
+   * Rappi acredita en la Billetera, el documento anunciaba una transferencia de
+   * datos que nunca ocurre: el caso dorado CC01 la imprimia. Falla (a) de la
+   * decision 36 de la respuesta del encargo 01.
+   *
+   * El texto es el DESPUES de la falla (b) de esa misma decision, copiado tal
+   * cual. El anterior decia solo "datos de contacto", cuando el Anexo A del
+   * Acuerdo Marco incluye tambien la direccion de entrega y el numero de
+   * documento; dejaba la autorizacion para despues, cuando el acuerdo dice que
+   * consta en el T&C de la campana; y no decia la finalidad, que la clausula
+   * cuarta obliga a informar en el T&C.
+   */
   valores.TEXTO_DATOS_ENTREGA =
-    entrada.entregaPor === 'organizador'
-      ? 'Para la entrega del premio, Rappi podrá compartir con el Organizador únicamente los datos de contacto del ganador que sean estrictamente necesarios para ese fin, previa autorización del ganador.'
+    (entrada.tipoPremio === 'fisico' && entrada.entregaPor === 'organizador')
+      ? 'Si resultas ganador, al aceptar el premio autorizas a Rappi para transferir al Organizador únicamente ' +
+        'los datos estrictamente necesarios para entregártelo, que pueden ser tu nombre y apellidos, correo ' +
+        'electrónico, número de teléfono celular, dirección de entrega y número de documento de identidad. ' +
+        'El Organizador solo podrá usar esos datos para entregarte el premio, coordinar la entrega, verificar ' +
+        'tu identidad al recibirlo y atender los reclamos sobre ella, y deberá suprimirlos una vez cumplida esa finalidad.'
       : '';
 
   valores.MEDIO_NOTIFICACION = MEDIO_NOTIFICACION_POR_OPCION[entrada.medioNotificacion] || '';
@@ -4539,6 +4568,32 @@ var CAMPOS_CARRERA = [
     opciones: [
       { valor: 'organizador', etiqueta: 'El Organizador' },
       { valor: 'rappi', etiqueta: 'Rappi como operador logístico' },
+    ],
+  },
+  {
+    /*
+     * El acuerdo de transferencia de datos.
+     *
+     * Rappi no le puede pasar al Organizador el nombre, la direccion y el
+     * documento del ganador sin un acuerdo firmado con esa marca. Solo aplica
+     * cuando hay algo fisico que llevar y lo lleva el Organizador, que es la
+     * misma condicion con la que sale la clausula de datos del documento.
+     *
+     * No bloquea: los datos salen despues del concurso, asi que el T&C se genera
+     * igual y lo que hace la herramienta es decirle al comercial como se firma.
+     * Decision 36 (i) de la respuesta del encargo 01.
+     */
+    id: 'acuerdoDatos',
+    etiqueta: '¿El Organizador firmó el acuerdo de datos?',
+    tipo: 'lista',
+    paso: 'premio',
+    obligatorio: false,
+    visible: function (entrada) {
+      return entrada.tipoPremio === 'fisico' && entrada.entregaPor === 'organizador';
+    },
+    opciones: [
+      { valor: 'firmado', etiqueta: 'Sí, ya está firmado' },
+      { valor: 'no_o_no_se', etiqueta: 'No, o no sé' },
     ],
   },
   {
@@ -9241,6 +9296,52 @@ var PREGUNTAS = {
     errores: { vacio: 'Dinos quién entrega el premio.' },
   }),
 
+  /*
+   * El acuerdo de transferencia de datos, decision 36 (i) de la respuesta del
+   * encargo 01. Todos los textos de aqui son de esa respuesta, copiados tal
+   * cual: el enunciado, la ayuda, el por que, las notas de las dos opciones y
+   * los nueve pasos del panel de Colombia.
+   *
+   * La nota de "Si, ya esta firmado" habla de la tabla de acuerdos marco, que es
+   * de Colombia, asi que solo sale ahi.
+   */
+  acuerdoDatos: p({
+    paso: 'premio',
+    pregunta: '¿El Organizador ya firmó el acuerdo de transferencia de datos?',
+    ayuda: 'Sin ese acuerdo firmado no se le pueden enviar los datos del ganador.',
+    porQue: 'Rappi responde por los datos de sus usuarios. Enviarlos a una marca sin acuerdo firmado nos expone ante la autoridad de datos personales.',
+    opcional: true,
+    avanzaSola: true,
+    opciones: [
+      { valor: 'firmado', etiqueta: 'Sí, ya está firmado', nota: 'Puedes seguir con la campaña.' },
+      { valor: 'no_o_no_se', etiqueta: 'No, o no sé', nota: 'Te mostramos cómo se firma. Puedes generar el T&C igual.' },
+    ],
+    // La nota de Colombia para la primera opción, que nombra la tabla de
+    // acuerdos marco. En los demás países esa tabla no existe.
+    notaFirmadoCO: 'La marca aparece en verde en la tabla de acuerdos marco.',
+    // El panel que sale al responder "No, o no sé".
+    panel: {
+      tituloCO: 'Cómo se firma en Colombia (una sola vez al año por marca)',
+      primeroCO: 'Primero mira si la marca ya está en verde en la tabla de acuerdos marco.',
+      pasosCO: [
+        'Pídele a la marca razón social, NIT, domicilio, nombre y cédula del representante legal o apoderado, y el correo para la firma. Si firma un apoderado, pide también el certificado de cámara de comercio o el poder.',
+        'Pídele nombre, cargo, correo y teléfono de las personas que van a manejar las Órdenes de Transferencia. Por Rappi, esa persona eres tú.',
+        'Mándale esa información a Legal para completar el Acuerdo Marco.',
+        'Envíale el acuerdo a la marca para revisión y explícale por qué se firma.',
+        'Cerrada la negociación, Legal lo manda a firma.',
+        'Cuando esté firmado, Legal lo carga en la tabla y la marca queda en verde.',
+        'En cada campaña llenas la Orden de Transferencia: campaña, número de ganadores, qué datos se envían, cuándo se entrega el premio y cuándo se borran los datos. La marca la acepta por correo y no se vuelve a firmar nada.',
+        'Cuando entregue el premio, la marca borra los datos y le manda a Rappi el certificado de supresión.',
+        'Si la marca no está en verde o la Orden no está aceptada, ni Producto ni Data te pueden entregar los datos.',
+        'Si no alcanzan a firmar antes de la entrega, cambia tu respuesta a "Rappi, como operador logístico": la marca le entrega los premios a Rappi y Rappi se los lleva al ganador.',
+      ],
+      // Los demás países no tienen tabla ni Orden de Transferencia: tienen el
+      // modelo de su Legal, y el enlace sale de la fila del país.
+      conModelo: 'En {país} el acuerdo se firma con el modelo de Legal de tu país. Ábrelo aquí y escríbele a Legal antes de comprometer la entrega del premio.',
+      sinModelo: 'En {país} todavía no hay modelo de acuerdo: escríbele a Legal antes de comprometer la entrega del premio.',
+    },
+  }),
+
   medioNotificacion: p({
     paso: 'premio',
     pregunta: '¿Cómo le avisas al ganador?',
@@ -12402,8 +12503,18 @@ function dibujarPregunta(campo, config) {
     ]));
   }
 
+  /*
+   * El aviso puede ser una frase o un bloque ya armado.
+   *
+   * Empezo siendo siempre una frase (la de la fecha de inicio muy proxima). El
+   * panel de como se firma el acuerdo de transferencia de datos es un titulo mas
+   * diez pasos numerados, que como frase no se lee. Al pasarlo aqui salia
+   * impreso "[object HTMLDivElement]", porque texto: lo convertia a cadena.
+   */
   if (config.aviso) {
-    bloque.appendChild(crear('div', { clase: 'aviso', texto: config.aviso }));
+    bloque.appendChild(config.aviso.nodeType
+      ? config.aviso
+      : crear('div', { clase: 'aviso', texto: config.aviso }));
   }
 
   var frase = asiQueda(campo.id, config.pais);
@@ -12943,6 +13054,22 @@ function opcionesDeLosDatos(campo) {
     return nombres.map(function (nombre) { return { valor: nombre, etiqueta: nombre, nota: 'Sección de la app.' }; });
   }
 
+  if (campo.id === 'acuerdoDatos') {
+    // La nota de "Sí, ya está firmado" nombra la tabla de acuerdos marco, que
+    // existe solo en Colombia. En los demás países esa frase no querría decir
+    // nada, así que la opción va sin nota.
+    var pregunta = estado.pregunta('acuerdoDatos');
+    return pregunta.opciones.map(function (opcion) {
+      if (opcion.valor !== 'firmado') return opcion;
+      var esColombia = pais && pais.codigo === 'CO';
+      return {
+        valor: opcion.valor,
+        etiqueta: opcion.etiqueta,
+        nota: esColombia ? pregunta.notaFirmadoCO : opcion.nota,
+      };
+    });
+  }
+
   if (campo.id === 'categoriaProducto') {
     // "Ninguna" va primero y viene marcada: es la respuesta de casi todas las
     // campanas, y la pregunta se muestra igual para que alguien la confirme.
@@ -12985,8 +13112,60 @@ function avisoDePaisEnPruebas() {
   ]);
 }
 
+/**
+ * El panel de como se firma el acuerdo de transferencia de datos.
+ *
+ * Sale al responder "No, o no se" a la pregunta del acuerdo. No es un regano:
+ * el T&C se genera igual, porque los datos del ganador salen despues del
+ * concurso. Lo que hace es decirle al comercial que tiene que arrancar ese
+ * tramite ya, para que no le llegue el dia de la entrega sin poder entregar.
+ *
+ * Colombia tiene su propio circuito, con la tabla de acuerdos marco y la Orden
+ * de Transferencia por campana. Los demas paises tienen el modelo de su Legal, y
+ * dos no tienen ninguno. Ver decision 36 (i) de la respuesta del encargo 01.
+ */
+function panelDeAcuerdoDeDatos() {
+  if (estado.entrada().acuerdoDatos !== 'no_o_no_se') return null;
+
+  var pais = flujo.paisElegido();
+  var panel = estado.pregunta('acuerdoDatos').panel;
+  if (!panel) return null;
+
+  var caja = crear('div', { clase: 'aviso' });
+
+  if (pais && pais.codigo === 'CO') {
+    caja.appendChild(crear('h3', { texto: panel.tituloCO }));
+    caja.appendChild(crear('p', { texto: panel.primeroCO }));
+    var lista = crear('ol');
+    for (var i = 0; i < panel.pasosCO.length; i++) {
+      lista.appendChild(crear('li', { texto: panel.pasosCO[i] }));
+    }
+    caja.appendChild(lista);
+    return caja;
+  }
+
+  var nombre = pais ? pais.nombre : '';
+  var tieneModelo = !!(pais && pais.url_acuerdo_datos);
+  caja.appendChild(crear('p', {
+    texto: (tieneModelo ? panel.conModelo : panel.sinModelo).replace('{país}', nombre),
+  }));
+  if (tieneModelo) {
+    caja.appendChild(crear('div', { clase: 'fila-botones' }, [
+      crear('a', {
+        clase: 'boton boton-secundario', href: pais.url_acuerdo_datos,
+        target: '_blank', rel: 'noopener',
+      }, [
+        document.createTextNode(estado.T('Abrir el modelo de acuerdo')), RM.util.icono('abrir', 16),
+      ]),
+    ]));
+  }
+  return caja;
+}
+
 /** Aviso contextual de un campo, si aplica. */
 function avisoDe(campo) {
+  // El panel del acuerdo cuelga de la misma pregunta, debajo de las opciones.
+  if (campo.id === 'acuerdoDatos') return panelDeAcuerdoDeDatos();
   if (campo.id !== 'fechaInicio') return null;
   var inicio = estado.entrada().fechaInicio;
   if (!inicio) return null;
@@ -14494,6 +14673,50 @@ function bloqueDeLeyendas(leyendas) {
   return caja;
 }
 
+/**
+ * El recordatorio del acuerdo de transferencia de datos en la pantalla final.
+ *
+ * La respuesta del encargo 01 pide que el aviso se repita aqui, y tiene razon:
+ * entre el formulario y la entrega del premio pasan semanas, y para entonces el
+ * comercial ya no se acuerda de que dijo "no se". Sin el acuerdo firmado, el dia
+ * de la entrega ni Producto ni Data le pueden dar los datos del ganador.
+ */
+function avisoDeAcuerdoDeDatos() {
+  if (estado.entrada().acuerdoDatos !== 'no_o_no_se') return null;
+
+  var pais = flujo.paisElegido();
+  var caja = crear('div', { clase: 'aviso' }, [
+    crear('h3', { texto: estado.T('Te falta el acuerdo de transferencia de datos') }),
+    crear('p', {
+      texto: estado.T('Tu T&C ya está, pero sin ese acuerdo firmado no te van a poder entregar los datos del ganador el día de la entrega. Arranca el trámite ahora, que toma tiempo.'),
+    }),
+  ]);
+
+  if (pais && pais.url_acuerdo_datos) {
+    caja.appendChild(crear('div', { clase: 'fila-botones' }, [
+      crear('a', {
+        clase: 'boton boton-secundario', href: pais.url_acuerdo_datos,
+        target: '_blank', rel: 'noopener',
+      }, [
+        document.createTextNode(estado.T('Abrir el modelo de acuerdo')), RM.util.icono('abrir', 16),
+      ]),
+    ]));
+  }
+  return caja;
+}
+
+/**
+ * Agrega un bloque solo si existe.
+ *
+ * appendChild(null) lanza una excepcion, y como esto corre a mitad de pintar la
+ * pantalla final, lo que ve el comercial es "No pudimos generar el documento"
+ * sobre un documento que si se genero. Paso con el aviso del acuerdo de datos,
+ * que solo sale en Carrera: en un cashback devolvia null y tumbaba la pantalla.
+ */
+function agregarSiHay(destino, bloque) {
+  if (bloque) destino.appendChild(bloque);
+}
+
 // --- Pantalla final ----------------------------------------------------------
 
 function pantallaListo(raiz) {
@@ -14514,7 +14737,8 @@ function pantallaListo(raiz) {
     RM.documento.dibujar(hoja, resultado.texto, '');
     contenido.appendChild(hoja);
     contenido.appendChild(bloqueDePublicacion(resultado));
-    contenido.appendChild(bloqueDeLeyendas(resultado.leyendas));
+    agregarSiHay(contenido, avisoDeAcuerdoDeDatos());
+    agregarSiHay(contenido, bloqueDeLeyendas(resultado.leyendas));
     contenido.appendChild(crear('div', { clase: 'fila-botones' }, [
       crear('button', {
         clase: 'boton boton-secundario', type: 'button', texto: estado.T('Hacer otra campaña'),
@@ -14539,12 +14763,13 @@ function pantallaListo(raiz) {
   ]));
 
   contenido.appendChild(bloqueDePublicacion(resultado));
+  agregarSiHay(contenido, avisoDeAcuerdoDeDatos());
 
   // Las leyendas van aqui, entre como publicar y el campo del enlace: el
   // comercial las copia en el mismo momento en que se lleva el documento, y
   // justo debajo esta el campo que las confirma.
   var cajaDeLeyendas = bloqueDeLeyendas(resultado.leyendas);
-  if (cajaDeLeyendas) contenido.appendChild(cajaDeLeyendas);
+  agregarSiHay(contenido, cajaDeLeyendas);
 
   // Link publicado.
   contenido.appendChild(crear('h2', { texto: estado.T('Cuando ya esté publicado') }));

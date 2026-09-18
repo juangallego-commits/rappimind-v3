@@ -351,6 +351,32 @@ var CAMPOS_CARRERA = [
     ],
   },
   {
+    /*
+     * El acuerdo de transferencia de datos.
+     *
+     * Rappi no le puede pasar al Organizador el nombre, la direccion y el
+     * documento del ganador sin un acuerdo firmado con esa marca. Solo aplica
+     * cuando hay algo fisico que llevar y lo lleva el Organizador, que es la
+     * misma condicion con la que sale la clausula de datos del documento.
+     *
+     * No bloquea: los datos salen despues del concurso, asi que el T&C se genera
+     * igual y lo que hace la herramienta es decirle al comercial como se firma.
+     * Decision 36 (i) de la respuesta del encargo 01.
+     */
+    id: 'acuerdoDatos',
+    etiqueta: '¿El Organizador firmó el acuerdo de datos?',
+    tipo: 'lista',
+    paso: 'premio',
+    obligatorio: false,
+    visible: function (entrada) {
+      return entrada.tipoPremio === 'fisico' && entrada.entregaPor === 'organizador';
+    },
+    opciones: [
+      { valor: 'firmado', etiqueta: 'Sí, ya está firmado' },
+      { valor: 'no_o_no_se', etiqueta: 'No, o no sé' },
+    ],
+  },
+  {
     id: 'medioNotificacion',
     etiqueta: '¿Cómo se avisa al ganador?',
     tipo: 'lista',

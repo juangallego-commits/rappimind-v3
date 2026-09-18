@@ -1273,3 +1273,78 @@ categoría del producto, y la 25, la pantalla final con las leyendas.
    que decidir si el límite es el correcto, si el enlace de Turbo puede ir corto,
    o qué más se puede marcar como recortable dentro del texto legal.
 4. **Correr `setup()`** después de desplegar, por lo de los países.
+
+## 18 de septiembre · El acuerdo de transferencia de datos
+
+Juan preguntó si le había llegado a Claude Code lo del acuerdo que hay que firmar
+en cada país cuando el premio lo entrega el Organizador. Sí había llegado, en la
+respuesta del encargo 01 (decisión 36), pero estaba sin construir: era el
+pendiente 8 de la lista de trabajo de producto. Ahora está.
+
+### Qué ve el comercial
+
+1. **Una pregunta nueva en Carrera de Compras**, en el paso del premio: "¿El
+   Organizador ya firmó el acuerdo de transferencia de datos?". Sale solo cuando
+   el premio es físico y lo entrega el Organizador, que es la única combinación
+   en la que Rappi le pasa a la marca el nombre, la dirección y el documento del
+   ganador. Es opcional: no bloquea el T&C.
+2. **Si responde "No, o no sé", se abre el camino para firmarlo.** En Colombia,
+   el circuito completo de nueve pasos, con la tabla de acuerdos marco, la Orden
+   de Transferencia por campaña, el certificado de supresión y la salida de
+   emergencia (cambiar a Rappi como operador logístico). En los países con
+   modelo, una línea y un botón que abre el modelo de Legal de ese país. En Chile
+   y Costa Rica, que no tienen modelo, la línea que manda a Legal.
+3. **La pantalla final repite el aviso**, con su botón. Entre el formulario y la
+   entrega del premio pasan semanas, y para entonces nadie se acuerda.
+
+### Y dos cosas que estaban mal desde antes, en producción
+
+1. **El documento anunciaba una transferencia de datos que nunca ocurre.** La
+   cláusula se imprimía mirando solo quién entrega, sin mirar qué se entrega, así
+   que una Carrera con premio en Créditos decía que Rappi podría compartir los
+   datos del ganador. Con Créditos no hay nada que compartir. El caso dorado CC01
+   lo imprimía, y ahora vigila lo contrario.
+2. **La cláusula no cuadraba con el Acuerdo Marco.** Hablaba solo de "datos de
+   contacto" cuando el Anexo A incluye también la dirección de entrega y el
+   número de documento; dejaba la autorización para después cuando el acuerdo
+   dice que consta en el T&C; y no decía la finalidad, que la cláusula cuarta
+   obliga a informar. Entró el texto corregido de la respuesta, letra por letra.
+
+Entra `CC03`, un caso dorado nuevo con premio físico entregado por el
+Organizador: es la única combinación en la que los datos viajan, y hasta hoy no
+tenía quién la protegiera.
+
+### Un defecto que salió al construirlo, y que solo vio el navegador
+
+El aviso del acuerdo sale solo en Carrera. En un cashback devolvía nada, y se
+agregaba igual a la pantalla: lo que veía el comercial era **"No pudimos generar
+el documento" encima de un documento que sí se había generado**. `npm test` no lo
+vio; lo cazó el recorrido de navegador. Ahora hay tres revisiones nuevas ahí para
+que no vuelva a pasar en silencio.
+
+### Cómo probarlo
+
+```
+npm test                                                        # 542 pruebas
+npm run demo
+export NODE_PATH=/opt/node22/lib/node_modules
+export PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
+node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js        # 50 revisiones
+node .claude/skills/flujo-y-ux/scripts/recorrer-en-portugues.js # todo bien
+```
+
+Con los ojos: arma una Carrera con premio físico entregado por el Organizador y
+responde "No, o no sé" en la pregunta del acuerdo.
+
+### Lo que necesito de Juan
+
+1. **Una frase, para cerrar la otra mitad del arreglo.** La respuesta dice que la
+   pregunta "¿Quién entrega el premio?" no debería salir con premio en Créditos,
+   y propone el texto que reemplaza la viñeta de entrega, pero viene marcado "lo
+   decides tú". Sin tu visto bueno no se puede aplicar: la viñeta no es opcional
+   y esconder la pregunta la dejaría rota. Está en `PENDIENTES_LEGAL.md`.
+2. **El acceso de los KAM a la carpeta de Drive.** En el hilo, dos personas no
+   pudieron abrirla, y la herramienta ya les muestra el botón.
+3. **Una coma.** El circuito de Colombia dice: cambia tu respuesta a "Rappi, como
+   operador logístico". La opción del formulario se llama "Rappi como operador
+   logístico", sin coma. No toqué el texto legal por eso; dime cuál cede.

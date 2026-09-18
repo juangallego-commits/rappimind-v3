@@ -306,8 +306,18 @@ function dibujarPregunta(campo, config) {
     ]));
   }
 
+  /*
+   * El aviso puede ser una frase o un bloque ya armado.
+   *
+   * Empezo siendo siempre una frase (la de la fecha de inicio muy proxima). El
+   * panel de como se firma el acuerdo de transferencia de datos es un titulo mas
+   * diez pasos numerados, que como frase no se lee. Al pasarlo aqui salia
+   * impreso "[object HTMLDivElement]", porque texto: lo convertia a cadena.
+   */
   if (config.aviso) {
-    bloque.appendChild(crear('div', { clase: 'aviso', texto: config.aviso }));
+    bloque.appendChild(config.aviso.nodeType
+      ? config.aviso
+      : crear('div', { clase: 'aviso', texto: config.aviso }));
   }
 
   var frase = asiQueda(campo.id, config.pais);

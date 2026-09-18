@@ -826,3 +826,34 @@ elige entre dos frases que Legal ya escribió.
     Y una consecuencia que conviene tener presente: un cambio que las pruebas no
     cubren es un cambio que nadie está mirando. Cuando toques algo que no se pueda
     probar, dilo en el reporte con todas las letras en vez de darlo por bueno.
+
+## 18 de septiembre · El acuerdo de transferencia de datos
+
+47. **La pregunta del acuerdo sale con la misma condición que la cláusula de
+    datos, y hay una prueba que lo amarra.** Las dos dependen de que el premio
+    sea físico y lo entregue el Organizador. Si se separan, la herramienta
+    pregunta por un acuerdo que el documento no necesita, o transfiere datos sin
+    haber preguntado nunca. La prueba recorre las cuatro combinaciones de premio
+    y entrega y exige que las dos respuestas coincidan.
+48. **El acuerdo no bloquea el T&C.** Los datos del ganador salen semanas
+    después, cuando el concurso terminó, así que un comercial que todavía no lo
+    tiene firmado genera su documento igual y lo que recibe es el camino para
+    firmarlo. Es lo que dice la decisión 36 (i) de la respuesta del encargo 01, y
+    es la razón por la que la pregunta no es un filtro.
+49. **La respuesta no cambia una coma del documento**, y hay una prueba que
+    compara los tres casos letra por letra. Lo que se firma es un contrato entre
+    Rappi y la marca, no algo que el usuario deba leer en el T&C.
+50. **El panel es un bloque, no una frase, y el aviso de un campo ahora acepta
+    las dos cosas.** El circuito de Colombia son un título y diez pasos
+    numerados, que como frase no se lee. Pasarlo por el `aviso` de siempre lo
+    imprimía como "[object HTMLDivElement]", porque ese camino convertía a texto.
+51. **`appendChild(null)` tumba la pantalla final.** El aviso del acuerdo solo
+    sale en Carrera, así que en un cashback devolvía null, y lo que veía el
+    comercial era "No pudimos generar el documento" sobre un documento que sí se
+    había generado. Ahora los dos bloques condicionales de esa pantalla pasan por
+    `agregarSiHay()`. Lo cazó el recorrido de navegador, no `npm test`.
+52. **Los enlaces de los modelos de acuerdo se leen de la respuesta, no se
+    transcriben.** Y hay una prueba que los compara contra
+    `docs/encargos/respuestas/01-legal.md`: un enlace que alguien "arregla" a
+    mano manda al comercial a un documento que no es el que Legal aprobó. Misma
+    idea que la prueba del texto de las leyendas.
