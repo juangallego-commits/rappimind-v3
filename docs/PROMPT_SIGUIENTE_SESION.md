@@ -4,13 +4,10 @@ Copia todo lo que está entre las líneas y pégalo como primer mensaje.
 
 ---
 
-Vas a retomar RappiMind v3. La sesión anterior (17 de septiembre) revisó con ojos
-críticos todo lo que se había construido la noche anterior, arregló cuarenta y un
-defectos con su prueba (en dos vueltas: la interfaz y Brasil primero; el servidor,
-el Sheet y el cashback por ETA después), y dejó escritos los tres encargos para
-Claude chat en `docs/encargos/`. Yo ya mandé esos encargos (o los voy a mandar) y voy a traer las
-respuestas. Tu trabajo en esta sesión es **convertir esas respuestas en cambios**,
-sin traducir nada a mano y sin decidir nada legal por tu cuenta.
+Vas a retomar RappiMind v3. La sesión del 18 de septiembre cerró dos cosas: sacó
+de piloto a seis países y construyó las leyendas de piezas publicitarias del
+encargo 03. Las tres respuestas de Claude chat (encargos 01, 02 y 03) ya están
+aplicadas: no queda ninguna por convertir en cambios.
 
 ## Antes de tocar nada
 
@@ -18,108 +15,89 @@ Lee completos, en este orden:
 
 1. `CLAUDE.md`, que tiene las reglas no negociables.
 2. `.claude/skills/flujo-y-ux/SKILL.md` y `.claude/skills/frontera-apps-script/SKILL.md`.
-3. `docs/PROGRESO.md`, de abajo hacia arriba. La última entrada es la de la
-   revisión crítica: ahí está lo que se arregló y lo que quedó pendiente.
-4. `docs/DECISIONES.md`, las decisiones 1 a 23 del final, para no deshacerlas.
+3. `docs/PROGRESO.md`, de abajo hacia arriba. Las dos últimas entradas son las de
+   esta sesión: los países y las leyendas.
+4. `docs/DECISIONES.md`, de la 31 a la 45, que son las técnicas de las leyendas.
+5. `docs/PENDIENTES_LEGAL.md`, las tres últimas secciones: Brasil en producción,
+   los países que salieron de piloto y las leyendas.
 
 Después mira el estado real, no lo que digan los documentos:
 
 ```
-npm test                                                        # deben pasar 421
+npm test                                                        # deben pasar 528
 npm run demo
-node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js        # 40 revisiones
-node .claude/skills/flujo-y-ux/scripts/recorrer-en-portugues.js # 25 revisiones
+export NODE_PATH=/opt/node22/lib/node_modules
+export PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
+node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js        # 47 revisiones
+node .claude/skills/flujo-y-ux/scripts/recorrer-en-portugues.js # 26 revisiones
+npm run front                                                   # 45 de 45 pantallas
 ```
 
-Los recorridos necesitan playwright-core y un Chromium. En el contenedor remoto
-están en `/opt/node22/lib/node_modules` (`export NODE_PATH=...`) y en
-`/opt/pw-browsers`. Si no los encuentras, dímelo y no sigas como si nada.
+Los recorridos necesitan playwright y un Chromium. En el contenedor remoto están
+en `/opt/node22/lib/node_modules` y en `/opt/pw-browsers`. Si no los encuentras,
+dímelo y no sigas como si nada.
 
-## Las respuestas de Claude chat, y qué hacer con cada una
+## Dónde quedó todo
 
-No te las voy a pegar en el chat: las subo al repositorio, enteras y sin editar,
-en `docs/encargos/respuestas/`. Ahí está `LEEME.md` con los nombres y con cómo
-las subo. Antes de tocar nada, mira qué archivos hay:
+**Los países.** Colombia, México, Perú, Argentina, Chile, Uruguay y Brasil están
+activos. Ecuador y Costa Rica siguen en piloto, y solo por una razón: nadie ha
+dicho si escriben los miles con punto o con coma. El estado viaja al Sheet en la
+tanda `estados-2026-09-18` de `data/paises.json`, que `setup()` aplica una sola
+vez. El país en piloto que usan las pruebas y los recorridos es Ecuador.
 
-```
-ls docs/encargos/respuestas/
-```
+**Las leyendas.** Las 55 de la respuesta del encargo 03 están en
+`modelos/leyendas/`, una por archivo. El motor es `src/core/leyendas.js` (elegir,
+armar, medir y recortar) y `src/core/derivados_leyendas.js` (los marcadores
+cortos). El comercial las ve en la pantalla final, una por formato. Hay una
+pregunta nueva al final del formulario, la categoría del producto, en el paso
+`pieza`.
 
-Si el archivo que te nombro no está, dímelo y no adivines. Trabaja **una
-respuesta por sesión**: cada una toca archivos distintos y mezclarlas es la
-forma más fácil de aplicar mal un texto legal.
+## Lo que está esperando una decisión de Juan
 
-Y una regla que vale para las tres: lo que Claude chat recomiende sin dar el
-texto exacto **no lo redactas tú**. Va a `docs/PENDIENTES_LEGAL.md` y me
-preguntas.
+Todo en `docs/PENDIENTES_LEGAL.md`. Lo que más urge, en orden:
 
-### La respuesta del encargo 01 (`respuestas/01-legal.md`)
+1. **El espacio no alcanza.** Una campaña corriente (Farmatodo, 20%, solo Turbo,
+   con compra mínima y categoría licores) da una letra pequeña de 645 caracteres
+   contra un límite de 620, ya recortada hasta el último nivel. El banner corto
+   de esa misma campaña mide 734 contra 300. Hay que decidir si el límite es el
+   correcto, si el enlace de Turbo puede ir corto, o qué más se marca como
+   recortable dentro del texto legal. Lo último es de Legal: no lo marques tú.
+2. **La forma del enlace corto.** Juan aprobó que sea una dirección propia dentro
+   de `promos.rappi.com`, y no bit.ly. Falta cómo se arma y quién crea la página.
+   Sin eso no hay leyenda de push ni de SMS, y hoy se entrega como pendiente con
+   esa razón escrita en pantalla.
+3. **Las 24 preguntas de la lista 2** de `docs/encargos/respuestas/03-leyendas.md`,
+   sección 9.3. Las tres que más cambian el diseño, según la propia respuesta,
+   son la 21 (dónde se redimen los Créditos del ETA, donde la pieza y el T&C
+   dicen cosas distintas), la 16 y la 6.
+4. **Brasil está en producción con cinco puntos abiertos**, entre ellos que el
+   mensaje a Legal BR sigue sin respuesta y que nadie de Brasil ha leído el
+   formulario en portugués. Juan lo decidió así, avisado.
+5. **Ecuador y Costa Rica** salen de piloto el día que alguien diga cómo escriben
+   los miles. Es cambiar un valor y agregar una tanda.
 
-Viene con un bloque final "PARA EL REPOSITORIO" con líneas como
-`MX.termino_dias = "días naturales"` y `modelo cashback, cláusula 8: ANTES "..."
-DESPUÉS "..."`. Con eso:
+## Lo que no se construyó, a propósito
 
-- Los valores de país van a `data/paises.json` **y** a la pestaña Paises del
-  Sheet (la hoja manda sobre la semilla: recuérdame cambiarlos allá). Cuando un
-  dato se confirma, sácalo de `por_confirmar_en_pruebas` de ese país.
-- Los cambios de modelo son texto legal: aplícalos literalmente en `modelos/`,
-  regenera las salidas esperadas que cambien (`pruebas/salidas_esperadas/`) y
-  dime cuáles cambiaron para que yo las mire.
-- Cuando un país tenga sus cuatro datos confirmados, no lo saques de piloto tú:
-  dime que está listo y lo cambio yo en el Sheet.
-
-### La respuesta del encargo 02 (`respuestas/02-interfaz.md`)
-
-Viene con un bloque "PARA EL REPOSITORIO" con líneas
-`pantalla NN | ACTUAL: "..." | PROPUESTO: "..."`. Busca cada "ACTUAL" literal en
-`src/core/preguntas.js`, `src/core/preguntas_pt.js`, `src/core/textos_interfaz.js`,
-`src/core/ayuda.js` y `src/client/js/`. Aplica solo los que cumplan las reglas de
-`preguntas.test.js` (diez palabras, ayuda de una línea, sin guiones como
-puntuación). Si un cambio toca una llave de `TEXTOS_PT`, cambia la llave y el
-literal del código a la vez, o la traducción muere en silencio (hay una prueba
-que lo caza). Después regenera las capturas con
-`node .claude/skills/flujo-y-ux/scripts/capturar-pantallas.js`.
-
-### La respuesta del encargo 03 (`respuestas/03-leyendas.md`)
-
-Es trabajo nuevo, no un arreglo. Viene con fichas y con un bloque "PARA EL
-REPOSITORIO" en el formato de `modelos/`. Antes de escribir código, léela entera y
-dime: cuántas leyendas vienen de un playbook o de una pieza real y cuántas son
-propuestas de Claude chat (esas las apruebo yo antes de que entren), qué datos
-nuevos pide y cómo propone resolver el enlace que llega tarde. Con eso decidimos
-juntos el diseño: dónde vive el catálogo (`modelos/leyendas/`), cómo se elige la
-pieza y cómo se muestra en la pantalla final. No lo construyas sin esa conversación.
-
-## Lo que sigue pendiente y no depende de Claude chat
-
-Todo en `docs/PENDIENTES_LEGAL.md`. Lo que más urge:
-
-- **Los quince enlaces** de los T&C generales de Colombia siguen sin abrirse desde
-  el entorno. Si te confirmo que alguno no abre, se quita de `data/tyc_genericos.json`
-  con su nota en `revisiones`.
-- **Brasil**: la hora de inicio (00:00 contra 00:01), "um (1)" contra "1 (um)", y
-  los cuatro casos dorados `BR01` a `BR04` contra los aprobados.
-- **El cashback por ETA**: los dos casos dorados `ETA01` y `ETA02` contra los
-  publicados de Bogotá y Barranquilla, y la mezcla de "tú" con "el
-  Usuario/Consumidor" que dejan los bloques compartidos (puntos 8 a 10 de
-  `docs/PENDIENTES_LEGAL.md`). Si yo decido cambiar un bloque compartido, dime
-  el texto exacto: no lo redactes tú.
-- **Después de desplegar hay que correr `setup()`** una vez: pone al día la lista
-  de datos por confirmar de Brasil en la pestaña Paises. Yo lo corro; recuérdamelo.
-- **Los T&C generales vencen** el 31 de octubre (uno) y el 31 de diciembre (los
-  demás). Si Legal publica versiones nuevas, hay que actualizar el archivo antes.
+- **Los descuentos con T&C general.** Juan decidió dejarlos para cuando exista ese
+  tipo de campaña. Hoy los 15 T&C generales solo entregan enlace, sin preguntas ni
+  documento, así que no son dos preguntas más: es un recorrido nuevo completo. Las
+  leyendas ya están en el catálogo, marcadas `se_elige_en: ninguna_parte_todavia`.
+- **Las leyendas de campaña de los otros ocho países.** La respuesta dice "no
+  cubierto". Los complementos de categoría de esos países sí están.
+- **Los casos dorados de Perú, Argentina, Chile y Uruguay.** Se ofrecieron y Juan
+  no los pidió. Cuatro países activos sin nadie que avise si una cláusula
+  compartida se mueve. La oferta sigue en pie.
 
 ## Cómo trabajamos
 
 - No soy técnico. Explícame las cosas por lo que yo veo en pantalla.
 - `npm test` antes de cada push, y me muestras el resultado.
 - Los dos recorridos de navegador antes de dar por bueno cualquier cambio de
-  interfaz.
+  interfaz, y abre la demostración para mirar con los ojos lo que cambió.
 - Puedes usar agentes en paralelo, repartidos por archivos, pero **verifica tú
-  mismo lo que te reporten**: en las dos últimas sesiones, cada agente reportó su
-  trabajo como terminado y en la mayoría había defectos reales.
-- Tienes mi autorización para lanzar el despliegue de GitHub Actions cuando haga
-  falta, pero avísame siempre. Lo que **no** puedes hacer es correr `setup()`
-  dentro de Apps Script: eso lo ejecuto yo, y me tienes que decir cuándo toca.
+  mismo lo que te reporten**.
+- Tienes mi autorización para lanzar el despliegue de GitHub Actions, pero avísame
+  siempre. Lo que **no** puedes hacer es correr `setup()` dentro de Apps Script:
+  eso lo ejecuto yo, y me tienes que decir cuándo toca.
 - Si una decisión es legal o de negocio, pregúntame. Si es técnica, decídela y
   déjala escrita en `docs/DECISIONES.md`.
