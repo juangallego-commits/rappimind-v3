@@ -1,14 +1,13 @@
 {
-  "version": "2026-09-17",
+  "version": "2026-09-18",
   "fuente": "Excel \"T&C Generales 2026\", hoja \"T&C Generales 2026\", entregado por Juan Camilo Gallego el 17 de septiembre de 2026. Juan avisó que no lo había revisado.",
   "nota": "Estos T&C ya están publicados por Legal. RappiMind no genera documento para ellos: solo entrega el enlace. Los textos de nombre, beneficio y paraQue están copiados tal cual del Excel, sin corregir.",
   "revisiones": [
     {
       "ids": [
-        "descuento_productos_seleccionados",
-        "descuento_productos_seleccionados_bis"
+        "descuento_productos_seleccionados"
       ],
-      "que": "El mismo nombre aparece en las filas 4 y 16 del Excel, con enlaces distintos (/2026/descuentoprodselecc y /descuentosenprod). Se conservan los dos, sin decidir cuál es el bueno."
+      "que": "El mismo nombre aparecía en las filas 4 y 16 del Excel, con enlaces distintos (/2026/descuentoprodselecc y /descuentosenprod). Juan decidió el 18 de septiembre de 2026 que la herramienta ofrece solo el de la ruta con año, /2026/descuentoprodselecc. El de /descuentosenprod no se borra de Squarespace: se redirige al de 2026 si dice lo mismo, o se deja publicado con aviso de vigencia si no."
     },
     {
       "ids": [
@@ -69,8 +68,7 @@
         "enlace": "https://promos.rappi.com/colombia/2026/descuentoprodselecc",
         "vigenciaInicio": "2026-01-01",
         "vigenciaFin": "2026-12-31",
-        "filaExcel": 4,
-        "advertencia": "Ojo: en la lista de Legal este T&C aparece dos veces, con enlaces distintos. Confirma con Legal cuál va en tu pieza antes de publicarla."
+        "filaExcel": 4
       },
       {
         "id": "descuento_en_valor",
@@ -182,17 +180,6 @@
         "vigenciaInicio": "2026-01-01",
         "vigenciaFin": "2026-12-31",
         "filaExcel": 15
-      },
-      {
-        "id": "descuento_productos_seleccionados_bis",
-        "nombre": "Descuento en Productos Seleccionados",
-        "beneficio": "Descuento porcentual directo (Precio tachado)",
-        "paraQue": "Respaldo legal para ofertas de \"precio tachado\" en la App. Úsalo cuando negocies descuentos directos en productos específicos para que el usuario vea la rebaja automáticamente en la tienda (sin cupones).",
-        "enlace": "https://promos.rappi.com/colombia/descuentosenprod",
-        "vigenciaInicio": "2026-01-01",
-        "vigenciaFin": "2026-12-31",
-        "filaExcel": 16,
-        "advertencia": "Ojo: en la lista de Legal este T&C aparece dos veces, con enlaces distintos. Confirma con Legal cuál va en tu pieza antes de publicarla."
       },
       {
         "id": "codigo_descuento_eventos_externos",

@@ -121,18 +121,35 @@ function textoProductosTravel(entrada, pais) {
   );
 }
 
-/** ORACION: nacionales, internacionales o los dos. Vacio cuando son los dos. */
+/**
+ * ORACION: nacionales, internacionales o los dos. Vacio cuando son los dos.
+ *
+ * La frase se parte segun las categorias marcadas (decision 43 de Legal): una
+ * campana de hoteles que habla de vuelos confunde sobre que compra aplica.
+ * Solo se acorta cuando no hay duda: "solo vuelos" es la categoria Vuelos y
+ * nada mas, y "sin vuelos" es que no haya ninguna categoria aerea. Un Paquete
+ * lleva vuelo y alojamiento, asi que cae en la frase completa, que es la
+ * aprobada y la que nombra las dos cosas.
+ */
 function textoAmbitoTravel(entrada, pais) {
   var paisLegal = (pais && pais.pais_legal) || '';
+  if (entrada.ambito !== 'nacional' && entrada.ambito !== 'internacional') return '';
+
+  var marcadas = categoriasDe(entrada);
+  var soloVuelos = marcadas.length === 1 && marcadas[0] === 'Vuelos';
+  var sinVuelos = marcadas.length > 0 && !hayAereasDeTravel(entrada);
+
   if (entrada.ambito === 'nacional') {
+    if (soloVuelos) return 'Aplica únicamente para vuelos con origen y destino en ' + paisLegal + '.';
+    if (sinVuelos) return 'Aplica únicamente para servicios que se presten en ' + paisLegal + '.';
     return 'Aplica únicamente para vuelos con origen y destino en ' + paisLegal +
       ' y para servicios que se presten en ' + paisLegal + '.';
   }
-  if (entrada.ambito === 'internacional') {
-    return 'Aplica únicamente para vuelos con origen o destino fuera de ' + paisLegal +
-      ' y para servicios que se presten fuera de ' + paisLegal + '.';
-  }
-  return '';
+
+  if (soloVuelos) return 'Aplica únicamente para vuelos con origen o destino fuera de ' + paisLegal + '.';
+  if (sinVuelos) return 'Aplica únicamente para servicios que se presten fuera de ' + paisLegal + '.';
+  return 'Aplica únicamente para vuelos con origen o destino fuera de ' + paisLegal +
+    ' y para servicios que se presten fuera de ' + paisLegal + '.';
 }
 
 /** ORACION: los destinos, si la campana los limita. */
@@ -258,7 +275,10 @@ function textoBaseCalculoTravel(entrada) {
     ? 'sin incluir cargos por servicio ni otros servicios adicionales'
     : 'sin incluir cargos por servicio, asistencias o seguros de viaje ni otros servicios adicionales';
 
-  return 'El Beneficio aplica únicamente sobre el valor pagado con dinero real por la tarifa o la reserva de los Productos Participantes, ' + excluidos + '.';
+  return 'El Beneficio aplica únicamente sobre el valor pagado con dinero real por la tarifa o la reserva de los ' +
+    'Productos Participantes, antes de impuestos, tasas y contribuciones, ' + excluidos + '. ' +
+    'No hacen parte de la base de cálculo el IVA, las tasas aeroportuarias ni ningún otro impuesto, tasa o ' +
+    'contribución incluido en el precio total.';
 }
 
 /**
@@ -279,9 +299,9 @@ function textoEjemploTopeTravel(entrada, pais) {
   // Cifras sin letras: es un ejemplo para leer rapido, no una clausula.
   return (
     'Por ejemplo, para recibir el máximo de ' + formatearMiles(tope, pais.separador_miles) +
-    ' Créditos en una orden, el valor pagado debe ser de al menos ' +
+    ' Créditos en una orden, el valor que cuenta para el cálculo del Beneficio debe ser de al menos ' +
     pais.moneda_simbolo + formatearMiles(umbral, pais.separador_miles) +
-    '; si pagas menos, recibirás el ' + porcentaje + '% de lo pagado.'
+    '; si es menor, recibirás el ' + porcentaje + '% de ese valor.'
   );
 }
 
@@ -354,6 +374,28 @@ function textoCargaTravel(entrada) {
       ' días hábiles siguientes a la finalización de la Campaña, siempre que tu reserva esté confirmada';
   }
   return '';
+}
+
+/*
+ * La verificacion de elegibilidad de Travel, segun cuando llegan los Creditos.
+ *
+ * Mismo caso que en delivery (decision 18): con carga al confirmarse la
+ * reserva, "verificar antes de acreditar" contradice a "acreditar al
+ * confirmarse", y la contradiccion impresa se lee a favor del usuario.
+ */
+var TEXTO_VERIFICACION_TRAVEL_ANTES =
+  'Rappi Travel se reserva el derecho de verificar la elegibilidad de cada orden antes de acreditar el Beneficio; ' +
+  'si la verificación determina que la orden no cumple las condiciones de la Campaña, los Créditos no serán ' +
+  'acreditados y se te informará a través de la Plataforma Rappi.';
+
+var TEXTO_VERIFICACION_TRAVEL_DESPUES =
+  'Rappi Travel podrá verificar la elegibilidad de cada orden después de acreditar el Beneficio; ' +
+  'si la verificación determina que la orden no cumple las condiciones de la Campaña, Rappi Travel podrá ' +
+  'descontar o revocar los Créditos acreditados y te lo informará a través de la Plataforma Rappi.';
+
+/** ORACION: como se verifica la elegibilidad de la orden. */
+function textoVerificacionTravel(entrada) {
+  return entrada.carga === 'al_confirmarse' ? TEXTO_VERIFICACION_TRAVEL_DESPUES : TEXTO_VERIFICACION_TRAVEL_ANTES;
 }
 
 /** ORACION: donde se pueden gastar los Creditos. */
@@ -485,6 +527,7 @@ function calcularDerivadosTravel(entrada, pais) {
   valores.TEXTO_LIMITE_CAMPANA_TRAVEL = textoLimiteCampanaTravel(datos, p);
   valores.TEXTO_CONTEO_IDA_REGRESO_TRAVEL = textoConteoIdaRegresoTravel(datos);
   valores.TEXTO_CARGA_TRAVEL = textoCargaTravel(datos);
+  valores.TEXTO_VERIFICACION_TRAVEL = textoVerificacionTravel(datos);
   valores.TEXTO_REDENCION_TRAVEL = textoRedencionTravel(datos, p);
   valores.TEXTO_DESCUENTO_TRAVEL = textoDescuentoTravel(datos);
   valores.TEXTO_SEGUN_PRODUCTO_TRAVEL = datos.formaDescuento === 'variable' ? ', según el Producto Participante' : '';

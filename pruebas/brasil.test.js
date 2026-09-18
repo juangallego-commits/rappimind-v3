@@ -185,3 +185,49 @@ test('un número negativo no tumba la vista previa', () => {
   assert.deepStrictEqual(revision.errores.map((e) => e.campo), ['tope']);
   assert.strictEqual(revision.errores[0].mensaje, 'El tope tiene que ser mayor que cero.');
 });
+
+/**
+ * Los valores legales de Brasil están escritos en portugués.
+ *
+ * La fila de Brasil tenía cinco valores en español ("a República Federativa
+ * del Brasil", "el PROCON y la Secretaría Nacional del Consumidor"). Hoy
+ * promocao_br no imprime ninguno de los cinco, así que ningún documento salió
+ * mal; pero el primer bloque en portugués que los use los sacaría con errores
+ * a la vista. Legal los corrigió en la respuesta al encargo 01.
+ */
+test('los valores legales de Brasil no traen palabras en español', () => {
+  const enPortugues = {
+    pais_legal: 'a República Federativa do Brasil',
+    ley_aplicable: 'as leis da República Federativa do Brasil',
+    jurisdiccion: 'o Foro Central da Comarca da Capital do Estado de São Paulo',
+    entidad_vigilancia: 'o PROCON e a Secretaria Nacional do Consumidor (SENACON)',
+    autoridad_datos: 'a Agência Nacional de Proteção de Dados (ANPD)',
+    politica_privacidad: 'o Aviso de Privacidade e Políticas de uso das Informação utilizadas pela Rappi',
+  };
+  for (const llave of Object.keys(enPortugues)) {
+    assert.strictEqual(BR[llave], enPortugues[llave], 'BR.' + llave);
+  }
+
+  // Las palabras que delatan que alguien escribió el valor desde Colombia.
+  // Solo las que no existen en portugués: "Consumidor" o "Nacional" se escriben
+  // igual en los dos idiomas y no prueban nada.
+  const sospechosas = /\b(del|las|leyes|y|Secretaría|Federativa del)\b/;
+  for (const llave of Object.keys(enPortugues)) {
+    assert.ok(!sospechosas.test(BR[llave]), 'BR.' + llave + ' tiene una palabra en español: ' + BR[llave]);
+  }
+  // Y el nombre viejo de la autoridad de datos, que la MP 1.317/2025 cambió de
+  // Autoridade a Agência sin tocar la sigla.
+  assert.ok(BR.autoridad_datos.indexOf('Autoridade') === -1, BR.autoridad_datos);
+});
+
+test('el documento brasileño llama al Usuário "pessoa física" y al Rappi en masculino', () => {
+  // Dos palabras que el mismo documento decía de dos formas: "pessoa humana"
+  // contra "pessoa física", y una sola "a Rappi" entre nueve "o Rappi". Si un
+  // documento usa dos nombres para la misma persona, se abre la discusión de si
+  // son dos categorías distintas.
+  const texto = documento(DESCONTO);
+  assert.ok(texto.indexOf('a pessoa física inscrita na plataforma Rappi') !== -1);
+  assert.ok(texto.indexOf('pessoa humana') === -1, 'volvió "pessoa humana"');
+  assert.ok(texto.indexOf('não sendo o Rappi responsável') !== -1);
+  assert.ok(texto.indexOf('a Rappi responsável') === -1, 'volvió "a Rappi responsável"');
+});

@@ -316,18 +316,33 @@ async function recorrer() {
   revisar('la lista de T&C publicados se lee como buena noticia',
     listaTyc.indexOf('no necesitas crear T&C') !== -1, listaTyc.replace(/\n+/g, ' | ').slice(0, 200));
   const tarjetasTyc = await pagina.evaluate(() => document.querySelectorAll('.opcion').length);
-  revisar('salen los quince T&C generales', tarjetasTyc === 15, String(tarjetasTyc));
+  revisar('salen los catorce T&C generales', tarjetasTyc === 14, String(tarjetasTyc));
 
-  // El repetido: lo que Legal dejó sin resolver se dice antes del enlace.
+  // Lo que Legal dejó sin resolver se dice antes del enlace, no después. Los dos
+  // cupones llegaron del Excel sin descripción y son los que hoy lo prueban: el
+  // "Descuento en Productos Seleccionados" dejó de estar repetido con la
+  // decisión 45 y ya no tiene nada pendiente.
+  await clic('Cupon de descuento - Valor fijo');
+  await pagina.waitForTimeout(400);
+  const conPendiente = await texto();
+  revisar('un T&C con algo pendiente avisa antes de dar el enlace',
+    conPendiente.indexOf('Antes de usar este enlace, confirma con Legal') !== -1 &&
+    conPendiente.indexOf('Antes de usar este enlace, confirma con Legal') < conPendiente.indexOf('Enlace para la pieza'),
+    conPendiente.replace(/\n+/g, ' | ').slice(0, 400));
+  revisar('con algo pendiente no dice "listo, tal cual"',
+    conPendiente.indexOf('ese es el enlace que va, tal cual') === -1);
+
+  await clic('Ver los otros T&C publicados');
+  await pagina.waitForTimeout(400);
+
+  // El que estuvo repetido: ahora sale uno solo y sin nada que confirmar.
   await clic('Descuento en Productos Seleccionados');
   await pagina.waitForTimeout(400);
-  const repetido = await texto();
-  revisar('el T&C repetido avisa antes de dar el enlace',
-    repetido.indexOf('Antes de usar este enlace, confirma con Legal') !== -1 &&
-    repetido.indexOf('Antes de usar este enlace, confirma con Legal') < repetido.indexOf('Enlace para la pieza'),
-    repetido.replace(/\n+/g, ' | ').slice(0, 400));
-  revisar('con algo pendiente no dice "listo, tal cual"',
-    repetido.indexOf('ese es el enlace que va, tal cual') === -1);
+  const yaNoRepetido = await texto();
+  revisar('el T&C que estuvo repetido ya no pide confirmar cuál va',
+    yaNoRepetido.indexOf('Antes de usar este enlace, confirma con Legal') === -1 &&
+    yaNoRepetido.indexOf('ese es el enlace que va, tal cual') !== -1,
+    yaNoRepetido.replace(/\n+/g, ' | ').slice(0, 400));
 
   await clic('Ver los otros T&C publicados');
   await pagina.waitForTimeout(400);

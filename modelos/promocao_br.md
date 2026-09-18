@@ -7,7 +7,7 @@
 # TERMOS E CONDIÇÕES
 ## {{NOMBRE_CAMPANA_MAYUS}}
 Por meio desta oferta, divulgamos os Termos e Condições da campanha “{{NOMBRE_CAMPANA}}”, na qual os usuários que realizarem compras[[?TEXTO_MINIMO_APERTURA]]{{TEXTO_MINIMO_APERTURA}}[[/?]] nas lojas do Parceiro **{{PARCEIRO}}**, na plataforma Rappi, em período específico, {{TEXTO_BENEFICIO_APERTURA}}.
-“Usuário” para fins deste T&C significa a pessoa humana inscrita na plataforma Rappi.
+“Usuário” para fins deste T&C significa a pessoa física inscrita na plataforma Rappi.
 § REGRAS PRINCIPAIS DA PROMOÇÃO
 • Esta campanha aplica-se apenas aos usuários cadastrados na plataforma Rappi que efetuarem a compra no período de **{{FECHA_INICIO}}** às **{{HORA_INICIO}}** até **{{FECHA_FIN}}** às **{{HORA_FIN}}**;
 • {{TEXTO_BENEFICIO_REGRA}};
