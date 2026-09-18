@@ -31,6 +31,8 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var listaY = moduloFechas.listaY;
   var separarPorComas = moduloFechas.separarPorComas;
 
+  var terminoDeDias = require('./texto.js').terminoDeDias;
+
   var moduloEsquemas = require('./esquemas.js');
   var categoriasDe = moduloEsquemas.categoriasDe;
   var hayAereasDeTravel = moduloEsquemas.hayAereasDeTravel;
@@ -209,9 +211,12 @@ function vinetasDeCondicionesTravel(entrada, pais) {
   }
 
   if (tieneValorTravel(entrada.anticipacionDias)) {
+    // Con un solo dia salia "al menos un (1) dias calendario de anticipacion".
+    var diasAnticipacion = Number(entrada.anticipacionDias);
     vinetas.push(
-      'La compra debe hacerse con al menos ' + letrasYCifra(entrada.anticipacionDias) +
-      ' días calendario de anticipación a la fecha de salida.'
+      'La compra debe hacerse con al menos ' + letrasYCifra(diasAnticipacion) +
+      (diasAnticipacion === 1 ? ' día calendario' : ' días calendario') +
+      ' de anticipación a la fecha de salida.'
     );
   }
 
@@ -233,14 +238,27 @@ function vinetasDeCondicionesTravel(entrada, pais) {
   }
 
   if (tieneValorTravel(entrada.nochesMinimas)) {
-    vinetas.push('La reserva de hotel debe ser de ' + letrasYCifraFemenino(entrada.nochesMinimas) + ' noches o más.');
+    // Con una sola noche salia "debe ser de una (1) noches o mas".
+    var noches = Number(entrada.nochesMinimas);
+    vinetas.push('La reserva de hotel debe ser de ' + letrasYCifraFemenino(noches) +
+      (noches === 1 ? ' noche' : ' noches') + ' o más.');
   }
 
   if (tieneValorTravel(entrada.diasAlquilerMinimo) && tieneValorTravel(entrada.diasAlquilerMaximo)) {
-    vinetas.push(
-      'El alquiler de auto debe ser de entre ' + letrasYCifra(entrada.diasAlquilerMinimo) +
-      ' y ' + letrasYCifra(entrada.diasAlquilerMaximo) + ' días.'
-    );
+    // El minimo y el maximo pueden ser el mismo numero: la validacion solo
+    // impide que el minimo sea mayor. Con los dos en 1 salia "entre un (1) y
+    // un (1) dias", que repite el numero y ademas lo deja en plural.
+    var alquilerMinimo = Number(entrada.diasAlquilerMinimo);
+    var alquilerMaximo = Number(entrada.diasAlquilerMaximo);
+    if (alquilerMinimo === alquilerMaximo) {
+      vinetas.push('El alquiler de auto debe ser de ' + letrasYCifra(alquilerMinimo) +
+        (alquilerMinimo === 1 ? ' día.' : ' días.'));
+    } else {
+      vinetas.push(
+        'El alquiler de auto debe ser de entre ' + letrasYCifra(alquilerMinimo) +
+        ' y ' + letrasYCifra(alquilerMaximo) + ' días.'
+      );
+    }
   }
 
   if (!entrada.sinCompraMinima && tieneValorTravel(entrada.compraMinima)) {
@@ -319,6 +337,8 @@ function textoLimiteOrdenesTravel(entrada) {
 function textoAgotamientoVigenciaTravel(entrada, pais) {
   if (entrada.tipo === 'descuento_travel') {
     if (entrada.sinUnidades || !tieneValorTravel(entrada.unidades)) return '';
+    // Con una sola unidad salia "hasta agotar las una (1) unidades con descuento".
+    if (Number(entrada.unidades) === 1) return 'la única unidad con descuento';
     return 'las ' + letrasYCifraFemenino(entrada.unidades) + ' unidades con descuento';
   }
 
@@ -332,6 +352,11 @@ function textoAgotamientoVigenciaTravel(entrada, pais) {
 function textoLimiteCampanaTravel(entrada, pais) {
   if (entrada.tipo === 'descuento_travel') {
     if (entrada.sinUnidades || !tieneValorTravel(entrada.unidades)) return '';
+    // Con una sola unidad salia "cuenta con una (1) unidades ... Una vez agotadas".
+    if (Number(entrada.unidades) === 1) {
+      return 'La Campaña cuenta con una (1) unidad con descuento. Una vez agotada, la Campaña finalizará ' +
+        'automáticamente, aunque no haya terminado su vigencia.';
+    }
     return 'La Campaña cuenta con ' + letrasYCifraFemenino(entrada.unidades) +
       ' unidades con descuento. Una vez agotadas, la Campaña finalizará automáticamente, aunque no haya terminado su vigencia.';
   }
@@ -365,13 +390,19 @@ function textoCargaTravel(entrada) {
   if (entrada.carga === 'al_confirmarse') return 'una vez se confirme la emisión de tu reserva';
   if (!tieneValorTravel(entrada.diasCarga)) return '';
 
+  // Con un solo dia salia "dentro de los un (1) dias calendario siguientes".
+  var diasCarga = Number(entrada.diasCarga);
+  var variosDiasCarga = diasCarga !== 1;
+  var articuloCarga = variosDiasCarga ? 'los ' : '';
   if (entrada.carga === 'dias_calendario') {
-    return 'dentro de los ' + letrasYCifra(entrada.diasCarga) +
-      ' días calendario siguientes a la finalización de la Campaña, siempre que tu reserva esté confirmada';
+    return 'dentro de ' + articuloCarga + letrasYCifra(diasCarga) +
+      (variosDiasCarga ? ' días calendario siguientes' : ' día calendario siguiente') +
+      ' a la finalización de la Campaña, siempre que tu reserva esté confirmada';
   }
   if (entrada.carga === 'dias_habiles') {
-    return 'dentro de los ' + letrasYCifra(entrada.diasCarga) +
-      ' días hábiles siguientes a la finalización de la Campaña, siempre que tu reserva esté confirmada';
+    return 'dentro de ' + articuloCarga + letrasYCifra(diasCarga) +
+      (variosDiasCarga ? ' días hábiles siguientes' : ' día hábil siguiente') +
+      ' a la finalización de la Campaña, siempre que tu reserva esté confirmada';
   }
   return '';
 }
@@ -442,8 +473,11 @@ function textoDescuentoTravel(entrada) {
 function textoMaximoDisponibleTravel(entrada) {
   if (entrada.formaDescuento !== 'variable') return '';
   if (!tieneValorTravel(entrada.productosConMaximo) || !tieneValorTravel(entrada.porcentaje)) return '';
+  // "un (1)" solo va delante de un sustantivo. Aqui la cifra va sola, asi que
+  // con un producto se escribe "uno (1) de los Productos Participantes".
+  var conMaximo = Number(entrada.productosConMaximo);
   return 'El descuento máximo del **' + porcentajeEnLetras(entrada.porcentaje) + '** aplica a ' +
-    letrasYCifra(entrada.productosConMaximo) + ' de los Productos Participantes.';
+    (conMaximo === 1 ? 'uno (1)' : letrasYCifra(conMaximo)) + ' de los Productos Participantes.';
 }
 
 /** FRAGMENTO: donde ve el usuario el descuento. */
@@ -467,8 +501,12 @@ function textoAsistenciaTravel(entrada) {
 /** FRAGMENTO: la vigencia de los Creditos. En Travel siempre es por dias. */
 function textoVigenciaCreditosTravel(entrada, pais) {
   if (!tieneValorTravel(entrada.diasVigencia)) return '';
-  return 'tendrán una vigencia de ' + letrasYCifra(entrada.diasVigencia) + ' ' +
-    ((pais && pais.termino_dias) || 'días calendario') + ' contados a partir de su carga';
+  // Con un solo dia salia "un (1) dias calendario contados a partir de su carga".
+  var diasVigenciaTravel = Number(entrada.diasVigencia);
+  var conTermino = pais && pais.termino_dias ? pais : { termino_dias: 'días calendario' };
+  return 'tendrán una vigencia de ' + letrasYCifra(diasVigenciaTravel) + ' ' +
+    terminoDeDias(conTermino, diasVigenciaTravel) + (diasVigenciaTravel === 1 ? ' contado' : ' contados') +
+    ' a partir de su carga';
 }
 
 /**

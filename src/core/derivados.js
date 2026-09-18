@@ -37,7 +37,9 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var calcularDerivadosBr = require('./derivados_br.js').calcularDerivadosBr;
   var calcularDerivadosEta = require('./derivados_eta.js').calcularDerivadosEta;
   var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
-  var tieneValor = require('./texto.js').tieneValor;
+  var moduloTextoDerivados = require('./texto.js');
+  var tieneValor = moduloTextoDerivados.tieneValor;
+  var terminoDeDias = moduloTextoDerivados.terminoDeDias;
 }
 
 // --- Textos fijos de Legal -------------------------------------------------
@@ -156,10 +158,12 @@ function textoSegmento(entrada, pais) {
   if (entrada.segmento === 'reactivados') {
     var dias = Number(entrada.diasSinCompra);
     if (!dias) return '';
+    // Con un solo dia salia "durante los un (1) dias calendario anteriores".
+    var variosDias = dias !== 1;
     return (
       'Pueden participar únicamente los Usuarios/Consumidores mayores de edad que no hayan realizado pedidos ' +
-      'en la Plataforma Rappi durante los ' + letrasYCifra(dias) + ' ' + ((pais && pais.termino_dias) || '') +
-      ' anteriores al inicio de la Campaña.'
+      'en la Plataforma Rappi durante ' + (variosDias ? 'los ' : '') + letrasYCifra(dias) + ' ' +
+      terminoDeDias(pais, dias) + (variosDias ? ' anteriores' : ' anterior') + ' al inicio de la Campaña.'
     );
   }
   return TEXTO_SEGMENTO_POR_OPCION[entrada.segmento] || '';
@@ -212,7 +216,9 @@ function textoVigenciaCreditos(entrada, pais) {
   if (entrada.vigencia === 'dias') {
     var dias = Number(entrada.diasVigencia);
     if (!dias) return '';
-    return 'tendrán una vigencia de ' + letrasYCifra(dias) + ' ' + pais.termino_dias + ' contados a partir de su carga';
+    // Con un solo dia salia "un (1) dias calendario contados a partir de su carga".
+    return 'tendrán una vigencia de ' + letrasYCifra(dias) + ' ' + terminoDeDias(pais, dias) +
+      (dias === 1 ? ' contado' : ' contados') + ' a partir de su carga';
   }
   if (entrada.vigencia === 'fecha' && entrada.fechaFinRedencion) {
     return 'podrán redimirse hasta las 11:59 p. m. del ' + formatearFecha(entrada.fechaFinRedencion);

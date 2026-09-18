@@ -89,7 +89,12 @@ var CAMPOS_COMUNES = [
       { valor: 'rappicard', etiqueta: 'Solo RappiCard' },
     ],
   },
-  { id: 'compraMinima', etiqueta: 'Compra mínima', tipo: 'numero', paso: 'participantes', obligatorio: false },
+  // minimo 1 y no 0: el campo es opcional, asi que "sin minimo" se dice
+  // dejandolo en blanco. Con un 0 escrito, el documento salia diciendo que el
+  // pedido "debera ser igual o superior a cero pesos M/Cte. ($0)", que no
+  // condiciona nada y se publica igual. El mensaje ya estaba escrito en
+  // preguntas.js (errores.cero) y no lo disparaba nadie.
+  { id: 'compraMinima', etiqueta: 'Compra mínima', tipo: 'numero', minimo: 1, paso: 'participantes', obligatorio: false },
   // La pieza publicitaria. Estas tres no cambian una coma del T&C: deciden la
   // leyenda que va dentro del arte, que hasta ahora el comercial le pedia a
   // Legal por correo. Por eso van en su propio paso, al final.
@@ -326,6 +331,9 @@ var CAMPOS_CARRERA = [
     id: 'creditosPremio',
     etiqueta: 'Créditos del premio',
     tipo: 'numero',
+    // Sin minimo, un 0 generaba "Cada ganador recibira cero (0) Creditos":
+    // un concurso publicado sin premio.
+    minimo: 1,
     paso: 'premio',
     visible: function (entrada) { return entrada.tipoPremio === 'creditos'; },
     obligatorio: function (entrada) { return entrada.tipoPremio === 'creditos'; },
@@ -416,7 +424,7 @@ var CAMPOS_POR_TIENDA = [
     obligatorio: function (tienda) { return !tienda.nacional; },
   },
   { id: 'nacional', etiqueta: 'Cobertura nacional', tipo: 'casilla', obligatorio: false },
-  { id: 'presupuesto', etiqueta: 'Presupuesto', tipo: 'numero', obligatorio: true },
+  { id: 'presupuesto', etiqueta: 'Presupuesto', tipo: 'numero', minimo: 1, obligatorio: true },
 ];
 
 /** Inserta un campo justo despues de otro, por identificador. */
@@ -649,6 +657,7 @@ var CAMPOS_TRAVEL_COMUNES = [
     id: 'compraMinima',
     etiqueta: 'Compra mínima',
     tipo: 'numero',
+    minimo: 1,
     paso: 'condiciones_travel',
     visible: function (entrada) { return !entrada.sinCompraMinima; },
     obligatorio: function (entrada) { return !entrada.sinCompraMinima; },
@@ -735,6 +744,10 @@ var CAMPOS_CASHBACK_TRAVEL = [
     id: 'tope',
     etiqueta: 'Tope por orden',
     tipo: 'numero',
+    // El cashback de delivery revisa este numero desde el principio; Travel se
+    // construyo despues y se quedo sin la revision. Con un 0 el documento decia
+    // "sin que puedas recibir mas de cero (0) Creditos por orden".
+    minimo: 1,
     paso: 'beneficio',
     visible: function (entrada) { return entrada.formaBeneficio === 'porcentaje' && !entrada.sinTope; },
     obligatorio: function (entrada) { return entrada.formaBeneficio === 'porcentaje' && !entrada.sinTope; },
@@ -751,12 +764,13 @@ var CAMPOS_CASHBACK_TRAVEL = [
     id: 'montoFijo',
     etiqueta: 'Créditos por orden',
     tipo: 'numero',
+    minimo: 1,
     paso: 'beneficio',
     visible: function (entrada) { return entrada.formaBeneficio === 'monto_fijo'; },
     obligatorio: function (entrada) { return entrada.formaBeneficio === 'monto_fijo'; },
   },
   { id: 'limitePorUsuario', etiqueta: 'Órdenes con beneficio por persona', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: true },
-  { id: 'presupuesto', etiqueta: 'Presupuesto total', tipo: 'numero', paso: 'beneficio', obligatorio: true },
+  { id: 'presupuesto', etiqueta: 'Presupuesto total', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: true },
   {
     id: 'maxOrdenes',
     etiqueta: 'Máximo de órdenes de la campaña',
@@ -1004,7 +1018,10 @@ var CAMPOS_CASHBACK_ETA = [
   { id: 'horaFin', etiqueta: 'Hora de fin', tipo: 'hora', paso: 'vigencia', obligatorio: true },
 
   { id: 'etaMinutos', etiqueta: 'Minutos del ETA', tipo: 'numero', minimo: 1, maximo: 240, paso: 'beneficio', obligatorio: true },
-  { id: 'porcentaje', etiqueta: 'Porcentaje que se devuelve', tipo: 'numero', paso: 'beneficio', obligatorio: true },
+  // Los mismos limites del cashback de delivery. Sin ellos el ETA aceptaba 500
+  // y titulaba el documento "15 MINUTOS O 500% CASHBACK", y aceptaba 0 y
+  // titulaba "15 MINUTOS O CASHBACK", sin porcentaje ninguno.
+  { id: 'porcentaje', etiqueta: 'Porcentaje que se devuelve', tipo: 'numero', minimo: 1, maximo: 100, paso: 'beneficio', obligatorio: true },
   { id: 'tope', etiqueta: 'Tope por orden', tipo: 'numero', paso: 'beneficio', obligatorio: true },
   { id: 'presupuesto', etiqueta: 'Presupuesto total', tipo: 'numero', paso: 'beneficio', obligatorio: true },
   { id: 'maxPedidos', etiqueta: 'Máximo de órdenes por persona', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: sinLimiteNoLoPide },

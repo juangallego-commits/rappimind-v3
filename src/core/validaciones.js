@@ -404,6 +404,26 @@ function validarTiendas(entrada, pais, esquema) {
       if (!resolverAtributo(campo.obligatorio, tienda, false)) continue;
       if (estaVacio(tienda[campo.id])) {
         errores.push(error('tiendas', 'Tienda ' + fila + ': falta ' + campo.etiqueta.toLowerCase() + '.'));
+        continue;
+      }
+      /*
+       * Los numeros de la tienda pasaban sin revisar. Un presupuesto en cero no
+       * esta vacio (estaVacio(0) es false), asi que llegaba hasta el documento y
+       * la fila de esa tienda salia "Beer Station (Bogota): cero (0) Creditos".
+       * La pantalla si lo marcaba en rojo, porque alli 0 se lee como falta de
+       * dato: la pantalla y el motor decian cosas distintas del mismo numero.
+       */
+      if (campo.tipo === 'numero') {
+        var numeroDeTienda = Number(tienda[campo.id]);
+        if (isNaN(numeroDeTienda)) {
+          errores.push(error('tiendas', 'Tienda ' + fila + ': ' + campo.etiqueta.toLowerCase() + ' tiene que ser un número.'));
+        } else if (campo.minimo !== undefined && numeroDeTienda < campo.minimo) {
+          errores.push(error('tiendas', 'Tienda ' + fila + ': ' + campo.etiqueta.toLowerCase() +
+            ' tiene que ser al menos ' + campo.minimo + '.'));
+        } else if (campo.maximo !== undefined && numeroDeTienda > campo.maximo) {
+          errores.push(error('tiendas', 'Tienda ' + fila + ': ' + campo.etiqueta.toLowerCase() +
+            ' no puede pasar de ' + campo.maximo + '.'));
+        }
       }
     }
 
@@ -710,7 +730,11 @@ function validarSolicitud(entrada, pais, contexto) {
 
   // El cashback por ETA tiene los mismos dos numeros y el mismo riesgo: un tope
   // mayor que el presupuesto deja que la primera orden se lleve la campana.
-  if (entrada.tipo === 'cashback' || entrada.tipo === 'cashback_eta') {
+  // El Cashback Multitienda tiene el mismo tope por pedido, y hasta ahora nadie
+  // revisaba que fuera mayor que cero: con un 0 el documento salia prometiendo
+  // un maximo de cero Creditos por pedido. No tiene presupuesto de campana
+  // (cada tienda pone el suyo), asi que el cruce contra el presupuesto no aplica.
+  if (entrada.tipo === 'cashback' || entrada.tipo === 'cashback_eta' || entrada.tipo === 'cashback_day') {
     errores = errores.concat(validarCashback(entrada, esquema.id, idioma));
   }
   if (esquema.esPorEta) {

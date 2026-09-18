@@ -68,6 +68,40 @@ function textoPlano(texto) {
   return normalizarTexto(texto).replace(/\*\*/g, '');
 }
 
+/**
+ * El termino de dias del pais, en singular cuando la cantidad es uno.
+ *
+ * La columna termino_dias de la pestana Paises guarda siempre el plural
+ * ("dias calendario", "dias naturales", "dias corridos", "dias corridos" en
+ * Brasil), porque es como aparece en las clausulas. Cuando la respuesta del
+ * comercial es 1, ese plural sale pegado a la cifra y el documento publica
+ * "una vigencia de un (1) dias calendario".
+ *
+ * Paso de verdad: la vigencia de los Creditos admite 1 dia (la pregunta acepta
+ * de 1 a 365) y ningun caso dorado usaba ese valor, asi que ninguna prueba lo
+ * veia. La red de seguridad del motor tampoco, porque la frase no tiene ningun
+ * signo roto: solo esta mal escrita.
+ *
+ * No se reescribe el texto de Legal: se pone en singular la misma palabra que
+ * Legal escribio. La regla es mecanica, sobre cada palabra del termino: lo que
+ * termina en "es" pierde el "es" (naturales a natural), lo que termina en "s"
+ * pierde la "s" (dias a dia, corridos a corrido) y lo demas se queda igual
+ * (calendario). Si alguien escribe otro termino en el Sheet, lo peor que pasa
+ * es que se quede como estaba.
+ */
+function terminoDeDias(pais, cantidad) {
+  var termino = (pais && pais.termino_dias) || '';
+  if (Number(cantidad) !== 1) return termino;
+  return termino
+    .split(' ')
+    .map(function (palabra) {
+      if (/es$/.test(palabra)) return palabra.slice(0, -2);
+      if (/s$/.test(palabra)) return palabra.slice(0, -1);
+      return palabra;
+    })
+    .join(' ');
+}
+
 /** true si el texto trae algun retorno de carro. */
 function tieneRetornoDeCarro(texto) {
   return String(texto === null || texto === undefined ? '' : texto).indexOf('\r') !== -1;
@@ -81,6 +115,7 @@ if (typeof module !== 'undefined') {
     recortarFinalDeLinea: recortarFinalDeLinea,
     normalizarParaComparar: normalizarParaComparar,
     textoPlano: textoPlano,
+    terminoDeDias: terminoDeDias,
     tieneRetornoDeCarro: tieneRetornoDeCarro,
   };
 }

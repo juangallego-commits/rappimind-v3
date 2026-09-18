@@ -2168,7 +2168,9 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var calcularDerivadosBr = require('./derivados_br.js').calcularDerivadosBr;
   var calcularDerivadosEta = require('./derivados_eta.js').calcularDerivadosEta;
   var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
-  var tieneValor = require('./texto.js').tieneValor;
+  var moduloTextoDerivados = require('./texto.js');
+  var tieneValor = moduloTextoDerivados.tieneValor;
+  var terminoDeDias = moduloTextoDerivados.terminoDeDias;
 }
 
 // --- Textos fijos de Legal -------------------------------------------------
@@ -2287,10 +2289,12 @@ function textoSegmento(entrada, pais) {
   if (entrada.segmento === 'reactivados') {
     var dias = Number(entrada.diasSinCompra);
     if (!dias) return '';
+    // Con un solo dia salia "durante los un (1) dias calendario anteriores".
+    var variosDias = dias !== 1;
     return (
       'Pueden participar únicamente los Usuarios/Consumidores mayores de edad que no hayan realizado pedidos ' +
-      'en la Plataforma Rappi durante los ' + letrasYCifra(dias) + ' ' + ((pais && pais.termino_dias) || '') +
-      ' anteriores al inicio de la Campaña.'
+      'en la Plataforma Rappi durante ' + (variosDias ? 'los ' : '') + letrasYCifra(dias) + ' ' +
+      terminoDeDias(pais, dias) + (variosDias ? ' anteriores' : ' anterior') + ' al inicio de la Campaña.'
     );
   }
   return TEXTO_SEGMENTO_POR_OPCION[entrada.segmento] || '';
@@ -2343,7 +2347,9 @@ function textoVigenciaCreditos(entrada, pais) {
   if (entrada.vigencia === 'dias') {
     var dias = Number(entrada.diasVigencia);
     if (!dias) return '';
-    return 'tendrán una vigencia de ' + letrasYCifra(dias) + ' ' + pais.termino_dias + ' contados a partir de su carga';
+    // Con un solo dia salia "un (1) dias calendario contados a partir de su carga".
+    return 'tendrán una vigencia de ' + letrasYCifra(dias) + ' ' + terminoDeDias(pais, dias) +
+      (dias === 1 ? ' contado' : ' contados') + ' a partir de su carga';
   }
   if (entrada.vigencia === 'fecha' && entrada.fechaFinRedencion) {
     return 'podrán redimirse hasta las 11:59 p. m. del ' + formatearFecha(entrada.fechaFinRedencion);
@@ -3510,6 +3516,8 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var listaY = moduloFechas.listaY;
   var separarPorComas = moduloFechas.separarPorComas;
 
+  var terminoDeDias = require('./texto.js').terminoDeDias;
+
   var moduloEsquemas = require('./esquemas.js');
   var categoriasDe = moduloEsquemas.categoriasDe;
   var hayAereasDeTravel = moduloEsquemas.hayAereasDeTravel;
@@ -3688,9 +3696,12 @@ function vinetasDeCondicionesTravel(entrada, pais) {
   }
 
   if (tieneValorTravel(entrada.anticipacionDias)) {
+    // Con un solo dia salia "al menos un (1) dias calendario de anticipacion".
+    var diasAnticipacion = Number(entrada.anticipacionDias);
     vinetas.push(
-      'La compra debe hacerse con al menos ' + letrasYCifra(entrada.anticipacionDias) +
-      ' días calendario de anticipación a la fecha de salida.'
+      'La compra debe hacerse con al menos ' + letrasYCifra(diasAnticipacion) +
+      (diasAnticipacion === 1 ? ' día calendario' : ' días calendario') +
+      ' de anticipación a la fecha de salida.'
     );
   }
 
@@ -3712,14 +3723,27 @@ function vinetasDeCondicionesTravel(entrada, pais) {
   }
 
   if (tieneValorTravel(entrada.nochesMinimas)) {
-    vinetas.push('La reserva de hotel debe ser de ' + letrasYCifraFemenino(entrada.nochesMinimas) + ' noches o más.');
+    // Con una sola noche salia "debe ser de una (1) noches o mas".
+    var noches = Number(entrada.nochesMinimas);
+    vinetas.push('La reserva de hotel debe ser de ' + letrasYCifraFemenino(noches) +
+      (noches === 1 ? ' noche' : ' noches') + ' o más.');
   }
 
   if (tieneValorTravel(entrada.diasAlquilerMinimo) && tieneValorTravel(entrada.diasAlquilerMaximo)) {
-    vinetas.push(
-      'El alquiler de auto debe ser de entre ' + letrasYCifra(entrada.diasAlquilerMinimo) +
-      ' y ' + letrasYCifra(entrada.diasAlquilerMaximo) + ' días.'
-    );
+    // El minimo y el maximo pueden ser el mismo numero: la validacion solo
+    // impide que el minimo sea mayor. Con los dos en 1 salia "entre un (1) y
+    // un (1) dias", que repite el numero y ademas lo deja en plural.
+    var alquilerMinimo = Number(entrada.diasAlquilerMinimo);
+    var alquilerMaximo = Number(entrada.diasAlquilerMaximo);
+    if (alquilerMinimo === alquilerMaximo) {
+      vinetas.push('El alquiler de auto debe ser de ' + letrasYCifra(alquilerMinimo) +
+        (alquilerMinimo === 1 ? ' día.' : ' días.'));
+    } else {
+      vinetas.push(
+        'El alquiler de auto debe ser de entre ' + letrasYCifra(alquilerMinimo) +
+        ' y ' + letrasYCifra(alquilerMaximo) + ' días.'
+      );
+    }
   }
 
   if (!entrada.sinCompraMinima && tieneValorTravel(entrada.compraMinima)) {
@@ -3798,6 +3822,8 @@ function textoLimiteOrdenesTravel(entrada) {
 function textoAgotamientoVigenciaTravel(entrada, pais) {
   if (entrada.tipo === 'descuento_travel') {
     if (entrada.sinUnidades || !tieneValorTravel(entrada.unidades)) return '';
+    // Con una sola unidad salia "hasta agotar las una (1) unidades con descuento".
+    if (Number(entrada.unidades) === 1) return 'la única unidad con descuento';
     return 'las ' + letrasYCifraFemenino(entrada.unidades) + ' unidades con descuento';
   }
 
@@ -3811,6 +3837,11 @@ function textoAgotamientoVigenciaTravel(entrada, pais) {
 function textoLimiteCampanaTravel(entrada, pais) {
   if (entrada.tipo === 'descuento_travel') {
     if (entrada.sinUnidades || !tieneValorTravel(entrada.unidades)) return '';
+    // Con una sola unidad salia "cuenta con una (1) unidades ... Una vez agotadas".
+    if (Number(entrada.unidades) === 1) {
+      return 'La Campaña cuenta con una (1) unidad con descuento. Una vez agotada, la Campaña finalizará ' +
+        'automáticamente, aunque no haya terminado su vigencia.';
+    }
     return 'La Campaña cuenta con ' + letrasYCifraFemenino(entrada.unidades) +
       ' unidades con descuento. Una vez agotadas, la Campaña finalizará automáticamente, aunque no haya terminado su vigencia.';
   }
@@ -3844,13 +3875,19 @@ function textoCargaTravel(entrada) {
   if (entrada.carga === 'al_confirmarse') return 'una vez se confirme la emisión de tu reserva';
   if (!tieneValorTravel(entrada.diasCarga)) return '';
 
+  // Con un solo dia salia "dentro de los un (1) dias calendario siguientes".
+  var diasCarga = Number(entrada.diasCarga);
+  var variosDiasCarga = diasCarga !== 1;
+  var articuloCarga = variosDiasCarga ? 'los ' : '';
   if (entrada.carga === 'dias_calendario') {
-    return 'dentro de los ' + letrasYCifra(entrada.diasCarga) +
-      ' días calendario siguientes a la finalización de la Campaña, siempre que tu reserva esté confirmada';
+    return 'dentro de ' + articuloCarga + letrasYCifra(diasCarga) +
+      (variosDiasCarga ? ' días calendario siguientes' : ' día calendario siguiente') +
+      ' a la finalización de la Campaña, siempre que tu reserva esté confirmada';
   }
   if (entrada.carga === 'dias_habiles') {
-    return 'dentro de los ' + letrasYCifra(entrada.diasCarga) +
-      ' días hábiles siguientes a la finalización de la Campaña, siempre que tu reserva esté confirmada';
+    return 'dentro de ' + articuloCarga + letrasYCifra(diasCarga) +
+      (variosDiasCarga ? ' días hábiles siguientes' : ' día hábil siguiente') +
+      ' a la finalización de la Campaña, siempre que tu reserva esté confirmada';
   }
   return '';
 }
@@ -3921,8 +3958,11 @@ function textoDescuentoTravel(entrada) {
 function textoMaximoDisponibleTravel(entrada) {
   if (entrada.formaDescuento !== 'variable') return '';
   if (!tieneValorTravel(entrada.productosConMaximo) || !tieneValorTravel(entrada.porcentaje)) return '';
+  // "un (1)" solo va delante de un sustantivo. Aqui la cifra va sola, asi que
+  // con un producto se escribe "uno (1) de los Productos Participantes".
+  var conMaximo = Number(entrada.productosConMaximo);
   return 'El descuento máximo del **' + porcentajeEnLetras(entrada.porcentaje) + '** aplica a ' +
-    letrasYCifra(entrada.productosConMaximo) + ' de los Productos Participantes.';
+    (conMaximo === 1 ? 'uno (1)' : letrasYCifra(conMaximo)) + ' de los Productos Participantes.';
 }
 
 /** FRAGMENTO: donde ve el usuario el descuento. */
@@ -3946,8 +3986,12 @@ function textoAsistenciaTravel(entrada) {
 /** FRAGMENTO: la vigencia de los Creditos. En Travel siempre es por dias. */
 function textoVigenciaCreditosTravel(entrada, pais) {
   if (!tieneValorTravel(entrada.diasVigencia)) return '';
-  return 'tendrán una vigencia de ' + letrasYCifra(entrada.diasVigencia) + ' ' +
-    ((pais && pais.termino_dias) || 'días calendario') + ' contados a partir de su carga';
+  // Con un solo dia salia "un (1) dias calendario contados a partir de su carga".
+  var diasVigenciaTravel = Number(entrada.diasVigencia);
+  var conTermino = pais && pais.termino_dias ? pais : { termino_dias: 'días calendario' };
+  return 'tendrán una vigencia de ' + letrasYCifra(diasVigenciaTravel) + ' ' +
+    terminoDeDias(conTermino, diasVigenciaTravel) + (diasVigenciaTravel === 1 ? ' contado' : ' contados') +
+    ' a partir de su carga';
 }
 
 /**
@@ -4338,7 +4382,12 @@ var CAMPOS_COMUNES = [
       { valor: 'rappicard', etiqueta: 'Solo RappiCard' },
     ],
   },
-  { id: 'compraMinima', etiqueta: 'Compra mínima', tipo: 'numero', paso: 'participantes', obligatorio: false },
+  // minimo 1 y no 0: el campo es opcional, asi que "sin minimo" se dice
+  // dejandolo en blanco. Con un 0 escrito, el documento salia diciendo que el
+  // pedido "debera ser igual o superior a cero pesos M/Cte. ($0)", que no
+  // condiciona nada y se publica igual. El mensaje ya estaba escrito en
+  // preguntas.js (errores.cero) y no lo disparaba nadie.
+  { id: 'compraMinima', etiqueta: 'Compra mínima', tipo: 'numero', minimo: 1, paso: 'participantes', obligatorio: false },
   // La pieza publicitaria. Estas tres no cambian una coma del T&C: deciden la
   // leyenda que va dentro del arte, que hasta ahora el comercial le pedia a
   // Legal por correo. Por eso van en su propio paso, al final.
@@ -4575,6 +4624,9 @@ var CAMPOS_CARRERA = [
     id: 'creditosPremio',
     etiqueta: 'Créditos del premio',
     tipo: 'numero',
+    // Sin minimo, un 0 generaba "Cada ganador recibira cero (0) Creditos":
+    // un concurso publicado sin premio.
+    minimo: 1,
     paso: 'premio',
     visible: function (entrada) { return entrada.tipoPremio === 'creditos'; },
     obligatorio: function (entrada) { return entrada.tipoPremio === 'creditos'; },
@@ -4665,7 +4717,7 @@ var CAMPOS_POR_TIENDA = [
     obligatorio: function (tienda) { return !tienda.nacional; },
   },
   { id: 'nacional', etiqueta: 'Cobertura nacional', tipo: 'casilla', obligatorio: false },
-  { id: 'presupuesto', etiqueta: 'Presupuesto', tipo: 'numero', obligatorio: true },
+  { id: 'presupuesto', etiqueta: 'Presupuesto', tipo: 'numero', minimo: 1, obligatorio: true },
 ];
 
 /** Inserta un campo justo despues de otro, por identificador. */
@@ -4898,6 +4950,7 @@ var CAMPOS_TRAVEL_COMUNES = [
     id: 'compraMinima',
     etiqueta: 'Compra mínima',
     tipo: 'numero',
+    minimo: 1,
     paso: 'condiciones_travel',
     visible: function (entrada) { return !entrada.sinCompraMinima; },
     obligatorio: function (entrada) { return !entrada.sinCompraMinima; },
@@ -4984,6 +5037,10 @@ var CAMPOS_CASHBACK_TRAVEL = [
     id: 'tope',
     etiqueta: 'Tope por orden',
     tipo: 'numero',
+    // El cashback de delivery revisa este numero desde el principio; Travel se
+    // construyo despues y se quedo sin la revision. Con un 0 el documento decia
+    // "sin que puedas recibir mas de cero (0) Creditos por orden".
+    minimo: 1,
     paso: 'beneficio',
     visible: function (entrada) { return entrada.formaBeneficio === 'porcentaje' && !entrada.sinTope; },
     obligatorio: function (entrada) { return entrada.formaBeneficio === 'porcentaje' && !entrada.sinTope; },
@@ -5000,12 +5057,13 @@ var CAMPOS_CASHBACK_TRAVEL = [
     id: 'montoFijo',
     etiqueta: 'Créditos por orden',
     tipo: 'numero',
+    minimo: 1,
     paso: 'beneficio',
     visible: function (entrada) { return entrada.formaBeneficio === 'monto_fijo'; },
     obligatorio: function (entrada) { return entrada.formaBeneficio === 'monto_fijo'; },
   },
   { id: 'limitePorUsuario', etiqueta: 'Órdenes con beneficio por persona', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: true },
-  { id: 'presupuesto', etiqueta: 'Presupuesto total', tipo: 'numero', paso: 'beneficio', obligatorio: true },
+  { id: 'presupuesto', etiqueta: 'Presupuesto total', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: true },
   {
     id: 'maxOrdenes',
     etiqueta: 'Máximo de órdenes de la campaña',
@@ -5253,7 +5311,10 @@ var CAMPOS_CASHBACK_ETA = [
   { id: 'horaFin', etiqueta: 'Hora de fin', tipo: 'hora', paso: 'vigencia', obligatorio: true },
 
   { id: 'etaMinutos', etiqueta: 'Minutos del ETA', tipo: 'numero', minimo: 1, maximo: 240, paso: 'beneficio', obligatorio: true },
-  { id: 'porcentaje', etiqueta: 'Porcentaje que se devuelve', tipo: 'numero', paso: 'beneficio', obligatorio: true },
+  // Los mismos limites del cashback de delivery. Sin ellos el ETA aceptaba 500
+  // y titulaba el documento "15 MINUTOS O 500% CASHBACK", y aceptaba 0 y
+  // titulaba "15 MINUTOS O CASHBACK", sin porcentaje ninguno.
+  { id: 'porcentaje', etiqueta: 'Porcentaje que se devuelve', tipo: 'numero', minimo: 1, maximo: 100, paso: 'beneficio', obligatorio: true },
   { id: 'tope', etiqueta: 'Tope por orden', tipo: 'numero', paso: 'beneficio', obligatorio: true },
   { id: 'presupuesto', etiqueta: 'Presupuesto total', tipo: 'numero', paso: 'beneficio', obligatorio: true },
   { id: 'maxPedidos', etiqueta: 'Máximo de órdenes por persona', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: sinLimiteNoLoPide },
@@ -10266,6 +10327,40 @@ function textoPlano(texto) {
   return normalizarTexto(texto).replace(/\*\*/g, '');
 }
 
+/**
+ * El termino de dias del pais, en singular cuando la cantidad es uno.
+ *
+ * La columna termino_dias de la pestana Paises guarda siempre el plural
+ * ("dias calendario", "dias naturales", "dias corridos", "dias corridos" en
+ * Brasil), porque es como aparece en las clausulas. Cuando la respuesta del
+ * comercial es 1, ese plural sale pegado a la cifra y el documento publica
+ * "una vigencia de un (1) dias calendario".
+ *
+ * Paso de verdad: la vigencia de los Creditos admite 1 dia (la pregunta acepta
+ * de 1 a 365) y ningun caso dorado usaba ese valor, asi que ninguna prueba lo
+ * veia. La red de seguridad del motor tampoco, porque la frase no tiene ningun
+ * signo roto: solo esta mal escrita.
+ *
+ * No se reescribe el texto de Legal: se pone en singular la misma palabra que
+ * Legal escribio. La regla es mecanica, sobre cada palabra del termino: lo que
+ * termina en "es" pierde el "es" (naturales a natural), lo que termina en "s"
+ * pierde la "s" (dias a dia, corridos a corrido) y lo demas se queda igual
+ * (calendario). Si alguien escribe otro termino en el Sheet, lo peor que pasa
+ * es que se quede como estaba.
+ */
+function terminoDeDias(pais, cantidad) {
+  var termino = (pais && pais.termino_dias) || '';
+  if (Number(cantidad) !== 1) return termino;
+  return termino
+    .split(' ')
+    .map(function (palabra) {
+      if (/es$/.test(palabra)) return palabra.slice(0, -2);
+      if (/s$/.test(palabra)) return palabra.slice(0, -1);
+      return palabra;
+    })
+    .join(' ');
+}
+
 /** true si el texto trae algun retorno de carro. */
 function tieneRetornoDeCarro(texto) {
   return String(texto === null || texto === undefined ? '' : texto).indexOf('\r') !== -1;
@@ -10279,6 +10374,7 @@ if (typeof module !== 'undefined') {
     recortarFinalDeLinea: recortarFinalDeLinea,
     normalizarParaComparar: normalizarParaComparar,
     textoPlano: textoPlano,
+    terminoDeDias: terminoDeDias,
     tieneRetornoDeCarro: tieneRetornoDeCarro,
   };
 }
@@ -11068,6 +11164,26 @@ function validarTiendas(entrada, pais, esquema) {
       if (!resolverAtributo(campo.obligatorio, tienda, false)) continue;
       if (estaVacio(tienda[campo.id])) {
         errores.push(error('tiendas', 'Tienda ' + fila + ': falta ' + campo.etiqueta.toLowerCase() + '.'));
+        continue;
+      }
+      /*
+       * Los numeros de la tienda pasaban sin revisar. Un presupuesto en cero no
+       * esta vacio (estaVacio(0) es false), asi que llegaba hasta el documento y
+       * la fila de esa tienda salia "Beer Station (Bogota): cero (0) Creditos".
+       * La pantalla si lo marcaba en rojo, porque alli 0 se lee como falta de
+       * dato: la pantalla y el motor decian cosas distintas del mismo numero.
+       */
+      if (campo.tipo === 'numero') {
+        var numeroDeTienda = Number(tienda[campo.id]);
+        if (isNaN(numeroDeTienda)) {
+          errores.push(error('tiendas', 'Tienda ' + fila + ': ' + campo.etiqueta.toLowerCase() + ' tiene que ser un número.'));
+        } else if (campo.minimo !== undefined && numeroDeTienda < campo.minimo) {
+          errores.push(error('tiendas', 'Tienda ' + fila + ': ' + campo.etiqueta.toLowerCase() +
+            ' tiene que ser al menos ' + campo.minimo + '.'));
+        } else if (campo.maximo !== undefined && numeroDeTienda > campo.maximo) {
+          errores.push(error('tiendas', 'Tienda ' + fila + ': ' + campo.etiqueta.toLowerCase() +
+            ' no puede pasar de ' + campo.maximo + '.'));
+        }
       }
     }
 
@@ -11374,7 +11490,11 @@ function validarSolicitud(entrada, pais, contexto) {
 
   // El cashback por ETA tiene los mismos dos numeros y el mismo riesgo: un tope
   // mayor que el presupuesto deja que la primera orden se lleve la campana.
-  if (entrada.tipo === 'cashback' || entrada.tipo === 'cashback_eta') {
+  // El Cashback Multitienda tiene el mismo tope por pedido, y hasta ahora nadie
+  // revisaba que fuera mayor que cero: con un 0 el documento salia prometiendo
+  // un maximo de cero Creditos por pedido. No tiene presupuesto de campana
+  // (cada tienda pone el suyo), asi que el cruce contra el presupuesto no aplica.
+  if (entrada.tipo === 'cashback' || entrada.tipo === 'cashback_eta' || entrada.tipo === 'cashback_day') {
     errores = errores.concat(validarCashback(entrada, esquema.id, idioma));
   }
   if (esquema.esPorEta) {
