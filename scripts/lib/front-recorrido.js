@@ -65,7 +65,8 @@ function buscarNavegador() {
 }
 
 /**
- * Congela la pantalla: corre DENTRO del navegador y devuelve el HTML de #app.
+ * Congela la pantalla: corre DENTRO del navegador y devuelve, de #app, el HTML
+ * y el texto tal como se lee.
  *
  * Tres cosas antes de serializar:
  *
@@ -136,16 +137,32 @@ function congelar(opciones) {
     if (mapa[destino]) enlace.setAttribute('href', '#' + mapa[destino]);
   }
 
-  return clon.innerHTML;
+  // El texto tal como se lee, sacado del mismo clon que el HTML: el documento
+  // de pantallas y el cuadernillo de revision tienen que contar la misma
+  // pantalla, no dos recorridos distintos.
+  //
+  // innerText mide lo que se ve, asi que el clon tiene que estar colgado del
+  // documento para que el navegador lo calcule. Se cuelga fuera de la vista y
+  // se descuelga enseguida. Lo que esta escondido no sale, que es justo lo que
+  // queremos: el desplegable cerrado no se lee.
+  clon.setAttribute('style', 'position:absolute;left:-99999px;top:0;width:1200px;');
+  document.body.appendChild(clon);
+  const texto = clon.innerText;
+  document.body.removeChild(clon);
+  clon.removeAttribute('style');
+
+  return { html: clon.innerHTML, texto: texto };
 }
 
 /**
  * El recorrido completo.
  *
  * fichas: las fichas de pantalla de scripts/front.js.
- * Devuelve { capturas: { id: html }, fallas: [{ id, motivo }], errores: [] }.
+ * carpetaDeCapturas: donde dejar el PNG de las fichas marcadas con `foto`.
+ * Devuelve { capturas: { id: html }, textos: { id: texto }, fotos: { id: archivo },
+ * fallas: [{ id, motivo }], erroresDeJs: [] }.
  */
-async function recorrer(rutaDeLaDemo, fichas, marcas) {
+async function recorrer(rutaDeLaDemo, fichas, marcas, carpetaDeCapturas) {
   const disponible = buscarNavegador();
   if (disponible.falta) throw new Error(disponible.falta);
   if (!fs.existsSync(rutaDeLaDemo)) throw new Error('Falta demo/index.html. Corre `npm run demo` primero.');
@@ -156,6 +173,8 @@ async function recorrer(rutaDeLaDemo, fichas, marcas) {
   const porId = {};
   for (const ficha of fichas) porId[ficha.id] = ficha;
   const capturas = {};
+  const textos = {};
+  const fotos = {};
   const fallas = [];
   const erroresDeJs = [];
   let pagina = null;
@@ -198,15 +217,34 @@ async function recorrer(rutaDeLaDemo, fichas, marcas) {
       await pagina.waitForTimeout(120);
     }
     await pagina.waitForTimeout(260);
-    const html = await pagina.evaluate(congelar, {
+    const congelada = await pagina.evaluate(congelar, {
       prefijo: ficha.ancla,
       vistaPreviaCompleta: !!ficha.vistaPreviaCompleta,
       marcaVistaPrevia: marcas.vistaPrevia,
       marcaDocumento: marcas.documento,
     });
+    const html = congelada.html;
     if (!html || html.length < 200) throw new Error('la pantalla "' + id + '" salió vacía');
+    if (!congelada.texto || congelada.texto.trim().length < 20) {
+      throw new Error('la pantalla "' + id + '" quedó sin texto legible');
+    }
     capturas[id] = html;
-    console.log('ok    ' + ficha.numero + ' ' + ficha.titulo + ' (' + Math.round(html.length / 1024) + ' KB)');
+    textos[id] = congelada.texto;
+
+    // La foto, solo para las pantallas que la piden. Una por forma de pantalla
+    // y no una por pregunta: cuarenta y seis fotos del mismo formulario pesan
+    // diez megas en el repositorio y no enseñan nada que no enseñe una.
+    let foto = '';
+    if (ficha.foto && carpetaDeCapturas) {
+      const archivo = path.join(carpetaDeCapturas,
+        String(ficha.numero).padStart(2, '0') + '-' + ficha.id + '.png');
+      await pagina.screenshot({ path: archivo, fullPage: true });
+      fotos[id] = path.basename(archivo);
+      foto = ' + foto';
+    }
+
+    console.log('ok    ' + ficha.numero + ' ' + ficha.titulo +
+      ' (' + Math.round(html.length / 1024) + ' KB' + foto + ')');
   }
 
   /** Clic en el primer boton o enlace cuyo texto empieza por la etiqueta. */
@@ -705,7 +743,7 @@ async function recorrer(rutaDeLaDemo, fichas, marcas) {
 
   await navegador.close();
 
-  return { capturas: capturas, fallas: fallas, erroresDeJs: erroresDeJs };
+  return { capturas: capturas, textos: textos, fotos: fotos, fallas: fallas, erroresDeJs: erroresDeJs };
 }
 
 module.exports = { recorrer, DOC_DE_EJEMPLO };

@@ -48,7 +48,7 @@ Antes del formulario. Si responde **sí** a cualquiera, no se genera: se muestra
 la pantalla "Esta campaña la redacta Legal" con la razón y el enlace al
 formulario manual.
 
-- ¿La tienda o la marca exige sus propios términos y condiciones?
+- ¿La tienda o la marca exige sus propios T&C?
 
 ## Paso: Campaña
 
@@ -73,7 +73,7 @@ formulario manual.
 
 ### ¿La campaña es de Rappi o de Rappi Travel?
 
-> Rappi es el domicilio de siempre. Rappi Travel son vuelos, hoteles, autos y paquetes.
+> Si es de vuelos, hoteles, autos o paquetes, es Rappi Travel.
 
 **Por qué te preguntamos esto.** Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.
 
@@ -135,7 +135,7 @@ formulario manual.
 
 ### ¿Dónde aplica la campaña?
 
-> Nacional es todo el país. Si es solo en algunas ciudades, las escribes en el siguiente paso.
+> Si es solo en algunas ciudades, las escribes en la siguiente pregunta.
 
 **Por qué te preguntamos esto.** La cobertura define dónde puede reclamar el usuario. Si el documento dice más de lo que la campaña cubre, el usuario tiene derecho a exigirlo.
 
@@ -152,7 +152,7 @@ formulario manual.
 **Opciones** (botones grandes, una sola):
 
 - **En todo el país**: Donde sea que Rappi tenga cobertura.
-- **Solo en algunas ciudades**: Las escribes tú en el siguiente paso.
+- **Solo en algunas ciudades**: Por ejemplo: Bogotá y Medellín.
 
 **Mensajes de validación:**
 
@@ -184,7 +184,7 @@ formulario manual.
 
 ### ¿Qué empresa paga el beneficio?
 
-> Es el Organizador: la tienda o la marca que pone la plata. Nunca es Rappi. Escribe la razón social como aparece en su RUT.
+> Tal como sale en su RUT, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.
 
 **Por qué te preguntamos esto.** El Organizador responde por la campaña frente al usuario y frente a la autoridad. Rappi solo pone la plataforma, así que el nombre tiene que ser exacto.
 
@@ -204,7 +204,7 @@ formulario manual.
 
 ### ¿Cuál es el NIT de esa empresa?
 
-> Con el dígito de verificación, por ejemplo 900.111.222-1. Está en el RUT del aliado; pídeselo a tu contacto.
+> Con dígito de verificación, tal como sale en el RUT: 900.111.222-1.
 
 **Por qué te preguntamos esto.** El documento identifica al Organizador con su número tributario. Un número mal escrito deja el documento sin un responsable identificable.
 
@@ -312,7 +312,7 @@ formulario manual.
 
 ## Paso: Beneficio
 
-### ¿Qué porcentaje del pedido devuelves en Créditos?
+### ¿Qué porcentaje del pedido se devuelve en Créditos?
 
 > Solo el número. Con 20, un pedido de $50.000 recibe $10.000 en Créditos.
 
@@ -324,7 +324,7 @@ formulario manual.
 | Paso | Beneficio |
 | Tipo de control | numero |
 | Obligatorio | sí, cuando se ve |
-| Ejemplo | 99 |
+| Ejemplo | 20 |
 | Avanza sola | no |
 | Llena en el documento | `PORCENTAJE` |
 
@@ -333,11 +333,11 @@ formulario manual.
 - `vacio`: Escribe el porcentaje que devuelves, sin el signo de porcentaje.
 - `rango`: El porcentaje va de 1 a 100. Si necesitas varios porcentajes o un rango, eso es otra campaña: escríbele a Legal.
 
-### ¿Qué es lo máximo que recibe alguien por pedido?
+### ¿Cuál es el máximo de Créditos por pedido?
 
 > Aunque el pedido sea grande, no recibe más de esto. Lo más usado es 25.000.
 
-**Por qué te preguntamos esto.** Sin tope, un pedido enorme se lleva el presupuesto entero. El tope es lo que hace que un cashback del 99% sea viable.
+**Por qué te preguntamos esto.** Sin tope, un pedido enorme se lleva el presupuesto entero. Con tope, un cashback alto sigue siendo viable.
 
 | | |
 |---|---|
@@ -376,9 +376,9 @@ formulario manual.
 - `vacio`: Escribe el presupuesto total de la campaña.
 - `cero`: El presupuesto tiene que ser mayor que cero.
 
-### ¿Cuántas veces puede ganar la misma persona?
+### ¿Cuántas veces puede recibir el beneficio una persona?
 
-> La mitad de las campañas permite una sola vez por usuario.
+> Se cuenta por persona, durante toda la campaña.
 
 **Por qué te preguntamos esto.** Sin límite, unos pocos usuarios pueden consumir el presupuesto en horas. Con límite, el beneficio llega a más gente.
 
@@ -410,7 +410,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ### ¿El beneficio aplica solo en cierto tipo de pedido?
 
-> Es opcional: si el beneficio aplica en cualquier pedido, no marques nada.
+> Si aplica en cualquier pedido, no marques nada.
 
 **Por qué te preguntamos esto.** Esta pregunta es sobre el pedido con el que el usuario se gana el beneficio, no sobre dónde gasta después los Créditos: eso se pregunta más adelante. Si la restricción no queda escrita, el usuario puede reclamar el beneficio en cualquier pedido.
 
@@ -426,11 +426,11 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 **Opciones** (casillas, se pueden marcar varias):
 
 - **Solo si el pedido se hace por Turbo**: Un pedido por el resto de la app no da el beneficio.
-- **Solo si consume en el local**: La modalidad de consumo en el local de la app. Un domicilio no da el beneficio.
+- **Solo si consume en el local**: Pide por la app y come en el local. Un domicilio no da el beneficio.
 
 ## Paso: Créditos
 
-### ¿Cuándo le llegan los Créditos?
+### ¿Cuándo le llegan los Créditos al usuario?
 
 > Es el momento en que el saldo le queda disponible en la Billetera.
 
@@ -478,7 +478,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ### ¿Hasta cuándo puede usar esos Créditos?
 
-> Casi todos ponen una fecha límite concreta.
+> Por ejemplo: hasta el 31 de diciembre, o 30 días desde que le llegan.
 
 **Por qué te preguntamos esto.** Los Créditos se vencen y eso tiene que estar escrito. Si no lo dices, el usuario puede sostener que no vencen.
 
@@ -543,9 +543,9 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ### ¿Dónde puede gastar los Créditos?
 
-> Siete de cada diez campañas los limitan a la misma tienda.
+> Por ejemplo: solo en la tienda donde se los ganó, que es lo más común.
 
-**Por qué te preguntamos esto.** Define dónde vale el saldo. Lo normal es que se gaste en la misma tienda donde el usuario se ganó el beneficio. En todo caso, estos Créditos casi nunca aplican a RappiFavor, Cajero ATM ni RappiTravel.
+**Por qué te preguntamos esto.** Define dónde vale el saldo. Lo normal es que se gaste en la misma tienda donde el usuario se ganó el beneficio. En todo caso, estos Créditos casi nunca aplican a RappiFavor, Cajero ATM ni Rappi Travel.
 
 | | |
 |---|---|
@@ -590,7 +590,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ### ¿Quiénes pueden participar?
 
-> La mitad de las campañas es para todos y casi la otra mitad para Pro.
+> Por ejemplo: solo Pro, o quienes no compran hace 60 días.
 
 **Por qué te preguntamos esto.** Limita quién puede reclamar el beneficio. Si el documento dice "todos", no puedes excluir a nadie después.
 
@@ -636,9 +636,9 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 - `vacio`: Escribe cuántos días sin comprar.
 - `rango`: Los días van de 1 a 365.
 
-### ¿Con qué puede pagar?
+### ¿Con qué medio de pago aplica el beneficio?
 
-> Con "todos" entran tarjetas, billeteras y efectivo donde exista.
+> Con "cualquier medio" entran tarjetas, billeteras y efectivo donde exista.
 
 **Por qué te preguntamos esto.** Restringir el medio de pago cambia quién puede participar. Los pedidos pagados con Créditos nunca dan beneficio.
 
@@ -664,7 +664,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ### ¿Hay que gastar un mínimo para participar?
 
-> Es opcional: si no exiges un mínimo, deja el campo vacío y sigue.
+> Por ejemplo: 30.000. Si no hay mínimo, déjalo vacío.
 
 **Por qué te preguntamos esto.** Si lo exiges, tiene que quedar escrito. Si no aparece en el documento, no lo puedes aplicar después.
 
@@ -682,11 +682,68 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 - `cero`: Si no quieres exigir un mínimo, deja el campo vacío.
 
+## Paso: Pieza
+
+### ¿Qué categoría tiene el producto de la pieza?
+
+> Casi siempre es Ninguna. Solo cambia la leyenda del arte, no tu T&C.
+
+**Por qué te preguntamos esto.** Algunas categorías tienen que llevar una advertencia por ley dentro de la pieza, como los licores o los medicamentos. La leyenda que te damos ya la trae.
+
+| | |
+|---|---|
+| Campo interno | `categoriaProducto` |
+| Paso | Pieza |
+| Tipo de control | lista |
+| Obligatorio | no |
+| Valor por defecto | ninguna |
+| Avanza sola | sí |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige una categoría, o Ninguna si el producto no es de ninguna de esas.
+
+### ¿Cuál es el registro sanitario?
+
+> Está en el empaque. Sin él no te damos la leyenda de la pieza.
+
+**Por qué te preguntamos esto.** Una pieza de un medicamento o de un fitoterapéutico tiene que mostrar su registro sanitario. Sin ese número no se puede publicar.
+
+| | |
+|---|---|
+| Campo interno | `registroSanitario` |
+| Paso | Pieza |
+| Tipo de control | texto |
+| Obligatorio | no |
+| Ejemplo | INVIMA 2020M-0012345 |
+| Avanza sola | no |
+| Llena en el documento | `REGISTRO_SANITARIO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el registro sanitario del producto.
+
+### ¿Tiene número de notificación ante el INVIMA?
+
+> Es opcional. Si no lo tienes a la mano, déjalo vacío.
+
+**Por qué te preguntamos esto.** Cuando la pieza de un medicamento se notificó al INVIMA, el número va dentro de la leyenda. Si no lo pones, la leyenda sale sin esa frase.
+
+| | |
+|---|---|
+| Campo interno | `notificacionInvima` |
+| Paso | Pieza |
+| Tipo de control | texto |
+| Obligatorio | no |
+| Ejemplo | 20251234567 |
+| Avanza sola | no |
+| Llena en el documento | `NOTIFICACION_INVIMA` |
+
 ## Paso: Revisar
 
 ### Confirma que la información es correcta
 
-> Confirmo que la información es veraz y corresponde a la campaña aprobada.
+> Confirmo que estos datos son ciertos y son los de mi campaña.
 
 **Por qué te preguntamos esto.** El documento se genera con lo que escribiste y se publica tal cual. Nadie de Legal lo revisa antes.
 
@@ -717,7 +774,7 @@ formulario manual.
 - ¿Hay azar (sorteo, rifa, raspa y gana)?
 - ¿Hay premios distintos por puesto o tabla de puntos?
 - ¿El premio es una boleta, una experiencia o está ligado a un evento?
-- ¿La tienda o la marca exige sus propios términos y condiciones?
+- ¿La tienda o la marca exige sus propios T&C?
 - ¿Participan varias tiendas?
 
 ## Paso: Campaña
@@ -743,7 +800,7 @@ formulario manual.
 
 ### ¿La campaña es de Rappi o de Rappi Travel?
 
-> Rappi es el domicilio de siempre. Rappi Travel son vuelos, hoteles, autos y paquetes.
+> Si es de vuelos, hoteles, autos o paquetes, es Rappi Travel.
 
 **Por qué te preguntamos esto.** Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.
 
@@ -805,7 +862,7 @@ formulario manual.
 
 ### ¿Dónde aplica la campaña?
 
-> Nacional es todo el país. Si es solo en algunas ciudades, las escribes en el siguiente paso.
+> Si es solo en algunas ciudades, las escribes en la siguiente pregunta.
 
 **Por qué te preguntamos esto.** La cobertura define dónde puede reclamar el usuario. Si el documento dice más de lo que la campaña cubre, el usuario tiene derecho a exigirlo.
 
@@ -822,7 +879,7 @@ formulario manual.
 **Opciones** (botones grandes, una sola):
 
 - **En todo el país**: Donde sea que Rappi tenga cobertura.
-- **Solo en algunas ciudades**: Las escribes tú en el siguiente paso.
+- **Solo en algunas ciudades**: Por ejemplo: Bogotá y Medellín.
 
 **Mensajes de validación:**
 
@@ -854,7 +911,7 @@ formulario manual.
 
 ### ¿Qué empresa paga el beneficio?
 
-> Es el Organizador: la tienda o la marca que pone la plata. Nunca es Rappi. Escribe la razón social como aparece en su RUT.
+> Tal como sale en su RUT, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.
 
 **Por qué te preguntamos esto.** El Organizador responde por la campaña frente al usuario y frente a la autoridad. Rappi solo pone la plataforma, así que el nombre tiene que ser exacto.
 
@@ -874,7 +931,7 @@ formulario manual.
 
 ### ¿Cuál es el NIT de esa empresa?
 
-> Con el dígito de verificación, por ejemplo 900.111.222-1. Está en el RUT del aliado; pídeselo a tu contacto.
+> Con dígito de verificación, tal como sale en el RUT: 900.111.222-1.
 
 **Por qué te preguntamos esto.** El documento identifica al Organizador con su número tributario. Un número mal escrito deja el documento sin un responsable identificable.
 
@@ -1109,7 +1166,7 @@ formulario manual.
 
 **Opciones** (botones grandes, una sola):
 
-- **Quien llegó primero**: Por la fecha y hora de su último pedido.
+- **Quien llegó primero**: Gana quien hizo antes su último pedido.
 - **Quien hizo más pedidos**: Cuenta pedidos válidos.
 - **Quien gastó más**: Suma el valor de las compras.
 
@@ -1212,6 +1269,25 @@ formulario manual.
 
 - `vacio`: Dinos quién entrega el premio.
 
+### ¿El Organizador ya firmó el acuerdo de transferencia de datos?
+
+> Sin ese acuerdo firmado no se le pueden enviar los datos del ganador.
+
+**Por qué te preguntamos esto.** Rappi responde por los datos de sus usuarios. Enviarlos a una marca sin acuerdo firmado nos expone ante la autoridad de datos personales.
+
+| | |
+|---|---|
+| Campo interno | `acuerdoDatos` |
+| Paso | Premio |
+| Tipo de control | lista |
+| Obligatorio | no |
+| Avanza sola | sí |
+
+**Opciones** (botones grandes, una sola):
+
+- **Sí, ya está firmado**: Puedes seguir con la campaña.
+- **No, o no sé**: Te mostramos cómo se firma. Puedes generar el T&C igual.
+
 ### ¿Cómo le avisas al ganador?
 
 > El correo de la cuenta de Rappi del ganador es lo más confiable.
@@ -1284,7 +1360,7 @@ formulario manual.
 
 ### ¿Quiénes pueden participar?
 
-> La mitad de las campañas es para todos y casi la otra mitad para Pro.
+> Por ejemplo: solo Pro, o quienes no compran hace 60 días.
 
 **Por qué te preguntamos esto.** Limita quién puede reclamar el beneficio. Si el documento dice "todos", no puedes excluir a nadie después.
 
@@ -1330,9 +1406,9 @@ formulario manual.
 - `vacio`: Escribe cuántos días sin comprar.
 - `rango`: Los días van de 1 a 365.
 
-### ¿Con qué puede pagar?
+### ¿Con qué medio de pago aplica el beneficio?
 
-> Con "todos" entran tarjetas, billeteras y efectivo donde exista.
+> Con "cualquier medio" entran tarjetas, billeteras y efectivo donde exista.
 
 **Por qué te preguntamos esto.** Restringir el medio de pago cambia quién puede participar. Los pedidos pagados con Créditos nunca dan beneficio.
 
@@ -1358,7 +1434,7 @@ formulario manual.
 
 ### ¿Hay que gastar un mínimo para participar?
 
-> Es opcional: si no exiges un mínimo, deja el campo vacío y sigue.
+> Por ejemplo: 30.000. Si no hay mínimo, déjalo vacío.
 
 **Por qué te preguntamos esto.** Si lo exiges, tiene que quedar escrito. Si no aparece en el documento, no lo puedes aplicar después.
 
@@ -1376,11 +1452,68 @@ formulario manual.
 
 - `cero`: Si no quieres exigir un mínimo, deja el campo vacío.
 
+## Paso: Pieza
+
+### ¿Qué categoría tiene el producto de la pieza?
+
+> Casi siempre es Ninguna. Solo cambia la leyenda del arte, no tu T&C.
+
+**Por qué te preguntamos esto.** Algunas categorías tienen que llevar una advertencia por ley dentro de la pieza, como los licores o los medicamentos. La leyenda que te damos ya la trae.
+
+| | |
+|---|---|
+| Campo interno | `categoriaProducto` |
+| Paso | Pieza |
+| Tipo de control | lista |
+| Obligatorio | no |
+| Valor por defecto | ninguna |
+| Avanza sola | sí |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige una categoría, o Ninguna si el producto no es de ninguna de esas.
+
+### ¿Cuál es el registro sanitario?
+
+> Está en el empaque. Sin él no te damos la leyenda de la pieza.
+
+**Por qué te preguntamos esto.** Una pieza de un medicamento o de un fitoterapéutico tiene que mostrar su registro sanitario. Sin ese número no se puede publicar.
+
+| | |
+|---|---|
+| Campo interno | `registroSanitario` |
+| Paso | Pieza |
+| Tipo de control | texto |
+| Obligatorio | no |
+| Ejemplo | INVIMA 2020M-0012345 |
+| Avanza sola | no |
+| Llena en el documento | `REGISTRO_SANITARIO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el registro sanitario del producto.
+
+### ¿Tiene número de notificación ante el INVIMA?
+
+> Es opcional. Si no lo tienes a la mano, déjalo vacío.
+
+**Por qué te preguntamos esto.** Cuando la pieza de un medicamento se notificó al INVIMA, el número va dentro de la leyenda. Si no lo pones, la leyenda sale sin esa frase.
+
+| | |
+|---|---|
+| Campo interno | `notificacionInvima` |
+| Paso | Pieza |
+| Tipo de control | texto |
+| Obligatorio | no |
+| Ejemplo | 20251234567 |
+| Avanza sola | no |
+| Llena en el documento | `NOTIFICACION_INVIMA` |
+
 ## Paso: Revisar
 
 ### Confirma que la información es correcta
 
-> Confirmo que la información es veraz y corresponde a la campaña aprobada.
+> Confirmo que estos datos son ciertos y son los de mi campaña.
 
 **Por qué te preguntamos esto.** El documento se genera con lo que escribiste y se publica tal cual. Nadie de Legal lo revisa antes.
 
@@ -1400,7 +1533,7 @@ formulario manual.
 
 # Cashback Travel
 
-La marca aliada devuelve un porcentaje de lo que el usuario pagó por su vuelo, hotel, auto o paquete, en Créditos para su Billetera. Solo para campañas de Rappi Travel.
+La marca aliada devuelve un porcentaje de lo que el usuario pagó por su vuelo, hotel, auto o paquete, en Créditos para su Billetera.
 
 ## Filtro de entrada
 
@@ -1432,7 +1565,7 @@ formulario manual.
 
 ### ¿La campaña es de Rappi o de Rappi Travel?
 
-> Rappi es el domicilio de siempre. Rappi Travel son vuelos, hoteles, autos y paquetes.
+> Si es de vuelos, hoteles, autos o paquetes, es Rappi Travel.
 
 **Por qué te preguntamos esto.** Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.
 
@@ -1476,7 +1609,7 @@ formulario manual.
 
 ### ¿Qué empresa paga el beneficio?
 
-> Es el Organizador: la tienda o la marca que pone la plata. Nunca es Rappi. Escribe la razón social como aparece en su RUT.
+> Tal como sale en su RUT, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.
 
 **Por qué te preguntamos esto.** El Organizador responde por la campaña frente al usuario y frente a la autoridad. Rappi solo pone la plataforma, así que el nombre tiene que ser exacto.
 
@@ -1496,7 +1629,7 @@ formulario manual.
 
 ### ¿Cuál es el NIT de esa empresa?
 
-> Con el dígito de verificación, por ejemplo 900.111.222-1. Está en el RUT del aliado; pídeselo a tu contacto.
+> Con dígito de verificación, tal como sale en el RUT: 900.111.222-1.
 
 **Por qué te preguntamos esto.** El documento identifica al Organizador con su número tributario. Un número mal escrito deja el documento sin un responsable identificable.
 
@@ -1915,7 +2048,7 @@ formulario manual.
 
 ### ¿Hay que gastar un mínimo para participar?
 
-> Es opcional: si no exiges un mínimo, deja el campo vacío y sigue.
+> Por ejemplo: 30.000. Si no hay mínimo, déjalo vacío.
 
 **Por qué te preguntamos esto.** Si lo exiges, tiene que quedar escrito. Si no aparece en el documento, no lo puedes aplicar después.
 
@@ -2073,7 +2206,7 @@ No tiene pregunta propia: se responde dentro de **compraMinima**.
 
 - `vacio`: Dinos cómo se calcula el cashback.
 
-### ¿Qué porcentaje del pedido devuelves en Créditos?
+### ¿Qué porcentaje del pedido se devuelve en Créditos?
 
 > Solo el número. Con 20, un pedido de $50.000 recibe $10.000 en Créditos.
 
@@ -2085,7 +2218,7 @@ No tiene pregunta propia: se responde dentro de **compraMinima**.
 | Paso | Beneficio |
 | Tipo de control | numero |
 | Obligatorio | sí, cuando se ve |
-| Ejemplo | 99 |
+| Ejemplo | 20 |
 | Avanza sola | no |
 | Llena en el documento | `PORCENTAJE` |
 
@@ -2094,11 +2227,11 @@ No tiene pregunta propia: se responde dentro de **compraMinima**.
 - `vacio`: Escribe el porcentaje que devuelves, sin el signo de porcentaje.
 - `rango`: El porcentaje va de 1 a 100. Si necesitas varios porcentajes o un rango, eso es otra campaña: escríbele a Legal.
 
-### ¿Qué es lo máximo que recibe alguien por pedido?
+### ¿Cuál es el máximo de Créditos por pedido?
 
 > Aunque el pedido sea grande, no recibe más de esto. Lo más usado es 25.000.
 
-**Por qué te preguntamos esto.** Sin tope, un pedido enorme se lleva el presupuesto entero. El tope es lo que hace que un cashback del 99% sea viable.
+**Por qué te preguntamos esto.** Sin tope, un pedido enorme se lleva el presupuesto entero. Con tope, un cashback alto sigue siendo viable.
 
 | | |
 |---|---|
@@ -2212,7 +2345,7 @@ No tiene pregunta propia: se responde dentro de **maxOrdenes**.
 
 ## Paso: Créditos
 
-### ¿Cuándo le llegan los Créditos?
+### ¿Cuándo le llegan los Créditos al usuario?
 
 > Es el momento en que el saldo le queda disponible en la Billetera.
 
@@ -2282,9 +2415,9 @@ No tiene pregunta propia: se responde dentro de **maxOrdenes**.
 
 ### ¿Dónde puede gastar los Créditos?
 
-> Siete de cada diez campañas los limitan a la misma tienda.
+> Por ejemplo: solo en la tienda donde se los ganó, que es lo más común.
 
-**Por qué te preguntamos esto.** Define dónde vale el saldo. Lo normal es que se gaste en la misma tienda donde el usuario se ganó el beneficio. En todo caso, estos Créditos casi nunca aplican a RappiFavor, Cajero ATM ni RappiTravel.
+**Por qué te preguntamos esto.** Define dónde vale el saldo. Lo normal es que se gaste en la misma tienda donde el usuario se ganó el beneficio. En todo caso, estos Créditos casi nunca aplican a RappiFavor, Cajero ATM ni Rappi Travel.
 
 | | |
 |---|---|
@@ -2329,7 +2462,7 @@ No tiene pregunta propia: se responde dentro de **maxOrdenes**.
 
 ### ¿Quiénes pueden participar?
 
-> La mitad de las campañas es para todos y casi la otra mitad para Pro.
+> Por ejemplo: solo Pro, o quienes no compran hace 60 días.
 
 **Por qué te preguntamos esto.** Limita quién puede reclamar el beneficio. Si el documento dice "todos", no puedes excluir a nadie después.
 
@@ -2354,9 +2487,9 @@ No tiene pregunta propia: se responde dentro de **maxOrdenes**.
 
 - `vacio`: Dinos quiénes pueden participar.
 
-### ¿Con qué puede pagar?
+### ¿Con qué medio de pago aplica el beneficio?
 
-> Con "todos" entran tarjetas, billeteras y efectivo donde exista.
+> Con "cualquier medio" entran tarjetas, billeteras y efectivo donde exista.
 
 **Por qué te preguntamos esto.** Restringir el medio de pago cambia quién puede participar. Los pedidos pagados con Créditos nunca dan beneficio.
 
@@ -2454,7 +2587,7 @@ No tiene pregunta propia: se responde dentro de **maxOrdenes**.
 
 ### Confirma que la información es correcta
 
-> Confirmo que la información es veraz y corresponde a la campaña aprobada.
+> Confirmo que estos datos son ciertos y son los de mi campaña.
 
 **Por qué te preguntamos esto.** El documento se genera con lo que escribiste y se publica tal cual. Nadie de Legal lo revisa antes.
 
@@ -2474,7 +2607,7 @@ No tiene pregunta propia: se responde dentro de **maxOrdenes**.
 
 # Descuento Travel
 
-La marca aliada baja el precio de sus vuelos, hoteles, autos o paquetes. El usuario ve el precio ya rebajado antes de pagar, no recibe Créditos. Solo para campañas de Rappi Travel.
+La marca aliada baja el precio de sus vuelos, hoteles, autos o paquetes. El usuario ve el precio ya rebajado antes de pagar, no recibe Créditos.
 
 ## Filtro de entrada
 
@@ -2506,7 +2639,7 @@ formulario manual.
 
 ### ¿La campaña es de Rappi o de Rappi Travel?
 
-> Rappi es el domicilio de siempre. Rappi Travel son vuelos, hoteles, autos y paquetes.
+> Si es de vuelos, hoteles, autos o paquetes, es Rappi Travel.
 
 **Por qué te preguntamos esto.** Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.
 
@@ -2550,7 +2683,7 @@ formulario manual.
 
 ### ¿Qué empresa paga el beneficio?
 
-> Es el Organizador: la tienda o la marca que pone la plata. Nunca es Rappi. Escribe la razón social como aparece en su RUT.
+> Tal como sale en su RUT, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.
 
 **Por qué te preguntamos esto.** El Organizador responde por la campaña frente al usuario y frente a la autoridad. Rappi solo pone la plataforma, así que el nombre tiene que ser exacto.
 
@@ -2570,7 +2703,7 @@ formulario manual.
 
 ### ¿Cuál es el NIT de esa empresa?
 
-> Con el dígito de verificación, por ejemplo 900.111.222-1. Está en el RUT del aliado; pídeselo a tu contacto.
+> Con dígito de verificación, tal como sale en el RUT: 900.111.222-1.
 
 **Por qué te preguntamos esto.** El documento identifica al Organizador con su número tributario. Un número mal escrito deja el documento sin un responsable identificable.
 
@@ -2989,7 +3122,7 @@ formulario manual.
 
 ### ¿Hay que gastar un mínimo para participar?
 
-> Es opcional: si no exiges un mínimo, deja el campo vacío y sigue.
+> Por ejemplo: 30.000. Si no hay mínimo, déjalo vacío.
 
 **Por qué te preguntamos esto.** Si lo exiges, tiene que quedar escrito. Si no aparece en el documento, no lo puedes aplicar después.
 
@@ -3147,7 +3280,7 @@ No tiene pregunta propia: se responde dentro de **compraMinima**.
 
 - `vacio`: Dinos si el descuento es igual en todos los productos.
 
-### ¿Qué porcentaje del pedido devuelves en Créditos?
+### ¿Qué porcentaje del pedido se devuelve en Créditos?
 
 > Solo el número. Con 20, un pedido de $50.000 recibe $10.000 en Créditos.
 
@@ -3159,7 +3292,7 @@ No tiene pregunta propia: se responde dentro de **compraMinima**.
 | Paso | Beneficio |
 | Tipo de control | numero |
 | Obligatorio | sí, cuando se ve |
-| Ejemplo | 99 |
+| Ejemplo | 20 |
 | Avanza sola | no |
 | Llena en el documento | `PORCENTAJE` |
 
@@ -3284,7 +3417,7 @@ No tiene pregunta propia: se responde dentro de **unidades**.
 
 ### ¿Quiénes pueden participar?
 
-> La mitad de las campañas es para todos y casi la otra mitad para Pro.
+> Por ejemplo: solo Pro, o quienes no compran hace 60 días.
 
 **Por qué te preguntamos esto.** Limita quién puede reclamar el beneficio. Si el documento dice "todos", no puedes excluir a nadie después.
 
@@ -3309,9 +3442,9 @@ No tiene pregunta propia: se responde dentro de **unidades**.
 
 - `vacio`: Dinos quiénes pueden participar.
 
-### ¿Con qué puede pagar?
+### ¿Con qué medio de pago aplica el beneficio?
 
-> Con "todos" entran tarjetas, billeteras y efectivo donde exista.
+> Con "cualquier medio" entran tarjetas, billeteras y efectivo donde exista.
 
 **Por qué te preguntamos esto.** Restringir el medio de pago cambia quién puede participar. Los pedidos pagados con Créditos nunca dan beneficio.
 
@@ -3409,7 +3542,7 @@ No tiene pregunta propia: se responde dentro de **unidades**.
 
 ### Confirma que la información es correcta
 
-> Confirmo que la información es veraz y corresponde a la campaña aprobada.
+> Confirmo que estos datos son ciertos y son los de mi campaña.
 
 **Por qué te preguntamos esto.** El documento se genera con lo que escribiste y se publica tal cual. Nadie de Legal lo revisa antes.
 
@@ -3461,7 +3594,7 @@ formulario manual.
 
 ### ¿La campaña es de Rappi o de Rappi Travel?
 
-> Rappi es el domicilio de siempre. Rappi Travel son vuelos, hoteles, autos y paquetes.
+> Si es de vuelos, hoteles, autos o paquetes, es Rappi Travel.
 
 **Por qué te preguntamos esto.** Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.
 
@@ -3611,7 +3744,7 @@ formulario manual.
 - `vacio`: Escribe en cuántos minutos prometes la entrega.
 - `rango`: El ETA tiene que estar entre 1 y 240 minutos.
 
-### ¿Qué porcentaje del pedido devuelves en Créditos?
+### ¿Qué porcentaje del pedido se devuelve en Créditos?
 
 > Solo el número. Con 20, un pedido de $50.000 recibe $10.000 en Créditos.
 
@@ -3623,7 +3756,7 @@ formulario manual.
 | Paso | Beneficio |
 | Tipo de control | numero |
 | Obligatorio | sí, cuando se ve |
-| Ejemplo | 99 |
+| Ejemplo | 20 |
 | Avanza sola | no |
 | Llena en el documento | `PORCENTAJE` |
 
@@ -3632,11 +3765,11 @@ formulario manual.
 - `vacio`: Escribe el porcentaje que devuelves, sin el signo de porcentaje.
 - `rango`: El porcentaje va de 1 a 100. Si necesitas varios porcentajes o un rango, eso es otra campaña: escríbele a Legal.
 
-### ¿Qué es lo máximo que recibe alguien por pedido?
+### ¿Cuál es el máximo de Créditos por pedido?
 
 > Aunque el pedido sea grande, no recibe más de esto. Lo más usado es 25.000.
 
-**Por qué te preguntamos esto.** Sin tope, un pedido enorme se lleva el presupuesto entero. El tope es lo que hace que un cashback del 99% sea viable.
+**Por qué te preguntamos esto.** Sin tope, un pedido enorme se lleva el presupuesto entero. Con tope, un cashback alto sigue siendo viable.
 
 | | |
 |---|---|
@@ -3675,9 +3808,9 @@ formulario manual.
 - `vacio`: Escribe el presupuesto total de la campaña.
 - `cero`: El presupuesto tiene que ser mayor que cero.
 
-### ¿Cuántas veces puede ganar la misma persona?
+### ¿Cuántas veces puede recibir el beneficio una persona?
 
-> La mitad de las campañas permite una sola vez por usuario.
+> Se cuenta por persona, durante toda la campaña.
 
 **Por qué te preguntamos esto.** Sin límite, unos pocos usuarios pueden consumir el presupuesto en horas. Con límite, el beneficio llega a más gente.
 
@@ -3709,7 +3842,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ## Paso: Créditos
 
-### ¿Cuándo le llegan los Créditos?
+### ¿Cuándo le llegan los Créditos al usuario?
 
 > Es el momento en que el saldo le queda disponible en la Billetera.
 
@@ -3757,7 +3890,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ### ¿Hasta cuándo puede usar esos Créditos?
 
-> Casi todos ponen una fecha límite concreta.
+> Por ejemplo: hasta el 31 de diciembre, o 30 días desde que le llegan.
 
 **Por qué te preguntamos esto.** Los Créditos se vencen y eso tiene que estar escrito. Si no lo dices, el usuario puede sostener que no vencen.
 
@@ -3848,9 +3981,9 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ## Paso: Participantes
 
-### ¿Con qué puede pagar?
+### ¿Con qué medio de pago aplica el beneficio?
 
-> Con "todos" entran tarjetas, billeteras y efectivo donde exista.
+> Con "cualquier medio" entran tarjetas, billeteras y efectivo donde exista.
 
 **Por qué te preguntamos esto.** Restringir el medio de pago cambia quién puede participar. Los pedidos pagados con Créditos nunca dan beneficio.
 
@@ -3878,7 +4011,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ### Confirma que la información es correcta
 
-> Confirmo que la información es veraz y corresponde a la campaña aprobada.
+> Confirmo que estos datos son ciertos y son los de mi campaña.
 
 **Por qué te preguntamos esto.** El documento se genera con lo que escribiste y se publica tal cual. Nadie de Legal lo revisa antes.
 
@@ -3930,7 +4063,7 @@ formulario manual.
 
 ### ¿La campaña es de Rappi o de Rappi Travel?
 
-> Rappi es el domicilio de siempre. Rappi Travel son vuelos, hoteles, autos y paquetes.
+> Si es de vuelos, hoteles, autos o paquetes, es Rappi Travel.
 
 **Por qué te preguntamos esto.** Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.
 
@@ -4103,7 +4236,7 @@ formulario manual.
 
 - `vacio`: Elige qué recibe el usuario.
 
-### ¿Qué porcentaje del pedido devuelves en Créditos?
+### ¿Qué porcentaje del pedido se devuelve en Créditos?
 
 > Solo el número. Con 20, un pedido de $50.000 recibe $10.000 en Créditos.
 
@@ -4115,7 +4248,7 @@ formulario manual.
 | Paso | Beneficio |
 | Tipo de control | numero |
 | Obligatorio | sí, cuando se ve |
-| Ejemplo | 99 |
+| Ejemplo | 20 |
 | Avanza sola | no |
 | Llena en el documento | `PORCENTAJE` |
 
@@ -4124,11 +4257,11 @@ formulario manual.
 - `vacio`: Escribe el porcentaje que devuelves, sin el signo de porcentaje.
 - `rango`: El porcentaje va de 1 a 100. Si necesitas varios porcentajes o un rango, eso es otra campaña: escríbele a Legal.
 
-### ¿Qué es lo máximo que recibe alguien por pedido?
+### ¿Cuál es el máximo de Créditos por pedido?
 
 > Aunque el pedido sea grande, no recibe más de esto. Lo más usado es 25.000.
 
-**Por qué te preguntamos esto.** Sin tope, un pedido enorme se lleva el presupuesto entero. El tope es lo que hace que un cashback del 99% sea viable.
+**Por qué te preguntamos esto.** Sin tope, un pedido enorme se lleva el presupuesto entero. Con tope, un cashback alto sigue siendo viable.
 
 | | |
 |---|---|
@@ -4146,9 +4279,9 @@ formulario manual.
 - `cero`: El tope tiene que ser mayor que cero.
 - `mayorQuePresupuesto`: El tope por pedido es mayor que el presupuesto total. Con eso, el primer pedido se lleva toda la campaña. Revisa los dos números.
 
-### ¿Cuántas veces puede ganar la misma persona?
+### ¿Cuántas veces puede recibir el beneficio una persona?
 
-> La mitad de las campañas permite una sola vez por usuario.
+> Se cuenta por persona, durante toda la campaña.
 
 **Por qué te preguntamos esto.** Sin límite, unos pocos usuarios pueden consumir el presupuesto en horas. Con límite, el beneficio llega a más gente.
 
@@ -4210,7 +4343,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ### ¿Hay que gastar un mínimo para participar?
 
-> Es opcional: si no exiges un mínimo, deja el campo vacío y sigue.
+> Por ejemplo: 30.000. Si no hay mínimo, déjalo vacío.
 
 **Por qué te preguntamos esto.** Si lo exiges, tiene que quedar escrito. Si no aparece en el documento, no lo puedes aplicar después.
 
@@ -4232,7 +4365,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ### Confirma que la información es correcta
 
-> Confirmo que la información es veraz y corresponde a la campaña aprobada.
+> Confirmo que estos datos son ciertos y son los de mi campaña.
 
 **Por qué te preguntamos esto.** El documento se genera con lo que escribiste y se publica tal cual. Nadie de Legal lo revisa antes.
 
@@ -4285,7 +4418,7 @@ formulario manual.
 
 ### ¿La campaña es de Rappi o de Rappi Travel?
 
-> Rappi es el domicilio de siempre. Rappi Travel son vuelos, hoteles, autos y paquetes.
+> Si es de vuelos, hoteles, autos o paquetes, es Rappi Travel.
 
 **Por qué te preguntamos esto.** Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.
 
@@ -4412,7 +4545,7 @@ formulario manual.
 
 ## Paso: Beneficio
 
-### ¿Qué porcentaje del pedido devuelves en Créditos?
+### ¿Qué porcentaje del pedido se devuelve en Créditos?
 
 > Solo el número. Con 20, un pedido de $50.000 recibe $10.000 en Créditos.
 
@@ -4424,7 +4557,7 @@ formulario manual.
 | Paso | Beneficio |
 | Tipo de control | numero |
 | Obligatorio | sí, cuando se ve |
-| Ejemplo | 99 |
+| Ejemplo | 20 |
 | Avanza sola | no |
 | Llena en el documento | `PORCENTAJE` |
 
@@ -4433,11 +4566,11 @@ formulario manual.
 - `vacio`: Escribe el porcentaje que devuelves, sin el signo de porcentaje.
 - `rango`: El porcentaje va de 1 a 100. Si necesitas varios porcentajes o un rango, eso es otra campaña: escríbele a Legal.
 
-### ¿Qué es lo máximo que recibe alguien por pedido?
+### ¿Cuál es el máximo de Créditos por pedido?
 
 > Aunque el pedido sea grande, no recibe más de esto. Lo más usado es 25.000.
 
-**Por qué te preguntamos esto.** Sin tope, un pedido enorme se lleva el presupuesto entero. El tope es lo que hace que un cashback del 99% sea viable.
+**Por qué te preguntamos esto.** Sin tope, un pedido enorme se lleva el presupuesto entero. Con tope, un cashback alto sigue siendo viable.
 
 | | |
 |---|---|
@@ -4455,9 +4588,9 @@ formulario manual.
 - `cero`: El tope tiene que ser mayor que cero.
 - `mayorQuePresupuesto`: El tope por pedido es mayor que el presupuesto total. Con eso, el primer pedido se lleva toda la campaña. Revisa los dos números.
 
-### ¿Cuántas veces puede ganar la misma persona?
+### ¿Cuántas veces puede recibir el beneficio una persona?
 
-> La mitad de las campañas permite una sola vez por usuario.
+> Se cuenta por persona, durante toda la campaña.
 
 **Por qué te preguntamos esto.** Sin límite, unos pocos usuarios pueden consumir el presupuesto en horas. Con límite, el beneficio llega a más gente.
 
@@ -4489,7 +4622,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ### ¿El beneficio aplica solo en cierto tipo de pedido?
 
-> Es opcional: si el beneficio aplica en cualquier pedido, no marques nada.
+> Si aplica en cualquier pedido, no marques nada.
 
 **Por qué te preguntamos esto.** Esta pregunta es sobre el pedido con el que el usuario se gana el beneficio, no sobre dónde gasta después los Créditos: eso se pregunta más adelante. Si la restricción no queda escrita, el usuario puede reclamar el beneficio en cualquier pedido.
 
@@ -4505,11 +4638,11 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 **Opciones** (casillas, se pueden marcar varias):
 
 - **Solo si el pedido se hace por Turbo**: Un pedido por el resto de la app no da el beneficio.
-- **Solo si consume en el local**: La modalidad de consumo en el local de la app. Un domicilio no da el beneficio.
+- **Solo si consume en el local**: Pide por la app y come en el local. Un domicilio no da el beneficio.
 
 ## Paso: Créditos
 
-### ¿Cuándo le llegan los Créditos?
+### ¿Cuándo le llegan los Créditos al usuario?
 
 > Es el momento en que el saldo le queda disponible en la Billetera.
 
@@ -4557,7 +4690,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ### ¿Hasta cuándo puede usar esos Créditos?
 
-> Casi todos ponen una fecha límite concreta.
+> Por ejemplo: hasta el 31 de diciembre, o 30 días desde que le llegan.
 
 **Por qué te preguntamos esto.** Los Créditos se vencen y eso tiene que estar escrito. Si no lo dices, el usuario puede sostener que no vencen.
 
@@ -4622,9 +4755,9 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ### ¿Dónde puede gastar los Créditos?
 
-> Siete de cada diez campañas los limitan a la misma tienda.
+> Por ejemplo: solo en la tienda donde se los ganó, que es lo más común.
 
-**Por qué te preguntamos esto.** Define dónde vale el saldo. Lo normal es que se gaste en la misma tienda donde el usuario se ganó el beneficio. En todo caso, estos Créditos casi nunca aplican a RappiFavor, Cajero ATM ni RappiTravel.
+**Por qué te preguntamos esto.** Define dónde vale el saldo. Lo normal es que se gaste en la misma tienda donde el usuario se ganó el beneficio. En todo caso, estos Créditos casi nunca aplican a RappiFavor, Cajero ATM ni Rappi Travel.
 
 | | |
 |---|---|
@@ -4671,7 +4804,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 > Mínimo dos. Cada una entra con su razón social, su NIT y su presupuesto.
 
-**Por qué te preguntamos esto.** En un Cashback Day cada tienda organiza su propio beneficio y responde por él. Por eso cada una necesita sus propios datos.
+**Por qué te preguntamos esto.** En un Cashback Multitienda cada tienda organiza su propio beneficio y responde por él. Por eso cada una necesita sus propios datos.
 
 | | |
 |---|---|
@@ -4701,7 +4834,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ### ¿Quiénes pueden participar?
 
-> La mitad de las campañas es para todos y casi la otra mitad para Pro.
+> Por ejemplo: solo Pro, o quienes no compran hace 60 días.
 
 **Por qué te preguntamos esto.** Limita quién puede reclamar el beneficio. Si el documento dice "todos", no puedes excluir a nadie después.
 
@@ -4747,9 +4880,9 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 - `vacio`: Escribe cuántos días sin comprar.
 - `rango`: Los días van de 1 a 365.
 
-### ¿Con qué puede pagar?
+### ¿Con qué medio de pago aplica el beneficio?
 
-> Con "todos" entran tarjetas, billeteras y efectivo donde exista.
+> Con "cualquier medio" entran tarjetas, billeteras y efectivo donde exista.
 
 **Por qué te preguntamos esto.** Restringir el medio de pago cambia quién puede participar. Los pedidos pagados con Créditos nunca dan beneficio.
 
@@ -4775,7 +4908,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ### ¿Hay que gastar un mínimo para participar?
 
-> Es opcional: si no exiges un mínimo, deja el campo vacío y sigue.
+> Por ejemplo: 30.000. Si no hay mínimo, déjalo vacío.
 
 **Por qué te preguntamos esto.** Si lo exiges, tiene que quedar escrito. Si no aparece en el documento, no lo puedes aplicar después.
 
@@ -4793,11 +4926,68 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 - `cero`: Si no quieres exigir un mínimo, deja el campo vacío.
 
+## Paso: Pieza
+
+### ¿Qué categoría tiene el producto de la pieza?
+
+> Casi siempre es Ninguna. Solo cambia la leyenda del arte, no tu T&C.
+
+**Por qué te preguntamos esto.** Algunas categorías tienen que llevar una advertencia por ley dentro de la pieza, como los licores o los medicamentos. La leyenda que te damos ya la trae.
+
+| | |
+|---|---|
+| Campo interno | `categoriaProducto` |
+| Paso | Pieza |
+| Tipo de control | lista |
+| Obligatorio | no |
+| Valor por defecto | ninguna |
+| Avanza sola | sí |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige una categoría, o Ninguna si el producto no es de ninguna de esas.
+
+### ¿Cuál es el registro sanitario?
+
+> Está en el empaque. Sin él no te damos la leyenda de la pieza.
+
+**Por qué te preguntamos esto.** Una pieza de un medicamento o de un fitoterapéutico tiene que mostrar su registro sanitario. Sin ese número no se puede publicar.
+
+| | |
+|---|---|
+| Campo interno | `registroSanitario` |
+| Paso | Pieza |
+| Tipo de control | texto |
+| Obligatorio | no |
+| Ejemplo | INVIMA 2020M-0012345 |
+| Avanza sola | no |
+| Llena en el documento | `REGISTRO_SANITARIO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el registro sanitario del producto.
+
+### ¿Tiene número de notificación ante el INVIMA?
+
+> Es opcional. Si no lo tienes a la mano, déjalo vacío.
+
+**Por qué te preguntamos esto.** Cuando la pieza de un medicamento se notificó al INVIMA, el número va dentro de la leyenda. Si no lo pones, la leyenda sale sin esa frase.
+
+| | |
+|---|---|
+| Campo interno | `notificacionInvima` |
+| Paso | Pieza |
+| Tipo de control | texto |
+| Obligatorio | no |
+| Ejemplo | 20251234567 |
+| Avanza sola | no |
+| Llena en el documento | `NOTIFICACION_INVIMA` |
+
 ## Paso: Revisar
 
 ### Confirma que la información es correcta
 
-> Confirmo que la información es veraz y corresponde a la campaña aprobada.
+> Confirmo que estos datos son ciertos y son los de mi campaña.
 
 **Por qué te preguntamos esto.** El documento se genera con lo que escribiste y se publica tal cual. Nadie de Legal lo revisa antes.
 

@@ -162,4 +162,8 @@ function main() {
   console.log('docs/PREGUNTAS_KAM.md generado: ' + lineas.length + ' líneas.');
 }
 
-main();
+// `ficha` la reusa scripts/revision.js para el cuadernillo de tandas: la
+// pregunta se describe en un solo sitio, y los dos documentos no se separan.
+module.exports = { ficha, main };
+
+if (require.main === module) main();

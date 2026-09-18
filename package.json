@@ -17,6 +17,7 @@
     "preguntas": "node scripts/preguntas.js",
     "demo": "node scripts/demo.js",
     "front": "node scripts/front.js",
+    "revision": "node scripts/revision.js",
     "ayuda": "node scripts/ayuda.js",
     "docs": "npm run preguntas && npm run ayuda"
   }

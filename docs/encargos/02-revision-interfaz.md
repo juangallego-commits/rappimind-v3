@@ -1,13 +1,16 @@
 # Encargo 02 · La revisión de la interfaz
 
-> **Esta versión quedó atrás. No la mandes así.** Las pantallas ahora salen de
-> `docs/FRONT_ACTUAL.html`, que se genera con `npm run front` y trae las 44
-> pantallas con el HTML y los estilos de verdad, más cinco anexos. Ese archivo
-> se adjunta solo, sin capturas. Lo que sigue valiendo de aquí son las reglas
-> del texto, el criterio del comercial y el formato de respuesta. Lo que ya no
-> vale es la numeración: la buena va de 1 a 44 y es la del HTML, no las 33 de
-> abajo. Y las dieciséis capturas de `docs/capturas/revision/` dejaron de hacer
-> falta.
+> **Esta versión quedó atrás. No la mandes así.** La revisión del front se hace
+> ahora con `docs/revision/`: las 46 pantallas partidas en siete tandas, cada
+> una con su texto sacado de la aplicación, sus fotos y el prompt con el formato
+> de respuesta. Empieza por `docs/revision/LEEME.md`. Lo que sigue valiendo de
+> aquí son las reglas del texto y el criterio del comercial, que ya están dentro
+> de `docs/revision/PROMPT.md`. Lo que ya no vale es la numeración de las 33
+> pantallas de abajo ni las dieciséis capturas de `docs/capturas/revision/`.
+>
+> `docs/FRONT_ACTUAL.html` sigue existiendo y sigue sirviendo para ver el front
+> entero de corrido, pero para revisarlo pesa demasiado: el porqué está en
+> `docs/revision/LEEME.md`.
 >
 > Si estás aplicando la respuesta de este encargo, los números de pantalla que
 > venga son los del HTML.

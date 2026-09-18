@@ -59,7 +59,7 @@ Las capturas van donde dicen los marcadores. Todavía no existen.
    Deberías ver: El calendario del mes y, a la izquierda, la lista de los T&C que ya existen.
    `[CAPTURA 3]`
 
-4. Copia el título de la campaña que te damos aquí abajo y pégalo en el título del evento. No lo cambies ni le agregues nada.
+4. Copia el título que te dio RappiMind y pégalo en el título del evento. No lo cambies ni le agregues nada.
    Deberías ver: El título arriba, donde dice "Escribe un título para el evento".
    `[CAPTURA 4]`
 
@@ -68,10 +68,10 @@ Las capturas van donde dicen los marcadores. Todavía no existen.
    `[CAPTURA 5]`
 
 6. Selecciona todo el documento, cópialo y pégalo en el cuerpo del evento. Revisa que las cláusulas numeradas y las viñetas se vean bien.
-   Deberías ver: El texto completo con sus veinte cláusulas.
+   Deberías ver: El texto completo, con todas sus cláusulas numeradas.
    `[CAPTURA 6]`
 
-7. Entra a la pestaña Opciones y reemplaza la dirección del evento por la que te damos aquí abajo. La parte del país no se toca: Squarespace la pone sola.
+7. Entra a la pestaña Opciones y reemplaza la dirección del evento por la que te dio RappiMind. La parte del país no se toca: Squarespace la pone sola.
    Deberías ver: El campo "URL del evento", con el país a la izquierda y el resto editable.
    `[CAPTURA 7]`
 
@@ -94,7 +94,7 @@ Las capturas van donde dicen los marcadores. Todavía no existen.
 | El enlace no abre o da error 404. | La página quedó en borrador. Vuelve a Squarespace y dale Publicar, no solo Guardar. |
 | El texto se ve corrido o sin viñetas. | Pégalo otra vez usando Pegar sin formato y deja que Squarespace le aplique el estilo de la página. |
 | El enlace no empieza por promos.rappi.com. | Creaste la página en otro sitio. Tiene que estar dentro de promos.rappi.com para que RappiMind la acepte. |
-| No tengo usuario de Squarespace. | Es normal: la cuenta la tienen unas pocas personas por país. Pide la publicación por el canal de Legal y pasa el documento y la dirección que te dio RappiMind. |
+| No tengo usuario de Squarespace. | Es normal: la cuenta la tienen unas pocas personas por país. Pide la publicación en #tyc-rappi y pasa el documento y la dirección que te dio RappiMind. |
 | La dirección que puse quedó distinta a la que me dio la herramienta. | Vuelve a Opciones, corrígela y publica otra vez. Si ya la publicaste con otra dirección, pega en RappiMind el enlace real, no el que te propusimos. |
 | Me equivoqué en un dato y ya generé el documento. | No edites el documento a mano. Genera uno nuevo con los datos corregidos y publica ese. El anterior queda en tu historial sin publicar. |
 
@@ -139,11 +139,11 @@ No, y por eso importa que los datos estén bien. El texto legal ya está aprobad
 
 **Ya publiqué y necesito cambiar las fechas. ¿Puedo?**
 
-Cambiar condiciones de una campaña ya publicada afecta a quien ya participó. Habla con Legal antes de tocar nada: hay reglas sobre qué se puede modificar y qué no.
+Si es para alargarla o subir el presupuesto, sí: en Mis campañas, botón Ampliar. Para acortarla o bajar algo, habla con Legal, porque afecta a quien ya participó.
 
 **El NIT del aliado no pasa la validación.**
 
-Casi siempre es el dígito de verificación, el número después del guion. Pídele el RUT a tu contacto y cópialo de ahí. Si el RUT dice un número y la validación lo rechaza, escríbele a Legal.
+Casi siempre es el dígito de verificación, el número después del guion. Pídele el RUT a tu contacto y cópialo de ahí. Si el RUT dice un número y la validación lo rechaza, avísanos en el canal de ayuda: es una falla de la herramienta.
 
 **¿Puedo poner varias tiendas en una misma campaña?**
 

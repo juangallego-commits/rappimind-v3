@@ -1576,3 +1576,76 @@ de dónde se gastan los Créditos.
 3. **Correr `setup()`** sigue pendiente de la vez pasada, por lo de los países
    que salieron de piloto.
 4. **El despliegue de GitHub Actions**: avísame si lo lanzo.
+
+## El paquete para revisar el front con Claude chat
+
+### Qué quedó
+
+`docs/revision/`, que es el front partido en tandas para poder revisarlo
+pantalla por pantalla y caso por caso en Claude chat, y que lo que salga se
+pueda aplicar sin volver a escribirlo a mano.
+
+- **`LEEME.md`**: cómo se hace cada tanda, paso a paso, sin tocar la terminal,
+  y cómo se sube la respuesta desde GitHub.
+- **`PROMPT.md`**: lo que se pega al empezar cada conversación. Quién revisa,
+  qué es RappiMind, quién es el comercial, las seis reglas que no se pueden
+  romper (empezando por que Rappi nunca es el organizador y que el texto legal
+  no se revisa), los nueve criterios de cada pantalla y el formato exacto de
+  respuesta.
+- **Siete tandas**, de 16 a 28 KB cada una: la entrada, el Cashback, el cierre,
+  los otros tipos de Rappi, Rappi Travel, Brasil y el portugués, y el celular
+  con los errores.
+- **`capturas/`**: 21 fotos, una por forma de pantalla. Claude chat lee
+  imágenes y no dibuja HTML, así que son lo único que le deja juzgar el aire,
+  la jerarquía y el tamaño de los botones.
+- **`pantallas.json`**: el texto de las 46 pantallas sacado del navegador, del
+  que se arman las tandas.
+
+### Por qué en tandas y no el archivo único
+
+`docs/FRONT_ACTUAL.html` sigue existiendo y sigue sirviendo: es el front entero
+en un archivo, se abre con doble clic y se ve como la aplicación. Para revisarlo
+en Claude chat tiene un problema, y es que pesa noventa mil fichas de contexto,
+la mitad en etiquetas y estilos que no aportan nada a una revisión de copy.
+Entra en una conversación, pero deja poco aire, y una revisión de 46 pantallas
+con poco aire vuelve con quince observaciones generales.
+
+Partido en siete, cada conversación revisa entre siete y dieciocho pantallas con
+la ventana entera libre. Es la diferencia entre "esta pantalla está bien" y una
+ficha con el texto de hoy y el texto propuesto.
+
+### Lo que apareció de paso
+
+- **`docs/PREGUNTAS_KAM.md` estaba viejo.** Las preguntas habían mejorado en el
+  código y el documento no se había vuelto a generar: 394 líneas de diferencia.
+  Ya está al día, y con él `docs/CONTENIDO_AYUDA.md`.
+- **Las 41 preguntas propias de Rappi Travel nunca han pasado por una revisión
+  de copy.** Son la tanda 5 y, de todo el paquete, es donde más hay que mirar.
+- **`docs/encargos/02-revision-interfaz.md` y `docs/REVISION_FRONT.md` quedaron
+  atrás.** Los reemplaza este paquete. Se dejan como historia de lo que ya se
+  revisó una vez.
+
+### Cómo probarlo
+
+```
+npm test                                                  # 589 pruebas
+export NODE_PATH=/opt/node22/lib/node_modules
+export PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
+npm run front        # recorre, deja el HTML, pantallas.json y las 21 fotos
+npm run revision     # arma las siete tandas, sin navegador, al instante
+```
+
+Con los ojos: abre `docs/revision/LEEME.md` y sigue los seis pasos con la tanda
+1. Si la respuesta que vuelve trae fichas con "Dice hoy" copiado letra por
+letra, el paquete funcionó.
+
+### Lo que necesito de Juan
+
+1. **Empieza por la tanda 1.** Son las once pantallas donde el comercial decide
+   si se queda o te escribe. Si solo hay tiempo para tres, que sean la 1, la 2
+   y la 3.
+2. **Guarda cada respuesta entera** en `docs/revision/respuestas/tanda-N.md`,
+   sin resumir. De ahí salen los cambios.
+3. **Mira con lupa lo que proponga sobre texto legal.** El prompt le dice que no
+   lo toque, pero va a proponer mejoras de redacción que suenan bien y que no se
+   aplican.

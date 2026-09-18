@@ -1,5 +1,11 @@
 # Revisión de la interfaz de RappiMind v3
 
+> **Esto quedó atrás. No lo mandes así.** La revisión del front se hace ahora
+> con `docs/revision/`, que trae las 46 pantallas partidas en siete tandas, con
+> el texto sacado de la aplicación, las fotos y el prompt con el formato de
+> respuesta. Empieza por `docs/revision/LEEME.md`. Esto se queda como historia
+> de la revisión de las 33 pantallas de septiembre.
+
 Este documento existe para que alguien que no tiene el repositorio ni la app pueda
 revisar el copy y la experiencia de RappiMind. Trae una captura de cada pantalla del
 recorrido y, debajo, el texto completo que se ve en ella.
