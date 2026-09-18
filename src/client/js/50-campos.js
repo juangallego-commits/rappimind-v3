@@ -179,11 +179,13 @@ function controlFechaUHora(campo, alCambiar) {
 }
 
 /** Botones grandes con una línea de explicación. */
-function controlOpciones(campo, pregunta, alElegir, deshabilitadas) {
+function controlOpciones(campo, pregunta, alElegir, deshabilitadas, deLosDatos) {
   var elegido = estado.entrada()[campo.id];
   var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-labelledby': 'pregunta-' + campo.id });
 
-  var opciones = pregunta.opciones || campo.opciones || [];
+  // Las opciones que salen de los datos mandan: la categoria del producto las
+  // saca del catalogo de leyendas, y cambian segun el pais.
+  var opciones = deLosDatos || pregunta.opciones || campo.opciones || [];
   for (var i = 0; i < opciones.length; i++) {
     (function (opcion, indice) {
       var razon = deshabilitadas ? deshabilitadas[opcion.valor] : null;
@@ -284,7 +286,7 @@ function dibujarPregunta(campo, config) {
     control = controlOpciones(campo, pregunta, function (valor) {
       if (alCambiar(valor)) return;
       if (pregunta.avanzaSola && config.alAvanzar) config.alAvanzar();
-    }, config.deshabilitadas);
+    }, config.deshabilitadas, config.opciones);
   } else if (campo.tipo === 'casillas') {
     control = controlCasillas(campo, pregunta, config.opciones || pregunta.opciones || [], alCambiar);
   } else if (campo.tipo === 'casilla') {

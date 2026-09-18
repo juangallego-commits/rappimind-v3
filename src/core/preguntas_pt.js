@@ -32,6 +32,29 @@ var PREGUNTAS_PT = {
     errores: { vacio: 'Escolha o país da campanha.' },
   },
 
+  // La pieza publicitaria. Un KAM de Brasil no las ve, porque hoy solo Colombia
+  // tiene leyenda de campana, pero si alguien deja la interfaz en portugues y
+  // arma una campana de Colombia si las lee.
+  categoriaProducto: {
+    pregunta: 'Qual é a categoria do produto da peça?',
+    ayuda: 'Quase sempre é Nenhuma. Só muda a legenda da arte.',
+    porQue: 'Algumas categorias precisam levar uma advertência por lei dentro da peça, como as bebidas alcoólicas ou os medicamentos. A legenda que entregamos já traz essa advertência.',
+    errores: { vacio: 'Escolha uma categoria, ou Nenhuma se o produto não for de nenhuma delas.' },
+  },
+
+  registroSanitario: {
+    pregunta: 'Qual é o registro sanitário?',
+    ayuda: 'Vai impresso na peça. Procure na embalagem do produto.',
+    porQue: 'Uma peça de um medicamento ou de um fitoterápico precisa mostrar o seu registro sanitário. Sem esse número não dá para publicar.',
+    errores: { vacio: 'Escreva o registro sanitário do produto.' },
+  },
+
+  notificacionInvima: {
+    pregunta: 'Tem número de notificação perante o INVIMA?',
+    ayuda: 'É opcional. Se não tiver à mão, deixe em branco.',
+    porQue: 'Quando a peça de um medicamento foi notificada ao INVIMA, o número vai dentro da legenda. Se você não colocar, a legenda sai sem essa frase.',
+  },
+
   negocio: {
     pregunta: 'A campanha é da Rappi ou da Rappi Travel?',
     ayuda: 'Se for de voos, hotéis, carros ou pacotes, é Rappi Travel.',

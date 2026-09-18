@@ -33,6 +33,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var tieneValorLey = require('./texto.js').tieneValor;
   var direccionDeCampanaLey = require('./nombres.js').direccionDeCampana;
   var SECCIONES_EXCLUIBLES_ETA_LEY = require('./derivados_eta.js').SECCIONES_EXCLUIBLES_ETA;
+  var categoriaPideRegistro = require('./esquemas.js').categoriaPideRegistro;
 }
 
 /** Donde vive el T&C publicado. La ruta del pais sale de la fila del pais. */
@@ -407,6 +408,17 @@ function urlDelTcDeLaCampana(entrada, pais, nombreCampana, enlacePublicado) {
  * uno de estos se entrega como pendiente, con su razon, en vez de salir rota o
  * de tumbar las otras cuatro.
  */
+/**
+ * Las categorias cuya pieza tiene que mostrar el registro sanitario.
+ *
+ * Es la misma lista de esquemas.js, que es quien decide si la pregunta se ve.
+ * Se lee de alli para que no haya dos listas que se puedan separar.
+ */
+function categoriaPideRegistroSanitario(categoria) {
+  if (typeof categoriaPideRegistro === 'function') return categoriaPideRegistro(categoria);
+  return false;
+}
+
 var PENDIENTES_POR_MARCADOR = {
   URL_CORTA: 'falta el enlace corto. Juan aprobó que sea una dirección propia dentro de promos.rappi.com, pero todavía no está definida la forma exacta ni quién crea la página',
 };
@@ -444,6 +456,15 @@ function faltantesParaLaLeyenda(entrada, pais) {
   if (entrada.tipo === 'carrera_compras' && entrada.criterioGanador &&
       entrada.criterioGanador !== 'mayor_valor') {
     faltantes.push('cómo se dice en una pieza que gana quien haga más pedidos');
+  }
+
+  // El registro sanitario no bloquea el documento, pero sin el la pieza de un
+  // medicamento o de un fitoterapeutico no se puede publicar (Legal CO,
+  // diapositiva 10). La leyenda lo lleva en un bloque opcional, asi que sin
+  // este aviso desapareceria en silencio y nadie se enteraria.
+  if (categoriaPideRegistroSanitario(entrada.categoriaProducto) &&
+      !tieneValorLey(entrada.registroSanitario)) {
+    faltantes.push('el registro sanitario del producto, que la pieza tiene que mostrar');
   }
 
   return faltantes;

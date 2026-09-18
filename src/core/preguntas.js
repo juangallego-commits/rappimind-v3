@@ -36,6 +36,7 @@ var PASOS = [
   { id: 'premio', nombre: 'Premio', titulo: 'El premio' },
   { id: 'tiendas', nombre: 'Tiendas', titulo: 'Las tiendas participantes' },
   { id: 'participantes', nombre: 'Participantes', titulo: 'Quién puede participar' },
+  { id: 'pieza', nombre: 'Pieza', titulo: 'La pieza publicitaria' },
   { id: 'confirmacion', nombre: 'Revisar', titulo: 'Revisa y genera' },
 ];
 
@@ -641,6 +642,48 @@ var PREGUNTAS = {
         placeholders: ['TEXTO_REDENCION_TRAVEL'],
       },
     },
+  }),
+
+  // --- La pieza publicitaria ----------------------------------------------
+  //
+  // Estas tres no cambian nada del T&C. Deciden la leyenda que va dentro del
+  // arte, que es el texto que hasta ahora el comercial le pedia a Legal por
+  // correo. Las opciones salen del catalogo de modelos/leyendas/, asi que un
+  // pais solo ofrece las categorias para las que existe una leyenda aprobada.
+
+  categoriaProducto: p({
+    paso: 'pieza',
+    // Casi ninguna campana lleva advertencia de categoria, asi que "Ninguna"
+    // viene marcada. Marcada no es respondida: la pregunta se muestra igual y
+    // alguien tiene que confirmarla, como pasa con Colombia en el pais.
+    porDefecto: 'ninguna',
+    pregunta: '¿Qué categoría tiene el producto de la pieza?',
+    ayuda: 'Casi siempre es Ninguna. Solo cambia la leyenda del arte, no tu T&C.',
+    opcional: true,
+    porQue: 'Algunas categorías tienen que llevar una advertencia por ley dentro de la pieza, como los licores o los medicamentos. La leyenda que te damos ya la trae.',
+    avanzaSola: true,
+    errores: { vacio: 'Elige una categoría, o Ninguna si el producto no es de ninguna de esas.' },
+  }),
+
+  registroSanitario: p({
+    paso: 'pieza',
+    pregunta: '¿Cuál es el registro sanitario?',
+    ayuda: 'Está en el empaque. Sin él no te damos la leyenda de la pieza.',
+    opcional: true,
+    porQue: 'Una pieza de un medicamento o de un fitoterapéutico tiene que mostrar su registro sanitario. Sin ese número no se puede publicar.',
+    ejemplo: 'INVIMA 2020M-0012345',
+    placeholders: ['REGISTRO_SANITARIO'],
+    errores: { vacio: 'Escribe el registro sanitario del producto.' },
+  }),
+
+  notificacionInvima: p({
+    paso: 'pieza',
+    pregunta: '¿Tiene número de notificación ante el INVIMA?',
+    ayuda: 'Es opcional. Si no lo tienes a la mano, déjalo vacío.',
+    porQue: 'Cuando la pieza de un medicamento se notificó al INVIMA, el número va dentro de la leyenda. Si no lo pones, la leyenda sale sin esa frase.',
+    ejemplo: '20251234567',
+    opcional: true,
+    placeholders: ['NOTIFICACION_INVIMA'],
   }),
 
   secciones: p({

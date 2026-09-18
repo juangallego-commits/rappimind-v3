@@ -197,7 +197,20 @@ function anunciar(mensaje) {
   if (region) region.textContent = mensaje;
 }
 
+/**
+ * La primera letra en mayuscula, sin tocar el resto.
+ *
+ * Las categorias del catalogo estan escritas como se leen dentro de una frase
+ * ("licores y cervezas"), y en una opcion de la pantalla arrancan la linea.
+ */
+function conMayusculaInicial(texto) {
+  var cadena = String(texto || '');
+  if (!cadena) return '';
+  return cadena.charAt(0).toUpperCase() + cadena.slice(1);
+}
+
 RM.util = {
+  conMayusculaInicial: conMayusculaInicial,
   paraCopiar: paraCopiar,
   seleccionar: seleccionar,
   crear: crear,

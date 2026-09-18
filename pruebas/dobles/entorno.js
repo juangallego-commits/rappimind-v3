@@ -52,6 +52,11 @@ function levantarEntorno(opciones) {
   globalThis.CONFIRMACIONES_LEGALES = semilla.confirmaciones || [];
   globalThis.SECCIONES = leerJson(rutaDesdeRaiz('data', 'secciones.json'));
 
+  // El catalogo de leyendas, igual que en Apps Script y en el navegador. Sin
+  // esto, la pregunta de la categoria del producto no se ve en las pruebas y se
+  // ve en produccion: la prueba pasaria contra un formulario que no existe.
+  globalThis.LEYENDAS = require('../../scripts/lib/modelos').cargarLeyendas();
+
   for (const nombre of ARCHIVOS_CORE) {
     publicarEnGlobal(path.join(__dirname, '..', '..', 'src', 'core', nombre + '.js'));
   }

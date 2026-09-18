@@ -147,6 +147,42 @@ function comoLeyendas(catalogo) {
   return lista;
 }
 
+/**
+ * El catalogo cargado, para quien no lo puede recibir por parametro.
+ *
+ * Lo necesitan dos cosas que corren lejos de aqui: la pregunta de la categoria
+ * del producto, que solo se muestra si el pais tiene categorias, y la lista de
+ * opciones de esa pregunta. Las dos viven en src/core/esquemas.js, que recibe
+ * solo la entrada del formulario.
+ *
+ * En Apps Script y en el navegador, LEYENDAS ya es una constante global que
+ * escribe el build. En Node no hay global que valga, asi que quien corre las
+ * pruebas llama a usarCatalogo() una vez. Si nadie lo hizo, el catalogo esta
+ * vacio y la pregunta no se muestra, que es preferible a mostrarla sin opciones.
+ */
+var catalogoEnMemoria = null;
+
+function usarCatalogo(textos) {
+  catalogoEnMemoria = cargarCatalogo(textos || {});
+  return catalogoEnMemoria;
+}
+
+function catalogoActual() {
+  if (catalogoEnMemoria) return catalogoEnMemoria;
+  if (typeof LEYENDAS !== 'undefined') catalogoEnMemoria = cargarCatalogo(LEYENDAS);
+  return catalogoEnMemoria || {};
+}
+
+/** Las categorias que este pais puede ofrecer, sin pasar el catalogo. */
+function categoriasDeProducto(codigoPais) {
+  return categoriasDelPais(catalogoActual(), codigoPais);
+}
+
+/** Si este pais tiene alguna leyenda de campana que entregar. */
+function hayLeyendasDeCampana(codigoPais, tipo) {
+  return leyendasDeLaCampana(catalogoActual(), codigoPais, tipo).length > 0;
+}
+
 function aplicaAlPais(leyenda, codigoPais) {
   return leyenda.pais.indexOf(String(codigoPais || '').toUpperCase()) !== -1;
 }
@@ -179,9 +215,28 @@ function categoriasDelPais(catalogo, codigoPais) {
     if (!aplicaAlPais(leyenda, codigoPais)) continue;
     if (vistas[leyenda.categoria_id]) continue;
     vistas[leyenda.categoria_id] = true;
-    opciones.push({ valor: leyenda.categoria_id, etiqueta: leyenda.categoria, leyenda: leyenda.id });
+    opciones.push({
+      valor: leyenda.categoria_id,
+      etiqueta: leyenda.categoria,
+      leyenda: leyenda.id,
+      // El principio de la advertencia que se va a imprimir. Sin esto las diez
+      // opciones decian lo mismo debajo y el comercial elegia a ciegas.
+      adelanto: adelantoDe(leyenda.cuerpo),
+    });
   }
+  // Por como se lee la etiqueta, no por el identificador: la lista la recorre
+  // una persona buscando su producto, no el catalogo.
+  opciones.sort(function (a, b) { return a.etiqueta.localeCompare(b.etiqueta, 'es'); });
   return opciones;
+}
+
+/** Las primeras palabras de una leyenda, para mostrarlas sin ocupar tres lineas. */
+function adelantoDe(cuerpo) {
+  var limpio = String(cuerpo || '').replace(/\[\[[^\]]*\]\]/g, '').replace(/\{\{\w+\}\}/g, '').replace(/\s+/g, ' ').trim();
+  if (limpio.length <= 64) return limpio;
+  var corte = limpio.slice(0, 64);
+  var espacio = corte.lastIndexOf(' ');
+  return (espacio > 30 ? corte.slice(0, espacio) : corte) + '…';
 }
 
 /**
@@ -427,6 +482,10 @@ if (typeof module !== 'undefined') {
     FORMAS_DE_ELEGIR: FORMAS_DE_ELEGIR,
     leyendaDesdeTexto: leyendaDesdeTexto,
     cargarCatalogo: cargarCatalogo,
+    usarCatalogo: usarCatalogo,
+    catalogoActual: catalogoActual,
+    categoriasDeProducto: categoriasDeProducto,
+    hayLeyendasDeCampana: hayLeyendasDeCampana,
     categoriasDelPais: categoriasDelPais,
     complementosQueAplican: complementosQueAplican,
     leyendasDeLaCampana: leyendasDeLaCampana,

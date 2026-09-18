@@ -50,7 +50,10 @@ function comoTexto(campo) {
     return etiquetas.join(', ');
   }
 
-  var opciones = pregunta.opciones || campo.opciones;
+  // Las opciones que salen de los datos no estan en el esquema ni en la
+  // pregunta. Sin esto, la categoria respondida se leia arriba como
+  // "medicamento", que es el nombre interno y no lo que dice la opcion.
+  var opciones = opcionesDeLosDatos(campo) || pregunta.opciones || campo.opciones;
   if (opciones) {
     var elegida = opciones.filter(function (o) { return o.valor === valor; })[0];
     if (elegida) return elegida.etiqueta;
@@ -88,12 +91,41 @@ function opcionesDeshabilitadas(campo) {
   return razon;
 }
 
-/** Las opciones reales de un campo de casillas que las saca de los datos. */
-function opcionesDeCasillas(campo) {
-  if (campo.id !== 'secciones') return null;
+/**
+ * Las opciones de un campo que no las trae escritas, sino que salen de los datos.
+ *
+ * Son dos: las secciones de la app, que vienen del Sheet, y la categoria del
+ * producto, que sale del catalogo de leyendas. Las dos cambian segun el pais, y
+ * por eso no pueden estar escritas en el esquema.
+ */
+function opcionesDeLosDatos(campo) {
   var pais = flujo.paisElegido();
-  var nombres = (E.configuracion.secciones && pais) ? (E.configuracion.secciones[pais.codigo] || []) : [];
-  return nombres.map(function (nombre) { return { valor: nombre, etiqueta: nombre, nota: 'Sección de la app.' }; });
+
+  if (campo.id === 'secciones') {
+    var nombres = (E.configuracion.secciones && pais) ? (E.configuracion.secciones[pais.codigo] || []) : [];
+    return nombres.map(function (nombre) { return { valor: nombre, etiqueta: nombre, nota: 'Sección de la app.' }; });
+  }
+
+  if (campo.id === 'categoriaProducto') {
+    // "Ninguna" va primero y viene marcada: es la respuesta de casi todas las
+    // campanas, y la pregunta se muestra igual para que alguien la confirme.
+    var opciones = [{
+      valor: 'ninguna',
+      etiqueta: estado.T('Ninguna de estas'),
+      nota: estado.T('El producto no necesita advertencia por ley.'),
+    }];
+    var delPais = pais ? categoriasDeProducto(pais.codigo) : [];
+    for (var i = 0; i < delPais.length; i++) {
+      opciones.push({
+        valor: delPais[i].valor,
+        etiqueta: RM.util.conMayusculaInicial(delPais[i].etiqueta),
+        nota: delPais[i].adelanto,
+      });
+    }
+    return opciones;
+  }
+
+  return null;
 }
 
 /**
@@ -285,7 +317,7 @@ function pantallaPasos(raiz) {
   // La pregunta abierta.
   var campoAbierto = campos[indiceAbierto];
   if (campoAbierto) {
-    var opcionesEspeciales = opcionesDeCasillas(campoAbierto);
+    var opcionesEspeciales = opcionesDeLosDatos(campoAbierto);
     var bloque = RM.campos.dibujarPregunta(campoAbierto, {
       pais: flujo.paisElegido(),
       error: E.errores[campoAbierto.id] ? errores[campoAbierto.id] : null,

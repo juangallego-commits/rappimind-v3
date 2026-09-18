@@ -18,8 +18,39 @@ if (typeof module !== 'undefined' && typeof require === 'function' && typeof CAT
   var CATEGORIAS_TRAVEL = require('../../data/categorias_travel.json');
 }
 
+/*
+ * La pregunta de la categoria del producto sale del catalogo de leyendas: las
+ * opciones que ofrece cada pais son las leyendas de categoria que existen para
+ * ese pais. En Apps Script y en el navegador estas funciones ya son globales.
+ */
+if (typeof module !== 'undefined' && typeof require === 'function') {
+  var moduloLeyendasEsquemas = require('./leyendas.js');
+  var categoriasDeProducto = moduloLeyendasEsquemas.categoriasDeProducto;
+  var hayLeyendasDeCampana = moduloLeyendasEsquemas.hayLeyendasDeCampana;
+}
+
 function siempre() {
   return true;
+}
+
+/**
+ * Las categorias que obligan a imprimir el registro sanitario en la pieza.
+ *
+ * Legal CO lo pide para medicamentos y fitoterapeuticos (diapositiva 10). Sin
+ * el registro la pieza no se puede publicar, asi que la pregunta es obligatoria
+ * y solo aparece cuando aplica.
+ */
+var CATEGORIAS_CON_REGISTRO = ['medicamento', 'medicamentos_varios', 'fitoterapeutico_pfm', 'fitoterapeutico_pft'];
+
+/** Solo los medicamentos llevan ademas el numero de notificacion ante el INVIMA. */
+var CATEGORIAS_CON_INVIMA = ['medicamento', 'medicamentos_varios'];
+
+function categoriaPideRegistro(categoria) {
+  return CATEGORIAS_CON_REGISTRO.indexOf(String(categoria || '')) !== -1;
+}
+
+function categoriaPideInvima(categoria) {
+  return CATEGORIAS_CON_INVIMA.indexOf(String(categoria || '')) !== -1;
 }
 
 /** Campos comunes a los tres tipos (seccion 5.1). */
@@ -77,6 +108,43 @@ var CAMPOS_COMUNES = [
     ],
   },
   { id: 'compraMinima', etiqueta: 'Compra mínima', tipo: 'numero', paso: 'participantes', obligatorio: false },
+  // La pieza publicitaria. Estas tres no cambian una coma del T&C: deciden la
+  // leyenda que va dentro del arte, que hasta ahora el comercial le pedia a
+  // Legal por correo. Por eso van en su propio paso, al final.
+  {
+    id: 'categoriaProducto',
+    etiqueta: 'Categoría del producto',
+    tipo: 'lista',
+    paso: 'pieza',
+    porDefecto: 'ninguna',
+    // Ninguna de las tres puede bloquear el documento: el T&C no las usa para
+    // nada. Lo que bloquean es la leyenda de la pieza, y eso lo dice
+    // faltantesParaLaLeyenda con su razon. Un comercial que solo quiere su T&C
+    // no se puede quedar sin el por una pregunta del arte.
+    obligatorio: false,
+    // Solo donde hay algo que imprimir. Un pais sin leyenda de campana no tiene
+    // donde pegar el complemento, y uno sin categorias no tiene que ofrecer.
+    visible: function (entrada) {
+      return hayLeyendasDeCampana(entrada.pais, entrada.tipo) &&
+        categoriasDeProducto(entrada.pais).length > 0;
+    },
+  },
+  {
+    id: 'registroSanitario',
+    etiqueta: 'Registro sanitario',
+    tipo: 'texto',
+    paso: 'pieza',
+    visible: function (entrada) { return categoriaPideRegistro(entrada.categoriaProducto); },
+    obligatorio: false,
+  },
+  {
+    id: 'notificacionInvima',
+    etiqueta: 'Notificación ante el INVIMA',
+    tipo: 'texto',
+    paso: 'pieza',
+    visible: function (entrada) { return categoriaPideInvima(entrada.categoriaProducto); },
+    obligatorio: false,
+  },
   {
     id: 'declaracion',
     etiqueta: 'Confirmo que la información es veraz y corresponde a la campaña aprobada',
@@ -1118,6 +1186,10 @@ if (typeof module !== 'undefined') {
     esquemaDe: esquemaDe,
     tieneCampo: tieneCampo,
     camposVisibles: camposVisibles,
+    categoriaPideRegistro: categoriaPideRegistro,
+    categoriaPideInvima: categoriaPideInvima,
+    CATEGORIAS_CON_REGISTRO: CATEGORIAS_CON_REGISTRO,
+    CATEGORIAS_CON_INVIMA: CATEGORIAS_CON_INVIMA,
     resolverAtributo: resolverAtributo,
     siempre: siempre,
   };

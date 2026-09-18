@@ -276,6 +276,78 @@ async function recorrer() {
   });
   revisar('un país que no está en piloto no lleva el aviso', sinAviso === '', sinAviso.slice(0, 120));
 
+  // --- 3d. La pregunta de la categoria del producto -------------------------
+  //
+  // Es la unica pregunta nueva del encargo 03, y solo sirve para la leyenda de
+  // la pieza publicitaria. Sus opciones no estan escritas en ningun esquema:
+  // salen del catalogo de modelos/leyendas/, asi que si el catalogo no llega al
+  // navegador la pregunta sale sin una sola opcion que ofrecer.
+  await desdeElInicio();
+  await decirQueNoATodo();
+  await clic('Colombia');
+  await clic('Rappi');
+  await clic('Cashback');
+  await pagina.evaluate(function () {
+    var pasos = RM.flujo.pasosDelTipo(RM.estado.entrada()).map(function (p) { return p.id; });
+    RM.estado.estado.pasoActual = pasos.indexOf('pieza');
+    RM.estado.estado.campoAbierto = 'categoriaProducto';
+    RM.app.dibujar();
+  });
+  await pagina.waitForTimeout(400);
+
+  const laPieza = await texto();
+  revisar('la pregunta de la categoría del producto sale con sus opciones',
+    laPieza.indexOf('¿Qué categoría tiene el producto de la pieza?') !== -1 &&
+    laPieza.indexOf('Ninguna de estas') !== -1 &&
+    laPieza.indexOf('Licores y cervezas') !== -1 &&
+    laPieza.indexOf('Un medicamento de venta libre') !== -1,
+    laPieza.replace(/\n+/g, ' | ').slice(0, 400));
+
+  // Cada opcion adelanta la advertencia que se va a imprimir. Sin eso, las diez
+  // decian lo mismo debajo y no habia con que elegir.
+  revisar('cada categoría adelanta la advertencia que va a imprimir',
+    laPieza.indexOf('El exceso de alcohol es perjudicial para la salud') !== -1 &&
+    laPieza.indexOf('Es medicamento, leer indicaciones') !== -1,
+    laPieza.replace(/\n+/g, ' | ').slice(0, 400));
+
+  // "Ninguna" viene marcada, pero la pregunta se muestra igual: marcar no es
+  // responder, y un dato que nadie confirmo sale impreso en una pieza.
+  const categoriaMarcada = await pagina.evaluate(function () {
+    var b = [].slice.call(document.querySelectorAll('.opcion'))
+      .filter(function (x) { return x.getAttribute('aria-pressed') === 'true'; })[0];
+    return {
+      marcada: b ? b.innerText.split('\n')[0] : '',
+      respondida: !!RM.estado.estado.respondidas.categoriaProducto,
+    };
+  });
+  revisar('"Ninguna" viene marcada pero la pregunta se muestra igual',
+    categoriaMarcada.marcada === 'Ninguna de estas' && categoriaMarcada.respondida === false,
+    JSON.stringify(categoriaMarcada));
+
+  // Elegir un medicamento abre las dos condicionales, y la respondida de arriba
+  // se lee con su etiqueta y no con el nombre interno del campo.
+  await clic('Un medicamento de venta libre');
+  await pagina.waitForTimeout(400);
+  const conMedicamento = await texto();
+  revisar('un medicamento abre el registro sanitario y se lee la etiqueta elegida',
+    conMedicamento.indexOf('¿Cuál es el registro sanitario?') !== -1 &&
+    conMedicamento.indexOf('Un medicamento de venta libre') !== -1 &&
+    conMedicamento.indexOf('\nmedicamento\n') === -1,
+    conMedicamento.replace(/\n+/g, ' | ').slice(0, 400));
+
+  // Y en un pais sin leyenda de campana la pregunta no existe: pedir la
+  // categoria sin nada donde imprimirla es pedir un dato por pedirlo.
+  await desdeElInicio();
+  await decirQueNoATodo();
+  await clic('México');
+  await clic('Rappi');
+  await clic('Cashback');
+  const pasosDeMexico = await pagina.evaluate(function () {
+    return RM.flujo.pasosDelTipo(RM.estado.entrada()).map(function (p) { return p.id; });
+  });
+  revisar('en un país sin leyenda de campaña no se pregunta la categoría',
+    pasosDeMexico.indexOf('pieza') === -1, pasosDeMexico.join(' > '));
+
   // --- 4. Los caminos que terminan en Legal --------------------------------
   await desdeElInicio();
   await decirQueNoATodo();
