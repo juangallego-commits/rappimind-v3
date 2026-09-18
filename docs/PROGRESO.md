@@ -1348,3 +1348,76 @@ responde "No, o no sé" en la pregunta del acuerdo.
 3. **Una coma.** El circuito de Colombia dice: cambia tu respuesta a "Rappi, como
    operador logístico". La opción del formulario se llama "Rappi como operador
    logístico", sin coma. No toqué el texto legal por eso; dime cuál cede.
+
+## 18 de septiembre (noche) · Un solo enlace, y las tres cosas que vio Juan usando la herramienta
+
+Cierra el día: la decisión del enlace, la frase de los Créditos aprobada y los
+tres reportes que Juan mandó después de entrar a la herramienta. Dos eran
+defectos reales, el tercero no lo era.
+
+### El enlace es uno solo
+
+Juan lo zanjó así: "el enlace para todo tiene que ser el mismo". Se acabó la
+espera por una dirección corta que nadie había definido. La leyenda de push y SMS
+ya no se retiene como pendiente: sale, con la misma dirección del T&C que va en
+la letra pequeña. Mide 92 caracteres contra un límite de 70 y la pantalla lo
+dice, pero como Juan avisó que en push y SMS casi nunca ponen el enlace, quien
+arma la pieza decide si lo quita y con eso cabe.
+
+De paso, cuando una leyenda no cabe la pantalla ya no dice solo que no cabe:
+dice por cuántos caracteres se pasa y cuánto de ese texto son enlaces. Es
+exactamente el dato que falta para decidir lo que sigue abierto: si sobra el
+límite, si sobra el enlace o si sobra texto legal.
+
+### La frase de los Créditos, aprobada
+
+Con el visto bueno de Juan entró la frase que faltaba: **"Los Créditos serán
+acreditados por Rappi en la Billetera de Créditos del ganador, por cuenta del
+Organizador, una vez aceptado el premio."** Con ella, la pregunta "¿Quién entrega
+el premio?" desaparece cuando el premio es en Créditos, porque con Créditos no
+hay entrega que repartir. Un caso dorado cambió, `CC01`, y cambió una sola línea.
+
+### Los tres reportes de Juan
+
+1. **El enlace de Drive no aparecía. Era verdad, y era el peor sitio posible.**
+   El panel del acuerdo devolvía la caja antes de llegar al botón en la rama de
+   Colombia, así que el único país donde la herramienta se usa hoy era justo el
+   único que no veía el enlace. Las pruebas comprobaban que el dato estuviera en
+   el país; nadie comprobaba que el botón llegara a la pantalla. Ahora el botón
+   se arma en su propia función, se agrega en las dos ramas, y hay una prueba que
+   lee el archivo y falla si vuelve a colgar de un solo país.
+2. **El NIT rechazado no era un defecto.** `900.898.545-1` de verdad no es
+   válido: para ese cuerpo el dígito de verificación es 0, no 1. Lo comprobé con
+   NITs reales conocidos antes de decirlo. Lo que sí estaba mal era el mensaje,
+   que no daba por dónde buscar. Ahora dice cuál es el dígito que corresponde y
+   pide revisar el número completo.
+3. **Las pantallas del front.** `docs/FRONT_ACTUAL.html` no tenía la pantalla del
+   acuerdo de transferencia de datos: se construyó la pregunta y se olvidó
+   agregarla al documento de pantallas. Ya está, y el documento pasó de 45 a 46
+   pantallas.
+
+### Cómo probarlo
+
+```
+npm test                                                        # 543 pruebas
+npm run demo
+export NODE_PATH=/opt/node22/lib/node_modules
+export PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
+node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js        # 50 revisiones
+node .claude/skills/flujo-y-ux/scripts/recorrer-en-portugues.js # 26 revisiones
+npm run front                                                   # 46 de 46 pantallas
+```
+
+Con los ojos, en la demostración: arma una Carrera de Colombia con premio físico
+entregado por el Organizador y mira que el botón "Abrir el modelo de acuerdo"
+esté ahí. Y en un cashback de Farmatodo, mira el bloque de leyendas de la
+pantalla final: la de push ya no dice "pendiente", dice por cuánto se pasa.
+
+### Lo que necesito de Juan
+
+1. **Qué más no cuadra en las pantallas del front.** Encontré y arreglé la
+   pantalla que faltaba, pero si lo que viste era otra cosa, dime cuál pantalla y
+   qué esperabas ver.
+2. Lo de siempre, que sigue abierto: el acceso de los KAM a la carpeta de Drive,
+   la coma de "Rappi, como operador logístico", las 24 preguntas de la lista 2 y
+   el espacio de la letra pequeña y el banner.

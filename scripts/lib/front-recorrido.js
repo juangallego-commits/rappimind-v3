@@ -607,6 +607,34 @@ async function recorrer(rutaDeLaDemo, fichas, marcas) {
     await capturar('carrera', { porQue: true });
   });
 
+  // El acuerdo de transferencia de datos, que solo sale en Carrera con premio
+  // fisico entregado por el Organizador. Es la unica combinacion en la que Rappi
+  // le pasa a la marca el nombre, la direccion y el documento del ganador, y el
+  // panel es el circuito de nueve pasos que Legal CO usa para firmarlo.
+  await tramo('el acuerdo de transferencia de datos', ['acuerdo-datos'], async () => {
+    await paginaNueva('escritorio', 'es');
+    await pagina.evaluate(function () {
+      RM.estado.reiniciarFormulario(Object.assign(RM.app.valoresIniciales(), {
+        pais: 'CO', negocio: 'rappi', tipo: 'carrera_compras', tienda: 'Carulla',
+        alcance: 'Nacional', ciudades: '', segmento: 'todos', metodoPago: 'todos',
+        fechaInicio: '2026-11-01', horaInicio: '00:00', fechaFin: '2026-11-30', horaFin: '23:59',
+        organizadorRazonSocial: 'Bimbo de Colombia S.A.', organizadorId: '900111222-1',
+        productos: 'marca', makerMarca: 'Bimbo', criterioGanador: 'mayor_valor',
+        numeroGanadores: 1, desempate: 'primero',
+        tipoPremio: 'fisico', descripcionPremio: 'Una bicicleta de montaña rodado 29',
+        entregaPor: 'organizador', acuerdoDatos: 'no_o_no_se',
+        medioNotificacion: 'correo', fechaNotificacion: '2026-12-05', plazoConfirmacion: 5,
+      }), {});
+      RM.estado.estado.filtroRespondido = true;
+      var pasos = RM.flujo.pasosDelTipo(RM.estado.entrada()).map(function (p) { return p.id; });
+      RM.estado.estado.pasoActual = pasos.indexOf('premio');
+      RM.estado.estado.campoAbierto = 'acuerdoDatos';
+      RM.app.ir('pasos');
+    });
+    await pagina.waitForTimeout(600);
+    await capturar('acuerdo-datos', { porQue: true });
+  });
+
   // --- 7. Ampliar una campana publicada y en curso ----------------------------
   await tramo('ampliar una campaña', ['ampliar'], async () => {
     await paginaNueva('escritorio', 'es');

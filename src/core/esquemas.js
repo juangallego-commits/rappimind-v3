@@ -340,11 +340,19 @@ var CAMPOS_CARRERA = [
     obligatorio: function (entrada) { return entrada.tipoPremio === 'fisico'; },
   },
   {
+    /*
+     * Solo con premio fisico. Con Creditos no hay entrega que repartir: Rappi
+     * los acredita en la Billetera, y preguntar quien entrega hacia que el
+     * documento dijera que el Organizador se encarga de una entrega que no
+     * existe. Falla (a) de la decision 36 del encargo 01; Juan aprobo el 18 de
+     * septiembre la frase que ocupa su lugar.
+     */
     id: 'entregaPor',
     etiqueta: '¿Quién entrega el premio?',
     tipo: 'lista',
     paso: 'premio',
-    obligatorio: true,
+    visible: function (entrada) { return entrada.tipoPremio === 'fisico'; },
+    obligatorio: function (entrada) { return entrada.tipoPremio === 'fisico'; },
     opciones: [
       { valor: 'organizador', etiqueta: 'El Organizador' },
       { valor: 'rappi', etiqueta: 'Rappi como operador logístico' },

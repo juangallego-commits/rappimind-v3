@@ -217,6 +217,11 @@ const PARTES = [
         queHace: 'Escribe un NIT que no existe. El error sale debajo del campo mientras escribe, sin redibujar la pantalla y sin regañarlo antes de tiempo.',
       },
       {
+        id: 'acuerdo-datos', titulo: 'Formulario, el acuerdo de transferencia de datos', pantalla: 'pasos',
+        queHace: 'Solo sale en Carrera de Compras cuando el premio es físico y lo entrega el Organizador, que es la única combinación en la que Rappi le pasa a la marca el nombre, la dirección y el documento del ganador. Al responder "No, o no sé" se abre el circuito completo de Colombia, con la tabla de acuerdos marco, la Orden de Transferencia de cada campaña y el certificado de supresión.',
+        nota: 'No bloquea el T&C: los datos salen semanas después, cuando el concurso terminó, así que el documento se genera igual y lo que recibe el comercial es el camino para firmarlo. En los otros países el panel es una línea y el botón abre el modelo de Legal de ese país; en Chile y Costa Rica, que no tienen modelo, manda a Legal.',
+      },
+      {
         id: 'ampliar', titulo: 'Mis campañas, ampliar una publicada', pantalla: 'historial',
         queHace: 'Una campaña publicada y en curso se puede ampliar: la vigencia solo se mueve hacia adelante y los números solo suben, porque bajarlos cambiaría las condiciones de quien ya compró.',
       },

@@ -284,14 +284,25 @@ test('una campaña sin frase aprobada no entrega ninguna leyenda a medias', () =
   assert.ok(r.faltantes.length > 0);
 });
 
-test('el enlace corto es un pendiente, no un defecto', () => {
-  // La leyenda de push necesita el enlace corto, que todavía no existe. Si eso
-  // contara como error, se caerían con ella las otras cuatro de la campaña.
-  const r = leyendasDe(campanaDeElCorral());
+test('el enlace es el mismo en las cinco leyendas', () => {
+  // Juan lo decidió el 18 de septiembre: no hay enlace corto. Dos direcciones
+  // para el mismo T&C es una que alguien va a copiar mal. La consecuencia es que
+  // la leyenda de push no cabe con el enlace, y la herramienta lo dice.
+  const r = leyendasDe(campanaDeElCorral(), CO, { nombreCampana: 'Cashback 99 El Corral' });
   assert.deepStrictEqual(r.errores, [], r.errores.join(' | '));
-  assert.deepStrictEqual(r.pendientes.map((p) => p.formato), ['push_sms']);
-  assert.ok(r.pendientes[0].razones[0].indexOf('enlace corto') !== -1, r.pendientes[0].razones.join(' | '));
-  assert.strictEqual(r.leyendas.filter((l) => l.formato === 'push_sms').length, 0);
+  assert.deepStrictEqual(r.pendientes, [], 'ya no queda ningún formato pendiente');
+
+  const conEnlace = r.leyendas.filter((l) => l.texto.indexOf('https://') !== -1);
+  assert.ok(conEnlace.length >= 3, 'esperaba varias leyendas con enlace');
+  for (const leyenda of conEnlace) {
+    assert.ok(leyenda.texto.indexOf(r.enlacePrevisto) !== -1,
+      leyenda.formato + ' lleva un enlace distinto: ' + leyenda.texto);
+  }
+
+  const push = r.leyendas.filter((l) => l.formato === 'push_sms')[0];
+  assert.ok(push, 'la leyenda de push ya se entrega');
+  assert.strictEqual(push.cabe, false, 'con el enlace, la push no cabe en 70 caracteres');
+  assert.ok(push.sobra > 0 && push.caracteresEnEnlaces > 0, JSON.stringify(push));
 });
 
 // --- El enlace del T&C -----------------------------------------------------

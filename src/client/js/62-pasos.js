@@ -193,25 +193,35 @@ function panelDeAcuerdoDeDatos() {
       lista.appendChild(crear('li', { texto: panel.pasosCO[i] }));
     }
     caja.appendChild(lista);
-    return caja;
+  } else {
+    var nombre = pais ? pais.nombre : '';
+    caja.appendChild(crear('p', {
+      texto: (pais && pais.url_acuerdo_datos ? panel.conModelo : panel.sinModelo).replace('{país}', nombre),
+    }));
   }
 
-  var nombre = pais ? pais.nombre : '';
-  var tieneModelo = !!(pais && pais.url_acuerdo_datos);
-  caja.appendChild(crear('p', {
-    texto: (tieneModelo ? panel.conModelo : panel.sinModelo).replace('{país}', nombre),
-  }));
-  if (tieneModelo) {
-    caja.appendChild(crear('div', { clase: 'fila-botones' }, [
-      crear('a', {
-        clase: 'boton boton-secundario', href: pais.url_acuerdo_datos,
-        target: '_blank', rel: 'noopener',
-      }, [
-        document.createTextNode(estado.T('Abrir el modelo de acuerdo')), RM.util.icono('abrir', 16),
-      ]),
-    ]));
-  }
+  // El botón va en los dos caminos.
+  //
+  // Estaba solo en el de los demás países, porque el de Colombia devolvía antes
+  // de llegar aquí. Resultado: el único país donde la herramienta se usa hoy era
+  // justo el único que no veía el enlace del modelo de acuerdo, que es la razón
+  // por la que el panel existe. Lo vio Juan, no las pruebas.
+  var boton = botonDelModeloDeAcuerdo(pais);
+  if (boton) caja.appendChild(boton);
   return caja;
+}
+
+/** El botón que abre el modelo de acuerdo del país, si ese país tiene uno. */
+function botonDelModeloDeAcuerdo(pais) {
+  if (!pais || !pais.url_acuerdo_datos) return null;
+  return crear('div', { clase: 'fila-botones' }, [
+    crear('a', {
+      clase: 'boton boton-secundario', href: pais.url_acuerdo_datos,
+      target: '_blank', rel: 'noopener',
+    }, [
+      document.createTextNode(estado.T('Abrir el modelo de acuerdo')), RM.util.icono('abrir', 16),
+    ]),
+  ]);
 }
 
 /** Aviso contextual de un campo, si aplica. */

@@ -24,13 +24,13 @@ Lee completos, en este orden:
 Después mira el estado real, no lo que digan los documentos:
 
 ```
-npm test                                                        # deben pasar 528
+npm test                                                        # deben pasar 543
 npm run demo
 export NODE_PATH=/opt/node22/lib/node_modules
 export PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
-node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js        # 47 revisiones
+node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js        # 50 revisiones
 node .claude/skills/flujo-y-ux/scripts/recorrer-en-portugues.js # 26 revisiones
-npm run front                                                   # 45 de 45 pantallas
+npm run front                                                   # 46 de 46 pantallas
 ```
 
 Los recorridos necesitan playwright y un Chromium. En el contenedor remoto están
@@ -44,6 +44,11 @@ activos. Ecuador y Costa Rica siguen en piloto, y solo por una razón: nadie ha
 dicho si escriben los miles con punto o con coma. El estado viaja al Sheet en la
 tanda `estados-2026-09-18` de `data/paises.json`, que `setup()` aplica una sola
 vez. El país en piloto que usan las pruebas y los recorridos es Ecuador.
+
+**El enlace.** Es uno solo y es el mismo en todas partes: no hay enlace corto ni
+lo va a haber. Lo decidió Juan el 18 de septiembre. La leyenda de push y SMS se
+entrega aunque se pase del límite, porque en push y SMS casi nunca ponen el
+enlace.
 
 **Las leyendas.** Las 55 de la respuesta del encargo 03 están en
 `modelos/leyendas/`, una por archivo. El motor es `src/core/leyendas.js` (elegir,
@@ -62,10 +67,9 @@ Todo en `docs/PENDIENTES_LEGAL.md`. Lo que más urge, en orden:
    de esa misma campaña mide 734 contra 300. Hay que decidir si el límite es el
    correcto, si el enlace de Turbo puede ir corto, o qué más se marca como
    recortable dentro del texto legal. Lo último es de Legal: no lo marques tú.
-2. **La forma del enlace corto.** Juan aprobó que sea una dirección propia dentro
-   de `promos.rappi.com`, y no bit.ly. Falta cómo se arma y quién crea la página.
-   Sin eso no hay leyenda de push ni de SMS, y hoy se entrega como pendiente con
-   esa razón escrita en pantalla.
+2. **El acuerdo de transferencia de datos, tres puntos.** El acceso de los KAM a
+   la carpeta de Drive, la coma de "Rappi, como operador logístico" y que Carrera
+   de Compras solo está habilitada en Colombia. Ninguno bloquea nada hoy.
 3. **Las 24 preguntas de la lista 2** de `docs/encargos/respuestas/03-leyendas.md`,
    sección 9.3. Las tres que más cambian el diseño, según la propia respuesta,
    son la 21 (dónde se redimen los Créditos del ETA, donde la pieza y el T&C

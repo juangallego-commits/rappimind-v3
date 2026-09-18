@@ -1159,8 +1159,10 @@ test('generar entrega las leyendas con el enlace previsto', () => {
   assert.ok(resultado.leyendas.enlacePrevisto.indexOf('https://promos.rappi.com/colombia/') === 0,
     resultado.leyendas.enlacePrevisto);
 
+  // Los cinco formatos. La push entra desde que Juan decidió que el enlace es
+  // uno solo: antes se quedaba esperando un enlace corto que ya no va a existir.
   const formatos = resultado.leyendas.leyendas.map((l) => l.formato);
-  assert.deepStrictEqual(formatos, ['texto_apoyo', 'letra_pequena', 'banner_corto', 'exterior']);
+  assert.deepStrictEqual(formatos, ['texto_apoyo', 'letra_pequena', 'banner_corto', 'exterior', 'push_sms']);
   for (const leyenda of resultado.leyendas.leyendas) {
     assert.ok(leyenda.texto.indexOf(resultado.leyendas.enlacePrevisto) !== -1 || leyenda.formato === 'texto_apoyo',
       leyenda.formato + ' no lleva el enlace: ' + leyenda.texto);

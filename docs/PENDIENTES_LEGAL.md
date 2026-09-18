@@ -770,13 +770,14 @@ final. Lo que queda abierto:
    cambian el diseño, según la propia respuesta, son la 21 (dónde se redimen los
    Créditos del ETA, donde la pieza y el T&C dicen cosas distintas), la 16 (el
    enlace corto) y la 6 (el aviso de tiempo estimado en el ETA).
-2. **El enlace corto no tiene forma definida.** Juan aprobó el 18 de septiembre
-   que sea una dirección propia dentro de `promos.rappi.com`, y no bit.ly. Falta
-   decidir cómo se arma y quién crea esa página. Mientras tanto, la leyenda de
-   push y SMS se entrega como pendiente, con esa razón escrita en pantalla. Ojo
-   con el dato de la pregunta 16: el enlace corto desbloquea push y SMS, pero el
-   banner chico del cashback por ETA mide 567 caracteres contra un límite de 300
-   y sigue sin caber aunque se acorten los dos enlaces.
+2. ~~El enlace corto no tiene forma definida.~~ **Cerrado el 18 de septiembre:
+   no hay enlace corto.** Juan decidió que el enlace sea uno solo y el mismo en
+   todas partes, así que la leyenda de push y SMS ya no se retiene: se entrega
+   con la dirección del T&C de la campaña. Mide 92 caracteres contra un límite de
+   70, y la pantalla lo dice. Juan avisó que en push y SMS casi nunca ponen el
+   enlace, así que quien arma la pieza decide si lo quita. Lo que sigue abierto
+   es de otra naturaleza: aunque se quitara, el banner chico del cashback por ETA
+   mide 567 caracteres contra un límite de 300 y tampoco cabe.
 3. **Cuatro casos donde la respuesta no dio frase corta**, y por eso la campaña
    no entrega leyenda y dice qué falta. Son los insumos 3, 4 y 5 de la lista 3:
    cómo se dice en una pieza que los Créditos solo sirven en ciertas secciones;
@@ -818,16 +819,14 @@ final. Lo que queda abierto:
 
 La decisión 36 de la respuesta del encargo 01 se aplicó casi entera. Lo que falta:
 
-1. **La mitad de la falla (a) que necesita un texto tuyo.** La respuesta dice que
-   la pregunta "¿Quién entrega el premio?" no debería salir con premio en
-   Créditos, porque con Créditos no hay entrega que repartir: Rappi los acredita
-   en la Billetera. Para esconderla hace falta la frase que reemplaza la viñeta
-   de entrega, y la respuesta la trae marcada "texto nuevo, lo decides tú":
-   "Los Créditos serán acreditados por Rappi en la Billetera de Créditos del
-   ganador, por cuenta del Organizador, una vez aceptado el premio."
-   Sin tu visto bueno no se puede aplicar, porque la viñeta no es opcional y
-   esconder la pregunta la dejaría rota. Hoy la pregunta sigue saliendo con
-   Créditos y el documento dice que el Organizador se encarga de la entrega.
+1. ~~La mitad de la falla (a) que necesita un texto tuyo.~~ **Resuelto el 18 de
+   septiembre.** Juan aprobó la frase que la respuesta traía marcada "texto
+   nuevo, lo decides tú": "Los Créditos serán acreditados por Rappi en la
+   Billetera de Créditos del ganador, por cuenta del Organizador, una vez
+   aceptado el premio." Con ella, la pregunta "¿Quién entrega el premio?" ya no
+   sale con premio en Créditos, porque con Créditos no hay entrega que repartir,
+   y la viñeta del documento imprime esa frase en su lugar. El único caso dorado
+   que cambió es CC01, y cambió una sola línea.
 2. **El acceso de los KAM a la carpeta de Drive.** En el hilo, dos personas no
    pudieron abrirla. La herramienta ya les muestra el botón "Abrir el modelo de
    acuerdo": si no tienen acceso, ese botón los lleva a una pantalla de permiso.

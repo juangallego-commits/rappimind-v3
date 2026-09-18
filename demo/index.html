@@ -2417,7 +2417,18 @@ function derivadosCarrera(entrada, pais, valores) {
       'del Organizador. Rappi no fabrica, comercializa ni garantiza dicho bien.';
   }
 
-  valores.TEXTO_ENTREGA = TEXTO_ENTREGA_POR_OPCION[entrada.entregaPor] || '';
+  /*
+   * La vinneta de entrega.
+   *
+   * Con premio fisico la escribe quien entrega. Con Creditos no se pregunta,
+   * porque no hay nada que llevar: los acredita Rappi en la Billetera. La frase
+   * es la que propuso la respuesta del encargo 01 en la falla (a) de la decision
+   * 36, y que Juan aprobo el 18 de septiembre.
+   */
+  valores.TEXTO_ENTREGA = entrada.tipoPremio === 'creditos'
+    ? 'Los Créditos serán acreditados por Rappi en la Billetera de Créditos del ganador, ' +
+      'por cuenta del Organizador, una vez aceptado el premio.'
+    : (TEXTO_ENTREGA_POR_OPCION[entrada.entregaPor] || '');
 
   /*
    * Los datos del ganador solo se transfieren cuando hay algo fisico que llevar
@@ -3309,10 +3320,12 @@ function urlDelTcDeLaCampana(entrada, pais, nombreCampana, enlacePublicado) {
  * No es un defecto: es una decision que falta. Una leyenda que solo depende de
  * uno de estos se entrega como pendiente, con su razon, en vez de salir rota o
  * de tumbar las otras cuatro.
+ *
+ * Hoy esta vacio. URL_CORTA estuvo aqui hasta que Juan decidio, el 18 de
+ * septiembre, que el enlace tiene que ser el mismo en todas partes: no hay
+ * enlace corto y no lo va a haber.
  */
-var PENDIENTES_POR_MARCADOR = {
-  URL_CORTA: 'falta el enlace corto. Juan aprobó que sea una dirección propia dentro de promos.rappi.com, pero todavía no está definida la forma exacta ni quién crea la página',
-};
+var PENDIENTES_POR_MARCADOR = {};
 
 /**
  * Lo que le falta a esta campana para poder tener leyenda, en palabras.
@@ -3372,8 +3385,24 @@ function calcularDerivadosDeLeyendas(entrada, pais, valoresDelDocumento, opcione
   var valores = valoresDelDocumento || {};
   var config = opciones || {};
 
+  var urlDeLaCampana = urlDelTcDeLaCampana(entrada, pais, config.nombreCampana, config.enlacePublicado);
+
   var cortos = {
-    URL_TC_CAMPANA: urlDelTcDeLaCampana(entrada, pais, config.nombreCampana, config.enlacePublicado),
+    URL_TC_CAMPANA: urlDeLaCampana,
+    /*
+     * Un solo enlace, el mismo en todas partes.
+     *
+     * La respuesta del encargo 03 proponia un enlace corto aparte para que la
+     * leyenda de push cupiera en 70 caracteres. Juan lo descarto el 18 de
+     * septiembre: el enlace tiene que ser el mismo en la letra pequena, en el
+     * banner y en la push, porque dos direcciones para el mismo T&C es una que
+     * alguien va a copiar mal. Ademas, en push y SMS casi nunca ponen el enlace.
+     *
+     * Asi que URL_CORTA es la direccion de la campana. La leyenda de push mide
+     * mas de lo que admite el formato y la herramienta lo dice, que es la
+     * verdad: con el enlace no cabe.
+     */
+    URL_CORTA: urlDeLaCampana,
     URL_TC_PRO: pais.url_tc_pro || '',
     PORCENTAJE_CIFRA: cifraDePorcentaje(entrada.porcentaje),
     TOPE_CIFRA: cifraDeMonto(entrada.tope, pais),
@@ -4560,11 +4589,19 @@ var CAMPOS_CARRERA = [
     obligatorio: function (entrada) { return entrada.tipoPremio === 'fisico'; },
   },
   {
+    /*
+     * Solo con premio fisico. Con Creditos no hay entrega que repartir: Rappi
+     * los acredita en la Billetera, y preguntar quien entrega hacia que el
+     * documento dijera que el Organizador se encarga de una entrega que no
+     * existe. Falla (a) de la decision 36 del encargo 01; Juan aprobo el 18 de
+     * septiembre la frase que ocupa su lugar.
+     */
     id: 'entregaPor',
     etiqueta: '¿Quién entrega el premio?',
     tipo: 'lista',
     paso: 'premio',
-    obligatorio: true,
+    visible: function (entrada) { return entrada.tipoPremio === 'fisico'; },
+    obligatorio: function (entrada) { return entrada.tipoPremio === 'fisico'; },
     opciones: [
       { valor: 'organizador', etiqueta: 'El Organizador' },
       { valor: 'rappi', etiqueta: 'Rappi como operador logístico' },
@@ -5786,8 +5823,19 @@ function validarNit(valor) {
   }
   var cuerpo = partido[1];
   var dv = Number(partido[2]);
-  if (digitoNit(cuerpo) !== dv) {
-    return resultado(false, 'El dígito de verificación del NIT no corresponde. Revisa el número.');
+  /*
+   * Si el digito no cuadra, se dice cual es el que cuadra.
+   *
+   * El mensaje decia solo "revisa el numero", y la herramienta sabe la
+   * respuesta: el digito de verificacion sale de los nueve primeros con una
+   * formula. Juan escribio 900.898.545-1, que es 900.898.545-0, y no tenia como
+   * saberlo sin ir a buscar el RUT. Decirlo no inventa nada: es aritmetica, y
+   * el comercial sigue teniendo que confirmar que el NIT es el correcto.
+   */
+  var correcto = digitoNit(cuerpo);
+  if (correcto !== dv) {
+    return resultado(false, 'El dígito de verificación no cuadra con ese NIT. Para ' +
+      agruparMiles(cuerpo, '.') + ' el dígito es ' + correcto + '. Revisa el número completo.');
   }
   return resultado(true, '', 'NIT ' + agruparMiles(cuerpo, '.') + '-' + dv);
 }
@@ -6573,11 +6621,22 @@ function armarLeyenda(leyenda, valores, largoDelFormato) {
     errores.push('El texto quedó roto: hay ' + senales[s] + '.');
   }
 
+  // Cuanto se pasa, y cuanto de eso son enlaces. Decir solo "no cabe" deja al
+  // comercial sin nada que hacer; con los numeros, Legal puede decidir si el
+  // limite del formato es el correcto o si hay que acortar algo.
+  var sobra = limite ? Math.max(0, elegido.texto.length - limite) : 0;
+  var enEnlaces = 0;
+  var enlaces = elegido.texto.match(/https?:\/\/\S+/g) || [];
+  for (var u = 0; u < enlaces.length; u++) enEnlaces += enlaces[u].length;
+
   return {
     id: leyenda.id,
     texto: elegido.texto,
     largo: elegido.texto.length,
     largo_max: limite,
+    sobra: sobra,
+    enlaces: enlaces.length,
+    caracteresEnEnlaces: enEnlaces,
     cabe: !limite || elegido.texto.length <= limite,
     nivel: elegido.nivel,
     recortada: elegido.nivel > 0,
@@ -13141,25 +13200,35 @@ function panelDeAcuerdoDeDatos() {
       lista.appendChild(crear('li', { texto: panel.pasosCO[i] }));
     }
     caja.appendChild(lista);
-    return caja;
+  } else {
+    var nombre = pais ? pais.nombre : '';
+    caja.appendChild(crear('p', {
+      texto: (pais && pais.url_acuerdo_datos ? panel.conModelo : panel.sinModelo).replace('{país}', nombre),
+    }));
   }
 
-  var nombre = pais ? pais.nombre : '';
-  var tieneModelo = !!(pais && pais.url_acuerdo_datos);
-  caja.appendChild(crear('p', {
-    texto: (tieneModelo ? panel.conModelo : panel.sinModelo).replace('{país}', nombre),
-  }));
-  if (tieneModelo) {
-    caja.appendChild(crear('div', { clase: 'fila-botones' }, [
-      crear('a', {
-        clase: 'boton boton-secundario', href: pais.url_acuerdo_datos,
-        target: '_blank', rel: 'noopener',
-      }, [
-        document.createTextNode(estado.T('Abrir el modelo de acuerdo')), RM.util.icono('abrir', 16),
-      ]),
-    ]));
-  }
+  // El botón va en los dos caminos.
+  //
+  // Estaba solo en el de los demás países, porque el de Colombia devolvía antes
+  // de llegar aquí. Resultado: el único país donde la herramienta se usa hoy era
+  // justo el único que no veía el enlace del modelo de acuerdo, que es la razón
+  // por la que el panel existe. Lo vio Juan, no las pruebas.
+  var boton = botonDelModeloDeAcuerdo(pais);
+  if (boton) caja.appendChild(boton);
   return caja;
+}
+
+/** El botón que abre el modelo de acuerdo del país, si ese país tiene uno. */
+function botonDelModeloDeAcuerdo(pais) {
+  if (!pais || !pais.url_acuerdo_datos) return null;
+  return crear('div', { clase: 'fila-botones' }, [
+    crear('a', {
+      clase: 'boton boton-secundario', href: pais.url_acuerdo_datos,
+      target: '_blank', rel: 'noopener',
+    }, [
+      document.createTextNode(estado.T('Abrir el modelo de acuerdo')), RM.util.icono('abrir', 16),
+    ]),
+  ]);
 }
 
 /** Aviso contextual de un campo, si aplica. */
@@ -14650,9 +14719,17 @@ function bloqueDeLeyendas(leyendas) {
       caja.appendChild(RM.util.paraCopiar(estado.T(leyenda.nombre), leyenda.texto, ayuda));
 
       if (!leyenda.cabe) {
+        // Con los números, no solo con el "no cabe": cuánto se pasa y cuánto de
+        // eso se lo están comiendo los enlaces, que suelen ser la mitad.
+        var porCuanto = estado.T('Se pasa por {n} caracteres.').replace('{n}', leyenda.sobra);
+        if (leyenda.enlaces > 0) {
+          porCuanto += ' ' + estado.T('Los enlaces ocupan {n} de los {total}.')
+            .replace('{n}', leyenda.caracteresEnEnlaces).replace('{total}', leyenda.largo);
+        }
         caja.appendChild(crear('div', { clase: 'aviso aviso-serio' }, [
+          crear('p', { texto: porCuanto }),
           crear('p', {
-            texto: estado.T('Esta leyenda no cabe en ese formato y no hay nada más que se pueda quitar: todo lo que queda es obligatorio. Usa un formato más grande o escríbele a Legal antes de mandar a diseñar.'),
+            texto: estado.T('No hay nada más que se pueda quitar: todo lo que queda es obligatorio. Usa un formato más grande o escríbele a Legal antes de mandar a diseñar.'),
           }),
         ]));
       }

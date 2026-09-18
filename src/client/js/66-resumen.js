@@ -336,9 +336,17 @@ function bloqueDeLeyendas(leyendas) {
       caja.appendChild(RM.util.paraCopiar(estado.T(leyenda.nombre), leyenda.texto, ayuda));
 
       if (!leyenda.cabe) {
+        // Con los números, no solo con el "no cabe": cuánto se pasa y cuánto de
+        // eso se lo están comiendo los enlaces, que suelen ser la mitad.
+        var porCuanto = estado.T('Se pasa por {n} caracteres.').replace('{n}', leyenda.sobra);
+        if (leyenda.enlaces > 0) {
+          porCuanto += ' ' + estado.T('Los enlaces ocupan {n} de los {total}.')
+            .replace('{n}', leyenda.caracteresEnEnlaces).replace('{total}', leyenda.largo);
+        }
         caja.appendChild(crear('div', { clase: 'aviso aviso-serio' }, [
+          crear('p', { texto: porCuanto }),
           crear('p', {
-            texto: estado.T('Esta leyenda no cabe en ese formato y no hay nada más que se pueda quitar: todo lo que queda es obligatorio. Usa un formato más grande o escríbele a Legal antes de mandar a diseñar.'),
+            texto: estado.T('No hay nada más que se pueda quitar: todo lo que queda es obligatorio. Usa un formato más grande o escríbele a Legal antes de mandar a diseñar.'),
           }),
         ]));
       }

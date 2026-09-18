@@ -431,11 +431,22 @@ function armarLeyenda(leyenda, valores, largoDelFormato) {
     errores.push('El texto quedó roto: hay ' + senales[s] + '.');
   }
 
+  // Cuanto se pasa, y cuanto de eso son enlaces. Decir solo "no cabe" deja al
+  // comercial sin nada que hacer; con los numeros, Legal puede decidir si el
+  // limite del formato es el correcto o si hay que acortar algo.
+  var sobra = limite ? Math.max(0, elegido.texto.length - limite) : 0;
+  var enEnlaces = 0;
+  var enlaces = elegido.texto.match(/https?:\/\/\S+/g) || [];
+  for (var u = 0; u < enlaces.length; u++) enEnlaces += enlaces[u].length;
+
   return {
     id: leyenda.id,
     texto: elegido.texto,
     largo: elegido.texto.length,
     largo_max: limite,
+    sobra: sobra,
+    enlaces: enlaces.length,
+    caracteresEnEnlaces: enEnlaces,
     cabe: !limite || elegido.texto.length <= limite,
     nivel: elegido.nivel,
     recortada: elegido.nivel > 0,

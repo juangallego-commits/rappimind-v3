@@ -857,3 +857,36 @@ elige entre dos frases que Legal ya escribió.
     `docs/encargos/respuestas/01-legal.md`: un enlace que alguien "arregla" a
     mano manda al comercial a un documento que no es el que Legal aprobó. Misma
     idea que la prueba del texto de las leyendas.
+
+## 18 de septiembre · Un solo enlace, y tres cosas que vio Juan
+
+53. **El enlace es uno solo y es el mismo en todas partes.** Juan lo decidió el
+    18 de septiembre: "el enlace para todo tiene que ser el mismo". Así que
+    `URL_CORTA` ya no espera una dirección corta distinta: vale la dirección del
+    T&C de la campaña, la misma que va en la letra pequeña y en el texto de
+    apoyo. Con eso `PENDIENTES_POR_MARCADOR` quedó vacío y la leyenda de push y
+    SMS se entrega, no se retiene. Mide 92 caracteres contra un límite de 70, y
+    la pantalla lo dice; Juan avisó que en push y SMS casi nunca ponen el
+    enlace, así que quien arma la pieza decide si lo quita. La constante se dejó
+    en el archivo, vacía y con la explicación al lado, porque el día que un
+    marcador vuelva a depender de un dato que nadie ha dado, el mecanismo ya
+    está.
+54. **Cuando una leyenda no cabe, la pantalla dice por cuánto y cuánto pesan los
+    enlaces.** Antes solo decía que no cabía. Ahora `armarLeyenda` devuelve
+    `sobra`, `enlaces` y `caracteresEnEnlaces`, y el resumen imprime "Se pasa por
+    22 caracteres. Los enlaces ocupan 148 de los 642." Es el dato que hace falta
+    para decidir lo que está abierto en `PENDIENTES_LEGAL.md`: si el problema es
+    el límite, el enlace o el texto.
+55. **El botón del modelo de acuerdo se armó en su propia función.** El panel de
+    Colombia devolvía antes de llegar al botón, así que el único país donde la
+    herramienta se usa hoy era justo el único que no veía el enlace de Drive, que
+    es la razón por la que el panel existe. Lo vio Juan usando la herramienta, no
+    las pruebas ni los recorridos. Ahora `botonDelModeloDeAcuerdo(pais)` se llama
+    desde las dos ramas, y hay una prueba estática que lee el archivo y falla si
+    vuelve a aparecer un `return` antes del botón.
+56. **El error del NIT dice cuál es el dígito correcto.** Juan probó
+    `900.898.545-1` y la herramienta solo decía que no era válido. El número
+    efectivamente no lo es (para 900.898.545 el dígito es 0), pero con el mensaje
+    viejo no había forma de saber si el error estaba en el dígito o en el cuerpo.
+    Ahora el mensaje nombra el dígito que corresponde y pide revisar el número
+    completo, que es lo que hace falta cuando alguien copió mal una cifra.

@@ -286,7 +286,18 @@ function derivadosCarrera(entrada, pais, valores) {
       'del Organizador. Rappi no fabrica, comercializa ni garantiza dicho bien.';
   }
 
-  valores.TEXTO_ENTREGA = TEXTO_ENTREGA_POR_OPCION[entrada.entregaPor] || '';
+  /*
+   * La vinneta de entrega.
+   *
+   * Con premio fisico la escribe quien entrega. Con Creditos no se pregunta,
+   * porque no hay nada que llevar: los acredita Rappi en la Billetera. La frase
+   * es la que propuso la respuesta del encargo 01 en la falla (a) de la decision
+   * 36, y que Juan aprobo el 18 de septiembre.
+   */
+  valores.TEXTO_ENTREGA = entrada.tipoPremio === 'creditos'
+    ? 'Los Créditos serán acreditados por Rappi en la Billetera de Créditos del ganador, ' +
+      'por cuenta del Organizador, una vez aceptado el premio.'
+    : (TEXTO_ENTREGA_POR_OPCION[entrada.entregaPor] || '');
 
   /*
    * Los datos del ganador solo se transfieren cuando hay algo fisico que llevar

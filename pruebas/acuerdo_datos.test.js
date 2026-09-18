@@ -161,3 +161,33 @@ test('la columna del acuerdo existe en la pestaña Paises', () => {
   const { PESTANAS } = require('../src/server/Config.js');
   assert.ok(PESTANAS.Paises.indexOf('url_acuerdo_datos') !== -1);
 });
+
+/**
+ * El botón del modelo de acuerdo sale en todos los países que lo tienen.
+ *
+ * El panel de Colombia devolvía antes de llegar al botón, así que el único país
+ * donde la herramienta se usa hoy era justo el único que no veía el enlace, que
+ * es la razón por la que el panel existe. Lo vio Juan, no las pruebas.
+ *
+ * Esta prueba mira el cliente sin navegador: recorre el archivo y comprueba que
+ * el botón no cuelgue de la rama de un país.
+ */
+test('el botón del modelo de acuerdo no cuelga de un solo país', () => {
+  const { leerTexto, rutaDesdeRaiz } = require('../scripts/lib/archivos');
+  const fuente = leerTexto(rutaDesdeRaiz('src', 'client', 'js', '62-pasos.js'));
+
+  const panel = fuente.slice(
+    fuente.indexOf('function panelDeAcuerdoDeDatos'),
+    fuente.indexOf('/** Aviso contextual de un campo')
+  );
+  assert.ok(panel.length > 0, 'no encontré el panel del acuerdo');
+
+  // El botón se arma en su propia función, fuera de la rama de Colombia.
+  assert.ok(fuente.indexOf('function botonDelModeloDeAcuerdo') !== -1,
+    'el botón ya no está en su propia función');
+
+  // Y dentro del panel no puede haber un return antes de agregarlo.
+  const antesDelBoton = panel.slice(0, panel.indexOf('botonDelModeloDeAcuerdo'));
+  assert.strictEqual(/\n  {4}return caja;/.test(antesDelBoton), false,
+    'el panel vuelve a devolver antes de agregar el botón: algún país se quedaría sin enlace');
+});

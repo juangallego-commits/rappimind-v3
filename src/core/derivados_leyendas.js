@@ -407,10 +407,12 @@ function urlDelTcDeLaCampana(entrada, pais, nombreCampana, enlacePublicado) {
  * No es un defecto: es una decision que falta. Una leyenda que solo depende de
  * uno de estos se entrega como pendiente, con su razon, en vez de salir rota o
  * de tumbar las otras cuatro.
+ *
+ * Hoy esta vacio. URL_CORTA estuvo aqui hasta que Juan decidio, el 18 de
+ * septiembre, que el enlace tiene que ser el mismo en todas partes: no hay
+ * enlace corto y no lo va a haber.
  */
-var PENDIENTES_POR_MARCADOR = {
-  URL_CORTA: 'falta el enlace corto. Juan aprobó que sea una dirección propia dentro de promos.rappi.com, pero todavía no está definida la forma exacta ni quién crea la página',
-};
+var PENDIENTES_POR_MARCADOR = {};
 
 /**
  * Lo que le falta a esta campana para poder tener leyenda, en palabras.
@@ -470,8 +472,24 @@ function calcularDerivadosDeLeyendas(entrada, pais, valoresDelDocumento, opcione
   var valores = valoresDelDocumento || {};
   var config = opciones || {};
 
+  var urlDeLaCampana = urlDelTcDeLaCampana(entrada, pais, config.nombreCampana, config.enlacePublicado);
+
   var cortos = {
-    URL_TC_CAMPANA: urlDelTcDeLaCampana(entrada, pais, config.nombreCampana, config.enlacePublicado),
+    URL_TC_CAMPANA: urlDeLaCampana,
+    /*
+     * Un solo enlace, el mismo en todas partes.
+     *
+     * La respuesta del encargo 03 proponia un enlace corto aparte para que la
+     * leyenda de push cupiera en 70 caracteres. Juan lo descarto el 18 de
+     * septiembre: el enlace tiene que ser el mismo en la letra pequena, en el
+     * banner y en la push, porque dos direcciones para el mismo T&C es una que
+     * alguien va a copiar mal. Ademas, en push y SMS casi nunca ponen el enlace.
+     *
+     * Asi que URL_CORTA es la direccion de la campana. La leyenda de push mide
+     * mas de lo que admite el formato y la herramienta lo dice, que es la
+     * verdad: con el enlace no cabe.
+     */
+    URL_CORTA: urlDeLaCampana,
     URL_TC_PRO: pais.url_tc_pro || '',
     PORCENTAJE_CIFRA: cifraDePorcentaje(entrada.porcentaje),
     TOPE_CIFRA: cifraDeMonto(entrada.tope, pais),

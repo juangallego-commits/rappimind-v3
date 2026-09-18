@@ -54,8 +54,19 @@ function validarNit(valor) {
   }
   var cuerpo = partido[1];
   var dv = Number(partido[2]);
-  if (digitoNit(cuerpo) !== dv) {
-    return resultado(false, 'El dígito de verificación del NIT no corresponde. Revisa el número.');
+  /*
+   * Si el digito no cuadra, se dice cual es el que cuadra.
+   *
+   * El mensaje decia solo "revisa el numero", y la herramienta sabe la
+   * respuesta: el digito de verificacion sale de los nueve primeros con una
+   * formula. Juan escribio 900.898.545-1, que es 900.898.545-0, y no tenia como
+   * saberlo sin ir a buscar el RUT. Decirlo no inventa nada: es aritmetica, y
+   * el comercial sigue teniendo que confirmar que el NIT es el correcto.
+   */
+  var correcto = digitoNit(cuerpo);
+  if (correcto !== dv) {
+    return resultado(false, 'El dígito de verificación no cuadra con ese NIT. Para ' +
+      agruparMiles(cuerpo, '.') + ' el dígito es ' + correcto + '. Revisa el número completo.');
   }
   return resultado(true, '', 'NIT ' + agruparMiles(cuerpo, '.') + '-' + dv);
 }
