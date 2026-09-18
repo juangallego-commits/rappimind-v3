@@ -22,8 +22,9 @@ Esta herramienta solo genera documentos para dinámicas SIN azar. Si tu campaña
 
 - Cashback: quien compra recibe un porcentaje de vuelta en Créditos. Todos los que cumplen reciben el beneficio.
 - Carrera de Compras: gana quien más compre durante la vigencia. El resultado depende del esfuerzo del participante, no de la suerte.
-- Descuento por umbral: quien supere cierto monto recibe el beneficio. La regla es la misma para todos.
-- Cashback Day: varias tiendas hacen cashback el mismo día, cada una con su propio presupuesto.
+- Cashback Multitienda: varias tiendas hacen cashback dentro de la misma jornada, cada una con su propio porcentaje, su tope y su presupuesto.
+- 15 minutos o Cashback: Rappi promete un tiempo de entrega en el botón Turbo y, si la orden llega tarde, devuelve en Créditos parte de lo que el usuario pagó.
+- Cashback Travel y Descuento Travel: las dos formas de campaña de vuelos, hoteles, autos y paquetes.
 
 ### No sirven: las redacta Legal
 
@@ -38,7 +39,6 @@ Esta herramienta solo genera documentos para dinámicas SIN azar. Si tu campaña
 - Premios distintos por puesto en un ranking, o tabla de puntos: consúltalo.
 - El premio es una boleta, una experiencia o algo atado a un evento con fecha: consúltalo.
 - Hay un jurado que decide, o un criterio de "el más creativo": consúltalo.
-- La campaña la fondea Rappi y no una tienda o una marca: consúltalo.
 - Participan varias tiendas en un mismo concurso: consúltalo.
 
 **La regla simple.** La prueba más simple: si dos personas hacen exactamente lo mismo y una puede ganar y la otra no, hay azar. Consulta antes de lanzar.
@@ -47,29 +47,45 @@ Esta herramienta solo genera documentos para dinámicas SIN azar. Si tu campaña
 
 Las capturas van donde dicen los marcadores. Todavía no existen.
 
-1. Abre el documento y léelo completo. Es el texto que vas a publicar tal cual.
+1. Abre el documento y léelo completo. Es el texto que vas a publicar, tal cual, sin editarlo.
    Deberías ver: El documento con el nombre de tu campaña en el título.
    `[CAPTURA 1]`
 
-2. Selecciona todo el contenido del documento y cópialo.
-   Deberías ver: Todo el texto resaltado.
+2. Entra a Squarespace, a la lista de páginas, y abre la página del país de tu campaña.
+   Deberías ver: El menú de la izquierda con un país por línea: Brasil, Argentina, Chile, Colombia y los demás.
    `[CAPTURA 2]`
 
-3. Entra a Squarespace y crea una página nueva dentro de promos.rappi.com.
-   Deberías ver: El editor de la página en blanco.
+3. Dentro del país, dale al signo de más para crear un evento nuevo.
+   Deberías ver: El calendario del mes y, a la izquierda, la lista de los T&C que ya existen.
    `[CAPTURA 3]`
 
-4. Pega el contenido y revisa que los títulos y las viñetas se vean bien.
-   Deberías ver: El texto con sus cláusulas numeradas y sus viñetas.
+4. Copia el título de la campaña que te damos aquí abajo y pégalo en el título del evento. No lo cambies ni le agregues nada.
+   Deberías ver: El título arriba, donde dice "Escribe un título para el evento".
    `[CAPTURA 4]`
 
-5. Publica la página y copia el enlace de la barra del navegador.
-   Deberías ver: Un enlace que empieza por https://promos.rappi.com/
+5. Pon la fecha de inicio y la de fin del evento iguales a la vigencia del documento. Si no coinciden, el evento se cae del calendario antes o después de que termine la campaña.
+   Deberías ver: Las dos fechas debajo del título.
    `[CAPTURA 5]`
 
-6. Vuelve a RappiMind, pega el enlace y marca la campaña como publicada.
-   Deberías ver: Tu campaña en verde en el historial.
+6. Selecciona todo el documento, cópialo y pégalo en el cuerpo del evento. Revisa que las cláusulas numeradas y las viñetas se vean bien.
+   Deberías ver: El texto completo con sus veinte cláusulas.
    `[CAPTURA 6]`
+
+7. Entra a la pestaña Opciones y reemplaza la dirección del evento por la que te damos aquí abajo. La parte del país no se toca: Squarespace la pone sola.
+   Deberías ver: El campo "URL del evento", con el país a la izquierda y el resto editable.
+   `[CAPTURA 7]`
+
+8. Dale a Guardar y publicar. Guardar solo deja la página en borrador y el enlace no abre.
+   Deberías ver: El evento en el calendario, sin la etiqueta de borrador.
+   `[CAPTURA 8]`
+
+9. Abre el enlace en el navegador para confirmar que carga, y cópialo.
+   Deberías ver: Tu documento publicado, en una dirección que empieza por https://promos.rappi.com/
+   `[CAPTURA 9]`
+
+10. Vuelve a RappiMind, pega el enlace abajo y marca la campaña como publicada.
+   Deberías ver: Tu campaña en verde en el historial, con su enlace guardado.
+   `[CAPTURA 10]`
 
 ### Si algo sale mal
 
@@ -78,6 +94,8 @@ Las capturas van donde dicen los marcadores. Todavía no existen.
 | El enlace no abre o da error 404. | La página quedó en borrador. Vuelve a Squarespace y dale Publicar, no solo Guardar. |
 | El texto se ve corrido o sin viñetas. | Pégalo otra vez usando Pegar sin formato y deja que Squarespace le aplique el estilo de la página. |
 | El enlace no empieza por promos.rappi.com. | Creaste la página en otro sitio. Tiene que estar dentro de promos.rappi.com para que RappiMind la acepte. |
+| No tengo usuario de Squarespace. | Es normal: la cuenta la tienen unas pocas personas por país. Pide la publicación por el canal de Legal y pasa el documento y la dirección que te dio RappiMind. |
+| La dirección que puse quedó distinta a la que me dio la herramienta. | Vuelve a Opciones, corrígela y publica otra vez. Si ya la publicaste con otra dirección, pega en RappiMind el enlace real, no el que te propusimos. |
 | Me equivoqué en un dato y ya generé el documento. | No edites el documento a mano. Genera uno nuevo con los datos corregidos y publica ese. El anterior queda en tu historial sin publicar. |
 
 ## 3. Contactos
@@ -88,9 +106,9 @@ Sin Dave: Anna pidió expresamente quitarlo.
 
 | Quién | Para qué | Correo |
 |---|---|---|
-| Juan Camilo Gallego | Dudas legales de fondo, campañas que no encajan en ningún tipo, y aprobación de textos nuevos. | [PENDIENTE: correo] |
-| Anna Habermann | Cómo plantear la campaña con el aliado y qué se puede prometer en las piezas de marketing. | [PENDIENTE: correo] |
-| Paula Barahona | Revisión de campañas de un país distinto a Colombia y coordinación con los equipos locales. | [PENDIENTE: correo] |
+| Juan Camilo Gallego | Dudas legales de fondo, campañas que no encajan en ningún tipo, y aprobación de textos nuevos. |  |
+| Anna Habermann | Cómo plantear la campaña con el aliado y qué se puede prometer en las piezas de marketing. |  |
+| Paula Barahona | Revisión de campañas de un país distinto a Colombia y coordinación con los equipos locales. |  |
 
 ## 4. Canal de ayuda
 
@@ -129,7 +147,7 @@ Casi siempre es el dígito de verificación, el número después del guion. Píd
 
 **¿Puedo poner varias tiendas en una misma campaña?**
 
-Sí, con el tipo Cashback Day. Cada tienda entra con su razón social, su NIT y su presupuesto, porque cada una organiza su propio beneficio y responde por él.
+Sí, con el tipo Cashback Multitienda. Cada tienda entra con su razón social, su NIT y su presupuesto, porque cada una organiza su propio beneficio y responde por él.
 
 **¿Qué es un Maker y en qué cambia las cosas?**
 
@@ -141,8 +159,12 @@ Porque Rappi es la plataforma que conecta, no quien vende ni quien fondea. El or
 
 **Mi campaña es de Rappi Travel. ¿Sirve esta herramienta?**
 
-Todavía no. Travel tiene otra entidad legal y su propio documento. La herramienta te manda al formulario de Legal en cuanto lo indicas.
+Sí. Después de elegir el país, la primera pregunta es si la campaña es de Rappi o de Rappi Travel. Travel tiene su propia entidad legal, sus propios tipos (Cashback Travel y Descuento Travel) y un filtro de nueve preguntas antes de empezar, porque hay casos de viajes que sí tiene que redactar Legal.
 
 **¿Dónde quedan guardados los documentos?**
 
 En una carpeta de Drive por país, nunca en una carpeta general. Tú quedas como lector del documento y el enlace te llega por correo.
+
+**Mi campaña es un descuento o un cupón y no la veo en la lista de tipos.**
+
+Buena noticia: para esas campañas no hay que generar nada. En Colombia, Legal ya publicó los T&C generales de los descuentos, los cupones, el envío gratis y la tarifa de servicio gratis. Debajo de la lista de tipos de campaña hay una opción que te lleva a ellos, y ahí copias el enlace que va en la pieza.

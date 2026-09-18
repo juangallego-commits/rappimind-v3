@@ -854,3 +854,106 @@ encargo y cambiar el front cambia también este archivo. Dime y lo hago.
    cada uno, no el código.
 3. **El espacio de "Usar como baseAmpliar"**, arriba.
 
+
+## 18 de septiembre · La respuesta del encargo 01, aplicada
+
+Entró `docs/encargos/respuestas/01-legal.md`: las 49 preguntas respondidas y un
+cierre de 34 líneas de decisiones más los valores por país. Se aplicó solo lo que
+venía con texto exacto. Lo demás quedó en `docs/PENDIENTES_LEGAL.md`, en la
+sección nueva del final, con veintisiete puntos repartidos en seis grupos.
+
+Solo se tocó el encargo 01. Los otros dos (la interfaz y las leyendas) siguen sin
+empezar.
+
+### Lo que cambió en los valores de cada país
+
+En `data/paises.json`. **Ojo: la pestaña Países del Sheet manda sobre esto**, así
+que estos cambios no llegan solos a producción. Hay que escribirlos allá a mano.
+
+| País | Qué cambió |
+|---|---|
+| Brasil | Los cinco valores que estaban en español pasaron a portugués, y el nombre de la política de privacidad cambia de artículo ("o", no "a"). La autoridad de datos pasa de Autoridade a **Agência** Nacional de Proteção de Dados: la MP 1.317/2025 la convirtió en agencia y la sigla ANPD se mantuvo. |
+| México | Los derechos de datos suman la revocación del consentimiento. |
+| Perú, Argentina, Chile, Ecuador, Uruguay, Costa Rica | Los derechos de datos dejan de ser la frase genérica y pasan a enumerarse con los nombres de la ley de cada país. |
+| Chile | La autoridad de datos pasa a "las autoridades competentes". La Agencia de Protección de Datos Personales todavía no existe operando, y nombrarla remite al usuario a una entidad que no lo puede atender. |
+| Uruguay | La entidad de vigilancia dice ahora de qué ministerio es esa área. |
+
+### Lo que cambió en el texto legal
+
+| Dónde | Qué |
+|---|---|
+| `modelos/bloques/acreditacion.md` y `modelos/cashback_travel.md` | Con carga inmediata (o "al confirmarse la reserva" en Travel), la verificación de elegibilidad pasa a ser posterior y con reversión de los Créditos. Con las otras cargas, la frase se queda igual. |
+| `modelos/cashback_eta.md` | Oración nueva al final del beneficio: no hay Beneficio si el retraso es por causas del Usuario/Consumidor (dirección errada, cambio de la orden, no estar para recibirla) ni por fuerza mayor. |
+| `modelos/promocao_br.md` | "pessoa humana" pasa a "pessoa física". |
+| `modelos/bloques/br_condicoes_gerais.md` | La única "a Rappi" del documento pasa a "o Rappi", como las otras nueve. |
+| `src/core/derivados.js` | Los días de "usuarios reactivados" se nombran con el término de cada país ("días calendario" en Colombia), no con "días" a secas. |
+| `src/core/derivados_travel.js` | La base de cálculo del cashback de Travel excluye impuestos, tasas y contribuciones, y lo dice con esas palabras. El ejemplo del tope habla del valor que cuenta para el cálculo, no del valor pagado. La frase del ámbito se parte según las categorías: una campaña solo de vuelos ya no habla de servicios, y una de hoteles ya no habla de vuelos. |
+| `data/tyc_genericos.json` | "Descuento en Productos Seleccionados" deja de estar repetido: la herramienta ofrece solo el de la ruta con año. Quedan catorce T&C generales, no quince. |
+
+### Las salidas esperadas que cambiaron
+
+Catorce de las dieciocho. **Estas son las que hay que mirar**, y lo que cambió en
+cada una es exactamente una de las líneas de arriba, nada más:
+
+| Caso | Qué cambió |
+|---|---|
+| CB01, CB02, CD01 | La verificación de elegibilidad (los tres tienen carga inmediata). |
+| ETA01, ETA02 | La salvedad nueva del retraso imputable al usuario. |
+| MX01 | Los derechos de datos de México. |
+| TV01, TV02, TV03, TV05 | La base de cálculo sin impuestos y el ejemplo del tope. |
+| TV01, TV03 | Además, el ámbito partido: TV01 es solo vuelos y TV03 solo hoteles. |
+| TV03 | Además, la verificación de Travel (carga al confirmarse la reserva). |
+| BR01 a BR04 | "pessoa física" y "não sendo o Rappi responsável". |
+
+No cambiaron CC01 (Carrera de Compras), TV04, TV06 ni TV07.
+
+### Cómo probarlo
+
+```
+npm test                                                        # 448 pruebas
+npm run demo
+export NODE_PATH=/opt/node22/lib/node_modules
+node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js        # el recorrido completo pasa
+node .claude/skills/flujo-y-ux/scripts/recorrer-en-portugues.js # todo bien
+```
+
+Y en la demostración, para ver lo que cambió sin leer código: elige Cashback,
+llega a "¿Cuándo le llegan los Créditos?" y cambia entre "Apenas termina el
+pedido" y "Al día siguiente del pedido". El "Así queda en tu T&C" de esa pregunta
+muestra ahora las dos frases que la respuesta produce, y la cláusula de
+acreditación del documento de la derecha cambia con ella.
+
+### Pruebas nuevas
+
+| Archivo | Qué protege |
+|---|---|
+| `pruebas/decisiones_legales.test.js` | Doce pruebas: que la frase cambie cuando tiene que cambiar y se quede igual cuando no. La verificación según la carga (delivery y Travel), los días del país en "reactivados", la base de cálculo con y sin Asistencia, el ejemplo del tope y las cinco formas del ámbito de Travel. |
+| `pruebas/brasil.test.js` | Dos pruebas nuevas: que los valores legales de Brasil no traigan palabras en español, y que el documento diga "pessoa física" y "o Rappi" una sola vez cada uno. |
+| `pruebas/paises_en_pruebas.test.js` | Que un dato confirmado salga de la lista y que el aviso no se apague por eso. |
+| `pruebas/servidor.test.js` | Que `setup()` no borre de la hoja un dato por confirmar que la semilla ya no trae. Es la razón por la que hay que limpiar el Sheet a mano. |
+
+### Lo que necesito de Juan
+
+1. **Cambiar a mano los valores en la pestaña Países del Sheet.** La hoja manda
+   sobre `data/paises.json` y `setup()` solo completa celdas vacías: los valores
+   que ya están escritos allá no se tocan solos. Son los de la tabla de arriba.
+2. **Borrar a mano, en esa misma pestaña, los datos por confirmar que ya se
+   confirmaron.** Esa columna solo crece con `setup()`. Después de desplegar,
+   `setup()` va a agregarle a cada país en piloto el pendiente nuevo
+   (`visto_bueno_legal_local`), pero los cuatro viejos se quedan hasta que los
+   borres.
+3. **Las cinco preguntas bloqueantes que no cerraron**: el tope del frete grátis
+   de Brasil, la autoridad de consumo de Argentina, el separador de miles de
+   Ecuador y de Costa Rica, y si CRM puede configurar el límite por tienda del
+   Cashback Multitienda. Están en el grupo A de `docs/PENDIENTES_LEGAL.md`.
+4. **La cláusula de responsabilidad de Rappi Travel** (decisión 40). El texto
+   alternativo está escrito y la respuesta dice que la decisión es tuya. Dime sí
+   o no y se aplica, o se anota como riesgo aceptado.
+5. **La tanda de Carrera de Compras** (la pregunta de quién entrega el premio, la
+   viñeta de premios en Créditos y la frase de datos del ganador). El texto de la
+   frase de datos es exacto, pero no puede entrar solo sin empeorar el caso de
+   premio en Créditos. Grupo B de los pendientes.
+6. **Las capturas no se regeneraron.** La pregunta de la carga cambió lo que se
+   ve en "Así queda en tu T&C". No corrí `capturar-pantallas.js` para no
+   desincronizar `docs/encargos/02-revision-interfaz.md`, que es el documento del
+   encargo que todavía no se ha trabajado. Se regeneran en esa sesión.

@@ -35,8 +35,11 @@ const DE_COLOMBIA = tycGenericosDelPais('CO');
 
 // --- Los datos ---------------------------------------------------------------
 
-test('están los quince T&C generales de Colombia del Excel de Legal', () => {
-  assert.strictEqual(DE_COLOMBIA.length, 15);
+test('están los catorce T&C generales de Colombia que la herramienta ofrece', () => {
+  // El Excel de Legal traía quince filas. Una era el mismo T&C repetido con otro
+  // enlace, y la decisión 45 dejó ofreciendo uno solo. Ver la revisión del
+  // archivo de datos.
+  assert.strictEqual(DE_COLOMBIA.length, 14);
 });
 
 test('cada T&C trae identificador, nombre, enlace y vigencia', () => {
@@ -88,13 +91,17 @@ test('Colombia sí los tiene, y el código se lee en cualquier caja', () => {
 
 // --- Lo que el Excel trajo mal, y que no se arregla por cuenta propia --------
 
-test('el T&C que Legal repitió sigue repetido, con sus dos enlaces', () => {
+test('del T&C que Legal repitió se ofrece uno solo, el de la ruta con año', () => {
+  // Estuvo repetido a proposito mientras nadie sabia cual era el bueno, y el
+  // comercial veia los dos con un aviso. Juan decidio (decision 45) que va el de
+  // /2026/descuentoprodselecc: mostrar los dos le pasaba al comercial una
+  // decision legal que no puede tomar. El otro sigue publicado en Squarespace.
   const repetidos = DE_COLOMBIA.filter((t) => t.nombre === 'Descuento en Productos Seleccionados');
-  assert.strictEqual(repetidos.length, 2, 'alguien "arregló" el duplicado de las filas 4 y 16');
-  assert.notStrictEqual(repetidos[0].enlace, repetidos[1].enlace);
-  for (const tyc of repetidos) {
-    assert.ok(tyc.advertencia, tyc.id + ' no avisa que el T&C está dos veces');
-  }
+  assert.strictEqual(repetidos.length, 1, 'volvio a aparecer el duplicado de las filas 4 y 16');
+  assert.strictEqual(repetidos[0].id, 'descuento_productos_seleccionados');
+  assert.strictEqual(repetidos[0].enlace, 'https://promos.rappi.com/colombia/2026/descuentoprodselecc');
+  assert.strictEqual(repetidos[0].advertencia, undefined, 'ya no hay nada que advertir: queda uno solo');
+  assert.strictEqual(tycGenericoPorId('CO', 'descuento_productos_seleccionados_bis'), null);
 });
 
 test('los dos cupones sin descripción no llevan una inventada', () => {
@@ -130,7 +137,7 @@ test('lo que hay que revisar con Legal queda anotado en el archivo de datos', ()
     assert.ok(revision.que && revision.que.length > 30, 'una revisión no dice qué pasa');
     for (const id of revision.ids) anotados.push(id);
   }
-  for (const id of ['descuento_productos_seleccionados_bis', 'cupon_valor_fijo', 'tarifa_servicio_gratis']) {
+  for (const id of ['descuento_productos_seleccionados', 'cupon_valor_fijo', 'tarifa_servicio_gratis']) {
     assert.ok(anotados.indexOf(id) !== -1, 'no quedó anotado lo de ' + id);
   }
 });
@@ -202,7 +209,7 @@ test('la vigencia se dice en palabras, no en fechas de máquina', () => {
 
 test('hoy, al menos un T&C general de Colombia se puede usar', () => {
   const usables = DE_COLOMBIA.filter((t) => estadoDeTycGenerico(t, '2026-09-17').usable);
-  assert.ok(usables.length >= 14, 'quedaron demasiados sin poder usarse: ' + usables.length);
+  assert.ok(usables.length >= 13, 'quedaron demasiados sin poder usarse: ' + usables.length);
 });
 
 // --- Lo que el comercial lee -------------------------------------------------
@@ -228,13 +235,13 @@ test('los mensajes de la herramienta no se leen como una negativa', () => {
 });
 
 test('cuando todos vencen, la herramienta lo sabe y no promete un enlace', () => {
-  // Catorce vencen el 31 de diciembre de 2026 y el otro el 31 de octubre. El
+  // Trece vencen el 31 de diciembre de 2026 y el otro el 31 de octubre. El
   // 1 de enero de 2027 la tarjeta seguía diciendo "Buena noticia: Legal ya
-  // publicó los T&C" y detrás había quince botones grises.
+  // publicó los T&C" y detrás había botones grises.
   assert.strictEqual(hayTycGenericosUsables('CO', '2026-09-17'), true);
-  assert.strictEqual(tycGenericosUsables('CO', '2026-09-17').length, 15);
+  assert.strictEqual(tycGenericosUsables('CO', '2026-09-17').length, 14);
   assert.ok(!tycGenericosUsables('CO', '2026-11-01').some((t) => t.id === 'tarifa_servicio_gratis'));
-  assert.strictEqual(tycGenericosUsables('CO', '2026-11-01').length, 14);
+  assert.strictEqual(tycGenericosUsables('CO', '2026-11-01').length, 13);
   assert.strictEqual(hayTycGenericosUsables('CO', '2027-01-01'), false);
   // Sin fecha de referencia no se afirma que venció.
   assert.strictEqual(hayTycGenericosUsables('CO', ''), true);

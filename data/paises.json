@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-16c",
+  "version": "2026-09-18",
   "fuente": "RappiMind_Config_Legal_por_Pais_4.xlsx",
   "paises": [
     {
@@ -36,11 +36,7 @@
       "texto_persona": "persona natural",
       "texto_hora_local": "hora local de la República de Colombia",
       "texto_derechos_datos": "tus derechos a conocer, actualizar, rectificar y suprimir tus datos personales, y a revocar la autorización otorgada",
-      "por_confirmar_en_pruebas": [
-        "travel_rnt",
-        "travel_rnt_vence",
-        "travel_entidad_vigilancia"
-      ],
+      "por_confirmar_en_pruebas": [],
       "travel_entidad": "Travel Moustache S.A.S.",
       "travel_id_fiscal": "NIT 901.337.236-7",
       "travel_rnt": "79000",
@@ -80,12 +76,9 @@
       "termino_dias": "días naturales",
       "texto_persona": "persona física",
       "texto_hora_local": "hora de la Ciudad de México",
-      "texto_derechos_datos": "tus derechos de acceso, rectificación, cancelación y oposición (derechos ARCO)",
+      "texto_derechos_datos": "tus derechos de acceso, rectificación, cancelación y oposición (derechos ARCO) y el de revocar tu consentimiento",
       "por_confirmar_en_pruebas": [
-        "separador_miles",
-        "termino_dias",
-        "texto_hora_local",
-        "texto_derechos_datos"
+        "visto_bueno_legal_local"
       ],
       "url_tc_turbo": ""
     },
@@ -117,12 +110,9 @@
       "termino_dias": "días calendario",
       "texto_persona": "persona natural",
       "texto_hora_local": "hora local de la República del Perú",
-      "texto_derechos_datos": "los derechos que la legislación aplicable te reconoce sobre tus datos personales",
+      "texto_derechos_datos": "tus derechos de acceso, actualización, inclusión, rectificación, supresión y oposición sobre tus datos personales, y el de revocar tu consentimiento",
       "por_confirmar_en_pruebas": [
-        "separador_miles",
-        "termino_dias",
-        "texto_hora_local",
-        "texto_derechos_datos"
+        "visto_bueno_legal_local"
       ],
       "url_tc_turbo": ""
     },
@@ -154,12 +144,9 @@
       "termino_dias": "días corridos",
       "texto_persona": "persona humana",
       "texto_hora_local": "hora local de la República Argentina",
-      "texto_derechos_datos": "los derechos que la legislación aplicable te reconoce sobre tus datos personales",
+      "texto_derechos_datos": "tus derechos de acceso, rectificación, actualización y supresión de tus datos personales",
       "por_confirmar_en_pruebas": [
-        "separador_miles",
-        "termino_dias",
-        "texto_hora_local",
-        "texto_derechos_datos"
+        "visto_bueno_legal_local"
       ],
       "url_tc_turbo": ""
     },
@@ -178,7 +165,7 @@
       "ley_aplicable": "las leyes de la República de Chile",
       "jurisdiccion": "los Tribunales Ordinarios de Santiago",
       "entidad_vigilancia": "el Servicio Nacional del Consumidor (SERNAC)",
-      "autoridad_datos": "la Agencia de Protección de Datos Personales",
+      "autoridad_datos": "las autoridades competentes",
       "url_tc_plataforma": "https://legal.rappi.com/chile/terminos-y-condiciones-consumidores-rappi/",
       "url_privacidad": "https://legal.rappi.com.co/chile/politica-de-privacidad/",
       "url_tc_creditos": "https://legal.rappi.com.co/chile/terminos-y-condiciones-funcionamiento-de-los-creditos-de-la-plataforma-rappi/",
@@ -191,12 +178,9 @@
       "termino_dias": "días corridos",
       "texto_persona": "persona natural",
       "texto_hora_local": "hora de Santiago de Chile",
-      "texto_derechos_datos": "los derechos que la legislación aplicable te reconoce sobre tus datos personales",
+      "texto_derechos_datos": "tus derechos de acceso, rectificación, supresión y bloqueo de tus datos personales, y los demás que te reconozca la legislación vigente",
       "por_confirmar_en_pruebas": [
-        "separador_miles",
-        "termino_dias",
-        "texto_hora_local",
-        "texto_derechos_datos"
+        "visto_bueno_legal_local"
       ],
       "url_tc_turbo": ""
     },
@@ -228,12 +212,10 @@
       "termino_dias": "días calendario",
       "texto_persona": "persona natural",
       "texto_hora_local": "hora del Ecuador continental",
-      "texto_derechos_datos": "los derechos que la legislación aplicable te reconoce sobre tus datos personales",
+      "texto_derechos_datos": "tus derechos de acceso, rectificación y actualización, eliminación, oposición, portabilidad y suspensión del tratamiento de tus datos personales",
       "por_confirmar_en_pruebas": [
         "separador_miles",
-        "termino_dias",
-        "texto_hora_local",
-        "texto_derechos_datos"
+        "visto_bueno_legal_local"
       ],
       "url_tc_turbo": ""
     },
@@ -251,7 +233,7 @@
       "pais_legal": "la República Oriental del Uruguay",
       "ley_aplicable": "las leyes de la República Oriental del Uruguay",
       "jurisdiccion": "los Tribunales de la Jurisdicción Ordinaria de Montevideo",
-      "entidad_vigilancia": "el Área de Defensa del Consumidor",
+      "entidad_vigilancia": "el Área de Defensa del Consumidor del Ministerio de Economía y Finanzas",
       "autoridad_datos": "la Unidad Reguladora y de Control de Datos Personales (URCDP)",
       "url_tc_plataforma": "https://legal.rappi.com.co/uruguay/terminos-y-condiciones-de-uso-de-plataforma-rappi/",
       "url_privacidad": "https://legal.rappi.com.co/uruguay/aviso-de-privacidad/",
@@ -265,12 +247,9 @@
       "termino_dias": "días corridos",
       "texto_persona": "persona física",
       "texto_hora_local": "hora local de la República Oriental del Uruguay",
-      "texto_derechos_datos": "los derechos que la legislación aplicable te reconoce sobre tus datos personales",
+      "texto_derechos_datos": "tus derechos de acceso, rectificación, actualización, inclusión y supresión de tus datos personales",
       "por_confirmar_en_pruebas": [
-        "separador_miles",
-        "termino_dias",
-        "texto_hora_local",
-        "texto_derechos_datos"
+        "visto_bueno_legal_local"
       ],
       "url_tc_turbo": ""
     },
@@ -302,12 +281,10 @@
       "termino_dias": "días naturales",
       "texto_persona": "persona física",
       "texto_hora_local": "hora local de la República de Costa Rica",
-      "texto_derechos_datos": "los derechos que la legislación aplicable te reconoce sobre tus datos personales",
+      "texto_derechos_datos": "tus derechos de acceso, rectificación y supresión de tus datos personales, y el de revocar tu consentimiento",
       "por_confirmar_en_pruebas": [
         "separador_miles",
-        "termino_dias",
-        "texto_hora_local",
-        "texto_derechos_datos"
+        "visto_bueno_legal_local"
       ],
       "url_tc_turbo": ""
     },
@@ -322,16 +299,16 @@
       "entidad_legal": "RAPPI BRASIL INTERMEDIAÇÃO DE NEGÓCIOS LTDA",
       "id_fiscal": "CNPJ 26.900.161/0001-25",
       "domicilio_legal": "São Paulo",
-      "pais_legal": "a República Federativa del Brasil",
-      "ley_aplicable": "a Leis da República Federativa do Brasil",
-      "jurisdiccion": "à Foro Central da comarca da cidade de São Paulo",
-      "entidad_vigilancia": "el PROCON y la Secretaría Nacional del Consumidor (SENACON)",
-      "autoridad_datos": "a Autoridade Nacional de Proteção de Dados (ANPD)",
+      "pais_legal": "a República Federativa do Brasil",
+      "ley_aplicable": "as leis da República Federativa do Brasil",
+      "jurisdiccion": "o Foro Central da Comarca da Capital do Estado de São Paulo",
+      "entidad_vigilancia": "o PROCON e a Secretaria Nacional do Consumidor (SENACON)",
+      "autoridad_datos": "a Agência Nacional de Proteção de Dados (ANPD)",
       "url_tc_plataforma": "https://legal.rappi.com.co/brazil/termos-e-condicoes-de-uso-da-plataforma-rappi/",
       "url_privacidad": "https://legal.rappi.com.co/brazil/aviso-de-privacidade-e-politicas-de-uso-das-informacao-utilizadas-pela-rappi/",
       "url_tc_creditos": "https://legal.rappi.com.co/brazil/termos-e-condicoes-funcionamento-dos-creditos-da-plataforma-rappi/",
       "moneda_nombre": "reais",
-      "politica_privacidad": "a Aviso de Privacidade e Políticas de uso das Informação utilizadas pela Rappi",
+      "politica_privacidad": "o Aviso de Privacidade e Políticas de uso das Informação utilizadas pela Rappi",
       "edad_minima": "dezoito (18) anos",
       "tipo_id_organizador": "CNPJ",
       "moneda_simbolo": "R$",
@@ -341,16 +318,7 @@
       "texto_hora_local": "horário de Brasília",
       "texto_derechos_datos": "",
       "por_confirmar_en_pruebas": [
-        "separador_miles",
-        "termino_dias",
-        "texto_hora_local",
-        "texto_derechos_datos",
-        "autoridad_datos",
-        "entidad_vigilancia",
-        "pais_legal",
-        "ley_aplicable",
-        "jurisdiccion",
-        "politica_privacidad"
+        "visto_bueno_legal_local"
       ],
       "url_tc_turbo": ""
     }

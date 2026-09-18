@@ -476,3 +476,175 @@ Salieron al revisar lo construido la noche anterior. Ninguno cambia texto legal.
     `CLAUDE.md`). Están copiados tal cual del Sheet de Legal. Si ese es el nombre
     oficial de las piezas, se quedan; si no, quedarían como "Cupón de descuento:
     valor fijo" y "Cupón de descuento: toda la tienda". Decisión de Juan.
+
+## De la respuesta al encargo 01 (18 de septiembre)
+
+`docs/encargos/respuestas/01-legal.md` respondió las 49 preguntas. Lo que traía
+texto exacto y aplicable ya está aplicado (ver `docs/PROGRESO.md`). Aquí queda
+lo que no: lo que vino con recomendación sin texto, lo que quedó sujeto a un
+dato que nadie tiene todavía, y lo que Juan tiene que decidir o hacer por fuera
+del repositorio. Nada de esta lista se redactó aquí.
+
+### A. Las cinco bloqueantes que no quedaron cerradas
+
+1. **Brasil, el tope del frete grátis (pregunta 2).** La decisión es que cubre
+   hasta R$20 y el excedente lo paga el Usuário, que es lo que dice el
+   documento hoy. Falta que alguien de Brasil confirme que la app cobra el
+   excedente y no quita el beneficio entero. Si lo quita, el texto B ya está
+   escrito y hay que cambiarlo: "Esclarece-se que o frete grátis não se aplica
+   quando o valor do frete for superior a R$20,00 (vinte reais); nesse caso, o
+   Usuário pagará o valor integral do frete."
+2. **Argentina, la autoridad de consumo (pregunta 9).** Se queda "la Dirección
+   Nacional de Defensa del Consumidor" hasta que Legal AR confirme el nombre
+   vigente: esa dependencia ha cambiado de nombre varias veces. Contacto en el
+   hilo de transferencia de datos: Milena Casella.
+3. **Ecuador, el separador de miles (pregunta 12).** Se queda la coma. En
+   Ecuador conviven los dos formatos y falta el dato de cómo escribe los montos
+   Legal EC en sus T&C publicados. Sigue marcado como dato por confirmar.
+   Contacto: Claudia Apolo.
+4. **Costa Rica, el separador de miles (pregunta 14).** Igual: se queda el
+   punto y sigue marcado como dato por confirmar. No hay contacto legal
+   confirmado en Costa Rica.
+5. **Cashback Multitienda, el máximo de pedidos (pregunta 20).** La decisión es
+   "por tienda", condicionada a que CRM pueda configurar el límite por tienda.
+   Si solo puede configurar uno global, se queda por campaña, porque el T&C
+   tiene que decir lo que la app hace. **Hasta que Juan confirme lo de CRM, el
+   texto sigue siendo el de hoy.** Los tres textos exactos ya están escritos en
+   la respuesta (líneas 518 a 520 del bloque "PARA EL REPOSITORIO") y se aplican
+   en un rato el día que la respuesta sea "sí, por tienda".
+
+### B. Texto exacto que no se puede aplicar solo
+
+6. **Carrera de Compras, la frase de datos del ganador (decisión 36, falla b).**
+   El texto nuevo está completo y es mejor que el de hoy, pero enumera la
+   dirección de entrega y el número de documento. Aplicarlo solo empeoraría el
+   caso CC01, que es un premio en Créditos "entregado" por el Organizador: hoy
+   ya manda datos que no tienen razón de ser, y con el texto nuevo mandaría más.
+   Va junto con la falla a (que "¿Quién entrega el premio?" solo salga con
+   premio físico) y con la viñeta de entrega para premios en Créditos, que la
+   respuesta deja escrita pero marcada como "lo decides tú". Las tres son una
+   sola tanda y necesitan tu visto bueno.
+7. **Brasil, la frase de datos personales del cierre (decisión 1).** Está
+   escrita en portugués y lista, pero solo entra si Legal BR la pide. Va en el
+   mensaje de la decisión 24.
+
+### C. Trabajo de producto que la respuesta pide y que no es aplicar un texto
+
+Todo esto trae los enunciados y las ayudas escritos, pero es construir pantalla,
+no reemplazar una frase. Hay que hablarlo antes, como el encargo 03.
+
+8. **La pregunta del acuerdo de transferencia de datos** (decisión 36 (i)):
+   pregunta nueva en Carrera de Compras, solo con premio físico entregado por el
+   Organizador, con un panel distinto por país y los enlaces de los modelos de
+   acuerdo. Los enlaces por país están en las líneas 546 a 554 de la respuesta;
+   no se metieron a `data/paises.json` para no pedirte columnas nuevas en el
+   Sheet por unos datos que todavía no usa nadie. Ojo con una cosa: en el hilo,
+   dos personas no pudieron abrir la carpeta de Drive. Hay que revisar que los
+   KAM tengan acceso de lectura antes de enseñarles el enlace.
+9. **El valor del premio** (decisión 36 (ii)): pregunta nueva y dos frases
+   nuevas para la cláusula de premio. Los textos dicen "pesos M/Cte." y "IVA",
+   que son de Colombia: como están, romperían el día que Carrera de Compras se
+   habilite en otro país. Hay que decidir si se escriben con el nombre de la
+   moneda y el impuesto de cada país o si el tipo se deja solo para Colombia.
+10. **Los productos con nombre y EAN** (decisión 36 (iii)): el campo de texto
+    libre pasa a filas con nombre y código de barras, con validación del dígito
+    de control. Cambia la cláusula de productos participantes y la pantalla.
+11. **Las secciones donde los Créditos no aplican** (decisión 38): casillas
+    nuevas (Rappi Travel, SOAT, Cajero ATM y Rappi Favor), marcadas de entrada,
+    y una frase de exclusión en la cláusula de redención.
+12. **"Consumo en el local"** (decisión 39): las condiciones pasan de casillas a
+    una sola elección, y la opción local se oculta mientras no sepamos el nombre
+    exacto con el que la app la muestra hoy en Colombia. **Ese nombre es el dato
+    que falta.** Sin él no se puede escribir la cláusula, porque el texto nuevo
+    lo cita entre comillas.
+13. **El filtro antes de la lista de T&C generales** (decisión 49): seis
+    preguntas de sí o no, con sus textos escritos, más la frase nueva de la
+    pantalla final ("Tu pieza debe decir siempre: el mínimo de compra, si lo
+    hay; el máximo de descuento o de cashback; y a qué usuarios aplica, si no es
+    para todos.").
+
+### D. Lo que decides tú, sin dato que falte
+
+14. **La responsabilidad de Rappi Travel** (decisión 40). La recomendación es
+    cambiar la cláusula por la alternativa R4, que está escrita completa en la
+    línea 568 de la respuesta. El argumento: con Rappi Travel calificada como
+    proveedor indirecto con responsabilidad solidaria, la exclusión general por
+    la prestación cae en el artículo 43, numeral 1, de la Ley 1480, es ineficaz
+    de pleno derecho y sirve como prueba en una investigación. **No se aplicó
+    porque la respuesta dice expresamente que la decisión es tuya.** Si la
+    mantienes como está, queda anotada aquí como riesgo aceptado.
+15. **Las descripciones de los dos cupones** (decisión 46). Las cuatro frases
+    están escritas, pero la respuesta las marca como propuesta pendiente de
+    Legal CO. Hoy los dos cupones siguen sin descripción y la pantalla avisa que
+    falta. Si Legal CO las aprueba, se aplican tal cual.
+16. **El modelo del ETA en "Turbo Restaurantes"** (decisión 33). Falta el dato
+    de si la campaña de 15 minutos corre, o va a correr, en Turbo de mercado. Si
+    la respuesta es sí, la modalidad pasa a lista cerrada con "Turbo
+    Restaurantes" (preseleccionada) y "Turbo". Si es no, se queda fija.
+17. **Travel, la marca del aliado obligatoria** (decisión 43). La marca pasaría
+    a ser obligatoria y el nombre de la campaña nunca empezaría con "Rappi
+    Travel", porque en el título se leería como quien hace la campaña. Es un
+    cambio de formulario y de la regla del nombre, no un texto: confírmalo y se
+    hace.
+
+### E. Fuera del repositorio: cosas que haces tú
+
+18. **Ratificar la excepción de Brasil con Legal BR** (decisión 24), en un solo
+    mensaje que lleva también lo de las decisiones 1, 2, 25, 26, 27 y 28, más la
+    hora de inicio (00:00 contra 00:01) y "um (1) pedido" contra "1 (um)
+    pedido". El mensaje está redactado en la respuesta 24.
+19. **La revisión de la interfaz en portugués** (decisión 29), con Amannda
+    Moreira o quien ella indique, y un KAM de Brasil. En este orden: las cuatro
+    opciones de "O que o usuário ganha?", la ayuda del teto del frete grátis, la
+    del mínimo de compra y los mensajes de error.
+20. **El general de cashback de 2025** (decisión 47): se queda publicado, con el
+    encabezado "Estos Términos y Condiciones no aplican a campañas iniciadas a
+    partir del 1 de enero de 2026. Cada campaña de cashback vigente tiene sus
+    propios Términos y Condiciones, publicados en su propio enlace." Eso va en
+    Squarespace, no aquí.
+21. **El enlace repetido de "Descuento en Productos Seleccionados"** (decisión
+    45). La herramienta ya ofrece solo el de `/colombia/2026/descuentoprodselecc`.
+    El otro, `/colombia/descuentosenprod`, sigue publicado: si dice lo mismo, se
+    redirige con un 301 en Squarespace; si no, se deja con aviso de vigencia.
+22. **Republicar "Cupones de Descuento para Membresía Rappi Pro y Black"**
+    (decisión 48) en la ruta de 2026. Cuando exista el enlace nuevo, se cambia
+    en `data/tyc_genericos.json` y se quita la revisión que hoy anota que la
+    vigencia dice 2026 y el enlace apunta a /colombia/2024/.
+23. **El certificado del RNT de Travel Moustache** (decisión 21): reemplazar en
+    el Drive la copia vencida por la renovada, y poner un recordatorio en
+    febrero de 2027. El 31 de marzo de 2027 la herramienta deja de generar
+    Travel sola.
+24. **Chile, el 1 de diciembre de 2026** (decisión 11). Ese día, y solo si la
+    Ley 21.719 entra en vigencia (el Gobierno está evaluando postergarla),
+    `CL.autoridad_datos` pasa de "las autoridades competentes" a "la Agencia de
+    Protección de Datos Personales". Es un cambio a mano, en el Sheet y en la
+    semilla.
+25. **Aviso al dueño de los T&C de Uso de la Plataforma** (decisión 41): la
+    versión publicada en about.rappi.com todavía define los Créditos como los de
+    la sección "Promos y Créditos". Si la app ya dice "Cuenta" y "Créditos", el
+    desactualizado es ese documento madre.
+
+### F. Una tensión de la propia respuesta, que resolví como me dijiste
+
+26. **Los datos por confirmar y el visto bueno del abogado local.** Tu
+    instrucción fue sacar de `por_confirmar_en_pruebas` cada valor que se
+    confirme, y eso se hizo. Pero la línea 511 de la respuesta dice otra cosa:
+    que esa lista queda vacía "cuando el abogado local de cada país dé el visto
+    bueno". Las dos se pueden cumplir a la vez, y así quedó: los valores
+    confirmados salieron, y en su lugar cada país en piloto marca ahora un solo
+    pendiente, `visto_bueno_legal_local`, que en pantalla se lee "el visto bueno
+    del equipo legal de este país". Si prefieres que la lista quede
+    completamente vacía, se quita en un minuto, pero entonces un abogado que
+    entre a probar no va a ver ni un pendiente y puede confirmar de pasada toda
+    la configuración de su país, que es justo lo que ese aviso existe para
+    evitar. Los contactos por país están en la respuesta 7: México, Ana Bravo y
+    Samanta Anzaldo; Argentina y Uruguay, Milena Casella; Perú, Álvaro Castro;
+    Ecuador, Claudia Apolo; Brasil, Amannda Moreira. Chile y Costa Rica no
+    tienen contacto confirmado.
+27. **El aviso del resumen dice una frase que se quedó a medias.** La pantalla
+    del resumen de un país en piloto sigue diciendo que los datos legales "los
+    propuso la herramienta por analogía con Colombia y no los ha confirmado
+    nadie". Después de esta respuesta eso ya no es cierto para los cuatro datos
+    que Legal confirmó, aunque sigue siéndolo para el resto de la fila. Es texto
+    de interfaz: lo dejé quieto para no cruzarme con el encargo 02, que es el
+    que toca esas frases.

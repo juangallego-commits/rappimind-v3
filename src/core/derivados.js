@@ -64,6 +64,26 @@ var TEXTO_CARGA_POR_OPCION = {
   dia_siguiente: 'al día siguiente de la finalización de la orden',
 };
 
+/*
+ * La verificacion de elegibilidad, segun cuando se cargan los Creditos.
+ *
+ * Con carga inmediata, "verificar antes de acreditar" y "acreditar de manera
+ * inmediata" son dos frases que no pueden ser ciertas a la vez, y esa
+ * contradiccion impresa se resuelve a favor del usuario: acreditacion
+ * inmediata y sin verificacion. Por eso, cuando la carga es inmediata, la
+ * verificacion pasa a ser posterior y con reversion. Decision 18 de Legal, en
+ * docs/encargos/respuestas/01-legal.md.
+ */
+var TEXTO_VERIFICACION_ANTES =
+  'Rappi se reserva el derecho de verificar la elegibilidad de cada pedido antes de acreditar el Beneficio; ' +
+  'si la verificación determina que el pedido no cumple las condiciones de la Campaña, los Créditos no serán ' +
+  'acreditados y se te informará a través de la Plataforma Rappi.';
+
+var TEXTO_VERIFICACION_DESPUES =
+  'Rappi podrá verificar la elegibilidad de cada pedido después de acreditar el Beneficio; ' +
+  'si la verificación determina que el pedido no cumple las condiciones de la Campaña, Rappi podrá descontar ' +
+  'o revocar los Créditos acreditados y te lo informará a través de la Plataforma Rappi.';
+
 var TEXTO_LUGAR_REDENCION_POR_OPCION = {
   tienda: 'Los Créditos podrán redimirse únicamente en la Tienda Participante donde se originó el Beneficio, dentro del Territorio.',
   general: 'Los Créditos podrán redimirse en cualquier sección de la Plataforma Rappi habilitada para el uso de Créditos, dentro del Territorio.',
@@ -125,14 +145,21 @@ function textoTerritorio(entrada, pais) {
   return encabezado + ', en ' + pais.pais_legal;
 }
 
-/** ORACION: quien puede participar. */
-function textoSegmento(entrada) {
+/**
+ * ORACION: quien puede participar.
+ *
+ * Los dias de "reactivados" se nombran con el termino del pais (calendario,
+ * corridos, naturales) y no con "dias" a secas: quien quedo por fuera por poco
+ * podia alegar que eran habiles. Decision 35 de Legal.
+ */
+function textoSegmento(entrada, pais) {
   if (entrada.segmento === 'reactivados') {
     var dias = Number(entrada.diasSinCompra);
     if (!dias) return '';
     return (
       'Pueden participar únicamente los Usuarios/Consumidores mayores de edad que no hayan realizado pedidos ' +
-      'en la Plataforma Rappi durante los ' + letrasYCifra(dias) + ' días anteriores al inicio de la Campaña.'
+      'en la Plataforma Rappi durante los ' + letrasYCifra(dias) + ' ' + ((pais && pais.termino_dias) || '') +
+      ' anteriores al inicio de la Campaña.'
     );
   }
   return TEXTO_SEGMENTO_POR_OPCION[entrada.segmento] || '';
@@ -160,6 +187,11 @@ function textoCarga(entrada) {
     return 'el ' + formatearFecha(entrada.fechaCarga);
   }
   return '';
+}
+
+/** ORACION: como se verifica la elegibilidad del pedido. */
+function textoVerificacion(entrada) {
+  return entrada.carga === 'inmediata' ? TEXTO_VERIFICACION_DESPUES : TEXTO_VERIFICACION_ANTES;
 }
 
 /** FRAGMENTO: hasta cuando sirven los Creditos. */
@@ -309,7 +341,7 @@ function calcularDerivadosEnElIdiomaDelPais(entrada, pais) {
     valores.ID_ORGANIZADOR = '';
   }
 
-  valores.TEXTO_SEGMENTO = textoSegmento(entrada);
+  valores.TEXTO_SEGMENTO = textoSegmento(entrada, pais);
   valores.TEXTO_METODO_PAGO = TEXTO_METODO_PAGO_POR_OPCION[entrada.metodoPago] || '';
 
   valores.TEXTO_MINIMO_COMPRA = tieneValor(entrada.compraMinima)
@@ -332,7 +364,10 @@ function calcularDerivadosEnElIdiomaDelPais(entrada, pais) {
   if (tieneValor(entrada.tope)) valores.TOPE = cantidadCreditos(entrada.tope, pais);
   if (tieneValor(entrada.presupuesto)) valores.PRESUPUESTO = cantidadCreditos(entrada.presupuesto, pais);
 
-  if (tieneValor(entrada.carga)) valores.TEXTO_CARGA = textoCarga(entrada);
+  if (tieneValor(entrada.carga)) {
+    valores.TEXTO_CARGA = textoCarga(entrada);
+    valores.TEXTO_VERIFICACION = textoVerificacion(entrada);
+  }
   if (tieneValor(entrada.vigencia)) valores.TEXTO_VIGENCIA_CREDITOS = textoVigenciaCreditos(entrada, pais);
   if (tieneValor(entrada.redencion)) valores.TEXTO_LUGAR_REDENCION = textoLugarRedencion(entrada);
 

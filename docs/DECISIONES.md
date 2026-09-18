@@ -597,3 +597,61 @@ frontera 2, y ya dejó una pantalla sin una sola opción que ofrecer.
     serializar, y por eso la pantalla final se captura en su versión de
     producción y no en la de la demostración.
 
+
+## Aplicar la respuesta al encargo 01 (18 de septiembre)
+
+Decisiones técnicas que hubo que tomar para meter al repositorio lo que
+`docs/encargos/respuestas/01-legal.md` trajo con texto exacto. Ninguna redacta
+texto legal: todas deciden dónde vive una frase que Legal ya escribió, o cómo se
+elige entre dos frases que Legal ya escribió.
+
+27. **La verificación de elegibilidad es un derivado, no una línea fija del
+    modelo.** La decisión 18 de Legal dice que con carga inmediata la
+    verificación pasa a ser posterior y con reversión, y que con "al día
+    siguiente" o "en una fecha" la frase se queda como está. Esa frase vivía
+    escrita dentro del bloque compartido `acreditacion`, que usan Cashback,
+    Cashback Multitienda y el ETA. Se sacó a `{{TEXTO_VERIFICACION}}` y la
+    elige `textoVerificacion(entrada)` en `src/core/derivados.js`. Se hizo así,
+    y no con un bloque nuevo por cada carga, porque el condicional depende de
+    una respuesta del formulario y no del modelo: duplicar el bloque habría
+    obligado a mantener la misma cláusula en tres archivos. En Travel es lo
+    mismo con `{{TEXTO_VERIFICACION_TRAVEL}}` y la carga "al confirmarse".
+    Las dos respuestas de la pregunta de la carga declaran ahora ese
+    placeholder, así que "Así queda en tu T&C" muestra las dos frases que la
+    respuesta produce, no solo una.
+28. **"Solo vuelos" y "sin vuelos" se leen de las categorías marcadas, y solo
+    cuando no hay duda.** La decisión 43 parte la frase del ámbito de Travel en
+    cuatro según las categorías. El repositorio ya tenía una noción de "hay
+    aéreas" (`hayAereasDeTravel`, el grupo Vuelos + Paquetes) que es la que
+    decide si se preguntan la aerolínea y el trayecto. Para el ámbito se usó un
+    criterio más estrecho: "solo vuelos" es la categoría Vuelos y nada más, y
+    "sin vuelos" es que no haya ninguna categoría del grupo aéreas. Todo lo
+    demás, incluido un Paquete solo, se queda con la frase completa de hoy, que
+    es la aprobada. Razón: un Paquete lleva vuelo y alojamiento, así que
+    cualquiera de las dos frases cortas le quitaría una mitad al documento,
+    mientras que la larga nombra las dos. Acortar de menos deja el texto de hoy;
+    acortar de más publica una cláusula que no cubre lo que se vendió.
+29. **Un país en piloto nunca se queda sin pendientes.** Legal confirmó los
+    cuatro datos que ocho países tenían marcados, así que la lista de
+    `por_confirmar_en_pruebas` se habría vaciado para seis de ellos y el aviso
+    del resumen habría desaparecido. En su lugar entra una llave nueva,
+    `visto_bueno_legal_local`, que es literalmente lo que sigue pendiente según
+    la propia respuesta (línea 511 y nota de la respuesta 7). Ecuador y Costa
+    Rica conservan además `separador_miles`. Colombia, que está activo y no
+    lleva aviso, sí quedó con la lista vacía: sus tres datos de Travel los
+    confirmaron Juan (el RNT y su vencimiento) y Legal (la entidad que lo
+    vigila). Está anotado en `docs/PENDIENTES_LEGAL.md` por si Juan prefiere
+    vaciar la lista del todo.
+30. **`setup()` no limpia la pestaña Países, y ahora hay una prueba que lo
+    dice.** Esa columna solo crece: `listasUnidas` une lo de la hoja con lo de
+    la semilla, y para las demás columnas la hoja manda sobre la semilla. Es
+    decir que cambiar `data/paises.json` no cambia una fila que ya existe.
+    Cuando Legal confirma un dato hay que borrarlo a mano en la pestaña Países.
+    Se dejó escrito en una prueba de `pruebas/servidor.test.js` para que nadie
+    dé por hecho que desplegar y correr `setup()` pone la hoja al día.
+31. **Los casos dorados que cambian se regeneran, pero el cambio se lee línea a
+    línea antes de escribirlo.** Catorce de los dieciocho `salidas_esperadas`
+    cambiaron con esta respuesta. Se regeneraron con un script de un solo uso
+    que imprime el antes y el después de cada línea distinta, y ese listado es
+    lo que va al reporte para Juan. Regenerar sin mirar convierte el caso dorado
+    en un espejo del motor y deja de proteger nada.

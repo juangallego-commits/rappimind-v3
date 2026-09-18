@@ -32,12 +32,48 @@ test('cada país en pruebas dice qué tiene sin confirmar', () => {
 });
 
 test('lo que falta se dice en palabras, no con el nombre de la columna', () => {
-  const faltantes = datosPorConfirmar(porCodigo('MX'));
-  for (const texto of faltantes) {
-    assert.ok(texto.indexOf('_') === -1, 'salió el nombre técnico de la columna: ' + texto);
-    assert.ok(texto.length > 12, 'demasiado corto para entenderse: ' + texto);
+  for (const codigo of ['MX', 'EC']) {
+    const faltantes = datosPorConfirmar(porCodigo(codigo));
+    for (const texto of faltantes) {
+      assert.ok(texto.indexOf('_') === -1, 'salió el nombre técnico de la columna: ' + texto);
+      assert.ok(texto.length > 12, 'demasiado corto para entenderse: ' + texto);
+    }
   }
-  assert.ok(faltantes.indexOf('los derechos del titular sobre sus datos personales') !== -1, faltantes.join(' | '));
+  // Ecuador todavía no dice cómo escribe los miles; México ya tiene sus cuatro
+  // datos confirmados por Legal y solo le falta que su abogado los apruebe.
+  assert.ok(datosPorConfirmar(porCodigo('EC')).indexOf('cómo se separan los miles en un monto') !== -1);
+  assert.ok(datosPorConfirmar(porCodigo('MX')).indexOf('el visto bueno del equipo legal de este país') !== -1);
+});
+
+/**
+ * Un dato confirmado sale de la lista, y el aviso no se apaga por eso.
+ *
+ * La respuesta del encargo 01 confirmó, con la ley de cada país, los cuatro
+ * datos que ocho países tenían pendientes. Si al confirmarlos la lista quedaba
+ * vacía, el abogado del país entraba a probar sin un solo pendiente a la vista
+ * y confirmaba de pasada toda la configuración. Lo que le queda pendiente a
+ * esos países es justo su propio visto bueno, y eso es lo que ahora dice.
+ */
+test('un país en piloto con todo confirmado sigue pidiendo el visto bueno local', () => {
+  for (const pais of PAISES.filter(paisEnPruebas)) {
+    assert.ok((pais.por_confirmar_en_pruebas || []).indexOf('visto_bueno_legal_local') !== -1,
+      pais.nombre + ' no pide el visto bueno de su equipo legal');
+  }
+  // Colombia ya está activo y no le falta nada: sus tres datos de Travel los
+  // confirmó Juan (el RNT y su vencimiento) y Legal (la entidad que lo vigila).
+  assert.deepStrictEqual(porCodigo('CO').por_confirmar_en_pruebas, []);
+
+  // Y los cuatro datos que todos tenían pendientes ya no aparecen, salvo el
+  // separador de miles de Ecuador y Costa Rica, que sigue sin dato.
+  for (const pais of PAISES) {
+    const pendientes = pais.por_confirmar_en_pruebas || [];
+    for (const llave of ['termino_dias', 'texto_hora_local', 'texto_derechos_datos']) {
+      assert.ok(pendientes.indexOf(llave) === -1, pais.codigo + ' todavía marca ' + llave);
+    }
+    if (['EC', 'CR'].indexOf(pais.codigo) === -1) {
+      assert.ok(pendientes.indexOf('separador_miles') === -1, pais.codigo + ' todavía marca separador_miles');
+    }
+  }
 });
 
 test('cada dato que un país marca por confirmar tiene su nombre en palabras', () => {

@@ -943,8 +943,7 @@ test('poner al día los países agrega los datos por confirmar nuevos de la semi
   const hoja = hojaPorNombre('Paises');
   const encabezados = hoja.valores[0];
   const filaBr = hoja.valores.findIndex((f) => f[encabezados.indexOf('codigo')] === 'BR');
-  hoja.valores[filaBr][encabezados.indexOf('por_confirmar_en_pruebas')] =
-    'separador_miles, termino_dias, texto_hora_local, texto_derechos_datos, autoridad_datos';
+  hoja.valores[filaBr][encabezados.indexOf('por_confirmar_en_pruebas')] = '';
 
   setup();
 
@@ -954,6 +953,31 @@ test('poner al día los países agrega los datos por confirmar nuevos de la semi
     assert.ok(brasil.por_confirmar_en_pruebas.indexOf(llave) !== -1, 'falta ' + llave);
   }
   assert.strictEqual(brasil.por_confirmar_en_pruebas.length, semilla.length);
+});
+
+/**
+ * Lo que setup sí hace y lo que no, con los datos por confirmar.
+ *
+ * Esa columna solo crece: setup une lo de la hoja con lo de la semilla. Cuando
+ * Legal confirma un dato y sale de data/paises.json, la hoja se queda con él
+ * hasta que alguien lo borre a mano, porque la hoja manda. Esta prueba existe
+ * para que nadie dé por hecho que desplegar y correr setup limpia la lista.
+ */
+test('setup no borra de la hoja un dato por confirmar que la semilla ya no trae', () => {
+  conSetup();
+  const hoja = hojaPorNombre('Paises');
+  const encabezados = hoja.valores[0];
+  const filaMx = hoja.valores.findIndex((f) => f[encabezados.indexOf('codigo')] === 'MX');
+  hoja.valores[filaMx][encabezados.indexOf('por_confirmar_en_pruebas')] =
+    'separador_miles, termino_dias, texto_hora_local, texto_derechos_datos';
+
+  setup();
+
+  const mexico = paisPorCodigo(leerPaises(), 'MX');
+  assert.ok(mexico.por_confirmar_en_pruebas.indexOf('termino_dias') !== -1,
+    'setup borró de la hoja un dato viejo: hay que quitarlo a mano en la pestaña Paises');
+  assert.ok(mexico.por_confirmar_en_pruebas.indexOf('visto_bueno_legal_local') !== -1,
+    'setup no agregó a la hoja el pendiente nuevo de la semilla');
 });
 
 test('previsualizar y generar aguantan una entrada vacía en modo demostración', () => {
