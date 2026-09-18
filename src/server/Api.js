@@ -355,7 +355,16 @@ function ampliarCampana(id, cambios) {
       datos_json: JSON.stringify(ampliada),
       fecha_fin: ampliada.fechaFin || '',
     }, respuestasParaElSheet(ampliada));
-    actualizarFila('Solicitudes', solicitud._fila, fila);
+    // Igual que al generar: si el Sheet se cae aqui, el documento de la version
+    // nueva se queda en la carpeta del pais sin que ninguna fila lo nombre, y
+    // la de la campana sigue apuntando a la version anterior.
+    try {
+      actualizarFila('Solicitudes', solicitud._fila, fila);
+    } catch (error) {
+      descartarDocumento(documento.id);
+      registrar('ampliar_fallido', id + ' · ' + String(error));
+      throw error;
+    }
 
     registrar('ampliar', id + ' · versión ' + version + ' · ' + JSON.stringify(revision.cambios));
 

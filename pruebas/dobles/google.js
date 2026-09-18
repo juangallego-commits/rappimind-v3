@@ -30,6 +30,7 @@ var mundoActivo = null;
 function reventarSiToca(cual, donde) {
   if (!mundoActivo || !mundoActivo.fallar || !mundoActivo.fallar[cual]) return;
   if (cual === 'hoja' && mundoActivo.fallar.hojaSolo && mundoActivo.fallar.hojaSolo !== donde) return;
+  if (cual === 'escritura' && mundoActivo.fallar.escrituraSolo && mundoActivo.fallar.escrituraSolo !== donde) return;
   throw new Error(mundoActivo.fallar[cual]);
 }
 
@@ -65,6 +66,7 @@ Rango.prototype.getValues = function () {
 };
 
 Rango.prototype.setValues = function (valores) {
+  reventarSiToca('escritura', this.hoja && this.hoja.nombre);
   for (var f = 0; f < valores.length; f++) {
     var destino = this.fila - 1 + f;
     while (this.hoja.valores.length <= destino) this.hoja.valores.push([]);
@@ -267,7 +269,11 @@ function instalarDobles(opciones) {
      * Se pone con mundo.fallar.bloqueo = 'Lock timeout: ...' y se quita
      * volviendolo a null.
      */
-    fallar: { bloqueo: null, documento: null, hoja: null, hojaSolo: null, correo: null },
+    fallar: {
+      bloqueo: null, documento: null, correo: null,
+      hoja: null, hojaSolo: null,
+      escritura: null, escrituraSolo: null,
+    },
   };
 
   mundoActivo = mundo;

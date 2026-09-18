@@ -32,6 +32,11 @@ function cuantasSolicitudes() {
   return leerSolicitudes().length;
 }
 
+/** Los documentos que siguen en la carpeta del país, sin contar la papelera. */
+function documentosVivos(mundo) {
+  return Object.keys(mundo.documentos).filter((id) => !mundo.archivos[id].isTrashed());
+}
+
 test('si Drive no crea el documento, no queda ninguna fila escrita', () => {
   const mundo = conSetup();
   const antes = cuantasSolicitudes();
@@ -106,16 +111,12 @@ test('si el Sheet falla despues de crear el Doc, el Doc no se queda suelto', () 
    * consecutivo y el mismo nombre, y creaba un segundo Doc con el título
    * idéntico: dos "RM-20260916-0001" en la misma carpeta del país.
    */
-  const sueltos = Object.keys(mundo.documentos).filter((id) => {
-    const archivo = mundo.archivos[id];
-    return archivo && !archivo.isTrashed();
-  });
-  assert.strictEqual(sueltos.length, 0, 'quedó un documento suelto en la carpeta del país');
+  assert.strictEqual(documentosVivos(mundo).length, 0, 'quedó un documento suelto en la carpeta del país');
 
   const segunda = generar(solicitudValida());
   assert.ok(segunda.valido);
-  const vivos = Object.keys(mundo.documentos).filter((id) => !mundo.archivos[id].isTrashed());
-  assert.strictEqual(vivos.length, 1, 'quedaron dos documentos vivos con el mismo identificador');
+  assert.strictEqual(documentosVivos(mundo).length, 1,
+    'quedaron dos documentos vivos con el mismo identificador');
 });
 
 test('el fallo a mitad queda escrito en el Registro', () => {
@@ -130,6 +131,25 @@ test('el fallo a mitad queda escrito en el Registro', () => {
 
   const acciones = objetosDe('Registro').map((f) => f.accion);
   assert.ok(acciones.indexOf('generar_fallido') !== -1, 'el fallo no dejó rastro: ' + acciones.join(', '));
+});
+
+test('ampliar también deja limpia la carpeta si el Sheet falla al actualizar', () => {
+  const mundo = conSetup();
+  // Una campaña que ya arrancó: el mundo de prueba está en 2026-09-16.
+  const original = generar(solicitudValida({ tienda: 'Jumbo', fechaInicio: '2026-09-16', fechaFin: '2026-09-30' }));
+  marcarPublicado(original.id, 'https://promos.rappi.com/colombia/jumbo');
+  const vivosAntes = documentosVivos(mundo).length;
+
+  mundo.fallar.escritura = 'Service invoked too many times for one day: spreadsheets.';
+  mundo.fallar.escrituraSolo = 'Solicitudes';
+  assert.throws(() => ampliarCampana(original.id, { fechaFin: '2026-10-15' }), /spreadsheets/);
+  mundo.fallar.escritura = null;
+  mundo.fallar.escrituraSolo = null;
+
+  assert.strictEqual(documentosVivos(mundo).length, vivosAntes,
+    'quedó el documento de la versión nueva sin ninguna fila que lo nombre');
+  // Y la campaña sigue apuntando al documento que sí está publicado.
+  assert.strictEqual(leerSolicitudes()[0].link_doc, original.linkDoc);
 });
 
 // --- El mensaje que lee el comercial ---------------------------------------
