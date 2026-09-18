@@ -11,6 +11,28 @@
  * Todo lo que escriben queda accesible para inspeccionarlo desde las pruebas.
  */
 
+/*
+ * El mundo del doble que esta instalado ahora mismo.
+ *
+ * Vive aqui arriba, y no dentro de instalarDobles, porque los prototipos de
+ * Hoja y de Documento se definen a nivel de modulo y tambien tienen que poder
+ * reventar a pedido.
+ */
+var mundoActivo = null;
+
+/**
+ * Revienta si la prueba pidio que este servicio fallara.
+ *
+ * `donde` sirve para que una prueba pueda tumbar una sola pestana: con
+ * mundo.fallar.hojaSolo = 'Solicitudes', el Registro sigue funcionando, que es
+ * lo que hace falta para comprobar que el fallo queda anotado.
+ */
+function reventarSiToca(cual, donde) {
+  if (!mundoActivo || !mundoActivo.fallar || !mundoActivo.fallar[cual]) return;
+  if (cual === 'hoja' && mundoActivo.fallar.hojaSolo && mundoActivo.fallar.hojaSolo !== donde) return;
+  throw new Error(mundoActivo.fallar[cual]);
+}
+
 function iterador(elementos) {
   var indice = 0;
   return {
@@ -77,6 +99,7 @@ Hoja.prototype.getRange = function (fila, columna, filas, columnas) {
   return new Rango(this, fila, columna, filas || 1, columnas || 1);
 };
 Hoja.prototype.appendRow = function (fila) {
+  reventarSiToca('hoja', this.nombre);
   this.valores.push(fila.slice());
   return this;
 };
@@ -119,6 +142,8 @@ function Archivo(id, nombre, tipo) {
 Archivo.prototype.getId = function () { return this.id; };
 Archivo.prototype.getName = function () { return this.nombre; };
 Archivo.prototype.moveTo = function (carpeta) { this.carpeta = carpeta; return this; };
+Archivo.prototype.setTrashed = function (valor) { this.enPapelera = !!valor; return this; };
+Archivo.prototype.isTrashed = function () { return !!this.enPapelera; };
 Archivo.prototype.addViewer = function (correo) {
   if (this.lectores.indexOf(correo) === -1) this.lectores.push(correo);
   return this;
@@ -231,7 +256,21 @@ function instalarDobles(opciones) {
     registroDeBloqueos: 0,
     correo: config.correo || 'juan.gallego@rappi.com',
     ahora: ahora,
+    /*
+     * Fallos a pedido, para probar lo que pasa cuando Google no responde.
+     *
+     * En produccion esto pasa de verdad: el bloqueo se agota cuando dos
+     * comerciales generan a la vez, Drive corta por cuota, y el Sheet puede
+     * tardar mas de lo que Apps Script espera. Sin poder reproducirlo, lo unico
+     * que se probaba era el camino feliz.
+     *
+     * Se pone con mundo.fallar.bloqueo = 'Lock timeout: ...' y se quita
+     * volviendolo a null.
+     */
+    fallar: { bloqueo: null, documento: null, hoja: null, hojaSolo: null, correo: null },
   };
+
+  mundoActivo = mundo;
 
   var contador = 0;
   function nuevoId(prefijo) {
@@ -308,6 +347,7 @@ function instalarDobles(opciones) {
 
   globalThis.DocumentApp = {
     create: function (titulo) {
+      reventarSiToca('documento');
       var documento = new Documento(nuevoId('doc'), titulo);
       mundo.documentos[documento.id] = documento;
       mundo.archivos[documento.id] = new Archivo(documento.id, titulo, 'documento');
@@ -319,13 +359,19 @@ function instalarDobles(opciones) {
   };
 
   globalThis.MailApp = {
-    sendEmail: function (opciones) { mundo.correos.push(opciones); },
+    sendEmail: function (opciones) {
+      reventarSiToca('correo');
+      mundo.correos.push(opciones);
+    },
   };
 
   globalThis.LockService = {
     getScriptLock: function () {
       return {
-        waitLock: function () { mundo.registroDeBloqueos += 1; },
+        waitLock: function () {
+          reventarSiToca('bloqueo');
+          mundo.registroDeBloqueos += 1;
+        },
         releaseLock: function () {},
       };
     },
@@ -353,6 +399,8 @@ function desinstalarDobles() {
   for (var i = 0; i < GLOBALES.length; i++) {
     delete globalThis[GLOBALES[i]];
   }
+  // Sin esto, un fallo pedido por una prueba se quedaría puesto para la siguiente.
+  mundoActivo = null;
 }
 
 module.exports = {

@@ -108,8 +108,32 @@ function crearDocumento(titulo, estructura, carpeta, correoLector) {
   return { id: documento.getId(), url: documento.getUrl() };
 }
 
+/**
+ * Manda a la papelera un documento que se acaba de crear.
+ *
+ * Se usa cuando la generacion se cae despues de crear el Doc: sin esto, el
+ * documento se queda suelto en la carpeta del pais y la siguiente generacion
+ * crea otro con el MISMO titulo y el MISMO identificador, porque el consecutivo
+ * sale del Sheet y en el Sheet no quedo nada. Dos documentos identicos en la
+ * carpeta, y nadie sabe cual es el bueno.
+ *
+ * A la papelera y no borrado: es reversible durante treinta dias, por si el
+ * fallo fue de otra cosa. Y si tampoco se puede, no se tapa el fallo original:
+ * esta funcion no lanza, devuelve si pudo.
+ */
+function descartarDocumento(id) {
+  if (!id) return false;
+  try {
+    DriveApp.getFileById(id).setTrashed(true);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
 if (typeof module !== 'undefined') {
   module.exports = {
+    descartarDocumento: descartarDocumento,
     escribirCuerpo: escribirCuerpo,
     escribirPartes: escribirPartes,
     crearDocumento: crearDocumento,

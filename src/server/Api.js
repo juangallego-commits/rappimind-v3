@@ -155,37 +155,23 @@ function generar(entrada) {
 
     var documento = crearDocumento(titulo, estructuraDelDocumento(resultado.texto), carpeta, quien.correo);
 
-    agregarFila('Solicitudes', unirObjetos({
-      id: id,
-      fecha: ahoraTexto(),
-      email: quien.correo,
-      pais: pais.codigo,
-      tipo: entrada.tipo,
-      version_modelo: MODELOS.versiones[esquema.modelo] || '',
-      nombre_campana: nombreCampana,
-      direccion_sugerida: direccion,
-      // Solo lo que el tipo pregunta: una tienda que quedo de otro tipo no es
-      // de esta campana, y un tipo de un solo dia termina el dia que empieza.
-      tienda: tieneCampo(esquema, 'tienda') ? (entrada.tienda || '') : '',
-      organizador: entrada.organizadorRazonSocial || '',
-      id_organizador: entrada.organizadorId || '',
-      fecha_inicio: entrada.fechaInicio || '',
-      fecha_fin: fechaFinDeLaCampana(entrada, esquema) || '',
-      link_doc: documento.url,
-      estado: 'generado',
-      link_publicado: '',
-      fecha_publicacion: '',
-      datos_json: JSON.stringify(entrada),
-    }, respuestasParaElSheet(entrada)));
-
-    enviarCorreoDeGeneracion(quien.correo, {
-      nombreCampana: nombreCampana,
-      pais: pais.nombre,
-      id: id,
-      linkDoc: documento.url,
-      urlApp: ScriptApp.getService().getUrl(),
-      urlAyuda: leerPropiedad(PROPIEDADES.CANAL_AYUDA_URL),
-    });
+    /*
+     * Desde aqui el documento ya existe en Drive. Si algo se cae despues, hay
+     * que quitarlo: el consecutivo y el nombre salen del Sheet, y si en el
+     * Sheet no quedo nada, la siguiente generacion crea otro documento con el
+     * mismo identificador y el mismo titulo. Comprobado: dos Docs identicos,
+     * RM-20260916-0001 los dos, en la misma carpeta del pais.
+     */
+    try {
+      escribirLaSolicitud(id, documento, {
+        quien: quien, pais: pais, esquema: esquema, entrada: entrada,
+        nombreCampana: nombreCampana, direccion: direccion,
+      });
+    } catch (error) {
+      descartarDocumento(documento.id);
+      registrar('generar_fallido', id + ' · ' + String(error));
+      throw error;
+    }
 
     registrar('generar', id + ' · ' + pais.codigo + ' · ' + entrada.tipo);
 
@@ -206,6 +192,46 @@ function generar(entrada) {
   } finally {
     bloqueo.releaseLock();
   }
+}
+
+/** La fila del Sheet y el correo, que es lo que va despues de crear el Doc. */
+function escribirLaSolicitud(id, documento, datos) {
+  var quien = datos.quien;
+  var pais = datos.pais;
+  var esquema = datos.esquema;
+  var entrada = datos.entrada;
+
+  agregarFila('Solicitudes', unirObjetos({
+    id: id,
+    fecha: ahoraTexto(),
+    email: quien.correo,
+    pais: pais.codigo,
+    tipo: entrada.tipo,
+    version_modelo: MODELOS.versiones[esquema.modelo] || '',
+    nombre_campana: datos.nombreCampana,
+    direccion_sugerida: datos.direccion,
+    // Solo lo que el tipo pregunta: una tienda que quedo de otro tipo no es
+    // de esta campana, y un tipo de un solo dia termina el dia que empieza.
+    tienda: tieneCampo(esquema, 'tienda') ? (entrada.tienda || '') : '',
+    organizador: entrada.organizadorRazonSocial || '',
+    id_organizador: entrada.organizadorId || '',
+    fecha_inicio: entrada.fechaInicio || '',
+    fecha_fin: fechaFinDeLaCampana(entrada, esquema) || '',
+    link_doc: documento.url,
+    estado: 'generado',
+    link_publicado: '',
+    fecha_publicacion: '',
+    datos_json: JSON.stringify(entrada),
+  }, respuestasParaElSheet(entrada)));
+
+  enviarCorreoDeGeneracion(quien.correo, {
+    nombreCampana: datos.nombreCampana,
+    pais: pais.nombre,
+    id: id,
+    linkDoc: documento.url,
+    urlApp: ScriptApp.getService().getUrl(),
+    urlAyuda: leerPropiedad(PROPIEDADES.CANAL_AYUDA_URL),
+  });
 }
 
 /** Las solicitudes que puede ver quien pide, con busqueda opcional. */

@@ -18,6 +18,22 @@ function hayServidorSimulado() {
   return !!RM.servidorSimulado;
 }
 
+/**
+ * Convierte el fallo crudo de Apps Script en uno que se pueda leer.
+ *
+ * Es la frontera del transporte, y por eso se traduce aqui una sola vez: las
+ * nueve pantallas que muestran un fallo imprimian el texto de Google tal cual,
+ * en ingles ("Lock timeout: another process was holding the lock for too
+ * long."). El texto original se conserva en `detalle`, que es lo que hay que
+ * mirar cuando algo raro pasa en produccion.
+ */
+function comoFalla(crudo) {
+  var falla = new Error(mensajeDeFalla(crudo));
+  falla.detalle = textoDelFallo(crudo);
+  falla.clase = claseDeFalla(crudo);
+  return falla;
+}
+
 /** Llama a una funcion del servidor. Siempre devuelve una promesa. */
 function llamar(nombre) {
   var argumentos = Array.prototype.slice.call(arguments, 1);
@@ -26,9 +42,7 @@ function llamar(nombre) {
     return new Promise(function (resolver, rechazar) {
       var corredor = google.script.run
         .withSuccessHandler(resolver)
-        .withFailureHandler(function (error) {
-          rechazar(new Error(error && error.message ? error.message : String(error)));
-        });
+        .withFailureHandler(function (error) { rechazar(comoFalla(error)); });
       corredor[nombre].apply(corredor, argumentos);
     });
   }
@@ -40,13 +54,13 @@ function llamar(nombre) {
         try {
           resolver(RM.servidorSimulado[nombre].apply(null, argumentos));
         } catch (error) {
-          rechazar(error);
+          rechazar(comoFalla(error));
         }
       }, 120);
     });
   }
 
-  return Promise.reject(new Error('No hay servidor disponible.'));
+  return Promise.reject(comoFalla('No hay servidor disponible.'));
 }
 
 RM.servidor = {
