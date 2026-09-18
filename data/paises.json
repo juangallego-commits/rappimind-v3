@@ -46,7 +46,10 @@
       "travel_politica_privacidad": "la política de privacidad",
       "travel_url_privacidad": "https://travel.rappi.com.co/private-policy",
       "travel_entidad_vigilancia": "la Superintendencia de Industria y Comercio y la Superintendencia de Transporte, según corresponda",
-      "url_tc_turbo": "https://legal.rappi.com.co/colombia/terminos-y-condiciones-del-boton-turbo/"
+      "url_tc_turbo": "https://legal.rappi.com.co/colombia/terminos-y-condiciones-del-boton-turbo/",
+      "ruta_promos": "colombia",
+      "url_tc_pro": "https://promos.rappi.com/colombia/prohome",
+      "nombre_modalidad_local": ""
     },
     {
       "codigo": "MX",
@@ -78,7 +81,10 @@
       "texto_hora_local": "hora de la Ciudad de México",
       "texto_derechos_datos": "tus derechos de acceso, rectificación, cancelación y oposición (derechos ARCO) y el de revocar tu consentimiento",
       "por_confirmar_en_pruebas": [],
-      "url_tc_turbo": ""
+      "url_tc_turbo": "",
+      "ruta_promos": "",
+      "url_tc_pro": "",
+      "nombre_modalidad_local": ""
     },
     {
       "codigo": "PE",
@@ -110,7 +116,10 @@
       "texto_hora_local": "hora local de la República del Perú",
       "texto_derechos_datos": "tus derechos de acceso, actualización, inclusión, rectificación, supresión y oposición sobre tus datos personales, y el de revocar tu consentimiento",
       "por_confirmar_en_pruebas": [],
-      "url_tc_turbo": ""
+      "url_tc_turbo": "",
+      "ruta_promos": "",
+      "url_tc_pro": "",
+      "nombre_modalidad_local": ""
     },
     {
       "codigo": "AR",
@@ -142,7 +151,10 @@
       "texto_hora_local": "hora local de la República Argentina",
       "texto_derechos_datos": "tus derechos de acceso, rectificación, actualización y supresión de tus datos personales",
       "por_confirmar_en_pruebas": [],
-      "url_tc_turbo": ""
+      "url_tc_turbo": "",
+      "ruta_promos": "",
+      "url_tc_pro": "",
+      "nombre_modalidad_local": ""
     },
     {
       "codigo": "CL",
@@ -174,7 +186,10 @@
       "texto_hora_local": "hora de Santiago de Chile",
       "texto_derechos_datos": "tus derechos de acceso, rectificación, supresión y bloqueo de tus datos personales, y los demás que te reconozca la legislación vigente",
       "por_confirmar_en_pruebas": [],
-      "url_tc_turbo": ""
+      "url_tc_turbo": "",
+      "ruta_promos": "",
+      "url_tc_pro": "",
+      "nombre_modalidad_local": ""
     },
     {
       "codigo": "EC",
@@ -208,7 +223,10 @@
       "por_confirmar_en_pruebas": [
         "separador_miles"
       ],
-      "url_tc_turbo": ""
+      "url_tc_turbo": "",
+      "ruta_promos": "",
+      "url_tc_pro": "",
+      "nombre_modalidad_local": ""
     },
     {
       "codigo": "UY",
@@ -240,7 +258,10 @@
       "texto_hora_local": "hora local de la República Oriental del Uruguay",
       "texto_derechos_datos": "tus derechos de acceso, rectificación, actualización, inclusión y supresión de tus datos personales",
       "por_confirmar_en_pruebas": [],
-      "url_tc_turbo": ""
+      "url_tc_turbo": "",
+      "ruta_promos": "",
+      "url_tc_pro": "",
+      "nombre_modalidad_local": ""
     },
     {
       "codigo": "CR",
@@ -274,7 +295,10 @@
       "por_confirmar_en_pruebas": [
         "separador_miles"
       ],
-      "url_tc_turbo": ""
+      "url_tc_turbo": "",
+      "ruta_promos": "",
+      "url_tc_pro": "",
+      "nombre_modalidad_local": ""
     },
     {
       "codigo": "BR",
@@ -306,7 +330,10 @@
       "texto_hora_local": "horário de Brasília",
       "texto_derechos_datos": "",
       "por_confirmar_en_pruebas": [],
-      "url_tc_turbo": ""
+      "url_tc_turbo": "",
+      "ruta_promos": "",
+      "url_tc_pro": "",
+      "nombre_modalidad_local": ""
     }
   ],
   "confirmaciones": [

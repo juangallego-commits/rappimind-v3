@@ -39,13 +39,21 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 /** Las llaves de %% que se leen como lista separada por comas. */
 var LLAVES_DE_LISTA = ['pais', 'tipo_campana', 'tipo_pieza', 'origen', 'minimo_irreductible'];
 
-/** Los formatos de pieza que la herramienta entrega, en el orden en que se muestran. */
+/**
+ * Los formatos de pieza que la herramienta entrega, en el orden en que se
+ * muestran, con el largo que admite cada uno (seccion 7C de la respuesta).
+ *
+ * El largo es del formato y no de la leyenda. Una misma leyenda sirve para la
+ * letra pequena y para el banner corto (Carrera y los dos de Travel), y esos dos
+ * formatos no admiten lo mismo: 620 contra 300. Con un solo numero por leyenda,
+ * un banner de Carrera se habria dado por bueno con 620 caracteres.
+ */
 var TIPOS_DE_PIEZA = [
-  { id: 'texto_apoyo', nombre: 'Texto de apoyo' },
-  { id: 'letra_pequena', nombre: 'Letra pequeña' },
-  { id: 'banner_corto', nombre: 'Banner corto' },
-  { id: 'exterior', nombre: 'Valla, exterior e impresos' },
-  { id: 'push_sms', nombre: 'Push y SMS' },
+  { id: 'texto_apoyo', nombre: 'Texto de apoyo', largo_max: 350 },
+  { id: 'letra_pequena', nombre: 'Letra pequeña', largo_max: 620 },
+  { id: 'banner_corto', nombre: 'Banner corto', largo_max: 300 },
+  { id: 'exterior', nombre: 'Valla, exterior e impresos', largo_max: 300 },
+  { id: 'push_sms', nombre: 'Push y SMS', largo_max: 70 },
 ];
 
 /**
@@ -224,7 +232,10 @@ function leyendasDeLaCampana(catalogo, codigoPais, tipo) {
       if (!aplicaAlPais(leyenda, codigoPais)) continue;
       if (!aplicaAlTipo(leyenda, tipo)) continue;
       if (leyenda.tipo_pieza.indexOf(formato.id) === -1) continue;
-      porFormato.push({ formato: formato.id, nombre: formato.nombre, leyenda: leyenda });
+      porFormato.push({
+        formato: formato.id, nombre: formato.nombre,
+        largo_max: formato.largo_max, leyenda: leyenda,
+      });
       break;
     }
   }
@@ -265,15 +276,28 @@ function resolverOpcionalesDeLeyenda(texto, valores) {
   });
 }
 
+/**
+ * Reemplaza los marcadores y anota los que quedaron vacios.
+ *
+ * El punto de una abreviatura es tambien el punto de la frase. Sin esto, una
+ * razon social como "Operador de Prueba S.A.S." dentro de "Cashback ofrecido por
+ * {{TIENDA}}." salia con dos puntos seguidos, que es una de las senales de texto
+ * roto: la leyenda entera se caia. Paso de verdad con el caso dorado TV05.
+ */
 function reemplazarEnLeyenda(texto, valores) {
   var vacios = [];
-  var resultado = texto.replace(/\{\{(\w+)\}\}/g, function (todo, llave) {
+  var resultado = texto.replace(/\{\{(\w+)\}\}/g, function (todo, llave, posicion) {
     var valor = valores[llave];
     if (valor === undefined || valor === null || valor === '') {
       if (vacios.indexOf(llave) === -1) vacios.push(llave);
       return '';
     }
-    return String(valor);
+    var escrito = String(valor);
+    var siguiente = texto.charAt(posicion + todo.length);
+    if (siguiente === '.' && escrito.charAt(escrito.length - 1) === '.') {
+      return escrito.slice(0, -1);
+    }
+    return escrito;
   });
   return { texto: resultado, vacios: vacios };
 }
@@ -308,14 +332,15 @@ function renderDeUnNivel(cuerpo, valores, nivel) {
  * la pieza (seccion 7D de la respuesta). Lo que nunca se devuelve es una
  * leyenda con un hueco: eso es un error, como en el documento.
  */
-function armarLeyenda(leyenda, valores) {
+function armarLeyenda(leyenda, valores, largoDelFormato) {
+  var limite = largoDelFormato || leyenda.largo_max;
   var niveles = [0].concat(nivelesDeRecorte(leyenda.cuerpo));
   var elegido = null;
 
   for (var i = 0; i < niveles.length; i++) {
     var intento = renderDeUnNivel(leyenda.cuerpo, valores, niveles[i]);
     elegido = { nivel: niveles[i], texto: intento.texto, vacios: intento.vacios };
-    if (!leyenda.largo_max || intento.texto.length <= leyenda.largo_max) break;
+    if (!limite || intento.texto.length <= limite) break;
   }
 
   var errores = [];
@@ -334,10 +359,11 @@ function armarLeyenda(leyenda, valores) {
     id: leyenda.id,
     texto: elegido.texto,
     largo: elegido.texto.length,
-    largo_max: leyenda.largo_max,
-    cabe: !leyenda.largo_max || elegido.texto.length <= leyenda.largo_max,
+    largo_max: limite,
+    cabe: !limite || elegido.texto.length <= limite,
     nivel: elegido.nivel,
     recortada: elegido.nivel > 0,
+    vacios: elegido.vacios,
     errores: errores,
   };
 }
@@ -382,7 +408,7 @@ function leyendasDeLaPieza(catalogo, codigoPais, tipo, valores, opciones) {
   var salida = [];
   var deLaCampana = leyendasDeLaCampana(catalogo, codigoPais, tipo);
   for (var i = 0; i < deLaCampana.length; i++) {
-    var armada = armarLeyenda(deLaCampana[i].leyenda, conComplementos);
+    var armada = armarLeyenda(deLaCampana[i].leyenda, conComplementos, deLaCampana[i].largo_max);
     armada.formato = deLaCampana[i].formato;
     armada.nombre = deLaCampana[i].nombre;
     salida.push(armada);

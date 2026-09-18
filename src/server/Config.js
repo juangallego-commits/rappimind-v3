@@ -35,6 +35,10 @@ var PESTANAS = {
     'travel_entidad', 'travel_id_fiscal', 'travel_rnt', 'travel_rnt_vence',
     'travel_url_sitio', 'travel_url_tc', 'travel_politica_privacidad',
     'travel_url_privacidad', 'travel_entidad_vigilancia',
+    // Datos que solo usan las leyendas de piezas publicitarias. La ruta del
+    // pais es la carpeta de Squarespace donde se publican los T&C, y con ella
+    // la herramienta arma la direccion de la campana antes de que exista.
+    'ruta_promos', 'url_tc_pro', 'nombre_modalidad_local',
   ],
   Equipo: ['email', 'nombre', 'rol', 'pais', 'activo'],
   Solicitudes: [
