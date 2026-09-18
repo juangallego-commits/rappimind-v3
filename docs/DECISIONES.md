@@ -711,3 +711,36 @@ elige entre dos frases que Legal ya escribió.
     una con su presupuesto, así que un límite único repartía mal el beneficio. La
     cláusula y la ayuda de la pregunta lo dicen ahora con esas palabras, y el
     caso dorado `CD01` quedó regenerado.
+
+## 18 de septiembre · Seis países salen de piloto
+
+31. **El estado de un país viaja en una tanda de confirmaciones, no a mano.** La
+    pestaña Paises manda sobre la semilla, así que cambiar `estado` en
+    `data/paises.json` no mueve una fila que ya existe: Juan habría desplegado,
+    corrido `setup()`, y México le seguiría saliendo solo al equipo de pruebas.
+    La tanda `estados-2026-09-18` declara `MX.estado`, `PE.estado`, `AR.estado`,
+    `CL.estado`, `UY.estado` y `BR.estado`, y el valor sale de la semilla, que es
+    la única copia. Se aplica una sola vez: si Juan vuelve a cerrar un país a
+    mano, correr `setup()` otra vez no lo reabre. Las dos pruebas nuevas de
+    `pruebas/servidor.test.js` corren ese camino entero contra una hoja vieja, y
+    la primera falla si se quita la tanda.
+32. **El país en piloto de las pruebas pasó de México a Ecuador.** Diez pruebas
+    usaban México, y una Brasil, como ejemplo de "país en piloto". Al salir los
+    dos a activo, esas pruebas dejaban de probar lo que decían probar, no de
+    pasar: `validarPais(MX, false)` empezaba a devolver `null`. Se movieron a
+    Ecuador, que sigue en piloto porque nadie ha dicho cómo escribe los miles. El
+    caso `MX02` se mudó entero y ahora se llama `EC01`, con un RUC ecuatoriano
+    ficticio de sociedad privada (`1791234561001`) que pasa el dígito verificador.
+33. **Lo que el navegador comprueba se mudó con las pruebas.** Los dos recorridos
+    y el generador de `docs/FRONT_ACTUAL.html` elegían México para ver el aviso de
+    país en pruebas. Ahora eligen Ecuador, y además se agregaron dos
+    comprobaciones nuevas del lado contrario: que México, ya activo, **no** lleve
+    el aviso, y que Brasil tampoco. Sin eso, sacar un país de piloto por error
+    habría pasado sin que nadie lo viera.
+34. **La traducción del aviso de pruebas se quedaba sin nadie que la mirara.**
+    Brasil era el único país que lee en portugués y el único en piloto que lo
+    leía, así que al activarlo la frase "está em testes" dejó de aparecer en todo
+    el recorrido en portugués. La frase sigue viva (un abogado de Brasil con rol
+    legal puede entrar a probar Ecuador), pero ninguna comprobación la miraba. Se
+    agregó una al final de `recorrer-en-portugues.js` que elige Ecuador con la
+    interfaz en portugués y confirma que el aviso sale traducido.

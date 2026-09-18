@@ -250,8 +250,9 @@ test('el servidor vuelve a validar aunque el navegador diga que está bien', () 
   const mundo = conSetup();
   comoComercial(mundo, 'kam@rappi.com');
   // Un país en piloto para alguien que no es del equipo: el cliente podría
-  // mandarlo igual, el servidor tiene que rechazarlo.
-  const resultado = generar(solicitudValida({ pais: 'MX' }));
+  // mandarlo igual, el servidor tiene que rechazarlo. Ecuador, porque México
+  // salió de piloto el 18 de septiembre.
+  const resultado = generar(solicitudValida({ pais: 'EC' }));
   assert.ok(!resultado.valido);
   assert.strictEqual(resultado.errores[0].campo, 'pais');
 });
@@ -262,7 +263,7 @@ test('a alguien del equipo de pruebas sí se le permite un país en piloto', () 
   mundo.correo = 'pruebas@rappi.com';
 
   const resultado = generar(solicitudValida({
-    pais: 'MX', organizadorId: 'PRU200101AB5', compraMinima: null,
+    pais: 'EC', organizadorId: '1791234561001', compraMinima: null,
   }));
   assert.ok(resultado.valido, JSON.stringify(resultado.errores));
 });
@@ -352,12 +353,12 @@ test('solo un administrador entra a la administración', () => {
 
 test('un administrador cambia el estado de un país', () => {
   conSetup();
-  assert.strictEqual(paisPorCodigo(leerPaises(), 'MX').estado, 'piloto');
+  assert.strictEqual(paisPorCodigo(leerPaises(), 'EC').estado, 'piloto');
 
-  assert.ok(adminGuardarEstadoDePais('MX', 'activo').valido);
-  assert.strictEqual(paisPorCodigo(leerPaises(), 'MX').estado, 'activo');
+  assert.ok(adminGuardarEstadoDePais('EC', 'activo').valido);
+  assert.strictEqual(paisPorCodigo(leerPaises(), 'EC').estado, 'activo');
 
-  const malo = adminGuardarEstadoDePais('MX', 'inventado');
+  const malo = adminGuardarEstadoDePais('EC', 'inventado');
   assert.ok(!malo.valido);
 });
 
@@ -532,7 +533,7 @@ test('setup avisa lo que dejó sin tocar porque la hoja manda', () => {
 
   assert.ok(texto.indexOf('BR.estado') !== -1, texto);
   assert.ok(texto.indexOf('la hoja dice "bloqueado"') !== -1, texto);
-  assert.ok(texto.indexOf('la semilla dice "piloto"') !== -1, texto);
+  assert.ok(texto.indexOf('la semilla dice "activo"') !== -1, texto);
   assert.ok(texto.indexOf('Administración') !== -1, 'no dice dónde cambiarlo');
 
   // Y no lo cambió: la hoja sigue mandando.
@@ -744,8 +745,12 @@ test('sin rol, la persona solo ve los países activos', () => {
   const mundo = conSetup();
   mundo.correo = 'nadie@rappi.com';
 
+  // Desde el 18 de septiembre son siete los activos. Ecuador y Costa Rica, que
+  // siguen en piloto, no le pueden salir a un comercial sin rol.
   const codigos = estadoInicial().paises.map((p) => p.codigo);
-  assert.deepStrictEqual(codigos, ['CO'], 'un comercial nuevo debería ver solo Colombia');
+  assert.deepStrictEqual(codigos.slice().sort(), ['AR', 'BR', 'CL', 'CO', 'MX', 'PE', 'UY']);
+  assert.strictEqual(codigos.indexOf('EC'), -1, 'un comercial nuevo no debería ver Ecuador');
+  assert.strictEqual(codigos.indexOf('CR'), -1, 'un comercial nuevo no debería ver Costa Rica');
 });
 
 test('la carga masiva nunca le baja el rol a quien ya estaba', () => {
@@ -1075,4 +1080,59 @@ test('cada confirmación declarada nombra un país y una columna que existen', (
       assert.ok(PESTANAS.Paises.indexOf(partes[1]) !== -1, 'columna que no existe: ' + campo);
     }
   }
+});
+
+/**
+ * La tanda que saca seis paises de piloto.
+ *
+ * El Sheet de Juan existe desde antes y dice "piloto" en las seis filas. La
+ * regla general es que la hoja manda sobre la semilla, asi que cambiar
+ * data/paises.json no mueve una fila que ya existe: sin la tanda, Juan despliega,
+ * corre setup(), y Mexico le sigue saliendo solo al equipo de pruebas.
+ *
+ * Esta prueba corre el camino entero: hoja vieja, setup(), y los seis paises
+ * salen activos, con Ecuador y Costa Rica intactos en piloto.
+ */
+test('la tanda de estados saca de piloto a los seis países en una hoja vieja', () => {
+  const mundo = conSetup();
+
+  const hoja = hojaPorNombre('Paises');
+  const encabezados = hoja.valores[0];
+  const columnaEstado = encabezados.indexOf('estado');
+  const fila = (codigo) => hoja.valores.findIndex((f) => f[encabezados.indexOf('codigo')] === codigo);
+
+  // La hoja como estaba antes: los ocho en piloto.
+  for (const codigo of ['MX', 'PE', 'AR', 'CL', 'UY', 'BR', 'EC', 'CR']) {
+    hoja.valores[fila(codigo)][columnaEstado] = 'piloto';
+  }
+  delete mundo.propiedades.CONFIRMACIONES_APLICADAS;
+
+  setup();
+
+  const paises = leerPaises();
+  for (const codigo of ['MX', 'PE', 'AR', 'CL', 'UY', 'BR']) {
+    assert.strictEqual(paisPorCodigo(paises, codigo).estado, 'activo',
+      codigo + ' siguió en piloto después de correr setup');
+  }
+  assert.strictEqual(paisPorCodigo(paises, 'EC').estado, 'piloto', 'Ecuador no debía salir de piloto');
+  assert.strictEqual(paisPorCodigo(paises, 'CR').estado, 'piloto', 'Costa Rica no debía salir de piloto');
+});
+
+test('si Juan vuelve a poner un país en piloto, setup no lo saca otra vez', () => {
+  // Cada tanda se aplica una sola vez. Si Juan cierra México a mano porque algo
+  // salió mal, correr setup() no puede reabrirlo.
+  const mundo = conSetup();
+  delete mundo.propiedades.CONFIRMACIONES_APLICADAS;
+  setup();
+  assert.strictEqual(paisPorCodigo(leerPaises(), 'MX').estado, 'activo');
+
+  const hoja = hojaPorNombre('Paises');
+  const encabezados = hoja.valores[0];
+  const filaMx = hoja.valores.findIndex((f) => f[encabezados.indexOf('codigo')] === 'MX');
+  hoja.valores[filaMx][encabezados.indexOf('estado')] = 'piloto';
+
+  setup();
+
+  assert.strictEqual(paisPorCodigo(leerPaises(), 'MX').estado, 'piloto',
+    'setup reabrió un país que Juan había cerrado a mano');
 });

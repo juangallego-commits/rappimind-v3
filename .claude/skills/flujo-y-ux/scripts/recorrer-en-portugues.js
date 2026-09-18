@@ -91,7 +91,7 @@ ok('el por qué del país y del tipo también en portugués',
   paisPt.indexOf('¿Por qué te preguntamos esto?')===-1 && tipoPt.indexOf('¿Por qué te preguntamos esto?')===-1 && paisPt.indexOf('Por que perguntamos isso?')!==-1,
   (paisPt+tipoPt).replace(/\n+/g,' | ').slice(0,300));
 ok('las notas de los países en portugués', paisPt.indexOf('Disponível.')!==-1 && paisPt.indexOf('Em piloto')!==-1 && paisPt.indexOf('En piloto')===-1);
-ok('el aviso de país en pruebas en portugués', parceiroPt.indexOf('está em testes')!==-1 && parceiroPt.indexOf('está en pruebas')===-1);
+ok('Brasil, que salió de piloto el 18 de septiembre, ya no lleva el aviso de pruebas', parceiroPt.indexOf('está em testes')===-1 && parceiroPt.indexOf('está en pruebas')===-1, parceiroPt.replace(/\n+/g,' | ').slice(0,300));
 ok('la vista previa vacía en portugués', paisPt.indexOf('Seu documento aparece aqui')!==-1 && paisPt.indexOf('Tu documento aparece aquí')===-1, paisPt.replace(/\n+/g,' | ').slice(0,300));
 
 // Un error de validación sale en portugués, no en español.
@@ -109,7 +109,7 @@ ok('"Assim fica" en portugués', conFecha.indexOf('Assim fica no seu T&C:')!==-1
 // El resumen de un país en pruebas dice qué falta de verdad, en portugués.
 await p.evaluate(()=>{window.RM.app.ir('resumen')}); await p.waitForTimeout(500);
 const resumenPt=await txt();
-ok('el resumen en portugués, con el aviso del país en pruebas', resumenPt.indexOf('está em testes')!==-1 && resumenPt.indexOf('Confirmo que as informações')!==-1, resumenPt.replace(/\n+/g,' | ').slice(0,400));
+ok('el resumen en portugués, y sin el aviso de pruebas porque Brasil ya es activo', resumenPt.indexOf('está em testes')===-1 && resumenPt.indexOf('Confirmo que as informações')!==-1, resumenPt.replace(/\n+/g,' | ').slice(0,400));
 const faltando=resumenPt.slice(resumenPt.indexOf('Está faltando:'), resumenPt.indexOf('Voltar'));
 ok('"Está faltando" lista lo que falta, no los datos del país',
   faltando.indexOf('Está faltando:')===0 && faltando.indexOf('miles')===-1 && faltando.indexOf('Escolha')!==-1 && faltando.indexOf('Marque a caixa')!==-1,
@@ -128,6 +128,19 @@ await p.evaluate(()=>[...document.querySelectorAll('.selector-idioma button')].f
 await p.waitForTimeout(300);
 await p.reload(); await p.waitForTimeout(900);
 ok('la preferencia sobrevive a recargar', (await txt()).indexOf('Gere os Termos e Condições')!==-1);
+
+// El aviso de pais en pruebas en portugues sigue existiendo para Ecuador y
+// Costa Rica, que son los dos que quedan en piloto. Sin esta comprobacion, la
+// frase se quedaba traducida y sin nadie que la mirara, porque Brasil, el unico
+// pais que lee en portugues, salio de piloto el 18 de septiembre.
+await p.goto(DEMO); await p.waitForTimeout(900);
+await p.evaluate(()=>[...document.querySelectorAll('.selector-idioma button')].find(b=>b.textContent.trim()==='BR').click());
+await p.waitForTimeout(400);
+await clic('Começar'); await p.waitForTimeout(300);
+await noAtodo();
+await clic('Ecuador'); await p.waitForTimeout(500);
+const ecuadorPt=await p.evaluate(()=>{const a=document.querySelector('.columna-preguntas .aviso');return a?a.innerText:''});
+ok('un país en piloto sí lleva el aviso en portugués', ecuadorPt.indexOf('está em testes')!==-1 && ecuadorPt.indexOf('está en pruebas')===-1, ecuadorPt.replace(/\n+/g,' | ').slice(0,300));
 
 ok('sin errores de JavaScript', errs.length===0, errs.join(' | '));
 await nav.close();

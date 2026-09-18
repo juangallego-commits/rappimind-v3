@@ -429,7 +429,7 @@
     },
     {
       "id": "MX01",
-      "descripcion": "Cashback MX (país en piloto, usuario del equipo de pruebas)",
+      "descripcion": "Cashback MX (país activo desde el 18 de septiembre; el caso nació cuando México estaba en piloto)",
       "fecha_referencia": "2026-09-16",
       "usuario_en_equipo": true,
       "entrada": {
@@ -483,12 +483,12 @@
       }
     },
     {
-      "id": "MX02",
-      "descripcion": "Cashback MX con usuario que NO está en el equipo de pruebas: no debe generar",
+      "id": "EC01",
+      "descripcion": "Cashback EC con usuario que NO está en el equipo de pruebas: no debe generar. Era de México hasta que México salió de piloto el 18 de septiembre; el caso se mudó a Ecuador, que sigue en piloto porque nadie ha dicho cómo escribe los miles",
       "fecha_referencia": "2026-09-16",
       "usuario_en_equipo": false,
       "entrada": {
-        "pais": "MX",
+        "pais": "EC",
         "tipo": "cashback",
         "negocio": "rappi"
       },

@@ -238,12 +238,16 @@ async function recorrer() {
 
   // --- 3c. El aviso de que un pais esta en pruebas -------------------------
   //
-  // Los ocho paises en piloto llevan valores legales que propuso la herramienta
-  // y que no ha confirmado nadie. Quien prueba tiene que saberlo antes de leer
-  // el documento y darlo por bueno.
+  // Un pais en piloto lleva valores legales que propuso la herramienta y que no
+  // ha confirmado nadie. Quien prueba tiene que saberlo antes de leer el
+  // documento y darlo por bueno.
+  //
+  // Antes este tramo usaba Mexico. El 18 de septiembre Mexico salio de piloto
+  // junto con Peru, Argentina, Chile, Uruguay y Brasil, y quedan Ecuador y
+  // Costa Rica, que siguen sin decir si escriben los miles con punto o con coma.
   await desdeElInicio();
   await decirQueNoATodo();
-  await clic('México');
+  await clic('Ecuador');
 
   const avisoDePruebas = await pagina.evaluate(() => {
     const a = document.querySelector('.columna-preguntas .aviso');
@@ -283,6 +287,17 @@ async function recorrer() {
     sinTravel.indexOf('Esta campaña la redacta Legal') !== -1 &&
     sinTravel.indexOf('todavía no está habilitado en México') !== -1,
     sinTravel.replace(/\n+/g, ' | ').slice(0, 300));
+
+  // Y un pais activo no lleva el aviso de pruebas ni en el formulario.
+  await desdeElInicio();
+  await decirQueNoATodo();
+  await clic('México');
+  const mexicoYaActivo = await pagina.evaluate(() => {
+    const a = document.querySelector('.columna-preguntas .aviso');
+    return a ? a.innerText : '';
+  });
+  revisar('México, que salió de piloto, ya no lleva el aviso de pruebas',
+    mexicoYaActivo.indexOf('está en pruebas') === -1, mexicoYaActivo.slice(0, 200));
 
   await desdeElInicio();
   await pagina.evaluate(() => {
@@ -364,11 +379,11 @@ async function recorrer() {
   //
   // El aviso de "no publiques" estaba en el formulario y en el resumen, pero
   // no en la pantalla que explica como publicar, que es donde se decide.
-  const campanaDeMexico = {
-    pais: 'MX', negocio: 'rappi', tipo: 'cashback', tienda: 'Oxxo', alcance: 'Nacional', ciudades: '',
+  const campanaEnPruebas = {
+    pais: 'EC', negocio: 'rappi', tipo: 'cashback', tienda: 'Tía', alcance: 'Nacional', ciudades: '',
     segmento: 'todos', metodoPago: 'todos', declaracion: false,
     fechaInicio: '2026-12-01', horaInicio: '00:00', fechaFin: '2026-12-02', horaFin: '23:59',
-    organizadorRazonSocial: 'Oxxo S.A. de C.V.', organizadorId: 'PRU200101AB5',
+    organizadorRazonSocial: 'Comercial Tía S.A.', organizadorId: '1791234561001',
     porcentaje: 20, tope: 200, presupuesto: 100000, maxPedidos: 1, sinLimite: false,
     carga: 'inmediata', vigencia: 'dias', diasVigencia: 30, redencion: 'tienda', condiciones: [],
   };
@@ -383,7 +398,7 @@ async function recorrer() {
     await unaPagina.waitForTimeout(700);
   }
 
-  await irAlResumenCon(pagina, campanaDeMexico);
+  await irAlResumenCon(pagina, campanaEnPruebas);
   await pagina.click('#declaracion');
   await pagina.waitForTimeout(400);
   await clic('Generar T&C');
@@ -400,7 +415,7 @@ async function recorrer() {
   const celular = await navegador.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
   const movil = await celular.newPage();
   movil.on('pageerror', function (e) { erroresDeJs.push('celular: ' + e.message); });
-  await irAlResumenCon(movil, Object.assign({}, campanaDeMexico, {
+  await irAlResumenCon(movil, Object.assign({}, campanaEnPruebas, {
     pais: 'CO', tienda: 'Jumbo', organizadorRazonSocial: 'Jumbo S.A.S.', organizadorId: '900111222-1', tope: 20000, presupuesto: 1000000,
   }));
   await movil.evaluate(() => window.scrollTo(0, document.body.scrollHeight));

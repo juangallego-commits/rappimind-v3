@@ -3,10 +3,14 @@
 /**
  * El aviso de que un país está en pruebas.
  *
- * Ocho países están en piloto con valores legales que propuso la herramienta por
- * analogía con Colombia y que no ha confirmado nadie. Cuando los equipos legales
- * de esos países entren a probar, tienen que saber qué están mirando: si no, un
- * abogado lee el documento, le parece bien, y confirma algo que nadie escribió.
+ * Empezaron siendo ocho países en piloto, con valores legales que propuso la
+ * herramienta por analogía con Colombia y que no había confirmado nadie. El
+ * encargo 01 los confirmó con la ley de cada país y el 18 de septiembre seis
+ * salieron a activo. Quedan Ecuador y Costa Rica, que siguen sin decir si
+ * escriben los miles con punto o con coma.
+ *
+ * El aviso existe para que un abogado que entra a probar sepa qué está mirando:
+ * si no, lee el documento, le parece bien, y confirma algo que nadie escribió.
  */
 
 const test = require('node:test');
@@ -18,23 +22,33 @@ const { rutaDesdeRaiz, leerJson } = require('../scripts/lib/archivos');
 const PAISES = leerJson(rutaDesdeRaiz('data', 'paises.json')).paises.map(paisDesdeFila);
 const porCodigo = (codigo) => PAISES.filter((p) => p.codigo === codigo)[0];
 
-test('Colombia no está en pruebas y los demás sí', () => {
+test('solo Ecuador y Costa Rica siguen en pruebas', () => {
   assert.strictEqual(paisEnPruebas(porCodigo('CO')), false);
   const enPruebas = PAISES.filter(paisEnPruebas).map((p) => p.codigo);
-  assert.deepStrictEqual(enPruebas.sort(), ['AR', 'BR', 'CL', 'CR', 'EC', 'MX', 'PE', 'UY']);
+  assert.deepStrictEqual(enPruebas.sort(), ['CR', 'EC']);
 });
 
-test('un país en pruebas lo sigue estando aunque no le falte ningún dato', () => {
-  // Después del encargo 01, seis de los ocho países en piloto no tienen un solo
-  // dato por confirmar. Estar en piloto no depende de esa lista: depende del
-  // estado, y el estado solo lo cambia Juan en la pestaña Paises del Sheet.
-  for (const pais of PAISES.filter(paisEnPruebas)) {
-    assert.strictEqual(pais.estado, 'piloto', pais.nombre);
+test('los seis que salieron de piloto no llevan el aviso de pruebas', () => {
+  // El 18 de septiembre Juan sacó de piloto a México, Perú, Argentina, Chile,
+  // Uruguay y Brasil. Con eso desaparece el aviso de "no publiques todavía" y
+  // el país lo ve cualquier comercial, no solo el equipo de pruebas.
+  for (const codigo of ['MX', 'PE', 'AR', 'CL', 'UY', 'BR']) {
+    assert.strictEqual(porCodigo(codigo).estado, 'activo', codigo);
+    assert.strictEqual(paisEnPruebas(porCodigo(codigo)), false, codigo);
   }
   assert.deepStrictEqual(datosPorConfirmar(porCodigo('MX')), [],
     'México ya tiene sus cuatro datos confirmados');
   assert.ok(datosPorConfirmar(porCodigo('EC')).length > 0,
     'Ecuador todavía no dice cómo escribe los miles');
+});
+
+test('un país en pruebas lo sigue estando aunque no le falte ningún dato', () => {
+  // Estar en piloto no depende de la lista de datos por confirmar: depende de
+  // la columna estado. Un país con la lista vacía y estado piloto sigue
+  // llevando el aviso.
+  const sinPendientes = Object.assign({}, porCodigo('EC'), { por_confirmar_en_pruebas: [] });
+  assert.strictEqual(paisEnPruebas(sinPendientes), true);
+  assert.deepStrictEqual(datosPorConfirmar(sinPendientes), []);
 });
 
 test('lo que falta se dice en palabras, no con el nombre de la columna', () => {
@@ -61,7 +75,7 @@ test('lo que falta se dice en palabras, no con el nombre de la columna', () => {
  * en el Sheet.
  */
 test('un dato confirmado sale de la lista de pendientes', () => {
-  // Colombia ya está activo y no le falta nada.
+  // Colombia ya estaba activo y no le falta nada.
   assert.deepStrictEqual(porCodigo('CO').por_confirmar_en_pruebas, []);
 
   // Nadie pide ya el visto bueno del abogado local.

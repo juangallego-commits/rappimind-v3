@@ -1,5 +1,13 @@
 # Los países en piloto: los cuatro datos que faltan por confirmar
 
+> **Este documento ya está contestado. Se deja como está por ser el registro de
+> lo que se preguntó.** La respuesta del encargo 01 confirmó los cuatro datos de
+> los ocho países con la ley de cada uno, y el 18 de septiembre de 2026 Juan sacó
+> de piloto a México, Perú, Argentina, Chile, Uruguay y Brasil. Siguen en piloto
+> Ecuador y Costa Rica, y solo por una razón: nadie ha dicho todavía si escriben
+> los miles con punto o con coma. Los valores que manda la herramienta hoy están
+> en `data/paises.json`, no aquí.
+
 Ocho países están en piloto, que es el estado donde solo los ve el equipo de
 pruebas. Para que un país salga a producción hay que confirmar cuatro datos
 legales que van impresos en el documento. Los tres primeros son de forma; el

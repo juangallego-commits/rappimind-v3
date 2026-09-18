@@ -1094,3 +1094,81 @@ dice Cambiar), la 24 y la 26 (Squarespace y la Ayuda, con #tyc-rappi) y la 28
    mismo descuadre que acabamos de corregir en español. La traducción que
    cuadraría es "Ver as minhas campanhas", pero no la escribo yo. ¿La pongo?
 5. **Los 25 cambios de recorrido**: cuáles entran y en qué orden.
+
+## 18 de septiembre · Seis países salen de piloto
+
+Juan aprobó que México, Perú, Argentina, Chile, Uruguay y Brasil pasen de piloto
+a activo. Ecuador y Costa Rica se quedan, porque nadie ha dicho todavía si
+escriben los miles con punto o con coma.
+
+### Qué cambia en la pantalla
+
+1. **Los seis países le salen a cualquier comercial.** Hasta hoy solo los veía
+   quien tuviera rol legal, pruebas o admin. En el selector la nota pasa de "En
+   piloto: solo para el equipo de pruebas." a "Disponible.".
+2. **Se va el freno de publicación.** Desaparece el aviso del formulario ("está
+   en pruebas: genera y revisa, pero todavía no publiques") y el bloque del
+   resumen ("no publiques este documento todavía"). El documento de esos seis
+   países pasa a ser publicable.
+3. **Ecuador y Costa Rica siguen igual**, con su aviso y con "cómo se separan los
+   miles en un monto" en la lista de lo que falta.
+
+### Antes de tocar nada, se generó un documento de cada país
+
+Con los mismos datos, para ver qué sale de verdad y no fiarse de la lista de
+pendientes. Los cinco de habla hispana salen limpios: cero `{{ }}`, cero `[[ ]]`,
+sin dobles puntos, sin paréntesis vacíos y sin frases partidas. México 11.935
+caracteres, Perú 12.025, Argentina 11.900, Chile 11.836 y Uruguay 11.938.
+
+### Brasil entró con advertencia
+
+Esta sesión recomendó dejar a Brasil en piloto hasta que Legal BR contestara el
+mensaje del encargo 01. Juan confirmó que entrara igual, y entró. Los cinco
+puntos que siguen abiertos quedaron escritos en `docs/PENDIENTES_LEGAL.md`, en la
+sección "Brasil ya está en producción, con estos puntos abiertos", porque ya no
+hay aviso en pantalla que los recuerde.
+
+### Cómo llega el cambio al Sheet
+
+`data/paises.json` declara ahora una tanda nueva, `estados-2026-09-18`, con las
+seis columnas de estado. La pestaña Paises manda sobre la semilla, así que sin
+esa tanda cambiar el archivo no habría movido ni una fila del Sheet de Juan.
+
+**Después de desplegar hay que correr `setup()` una vez.** Eso es lo que escribe
+"activo" en las seis filas. Lo corre Juan; Claude Code no puede.
+
+### Cómo probarlo
+
+```
+npm test                                                        # 455 pruebas, todas pasan
+npm run demo
+export NODE_PATH=/opt/node22/lib/node_modules
+export PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
+node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js        # el recorrido completo pasa
+node .claude/skills/flujo-y-ux/scripts/recorrer-en-portugues.js # todo bien
+npm run front                                                   # 44 de 44 pantallas
+node .claude/skills/flujo-y-ux/scripts/capturar-pantallas.js    # 33 de 33 capturas
+```
+
+Y con los ojos: abre `docs/FRONT_ACTUAL.html` y mira la pantalla del país en
+piloto, que ahora es Ecuador y no México.
+
+### Pruebas nuevas
+
+- `la tanda de estados saca de piloto a los seis países en una hoja vieja`, que
+  corre el camino entero contra una hoja que decía "piloto" en las ocho filas.
+  Comprobado que falla si se quita la tanda.
+- `si Juan vuelve a poner un país en piloto, setup no lo saca otra vez`.
+- `los seis que salieron de piloto no llevan el aviso de pruebas`.
+- En el navegador: que México y Brasil, ya activos, no lleven el aviso, y que
+  Ecuador sí lo lleve también en portugués.
+
+### Lo que necesito de Juan
+
+1. **Correr `setup()`** en Apps Script después de desplegar. Sin eso el Sheet
+   sigue diciendo "piloto" y no cambia nada de lo de arriba.
+2. **Los casos dorados de Perú, Argentina, Chile y Uruguay**: no los pediste, así
+   que no los hice. Cuatro países sin caso dorado quedan sin nadie que avise si
+   una cláusula compartida se mueve. La oferta sigue en pie.
+3. **Ecuador y Costa Rica**: con que alguien diga si escriben los miles con punto
+   o con coma, salen de piloto el mismo día.

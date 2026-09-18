@@ -713,3 +713,48 @@ Cierra cinco de los pendientes de arriba y abre dos.
     una tienda puede participar y aun así excluir los pedidos a domicilio. La
     opción sigue oculta mientras `CO.nombre_modalidad_local` esté vacío, así que
     hoy no le aparece a nadie.
+
+## Brasil ya está en producción, con estos puntos abiertos (18 de septiembre)
+
+El 18 de septiembre Juan sacó a Brasil de piloto junto con México, Perú,
+Argentina, Chile y Uruguay. Desde ese momento cualquier KAM de Brasil puede
+generar y publicar un T&C en portugués, sin el aviso de "no publiques todavía".
+
+Esta sesión lo advirtió antes de hacerlo y Juan confirmó que Brasil entraba
+igual. Lo que sigue abierto queda aquí, para que no se pierda ahora que ya no
+hay aviso en pantalla que lo recuerde:
+
+1. **El mensaje a Legal BR no tiene respuesta.** La decisión 24 de la respuesta
+   del encargo 01 dejó redactado un mensaje que pide confirmar cinco cosas: (i)
+   la excepción de que Rappi concede, modifica y cancela la promoción; (ii) que
+   el frete grátis cubre hasta el tope y el excedente lo paga el Usuário; (iii)
+   las correcciones de redacción del anexo; (iv) si quieren la frase de datos
+   personales en el cierre; y (v) la hora de inicio y cómo se escribe el límite
+   de pedidos. Mientras no conteste, la excepción vive solo de la autorización
+   de Juan del 17 de septiembre.
+2. **La hora de inicio.** El formulario preselecciona 00:00 y los cuatro T&C
+   aprobados arrancan a las 00:01. Hoy sale impreso lo que el KAM deje.
+3. **"um (1) pedido" contra "1 (um) pedido".** El motor imprime la primera; la
+   ayuda en portugués cita la segunda. Una de las dos está mal.
+4. **Los cuatro casos dorados `BR01` a `BR04` no se han comparado** con los
+   cuatro T&C que mandó Legal Brasil. Protegen el texto de moverse solo; no
+   dicen que sea el aprobado.
+5. **La interfaz en portugués no la ha leído nadie de Brasil.** Es la decisión
+   29 de la respuesta del encargo 01: la lectura de Amannda Moreira, o de quien
+   ella indique, más un KAM de Brasil.
+6. **El nombre de los países no se traduce.** En la interfaz en portugués la
+   lista dice "Ecuador" y no "Equador", "Perú" y no "Peru". Los nombres salen de
+   la columna `nombre` de la pestaña Paises, que es una sola por país. Es menor y
+   no toca texto legal, pero se ve.
+
+Y de los otros cinco países que salieron de piloto el mismo día:
+
+7. **Chile imprime "las autoridades competentes"** como autoridad de protección
+   de datos, a propósito, porque la agencia de la Ley 21.719 todavía no opera.
+   Esa frase sale en el documento publicado. Cuando la agencia entre, hay que
+   cambiar el valor en la pestaña Paises.
+8. **Perú, Argentina, Chile y Uruguay no tienen caso dorado.** Nadie ha leído un
+   documento completo de esos cuatro países. Esta sesión sí generó uno de cada
+   uno y los cuatro salen limpios, sin huecos ni frases partidas, pero eso no es
+   lo mismo que haberlo leído. Claude Code ofreció agregar `PE01`, `AR01`, `CL01`
+   y `UY01`; Juan no los pidió. La oferta sigue en pie.

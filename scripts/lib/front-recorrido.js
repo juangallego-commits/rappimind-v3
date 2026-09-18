@@ -556,7 +556,9 @@ async function recorrer(rutaDeLaDemo, fichas, marcas) {
     await paginaNueva('escritorio', 'es');
     await clic('Empezar');
     await decirQueNoATodo();
-    await elegirOpcion('México');
+    // Ecuador, porque Mexico salio de piloto el 18 de septiembre. Quedan
+    // Ecuador y Costa Rica, que siguen sin decir como escriben los miles.
+    await elegirOpcion('Ecuador');
     await elegirOpcion('Rappi');
     await pagina.waitForTimeout(400);
     await capturar('pais-en-pruebas');

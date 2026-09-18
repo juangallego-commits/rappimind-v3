@@ -174,8 +174,15 @@ test('ir y volver entre fila y país no pierde nada', () => {
 });
 
 test('los países en piloto solo aparecen para el equipo', () => {
-  assert.deepStrictEqual(paisesDisponibles(paises, false).map((p) => p.codigo), ['CO']);
-  assert.ok(paisesDisponibles(paises, true).length > 1);
+  // Desde el 18 de septiembre siete países son activos y solo Ecuador y Costa
+  // Rica siguen en piloto, así que un comercial de fuera del equipo ve siete.
+  const paraTodos = paisesDisponibles(paises, false).map((p) => p.codigo);
+  assert.deepStrictEqual(paraTodos.sort(), ['AR', 'BR', 'CL', 'CO', 'MX', 'PE', 'UY']);
+
+  const paraElEquipo = paisesDisponibles(paises, true).map((p) => p.codigo);
+  assert.ok(paraElEquipo.indexOf('EC') !== -1, 'el equipo no ve Ecuador');
+  assert.ok(paraElEquipo.indexOf('CR') !== -1, 'el equipo no ve Costa Rica');
+  assert.ok(paraElEquipo.length > paraTodos.length);
   assert.ok(paisesDisponibles(paises, true).every((p) => p.estado !== 'bloqueado'));
 });
 

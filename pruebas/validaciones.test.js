@@ -12,6 +12,8 @@ const { paises } = leerJson(rutaDesdeRaiz('data', 'paises.json'));
 const CO = paises.find((p) => p.codigo === 'CO');
 const MX = paises.find((p) => p.codigo === 'MX');
 const BR = paises.find((p) => p.codigo === 'BR');
+// El país en piloto de las pruebas. Era México hasta el 18 de septiembre.
+const EC = paises.find((p) => p.codigo === 'EC');
 
 /** Una solicitud de Cashback CO válida, para ir rompiéndola de a un campo. */
 function solicitudBase(cambios) {
@@ -57,21 +59,24 @@ test('la solicitud base es válida', () => {
 });
 
 test('un país en piloto no aparece para quien no está en el equipo', () => {
-  assert.ok(validarPais(MX, false));
-  assert.strictEqual(validarPais(MX, true), null);
+  // Ecuador, porque México salió de piloto el 18 de septiembre.
+  assert.ok(validarPais(EC, false));
+  assert.strictEqual(validarPais(EC, true), null);
 });
 
 test('un país bloqueado no genera para nadie', () => {
-  // Brasil pasó a piloto al entrar su modelo, así que el país bloqueado se
-  // construye aquí: la regla es de la validación, no de qué país esté cerrado hoy.
+  // Hoy ningún país está bloqueado, así que el bloqueado se construye aquí: la
+  // regla es de la validación, no de qué país esté cerrado hoy.
   const bloqueado = Object.assign({}, BR, { estado: 'bloqueado' });
   assert.ok(validarPais(bloqueado, false));
   assert.ok(validarPais(bloqueado, true));
 });
 
-test('Brasil está en piloto: solo lo ve el equipo de pruebas', () => {
-  assert.strictEqual(BR.estado, 'piloto');
-  assert.ok(validarPais(BR, false), 'un comercial de fuera del equipo no debería poder generar en Brasil');
+test('Brasil ya es activo: lo ve cualquier comercial', () => {
+  // Juan lo sacó de piloto el 18 de septiembre, con la excepción de Rappi como
+  // quien concede la promoción ya autorizada y anotada en CLAUDE.md.
+  assert.strictEqual(BR.estado, 'activo');
+  assert.strictEqual(validarPais(BR, false), null);
   assert.strictEqual(validarPais(BR, true), null);
 });
 
@@ -86,7 +91,7 @@ test('el tipo debe estar habilitado para el país', () => {
 });
 
 test('si el país no está disponible no se revisa nada más', () => {
-  const resultado = validarSolicitud({ pais: 'MX', tipo: 'cashback' }, MX, CONTEXTO);
+  const resultado = validarSolicitud({ pais: 'EC', tipo: 'cashback' }, EC, CONTEXTO);
   assert.strictEqual(resultado.errores.length, 1);
   assert.strictEqual(resultado.errores[0].campo, 'pais');
 });
