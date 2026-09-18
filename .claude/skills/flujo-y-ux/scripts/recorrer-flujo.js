@@ -563,6 +563,53 @@ async function recorrer() {
   revisar('en celular el selector de idioma no tapa los botones del final', tapados.length === 0, tapados.join(' | '));
   await celular.close();
 
+  // --- 7b. Una opción que el país no puede cumplir se bloquea con su razón ---
+  //
+  // Los nombres de las secciones tienen que ser los de la app, porque el
+  // documento los imprime entre comillas, y esa lista solo existe para
+  // Colombia. En México el comercial elegia "En ciertas secciones de Rappi" y
+  // quedaba delante de una pregunta sin una sola casilla que marcar.
+  async function opcionesDeLaRedencionCon(codigoPais, identificacion) {
+    await pagina.goto(DEMO);
+    await pagina.waitForTimeout(800);
+    await pagina.evaluate((datos) => {
+      RM.estado.reiniciarFormulario(Object.assign(RM.app.valoresIniciales(), datos), {});
+      RM.estado.estado.filtroRespondido = true;
+      RM.estado.estado.pasoActual = 4;
+      RM.estado.estado.campoAbierto = 'redencion';
+      RM.app.ir('pasos');
+    }, Object.assign({}, campanaEnPruebas, {
+      pais: codigoPais, tipo: 'cashback', tienda: 'Jumbo', organizadorRazonSocial: 'Jumbo S.A.S.',
+      organizadorId: identificacion, redencion: 'tienda', tope: 20000, presupuesto: 1000000,
+    }));
+    await pagina.waitForTimeout(600);
+    return pagina.evaluate(() => {
+      const bloque = [].slice.call(document.querySelectorAll('.pregunta'))
+        .filter((q) => /gastar los Créditos/i.test(q.textContent)).pop();
+      if (!bloque) return null;
+      return [].map.call(bloque.querySelectorAll('.opcion'), (o) => ({
+        texto: o.textContent.trim().replace(/\s+/g, ' '),
+        bloqueada: o.disabled || o.getAttribute('aria-disabled') === 'true',
+      }));
+    });
+  }
+
+  const redencionCO = await opcionesDeLaRedencionCon('CO', '900111222-1');
+  revisar('en Colombia se pueden elegir las tres opciones de redención',
+    !!redencionCO && redencionCO.length === 3 && redencionCO.every((o) => !o.bloqueada),
+    JSON.stringify(redencionCO));
+
+  const redencionMX = await opcionesDeLaRedencionCon('MX', 'PRU200101AB5');
+  const seccionesMX = (redencionMX || []).filter((o) => /secciones/i.test(o.texto))[0];
+  revisar('en un país sin lista de secciones, esa opción se bloquea',
+    !!seccionesMX && seccionesMX.bloqueada, JSON.stringify(redencionMX));
+  revisar('y dice por qué, nombrando al país',
+    !!seccionesMX && seccionesMX.texto.indexOf('México') !== -1,
+    seccionesMX ? seccionesMX.texto : '(no salió la opción)');
+  revisar('las otras dos opciones siguen disponibles, no es un callejón',
+    !!redencionMX && redencionMX.filter((o) => !o.bloqueada).length === 2,
+    JSON.stringify(redencionMX));
+
   // --- 8. Quien no ve la pantalla también tiene que enterarse de que cambió ---
   //
   // La aplicacion redibuja el <main> entero en cada cambio de pantalla. Antes

@@ -83,6 +83,30 @@ function comoTexto(campo) {
 
 /** Opciones que hay que deshabilitar, con la razón visible. */
 function opcionesDeshabilitadas(campo) {
+  /*
+   * "En ciertas secciones de Rappi" solo se puede elegir donde sabemos como se
+   * llaman esas secciones en la app, porque el documento las imprime entre
+   * comillas. Hoy esa lista existe solo para Colombia.
+   *
+   * Sin esto, un comercial de Mexico elegia la opcion y se quedaba delante de
+   * una pregunta sin una sola casilla que marcar, y con una validacion que le
+   * pedia marcar al menos una: imposible de cumplir y sin salida mas que
+   * adivinar que habia que cambiar la respuesta anterior.
+   *
+   * Deshabilitada con su razon, y no escondida: si desapareciera, el comercial
+   * creeria que la herramienta no sabe hacerlo y volveria a escribirle a Legal.
+   */
+  if (campo.id === 'redencion') {
+    var pais = flujo.paisElegido();
+    if (!pais) return null;
+    var nombres = (E.configuracion.secciones && E.configuracion.secciones[pais.codigo]) || [];
+    if (nombres.length > 0) return null;
+    var sinSecciones = {};
+    sinSecciones.secciones = estado.pregunta('redencion').razonSinSecciones
+      .replace('{pais}', pais.nombre);
+    return sinSecciones;
+  }
+
   if (campo.id !== 'desempate') return null;
   var criterio = estado.entrada().criterioGanador;
   if (!criterio) return null;

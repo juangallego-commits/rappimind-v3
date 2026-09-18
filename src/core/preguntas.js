@@ -633,6 +633,14 @@ var PREGUNTAS = {
     ],
     placeholders: ['TEXTO_LUGAR_REDENCION'],
     errores: { vacio: 'Dinos dónde puede gastar los Créditos.' },
+    /*
+     * Los nombres de las secciones tienen que ser los de la app, porque el
+     * documento los imprime entre comillas. Hoy solo esta la lista de Colombia
+     * (data/secciones.json). En los demas paises esta opcion se podia elegir y
+     * despues no habia ni una casilla que marcar, con una validacion que pedia
+     * marcar al menos una: un camino que arranca y muere.
+     */
+    razonSinSecciones: 'Todavía no tenemos la lista de secciones de la app en {pais}, y el documento tiene que nombrarlas igual que la app. Si tu campaña las necesita, escríbenos a #tyc-rappi.',
     variantes: {
       cashback_travel: {
         pregunta: '¿Dónde puede gastar los Créditos?',
