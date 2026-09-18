@@ -308,6 +308,7 @@ formulario manual.
 **Mensajes de validación:**
 
 - `vacio`: Elige la hora de fin.
+- `orden`: La hora de fin tiene que ser después de la de inicio: la campaña es de un solo día.
 
 ## Paso: Beneficio
 
@@ -401,6 +402,7 @@ formulario manual.
 
 - `vacio`: Dinos cuántas veces puede ganar la misma persona.
 - `cuantas`: Escribe cuántos pedidos con beneficio puede hacer una persona.
+- `rango`: Tiene que ser al menos un pedido.
 
 ### sinLimite
 
@@ -442,7 +444,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | Obligatorio | sí, cuando se ve |
 | Valor por defecto | dia_siguiente |
 | Avanza sola | sí |
-| Llena en el documento | `TEXTO_CARGA` |
+| Llena en el documento | `TEXTO_CARGA`, `TEXTO_VERIFICACION` |
 
 **Opciones** (botones grandes, una sola):
 
@@ -976,6 +978,7 @@ formulario manual.
 **Mensajes de validación:**
 
 - `vacio`: Elige la hora de fin.
+- `orden`: La hora de fin tiene que ser después de la de inicio: la campaña es de un solo día.
 
 ## Paso: Concurso
 
@@ -2041,6 +2044,7 @@ No tiene pregunta propia: se responde dentro de **compraMinima**.
 **Mensajes de validación:**
 
 - `vacio`: Elige la hora de fin.
+- `orden`: La hora de fin tiene que ser después de la de inicio: la campaña es de un solo día.
 
 ## Paso: Beneficio
 
@@ -2222,7 +2226,7 @@ No tiene pregunta propia: se responde dentro de **maxOrdenes**.
 | Obligatorio | sí, cuando se ve |
 | Valor por defecto | dia_siguiente |
 | Avanza sola | sí |
-| Llena en el documento | `TEXTO_CARGA` |
+| Llena en el documento | `TEXTO_CARGA`, `TEXTO_VERIFICACION` |
 
 **Opciones** (botones grandes, una sola):
 
@@ -3114,6 +3118,7 @@ No tiene pregunta propia: se responde dentro de **compraMinima**.
 **Mensajes de validación:**
 
 - `vacio`: Elige la hora de fin.
+- `orden`: La hora de fin tiene que ser después de la de inicio: la campaña es de un solo día.
 
 ## Paso: Beneficio
 
@@ -3422,6 +3427,829 @@ No tiene pregunta propia: se responde dentro de **unidades**.
 
 ---
 
+# 15 minutos o Cashback
+
+Rappi promete un tiempo de entrega en el botón Turbo de una ciudad. Si la orden llega tarde, el usuario recibe en Créditos un porcentaje de lo que pagó. No hay tienda aliada que fondee: el presupuesto lo pone Rappi.
+
+## Filtro de entrada
+
+Antes del formulario. Si responde **sí** a cualquiera, no se genera: se muestra
+la pantalla "Esta campaña la redacta Legal" con la razón y el enlace al
+formulario manual.
+
+
+## Paso: Campaña
+
+### ¿En qué país corre la campaña?
+
+> Si tu país no aparece en la lista, todavía no está habilitado.
+
+**Por qué te preguntamos esto.** Cada país tiene su propia entidad legal de Rappi, su moneda y su autoridad de protección al consumidor. El documento cambia completo según el país.
+
+| | |
+|---|---|
+| Campo interno | `pais` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `PAIS_LEGAL`, `ENTIDAD_LEGAL` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el país de la campaña.
+
+### ¿La campaña es de Rappi o de Rappi Travel?
+
+> Rappi es el domicilio de siempre. Rappi Travel son vuelos, hoteles, autos y paquetes.
+
+**Por qué te preguntamos esto.** Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.
+
+| | |
+|---|---|
+| Campo interno | `negocio` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | rappi |
+| Avanza sola | sí |
+
+**Opciones** (botones grandes, una sola):
+
+- **Rappi**: Restaurantes, supermercados, farmacias y todo lo que llega a domicilio.
+- **Rappi Travel**: Vuelos, hoteles, autos, paquetes, tours y asistencia al viajero.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si la campaña es de Rappi o de Rappi Travel.
+
+### ¿Qué tipo de campaña vas a hacer?
+
+> Elige el que se parezca a tu campaña. Cada opción dice de qué se trata.
+
+**Por qué te preguntamos esto.** Cada tipo usa un modelo legal distinto, aprobado por Legal. Elegir mal significa generar el documento equivocado.
+
+| | |
+|---|---|
+| Campo interno | `tipo` |
+| Paso | Campaña |
+| Tipo de control | tarjetas |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el tipo de campaña.
+
+### ¿En qué ciudades?
+
+> Sepáralas con comas. Por ejemplo: Bogotá, Medellín, Cali.
+
+**Por qué te preguntamos esto.** Las ciudades salen escritas tal cual en la cláusula de cobertura. Si falta una, el usuario de esa ciudad no puede reclamar.
+
+| | |
+|---|---|
+| Campo interno | `ciudades` |
+| Paso | Campaña |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | Bogotá, Medellín, Cali |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_TERRITORIO` |
+
+**Sugerencias clicables:** Bogotá, Medellín, Cali, Barranquilla, Bucaramanga, Cúcuta
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe al menos una ciudad, o vuelve y elige cobertura nacional.
+
+## Paso: Cuándo
+
+### ¿Qué día arranca la campaña?
+
+> Puede ser hoy. Publica los T&C antes de que arranque.
+
+**Por qué te preguntamos esto.** Los Términos y Condiciones tienen que estar publicados antes de que la campaña empiece. Si arrancó ayer, ya no se pueden publicar a tiempo.
+
+| | |
+|---|---|
+| Campo interno | `fechaInicio` |
+| Paso | Cuándo |
+| Tipo de control | fecha |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `FECHA_INICIO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el día en que arranca la campaña.
+- `pasado`: Esa fecha ya pasó. Los T&C se publican antes de que la campaña empiece, así que elige hoy o un día futuro.
+
+**Aviso:** Faltan menos de 48 horas. Alcanzas, pero publica los T&C hoy mismo.
+
+### ¿A qué hora arranca?
+
+> Por defecto arranca a medianoche.
+
+**Por qué te preguntamos esto.** La hora exacta define desde cuándo un pedido cuenta para la campaña. Un pedido un minuto antes no da beneficio.
+
+| | |
+|---|---|
+| Campo interno | `horaInicio` |
+| Paso | Cuándo |
+| Tipo de control | hora |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 00:00 |
+| Avanza sola | no |
+| Llena en el documento | `HORA_INICIO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige la hora de inicio.
+
+### ¿A qué hora termina?
+
+> Por defecto termina a las 11:59 de la noche.
+
+**Por qué te preguntamos esto.** Define hasta qué minuto cuenta un pedido. Los pedidos posteriores se procesan como pedidos normales.
+
+| | |
+|---|---|
+| Campo interno | `horaFin` |
+| Paso | Cuándo |
+| Tipo de control | hora |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 23:59 |
+| Avanza sola | no |
+| Llena en el documento | `HORA_FIN` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige la hora de fin.
+- `orden`: La hora de fin tiene que ser después de la de inicio: la campaña es de un solo día.
+
+## Paso: Beneficio
+
+### ¿En cuántos minutos prometes la entrega?
+
+> El ETA que el usuario ve en la app al hacer la orden. Las campañas publicadas usan quince minutos.
+
+**Por qué te preguntamos esto.** Este número es la promesa: si la orden llega después, Rappi paga el Cashback. Sale escrito en letras y en cifra en tres cláusulas del documento.
+
+| | |
+|---|---|
+| Campo interno | `etaMinutos` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 15 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_ETA` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe en cuántos minutos prometes la entrega.
+- `rango`: El ETA tiene que estar entre 1 y 240 minutos.
+
+### ¿Qué porcentaje del pedido devuelves en Créditos?
+
+> Solo el número. Con 20, un pedido de $50.000 recibe $10.000 en Créditos.
+
+**Por qué te preguntamos esto.** Es la promesa central de la campaña. Una vez publicado, el usuario puede exigir exactamente ese porcentaje.
+
+| | |
+|---|---|
+| Campo interno | `porcentaje` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 99 |
+| Avanza sola | no |
+| Llena en el documento | `PORCENTAJE` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el porcentaje que devuelves, sin el signo de porcentaje.
+- `rango`: El porcentaje va de 1 a 100. Si necesitas varios porcentajes o un rango, eso es otra campaña: escríbele a Legal.
+
+### ¿Qué es lo máximo que recibe alguien por pedido?
+
+> Aunque el pedido sea grande, no recibe más de esto. Lo más usado es 25.000.
+
+**Por qué te preguntamos esto.** Sin tope, un pedido enorme se lleva el presupuesto entero. El tope es lo que hace que un cashback del 99% sea viable.
+
+| | |
+|---|---|
+| Campo interno | `tope` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 25000 |
+| Avanza sola | no |
+| Llena en el documento | `TOPE` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el máximo de Créditos que recibe una persona por pedido.
+- `cero`: El tope tiene que ser mayor que cero.
+- `mayorQuePresupuesto`: El tope por pedido es mayor que el presupuesto total. Con eso, el primer pedido se lleva toda la campaña. Revisa los dos números.
+
+### ¿Cuánto es el presupuesto total de la campaña?
+
+> Cuando se acabe, la campaña termina sola. Lo habitual va de 5 a 40 millones.
+
+**Por qué te preguntamos esto.** El documento dice que la campaña termina al agotarse el presupuesto. Es lo que te protege si el consumo se dispara.
+
+| | |
+|---|---|
+| Campo interno | `presupuesto` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 20000000 |
+| Avanza sola | no |
+| Llena en el documento | `PRESUPUESTO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el presupuesto total de la campaña.
+- `cero`: El presupuesto tiene que ser mayor que cero.
+
+### ¿Cuántas veces puede ganar la misma persona?
+
+> La mitad de las campañas permite una sola vez por usuario.
+
+**Por qué te preguntamos esto.** Sin límite, unos pocos usuarios pueden consumir el presupuesto en horas. Con límite, el beneficio llega a más gente.
+
+| | |
+|---|---|
+| Campo interno | `maxPedidos` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 1 |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_LIMITE_PEDIDOS` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Una sola vez**: Lo más común. El segundo pedido ya no da beneficio.
+- **Varias veces**: Tú dices cuántas.
+- **Sin límite**: Solo lo frena el presupuesto.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos cuántas veces puede ganar la misma persona.
+- `cuantas`: Escribe cuántos pedidos con beneficio puede hacer una persona.
+- `rango`: Tiene que ser al menos un pedido.
+
+### sinLimite
+
+No tiene pregunta propia: se responde dentro de **maxPedidos**.
+
+## Paso: Créditos
+
+### ¿Cuándo le llegan los Créditos?
+
+> Es el momento en que el saldo le queda disponible en la Billetera.
+
+**Por qué te preguntamos esto.** El documento fija en qué momento el usuario recibe los Créditos, y eso es lo que el usuario va a esperar. Elige lo que el equipo de operaciones puede cumplir.
+
+| | |
+|---|---|
+| Campo interno | `carga` |
+| Paso | Créditos |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | dia_siguiente |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_CARGA`, `TEXTO_VERIFICACION` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Al día siguiente del pedido**: Lo más usado.
+- **Apenas termina el pedido**: Inmediato, sin verificación previa.
+- **En una fecha específica**: Todos reciben el mismo día.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos cuándo le llegan los Créditos al usuario.
+
+### ¿Qué día les cargas los Créditos?
+
+> Tiene que ser durante la campaña o después, nunca antes.
+
+**Por qué te preguntamos esto.** Es la fecha que el usuario va a esperar. Si no se cumple, entra un reclamo.
+
+| | |
+|---|---|
+| Campo interno | `fechaCarga` |
+| Paso | Créditos |
+| Tipo de control | fecha |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_CARGA` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el día de la carga.
+- `antes`: La carga no puede ser antes de que arranque la campaña.
+
+### ¿Hasta cuándo puede usar esos Créditos?
+
+> Casi todos ponen una fecha límite concreta.
+
+**Por qué te preguntamos esto.** Los Créditos se vencen y eso tiene que estar escrito. Si no lo dices, el usuario puede sostener que no vencen.
+
+| | |
+|---|---|
+| Campo interno | `vigencia` |
+| Paso | Créditos |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_VIGENCIA_CREDITOS` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Hasta una fecha**: Todos vencen el mismo día.
+- **Durante unos días**: Cuenta desde que le llegan a cada uno.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos hasta cuándo sirven los Créditos.
+
+### ¿Cuántos días le duran?
+
+> Los valores que más se usan son 5, 7 y 30 días.
+
+**Por qué te preguntamos esto.** Se cuentan desde el día en que le llegan. Muy pocos días y el usuario no alcanza a usarlos, y eso genera reclamos.
+
+| | |
+|---|---|
+| Campo interno | `diasVigencia` |
+| Paso | Créditos |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 30 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_VIGENCIA_CREDITOS` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe cuántos días duran los Créditos.
+- `rango`: Los días van de 1 a 365.
+
+### ¿Qué día se vencen los Créditos?
+
+> Tiene que ser después de que termine la campaña.
+
+**Por qué te preguntamos esto.** Si vencen el mismo día que termina la campaña, quien compra el último día no alcanza a usarlos.
+
+| | |
+|---|---|
+| Campo interno | `fechaFinRedencion` |
+| Paso | Créditos |
+| Tipo de control | fecha |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_VIGENCIA_CREDITOS` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el día en que se vencen los Créditos.
+- `orden`: Los Créditos tienen que vencerse después de que termine la campaña. Si no, quien compre el último día no alcanza a usarlos.
+
+### ¿En qué secciones NO se pueden redimir los Créditos?
+
+> Opcional. Marca las que queden por fuera. Las campañas publicadas excluyen Rappi Travel, SOAT, Cajero ATM y Rappi Favor.
+
+**Por qué te preguntamos esto.** El documento dice dónde se puede gastar el saldo. Una sección que no esté excluida aquí queda habilitada, y después no se puede cerrar.
+
+| | |
+|---|---|
+| Campo interno | `exclusionesEta` |
+| Paso | Créditos |
+| Tipo de control | casillas |
+| Obligatorio | no |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_LUGAR_REDENCION` |
+
+**Opciones** (casillas, se pueden marcar varias):
+
+- **Rappi Travel**: Vuelos, hoteles, autos y paquetes.
+- **Seguro Soat**: El seguro obligatorio de vehículos.
+- **Cajero ATM**: El retiro de efectivo.
+- **Rappi Favor**: Los mandados y diligencias.
+
+**Mensajes de validación:**
+
+- `vacio`: Marca las secciones excluidas, o sigue sin marcar ninguna.
+
+## Paso: Participantes
+
+### ¿Con qué puede pagar?
+
+> Con "todos" entran tarjetas, billeteras y efectivo donde exista.
+
+**Por qué te preguntamos esto.** Restringir el medio de pago cambia quién puede participar. Los pedidos pagados con Créditos nunca dan beneficio.
+
+| | |
+|---|---|
+| Campo interno | `metodoPago` |
+| Paso | Participantes |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | todos |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_METODO_PAGO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Con cualquier medio de pago**: Lo más común.
+- **Con todo menos efectivo**: Tarjetas y billeteras sí, efectivo no.
+- **Solo con RappiCard**: Únicamente la tarjeta de Rappi.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos con qué puede pagar el usuario.
+
+## Paso: Revisar
+
+### Confirma que la información es correcta
+
+> Confirmo que la información es veraz y corresponde a la campaña aprobada.
+
+**Por qué te preguntamos esto.** El documento se genera con lo que escribiste y se publica tal cual. Nadie de Legal lo revisa antes.
+
+| | |
+|---|---|
+| Campo interno | `declaracion` |
+| Paso | Revisar |
+| Tipo de control | casilla |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+
+**Mensajes de validación:**
+
+- `vacio`: Marca la casilla para confirmar que la información es correcta.
+
+---
+
+# Promoção Brasil
+
+Descuento en porcentaje, envío gratis o tarifa de servicio gratis en una tienda aliada de Brasil. El usuario ve el beneficio aplicado al pagar, no recibe Créditos. Solo para Brasil.
+
+## Filtro de entrada
+
+Antes del formulario. Si responde **sí** a cualquiera, no se genera: se muestra
+la pantalla "Esta campaña la redacta Legal" con la razón y el enlace al
+formulario manual.
+
+
+## Paso: Campaña
+
+### ¿En qué país corre la campaña?
+
+> Si tu país no aparece en la lista, todavía no está habilitado.
+
+**Por qué te preguntamos esto.** Cada país tiene su propia entidad legal de Rappi, su moneda y su autoridad de protección al consumidor. El documento cambia completo según el país.
+
+| | |
+|---|---|
+| Campo interno | `pais` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `PAIS_LEGAL`, `ENTIDAD_LEGAL` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el país de la campaña.
+
+### ¿La campaña es de Rappi o de Rappi Travel?
+
+> Rappi es el domicilio de siempre. Rappi Travel son vuelos, hoteles, autos y paquetes.
+
+**Por qué te preguntamos esto.** Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.
+
+| | |
+|---|---|
+| Campo interno | `negocio` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | rappi |
+| Avanza sola | sí |
+
+**Opciones** (botones grandes, una sola):
+
+- **Rappi**: Restaurantes, supermercados, farmacias y todo lo que llega a domicilio.
+- **Rappi Travel**: Vuelos, hoteles, autos, paquetes, tours y asistencia al viajero.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si la campaña es de Rappi o de Rappi Travel.
+
+### ¿Qué tipo de campaña vas a hacer?
+
+> Elige el que se parezca a tu campaña. Cada opción dice de qué se trata.
+
+**Por qué te preguntamos esto.** Cada tipo usa un modelo legal distinto, aprobado por Legal. Elegir mal significa generar el documento equivocado.
+
+| | |
+|---|---|
+| Campo interno | `tipo` |
+| Paso | Campaña |
+| Tipo de control | tarjetas |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el tipo de campaña.
+
+### ¿En qué tienda aplica?
+
+> La marca comercial como aparece en la app. Por ejemplo: Pollo Dorado.
+
+**Por qué te preguntamos esto.** El documento nombra la tienda y la define como Tienda Participante. Si el nombre no coincide con el de la app, el usuario no la encuentra.
+
+| | |
+|---|---|
+| Campo interno | `tienda` |
+| Paso | Campaña |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | Pollo Dorado |
+| Avanza sola | no |
+| Llena en el documento | `TIENDA` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe la tienda donde aplica la campaña.
+
+## Paso: Cuándo
+
+### ¿Qué día arranca la campaña?
+
+> Puede ser hoy. Publica los T&C antes de que arranque.
+
+**Por qué te preguntamos esto.** Los Términos y Condiciones tienen que estar publicados antes de que la campaña empiece. Si arrancó ayer, ya no se pueden publicar a tiempo.
+
+| | |
+|---|---|
+| Campo interno | `fechaInicio` |
+| Paso | Cuándo |
+| Tipo de control | fecha |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `FECHA_INICIO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el día en que arranca la campaña.
+- `pasado`: Esa fecha ya pasó. Los T&C se publican antes de que la campaña empiece, así que elige hoy o un día futuro.
+
+**Aviso:** Faltan menos de 48 horas. Alcanzas, pero publica los T&C hoy mismo.
+
+### ¿A qué hora arranca?
+
+> Por defecto arranca a medianoche.
+
+**Por qué te preguntamos esto.** La hora exacta define desde cuándo un pedido cuenta para la campaña. Un pedido un minuto antes no da beneficio.
+
+| | |
+|---|---|
+| Campo interno | `horaInicio` |
+| Paso | Cuándo |
+| Tipo de control | hora |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 00:00 |
+| Avanza sola | no |
+| Llena en el documento | `HORA_INICIO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige la hora de inicio.
+
+### ¿Qué día termina?
+
+> La mayoría de los cashback duran un solo día. Te la dejamos igual a la de inicio.
+
+**Por qué te preguntamos esto.** Después de esta fecha la campaña no da beneficio. También se usa para calcular hasta cuándo sirven los Créditos.
+
+| | |
+|---|---|
+| Campo interno | `fechaFin` |
+| Paso | Cuándo |
+| Tipo de control | fecha |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `FECHA_FIN` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el día en que termina la campaña.
+- `orden`: La campaña no puede terminar antes de empezar. Revisa la fecha y la hora de fin.
+
+### ¿A qué hora termina?
+
+> Por defecto termina a las 11:59 de la noche.
+
+**Por qué te preguntamos esto.** Define hasta qué minuto cuenta un pedido. Los pedidos posteriores se procesan como pedidos normales.
+
+| | |
+|---|---|
+| Campo interno | `horaFin` |
+| Paso | Cuándo |
+| Tipo de control | hora |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 23:59 |
+| Avanza sola | no |
+| Llena en el documento | `HORA_FIN` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige la hora de fin.
+- `orden`: La hora de fin tiene que ser después de la de inicio: la campaña es de un solo día.
+
+## Paso: Beneficio
+
+### ¿Qué recibe el usuario?
+
+> Las cuatro formas que Legal Brasil tiene aprobadas. Cada una cambia una sola frase del documento.
+
+**Por qué te preguntamos esto.** De aquí salen el párrafo de apertura y la viñeta que describe el beneficio. Es lo único que distingue los cuatro modelos aprobados entre sí.
+
+| | |
+|---|---|
+| Campo interno | `beneficioBr` |
+| Paso | Beneficio |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_BENEFICIO_APERTURA`, `TEXTO_BENEFICIO_REGRA` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Desconto % OFF**: Un porcentaje de descuento sobre el pedido, con tope en reales.
+- **Frete grátis**: El envío sin costo, hasta el tope que definas.
+- **Taxa de serviço grátis**: La tarifa de servicio sin costo. Los documentos aprobados no le ponen tope.
+- **Taxa de serviço e frete grátis**: Las dos cosas juntas. Es la única que los documentos aprobados usan sin mínimo de compra.
+
+**Mensajes de validación:**
+
+- `vacio`: Elige qué recibe el usuario.
+
+### ¿Qué porcentaje del pedido devuelves en Créditos?
+
+> Solo el número. Con 20, un pedido de $50.000 recibe $10.000 en Créditos.
+
+**Por qué te preguntamos esto.** Es la promesa central de la campaña. Una vez publicado, el usuario puede exigir exactamente ese porcentaje.
+
+| | |
+|---|---|
+| Campo interno | `porcentaje` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 99 |
+| Avanza sola | no |
+| Llena en el documento | `PORCENTAJE` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el porcentaje que devuelves, sin el signo de porcentaje.
+- `rango`: El porcentaje va de 1 a 100. Si necesitas varios porcentajes o un rango, eso es otra campaña: escríbele a Legal.
+
+### ¿Qué es lo máximo que recibe alguien por pedido?
+
+> Aunque el pedido sea grande, no recibe más de esto. Lo más usado es 25.000.
+
+**Por qué te preguntamos esto.** Sin tope, un pedido enorme se lleva el presupuesto entero. El tope es lo que hace que un cashback del 99% sea viable.
+
+| | |
+|---|---|
+| Campo interno | `tope` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 25000 |
+| Avanza sola | no |
+| Llena en el documento | `TOPE` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el máximo de Créditos que recibe una persona por pedido.
+- `cero`: El tope tiene que ser mayor que cero.
+- `mayorQuePresupuesto`: El tope por pedido es mayor que el presupuesto total. Con eso, el primer pedido se lleva toda la campaña. Revisa los dos números.
+
+### ¿Cuántas veces puede ganar la misma persona?
+
+> La mitad de las campañas permite una sola vez por usuario.
+
+**Por qué te preguntamos esto.** Sin límite, unos pocos usuarios pueden consumir el presupuesto en horas. Con límite, el beneficio llega a más gente.
+
+| | |
+|---|---|
+| Campo interno | `maxPedidos` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 1 |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_LIMITE_PEDIDOS` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Una sola vez**: Lo más común. El segundo pedido ya no da beneficio.
+- **Varias veces**: Tú dices cuántas.
+- **Sin límite**: Solo lo frena el presupuesto.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos cuántas veces puede ganar la misma persona.
+- `cuantas`: Escribe cuántos pedidos con beneficio puede hacer una persona.
+- `rango`: Tiene que ser al menos un pedido.
+
+### sinLimite
+
+No tiene pregunta propia: se responde dentro de **maxPedidos**.
+
+### ¿Con qué medios se puede pagar?
+
+> Marca todos los que apliquen. Los cuatro documentos aprobados los enumeran uno por uno.
+
+**Por qué te preguntamos esto.** El documento lista los medios de pago válidos con su nombre. Un medio que no esté en la lista no da derecho al beneficio.
+
+| | |
+|---|---|
+| Campo interno | `metodosPagoBr` |
+| Paso | Beneficio |
+| Tipo de control | casillas |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_METODO_PAGO` |
+
+**Opciones** (casillas, se pueden marcar varias):
+
+- **Dinheiro**: Efectivo.
+- **Paypal**: La cuenta de PayPal del usuario.
+- **RappiPay**: El medio de pago propio de Rappi.
+- **Cartão de crédito Visa**: Tarjeta de crédito Visa.
+- **Cartão de crédito Mastercard**: Tarjeta de crédito Mastercard.
+- **Voucher Refeição**: Vale de comida.
+
+**Mensajes de validación:**
+
+- `vacio`: Marca al menos un medio de pago.
+
+## Paso: Participantes
+
+### ¿Hay que gastar un mínimo para participar?
+
+> Es opcional: si no exiges un mínimo, deja el campo vacío y sigue.
+
+**Por qué te preguntamos esto.** Si lo exiges, tiene que quedar escrito. Si no aparece en el documento, no lo puedes aplicar después.
+
+| | |
+|---|---|
+| Campo interno | `compraMinima` |
+| Paso | Participantes |
+| Tipo de control | numero |
+| Obligatorio | no |
+| Ejemplo | 100000 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_MINIMO_COMPRA`, `TEXTO_UMBRAL` |
+
+**Mensajes de validación:**
+
+- `cero`: Si no quieres exigir un mínimo, deja el campo vacío.
+
+## Paso: Revisar
+
+### Confirma que la información es correcta
+
+> Confirmo que la información es veraz y corresponde a la campaña aprobada.
+
+**Por qué te preguntamos esto.** El documento se genera con lo que escribiste y se publica tal cual. Nadie de Legal lo revisa antes.
+
+| | |
+|---|---|
+| Campo interno | `declaracion` |
+| Paso | Revisar |
+| Tipo de control | casilla |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+
+**Mensajes de validación:**
+
+- `vacio`: Marca la casilla para confirmar que la información es correcta.
+
+---
+
 # Cashback Multitienda
 
 Varias tiendas hacen cashback dentro de una misma jornada comercial. Cada tienda pone su porcentaje, su tope y su presupuesto, y cada una organiza lo suyo.
@@ -3580,6 +4408,7 @@ formulario manual.
 **Mensajes de validación:**
 
 - `vacio`: Elige la hora de fin.
+- `orden`: La hora de fin tiene que ser después de la de inicio: la campaña es de un solo día.
 
 ## Paso: Beneficio
 
@@ -3652,6 +4481,7 @@ formulario manual.
 
 - `vacio`: Dinos cuántas veces puede ganar la misma persona.
 - `cuantas`: Escribe cuántos pedidos con beneficio puede hacer una persona.
+- `rango`: Tiene que ser al menos un pedido.
 
 ### sinLimite
 
@@ -3693,7 +4523,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | Obligatorio | sí, cuando se ve |
 | Valor por defecto | dia_siguiente |
 | Avanza sola | sí |
-| Llena en el documento | `TEXTO_CARGA` |
+| Llena en el documento | `TEXTO_CARGA`, `TEXTO_VERIFICACION` |
 
 **Opciones** (botones grandes, una sola):
 
@@ -3992,6 +4822,19 @@ la pregunta que lo llena. Estos son los nombres:
 
 | En el modelo | Dice en pantalla |
 |---|---|
+| `TEXTO_ETA` | el tiempo de entrega prometido |
+| `TEXTO_CIUDAD_ETA` | la ciudad |
+| `TEXTO_LIMITE_ORDENES` | el máximo de órdenes por persona |
+| `MODALIDAD_TURBO` | la modalidad del botón turbo |
+| `URL_TC_TURBO` | el enlace de los términos del botón turbo |
+| `ID_FISCAL` | la identificación de la empresa |
+| `DOMICILIO_LEGAL` | el domicilio de la empresa |
+| `PAIS_LEGAL` | el país |
+| `TEXTO_MINIMO_APERTURA` | el mínimo de compra |
+| `TEXTO_BENEFICIO_APERTURA` | qué recibe el usuario, con su porcentaje si es desconto |
+| `TEXTO_BENEFICIO_REGRA` | la regla del beneficio |
+| `TEXTO_TOPE_BENEFICIO` | el tope del beneficio |
+| `PARCEIRO` | el parceiro |
 | `TEXTO_PRODUCTOS_TRAVEL` | las categorías que participan |
 | `TEXTO_AMBITO_TRAVEL` | si los viajes son nacionales o internacionales |
 | `TEXTO_DESTINOS_TRAVEL` | los destinos |
@@ -4007,6 +4850,7 @@ la pregunta que lo llena. Estos son los nombres:
 | `TEXTO_LIMITE_CAMPANA_TRAVEL` | el límite total de la campaña |
 | `TEXTO_CONTEO_IDA_REGRESO_TRAVEL` | cómo cuenta una compra de ida y regreso |
 | `TEXTO_CARGA_TRAVEL` | cuándo llegan los Créditos |
+| `TEXTO_VERIFICACION_TRAVEL` | cómo se verifica la elegibilidad de la orden |
 | `TEXTO_REDENCION_TRAVEL` | dónde se pueden usar los Créditos |
 | `TEXTO_DESCUENTO_TRAVEL` | en qué consiste el descuento |
 | `TEXTO_SEGUN_PRODUCTO_TRAVEL` | si el descuento cambia según el producto |
@@ -4046,6 +4890,7 @@ la pregunta que lo llena. Estos son los nombres:
 | `TOPE` | el tope por pedido |
 | `PRESUPUESTO` | el presupuesto |
 | `TEXTO_CARGA` | cuándo llegan los Créditos |
+| `TEXTO_VERIFICACION` | cómo se verifica la elegibilidad del pedido |
 | `TEXTO_VIGENCIA_CREDITOS` | hasta cuándo sirven |
 | `TEXTO_LUGAR_REDENCION` | dónde se gastan |
 | `TEXTO_PRODUCTOS` | qué productos participan |
