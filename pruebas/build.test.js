@@ -168,3 +168,62 @@ test('el build se niega si dos archivos se llaman igual salvo por mayúsculas', 
   assert.throws(() => revisarColisionesDeNombre(['core/Secciones.js', 'server/secciones.js']), /mayusculas/);
   assert.doesNotThrow(() => revisarColisionesDeNombre(['core/a.js', 'server/b.js']));
 });
+
+/**
+ * Un alias de require que se llama distinto al global queda sin definir.
+ *
+ * Los archivos de src/core/ comparten un solo ámbito en Apps Script y en el
+ * navegador. La línea `var formatearFecha = require('./fechas.js').formatearFecha`
+ * no se ejecuta ahí, pero no hace daño: `var` vuelve a declarar un nombre que ya
+ * existe sin pisarle el valor, así que sigue apuntando a la función global.
+ *
+ * Lo que sí hace daño es ponerle otro nombre. `var formatearFechaLey = require(...)`
+ * crea un nombre nuevo que nadie asigna nunca, y la primera llamada revienta con
+ * "no es una función". En Node pasa, en npm test pasa, y revienta al abrir la
+ * demostración o en producción.
+ *
+ * Pasó de verdad al construir las leyendas: nueve alias con sufijo, y la
+ * pantalla final se quedó sin leyendas con "tieneValorLey is not a function".
+ */
+/** Los bloques `if (typeof module !== 'undefined' ...) { ... }` de un archivo. */
+function bloquesDeRequire(texto) {
+  const bloques = [];
+  const marca = /if \(typeof module !== 'undefined'[^)]*\) \{/g;
+  let encontrado;
+  while ((encontrado = marca.exec(texto)) !== null) {
+    let nivel = 1;
+    let i = encontrado.index + encontrado[0].length;
+    const desde = i;
+    while (i < texto.length && nivel > 0) {
+      if (texto[i] === '{') nivel += 1;
+      else if (texto[i] === '}') nivel -= 1;
+      i += 1;
+    }
+    bloques.push(texto.slice(desde, i));
+  }
+  return bloques;
+}
+
+test('ningún archivo de core renombra lo que importa de otro archivo de core', () => {
+  const carpeta = rutaDesdeRaiz('src', 'core');
+  const renombrados = [];
+
+  for (const archivo of listarArchivos(carpeta, '.js')) {
+    const texto = leerTexto(path.join(carpeta, archivo));
+
+    // Solo dentro del bloque que Node ejecuta y Apps Script no. Fuera de él,
+    // "var inicio = entrada.fechaInicio" es una variable local cualquiera.
+    for (const bloque of bloquesDeRequire(texto)) {
+      const patron = /\bvar\s+(\w+)\s*=\s*(?:require\([^)]*\)|\w+)\.(\w+)\s*;/g;
+      let encontrado;
+      while ((encontrado = patron.exec(bloque)) !== null) {
+        const alias = encontrado[1];
+        const original = encontrado[2];
+        if (alias !== original) renombrados.push(archivo + ': ' + alias + ' debería llamarse ' + original);
+      }
+    }
+  }
+
+  assert.deepStrictEqual(renombrados, [],
+    'estos alias quedan sin definir fuera de Node:\n  ' + renombrados.join('\n  '));
+});

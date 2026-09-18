@@ -19,12 +19,12 @@ const { cargarLeyendas, cargarModelos } = require('../scripts/lib/modelos');
 // los esquemas, porque la visibilidad de la pregunta sale de él.
 usarCatalogo(cargarLeyendas());
 
+const { camposVisibles } = require('../src/core/esquemas.js');
 const {
-  camposVisibles,
   categoriaPideRegistro,
   categoriaPideInvima,
   CATEGORIAS_CON_REGISTRO,
-} = require('../src/core/esquemas.js');
+} = require('../src/core/leyendas.js');
 const { PREGUNTAS, PASOS } = require('../src/core/preguntas.js');
 const { validarSolicitud } = require('../src/core/validaciones.js');
 const { generarTexto, generarLeyendasDeLaCampana } = require('../src/core/generar.js');

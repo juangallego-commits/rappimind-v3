@@ -402,7 +402,15 @@ async function capturarTodo() {
     await capturar(21, { porQue: true });
 
     await escribir('30000');
-    await clic('Revisar y generar');
+    // Con la pregunta de la categoria detras, el boton de la compra minima dice
+    // "Siguiente"; sin ella decia "Revisar y generar". Se aceptan los dos para
+    // que esta captura no dependa de cuantas preguntas queden.
+    await clic(['Siguiente', 'Revisar y generar']);
+    // La categoria del producto es ahora la ultima pregunta del formulario:
+    // decide la leyenda de la pieza publicitaria, no el T&C. Al elegirla el
+    // asistente avanza solo, y como es la ultima, avanza al resumen.
+    await elegirOpcion('Licores y cervezas');
+    await pagina.waitForTimeout(500);
     await capturar(22);
 
     await pagina.click('#declaracion');

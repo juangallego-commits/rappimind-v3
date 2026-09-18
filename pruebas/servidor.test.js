@@ -1136,3 +1136,108 @@ test('si Juan vuelve a poner un país en piloto, setup no lo saca otra vez', () 
   assert.strictEqual(paisPorCodigo(leerPaises(), 'MX').estado, 'piloto',
     'setup reabrió un país que Juan había cerrado a mano');
 });
+
+// --- Las leyendas de las piezas publicitarias ------------------------------
+
+/**
+ * El camino 4 de la seccion 6 de la respuesta del encargo 03, que Juan aprobo
+ * el 18 de septiembre: enlace previsto y confirmado.
+ *
+ * Al generar, la herramienta arma la direccion donde va a quedar publicado el
+ * T&C y entrega las leyendas completas con esa direccion, marcadas "enlace por
+ * confirmar". Cuando el comercial pega el enlace publicado, se comparan: si es
+ * distinto, las leyendas se rehacen con el real y hay que cambiar el arte.
+ */
+test('generar entrega las leyendas con el enlace previsto', () => {
+  conSetup();
+  const resultado = generar(solicitudValida());
+
+  assert.ok(resultado.valido, JSON.stringify(resultado.errores));
+  assert.ok(resultado.leyendas, 'la respuesta no trae leyendas');
+  assert.strictEqual(resultado.leyendas.hay, true);
+  assert.strictEqual(resultado.leyendas.enlaceConfirmado, false);
+  assert.ok(resultado.leyendas.enlacePrevisto.indexOf('https://promos.rappi.com/colombia/') === 0,
+    resultado.leyendas.enlacePrevisto);
+
+  const formatos = resultado.leyendas.leyendas.map((l) => l.formato);
+  assert.deepStrictEqual(formatos, ['texto_apoyo', 'letra_pequena', 'banner_corto', 'exterior']);
+  for (const leyenda of resultado.leyendas.leyendas) {
+    assert.ok(leyenda.texto.indexOf(resultado.leyendas.enlacePrevisto) !== -1 || leyenda.formato === 'texto_apoyo',
+      leyenda.formato + ' no lleva el enlace: ' + leyenda.texto);
+    assert.strictEqual(/\{\{|\[\[/.test(leyenda.texto), false, leyenda.formato + ': ' + leyenda.texto);
+  }
+});
+
+test('pegar un enlace distinto rehace las leyendas y lo dice', () => {
+  conSetup();
+  const generado = generar(solicitudValida());
+  const previsto = generado.leyendas.enlacePrevisto;
+
+  const publicado = 'https://promos.rappi.com/colombia/2026/9/20/otra-direccion';
+  const respuesta = marcarPublicado(generado.id, publicado);
+
+  assert.ok(respuesta.valido, JSON.stringify(respuesta.errores));
+  assert.ok(respuesta.leyendas, 'al publicar no se rehicieron las leyendas');
+  assert.strictEqual(respuesta.leyendas.enlaceConfirmado, true);
+  assert.strictEqual(respuesta.leyendas.enlaceCambio, true);
+
+  const letra = respuesta.leyendas.leyendas.filter((l) => l.formato === 'letra_pequena')[0];
+  assert.ok(letra.texto.indexOf(publicado) !== -1, letra.texto);
+  assert.strictEqual(letra.texto.indexOf(previsto), -1, 'quedó el enlace viejo: ' + letra.texto);
+});
+
+test('si el enlace publicado es el previsto, la leyenda no cambia', () => {
+  conSetup();
+  const generado = generar(solicitudValida());
+  const respuesta = marcarPublicado(generado.id, generado.leyendas.enlacePrevisto);
+
+  assert.strictEqual(respuesta.leyendas.enlaceCambio, false);
+  assert.strictEqual(respuesta.leyendas.enlaceConfirmado, true);
+  const antes = generado.leyendas.leyendas.map((l) => l.texto).join('|');
+  const despues = respuesta.leyendas.leyendas.map((l) => l.texto).join('|');
+  assert.strictEqual(antes, despues, 'la leyenda cambió sin que el enlace cambiara');
+});
+
+/**
+ * Frontera 1: lo que sale del servidor tiene que cruzar google.script.run.
+ *
+ * Solo pasan numeros, textos, booleanos, nulos, listas y objetos hechos de eso.
+ * Una fecha enterrada en cualquier parte de la respuesta se convierte en null y
+ * la pantalla final se queda en blanco, sin ningun error en el registro.
+ */
+test('las leyendas cruzan al navegador sin nada que Apps Script convierta en null', () => {
+  conSetup();
+  const resultado = generar(solicitudValida());
+
+  const revisar = (valor, camino) => {
+    if (valor === null || valor === undefined) return;
+    const tipo = typeof valor;
+    if (tipo === 'string' || tipo === 'number' || tipo === 'boolean') return;
+    if (Object.prototype.toString.call(valor) === '[object Array]') {
+      valor.forEach((v, i) => revisar(v, camino + '[' + i + ']'));
+      return;
+    }
+    assert.strictEqual(Object.prototype.toString.call(valor), '[object Object]',
+      camino + ' es un ' + Object.prototype.toString.call(valor) + ', que no cruza a google.script.run');
+    for (const llave of Object.keys(valor)) revisar(valor[llave], camino + '.' + llave);
+  };
+
+  revisar(resultado.leyendas, 'leyendas');
+});
+
+test('una solicitud sin datos legibles se puede publicar igual, sin leyendas', () => {
+  // Las solicitudes viejas del Sheet no tienen por qué traer un datos_json que
+  // se pueda leer. Marcarlas como publicadas no se puede caer por eso.
+  const mundo = conSetup();
+  const generado = generar(solicitudValida());
+
+  const hoja = hojaPorNombre('Solicitudes');
+  const encabezados = hoja.valores[0];
+  const fila = hoja.valores.findIndex((f) => f[encabezados.indexOf('id')] === generado.id);
+  hoja.valores[fila][encabezados.indexOf('datos_json')] = 'esto no es JSON';
+
+  const respuesta = marcarPublicado(generado.id, 'https://promos.rappi.com/colombia/algo');
+  assert.strictEqual(respuesta.valido, true, JSON.stringify(respuesta.errores));
+  assert.strictEqual(respuesta.leyendas, null);
+  assert.strictEqual(mundo.propiedades ? true : true, true);
+});

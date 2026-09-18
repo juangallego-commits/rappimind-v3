@@ -744,3 +744,64 @@ elige entre dos frases que Legal ya escribió.
     legal puede entrar a probar Ecuador), pero ninguna comprobación la miraba. Se
     agregó una al final de `recorrer-en-portugues.js` que elige Ecuador con la
     interfaz en portugués y confirma que el aviso sale traducido.
+
+## 18 de septiembre · Las leyendas de piezas publicitarias (encargo 03)
+
+35. **El catálogo de leyendas vive en `modelos/leyendas/`, una por archivo.** Son
+    texto legal, así que viven donde vive el texto legal y no dentro del código.
+    Se extrajeron del bloque PARA EL REPOSITORIO de la respuesta sin escribir una
+    sola letra a mano, y hay una prueba que compara letra por letra el
+    repositorio contra la respuesta. Si alguien "mejora" una frase o arregla una
+    tilde, se cae.
+36. **A los complementos se les agregaron dos llaves que la respuesta no traía.**
+    `categoria_id`, que es el identificador estable, y `se_elige_en`, que dice si
+    la categoría se pregunta, si sale de que la campaña ya sea de Turbo, o si
+    está en el catálogo pero la herramienta no llega ahí todavía. Son metadatos
+    de la ficha, no texto legal: el cuerpo de cada leyenda quedó intacto.
+37. **Las opciones de la categoría salen del catálogo, no de una lista escrita a
+    mano.** Un país ofrece las categorías para las que tiene leyenda. Agregar la
+    leyenda de una categoría nueva la pone sola en la pregunta, y una categoría
+    sin leyenda no se puede elegir, que es lo correcto porque no tendría nada que
+    imprimir. Es la misma regla que ya usan las columnas del Sheet, que salen de
+    los esquemas.
+38. **El largo máximo lo pone el formato de pieza, no la leyenda.** La respuesta
+    declara un `largo_max` por leyenda, pero la misma leyenda de Carrera sirve
+    para letra pequeña (620) y para banner corto (300). Con un solo número, un
+    banner de Carrera de 500 caracteres pasaba por bueno. Los cinco límites salen
+    de la sección 7C.
+39. **Las tres preguntas de la pieza no bloquean el documento.** El T&C no usa la
+    categoría ni el registro sanitario para nada, así que quien solo quiere su
+    documento lo tiene. Lo que bloquean es la leyenda, y se dice con su razón.
+    Hay una prueba que compara el documento con categoría y sin ella, letra por
+    letra.
+40. **Un marcador que espera una decisión se entrega como pendiente, no como
+    error.** La leyenda de push necesita el enlace corto, que Juan aprobó pero
+    cuya forma exacta no está definida. Si contara como error se caerían con ella
+    las otras cuatro leyendas de la campaña.
+41. **Donde la respuesta no dio frase, no se escribe una.** Si los Créditos se
+    redimen en ciertas secciones, si la campaña es de consumo en el local sin
+    nombre de modalidad, si en Carrera gana quien haga más pedidos, o si falta el
+    registro sanitario de un medicamento, la campaña no entrega leyenda y dice
+    qué falta. Son los insumos 3, 4 y 5 de la lista 3 de la respuesta.
+42. **`dist/LeyendasCatalogo.js` se llama así y no `Leyendas.js`.** Apps Script no
+    distingue mayúsculas en los nombres de archivo y habría pisado a
+    `leyendas.js`, que es el motor. Lo cazó `revisarColisionesDeNombre()`.
+43. **Un alias de `require` que se llama distinto al global queda sin definir
+    fuera de Node, y ahora hay una prueba que lo caza.** Los archivos de
+    `src/core/` comparten un solo ámbito en Apps Script y en el navegador:
+    `var formatearFecha = require('./fechas.js').formatearFecha` no se ejecuta
+    allí, pero no hace daño porque `var` vuelve a declarar un nombre que ya
+    existe sin pisarle el valor. Ponerle otro nombre sí: `var formatearFechaLey`
+    crea un nombre que nadie asigna nunca. Pasó de verdad, con nueve alias, y la
+    pantalla final se quedó sin leyendas con "tieneValorLey is not a function".
+    La prueba nueva de `pruebas/build.test.js` revisa solo dentro del bloque de
+    `require`, porque fuera de él un nombre distinto es una variable local
+    cualquiera.
+44. **Las tres columnas nuevas del país van al final.** `ruta_promos`,
+    `url_tc_pro` y `nombre_modalidad_local`. Mover una columna que ya existe
+    desalinearía todo el histórico. Las tres empiezan vacías salvo en Colombia, y
+    una columna nueva se rellena sola desde la semilla porque la celda está
+    vacía: no hace falta una tanda de confirmaciones.
+45. **La barra de pasos se envuelve en dos filas.** Con seis pasos entraba justa;
+    al entrar el séptimo, "Organizador" y "Cuándo" se leían pegados, como una
+    sola palabra. Solo se vio abriendo el navegador.

@@ -173,8 +173,11 @@ button { font-size: 15px; cursor: pointer; }
 
 .progreso-compacto { display: none; }
 
-.progreso { display: flex; gap: var(--e1); margin: 0 0 var(--e6); list-style: none; padding: 0; }
-.progreso li { flex: 1; min-width: 0; }
+/* Los pasos se reparten el ancho, y si no caben pasan a una segunda fila.
+   Con seis pasos entraban justos; al entrar el de la pieza publicitaria, el
+   septimo, "Organizador" y "Cuando" se leian pegados, como una sola palabra. */
+.progreso { display: flex; flex-wrap: wrap; gap: var(--e1) var(--e3); margin: 0 0 var(--e6); list-style: none; padding: 0; }
+.progreso li { flex: 1 1 auto; min-width: 82px; }
 .progreso button {
   width: 100%; text-align: left; background: none; border: 0;
   padding: var(--e2) 0 var(--e2);

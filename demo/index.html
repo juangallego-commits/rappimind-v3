@@ -194,8 +194,11 @@ button { font-size: 15px; cursor: pointer; }
 
 .progreso-compacto { display: none; }
 
-.progreso { display: flex; gap: var(--e1); margin: 0 0 var(--e6); list-style: none; padding: 0; }
-.progreso li { flex: 1; min-width: 0; }
+/* Los pasos se reparten el ancho, y si no caben pasan a una segunda fila.
+   Con seis pasos entraban justos; al entrar el de la pieza publicitaria, el
+   septimo, "Organizador" y "Cuando" se leian pegados, como una sola palabra. */
+.progreso { display: flex; flex-wrap: wrap; gap: var(--e1) var(--e3); margin: 0 0 var(--e6); list-style: none; padding: 0; }
+.progreso li { flex: 1 1 auto; min-width: 82px; }
 .progreso button {
   width: 100%; text-align: left; background: none; border: 0;
   padding: var(--e2) 0 var(--e2);
@@ -2891,18 +2894,19 @@ if (typeof module !== 'undefined') {
 /* En Node las dependencias se cargan con require; en Apps Script ya son globales. */
 if (typeof module !== 'undefined' && typeof require === 'function') {
   var moduloNumerosLey = require('./numeros.js');
-  var formatearMilesLey = moduloNumerosLey.formatearMiles;
+  var formatearMiles = moduloNumerosLey.formatearMiles;
 
   var moduloFechasLey = require('./fechas.js');
-  var formatearFechaLey = moduloFechasLey.formatearFecha;
-  var formatearHoraLey = moduloFechasLey.formatearHora;
-  var partesDeFechaLey = moduloFechasLey.partesDeFecha;
-  var listaYLey = moduloFechasLey.listaY;
-  var separarPorComasLey = moduloFechasLey.separarPorComas;
+  var formatearFecha = moduloFechasLey.formatearFecha;
+  var formatearHora = moduloFechasLey.formatearHora;
+  var partesDeFecha = moduloFechasLey.partesDeFecha;
+  var listaY = moduloFechasLey.listaY;
+  var separarPorComas = moduloFechasLey.separarPorComas;
 
-  var tieneValorLey = require('./texto.js').tieneValor;
-  var direccionDeCampanaLey = require('./nombres.js').direccionDeCampana;
-  var SECCIONES_EXCLUIBLES_ETA_LEY = require('./derivados_eta.js').SECCIONES_EXCLUIBLES_ETA;
+  var tieneValor = require('./texto.js').tieneValor;
+  var direccionDeCampana = require('./nombres.js').direccionDeCampana;
+  var SECCIONES_EXCLUIBLES_ETA = require('./derivados_eta.js').SECCIONES_EXCLUIBLES_ETA;
+  var categoriaPideRegistro = require('./leyendas.js').categoriaPideRegistro;
 }
 
 /** Donde vive el T&C publicado. La ruta del pais sale de la fila del pais. */
@@ -2921,23 +2925,23 @@ var HORA_DE_CIERRE = '23:59';
 
 /** FRAGMENTO: un monto como se escribe en una pieza. "$25.000". */
 function cifraDeMonto(valor, pais) {
-  if (!tieneValorLey(valor)) return '';
+  if (!tieneValor(valor)) return '';
   var entero = Math.trunc(Number(valor));
   if (!isFinite(entero)) return '';
-  return (pais.moneda_simbolo || '') + formatearMilesLey(entero, pais.separador_miles || '.');
+  return (pais.moneda_simbolo || '') + formatearMiles(entero, pais.separador_miles || '.');
 }
 
 /** FRAGMENTO: el porcentaje en cifra. "99%". */
 function cifraDePorcentaje(valor) {
-  if (!tieneValorLey(valor)) return '';
+  if (!tieneValor(valor)) return '';
   return String(Number(valor)) + '%';
 }
 
 // --- La vigencia -----------------------------------------------------------
 
 function esDiaCompleto(horaInicio, horaFin) {
-  return (!tieneValorLey(horaInicio) || horaInicio === HORA_DE_ARRANQUE) &&
-    (!tieneValorLey(horaFin) || horaFin === HORA_DE_CIERRE);
+  return (!tieneValor(horaInicio) || horaInicio === HORA_DE_ARRANQUE) &&
+    (!tieneValor(horaFin) || horaFin === HORA_DE_CIERRE);
 }
 
 /**
@@ -2950,25 +2954,25 @@ function esDiaCompleto(horaInicio, horaFin) {
  */
 function textoVigenciaCorta(entrada) {
   var inicio = entrada.fechaInicio;
-  var fin = tieneValorLey(entrada.fechaFin) ? entrada.fechaFin : entrada.fechaInicio;
-  if (!tieneValorLey(inicio)) return '';
+  var fin = tieneValor(entrada.fechaFin) ? entrada.fechaFin : entrada.fechaInicio;
+  if (!tieneValor(inicio)) return '';
 
   var horaInicio = entrada.horaInicio;
   var horaFin = entrada.horaFin;
   var todoElDia = esDiaCompleto(horaInicio, horaFin);
 
   if (inicio === fin) {
-    if (todoElDia) return 'el ' + formatearFechaLey(inicio);
-    return 'el ' + formatearFechaLey(inicio) +
-      ' entre las ' + formatearHoraLey(horaInicio) + ' y las ' + formatearHoraLey(horaFin);
+    if (todoElDia) return 'el ' + formatearFecha(inicio);
+    return 'el ' + formatearFecha(inicio) +
+      ' entre las ' + formatearHora(horaInicio) + ' y las ' + formatearHora(horaFin);
   }
 
   if (!todoElDia) {
-    return 'desde las ' + formatearHoraLey(horaInicio) + ' del ' + formatearFechaLey(inicio) +
-      ' hasta las ' + formatearHoraLey(horaFin) + ' del ' + formatearFechaLey(fin);
+    return 'desde las ' + formatearHora(horaInicio) + ' del ' + formatearFecha(inicio) +
+      ' hasta las ' + formatearHora(horaFin) + ' del ' + formatearFecha(fin);
   }
 
-  return 'del ' + fechaAbreviadaContra(inicio, fin) + ' al ' + formatearFechaLey(fin);
+  return 'del ' + fechaAbreviadaContra(inicio, fin) + ' al ' + formatearFecha(fin);
 }
 
 /**
@@ -2978,11 +2982,11 @@ function textoVigenciaCorta(entrada) {
  * septiembre al 2 de octubre de 2026" entre meses; y con el ano cuando cambia.
  */
 function fechaAbreviadaContra(inicio, fin) {
-  var a = partesDeFechaLey(inicio);
-  var b = partesDeFechaLey(fin);
-  if (!a || !b) return formatearFechaLey(inicio);
+  var a = partesDeFecha(inicio);
+  var b = partesDeFecha(fin);
+  if (!a || !b) return formatearFecha(inicio);
 
-  var completa = formatearFechaLey(inicio);
+  var completa = formatearFecha(inicio);
   if (a.anio !== b.anio) return completa;
   if (a.mes !== b.mes) return completa.replace(/ de \d+$/, '');
   return String(a.dia);
@@ -2996,19 +3000,19 @@ function dondeSeRedimen(entrada, valores) {
   if (entrada.tipo === 'cashback_eta') {
     var nombres = [];
     var elegidas = entrada.exclusionesEta || [];
-    for (var i = 0; i < SECCIONES_EXCLUIBLES_ETA_LEY.length; i++) {
+    for (var i = 0; i < SECCIONES_EXCLUIBLES_ETA.length; i++) {
       for (var e = 0; e < elegidas.length; e++) {
-        if (elegidas[e] === SECCIONES_EXCLUIBLES_ETA_LEY[i].valor) {
-          nombres.push(SECCIONES_EXCLUIBLES_ETA_LEY[i].nombre);
+        if (elegidas[e] === SECCIONES_EXCLUIBLES_ETA[i].valor) {
+          nombres.push(SECCIONES_EXCLUIBLES_ETA[i].nombre);
           break;
         }
       }
     }
     if (nombres.length === 0) return 'en cualquier sección de Rappi habilitada para Créditos';
-    return 'en Rappi, excepto en ' + listaYLey(nombres);
+    return 'en Rappi, excepto en ' + listaY(nombres);
   }
   if (entrada.redencion === 'tienda') {
-    return tieneValorLey(valores.TIENDA) ? 'en ' + valores.TIENDA : '';
+    return tieneValor(valores.TIENDA) ? 'en ' + valores.TIENDA : '';
   }
   if (entrada.redencion === 'general') return 'en cualquier sección de Rappi habilitada para Créditos';
   // "secciones" no tiene frase corta aprobada: es el insumo 5 de la lista 3 de
@@ -3018,22 +3022,22 @@ function dondeSeRedimen(entrada, valores) {
 
 /** FRAGMENTO: hasta cuando se pueden gastar los Creditos, en corto. */
 function cuandoSeRedimen(entrada) {
-  var cargaEnFecha = entrada.carga === 'fecha' && tieneValorLey(entrada.fechaCarga);
+  var cargaEnFecha = entrada.carga === 'fecha' && tieneValor(entrada.fechaCarga);
 
   if (entrada.vigencia === 'dias') {
-    if (!tieneValorLey(entrada.diasVigencia)) return '';
+    if (!tieneValor(entrada.diasVigencia)) return '';
     var dias = 'durante ' + Math.trunc(Number(entrada.diasVigencia)) + ' días';
     return cargaEnFecha
-      ? dias + ' desde el ' + formatearFechaLey(entrada.fechaCarga)
+      ? dias + ' desde el ' + formatearFecha(entrada.fechaCarga)
       : dias + ' desde que los recibes';
   }
 
   if (entrada.vigencia === 'fecha') {
-    if (!tieneValorLey(entrada.fechaFinRedencion)) return '';
+    if (!tieneValor(entrada.fechaFinRedencion)) return '';
     return cargaEnFecha
       ? 'del ' + fechaAbreviadaContra(entrada.fechaCarga, entrada.fechaFinRedencion) +
-        ' al ' + formatearFechaLey(entrada.fechaFinRedencion)
-      : 'hasta el ' + formatearFechaLey(entrada.fechaFinRedencion);
+        ' al ' + formatearFecha(entrada.fechaFinRedencion)
+      : 'hasta el ' + formatearFecha(entrada.fechaFinRedencion);
   }
   return '';
 }
@@ -3063,8 +3067,8 @@ function textoLimiteCorto(entrada) {
   if (entrada.sinLimite || entrada.sinMaxOrdenes) {
     return 'Sin límite de ' + plural + ' por usuario.';
   }
-  var maximo = tieneValorLey(entrada.maxPedidos) ? entrada.maxPedidos : entrada.maxOrdenes;
-  if (!tieneValorLey(maximo)) return '';
+  var maximo = tieneValor(entrada.maxPedidos) ? entrada.maxPedidos : entrada.maxOrdenes;
+  if (!tieneValor(maximo)) return '';
 
   var cantidad = Math.trunc(Number(maximo));
   if (cantidad === 1) {
@@ -3078,22 +3082,22 @@ function textoLimiteCorto(entrada) {
 /** ORACION opcional: las ciudades. Nacional no dice nada. */
 function textoTerritorioCorto(entrada) {
   if (entrada.alcance !== 'Ciudades') return '';
-  var ciudades = separarPorComasLey(entrada.ciudades);
+  var ciudades = separarPorComas(entrada.ciudades);
   if (ciudades.length === 0) return '';
-  return 'Aplica solo en ' + listaYLey(ciudades) + '.';
+  return 'Aplica solo en ' + listaY(ciudades) + '.';
 }
 
 /** ORACION opcional: a quien le sirve la campana. */
 function textoSegmentoCorto(entrada, pais) {
   if (entrada.segmento === 'pro') {
-    if (!tieneValorLey(pais.url_tc_pro)) return '';
+    if (!tieneValor(pais.url_tc_pro)) return '';
     return 'Para acceder debes tener tu membresía Pro o Pro Black activa: ' + pais.url_tc_pro + '.';
   }
   if (entrada.segmento === 'nuevos') {
     return 'Solo para usuarios que hagan su primer pedido en Rappi durante la campaña.';
   }
   if (entrada.segmento === 'reactivados') {
-    if (!tieneValorLey(entrada.diasSinCompra)) return '';
+    if (!tieneValor(entrada.diasSinCompra)) return '';
     return 'Solo para usuarios sin pedidos en Rappi en los ' + Math.trunc(Number(entrada.diasSinCompra)) +
       ' días anteriores al inicio de la campaña.';
   }
@@ -3121,7 +3125,7 @@ function textoCondicionesCorto(entrada, pais) {
   }
   for (var c = 0; c < condiciones.length; c++) {
     if (condiciones[c] === 'consumo_local') {
-      if (!tieneValorLey(pais.nombre_modalidad_local)) return '';
+      if (!tieneValor(pais.nombre_modalidad_local)) return '';
       return 'Válido solo en pedidos por “' + pais.nombre_modalidad_local + '”.';
     }
   }
@@ -3164,13 +3168,13 @@ function listaTiendasCorta(entrada) {
     if (tienda.nacional) {
       nombre += ' (todo el país)';
     } else {
-      var ciudades = separarPorComasLey(tienda.ciudades);
-      if (ciudades.length > 0) nombre += ' (' + listaYLey(ciudades) + ')';
+      var ciudades = separarPorComas(tienda.ciudades);
+      if (ciudades.length > 0) nombre += ' (' + listaY(ciudades) + ')';
     }
     nombres.push(nombre);
   }
 
-  var lista = listaYLey(nombres);
+  var lista = listaY(nombres);
   if (tiendas.length > 5 || lista.length > 200) return 'las tiendas participantes que aparecen en los términos';
   return lista;
 }
@@ -3186,7 +3190,7 @@ function listaTiendasCorta(entrada) {
  */
 function textoGanadoresCorto(entrada) {
   if (entrada.criterioGanador !== 'mayor_valor') return '';
-  var cuantos = tieneValorLey(entrada.numeroGanadores) ? Math.trunc(Number(entrada.numeroGanadores)) : 1;
+  var cuantos = tieneValor(entrada.numeroGanadores) ? Math.trunc(Number(entrada.numeroGanadores)) : 1;
   if (cuantos === 1) return 'Gana el usuario con el mayor valor en compras de los productos participantes.';
   return 'Ganan los ' + cuantos + ' usuarios con el mayor valor en compras de los productos participantes.';
 }
@@ -3237,15 +3241,15 @@ function textoDescuentoTravelCorto(entrada) {
 
 /** FRAGMENTO opcional: cuantas unidades hay con descuento. */
 function textoUnidadesTravel(entrada) {
-  if (entrada.sinUnidades || !tieneValorLey(entrada.unidades)) return '';
+  if (entrada.sinUnidades || !tieneValor(entrada.unidades)) return '';
   return 'las ' + Math.trunc(Number(entrada.unidades)) + ' unidades con descuento';
 }
 
 /** ORACION opcional: el aviso de condiciones de viaje. */
 function textoCondicionesViaje(entrada) {
-  var hayCondiciones = tieneValorLey(entrada.periodoViajeInicio) ||
-    tieneValorLey(entrada.anticipacionDias) ||
-    tieneValorLey(entrada.nochesMinimas) ||
+  var hayCondiciones = tieneValor(entrada.periodoViajeInicio) ||
+    tieneValor(entrada.anticipacionDias) ||
+    tieneValor(entrada.nochesMinimas) ||
     (entrada.fechasExcluidas || []).length > 0;
   if (!hayCondiciones) return '';
   return 'Aplican condiciones de viaje, como fechas y anticipación mínima, descritas en los términos.';
@@ -3263,9 +3267,9 @@ function textoCondicionesViaje(entrada) {
  * seccion 6 de la respuesta, que Juan aprobo el 18 de septiembre.
  */
 function urlDelTcDeLaCampana(entrada, pais, nombreCampana, enlacePublicado) {
-  if (tieneValorLey(enlacePublicado)) return String(enlacePublicado).trim();
-  if (!tieneValorLey(pais.ruta_promos) || !tieneValorLey(nombreCampana)) return '';
-  var direccion = direccionDeCampanaLey(nombreCampana);
+  if (tieneValor(enlacePublicado)) return String(enlacePublicado).trim();
+  if (!tieneValor(pais.ruta_promos) || !tieneValor(nombreCampana)) return '';
+  var direccion = direccionDeCampana(nombreCampana);
   if (!direccion) return '';
   return SITIO_DE_PUBLICACION + pais.ruta_promos + '/' + direccion;
 }
@@ -3302,18 +3306,27 @@ function faltantesParaLaLeyenda(entrada, pais) {
 
   var condiciones = entrada.condiciones || [];
   for (var i = 0; i < condiciones.length; i++) {
-    if (condiciones[i] === 'consumo_local' && !tieneValorLey(pais.nombre_modalidad_local)) {
+    if (condiciones[i] === 'consumo_local' && !tieneValor(pais.nombre_modalidad_local)) {
       faltantes.push('cómo se llama dentro de la app la modalidad de consumo en el local');
     }
   }
 
-  if (entrada.segmento === 'pro' && !tieneValorLey(pais.url_tc_pro)) {
+  if (entrada.segmento === 'pro' && !tieneValor(pais.url_tc_pro)) {
     faltantes.push('el enlace de los términos de RappiPro de este país');
   }
 
   if (entrada.tipo === 'carrera_compras' && entrada.criterioGanador &&
       entrada.criterioGanador !== 'mayor_valor') {
     faltantes.push('cómo se dice en una pieza que gana quien haga más pedidos');
+  }
+
+  // El registro sanitario no bloquea el documento, pero sin el la pieza de un
+  // medicamento o de un fitoterapeutico no se puede publicar (Legal CO,
+  // diapositiva 10). La leyenda lo lleva en un bloque opcional, asi que sin
+  // este aviso desapareceria en silencio y nadie se enteraria.
+  if (categoriaPideRegistro(entrada.categoriaProducto) &&
+      !tieneValor(entrada.registroSanitario)) {
+    faltantes.push('el registro sanitario del producto, que la pieza tiene que mostrar');
   }
 
   return faltantes;
@@ -3364,7 +3377,7 @@ function calcularDerivadosDeLeyendas(entrada, pais, valoresDelDocumento, opcione
 
   // El tiempo prometido y la ciudad del ETA, en la forma corta de la pieza.
   if (entrada.tipo === 'cashback_eta') {
-    cortos.ETA_CORTO = tieneValorLey(entrada.etaMinutos)
+    cortos.ETA_CORTO = tieneValor(entrada.etaMinutos)
       ? Math.trunc(Number(entrada.etaMinutos)) + ' minutos'
       : '';
     cortos.TEXTO_CIUDAD_ETA = String(entrada.ciudades || '').trim();
@@ -4205,30 +4218,12 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var moduloLeyendasEsquemas = require('./leyendas.js');
   var categoriasDeProducto = moduloLeyendasEsquemas.categoriasDeProducto;
   var hayLeyendasDeCampana = moduloLeyendasEsquemas.hayLeyendasDeCampana;
+  var categoriaPideRegistro = moduloLeyendasEsquemas.categoriaPideRegistro;
+  var categoriaPideInvima = moduloLeyendasEsquemas.categoriaPideInvima;
 }
 
 function siempre() {
   return true;
-}
-
-/**
- * Las categorias que obligan a imprimir el registro sanitario en la pieza.
- *
- * Legal CO lo pide para medicamentos y fitoterapeuticos (diapositiva 10). Sin
- * el registro la pieza no se puede publicar, asi que la pregunta es obligatoria
- * y solo aparece cuando aplica.
- */
-var CATEGORIAS_CON_REGISTRO = ['medicamento', 'medicamentos_varios', 'fitoterapeutico_pfm', 'fitoterapeutico_pft'];
-
-/** Solo los medicamentos llevan ademas el numero de notificacion ante el INVIMA. */
-var CATEGORIAS_CON_INVIMA = ['medicamento', 'medicamentos_varios'];
-
-function categoriaPideRegistro(categoria) {
-  return CATEGORIAS_CON_REGISTRO.indexOf(String(categoria || '')) !== -1;
-}
-
-function categoriaPideInvima(categoria) {
-  return CATEGORIAS_CON_INVIMA.indexOf(String(categoria || '')) !== -1;
 }
 
 /** Campos comunes a los tres tipos (seccion 5.1). */
@@ -4295,7 +4290,11 @@ var CAMPOS_COMUNES = [
     tipo: 'lista',
     paso: 'pieza',
     porDefecto: 'ninguna',
-    obligatorio: true,
+    // Ninguna de las tres puede bloquear el documento: el T&C no las usa para
+    // nada. Lo que bloquean es la leyenda de la pieza, y eso lo dice
+    // faltantesParaLaLeyenda con su razon. Un comercial que solo quiere su T&C
+    // no se puede quedar sin el por una pregunta del arte.
+    obligatorio: false,
     // Solo donde hay algo que imprimir. Un pais sin leyenda de campana no tiene
     // donde pegar el complemento, y uno sin categorias no tiene que ofrecer.
     visible: function (entrada) {
@@ -4309,7 +4308,7 @@ var CAMPOS_COMUNES = [
     tipo: 'texto',
     paso: 'pieza',
     visible: function (entrada) { return categoriaPideRegistro(entrada.categoriaProducto); },
-    obligatorio: function (entrada) { return categoriaPideRegistro(entrada.categoriaProducto); },
+    obligatorio: false,
   },
   {
     id: 'notificacionInvima',
@@ -5360,10 +5359,6 @@ if (typeof module !== 'undefined') {
     esquemaDe: esquemaDe,
     tieneCampo: tieneCampo,
     camposVisibles: camposVisibles,
-    categoriaPideRegistro: categoriaPideRegistro,
-    categoriaPideInvima: categoriaPideInvima,
-    CATEGORIAS_CON_REGISTRO: CATEGORIAS_CON_REGISTRO,
-    CATEGORIAS_CON_INVIMA: CATEGORIAS_CON_INVIMA,
     resolverAtributo: resolverAtributo,
     siempre: siempre,
   };
@@ -5550,7 +5545,9 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var faltantesParaLaLeyenda = moduloDerivadosLeyendas.faltantesParaLaLeyenda;
   var esDeTurbo = moduloDerivadosLeyendas.esDeTurbo;
   var PENDIENTES_POR_MARCADOR = moduloDerivadosLeyendas.PENDIENTES_POR_MARCADOR;
-  var conElIdiomaDeGenerar = require('./idiomas.js').conElIdiomaDe;
+  var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
+  var urlDelTcDeLaCampana = moduloDerivadosLeyendas.urlDelTcDeLaCampana;
+  var tieneValor = require('./texto.js').tieneValor;
 }
 
 /**
@@ -5603,12 +5600,15 @@ function generarLeyendasDeLaCampana(entrada, pais, textos, opciones) {
 
   var faltantes = faltantesParaLaLeyenda(entrada, pais);
   if (faltantes.length > 0) {
-    return { hay: false, leyendas: [], complementos: [], faltantes: faltantes, pendientes: [], errores: [] };
+      return {
+      hay: false, leyendas: [], complementos: [], faltantes: faltantes, pendientes: [], errores: [],
+      enlacePrevisto: '', enlaceUsado: '', enlaceConfirmado: false, enlaceCambio: false,
+    };
   }
 
   // Con el idioma del pais, igual que el documento: los numeros y las fechas de
   // la leyenda se escriben como los del T&C o se contradicen entre si.
-  var armadas = conElIdiomaDeGenerar(pais, function () {
+  var armadas = conElIdiomaDe(pais, function () {
     var valores = calcularDerivadosDeLeyendas(
       entrada, pais, calcularDerivados(entrada, pais),
       { nombreCampana: config.nombreCampana, enlacePublicado: config.enlacePublicado }
@@ -5647,6 +5647,7 @@ function generarLeyendasDeLaCampana(entrada, pais, textos, opciones) {
     entregadas.push(armada);
   }
 
+  var previsto = urlDelTcDeLaCampana(entrada, pais, config.nombreCampana, '');
   return {
     hay: entregadas.length > 0,
     leyendas: entregadas,
@@ -5654,6 +5655,15 @@ function generarLeyendasDeLaCampana(entrada, pais, textos, opciones) {
     faltantes: [],
     pendientes: pendientes,
     errores: errores,
+    // El enlace que lleva la leyenda, y si ya esta confirmado contra el
+    // publicado. Es el camino 4 de la seccion 6 de la respuesta: la leyenda
+    // sale completa el mismo dia, marcada "enlace por confirmar", y cuando el
+    // comercial pega el publicado se compara y se rehace si es distinto.
+    enlacePrevisto: previsto,
+    enlaceUsado: tieneValor(config.enlacePublicado) ? String(config.enlacePublicado).trim() : previsto,
+    enlaceConfirmado: !!tieneValor(config.enlacePublicado),
+    enlaceCambio: !!tieneValor(config.enlacePublicado) &&
+      String(config.enlacePublicado).trim() !== previsto,
   };
 }
 
@@ -6107,7 +6117,7 @@ if (typeof module !== 'undefined') {
 /* En Node las dependencias se cargan con require; en Apps Script ya son globales. */
 if (typeof module !== 'undefined' && typeof require === 'function') {
   var moduloTextoLeyendas = require('./texto.js');
-  var normalizarTextoLeyenda = moduloTextoLeyendas.normalizarTexto;
+  var normalizarTexto = moduloTextoLeyendas.normalizarTexto;
   // comoLista es de paises.js. En Apps Script ya es global, y declararla otra
   // vez aqui la pisaria sin avisar: los archivos de src/core/ comparten ambito.
   var comoLista = require('./paises.js').comoLista;
@@ -6145,6 +6155,29 @@ var TIPOS_DE_PIEZA = [
  */
 var FORMAS_DE_ELEGIR = ['pregunta', 'condicion_turbo', 'ninguna_parte_todavia'];
 
+/**
+ * Las categorias cuya pieza tiene que mostrar el registro sanitario.
+ *
+ * Legal CO lo pide para medicamentos y fitoterapeuticos (diapositiva 10). Sin el
+ * registro la pieza no se puede publicar, asi que la pregunta aparece sola y,
+ * mientras no se responda, no hay leyenda.
+ *
+ * Viven aqui, con el catalogo, y no en los esquemas: son categorias del
+ * catalogo, y asi la pregunta y la leyenda las leen del mismo sitio.
+ */
+var CATEGORIAS_CON_REGISTRO = ['medicamento', 'medicamentos_varios', 'fitoterapeutico_pfm', 'fitoterapeutico_pft'];
+
+/** Solo los medicamentos llevan ademas el numero de notificacion ante el INVIMA. */
+var CATEGORIAS_CON_INVIMA = ['medicamento', 'medicamentos_varios'];
+
+function categoriaPideRegistro(categoria) {
+  return CATEGORIAS_CON_REGISTRO.indexOf(String(categoria || '')) !== -1;
+}
+
+function categoriaPideInvima(categoria) {
+  return CATEGORIAS_CON_INVIMA.indexOf(String(categoria || '')) !== -1;
+}
+
 /** Lo que nunca puede quedar dentro de una leyenda entregada. */
 var MARCAS_SIN_RESOLVER_EN_LEYENDA = /\{\{|\}\}|\[\[|\]\]/;
 
@@ -6169,9 +6202,7 @@ var SENALES_DE_LEYENDA_ROTA = [
  * deja tal cual vino de Legal.
  */
 function leyendaDesdeTexto(texto) {
-  var normalizado = typeof normalizarTextoLeyenda === 'function'
-    ? normalizarTextoLeyenda(texto)
-    : String(texto || '').replace(/\r\n?/g, '\n');
+  var normalizado = normalizarTexto(texto);
 
   var lineas = normalizado.split('\n');
   var ficha = {};
@@ -6562,6 +6593,10 @@ if (typeof module !== 'undefined') {
     usarCatalogo: usarCatalogo,
     catalogoActual: catalogoActual,
     categoriasDeProducto: categoriasDeProducto,
+    categoriaPideRegistro: categoriaPideRegistro,
+    categoriaPideInvima: categoriaPideInvima,
+    CATEGORIAS_CON_REGISTRO: CATEGORIAS_CON_REGISTRO,
+    CATEGORIAS_CON_INVIMA: CATEGORIAS_CON_INVIMA,
     hayLeyendasDeCampana: hayLeyendasDeCampana,
     categoriasDelPais: categoriasDelPais,
     complementosQueAplican: complementosQueAplican,
@@ -8474,7 +8509,8 @@ var PREGUNTAS = {
     // alguien tiene que confirmarla, como pasa con Colombia en el pais.
     porDefecto: 'ninguna',
     pregunta: '¿Qué categoría tiene el producto de la pieza?',
-    ayuda: 'Casi siempre es Ninguna. Solo cambia la leyenda del arte.',
+    ayuda: 'Casi siempre es Ninguna. Solo cambia la leyenda del arte, no tu T&C.',
+    opcional: true,
     porQue: 'Algunas categorías tienen que llevar una advertencia por ley dentro de la pieza, como los licores o los medicamentos. La leyenda que te damos ya la trae.',
     avanzaSola: true,
     errores: { vacio: 'Elige una categoría, o Ninguna si el producto no es de ninguna de esas.' },
@@ -8483,7 +8519,8 @@ var PREGUNTAS = {
   registroSanitario: p({
     paso: 'pieza',
     pregunta: '¿Cuál es el registro sanitario?',
-    ayuda: 'Va impreso en la pieza. Búscalo en el empaque del producto.',
+    ayuda: 'Está en el empaque. Sin él no te damos la leyenda de la pieza.',
+    opcional: true,
     porQue: 'Una pieza de un medicamento o de un fitoterapéutico tiene que mostrar su registro sanitario. Sin ese número no se puede publicar.',
     ejemplo: 'INVIMA 2020M-0012345',
     placeholders: ['REGISTRO_SANITARIO'],
@@ -11321,6 +11358,7 @@ if (typeof module !== 'undefined') {
         valido: true, demostracion: true, texto: resultado.texto, id: id,
         nombreCampana: nombreCampana, direccionSugerida: direccionDeCampana(nombreCampana),
         pais: pais.codigo,
+        leyendas: generarLeyendasDeLaCampana(entrada, pais, LEYENDAS, { nombreCampana: nombreCampana }),
       };
     },
 
@@ -11335,7 +11373,14 @@ if (typeof module !== 'undefined') {
         if (solicitudes[i].id !== id) continue;
         solicitudes[i].estado = 'publicado';
         solicitudes[i].link_publicado = revision.url;
-        return { valido: true, id: id, linkPublicado: revision.url };
+        var deLaSolicitud = JSON.parse(solicitudes[i].datos_json || '{}');
+        var paisDeLaSolicitud = paisPorCodigo(PAISES_SEMILLA.map(paisDesdeFila), solicitudes[i].pais);
+        return {
+          valido: true, id: id, linkPublicado: revision.url,
+          leyendas: paisDeLaSolicitud ? generarLeyendasDeLaCampana(deLaSolicitud, paisDeLaSolicitud, LEYENDAS, {
+            nombreCampana: solicitudes[i].nombre_campana, enlacePublicado: revision.url,
+          }) : null,
+        };
       }
       return { valido: false, errores: [{ campo: 'id', mensaje: 'No encontramos esa solicitud.' }] };
     },
@@ -14355,6 +14400,100 @@ function bloqueDePublicacion(resultado) {
   return contenido;
 }
 
+/**
+ * Las leyendas de las piezas publicitarias, una por formato.
+ *
+ * Es lo ultimo que se construyo del encargo 03 y lo unico que el comercial ve
+ * de todo aquello. Hasta ahora este texto se lo pedia a Legal por correo; aqui
+ * sale con el documento, ya lleno con los mismos datos, para que la pieza y el
+ * T&C no se puedan contradecir.
+ *
+ * No se pregunta en que pieza va: se entregan las cuatro y el comercial copia la
+ * que necesite (seccion 7B.4 de la respuesta).
+ */
+function bloqueDeLeyendas(leyendas) {
+  if (!leyendas) return null;
+
+  var caja = crear('div', { clase: 'pagina-seccion' }, [
+    crear('h2', { texto: estado.T('El texto legal de tus piezas') }),
+  ]);
+
+  // Un pais sin leyenda aprobada, o una campana con algo que Legal no ha
+  // definido. Se dice cual es el caso, como en la pantalla de Legal: un aviso
+  // sin razon concreta no le sirve a nadie.
+  if (!leyendas.hay) {
+    var razones = (leyendas.faltantes || []).slice();
+    var aviso = crear('div', { clase: 'aviso' }, [
+      crear('h3', { texto: estado.T('Para esta campaña todavía no tenemos leyenda') }),
+      crear('p', {
+        texto: razones.length > 0
+          ? estado.T('Nos falta que Legal defina esto, y sin eso la pieza saldría incompleta:')
+          : estado.T('Todavía no hay leyenda aprobada para las piezas de este país. Escríbele a Legal de tu país con el enlace de tu T&C.'),
+      }),
+    ]);
+    if (razones.length > 0) {
+      var lista = crear('ul');
+      for (var r = 0; r < razones.length; r++) lista.appendChild(crear('li', { texto: razones[r] }));
+      aviso.appendChild(lista);
+      aviso.appendChild(crear('p', { texto: estado.T('Escríbele a Legal con el enlace de tu T&C y te la damos.') }));
+    }
+    caja.appendChild(aviso);
+    return caja;
+  }
+
+  // El estado del enlace. Mientras no este confirmado, la leyenda esta completa
+  // pero el enlace todavia no existe: publicar la pieza antes que el T&C es el
+  // unico riesgo que queda del camino 4.
+  if (leyendas.enlaceCambio) {
+    caja.appendChild(crear('div', { clase: 'aviso aviso-serio' }, [
+      crear('h3', { texto: estado.T('La leyenda cambió. Cambia el arte antes de publicarlo.') }),
+      crear('p', { texto: estado.T('El enlace que publicaste no es el que habíamos previsto, así que rehicimos las leyendas con el enlace real.') }),
+    ]));
+  } else if (leyendas.enlaceConfirmado) {
+    caja.appendChild(crear('p', { clase: 'mensaje-ok', texto: estado.T('Enlace confirmado: estas leyendas ya llevan la dirección publicada.') }));
+  } else {
+    caja.appendChild(crear('p', {
+      clase: 'pregunta-ayuda',
+      texto: estado.T('Enlace por confirmar. Cuando publiques la página y pegues el enlace aquí abajo, comparamos y te avisamos si la leyenda cambia.'),
+    }));
+  }
+
+  for (var i = 0; i < leyendas.leyendas.length; i++) {
+    (function (leyenda) {
+      var ayuda = leyenda.largo + ' de ' + leyenda.largo_max + ' caracteres.';
+      // Decir "recortada para que quepa" encima de un aviso de que no cabe es
+      // decir dos cosas distintas en la misma pantalla.
+      if (leyenda.recortada) {
+        ayuda += ' ' + (leyenda.cabe
+          ? estado.T('Recortada para que quepa.')
+          : estado.T('Recortada hasta el mínimo, y aun así se pasa.'));
+      }
+      caja.appendChild(RM.util.paraCopiar(estado.T(leyenda.nombre), leyenda.texto, ayuda));
+
+      if (!leyenda.cabe) {
+        caja.appendChild(crear('div', { clase: 'aviso aviso-serio' }, [
+          crear('p', {
+            texto: estado.T('Esta leyenda no cabe en ese formato y no hay nada más que se pueda quitar: todo lo que queda es obligatorio. Usa un formato más grande o escríbele a Legal antes de mandar a diseñar.'),
+          }),
+        ]));
+      }
+    })(leyendas.leyendas[i]);
+  }
+
+  // Los formatos que esperan una decision, con su razon. No son un error: la
+  // push necesita el enlace corto, que todavia no existe.
+  for (var p = 0; p < (leyendas.pendientes || []).length; p++) {
+    (function (pendiente) {
+      caja.appendChild(crear('div', { clase: 'aviso' }, [
+        crear('h3', { texto: estado.T(pendiente.nombre) + estado.T(': todavía no') }),
+        crear('p', { texto: pendiente.razones.join('. ') + '.' }),
+      ]));
+    })(leyendas.pendientes[p]);
+  }
+
+  return caja;
+}
+
 // --- Pantalla final ----------------------------------------------------------
 
 function pantallaListo(raiz) {
@@ -14375,6 +14514,7 @@ function pantallaListo(raiz) {
     RM.documento.dibujar(hoja, resultado.texto, '');
     contenido.appendChild(hoja);
     contenido.appendChild(bloqueDePublicacion(resultado));
+    contenido.appendChild(bloqueDeLeyendas(resultado.leyendas));
     contenido.appendChild(crear('div', { clase: 'fila-botones' }, [
       crear('button', {
         clase: 'boton boton-secundario', type: 'button', texto: estado.T('Hacer otra campaña'),
@@ -14399,6 +14539,12 @@ function pantallaListo(raiz) {
   ]));
 
   contenido.appendChild(bloqueDePublicacion(resultado));
+
+  // Las leyendas van aqui, entre como publicar y el campo del enlace: el
+  // comercial las copia en el mismo momento en que se lleva el documento, y
+  // justo debajo esta el campo que las confirma.
+  var cajaDeLeyendas = bloqueDeLeyendas(resultado.leyendas);
+  if (cajaDeLeyendas) contenido.appendChild(cajaDeLeyendas);
 
   // Link publicado.
   contenido.appendChild(crear('h2', { texto: estado.T('Cuando ya esté publicado') }));
@@ -14433,6 +14579,18 @@ function pantallaListo(raiz) {
         mensaje.textContent = 'Listo: tu campaña quedó marcada como publicada.';
         campo.disabled = true;
         guardar.disabled = true;
+
+        // Paso 3 del camino 4: con el enlace real, las leyendas se rehacen y
+        // el bloque se cambia entero. Si el enlace resulto distinto, el aviso
+        // rojo aparece ahi mismo, no en un correo que nadie abre.
+        if (respuesta.leyendas && cajaDeLeyendas && cajaDeLeyendas.parentNode) {
+          var rehecho = bloqueDeLeyendas(respuesta.leyendas);
+          if (rehecho) {
+            cajaDeLeyendas.parentNode.replaceChild(rehecho, cajaDeLeyendas);
+            cajaDeLeyendas = rehecho;
+            rehecho.scrollIntoView({ block: 'nearest' });
+          }
+        }
       }).catch(function (error) {
         guardar.disabled = false;
         guardar.textContent = 'Marcar como publicado';

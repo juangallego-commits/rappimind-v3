@@ -1172,3 +1172,104 @@ piloto, que ahora es Ecuador y no México.
    una cláusula compartida se mueve. La oferta sigue en pie.
 3. **Ecuador y Costa Rica**: con que alguien diga si escriben los miles con punto
    o con coma, salen de piloto el mismo día.
+
+## 18 de septiembre · Las leyendas de piezas publicitarias, del encargo 03
+
+El comercial ya no tiene que pedirle a Legal el texto legal que va dentro del
+arte. Sale con el documento, en la misma pantalla, lleno con los mismos datos
+que llenaron el T&C.
+
+### Qué ve el comercial
+
+1. **Una pregunta nueva al final del formulario**, en un paso que se llama "La
+   pieza publicitaria": "¿Qué categoría tiene el producto de la pieza?", con
+   Ninguna marcada. Cada opción adelanta la advertencia que se va a imprimir, así
+   que se elige viendo lo que sale. Si eliges un medicamento se abren dos
+   preguntas más: el registro sanitario y la notificación ante el INVIMA.
+2. **En la pantalla final, un bloque nuevo, "El texto legal de tus piezas"**, con
+   una leyenda por formato (texto de apoyo, letra pequeña, banner corto, valla) y
+   un botón de copiar en cada una. Debajo dice cuánto mide y cuánto admite el
+   formato.
+3. **Cuando una leyenda no cabe, lo dice.** Con los datos de la pieza real de El
+   Corral, el banner corto mide 382 caracteres y admite 300, y no hay nada que
+   quitar porque todo lo que queda es obligatorio. Eso hay que saberlo antes de
+   mandar a diseñar, no después.
+4. **El enlace por confirmar.** La leyenda sale completa el mismo día, con la
+   dirección donde va a quedar publicado el T&C. Cuando pegas el enlace real, la
+   herramienta compara: si es igual, dice "enlace confirmado"; si es distinto,
+   rehace las leyendas y avisa en rojo que hay que cambiar el arte.
+
+### La prueba que más vale
+
+Reproduce la pieza publicitaria real de El Corral con los datos que la respuesta
+dice que usó. El texto de apoyo sale idéntico, 146 caracteres, y la letra pequeña
+palabra por palabra. Si un marcador cambia de forma, esa comparación se cae.
+
+Y hay otra que compara letra por letra las 55 leyendas del repositorio contra la
+respuesta de Claude chat: si alguien "mejora" una frase o arregla una tilde, se
+cae. Comprobado que falla al cambiar una palabra.
+
+### Lo que no se construyó, y por qué
+
+- **Las preguntas de los descuentos con T&C general.** Decidiste dejarlas: hoy
+  ese tipo de campaña no existe en la herramienta, así que no son dos preguntas
+  más sino un recorrido nuevo completo.
+- **La leyenda de push y SMS.** Necesita el enlace corto, y aunque aprobaste que
+  sea una dirección propia dentro de promos.rappi.com, falta definir cómo se arma
+  y quién crea la página. Se entrega como pendiente, con esa razón en pantalla,
+  para no tumbar con ella las otras cuatro leyendas.
+- **Las leyendas de los otros ocho países.** La respuesta dice "no cubierto": el
+  SSL solo da recetas. Los complementos de categoría de esos países sí están en
+  el catálogo, pero no hay leyenda de campaña donde pegarlos.
+
+### Defectos reales que salieron al construirlo
+
+1. **`dist/Leyendas.js` habría pisado a `leyendas.js`** en Apps Script, que no
+   distingue mayúsculas. Lo cazó el propio build.
+2. **`comoLista` estaba declarada dos veces**, en `paises.js` y en `leyendas.js`.
+   En Apps Script la segunda pisa a la primera sin avisar.
+3. **Nueve alias de `require` con nombre distinto al global**, que en el navegador
+   quedan sin definir: la pantalla final se quedó sin leyendas con "tieneValorLey
+   is not a function". Hay una prueba nueva que caza esta clase entera.
+4. **El largo máximo lo ponía la leyenda y tiene que ponerlo el formato.** Un
+   banner de Carrera de 500 caracteres pasaba por bueno.
+5. **La lista de tiendas del Multitienda salía vacía**, porque leía `nombre` y
+   `alcance` y los datos traen `marca`, `nacional` y `ciudades`.
+6. **`partesDeFecha` devuelve `anio` y el código decía `ano`.** Una campaña de fin
+   de año salía "del 30 de diciembre al 2 de enero de 2027", sin decir de qué año
+   era el 30 de diciembre.
+7. **Una razón social que termina en abreviatura ya trae su punto.** "Cashback
+   ofrecido por Operador de Prueba S.A.S.." tumbaba la leyenda entera del caso
+   TV05.
+8. **Con siete pasos, la barra de arriba se leía "OrganizadorCuándo".** Solo se
+   vio abriendo el navegador.
+
+### Cómo probarlo
+
+```
+npm test                                                        # 528 pruebas
+npm run demo
+export NODE_PATH=/opt/node22/lib/node_modules
+export PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
+node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js        # el recorrido completo pasa
+node .claude/skills/flujo-y-ux/scripts/recorrer-en-portugues.js # todo bien
+npm run front                                                   # 45 de 45 pantallas
+node .claude/skills/flujo-y-ux/scripts/capturar-pantallas.js    # 33 de 33 capturas
+```
+
+Y con los ojos: abre `docs/FRONT_ACTUAL.html` y mira la pantalla 22, la de la
+categoría del producto, y la 25, la pantalla final con las leyendas.
+
+### Lo que necesito de Juan
+
+1. **Las 24 preguntas de la lista 2 de la respuesta.** Sobre todo la 21, la 16 y
+   la 6, que son las que más cambian el diseño.
+2. **La forma del enlace corto**: cómo se arma la dirección y quién crea esa
+   página en Squarespace. Sin eso no hay leyenda de push ni de SMS.
+3. **El espacio no alcanza, y no solo en el banner.** Una campaña corriente
+   (Farmatodo, 20%, solo Turbo, con compra mínima y categoría licores) da una
+   letra pequeña de 645 caracteres contra un límite de 620, ya recortada hasta el
+   último nivel. El banner corto de esa misma campaña mide 734 contra 300. Hay
+   que decidir si el límite es el correcto, si el enlace de Turbo puede ir corto,
+   o qué más se puede marcar como recortable dentro del texto legal.
+4. **Correr `setup()`** después de desplegar, por lo de los países.

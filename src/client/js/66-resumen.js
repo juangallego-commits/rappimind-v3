@@ -265,6 +265,100 @@ function bloqueDePublicacion(resultado) {
   return contenido;
 }
 
+/**
+ * Las leyendas de las piezas publicitarias, una por formato.
+ *
+ * Es lo ultimo que se construyo del encargo 03 y lo unico que el comercial ve
+ * de todo aquello. Hasta ahora este texto se lo pedia a Legal por correo; aqui
+ * sale con el documento, ya lleno con los mismos datos, para que la pieza y el
+ * T&C no se puedan contradecir.
+ *
+ * No se pregunta en que pieza va: se entregan las cuatro y el comercial copia la
+ * que necesite (seccion 7B.4 de la respuesta).
+ */
+function bloqueDeLeyendas(leyendas) {
+  if (!leyendas) return null;
+
+  var caja = crear('div', { clase: 'pagina-seccion' }, [
+    crear('h2', { texto: estado.T('El texto legal de tus piezas') }),
+  ]);
+
+  // Un pais sin leyenda aprobada, o una campana con algo que Legal no ha
+  // definido. Se dice cual es el caso, como en la pantalla de Legal: un aviso
+  // sin razon concreta no le sirve a nadie.
+  if (!leyendas.hay) {
+    var razones = (leyendas.faltantes || []).slice();
+    var aviso = crear('div', { clase: 'aviso' }, [
+      crear('h3', { texto: estado.T('Para esta campaña todavía no tenemos leyenda') }),
+      crear('p', {
+        texto: razones.length > 0
+          ? estado.T('Nos falta que Legal defina esto, y sin eso la pieza saldría incompleta:')
+          : estado.T('Todavía no hay leyenda aprobada para las piezas de este país. Escríbele a Legal de tu país con el enlace de tu T&C.'),
+      }),
+    ]);
+    if (razones.length > 0) {
+      var lista = crear('ul');
+      for (var r = 0; r < razones.length; r++) lista.appendChild(crear('li', { texto: razones[r] }));
+      aviso.appendChild(lista);
+      aviso.appendChild(crear('p', { texto: estado.T('Escríbele a Legal con el enlace de tu T&C y te la damos.') }));
+    }
+    caja.appendChild(aviso);
+    return caja;
+  }
+
+  // El estado del enlace. Mientras no este confirmado, la leyenda esta completa
+  // pero el enlace todavia no existe: publicar la pieza antes que el T&C es el
+  // unico riesgo que queda del camino 4.
+  if (leyendas.enlaceCambio) {
+    caja.appendChild(crear('div', { clase: 'aviso aviso-serio' }, [
+      crear('h3', { texto: estado.T('La leyenda cambió. Cambia el arte antes de publicarlo.') }),
+      crear('p', { texto: estado.T('El enlace que publicaste no es el que habíamos previsto, así que rehicimos las leyendas con el enlace real.') }),
+    ]));
+  } else if (leyendas.enlaceConfirmado) {
+    caja.appendChild(crear('p', { clase: 'mensaje-ok', texto: estado.T('Enlace confirmado: estas leyendas ya llevan la dirección publicada.') }));
+  } else {
+    caja.appendChild(crear('p', {
+      clase: 'pregunta-ayuda',
+      texto: estado.T('Enlace por confirmar. Cuando publiques la página y pegues el enlace aquí abajo, comparamos y te avisamos si la leyenda cambia.'),
+    }));
+  }
+
+  for (var i = 0; i < leyendas.leyendas.length; i++) {
+    (function (leyenda) {
+      var ayuda = leyenda.largo + ' de ' + leyenda.largo_max + ' caracteres.';
+      // Decir "recortada para que quepa" encima de un aviso de que no cabe es
+      // decir dos cosas distintas en la misma pantalla.
+      if (leyenda.recortada) {
+        ayuda += ' ' + (leyenda.cabe
+          ? estado.T('Recortada para que quepa.')
+          : estado.T('Recortada hasta el mínimo, y aun así se pasa.'));
+      }
+      caja.appendChild(RM.util.paraCopiar(estado.T(leyenda.nombre), leyenda.texto, ayuda));
+
+      if (!leyenda.cabe) {
+        caja.appendChild(crear('div', { clase: 'aviso aviso-serio' }, [
+          crear('p', {
+            texto: estado.T('Esta leyenda no cabe en ese formato y no hay nada más que se pueda quitar: todo lo que queda es obligatorio. Usa un formato más grande o escríbele a Legal antes de mandar a diseñar.'),
+          }),
+        ]));
+      }
+    })(leyendas.leyendas[i]);
+  }
+
+  // Los formatos que esperan una decision, con su razon. No son un error: la
+  // push necesita el enlace corto, que todavia no existe.
+  for (var p = 0; p < (leyendas.pendientes || []).length; p++) {
+    (function (pendiente) {
+      caja.appendChild(crear('div', { clase: 'aviso' }, [
+        crear('h3', { texto: estado.T(pendiente.nombre) + estado.T(': todavía no') }),
+        crear('p', { texto: pendiente.razones.join('. ') + '.' }),
+      ]));
+    })(leyendas.pendientes[p]);
+  }
+
+  return caja;
+}
+
 // --- Pantalla final ----------------------------------------------------------
 
 function pantallaListo(raiz) {
@@ -285,6 +379,7 @@ function pantallaListo(raiz) {
     RM.documento.dibujar(hoja, resultado.texto, '');
     contenido.appendChild(hoja);
     contenido.appendChild(bloqueDePublicacion(resultado));
+    contenido.appendChild(bloqueDeLeyendas(resultado.leyendas));
     contenido.appendChild(crear('div', { clase: 'fila-botones' }, [
       crear('button', {
         clase: 'boton boton-secundario', type: 'button', texto: estado.T('Hacer otra campaña'),
@@ -309,6 +404,12 @@ function pantallaListo(raiz) {
   ]));
 
   contenido.appendChild(bloqueDePublicacion(resultado));
+
+  // Las leyendas van aqui, entre como publicar y el campo del enlace: el
+  // comercial las copia en el mismo momento en que se lleva el documento, y
+  // justo debajo esta el campo que las confirma.
+  var cajaDeLeyendas = bloqueDeLeyendas(resultado.leyendas);
+  if (cajaDeLeyendas) contenido.appendChild(cajaDeLeyendas);
 
   // Link publicado.
   contenido.appendChild(crear('h2', { texto: estado.T('Cuando ya esté publicado') }));
@@ -343,6 +444,18 @@ function pantallaListo(raiz) {
         mensaje.textContent = 'Listo: tu campaña quedó marcada como publicada.';
         campo.disabled = true;
         guardar.disabled = true;
+
+        // Paso 3 del camino 4: con el enlace real, las leyendas se rehacen y
+        // el bloque se cambia entero. Si el enlace resulto distinto, el aviso
+        // rojo aparece ahi mismo, no en un correo que nadie abre.
+        if (respuesta.leyendas && cajaDeLeyendas && cajaDeLeyendas.parentNode) {
+          var rehecho = bloqueDeLeyendas(respuesta.leyendas);
+          if (rehecho) {
+            cajaDeLeyendas.parentNode.replaceChild(rehecho, cajaDeLeyendas);
+            cajaDeLeyendas = rehecho;
+            rehecho.scrollIntoView({ block: 'nearest' });
+          }
+        }
       }).catch(function (error) {
         guardar.disabled = false;
         guardar.textContent = 'Marcar como publicado';

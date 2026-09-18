@@ -27,30 +27,12 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var moduloLeyendasEsquemas = require('./leyendas.js');
   var categoriasDeProducto = moduloLeyendasEsquemas.categoriasDeProducto;
   var hayLeyendasDeCampana = moduloLeyendasEsquemas.hayLeyendasDeCampana;
+  var categoriaPideRegistro = moduloLeyendasEsquemas.categoriaPideRegistro;
+  var categoriaPideInvima = moduloLeyendasEsquemas.categoriaPideInvima;
 }
 
 function siempre() {
   return true;
-}
-
-/**
- * Las categorias que obligan a imprimir el registro sanitario en la pieza.
- *
- * Legal CO lo pide para medicamentos y fitoterapeuticos (diapositiva 10). Sin
- * el registro la pieza no se puede publicar, asi que la pregunta es obligatoria
- * y solo aparece cuando aplica.
- */
-var CATEGORIAS_CON_REGISTRO = ['medicamento', 'medicamentos_varios', 'fitoterapeutico_pfm', 'fitoterapeutico_pft'];
-
-/** Solo los medicamentos llevan ademas el numero de notificacion ante el INVIMA. */
-var CATEGORIAS_CON_INVIMA = ['medicamento', 'medicamentos_varios'];
-
-function categoriaPideRegistro(categoria) {
-  return CATEGORIAS_CON_REGISTRO.indexOf(String(categoria || '')) !== -1;
-}
-
-function categoriaPideInvima(categoria) {
-  return CATEGORIAS_CON_INVIMA.indexOf(String(categoria || '')) !== -1;
 }
 
 /** Campos comunes a los tres tipos (seccion 5.1). */
@@ -1186,10 +1168,6 @@ if (typeof module !== 'undefined') {
     esquemaDe: esquemaDe,
     tieneCampo: tieneCampo,
     camposVisibles: camposVisibles,
-    categoriaPideRegistro: categoriaPideRegistro,
-    categoriaPideInvima: categoriaPideInvima,
-    CATEGORIAS_CON_REGISTRO: CATEGORIAS_CON_REGISTRO,
-    CATEGORIAS_CON_INVIMA: CATEGORIAS_CON_INVIMA,
     resolverAtributo: resolverAtributo,
     siempre: siempre,
   };

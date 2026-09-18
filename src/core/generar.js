@@ -27,7 +27,9 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var faltantesParaLaLeyenda = moduloDerivadosLeyendas.faltantesParaLaLeyenda;
   var esDeTurbo = moduloDerivadosLeyendas.esDeTurbo;
   var PENDIENTES_POR_MARCADOR = moduloDerivadosLeyendas.PENDIENTES_POR_MARCADOR;
-  var conElIdiomaDeGenerar = require('./idiomas.js').conElIdiomaDe;
+  var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
+  var urlDelTcDeLaCampana = moduloDerivadosLeyendas.urlDelTcDeLaCampana;
+  var tieneValor = require('./texto.js').tieneValor;
 }
 
 /**
@@ -80,12 +82,15 @@ function generarLeyendasDeLaCampana(entrada, pais, textos, opciones) {
 
   var faltantes = faltantesParaLaLeyenda(entrada, pais);
   if (faltantes.length > 0) {
-    return { hay: false, leyendas: [], complementos: [], faltantes: faltantes, pendientes: [], errores: [] };
+      return {
+      hay: false, leyendas: [], complementos: [], faltantes: faltantes, pendientes: [], errores: [],
+      enlacePrevisto: '', enlaceUsado: '', enlaceConfirmado: false, enlaceCambio: false,
+    };
   }
 
   // Con el idioma del pais, igual que el documento: los numeros y las fechas de
   // la leyenda se escriben como los del T&C o se contradicen entre si.
-  var armadas = conElIdiomaDeGenerar(pais, function () {
+  var armadas = conElIdiomaDe(pais, function () {
     var valores = calcularDerivadosDeLeyendas(
       entrada, pais, calcularDerivados(entrada, pais),
       { nombreCampana: config.nombreCampana, enlacePublicado: config.enlacePublicado }
@@ -124,6 +129,7 @@ function generarLeyendasDeLaCampana(entrada, pais, textos, opciones) {
     entregadas.push(armada);
   }
 
+  var previsto = urlDelTcDeLaCampana(entrada, pais, config.nombreCampana, '');
   return {
     hay: entregadas.length > 0,
     leyendas: entregadas,
@@ -131,6 +137,15 @@ function generarLeyendasDeLaCampana(entrada, pais, textos, opciones) {
     faltantes: [],
     pendientes: pendientes,
     errores: errores,
+    // El enlace que lleva la leyenda, y si ya esta confirmado contra el
+    // publicado. Es el camino 4 de la seccion 6 de la respuesta: la leyenda
+    // sale completa el mismo dia, marcada "enlace por confirmar", y cuando el
+    // comercial pega el publicado se compara y se rehace si es distinto.
+    enlacePrevisto: previsto,
+    enlaceUsado: tieneValor(config.enlacePublicado) ? String(config.enlacePublicado).trim() : previsto,
+    enlaceConfirmado: !!tieneValor(config.enlacePublicado),
+    enlaceCambio: !!tieneValor(config.enlacePublicado) &&
+      String(config.enlacePublicado).trim() !== previsto,
   };
 }
 

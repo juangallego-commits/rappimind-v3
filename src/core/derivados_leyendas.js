@@ -21,19 +21,19 @@
 /* En Node las dependencias se cargan con require; en Apps Script ya son globales. */
 if (typeof module !== 'undefined' && typeof require === 'function') {
   var moduloNumerosLey = require('./numeros.js');
-  var formatearMilesLey = moduloNumerosLey.formatearMiles;
+  var formatearMiles = moduloNumerosLey.formatearMiles;
 
   var moduloFechasLey = require('./fechas.js');
-  var formatearFechaLey = moduloFechasLey.formatearFecha;
-  var formatearHoraLey = moduloFechasLey.formatearHora;
-  var partesDeFechaLey = moduloFechasLey.partesDeFecha;
-  var listaYLey = moduloFechasLey.listaY;
-  var separarPorComasLey = moduloFechasLey.separarPorComas;
+  var formatearFecha = moduloFechasLey.formatearFecha;
+  var formatearHora = moduloFechasLey.formatearHora;
+  var partesDeFecha = moduloFechasLey.partesDeFecha;
+  var listaY = moduloFechasLey.listaY;
+  var separarPorComas = moduloFechasLey.separarPorComas;
 
-  var tieneValorLey = require('./texto.js').tieneValor;
-  var direccionDeCampanaLey = require('./nombres.js').direccionDeCampana;
-  var SECCIONES_EXCLUIBLES_ETA_LEY = require('./derivados_eta.js').SECCIONES_EXCLUIBLES_ETA;
-  var categoriaPideRegistro = require('./esquemas.js').categoriaPideRegistro;
+  var tieneValor = require('./texto.js').tieneValor;
+  var direccionDeCampana = require('./nombres.js').direccionDeCampana;
+  var SECCIONES_EXCLUIBLES_ETA = require('./derivados_eta.js').SECCIONES_EXCLUIBLES_ETA;
+  var categoriaPideRegistro = require('./leyendas.js').categoriaPideRegistro;
 }
 
 /** Donde vive el T&C publicado. La ruta del pais sale de la fila del pais. */
@@ -52,23 +52,23 @@ var HORA_DE_CIERRE = '23:59';
 
 /** FRAGMENTO: un monto como se escribe en una pieza. "$25.000". */
 function cifraDeMonto(valor, pais) {
-  if (!tieneValorLey(valor)) return '';
+  if (!tieneValor(valor)) return '';
   var entero = Math.trunc(Number(valor));
   if (!isFinite(entero)) return '';
-  return (pais.moneda_simbolo || '') + formatearMilesLey(entero, pais.separador_miles || '.');
+  return (pais.moneda_simbolo || '') + formatearMiles(entero, pais.separador_miles || '.');
 }
 
 /** FRAGMENTO: el porcentaje en cifra. "99%". */
 function cifraDePorcentaje(valor) {
-  if (!tieneValorLey(valor)) return '';
+  if (!tieneValor(valor)) return '';
   return String(Number(valor)) + '%';
 }
 
 // --- La vigencia -----------------------------------------------------------
 
 function esDiaCompleto(horaInicio, horaFin) {
-  return (!tieneValorLey(horaInicio) || horaInicio === HORA_DE_ARRANQUE) &&
-    (!tieneValorLey(horaFin) || horaFin === HORA_DE_CIERRE);
+  return (!tieneValor(horaInicio) || horaInicio === HORA_DE_ARRANQUE) &&
+    (!tieneValor(horaFin) || horaFin === HORA_DE_CIERRE);
 }
 
 /**
@@ -81,25 +81,25 @@ function esDiaCompleto(horaInicio, horaFin) {
  */
 function textoVigenciaCorta(entrada) {
   var inicio = entrada.fechaInicio;
-  var fin = tieneValorLey(entrada.fechaFin) ? entrada.fechaFin : entrada.fechaInicio;
-  if (!tieneValorLey(inicio)) return '';
+  var fin = tieneValor(entrada.fechaFin) ? entrada.fechaFin : entrada.fechaInicio;
+  if (!tieneValor(inicio)) return '';
 
   var horaInicio = entrada.horaInicio;
   var horaFin = entrada.horaFin;
   var todoElDia = esDiaCompleto(horaInicio, horaFin);
 
   if (inicio === fin) {
-    if (todoElDia) return 'el ' + formatearFechaLey(inicio);
-    return 'el ' + formatearFechaLey(inicio) +
-      ' entre las ' + formatearHoraLey(horaInicio) + ' y las ' + formatearHoraLey(horaFin);
+    if (todoElDia) return 'el ' + formatearFecha(inicio);
+    return 'el ' + formatearFecha(inicio) +
+      ' entre las ' + formatearHora(horaInicio) + ' y las ' + formatearHora(horaFin);
   }
 
   if (!todoElDia) {
-    return 'desde las ' + formatearHoraLey(horaInicio) + ' del ' + formatearFechaLey(inicio) +
-      ' hasta las ' + formatearHoraLey(horaFin) + ' del ' + formatearFechaLey(fin);
+    return 'desde las ' + formatearHora(horaInicio) + ' del ' + formatearFecha(inicio) +
+      ' hasta las ' + formatearHora(horaFin) + ' del ' + formatearFecha(fin);
   }
 
-  return 'del ' + fechaAbreviadaContra(inicio, fin) + ' al ' + formatearFechaLey(fin);
+  return 'del ' + fechaAbreviadaContra(inicio, fin) + ' al ' + formatearFecha(fin);
 }
 
 /**
@@ -109,11 +109,11 @@ function textoVigenciaCorta(entrada) {
  * septiembre al 2 de octubre de 2026" entre meses; y con el ano cuando cambia.
  */
 function fechaAbreviadaContra(inicio, fin) {
-  var a = partesDeFechaLey(inicio);
-  var b = partesDeFechaLey(fin);
-  if (!a || !b) return formatearFechaLey(inicio);
+  var a = partesDeFecha(inicio);
+  var b = partesDeFecha(fin);
+  if (!a || !b) return formatearFecha(inicio);
 
-  var completa = formatearFechaLey(inicio);
+  var completa = formatearFecha(inicio);
   if (a.anio !== b.anio) return completa;
   if (a.mes !== b.mes) return completa.replace(/ de \d+$/, '');
   return String(a.dia);
@@ -127,19 +127,19 @@ function dondeSeRedimen(entrada, valores) {
   if (entrada.tipo === 'cashback_eta') {
     var nombres = [];
     var elegidas = entrada.exclusionesEta || [];
-    for (var i = 0; i < SECCIONES_EXCLUIBLES_ETA_LEY.length; i++) {
+    for (var i = 0; i < SECCIONES_EXCLUIBLES_ETA.length; i++) {
       for (var e = 0; e < elegidas.length; e++) {
-        if (elegidas[e] === SECCIONES_EXCLUIBLES_ETA_LEY[i].valor) {
-          nombres.push(SECCIONES_EXCLUIBLES_ETA_LEY[i].nombre);
+        if (elegidas[e] === SECCIONES_EXCLUIBLES_ETA[i].valor) {
+          nombres.push(SECCIONES_EXCLUIBLES_ETA[i].nombre);
           break;
         }
       }
     }
     if (nombres.length === 0) return 'en cualquier sección de Rappi habilitada para Créditos';
-    return 'en Rappi, excepto en ' + listaYLey(nombres);
+    return 'en Rappi, excepto en ' + listaY(nombres);
   }
   if (entrada.redencion === 'tienda') {
-    return tieneValorLey(valores.TIENDA) ? 'en ' + valores.TIENDA : '';
+    return tieneValor(valores.TIENDA) ? 'en ' + valores.TIENDA : '';
   }
   if (entrada.redencion === 'general') return 'en cualquier sección de Rappi habilitada para Créditos';
   // "secciones" no tiene frase corta aprobada: es el insumo 5 de la lista 3 de
@@ -149,22 +149,22 @@ function dondeSeRedimen(entrada, valores) {
 
 /** FRAGMENTO: hasta cuando se pueden gastar los Creditos, en corto. */
 function cuandoSeRedimen(entrada) {
-  var cargaEnFecha = entrada.carga === 'fecha' && tieneValorLey(entrada.fechaCarga);
+  var cargaEnFecha = entrada.carga === 'fecha' && tieneValor(entrada.fechaCarga);
 
   if (entrada.vigencia === 'dias') {
-    if (!tieneValorLey(entrada.diasVigencia)) return '';
+    if (!tieneValor(entrada.diasVigencia)) return '';
     var dias = 'durante ' + Math.trunc(Number(entrada.diasVigencia)) + ' días';
     return cargaEnFecha
-      ? dias + ' desde el ' + formatearFechaLey(entrada.fechaCarga)
+      ? dias + ' desde el ' + formatearFecha(entrada.fechaCarga)
       : dias + ' desde que los recibes';
   }
 
   if (entrada.vigencia === 'fecha') {
-    if (!tieneValorLey(entrada.fechaFinRedencion)) return '';
+    if (!tieneValor(entrada.fechaFinRedencion)) return '';
     return cargaEnFecha
       ? 'del ' + fechaAbreviadaContra(entrada.fechaCarga, entrada.fechaFinRedencion) +
-        ' al ' + formatearFechaLey(entrada.fechaFinRedencion)
-      : 'hasta el ' + formatearFechaLey(entrada.fechaFinRedencion);
+        ' al ' + formatearFecha(entrada.fechaFinRedencion)
+      : 'hasta el ' + formatearFecha(entrada.fechaFinRedencion);
   }
   return '';
 }
@@ -194,8 +194,8 @@ function textoLimiteCorto(entrada) {
   if (entrada.sinLimite || entrada.sinMaxOrdenes) {
     return 'Sin límite de ' + plural + ' por usuario.';
   }
-  var maximo = tieneValorLey(entrada.maxPedidos) ? entrada.maxPedidos : entrada.maxOrdenes;
-  if (!tieneValorLey(maximo)) return '';
+  var maximo = tieneValor(entrada.maxPedidos) ? entrada.maxPedidos : entrada.maxOrdenes;
+  if (!tieneValor(maximo)) return '';
 
   var cantidad = Math.trunc(Number(maximo));
   if (cantidad === 1) {
@@ -209,22 +209,22 @@ function textoLimiteCorto(entrada) {
 /** ORACION opcional: las ciudades. Nacional no dice nada. */
 function textoTerritorioCorto(entrada) {
   if (entrada.alcance !== 'Ciudades') return '';
-  var ciudades = separarPorComasLey(entrada.ciudades);
+  var ciudades = separarPorComas(entrada.ciudades);
   if (ciudades.length === 0) return '';
-  return 'Aplica solo en ' + listaYLey(ciudades) + '.';
+  return 'Aplica solo en ' + listaY(ciudades) + '.';
 }
 
 /** ORACION opcional: a quien le sirve la campana. */
 function textoSegmentoCorto(entrada, pais) {
   if (entrada.segmento === 'pro') {
-    if (!tieneValorLey(pais.url_tc_pro)) return '';
+    if (!tieneValor(pais.url_tc_pro)) return '';
     return 'Para acceder debes tener tu membresía Pro o Pro Black activa: ' + pais.url_tc_pro + '.';
   }
   if (entrada.segmento === 'nuevos') {
     return 'Solo para usuarios que hagan su primer pedido en Rappi durante la campaña.';
   }
   if (entrada.segmento === 'reactivados') {
-    if (!tieneValorLey(entrada.diasSinCompra)) return '';
+    if (!tieneValor(entrada.diasSinCompra)) return '';
     return 'Solo para usuarios sin pedidos en Rappi en los ' + Math.trunc(Number(entrada.diasSinCompra)) +
       ' días anteriores al inicio de la campaña.';
   }
@@ -252,7 +252,7 @@ function textoCondicionesCorto(entrada, pais) {
   }
   for (var c = 0; c < condiciones.length; c++) {
     if (condiciones[c] === 'consumo_local') {
-      if (!tieneValorLey(pais.nombre_modalidad_local)) return '';
+      if (!tieneValor(pais.nombre_modalidad_local)) return '';
       return 'Válido solo en pedidos por “' + pais.nombre_modalidad_local + '”.';
     }
   }
@@ -295,13 +295,13 @@ function listaTiendasCorta(entrada) {
     if (tienda.nacional) {
       nombre += ' (todo el país)';
     } else {
-      var ciudades = separarPorComasLey(tienda.ciudades);
-      if (ciudades.length > 0) nombre += ' (' + listaYLey(ciudades) + ')';
+      var ciudades = separarPorComas(tienda.ciudades);
+      if (ciudades.length > 0) nombre += ' (' + listaY(ciudades) + ')';
     }
     nombres.push(nombre);
   }
 
-  var lista = listaYLey(nombres);
+  var lista = listaY(nombres);
   if (tiendas.length > 5 || lista.length > 200) return 'las tiendas participantes que aparecen en los términos';
   return lista;
 }
@@ -317,7 +317,7 @@ function listaTiendasCorta(entrada) {
  */
 function textoGanadoresCorto(entrada) {
   if (entrada.criterioGanador !== 'mayor_valor') return '';
-  var cuantos = tieneValorLey(entrada.numeroGanadores) ? Math.trunc(Number(entrada.numeroGanadores)) : 1;
+  var cuantos = tieneValor(entrada.numeroGanadores) ? Math.trunc(Number(entrada.numeroGanadores)) : 1;
   if (cuantos === 1) return 'Gana el usuario con el mayor valor en compras de los productos participantes.';
   return 'Ganan los ' + cuantos + ' usuarios con el mayor valor en compras de los productos participantes.';
 }
@@ -368,15 +368,15 @@ function textoDescuentoTravelCorto(entrada) {
 
 /** FRAGMENTO opcional: cuantas unidades hay con descuento. */
 function textoUnidadesTravel(entrada) {
-  if (entrada.sinUnidades || !tieneValorLey(entrada.unidades)) return '';
+  if (entrada.sinUnidades || !tieneValor(entrada.unidades)) return '';
   return 'las ' + Math.trunc(Number(entrada.unidades)) + ' unidades con descuento';
 }
 
 /** ORACION opcional: el aviso de condiciones de viaje. */
 function textoCondicionesViaje(entrada) {
-  var hayCondiciones = tieneValorLey(entrada.periodoViajeInicio) ||
-    tieneValorLey(entrada.anticipacionDias) ||
-    tieneValorLey(entrada.nochesMinimas) ||
+  var hayCondiciones = tieneValor(entrada.periodoViajeInicio) ||
+    tieneValor(entrada.anticipacionDias) ||
+    tieneValor(entrada.nochesMinimas) ||
     (entrada.fechasExcluidas || []).length > 0;
   if (!hayCondiciones) return '';
   return 'Aplican condiciones de viaje, como fechas y anticipación mínima, descritas en los términos.';
@@ -394,9 +394,9 @@ function textoCondicionesViaje(entrada) {
  * seccion 6 de la respuesta, que Juan aprobo el 18 de septiembre.
  */
 function urlDelTcDeLaCampana(entrada, pais, nombreCampana, enlacePublicado) {
-  if (tieneValorLey(enlacePublicado)) return String(enlacePublicado).trim();
-  if (!tieneValorLey(pais.ruta_promos) || !tieneValorLey(nombreCampana)) return '';
-  var direccion = direccionDeCampanaLey(nombreCampana);
+  if (tieneValor(enlacePublicado)) return String(enlacePublicado).trim();
+  if (!tieneValor(pais.ruta_promos) || !tieneValor(nombreCampana)) return '';
+  var direccion = direccionDeCampana(nombreCampana);
   if (!direccion) return '';
   return SITIO_DE_PUBLICACION + pais.ruta_promos + '/' + direccion;
 }
@@ -408,17 +408,6 @@ function urlDelTcDeLaCampana(entrada, pais, nombreCampana, enlacePublicado) {
  * uno de estos se entrega como pendiente, con su razon, en vez de salir rota o
  * de tumbar las otras cuatro.
  */
-/**
- * Las categorias cuya pieza tiene que mostrar el registro sanitario.
- *
- * Es la misma lista de esquemas.js, que es quien decide si la pregunta se ve.
- * Se lee de alli para que no haya dos listas que se puedan separar.
- */
-function categoriaPideRegistroSanitario(categoria) {
-  if (typeof categoriaPideRegistro === 'function') return categoriaPideRegistro(categoria);
-  return false;
-}
-
 var PENDIENTES_POR_MARCADOR = {
   URL_CORTA: 'falta el enlace corto. Juan aprobó que sea una dirección propia dentro de promos.rappi.com, pero todavía no está definida la forma exacta ni quién crea la página',
 };
@@ -444,12 +433,12 @@ function faltantesParaLaLeyenda(entrada, pais) {
 
   var condiciones = entrada.condiciones || [];
   for (var i = 0; i < condiciones.length; i++) {
-    if (condiciones[i] === 'consumo_local' && !tieneValorLey(pais.nombre_modalidad_local)) {
+    if (condiciones[i] === 'consumo_local' && !tieneValor(pais.nombre_modalidad_local)) {
       faltantes.push('cómo se llama dentro de la app la modalidad de consumo en el local');
     }
   }
 
-  if (entrada.segmento === 'pro' && !tieneValorLey(pais.url_tc_pro)) {
+  if (entrada.segmento === 'pro' && !tieneValor(pais.url_tc_pro)) {
     faltantes.push('el enlace de los términos de RappiPro de este país');
   }
 
@@ -462,8 +451,8 @@ function faltantesParaLaLeyenda(entrada, pais) {
   // medicamento o de un fitoterapeutico no se puede publicar (Legal CO,
   // diapositiva 10). La leyenda lo lleva en un bloque opcional, asi que sin
   // este aviso desapareceria en silencio y nadie se enteraria.
-  if (categoriaPideRegistroSanitario(entrada.categoriaProducto) &&
-      !tieneValorLey(entrada.registroSanitario)) {
+  if (categoriaPideRegistro(entrada.categoriaProducto) &&
+      !tieneValor(entrada.registroSanitario)) {
     faltantes.push('el registro sanitario del producto, que la pieza tiene que mostrar');
   }
 
@@ -515,7 +504,7 @@ function calcularDerivadosDeLeyendas(entrada, pais, valoresDelDocumento, opcione
 
   // El tiempo prometido y la ciudad del ETA, en la forma corta de la pieza.
   if (entrada.tipo === 'cashback_eta') {
-    cortos.ETA_CORTO = tieneValorLey(entrada.etaMinutos)
+    cortos.ETA_CORTO = tieneValor(entrada.etaMinutos)
       ? Math.trunc(Number(entrada.etaMinutos)) + ' minutos'
       : '';
     cortos.TEXTO_CIUDAD_ETA = String(entrada.ciudades || '').trim();

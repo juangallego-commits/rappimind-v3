@@ -141,7 +141,12 @@ const PARTES = [
       },
       {
         id: 'compra-minima', titulo: 'Formulario, la compra mínima', pantalla: 'pasos',
-        queHace: 'Última pregunta del formulario y la única marcada como opcional en este paso. Puede dejarla vacía y seguir. El botón ya no dice Siguiente sino Revisar y generar.',
+        queHace: 'La única marcada como opcional en este paso. Puede dejarla vacía y seguir.',
+      },
+      {
+        id: 'categoria-producto', titulo: 'Formulario, la categoría del producto', pantalla: 'pasos',
+        queHace: 'La última pregunta, y la única que no cambia nada del T&C: decide la leyenda que va dentro de la pieza publicitaria. Viene marcada en Ninguna, que es la respuesta de casi todas las campañas, y cada opción adelanta la advertencia que se va a imprimir. Si elige un medicamento se abren dos preguntas más, el registro sanitario y la notificación ante el INVIMA.',
+        nota: 'Las opciones no están escritas en ningún esquema: salen del catálogo de modelos/leyendas/, así que cada país ofrece solo las categorías para las que Legal tiene una leyenda aprobada. Colombia ofrece diez; México, cinco; Uruguay, Costa Rica y Brasil, ninguna, y ahí la pregunta no aparece.',
       },
       {
         id: 'resumen', titulo: 'Resumen, con algo pendiente', pantalla: 'resumen',

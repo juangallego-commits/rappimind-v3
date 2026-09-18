@@ -108,11 +108,15 @@ function generar(entrada) {
   }
 
   if (quien.demostracion) {
+    var esquemaDemo = esquemaDe(entrada.tipo);
     return {
       valido: true,
       demostracion: true,
       texto: resultado.texto,
       mensaje: 'Modo demostración: no se creó ningún documento.',
+      leyendas: generarLeyendasDeLaCampana(entrada, pais, LEYENDAS, {
+        nombreCampana: nombreDeCampana(entrada, esquemaDemo, pais),
+      }),
     };
   }
 
@@ -193,6 +197,11 @@ function generar(entrada) {
       nombreCampana: nombreCampana,
       direccionSugerida: direccion,
       pais: pais.codigo,
+      // Las leyendas de las piezas, con el enlace previsto. Salen aqui y no en
+      // otra llamada porque el comercial las necesita en el mismo momento en
+      // que se lleva el documento, y una llamada mas es una pantalla que se
+      // puede quedar a medio pintar.
+      leyendas: generarLeyendasDeLaCampana(entrada, pais, LEYENDAS, { nombreCampana: nombreCampana }),
     };
   } finally {
     bloqueo.releaseLock();
@@ -235,7 +244,25 @@ function marcarPublicado(id, url) {
   });
   registrar('publicar', id + ' · ' + revision.url);
 
-  return { valido: true, id: id, linkPublicado: revision.url };
+  // Paso 3 del camino 4: se comparan las leyendas contra el enlace real. Si es
+  // distinto al previsto, se rehacen y el comercial tiene que cambiar el arte.
+  var leyendas = null;
+  try {
+    var entradaGuardada = JSON.parse(solicitud.datos_json || '{}');
+    var paisDeLaSolicitud = paisPorCodigo(leerPaises(), solicitud.pais);
+    if (paisDeLaSolicitud) {
+      leyendas = generarLeyendasDeLaCampana(entradaGuardada, paisDeLaSolicitud, LEYENDAS, {
+        nombreCampana: solicitud.nombre_campana,
+        enlacePublicado: revision.url,
+      });
+    }
+  } catch (error) {
+    // Una solicitud vieja puede no tener datos_json legible. Marcarla como
+    // publicada sigue funcionando: lo que no hay es leyenda que rehacer.
+    leyendas = null;
+  }
+
+  return { valido: true, id: id, linkPublicado: revision.url, leyendas: leyendas };
 }
 
 /**

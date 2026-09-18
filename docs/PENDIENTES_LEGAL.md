@@ -758,3 +758,58 @@ Y de los otros cinco países que salieron de piloto el mismo día:
    uno y los cuatro salen limpios, sin huecos ni frases partidas, pero eso no es
    lo mismo que haberlo leído. Claude Code ofreció agregar `PE01`, `AR01`, `CL01`
    y `UY01`; Juan no los pidió. La oferta sigue en pie.
+
+## Las leyendas de piezas publicitarias (18 de septiembre)
+
+El catálogo de las 55 leyendas de la respuesta del encargo 03 ya está en
+`modelos/leyendas/`, y la herramienta entrega las de Colombia en la pantalla
+final. Lo que queda abierto:
+
+1. **Las 24 preguntas de la lista 2 de la respuesta siguen sin contestar.** Están
+   en `docs/encargos/respuestas/03-leyendas.md`, sección 9.3. Las tres que más
+   cambian el diseño, según la propia respuesta, son la 21 (dónde se redimen los
+   Créditos del ETA, donde la pieza y el T&C dicen cosas distintas), la 16 (el
+   enlace corto) y la 6 (el aviso de tiempo estimado en el ETA).
+2. **El enlace corto no tiene forma definida.** Juan aprobó el 18 de septiembre
+   que sea una dirección propia dentro de `promos.rappi.com`, y no bit.ly. Falta
+   decidir cómo se arma y quién crea esa página. Mientras tanto, la leyenda de
+   push y SMS se entrega como pendiente, con esa razón escrita en pantalla. Ojo
+   con el dato de la pregunta 16: el enlace corto desbloquea push y SMS, pero el
+   banner chico del cashback por ETA mide 567 caracteres contra un límite de 300
+   y sigue sin caber aunque se acorten los dos enlaces.
+3. **Cuatro casos donde la respuesta no dio frase corta**, y por eso la campaña
+   no entrega leyenda y dice qué falta. Son los insumos 3, 4 y 5 de la lista 3:
+   cómo se dice en una pieza que los Créditos solo sirven en ciertas secciones;
+   cómo se llama dentro de la app la modalidad de consumo en el local
+   (`CO.nombre_modalidad_local` sigue vacío); y cómo se dice que en Carrera gana
+   quien haga más pedidos. El cuarto es el registro sanitario, que no es una
+   frase que falte sino un dato que el comercial tiene que escribir.
+4. **Las leyendas de campaña son solo de Colombia.** Para los otros ocho países
+   la respuesta dice "no cubierto": el SSL solo da recetas. Los complementos de
+   categoría de esos países sí están en el catálogo, pero no hay leyenda de
+   campaña donde pegarlos, así que la pregunta de la categoría no aparece y la
+   pantalla final manda a Legal del país. Es el punto 9 de la sección 7E.
+5. **Cuatro leyendas están en el catálogo y la herramienta no llega a ellas:**
+   apuestas y Mundial, que la sección 7E manda escalar a Legal, y las de
+   descuentos con T&C general y awareness, que son tipos de campaña que v3 no
+   genera. Quedan escritas y marcadas con `se_elige_en: ninguna_parte_todavia`.
+6. **Las preguntas de los descuentos con T&C general no se construyeron.** Juan
+   decidió el 18 de septiembre dejarlas para cuando exista ese tipo de campaña.
+   Hoy los 15 T&C generales solo entregan enlace, sin preguntas ni documento, así
+   que no son "dos preguntas más": son un recorrido nuevo completo.
+7. **Y no es solo el banner: una campaña corriente ya no cabe en la letra
+   pequeña.** Farmatodo, 20% de cashback, solo por Turbo, con compra mínima y
+   categoría licores, da una letra pequeña de 645 caracteres contra un límite de
+   620, recortada hasta el último nivel. No es el caso extremo que midió la
+   respuesta (865 caracteres): es una campaña normal. La causa es que suma dos
+   complementos, el de Turbo con su enlace de 74 caracteres y el de licores con
+   sus dos leyes. Hay que decidir si el límite de 620 es el correcto, si el
+   enlace de Turbo puede ir corto, o qué más se puede marcar como recortable.
+8. **La leyenda de banner corto casi nunca cabe.** Con los datos reales de la
+   pieza 1 mide 382 caracteres contra un límite de 300, y toda ella es mínimo
+   irreductible: no hay nada marcado como recortable. La herramienta lo dice en
+   pantalla, que es lo que pide la sección 7D, pero alguien tiene que decidir qué
+   se puede quitar o si esas campañas simplemente no salen en banner chico.
+9. **El texto de la pregunta nueva en portugués lo escribí yo**, igual que el
+   resto de la interfaz en portugués. Va en el mismo paquete que ya está anotado
+   para que lo lea alguien de Brasil.

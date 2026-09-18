@@ -110,6 +110,7 @@ const SERVIDOR_SIMULADO = `
         valido: true, demostracion: true, texto: resultado.texto, id: id,
         nombreCampana: nombreCampana, direccionSugerida: direccionDeCampana(nombreCampana),
         pais: pais.codigo,
+        leyendas: generarLeyendasDeLaCampana(entrada, pais, LEYENDAS, { nombreCampana: nombreCampana }),
       };
     },
 
@@ -124,7 +125,14 @@ const SERVIDOR_SIMULADO = `
         if (solicitudes[i].id !== id) continue;
         solicitudes[i].estado = 'publicado';
         solicitudes[i].link_publicado = revision.url;
-        return { valido: true, id: id, linkPublicado: revision.url };
+        var deLaSolicitud = JSON.parse(solicitudes[i].datos_json || '{}');
+        var paisDeLaSolicitud = paisPorCodigo(PAISES_SEMILLA.map(paisDesdeFila), solicitudes[i].pais);
+        return {
+          valido: true, id: id, linkPublicado: revision.url,
+          leyendas: paisDeLaSolicitud ? generarLeyendasDeLaCampana(deLaSolicitud, paisDeLaSolicitud, LEYENDAS, {
+            nombreCampana: solicitudes[i].nombre_campana, enlacePublicado: revision.url,
+          }) : null,
+        };
       }
       return { valido: false, errores: [{ campo: 'id', mensaje: 'No encontramos esa solicitud.' }] };
     },

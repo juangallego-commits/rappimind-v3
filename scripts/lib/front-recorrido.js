@@ -426,6 +426,7 @@ async function recorrer(rutaDeLaDemo, fichas, marcas) {
     organizadorRazonSocial: 'Farmatodo Colombia S.A.S.', organizadorId: '900111222-1',
     porcentaje: 20, tope: 20000, presupuesto: 5000000, maxPedidos: 1, sinLimite: false,
     carga: 'inmediata', vigencia: 'dias', diasVigencia: 30, redencion: 'tienda', condiciones: [],
+    categoriaProducto: 'licores',
   };
 
   // --- 1. El recorrido del Cashback, de principio a fin ----------------------
@@ -461,7 +462,10 @@ async function recorrer(rutaDeLaDemo, fichas, marcas) {
     { opcion: 'Solo en esta tienda' }, { captura: 'segmento', porQue: true },
     { opcion: 'Todos los usuarios' }, { captura: 'medio-de-pago', porQue: true },
     { opcion: 'Con cualquier medio de pago' }, { captura: 'compra-minima', porQue: true },
-    { texto: '30000' }, { siguiente: true }, { captura: 'resumen' },
+    { texto: '30000' }, { siguiente: true }, { captura: 'categoria-producto', porQue: true },
+    // La unica pregunta nueva del encargo 03: decide la leyenda que va dentro
+    // del arte, no el T&C. Las opciones salen del catalogo de modelos/leyendas/.
+    { opcion: 'Licores y cervezas' }, { captura: 'resumen' },
   ];
 
   async function correrCamino(camino, mapa) {

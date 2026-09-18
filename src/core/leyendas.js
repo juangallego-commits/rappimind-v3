@@ -30,7 +30,7 @@
 /* En Node las dependencias se cargan con require; en Apps Script ya son globales. */
 if (typeof module !== 'undefined' && typeof require === 'function') {
   var moduloTextoLeyendas = require('./texto.js');
-  var normalizarTextoLeyenda = moduloTextoLeyendas.normalizarTexto;
+  var normalizarTexto = moduloTextoLeyendas.normalizarTexto;
   // comoLista es de paises.js. En Apps Script ya es global, y declararla otra
   // vez aqui la pisaria sin avisar: los archivos de src/core/ comparten ambito.
   var comoLista = require('./paises.js').comoLista;
@@ -68,6 +68,29 @@ var TIPOS_DE_PIEZA = [
  */
 var FORMAS_DE_ELEGIR = ['pregunta', 'condicion_turbo', 'ninguna_parte_todavia'];
 
+/**
+ * Las categorias cuya pieza tiene que mostrar el registro sanitario.
+ *
+ * Legal CO lo pide para medicamentos y fitoterapeuticos (diapositiva 10). Sin el
+ * registro la pieza no se puede publicar, asi que la pregunta aparece sola y,
+ * mientras no se responda, no hay leyenda.
+ *
+ * Viven aqui, con el catalogo, y no en los esquemas: son categorias del
+ * catalogo, y asi la pregunta y la leyenda las leen del mismo sitio.
+ */
+var CATEGORIAS_CON_REGISTRO = ['medicamento', 'medicamentos_varios', 'fitoterapeutico_pfm', 'fitoterapeutico_pft'];
+
+/** Solo los medicamentos llevan ademas el numero de notificacion ante el INVIMA. */
+var CATEGORIAS_CON_INVIMA = ['medicamento', 'medicamentos_varios'];
+
+function categoriaPideRegistro(categoria) {
+  return CATEGORIAS_CON_REGISTRO.indexOf(String(categoria || '')) !== -1;
+}
+
+function categoriaPideInvima(categoria) {
+  return CATEGORIAS_CON_INVIMA.indexOf(String(categoria || '')) !== -1;
+}
+
 /** Lo que nunca puede quedar dentro de una leyenda entregada. */
 var MARCAS_SIN_RESOLVER_EN_LEYENDA = /\{\{|\}\}|\[\[|\]\]/;
 
@@ -92,9 +115,7 @@ var SENALES_DE_LEYENDA_ROTA = [
  * deja tal cual vino de Legal.
  */
 function leyendaDesdeTexto(texto) {
-  var normalizado = typeof normalizarTextoLeyenda === 'function'
-    ? normalizarTextoLeyenda(texto)
-    : String(texto || '').replace(/\r\n?/g, '\n');
+  var normalizado = normalizarTexto(texto);
 
   var lineas = normalizado.split('\n');
   var ficha = {};
@@ -485,6 +506,10 @@ if (typeof module !== 'undefined') {
     usarCatalogo: usarCatalogo,
     catalogoActual: catalogoActual,
     categoriasDeProducto: categoriasDeProducto,
+    categoriaPideRegistro: categoriaPideRegistro,
+    categoriaPideInvima: categoriaPideInvima,
+    CATEGORIAS_CON_REGISTRO: CATEGORIAS_CON_REGISTRO,
+    CATEGORIAS_CON_INVIMA: CATEGORIAS_CON_INVIMA,
     hayLeyendasDeCampana: hayLeyendasDeCampana,
     categoriasDelPais: categoriasDelPais,
     complementosQueAplican: complementosQueAplican,
