@@ -77,9 +77,7 @@
       "texto_persona": "persona física",
       "texto_hora_local": "hora de la Ciudad de México",
       "texto_derechos_datos": "tus derechos de acceso, rectificación, cancelación y oposición (derechos ARCO) y el de revocar tu consentimiento",
-      "por_confirmar_en_pruebas": [
-        "visto_bueno_legal_local"
-      ],
+      "por_confirmar_en_pruebas": [],
       "url_tc_turbo": ""
     },
     {
@@ -111,9 +109,7 @@
       "texto_persona": "persona natural",
       "texto_hora_local": "hora local de la República del Perú",
       "texto_derechos_datos": "tus derechos de acceso, actualización, inclusión, rectificación, supresión y oposición sobre tus datos personales, y el de revocar tu consentimiento",
-      "por_confirmar_en_pruebas": [
-        "visto_bueno_legal_local"
-      ],
+      "por_confirmar_en_pruebas": [],
       "url_tc_turbo": ""
     },
     {
@@ -145,9 +141,7 @@
       "texto_persona": "persona humana",
       "texto_hora_local": "hora local de la República Argentina",
       "texto_derechos_datos": "tus derechos de acceso, rectificación, actualización y supresión de tus datos personales",
-      "por_confirmar_en_pruebas": [
-        "visto_bueno_legal_local"
-      ],
+      "por_confirmar_en_pruebas": [],
       "url_tc_turbo": ""
     },
     {
@@ -179,9 +173,7 @@
       "texto_persona": "persona natural",
       "texto_hora_local": "hora de Santiago de Chile",
       "texto_derechos_datos": "tus derechos de acceso, rectificación, supresión y bloqueo de tus datos personales, y los demás que te reconozca la legislación vigente",
-      "por_confirmar_en_pruebas": [
-        "visto_bueno_legal_local"
-      ],
+      "por_confirmar_en_pruebas": [],
       "url_tc_turbo": ""
     },
     {
@@ -214,8 +206,7 @@
       "texto_hora_local": "hora del Ecuador continental",
       "texto_derechos_datos": "tus derechos de acceso, rectificación y actualización, eliminación, oposición, portabilidad y suspensión del tratamiento de tus datos personales",
       "por_confirmar_en_pruebas": [
-        "separador_miles",
-        "visto_bueno_legal_local"
+        "separador_miles"
       ],
       "url_tc_turbo": ""
     },
@@ -248,9 +239,7 @@
       "texto_persona": "persona física",
       "texto_hora_local": "hora local de la República Oriental del Uruguay",
       "texto_derechos_datos": "tus derechos de acceso, rectificación, actualización, inclusión y supresión de tus datos personales",
-      "por_confirmar_en_pruebas": [
-        "visto_bueno_legal_local"
-      ],
+      "por_confirmar_en_pruebas": [],
       "url_tc_turbo": ""
     },
     {
@@ -283,8 +272,7 @@
       "texto_hora_local": "hora local de la República de Costa Rica",
       "texto_derechos_datos": "tus derechos de acceso, rectificación y supresión de tus datos personales, y el de revocar tu consentimiento",
       "por_confirmar_en_pruebas": [
-        "separador_miles",
-        "visto_bueno_legal_local"
+        "separador_miles"
       ],
       "url_tc_turbo": ""
     },
@@ -317,10 +305,44 @@
       "texto_persona": "pessoa física",
       "texto_hora_local": "horário de Brasília",
       "texto_derechos_datos": "",
-      "por_confirmar_en_pruebas": [
-        "visto_bueno_legal_local"
-      ],
+      "por_confirmar_en_pruebas": [],
       "url_tc_turbo": ""
+    }
+  ],
+  "confirmaciones": [
+    {
+      "id": "encargo-01-2026-09-18",
+      "nota": "Los valores legales que Legal confirmo al responder el encargo 01. Se escriben en la pestana Paises una sola vez, pisando lo que hubiera, porque los confirmo el dueno legal del producto.",
+      "campos": [
+        "CO.por_confirmar_en_pruebas",
+        "MX.por_confirmar_en_pruebas",
+        "MX.texto_derechos_datos",
+        "PE.por_confirmar_en_pruebas",
+        "PE.texto_derechos_datos",
+        "AR.por_confirmar_en_pruebas",
+        "AR.texto_derechos_datos",
+        "CL.por_confirmar_en_pruebas",
+        "CL.texto_derechos_datos",
+        "CL.autoridad_datos",
+        "EC.por_confirmar_en_pruebas",
+        "EC.texto_derechos_datos",
+        "UY.por_confirmar_en_pruebas",
+        "UY.texto_derechos_datos",
+        "UY.entidad_vigilancia",
+        "CR.por_confirmar_en_pruebas",
+        "CR.texto_derechos_datos",
+        "BR.por_confirmar_en_pruebas",
+        "BR.texto_derechos_datos",
+        "BR.pais_legal",
+        "BR.ley_aplicable",
+        "BR.jurisdiccion",
+        "BR.entidad_vigilancia",
+        "BR.autoridad_datos",
+        "BR.politica_privacidad",
+        "BR.separador_miles",
+        "BR.termino_dias",
+        "BR.texto_hora_local"
+      ]
     }
   ]
 }

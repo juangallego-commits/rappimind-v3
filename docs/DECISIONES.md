@@ -681,3 +681,33 @@ elige entre dos frases que Legal ya escribió.
     `pruebas/ayuda.test.js` (la alternativa cuando un contacto no tiene correo)
     y el recorrido de la skill (el atajo a los T&C publicados). Se cambió la
     cita, no lo que la prueba vigila.
+
+## 18 de septiembre · Las decisiones de Juan sobre el encargo 01
+
+28. **Un valor que Legal confirma llega solo a la pestaña Paises.** La regla de
+    que la hoja manda sobre la semilla sigue en pie: protege lo que Legal edita a
+    mano. Lo que no tenía solución era el camino contrario. Cuando Legal confirma
+    un valor respondiendo un encargo, ese valor entra al repositorio y se quedaba
+    esperando a que alguien lo copiara celda por celda en el Sheet, que es como
+    una fila se queda vieja para siempre.
+
+    Ahora `data/paises.json` declara tandas de confirmaciones con un id y la
+    lista de columnas que cubre, en la forma `MX.texto_derechos_datos`. El valor
+    sale de la semilla, no se repite en la declaración, así que no hay dos copias
+    que se puedan separar. `setup()` escribe cada tanda una sola vez y guarda el
+    id aplicado en las propiedades del script: correr `setup()` diez veces no
+    revive un valor que Legal haya corregido después. La primera tanda es
+    `encargo-01-2026-09-18`, con 28 columnas.
+
+29. **Nadie pide el visto bueno del abogado de cada país.** La sesión del encargo
+    01 había agregado `visto_bueno_legal_local` como pendiente nuevo de los ocho
+    países en piloto, para que la lista no quedara vacía. Juan decidió no correr
+    ese circuito. El pendiente se quitó, y seis de los ocho países quedan sin un
+    solo dato por confirmar. Que un país esté en piloto no depende de esa lista:
+    depende de la columna `estado`, que solo Juan cambia en el Sheet.
+
+30. **El máximo de pedidos del Cashback Multitienda se cuenta por tienda**
+    (decisión 20 de la respuesta). Son varias tiendas en una misma jornada, cada
+    una con su presupuesto, así que un límite único repartía mal el beneficio. La
+    cláusula y la ayuda de la pregunta lo dicen ahora con esas palabras, y el
+    caso dorado `CD01` quedó regenerado.

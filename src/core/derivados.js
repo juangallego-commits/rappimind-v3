@@ -173,6 +173,19 @@ function textoLimitePedidos(entrada) {
   var maximo = Number(entrada.maxPedidos);
   if (!maximo) return '';
   var sustantivo = maximo === 1 ? 'pedido' : 'pedidos';
+
+  // Decision 20 de la respuesta del encargo 01, confirmada por Juan el 18 de
+  // septiembre: en el Cashback Multitienda el maximo se cuenta por cada tienda,
+  // no por campana. Son varias tiendas en una misma jornada y cada una pone su
+  // propio presupuesto, asi que un limite unico repartia mal el beneficio.
+  if (entrada.tipo === 'cashback_day') {
+    return (
+      'Puedes obtener el Beneficio en un máximo de ' + letrasYCifra(maximo) + ' ' + sustantivo +
+      ' por cada Tienda Participante durante la vigencia de la Campaña; los pedidos adicionales en esa misma tienda' +
+      ' no generarán el Beneficio y se procesarán como pedidos regulares.'
+    );
+  }
+
   return (
     'Puedes obtener el Beneficio en un máximo de ' + letrasYCifra(maximo) + ' ' + sustantivo +
     ' durante la vigencia de la Campaña; los pedidos adicionales no generarán el Beneficio y se procesarán como pedidos regulares.'

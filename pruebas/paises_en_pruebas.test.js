@@ -24,56 +24,63 @@ test('Colombia no está en pruebas y los demás sí', () => {
   assert.deepStrictEqual(enPruebas.sort(), ['AR', 'BR', 'CL', 'CR', 'EC', 'MX', 'PE', 'UY']);
 });
 
-test('cada país en pruebas dice qué tiene sin confirmar', () => {
+test('un país en pruebas lo sigue estando aunque no le falte ningún dato', () => {
+  // Después del encargo 01, seis de los ocho países en piloto no tienen un solo
+  // dato por confirmar. Estar en piloto no depende de esa lista: depende del
+  // estado, y el estado solo lo cambia Juan en la pestaña Paises del Sheet.
   for (const pais of PAISES.filter(paisEnPruebas)) {
-    const faltantes = datosPorConfirmar(pais);
-    assert.ok(faltantes.length > 0, pais.nombre + ' está en piloto y no dice qué le falta confirmar');
+    assert.strictEqual(pais.estado, 'piloto', pais.nombre);
   }
+  assert.deepStrictEqual(datosPorConfirmar(porCodigo('MX')), [],
+    'México ya tiene sus cuatro datos confirmados');
+  assert.ok(datosPorConfirmar(porCodigo('EC')).length > 0,
+    'Ecuador todavía no dice cómo escribe los miles');
 });
 
 test('lo que falta se dice en palabras, no con el nombre de la columna', () => {
-  for (const codigo of ['MX', 'EC']) {
+  for (const codigo of ['EC', 'CR']) {
     const faltantes = datosPorConfirmar(porCodigo(codigo));
     for (const texto of faltantes) {
       assert.ok(texto.indexOf('_') === -1, 'salió el nombre técnico de la columna: ' + texto);
       assert.ok(texto.length > 12, 'demasiado corto para entenderse: ' + texto);
     }
   }
-  // Ecuador todavía no dice cómo escribe los miles; México ya tiene sus cuatro
-  // datos confirmados por Legal y solo le falta que su abogado los apruebe.
+  // Ecuador y Costa Rica son los dos que siguen sin decir cómo escriben los miles.
   assert.ok(datosPorConfirmar(porCodigo('EC')).indexOf('cómo se separan los miles en un monto') !== -1);
-  assert.ok(datosPorConfirmar(porCodigo('MX')).indexOf('el visto bueno del equipo legal de este país') !== -1);
+  assert.ok(datosPorConfirmar(porCodigo('CR')).indexOf('cómo se separan los miles en un monto') !== -1);
 });
 
 /**
- * Un dato confirmado sale de la lista, y el aviso no se apaga por eso.
+ * Un dato confirmado sale de la lista.
  *
  * La respuesta del encargo 01 confirmó, con la ley de cada país, los cuatro
- * datos que ocho países tenían pendientes. Si al confirmarlos la lista quedaba
- * vacía, el abogado del país entraba a probar sin un solo pendiente a la vista
- * y confirmaba de pasada toda la configuración. Lo que le queda pendiente a
- * esos países es justo su propio visto bueno, y eso es lo que ahora dice.
+ * datos que ocho países tenían pendientes. Juan decidió el 18 de septiembre no
+ * pedir además el visto bueno del abogado de cada país, así que la lista de un
+ * país que ya tiene todo confirmado queda vacía. El aviso de que el país está
+ * en pruebas no depende de esa lista: depende del estado, que solo Juan cambia
+ * en el Sheet.
  */
-test('un país en piloto con todo confirmado sigue pidiendo el visto bueno local', () => {
-  for (const pais of PAISES.filter(paisEnPruebas)) {
-    assert.ok((pais.por_confirmar_en_pruebas || []).indexOf('visto_bueno_legal_local') !== -1,
-      pais.nombre + ' no pide el visto bueno de su equipo legal');
-  }
-  // Colombia ya está activo y no le falta nada: sus tres datos de Travel los
-  // confirmó Juan (el RNT y su vencimiento) y Legal (la entidad que lo vigila).
+test('un dato confirmado sale de la lista de pendientes', () => {
+  // Colombia ya está activo y no le falta nada.
   assert.deepStrictEqual(porCodigo('CO').por_confirmar_en_pruebas, []);
+
+  // Nadie pide ya el visto bueno del abogado local.
+  for (const pais of PAISES) {
+    assert.strictEqual((pais.por_confirmar_en_pruebas || []).indexOf('visto_bueno_legal_local'), -1,
+      pais.nombre + ' todavía pide el visto bueno local, que Juan decidió no pedir');
+  }
 
   // Y los cuatro datos que todos tenían pendientes ya no aparecen, salvo el
   // separador de miles de Ecuador y Costa Rica, que sigue sin dato.
   for (const pais of PAISES) {
     const pendientes = pais.por_confirmar_en_pruebas || [];
     for (const llave of ['termino_dias', 'texto_hora_local', 'texto_derechos_datos']) {
-      assert.ok(pendientes.indexOf(llave) === -1, pais.codigo + ' todavía marca ' + llave);
-    }
-    if (['EC', 'CR'].indexOf(pais.codigo) === -1) {
-      assert.ok(pendientes.indexOf('separador_miles') === -1, pais.codigo + ' todavía marca separador_miles');
+      assert.strictEqual(pendientes.indexOf(llave), -1,
+        pais.nombre + ' sigue marcando ' + llave + ', que el encargo 01 confirmó');
     }
   }
+  assert.deepStrictEqual(porCodigo('EC').por_confirmar_en_pruebas, ['separador_miles']);
+  assert.deepStrictEqual(porCodigo('CR').por_confirmar_en_pruebas, ['separador_miles']);
 });
 
 test('cada dato que un país marca por confirmar tiene su nombre en palabras', () => {

@@ -457,6 +457,13 @@ var PREGUNTAS = {
         ayuda: 'Los documentos aprobados usan uno, dos, o sin límite.',
         porQue: 'El documento lo escribe en letras y en cifra: "o limite de 1 (um) pedido por usuário".',
       },
+
+      // Decision 20: aqui el limite se cuenta por cada tienda, no por campana.
+      // El comercial tiene que saberlo antes de escribir el numero, porque con
+      // veinte tiendas participantes un "1" no significa un pedido en total.
+      cashback_day: {
+        ayuda: 'Es por cada tienda: con 1, gana una vez en cada tienda participante.',
+      },
     },
     paso: 'beneficio',
     pregunta: '¿Cuántas veces puede recibir el beneficio una persona?',

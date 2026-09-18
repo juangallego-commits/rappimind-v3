@@ -709,9 +709,7 @@ var PAISES_SEMILLA = [
     "texto_persona": "persona física",
     "texto_hora_local": "hora de la Ciudad de México",
     "texto_derechos_datos": "tus derechos de acceso, rectificación, cancelación y oposición (derechos ARCO) y el de revocar tu consentimiento",
-    "por_confirmar_en_pruebas": [
-      "visto_bueno_legal_local"
-    ],
+    "por_confirmar_en_pruebas": [],
     "url_tc_turbo": ""
   },
   {
@@ -743,9 +741,7 @@ var PAISES_SEMILLA = [
     "texto_persona": "persona natural",
     "texto_hora_local": "hora local de la República del Perú",
     "texto_derechos_datos": "tus derechos de acceso, actualización, inclusión, rectificación, supresión y oposición sobre tus datos personales, y el de revocar tu consentimiento",
-    "por_confirmar_en_pruebas": [
-      "visto_bueno_legal_local"
-    ],
+    "por_confirmar_en_pruebas": [],
     "url_tc_turbo": ""
   },
   {
@@ -777,9 +773,7 @@ var PAISES_SEMILLA = [
     "texto_persona": "persona humana",
     "texto_hora_local": "hora local de la República Argentina",
     "texto_derechos_datos": "tus derechos de acceso, rectificación, actualización y supresión de tus datos personales",
-    "por_confirmar_en_pruebas": [
-      "visto_bueno_legal_local"
-    ],
+    "por_confirmar_en_pruebas": [],
     "url_tc_turbo": ""
   },
   {
@@ -811,9 +805,7 @@ var PAISES_SEMILLA = [
     "texto_persona": "persona natural",
     "texto_hora_local": "hora de Santiago de Chile",
     "texto_derechos_datos": "tus derechos de acceso, rectificación, supresión y bloqueo de tus datos personales, y los demás que te reconozca la legislación vigente",
-    "por_confirmar_en_pruebas": [
-      "visto_bueno_legal_local"
-    ],
+    "por_confirmar_en_pruebas": [],
     "url_tc_turbo": ""
   },
   {
@@ -846,8 +838,7 @@ var PAISES_SEMILLA = [
     "texto_hora_local": "hora del Ecuador continental",
     "texto_derechos_datos": "tus derechos de acceso, rectificación y actualización, eliminación, oposición, portabilidad y suspensión del tratamiento de tus datos personales",
     "por_confirmar_en_pruebas": [
-      "separador_miles",
-      "visto_bueno_legal_local"
+      "separador_miles"
     ],
     "url_tc_turbo": ""
   },
@@ -880,9 +871,7 @@ var PAISES_SEMILLA = [
     "texto_persona": "persona física",
     "texto_hora_local": "hora local de la República Oriental del Uruguay",
     "texto_derechos_datos": "tus derechos de acceso, rectificación, actualización, inclusión y supresión de tus datos personales",
-    "por_confirmar_en_pruebas": [
-      "visto_bueno_legal_local"
-    ],
+    "por_confirmar_en_pruebas": [],
     "url_tc_turbo": ""
   },
   {
@@ -915,8 +904,7 @@ var PAISES_SEMILLA = [
     "texto_hora_local": "hora local de la República de Costa Rica",
     "texto_derechos_datos": "tus derechos de acceso, rectificación y supresión de tus datos personales, y el de revocar tu consentimiento",
     "por_confirmar_en_pruebas": [
-      "separador_miles",
-      "visto_bueno_legal_local"
+      "separador_miles"
     ],
     "url_tc_turbo": ""
   },
@@ -949,15 +937,49 @@ var PAISES_SEMILLA = [
     "texto_persona": "pessoa física",
     "texto_hora_local": "horário de Brasília",
     "texto_derechos_datos": "",
-    "por_confirmar_en_pruebas": [
-      "visto_bueno_legal_local"
-    ],
+    "por_confirmar_en_pruebas": [],
     "url_tc_turbo": ""
   }
 ];
 var PAISES_VERSION = "2026-09-18";
+var CONFIRMACIONES_LEGALES = [
+  {
+    "id": "encargo-01-2026-09-18",
+    "nota": "Los valores legales que Legal confirmo al responder el encargo 01. Se escriben en la pestana Paises una sola vez, pisando lo que hubiera, porque los confirmo el dueno legal del producto.",
+    "campos": [
+      "CO.por_confirmar_en_pruebas",
+      "MX.por_confirmar_en_pruebas",
+      "MX.texto_derechos_datos",
+      "PE.por_confirmar_en_pruebas",
+      "PE.texto_derechos_datos",
+      "AR.por_confirmar_en_pruebas",
+      "AR.texto_derechos_datos",
+      "CL.por_confirmar_en_pruebas",
+      "CL.texto_derechos_datos",
+      "CL.autoridad_datos",
+      "EC.por_confirmar_en_pruebas",
+      "EC.texto_derechos_datos",
+      "UY.por_confirmar_en_pruebas",
+      "UY.texto_derechos_datos",
+      "UY.entidad_vigilancia",
+      "CR.por_confirmar_en_pruebas",
+      "CR.texto_derechos_datos",
+      "BR.por_confirmar_en_pruebas",
+      "BR.texto_derechos_datos",
+      "BR.pais_legal",
+      "BR.ley_aplicable",
+      "BR.jurisdiccion",
+      "BR.entidad_vigilancia",
+      "BR.autoridad_datos",
+      "BR.politica_privacidad",
+      "BR.separador_miles",
+      "BR.termino_dias",
+      "BR.texto_hora_local"
+    ]
+  }
+];
 
-if (typeof module !== 'undefined') { module.exports = { PAISES_SEMILLA: PAISES_SEMILLA, PAISES_VERSION: PAISES_VERSION }; }
+if (typeof module !== 'undefined') { module.exports = { PAISES_SEMILLA: PAISES_SEMILLA, PAISES_VERSION: PAISES_VERSION, CONFIRMACIONES_LEGALES: CONFIRMACIONES_LEGALES }; }
 
 // --- Secciones.js ---
 // Archivo generado por scripts/build.js. No editar a mano.
@@ -2165,6 +2187,19 @@ function textoLimitePedidos(entrada) {
   var maximo = Number(entrada.maxPedidos);
   if (!maximo) return '';
   var sustantivo = maximo === 1 ? 'pedido' : 'pedidos';
+
+  // Decision 20 de la respuesta del encargo 01, confirmada por Juan el 18 de
+  // septiembre: en el Cashback Multitienda el maximo se cuenta por cada tienda,
+  // no por campana. Son varias tiendas en una misma jornada y cada una pone su
+  // propio presupuesto, asi que un limite unico repartia mal el beneficio.
+  if (entrada.tipo === 'cashback_day') {
+    return (
+      'Puedes obtener el Beneficio en un máximo de ' + letrasYCifra(maximo) + ' ' + sustantivo +
+      ' por cada Tienda Participante durante la vigencia de la Campaña; los pedidos adicionales en esa misma tienda' +
+      ' no generarán el Beneficio y se procesarán como pedidos regulares.'
+    );
+  }
+
   return (
     'Puedes obtener el Beneficio en un máximo de ' + letrasYCifra(maximo) + ' ' + sustantivo +
     ' durante la vigencia de la Campaña; los pedidos adicionales no generarán el Beneficio y se procesarán como pedidos regulares.'
@@ -6420,7 +6455,6 @@ var NOMBRE_DEL_DATO = {
   // confirmo Legal: que el abogado de ese pais los vea y los apruebe. Sin
   // esta llave, confirmar los cuatro datos de un pais apagaba el aviso
   // entero y el abogado local entraba a probar sin saber que le tocaba a el.
-  visto_bueno_legal_local: 'el visto bueno del equipo legal de este país',
 };
 
 /**
@@ -6937,6 +6971,13 @@ var PREGUNTAS = {
         pregunta: '¿Cuántos pedidos puede hacer la misma persona?',
         ayuda: 'Los documentos aprobados usan uno, dos, o sin límite.',
         porQue: 'El documento lo escribe en letras y en cifra: "o limite de 1 (um) pedido por usuário".',
+      },
+
+      // Decision 20: aqui el limite se cuenta por cada tienda, no por campana.
+      // El comercial tiene que saberlo antes de escribir el numero, porque con
+      // veinte tiendas participantes un "1" no significa un pedido en total.
+      cashback_day: {
+        ayuda: 'Es por cada tienda: con 1, gana una vez en cada tienda participante.',
       },
     },
     paso: 'beneficio',

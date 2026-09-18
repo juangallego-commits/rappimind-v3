@@ -19,6 +19,7 @@ function setup() {
 
   asegurarPestanas(base, pasos);
   sembrarPaises(pasos);
+  aplicarConfirmaciones(pasos);
   asegurarCarpetasPorPais(raiz, pasos);
   asegurarAdministradores(pasos);
 
@@ -149,6 +150,74 @@ function sembrarPaises(pasos) {
     hoja.getRange(2, 1, filas.length, encabezados.length).setValues(filas);
     pasos.push(filas.length + ' países cargados');
   }
+}
+
+/**
+ * Escribe en la pestana Paises los valores que Legal ya confirmo.
+ *
+ * La regla general es que la hoja manda sobre la semilla, y es la correcta: lo
+ * que Legal escribe a mano ahi no se pisa. Pero cuando Legal confirma un valor
+ * respondiendo un encargo, ese valor entra al repositorio y no tiene forma de
+ * llegar a la hoja: ponerPaisesAlDia solo rellena celdas vacias. Quedaba como
+ * trabajo manual, celda por celda, y asi es como una fila se queda vieja para
+ * siempre.
+ *
+ * data/paises.json declara cada tanda de confirmaciones con un id y la lista de
+ * columnas que cubre, en la forma "CO.termino_dias". El valor sale de la
+ * semilla, que es la fuente: aqui no hay una segunda copia que se pueda separar.
+ * Cada tanda se aplica una sola vez, y el id aplicado queda guardado, asi que
+ * correr setup() diez veces no revive un valor que Legal cambio despues.
+ */
+function aplicarConfirmaciones(pasos) {
+  var tandas = typeof CONFIRMACIONES_LEGALES !== 'undefined' ? CONFIRMACIONES_LEGALES : [];
+  if (!tandas || tandas.length === 0) return;
+
+  var aplicadas = comoLista(leerPropiedad(PROPIEDADES.CONFIRMACIONES_APLICADAS) || '');
+  var filas = leerPaises();
+  var escritas = 0;
+  var nuevas = [];
+
+  for (var t = 0; t < tandas.length; t++) {
+    var tanda = tandas[t];
+    if (!tanda || !tanda.id) continue;
+    if (aplicadas.indexOf(tanda.id) !== -1) continue;
+
+    var campos = tanda.campos || [];
+    var porPais = {};
+
+    for (var c = 0; c < campos.length; c++) {
+      var partes = String(campos[c]).split('.');
+      if (partes.length !== 2) continue;
+      var codigo = partes[0].trim().toUpperCase();
+      var columna = partes[1].trim();
+
+      var semilla = paisPorCodigo(PAISES_SEMILLA, codigo);
+      var fila = paisPorCodigo(filas, codigo);
+      if (!semilla || !fila) continue;
+      if (PESTANAS.Paises.indexOf(columna) === -1) continue;
+
+      var valor = paisComoFila(semilla)[columna];
+      if (valor === undefined) valor = '';
+      if (String(fila[columna] === undefined ? '' : fila[columna]) === String(valor)) continue;
+
+      if (!porPais[codigo]) porPais[codigo] = { _fila: fila._fila, cambios: {} };
+      porPais[codigo].cambios[columna] = valor;
+      escritas += 1;
+    }
+
+    for (var codigoPais in porPais) {
+      if (!Object.prototype.hasOwnProperty.call(porPais, codigoPais)) continue;
+      actualizarFila('Paises', porPais[codigoPais]._fila, porPais[codigoPais].cambios);
+    }
+
+    nuevas.push(tanda.id);
+    aplicadas.push(tanda.id);
+  }
+
+  if (nuevas.length === 0) return;
+
+  guardarPropiedad(PROPIEDADES.CONFIRMACIONES_APLICADAS, aplicadas.join(', '));
+  pasos.push(escritas + ' valores confirmados por Legal escritos en Paises (' + nuevas.join(', ') + ')');
 }
 
 /**

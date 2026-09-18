@@ -675,3 +675,41 @@ no reemplazar una frase. Hay que hablarlo antes, como el encargo 03.
 
     Las líneas exactas están en `docs/encargos/respuestas/02-interfaz.md`, en el
     bloque final, marcadas como pantalla 30. Decisión de Juan, grupo por grupo.
+
+## Lo que Juan decidió el 18 de septiembre
+
+Cierra cinco de los pendientes de arriba y abre dos.
+
+**Cerrados.**
+
+- **Brasil, el tope del frete grátis** (grupo A, punto 1): se queda como está,
+  con el excedente a cargo del Usuário. El texto alternativo sigue escrito en la
+  respuesta por si Brasil dice que la app quita el beneficio entero.
+- **Cashback Multitienda, el máximo de pedidos** (grupo A, punto 5): es por cada
+  tienda participante. Aplicado.
+- **Rappi Travel, la cláusula de responsabilidad** (decisión 40): se queda la de
+  hoy. Queda escrito como **riesgo aceptado**, que es lo que la respuesta pedía
+  que se anotara si no se cambiaba.
+- **Brasil, la ratificación por escrito** (decisión 24): confirmada.
+- **Las catorce leyendas con propuesta** (encargo 03): aprobadas las catorce. Se
+  ajustan sobre la marcha, mirando cómo salen en el desarrollo.
+
+**Abiertos, con lo que dijo Juan.**
+
+14. **Turbo no es una modalidad, son tiendas por zona.** La decisión 33 proponía
+    que `MODALIDAD_TURBO` pasara a una lista cerrada de dos, "Turbo Restaurantes"
+    y "Turbo". Juan lo corrigió: en la práctica son las tiendas Turbo de cada
+    zona, con nombre propio, como Turbo Calleja, Turbo Chico o Turbo Laureles.
+    Eso no es una lista cerrada de dos opciones y cambia el diseño de la pregunta
+    del cashback por ETA, porque hoy el documento nombra una sola modalidad para
+    toda la ciudad. Hay que decidir si el T&C nombra la ciudad (como los dos
+    publicados), la zona, o las tiendas una por una. No se tocó nada.
+15. **"Consumo en el local" quedó sin resolver porque la pregunta se entiende de
+    dos formas.** La decisión 39 la usa para decir **cómo se pide**: si el
+    beneficio se gana en cualquier pedido, solo pidiendo por Turbo, o solo
+    consumiendo en el local. Juan la leyó como **qué tiendas participan**, y
+    anotó que en el Cashback eso ya viene implícito con el nombre de la tienda.
+    Son dos cosas distintas y conviene zanjarlo antes de construir la pantalla:
+    una tienda puede participar y aun así excluir los pedidos a domicilio. La
+    opción sigue oculta mientras `CO.nombre_modalidad_local` esté vacío, así que
+    hoy no le aparece a nadie.

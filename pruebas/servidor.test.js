@@ -976,8 +976,6 @@ test('setup no borra de la hoja un dato por confirmar que la semilla ya no trae'
   const mexico = paisPorCodigo(leerPaises(), 'MX');
   assert.ok(mexico.por_confirmar_en_pruebas.indexOf('termino_dias') !== -1,
     'setup borró de la hoja un dato viejo: hay que quitarlo a mano en la pestaña Paises');
-  assert.ok(mexico.por_confirmar_en_pruebas.indexOf('visto_bueno_legal_local') !== -1,
-    'setup no agregó a la hoja el pendiente nuevo de la semilla');
 });
 
 test('previsualizar y generar aguantan una entrada vacía en modo demostración', () => {
@@ -985,4 +983,96 @@ test('previsualizar y generar aguantan una entrada vacía en modo demostración'
   assert.doesNotThrow(() => previsualizar(null));
   assert.doesNotThrow(() => generar(undefined));
   assert.strictEqual(previsualizar(null).valido, false);
+});
+
+// --- los valores que Legal confirma llegan solos a la hoja -----------------
+
+/**
+ * La hoja manda sobre la semilla, y eso no cambia. Lo que cambia es que un
+ * valor confirmado por Legal ya no se queda esperando a que alguien lo copie
+ * celda por celda: la semilla declara la tanda, setup la escribe una vez, y
+ * guarda que ya la escribió.
+ */
+function hojaDePaisesComoEstabaAntesDelEncargo01() {
+  const hoja = hojaPorNombre('Paises');
+  const encabezados = hoja.valores[0];
+  const fila = (codigo) => hoja.valores.findIndex((f) => f[encabezados.indexOf('codigo')] === codigo);
+
+  hoja.valores[fila('MX')][encabezados.indexOf('texto_derechos_datos')] =
+    'tus derechos de acceso, rectificación, cancelación y oposición (derechos ARCO)';
+  hoja.valores[fila('MX')][encabezados.indexOf('por_confirmar_en_pruebas')] =
+    'separador_miles, termino_dias, texto_hora_local, texto_derechos_datos';
+  hoja.valores[fila('BR')][encabezados.indexOf('pais_legal')] = 'a República Federativa del Brasil';
+  hoja.valores[fila('BR')][encabezados.indexOf('entidad_vigilancia')] =
+    'el PROCON y la Secretaría Nacional del Consumidor (SENACON)';
+  return hoja;
+}
+
+test('setup escribe en la hoja los valores que Legal confirmó', () => {
+  // El caso real: el Sheet de Juan existe desde antes, con los valores viejos,
+  // y nunca ha visto una tanda de confirmaciones.
+  const mundo = conSetup();
+  hojaDePaisesComoEstabaAntesDelEncargo01();
+  delete mundo.propiedades.CONFIRMACIONES_APLICADAS;
+
+  setup();
+
+  const mexico = paisPorCodigo(leerPaises(), 'MX');
+  assert.ok(mexico.texto_derechos_datos.indexOf('revocar tu consentimiento') !== -1,
+    'no se escribió el texto de derechos confirmado: ' + mexico.texto_derechos_datos);
+  assert.deepStrictEqual(mexico.por_confirmar_en_pruebas, [],
+    'los datos ya confirmados siguen marcados como pendientes');
+
+  const brasil = paisPorCodigo(leerPaises(), 'BR');
+  assert.strictEqual(brasil.pais_legal, 'a República Federativa do Brasil');
+  assert.ok(brasil.entidad_vigilancia.indexOf('Secretaria Nacional do Consumidor') !== -1, brasil.entidad_vigilancia);
+});
+
+test('la tanda de confirmaciones se aplica una sola vez', () => {
+  // Si se aplicara en cada setup, un valor que Legal corrija a mano después
+  // volvería solo al de la semilla, que es justo lo que la regla evita.
+  const mundo = conSetup();
+  hojaDePaisesComoEstabaAntesDelEncargo01();
+  delete mundo.propiedades.CONFIRMACIONES_APLICADAS;
+  setup();
+
+  const hoja = hojaPorNombre('Paises');
+  const encabezados = hoja.valores[0];
+  const filaMx = hoja.valores.findIndex((f) => f[encabezados.indexOf('codigo')] === 'MX');
+  hoja.valores[filaMx][encabezados.indexOf('texto_derechos_datos')] = 'lo que Legal escribió después';
+
+  setup();
+
+  assert.strictEqual(paisPorCodigo(leerPaises(), 'MX').texto_derechos_datos, 'lo que Legal escribió después',
+    'la segunda corrida revivió el valor de la semilla');
+});
+
+test('las confirmaciones solo tocan las columnas que declaran', () => {
+  const mundo = conSetup();
+  delete mundo.propiedades.CONFIRMACIONES_APLICADAS;
+  const hoja = hojaPorNombre('Paises');
+  const encabezados = hoja.valores[0];
+  const filaMx = hoja.valores.findIndex((f) => f[encabezados.indexOf('codigo')] === 'MX');
+  hoja.valores[filaMx][encabezados.indexOf('entidad_legal')] = 'Rappi México, editado a mano';
+
+  setup();
+
+  assert.strictEqual(paisPorCodigo(leerPaises(), 'MX').entidad_legal, 'Rappi México, editado a mano');
+});
+
+test('cada confirmación declarada nombra un país y una columna que existen', () => {
+  const { leerJson, rutaDesdeRaiz } = require('../scripts/lib/archivos');
+  const semilla = leerJson(rutaDesdeRaiz('data', 'paises.json'));
+  const { PESTANAS } = require('../src/server/Config.js');
+  const codigos = semilla.paises.map((p) => p.codigo);
+
+  for (const tanda of semilla.confirmaciones || []) {
+    assert.ok(tanda.id, 'una tanda de confirmaciones sin id');
+    for (const campo of tanda.campos || []) {
+      const partes = String(campo).split('.');
+      assert.strictEqual(partes.length, 2, 'mal escrito: ' + campo);
+      assert.ok(codigos.indexOf(partes[0]) !== -1, 'país que no existe: ' + campo);
+      assert.ok(PESTANAS.Paises.indexOf(partes[1]) !== -1, 'columna que no existe: ' + campo);
+    }
+  }
 });

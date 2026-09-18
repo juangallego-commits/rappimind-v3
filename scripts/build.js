@@ -117,8 +117,9 @@ function generarDatos() {
       encabezado('data/paises.json'),
       'var PAISES_SEMILLA = ' + comoLiteral(paises.paises) + ';',
       'var PAISES_VERSION = ' + comoLiteral(paises.version || '') + ';',
+      'var CONFIRMACIONES_LEGALES = ' + comoLiteral(paises.confirmaciones || []) + ';',
       '',
-      "if (typeof module !== 'undefined') { module.exports = { PAISES_SEMILLA: PAISES_SEMILLA, PAISES_VERSION: PAISES_VERSION }; }",
+      "if (typeof module !== 'undefined') { module.exports = { PAISES_SEMILLA: PAISES_SEMILLA, PAISES_VERSION: PAISES_VERSION, CONFIRMACIONES_LEGALES: CONFIRMACIONES_LEGALES }; }",
       '',
     ].join('\n')
   );

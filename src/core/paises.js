@@ -293,7 +293,6 @@ var NOMBRE_DEL_DATO = {
   // confirmo Legal: que el abogado de ese pais los vea y los apruebe. Sin
   // esta llave, confirmar los cuatro datos de un pais apagaba el aviso
   // entero y el abogado local entraba a probar sin saber que le tocaba a el.
-  visto_bueno_legal_local: 'el visto bueno del equipo legal de este país',
 };
 
 /**

@@ -47,7 +47,9 @@ function levantarEntorno(opciones) {
   const mundo = instalarDobles(opciones);
 
   globalThis.MODELOS = constanteDeModelos();
-  globalThis.PAISES_SEMILLA = leerJson(rutaDesdeRaiz('data', 'paises.json')).paises;
+  var semilla = leerJson(rutaDesdeRaiz('data', 'paises.json'));
+  globalThis.PAISES_SEMILLA = semilla.paises;
+  globalThis.CONFIRMACIONES_LEGALES = semilla.confirmaciones || [];
   globalThis.SECCIONES = leerJson(rutaDesdeRaiz('data', 'secciones.json'));
 
   for (const nombre of ARCHIVOS_CORE) {
