@@ -131,6 +131,15 @@ a { color: var(--naranja-accion); }
 .enlace-nav:hover { background: var(--niebla); color: var(--tinta); }
 .enlace-nav[aria-current='page'] { color: var(--tinta); box-shadow: inset 0 -2px 0 var(--naranja-marca); }
 
+/*
+ * El titulo de la pantalla recibe el foco al cambiar de pantalla, para que el
+ * lector de pantalla lo lea y para que el tabulador siga desde ahi y no desde
+ * la barra de arriba. Ese foco lo pone el codigo, no la persona, asi que no
+ * lleva anillo: con :focus-visible, si alguien llega tabulando de verdad, el
+ * anillo sigue saliendo.
+ */
+h1[tabindex='-1']:focus:not(:focus-visible) { outline: none; }
+
 .pagina { max-width: 1320px; margin: 0 auto; padding: var(--e6) var(--e5) var(--e8); }
 .pagina-angosta { max-width: 760px; }
 
@@ -16024,6 +16033,36 @@ function ir(pantalla) {
   if (caja) vaciar(caja);
   dibujar();
   window.scrollTo(0, 0);
+  entregarLaPantalla();
+}
+
+/**
+ * Al cambiar de pantalla, entrega el foco y di en voz alta dónde quedamos.
+ *
+ * La aplicación redibuja el <main> entero en cada cambio. Para quien ve, eso es
+ * evidente. Para quien no, no pasaba nada: el lector de pantalla se quedaba
+ * callado y el foco volvía al <body>, así que el siguiente tabulador arrancaba
+ * otra vez desde la barra de arriba. Comprobado en el navegador: después de
+ * pulsar "Empezar", la región de anuncios seguía vacía y document.activeElement
+ * era BODY.
+ *
+ * El título de la pantalla nueva recibe el foco con tabindex -1, que quiere
+ * decir enfocable por código pero no con el tabulador, y se anuncia.
+ *
+ * Esto va en ir() y NO en dibujar(), que corre con cada respuesta dentro de la
+ * misma pantalla: ahí mover el foco se lo quitaría al campo que la persona está
+ * llenando justo en ese momento.
+ */
+function entregarLaPantalla() {
+  var titulo = document.querySelector('#app h1');
+  if (!titulo) return;
+  titulo.setAttribute('tabindex', '-1');
+  try {
+    titulo.focus({ preventScroll: true });
+  } catch (error) {
+    titulo.focus();
+  }
+  RM.util.anunciar(titulo.textContent.trim());
 }
 
 /**

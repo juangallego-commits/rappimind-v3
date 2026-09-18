@@ -563,6 +563,37 @@ async function recorrer() {
   revisar('en celular el selector de idioma no tapa los botones del final', tapados.length === 0, tapados.join(' | '));
   await celular.close();
 
+  // --- 8. Quien no ve la pantalla también tiene que enterarse de que cambió ---
+  //
+  // La aplicacion redibuja el <main> entero en cada cambio de pantalla. Antes
+  // de este arreglo, la region de anuncios quedaba vacia y el foco volvia al
+  // <body>: el lector de pantalla no decia nada y el tabulador arrancaba otra
+  // vez desde la barra de arriba, en cada pantalla.
+  await desdeElInicio();
+  const entrega = await pagina.evaluate(() => {
+    const region = document.getElementById('anuncios');
+    const foco = document.activeElement;
+    const titulo = document.querySelector('#app h1');
+    return {
+      anuncio: region ? region.textContent.trim() : '',
+      tituloDeLaPantalla: titulo ? titulo.textContent.trim() : '',
+      focoEnElTitulo: !!titulo && foco === titulo,
+    };
+  });
+  revisar('al cambiar de pantalla se anuncia dónde quedamos',
+    entrega.anuncio === entrega.tituloDeLaPantalla && entrega.anuncio !== '',
+    'anuncio: "' + entrega.anuncio + '" · título: "' + entrega.tituloDeLaPantalla + '"');
+  revisar('el foco queda en el título de la pantalla nueva, no en el body',
+    entrega.focoEnElTitulo, 'el foco no llegó al título');
+
+  await pagina.keyboard.press('Tab');
+  const siguiente = await pagina.evaluate(() => {
+    const a = document.activeElement;
+    return { texto: (a.textContent || '').trim().slice(0, 30), enLaBarra: !!a.closest('.barra-superior') };
+  });
+  revisar('el tabulador sigue dentro de la pantalla, no vuelve a la barra de arriba',
+    !siguiente.enLaBarra, 'el tabulador saltó a la barra: "' + siguiente.texto + '"');
+
   revisar('ninguna pantalla lanzó un error de JavaScript',
     erroresDeJs.length === 0, erroresDeJs.join(' | '));
 

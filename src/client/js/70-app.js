@@ -179,6 +179,36 @@ function ir(pantalla) {
   if (caja) vaciar(caja);
   dibujar();
   window.scrollTo(0, 0);
+  entregarLaPantalla();
+}
+
+/**
+ * Al cambiar de pantalla, entrega el foco y di en voz alta dónde quedamos.
+ *
+ * La aplicación redibuja el <main> entero en cada cambio. Para quien ve, eso es
+ * evidente. Para quien no, no pasaba nada: el lector de pantalla se quedaba
+ * callado y el foco volvía al <body>, así que el siguiente tabulador arrancaba
+ * otra vez desde la barra de arriba. Comprobado en el navegador: después de
+ * pulsar "Empezar", la región de anuncios seguía vacía y document.activeElement
+ * era BODY.
+ *
+ * El título de la pantalla nueva recibe el foco con tabindex -1, que quiere
+ * decir enfocable por código pero no con el tabulador, y se anuncia.
+ *
+ * Esto va en ir() y NO en dibujar(), que corre con cada respuesta dentro de la
+ * misma pantalla: ahí mover el foco se lo quitaría al campo que la persona está
+ * llenando justo en ese momento.
+ */
+function entregarLaPantalla() {
+  var titulo = document.querySelector('#app h1');
+  if (!titulo) return;
+  titulo.setAttribute('tabindex', '-1');
+  try {
+    titulo.focus({ preventScroll: true });
+  } catch (error) {
+    titulo.focus();
+  }
+  RM.util.anunciar(titulo.textContent.trim());
 }
 
 /**
