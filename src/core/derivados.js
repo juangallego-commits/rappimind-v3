@@ -287,10 +287,30 @@ function derivadosCarrera(entrada, pais, valores) {
   }
 
   valores.TEXTO_ENTREGA = TEXTO_ENTREGA_POR_OPCION[entrada.entregaPor] || '';
-  // Solo se comparten datos cuando entrega el Organizador.
+
+  /*
+   * Los datos del ganador solo se transfieren cuando hay algo fisico que llevar
+   * a una direccion y lo lleva el Organizador.
+   *
+   * Antes bastaba con que entregara el Organizador. Con premio en Creditos, que
+   * Rappi acredita en la Billetera, el documento anunciaba una transferencia de
+   * datos que nunca ocurre: el caso dorado CC01 la imprimia. Falla (a) de la
+   * decision 36 de la respuesta del encargo 01.
+   *
+   * El texto es el DESPUES de la falla (b) de esa misma decision, copiado tal
+   * cual. El anterior decia solo "datos de contacto", cuando el Anexo A del
+   * Acuerdo Marco incluye tambien la direccion de entrega y el numero de
+   * documento; dejaba la autorizacion para despues, cuando el acuerdo dice que
+   * consta en el T&C de la campana; y no decia la finalidad, que la clausula
+   * cuarta obliga a informar en el T&C.
+   */
   valores.TEXTO_DATOS_ENTREGA =
-    entrada.entregaPor === 'organizador'
-      ? 'Para la entrega del premio, Rappi podrá compartir con el Organizador únicamente los datos de contacto del ganador que sean estrictamente necesarios para ese fin, previa autorización del ganador.'
+    (entrada.tipoPremio === 'fisico' && entrada.entregaPor === 'organizador')
+      ? 'Si resultas ganador, al aceptar el premio autorizas a Rappi para transferir al Organizador únicamente ' +
+        'los datos estrictamente necesarios para entregártelo, que pueden ser tu nombre y apellidos, correo ' +
+        'electrónico, número de teléfono celular, dirección de entrega y número de documento de identidad. ' +
+        'El Organizador solo podrá usar esos datos para entregarte el premio, coordinar la entrega, verificar ' +
+        'tu identidad al recibirlo y atender los reclamos sobre ella, y deberá suprimirlos una vez cumplida esa finalidad.'
       : '';
 
   valores.MEDIO_NOTIFICACION = MEDIO_NOTIFICACION_POR_OPCION[entrada.medioNotificacion] || '';

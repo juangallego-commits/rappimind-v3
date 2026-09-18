@@ -34,10 +34,15 @@ function salidaEsperada(caso) {
   return normalizarParaComparar(leerTexto(rutaDesdeRaiz('pruebas', 'salidas_esperadas', caso.id + '.txt')));
 }
 
-test('hay treinta y un casos, dieciocho que generan y trece que fallan', () => {
-  assert.strictEqual(casos.length, 31);
-  assert.strictEqual(generan.length, 18);
+test('hay treinta y dos casos, diecinueve que generan y trece que fallan', () => {
+  assert.strictEqual(casos.length, 32);
+  assert.strictEqual(generan.length, 19);
   assert.strictEqual(fallan.length, 13);
+
+  // CC03 es el único caso con premio físico entregado por el Organizador, que
+  // es la única combinación en la que el documento autoriza transferir los
+  // datos del ganador. Sin él, ese texto no tenía quien lo protegiera.
+  assert.ok(casos.filter((caso) => caso.id === 'CC03').length === 1);
 
   // Los dos del cashback por ETA, los publicados de Bogotá y Barranquilla:
   // un tipo sin fecha de fin que hasta hoy no tenía caso dorado.
@@ -113,4 +118,68 @@ test('no sobran ni faltan archivos en salidas_esperadas', () => {
   for (const caso of fallan) {
     assert.ok(!existe(rutaDesdeRaiz('pruebas', 'salidas_esperadas', caso.id + '.txt')), caso.id + ' no debería tener salida esperada');
   }
+});
+
+/**
+ * Los datos del ganador solo viajan cuando hay algo físico que llevar.
+ *
+ * Hasta el 18 de septiembre bastaba con que el premio lo entregara el
+ * Organizador. Con premio en Créditos, que Rappi acredita en la Billetera, el
+ * documento anunciaba una transferencia de datos que nunca ocurre: el caso
+ * dorado CC01 la imprimía. Es la falla (a) de la decisión 36 de la respuesta del
+ * encargo 01.
+ *
+ * Esta prueba mira la regla, no un caso: recorre las cuatro combinaciones de
+ * premio y entrega, y solo una puede llevar la cláusula.
+ */
+test('solo un premio físico entregado por el Organizador transfiere datos', () => {
+  const { calcularDerivados } = require('../src/core/derivados.js');
+  const { paises } = leerJson(rutaDesdeRaiz('data', 'paises.json'));
+  const CO = paises.filter((p) => p.codigo === 'CO')[0];
+  const base = casos.filter((c) => c.id === 'CC01')[0].entrada;
+
+  const conDatos = (cambios) => {
+    const entrada = Object.assign({}, base, cambios);
+    return calcularDerivados(entrada, CO).TEXTO_DATOS_ENTREGA;
+  };
+
+  const fisico = { tipoPremio: 'fisico', descripcionPremio: 'Una bicicleta', creditosPremio: null };
+
+  assert.ok(conDatos(Object.assign({ entregaPor: 'organizador' }, fisico)),
+    'un premio físico que entrega el Organizador sí transfiere datos');
+  assert.strictEqual(conDatos(Object.assign({ entregaPor: 'rappi' }, fisico)), '',
+    'si lo entrega Rappi no hay a quién transferirle nada');
+  assert.strictEqual(conDatos({ tipoPremio: 'creditos', entregaPor: 'organizador' }), '',
+    'los Créditos los acredita Rappi en la Billetera: no hay dirección a dónde llevarlos');
+  assert.strictEqual(conDatos({ tipoPremio: 'creditos', entregaPor: 'rappi' }), '');
+});
+
+/**
+ * La cláusula dice lo que el Acuerdo Marco contempla.
+ *
+ * La anterior hablaba solo de "datos de contacto", cuando el Anexo A incluye
+ * también la dirección de entrega y el número de documento; dejaba la
+ * autorización para después ("previa autorización del ganador"), cuando el
+ * acuerdo dice que consta en el T&C de la campaña; y no decía la finalidad, que
+ * la cláusula cuarta obliga a informar en el T&C. Falla (b) de la decisión 36.
+ */
+test('la cláusula de datos nombra los datos, la finalidad y la supresión', () => {
+  const { calcularDerivados } = require('../src/core/derivados.js');
+  const { paises } = leerJson(rutaDesdeRaiz('data', 'paises.json'));
+  const CO = paises.filter((p) => p.codigo === 'CO')[0];
+  const entrada = Object.assign({}, casos.filter((c) => c.id === 'CC03')[0].entrada);
+  const texto = calcularDerivados(entrada, CO).TEXTO_DATOS_ENTREGA;
+
+  // Los cinco datos del Anexo A, con sus palabras.
+  for (const dato of ['nombre y apellidos', 'correo electrónico', 'número de teléfono celular',
+    'dirección de entrega', 'número de documento de identidad']) {
+    assert.ok(texto.indexOf(dato) !== -1, 'la cláusula no nombra ' + dato);
+  }
+  // La autorización consta aquí, no queda para después.
+  assert.ok(texto.indexOf('al aceptar el premio autorizas a Rappi') !== -1, texto);
+  assert.strictEqual(texto.indexOf('previa autorización del ganador'), -1,
+    'volvió la redacción que dejaba la autorización para después');
+  // La finalidad y la supresión, que la cláusula cuarta del acuerdo exige.
+  assert.ok(texto.indexOf('solo podrá usar esos datos para') !== -1, texto);
+  assert.ok(texto.indexOf('suprimirlos una vez cumplida esa finalidad') !== -1, texto);
 });

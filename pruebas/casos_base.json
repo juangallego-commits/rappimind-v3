@@ -271,7 +271,6 @@
           "cinco (5) días hábiles",
           "los productos de la marca Bimbo",
           "quinientos mil (500.000) Créditos",
-          "podrá compartir con el Organizador",
           "treinta mil pesos M/Cte. ($30.000)",
           "el mayor valor total en compras de Productos Participantes",
           "ganará el participante que haya alcanzado primero"
@@ -279,7 +278,9 @@
         "no_contiene": [
           "{{",
           "[[",
-          ".."
+          "..",
+          "compartir con el Organizador",
+          "transferir al Organizador"
         ]
       }
     },
@@ -319,6 +320,57 @@
         "resultado": "falla",
         "errores": [
           "desempate"
+        ]
+      }
+    },
+    {
+      "id": "CC03",
+      "descripcion": "Carrera CO con premio físico que entrega el Organizador: es el único caso en que se transfieren los datos del ganador",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "CO",
+        "alcance": "Nacional",
+        "ciudades": "",
+        "segmento": "todos",
+        "metodoPago": "todos",
+        "declaracion": true,
+        "tipo": "carrera_compras",
+        "nombreCampana": "Carrera de Compras Bimbo Bicicleta",
+        "tienda": "Carulla",
+        "fechaInicio": "2026-09-20",
+        "horaInicio": "00:00",
+        "fechaFin": "2026-09-30",
+        "horaFin": "23:59",
+        "organizadorRazonSocial": "Organizador de Prueba Tres S.A.S.",
+        "organizadorId": "900555666-1",
+        "productos": "marca",
+        "makerMarca": "Bimbo",
+        "criterioGanador": "mayor_valor",
+        "numeroGanadores": 1,
+        "desempate": "primero",
+        "tipoPremio": "fisico",
+        "descripcionPremio": "Una bicicleta de montaña rodado 29",
+        "entregaPor": "organizador",
+        "medioNotificacion": "correo",
+        "fechaNotificacion": "2026-10-05",
+        "plazoConfirmacion": 5,
+        "compraMinima": 30000,
+        "negocio": "rappi"
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "Una bicicleta de montaña rodado 29",
+          "al aceptar el premio autorizas a Rappi para transferir al Organizador",
+          "dirección de entrega y número de documento de identidad",
+          "deberá suprimirlos una vez cumplida esa finalidad",
+          "La entrega del premio estará a cargo exclusivamente del Organizador"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          "..",
+          "previa autorización del ganador"
         ]
       }
     },
