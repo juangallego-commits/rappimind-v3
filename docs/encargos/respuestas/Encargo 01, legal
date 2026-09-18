@@ -1,0 +1,132 @@
+decisión 1: promocao_br sin cláusula de datos, como los cuatro aprobados; la frase opcional va en el mensaje a Legal BR (decisión 24)
+BR.texto_derechos_datos = "" (vacío a propósito)
+BR.por_confirmar_en_pruebas: quitar texto_derechos_datos
+bloque br_plataforma, solo si Legal BR la pide: agregar al final "O tratamento dos dados pessoais do Usuário no âmbito desta promoção observa a Lei nº 13.709/2018 (Lei Geral de Proteção de Dados Pessoais) e o Aviso de Privacidade indicado acima, no qual constam os direitos do titular e a forma de exercê-los."
+decisión 2: se queda el tope con excedente a cargo del Usuário, sujeto a que Brasil confirme que la app cobra solo el excedente
+modelo promocao_br, frete grátis: sin cambio "Esclarece-se que o frete grátis está limitado a R$20,00 (vinte reais); o valor que exceder esse limite será cobrado do Usuário."
+modelo promocao_br, frete grátis, solo si la app quita el beneficio entero: DESPUÉS "Esclarece-se que o frete grátis não se aplica quando o valor do frete for superior a R$20,00 (vinte reais); nesse caso, o Usuário pagará o valor integral do frete."
+BR.pais_legal = "a República Federativa do Brasil"
+BR.ley_aplicable = "as leis da República Federativa do Brasil"
+BR.jurisdiccion = "o Foro Central da Comarca da Capital do Estado de São Paulo"
+BR.entidad_vigilancia = "o PROCON e a Secretaria Nacional do Consumidor (SENACON)"
+BR.autoridad_datos = "a Agência Nacional de Proteção de Dados (ANPD)"
+decisión 3: ningún bloque en portugués puede poner estos valores después de "de", "em", "a" o "por"; si un bloque usa jurisdiccion, deja a salvo el foro del domicilio del consumidor (art. 101, I, CDC)
+decisión 4: sin cambio (los dos enlaces del cierre van)
+decisión 5: sin excepción (garantía de servicio); cashback_eta solo para compensar el incumplimiento del ETA de Rappi, sin Organizador ni tercero que fondee
+decisión 6: sin cambio en cashback_eta (el bloque datos se queda); los dos T&C publicados no se tocan
+MX.separador_miles = ","
+MX.termino_dias = "días naturales"
+MX.texto_hora_local = "hora de la Ciudad de México"
+MX.texto_derechos_datos = "tus derechos de acceso, rectificación, cancelación y oposición (derechos ARCO) y el de revocar tu consentimiento"
+MX.autoridad_datos: sin cambio ("la Secretaría Anticorrupción y Buen Gobierno")
+MX.entidad_vigilancia: sin cambio ("la Procuraduría Federal del Consumidor (PROFECO)")
+PE.separador_miles = ","
+PE.termino_dias = "días calendario"
+PE.texto_hora_local = "hora local de la República del Perú"
+PE.texto_derechos_datos = "tus derechos de acceso, actualización, inclusión, rectificación, supresión y oposición sobre tus datos personales, y el de revocar tu consentimiento"
+AR.separador_miles = "."
+AR.termino_dias = "días corridos"
+AR.texto_hora_local = "hora local de la República Argentina"
+AR.texto_derechos_datos = "tus derechos de acceso, rectificación, actualización y supresión de tus datos personales"
+AR.entidad_vigilancia: sin cambio hasta que Legal AR confirme el nombre vigente
+CL.separador_miles = "."
+CL.termino_dias = "días corridos"
+CL.texto_hora_local = "hora de Santiago de Chile"
+CL.texto_derechos_datos = "tus derechos de acceso, rectificación, supresión y bloqueo de tus datos personales, y los demás que te reconozca la legislación vigente"
+CL.autoridad_datos = "las autoridades competentes"
+CL.autoridad_datos, el 1 de diciembre de 2026 y solo si la Ley 21.719 entra en vigencia ese día = "la Agencia de Protección de Datos Personales"
+EC.separador_miles: sin cambio hasta que Legal EC diga cómo escribe los montos
+EC.termino_dias = "días calendario"
+EC.texto_hora_local = "hora del Ecuador continental"
+EC.texto_derechos_datos = "tus derechos de acceso, rectificación y actualización, eliminación, oposición, portabilidad y suspensión del tratamiento de tus datos personales"
+EC.url_privacidad: sin cambio ("persolanes" es la dirección real)
+UY.separador_miles = "."
+UY.termino_dias = "días corridos"
+UY.texto_hora_local = "hora local de la República Oriental del Uruguay"
+UY.texto_derechos_datos = "tus derechos de acceso, rectificación, actualización, inclusión y supresión de tus datos personales"
+UY.entidad_vigilancia = "el Área de Defensa del Consumidor del Ministerio de Economía y Finanzas"
+CR.separador_miles: sin cambio hasta que Legal CR diga cómo escribe los montos
+CR.termino_dias = "días naturales"
+CR.texto_hora_local = "hora local de la República de Costa Rica"
+CR.texto_derechos_datos = "tus derechos de acceso, rectificación y supresión de tus datos personales, y el de revocar tu consentimiento"
+BR.separador_miles = "."
+BR.termino_dias = "dias corridos"
+BR.texto_hora_local = "horário de Brasília"
+estado de MX, PE, AR, CL, EC, UY, CR y BR: siguen en piloto; por_confirmar_en_pruebas = [] cuando el abogado local de cada país dé el visto bueno
+decisión 16: sin cambio (MX.url_tc_creditos abre)
+decisión 17: sin cambio (se confirma el nombre estructurado)
+bloque acreditacion (cláusula 8 de cashback; también cashback_day y cashback_eta), solo con carga inmediata: ANTES "Rappi se reserva el derecho de verificar la elegibilidad de cada pedido antes de acreditar el Beneficio; si la verificación determina que el pedido no cumple las condiciones de la Campaña, los Créditos no serán acreditados y se te informará a través de la Plataforma Rappi." DESPUÉS "Rappi podrá verificar la elegibilidad de cada pedido después de acreditar el Beneficio; si la verificación determina que el pedido no cumple las condiciones de la Campaña, Rappi podrá descontar o revocar los Créditos acreditados y te lo informará a través de la Plataforma Rappi."
+acreditación de cashback_travel, solo con carga al confirmarse: ANTES "Rappi Travel se reserva el derecho de verificar la elegibilidad de cada orden antes de acreditar el Beneficio; si la verificación determina que la orden no cumple las condiciones de la Campaña, los Créditos no serán acreditados y se te informará a través de la Plataforma Rappi." DESPUÉS "Rappi Travel podrá verificar la elegibilidad de cada orden después de acreditar el Beneficio; si la verificación determina que la orden no cumple las condiciones de la Campaña, Rappi Travel podrá descontar o revocar los Créditos acreditados y te lo informará a través de la Plataforma Rappi."
+decisión 19: sin cambio (CO: Restaurantes, Turbo, Supermercados, CPGs, Turbo Restaurantes)
+decisión 20: por tienda, si CRM lo puede configurar; si no, se queda por campaña
+modelo cashback_day, TEXTO_LIMITE_PEDIDOS con 1: ANTES "Puedes obtener el Beneficio en un máximo de un (1) pedido durante la vigencia de la Campaña; los pedidos adicionales no generarán el Beneficio y se procesarán como pedidos regulares." DESPUÉS "Puedes obtener el Beneficio en un máximo de un (1) pedido por cada Tienda Participante durante la vigencia de la Campaña; los pedidos adicionales en esa misma tienda no generarán el Beneficio y se procesarán como pedidos regulares."
+modelo cashback_day, TEXTO_LIMITE_PEDIDOS con N: DESPUÉS "Puedes obtener el Beneficio en un máximo de {N en letras} ({N}) pedidos por cada Tienda Participante durante la vigencia de la Campaña; los pedidos adicionales en esa misma tienda no generarán el Beneficio y se procesarán como pedidos regulares."
+formulario cashback_day, ayuda de la pregunta de veces por persona: "Es por cada tienda: con 1, el usuario gana una vez en cada tienda participante."
+decisión 21: sin cambio (RNT 79000, vence 2027-03-31)
+modelo cashback_travel, TEXTO_BASE_CALCULO_TRAVEL: ANTES "El Beneficio aplica únicamente sobre el valor pagado con dinero real por la tarifa o la reserva de los Productos Participantes, sin incluir cargos por servicio, asistencias o seguros de viaje ni otros servicios adicionales." DESPUÉS "El Beneficio aplica únicamente sobre el valor pagado con dinero real por la tarifa o la reserva de los Productos Participantes, antes de impuestos, tasas y contribuciones, sin incluir cargos por servicio, asistencias o seguros de viaje ni otros servicios adicionales. No hacen parte de la base de cálculo el IVA, las tasas aeroportuarias ni ningún otro impuesto, tasa o contribución incluido en el precio total."
+decisión 22: si una marca pide incluir impuestos y tasas, la campaña va a Legal
+decisión 23: sin cambio (Rappi Travel como agencia de viajes)
+decisión 24: ratificar con Legal BR por escrito, con el mensaje de la respuesta 24
+decisión 25: sin cambio (se quedan las siete correcciones)
+decisión 26: sin cambio (se mantiene la eliminación de las dos duplicadas)
+bloque br_condicoes_gerais: ANTES "não sendo a Rappi responsável" DESPUÉS "não sendo o Rappi responsável"
+modelo promocao_br: ANTES "“Usuário” para fins deste T&C significa a pessoa humana inscrita na plataforma Rappi." DESPUÉS "“Usuário” para fins deste T&C significa a pessoa física inscrita na plataforma Rappi."
+decisión 27: "São Paulo/SP" no va en el modelo
+BR.politica_privacidad = "o Aviso de Privacidade e Políticas de uso das Informação utilizadas pela Rappi"
+decisión 29: revisión de la interfaz en portugués por Legal BR (Amannda Moreira o quien ella indique) y un KAM de Brasil
+modelo cashback_eta, cláusula del beneficio, agregar después de "Rappi se obliga a cumplir con el ETA exhibido dentro de la Plataforma Rappi.": "No habrá lugar al Beneficio cuando el retraso se deba a causas imputables al Usuario/Consumidor, como una dirección de entrega incorrecta o incompleta, la modificación de la orden o de la dirección después de realizada, o la falta de disponibilidad para recibirla, ni cuando obedezca a fuerza mayor o caso fortuito."
+decisión 31: sin cambio (se queda la versión nueva de seguridad vial)
+decisión 32: sin cambio (se quedan los cuatro cambios de forma)
+decisión 33: pendiente del dato; si hay campaña ETA en Turbo de mercado, MODALIDAD_TURBO pasa a lista cerrada: "Turbo Restaurantes" (por defecto) y "Turbo"
+decisión 34: sin cambio (se quedan los siete cambios de cashback)
+decisión 35: se quedan los tres textos nuevos
+TEXTO_SEGMENTO, reactivados: ANTES "durante los {N en letras} ({N}) días anteriores al inicio de la Campaña" DESPUÉS "durante los {N en letras} ({N}) {termino_dias} anteriores al inicio de la Campaña"
+decisión 36: se quedan los siete cambios de carrera_compras; cláusula de impuestos sin cambio
+formulario carrera_compras: entregaPor solo se pregunta si tipoPremio = fisico
+modelo carrera_compras, viñeta Entrega con premio en Créditos (texto nuevo): "Los Créditos serán acreditados por Rappi en la Billetera de Créditos del ganador, por cuenta del Organizador, una vez aceptado el premio."
+modelo carrera_compras, TEXTO_DATOS_ENTREGA: ANTES "Para la entrega del premio, Rappi podrá compartir con el Organizador únicamente los datos de contacto del ganador que sean estrictamente necesarios para ese fin, previa autorización del ganador." DESPUÉS "Si resultas ganador, al aceptar el premio autorizas a Rappi para transferir al Organizador únicamente los datos estrictamente necesarios para entregártelo, que pueden ser tu nombre y apellidos, correo electrónico, número de teléfono celular, dirección de entrega y número de documento de identidad. El Organizador solo podrá usar esos datos para entregarte el premio, coordinar la entrega, verificar tu identidad al recibirlo y atender los reclamos sobre ella, y deberá suprimirlos una vez cumplida esa finalidad."
+formulario carrera_compras, pregunta nueva acuerdoDatos (nombre sugerido; solo si tipoPremio = fisico y entregaPor = organizador; no bloquea): enunciado "¿El Organizador ya firmó el acuerdo de transferencia de datos?"; ayuda "Sin ese acuerdo firmado no se le pueden enviar los datos del ganador."; por qué "Rappi responde por los datos de sus usuarios. Enviarlos a una marca sin acuerdo firmado nos expone ante la autoridad de datos personales."; opciones "Sí, ya está firmado" (nota CO "La marca aparece en verde en la tabla de acuerdos marco.") y "No, o no sé" (nota "Te mostramos cómo se firma. Puedes generar el T&C igual.")
+formulario carrera_compras, panel de acuerdoDatos = "No, o no sé": el texto por país de la respuesta 36, tal cual; la respuesta queda en Mis campañas y la pantalla final repite el aviso
+CO.url_acuerdo_datos = "https://drive.google.com/file/d/1qpV7hsIPT2HXidULMp6vjzO0M-HfMKEr/view" (campo nuevo)
+CO.url_tabla_acuerdos = "https://docs.google.com/spreadsheets/d/1wvivWGy6UIS_kcleKzZ3zyw6oBK1rTnEeZoLzDS_TtM/edit" (campo nuevo)
+MX.url_acuerdo_datos = "https://docs.google.com/document/d/1hMNNU0lZh9LLSv-SWyAVVneaeoY0h6Q_o6jMxhP8J_c/edit"
+AR.url_acuerdo_datos = "https://drive.google.com/file/d/1lgI4Fq7rCdbK-NUlYGmtNzY46pX7lbl5/view"
+UY.url_acuerdo_datos = "https://drive.google.com/file/d/1k4HIOM92EZWKk_bPer7K-CojJeKc0Mzu/view"
+PE.url_acuerdo_datos = "https://drive.google.com/file/d/1M6F7SRilOTU19uGQS_bq6onGY6pJ_A2z/view"
+EC.url_acuerdo_datos = "https://drive.google.com/file/d/19e-Zehkq6f5TNea1KjVh_OoiG6yYKpgY/view"
+CL.url_acuerdo_datos = "" (no hay modelo; el panel manda a Legal)
+CR.url_acuerdo_datos = "" (no hay modelo; el panel manda a Legal)
+formulario carrera_compras, pregunta nueva valorPremio (nombre sugerido; solo si tipoPremio = fisico): enunciado "¿Cuánto vale el premio, con IVA incluido?"; ayuda "Por cada ganador, en pesos. Por ejemplo: 1500000."; por qué "Con ese valor se calculan los impuestos del premio. Si el documento no lo dice, no hay con qué medir si lo entregado es lo prometido."
+modelo carrera_compras, LISTA_PREMIOS con premio físico y un ganador: ANTES "El ganador recibirá el siguiente premio: {descripción}." DESPUÉS "El ganador recibirá el siguiente premio: {descripción}, con un valor comercial de {valor en letras} pesos M/Cte. (${valor}), IVA incluido."
+modelo carrera_compras, LISTA_PREMIOS con premio físico y varios ganadores: ANTES "Cada ganador recibirá el siguiente premio: {descripción}." DESPUÉS "Cada ganador recibirá el siguiente premio: {descripción}, con un valor comercial unitario de {valor en letras} pesos M/Cte. (${valor}), IVA incluido. El valor comercial total de los premios de la Campaña es de {total en letras} pesos M/Cte. (${total})."
+formulario carrera_compras: productosLista pasa a filas productosDetalle (nombre sugerido), con nombre y EAN validado (8, 12, 13 o 14 números y dígito de control); enunciado "¿Cuáles productos participan?"; ayuda "Uno por fila: el nombre como sale en la app y su EAN, el número del código de barras."; por qué "El EAN identifica el producto sin discusión. Si dos productos se llaman parecido, el EAN decide qué compra suma."; errores "El EAN tiene 8, 12, 13 o 14 números. Revisa que esté completo." y "Ese EAN no existe: el último número no cuadra. Cópialo otra vez del empaque o del catálogo."
+modelo carrera_compras, TEXTO_PRODUCTOS especificos: ANTES "Participan en el concurso únicamente los siguientes productos de la Tienda Participante (en adelante, los “Productos Participantes”): {lista}." DESPUÉS "Participan en el concurso únicamente los siguientes productos de la Tienda Participante, identificados con su nombre y su código de barras EAN (en adelante, los “Productos Participantes”):" + una viñeta por producto "• {nombre} (EAN {código})" + "Solo suman al acumulado las unidades cuyo código EAN coincida con alguno de los anteriores."
+decisión 37: sin cambio
+TEXTO_LUGAR_REDENCION general, con exclusiones marcadas: ANTES "Los Créditos podrán redimirse en cualquier sección de la Plataforma Rappi habilitada para el uso de Créditos, dentro del Territorio." DESPUÉS "Los Créditos podrán redimirse en cualquier sección de la Plataforma Rappi habilitada para el uso de Créditos, a excepción de {exclusiones marcadas}, dentro del Territorio."
+formulario cashback y cashback_day: si redencion = general, casillas exclusionesRedencion (nombre sugerido) con Rappi Travel, SOAT, Cajero ATM y Rappi Favor, marcadas por defecto
+decisión 39: condiciones pasa de casillas a una sola elección; la opción local se oculta mientras CO.nombre_modalidad_local esté vacío
+formulario condiciones: enunciado "¿En qué pedidos se gana el beneficio?"; ayuda "Si la marca no puso ninguna condición, deja la primera opción."; opciones "En cualquier pedido" (nota "Domicilio, Turbo o cualquier forma de pedir."), "Solo en pedidos por Turbo" (nota "Un pedido por el resto de la app no da el beneficio.") y "Solo en pedidos por “{nombre_modalidad_local}”" (nota "Un pedido a domicilio no da el beneficio."); el por qué actual se queda
+TEXTO_CONDICIONES consumo_local: ANTES "El Beneficio aplica únicamente para pedidos realizados bajo la modalidad de consumo en el local disponible en la Plataforma Rappi." DESPUÉS "El Beneficio aplica únicamente para pedidos realizados a través de la opción “{nombre_modalidad_local}” de la Plataforma Rappi; los pedidos con entrega a domicilio no generan el Beneficio."
+CO.nombre_modalidad_local = "" (campo nuevo; pendiente del nombre exacto en la app)
+decisión 40: recomiendo R4; Juan decide; si se mantiene, anotarlo como riesgo aceptado
+bloque travel_responsabilidad, solo si Juan acepta R4: ANTES "Rappi Travel actúa como intermediario para la comercialización de productos y servicios turísticos provistos por proveedores y operadores. En consecuencia, Rappi Travel no será responsable por: (i) la prestación, calidad, idoneidad, disponibilidad o cumplimiento de los servicios turísticos a cargo de los proveedores u operadores; (ii) las cancelaciones, modificaciones o penalidades aplicadas por el proveedor, aerolínea u operador conforme a sus propias políticas; (iii) las fallas técnicas, interrupciones o limitaciones en la disponibilidad de los Sistemas Rappi Travel ajenas a su control razonable; ni (iv) los rechazos de órdenes derivados de fallas en la conexión con los proveedores u operadores. Rappi Travel sí es responsable de: (i) {{TEXTO_RESPONSABILIDAD_TRAVEL}}; (ii) la publicación veraz y completa de los presentes Términos y Condiciones; y (iii) la atención oportuna de tus peticiones, quejas y reclamos relacionados con la Campaña." DESPUÉS "Las condiciones de prestación de cada servicio turístico, como equipaje, cambios, cancelaciones, demoras y penalidades, son las del Proveedor y de la tarifa adquirida, y se informan antes de pagar. Rappi Travel no será responsable por las fallas técnicas, interrupciones o limitaciones en la disponibilidad de los Sistemas Rappi Travel ajenas a su control razonable, ni por los rechazos de órdenes derivados de fallas en la conexión con los Proveedores. Nada de lo anterior limita los derechos que la ley te reconoce como consumidor. Rappi Travel es responsable de: (i) {{TEXTO_RESPONSABILIDAD_TRAVEL}}; (ii) la publicación veraz y completa de los presentes Términos y Condiciones; y (iii) la atención oportuna de tus peticiones, quejas y reclamos relacionados con la Campaña."
+decisión 41: (1) sin cambio, Créditos sin documento madre y remisión a los T&C de Créditos cuando se usan fuera de Travel; (2) sin cambio, "Cuenta" y "Créditos"; (3) se queda la exclusión de pagos con Créditos en descuento_travel; (4) sin cambio, aviso y no bloqueo
+decisión 42: visto bueno a Reembolso parcial, Plazo, descuento variable y entidad de vigilancia de Travel
+modelo cashback_travel, TEXTO_EJEMPLO_TOPE_TRAVEL: ANTES "Por ejemplo, para recibir el máximo de {tope} Créditos en una orden, el valor pagado debe ser de al menos {umbral}; si pagas menos, recibirás el {porcentaje} de lo pagado." DESPUÉS "Por ejemplo, para recibir el máximo de {tope} Créditos en una orden, el valor que cuenta para el cálculo del Beneficio debe ser de al menos {umbral}; si es menor, recibirás el {porcentaje} de ese valor."
+TEXTO_AMBITO_TRAVEL, nacional, solo vuelos: "Aplica únicamente para vuelos con origen y destino en {pais_legal}."
+TEXTO_AMBITO_TRAVEL, nacional, sin vuelos: "Aplica únicamente para servicios que se presten en {pais_legal}."
+TEXTO_AMBITO_TRAVEL, internacional, solo vuelos: "Aplica únicamente para vuelos con origen o destino fuera de {pais_legal}."
+TEXTO_AMBITO_TRAVEL, internacional, sin vuelos: "Aplica únicamente para servicios que se presten fuera de {pais_legal}."
+TEXTO_AMBITO_TRAVEL, con vuelos y otras categorías: sin cambio
+formulario cashback_travel y descuento_travel: marcaAliado obligatoria; el nombre de la campaña nunca empieza con "Rappi Travel"
+decisión 43: el conteo por trayecto se queda, sin cambio
+decisión 44: fuera a propósito; orden para las siguientes versiones: 2x1 y 3x2 (republicación de Legal CO), obsequios con modelo propio, generales de otros países; combos no entran como tipo
+data/tyc_genericos.json: quitar descuento_productos_seleccionados_bis y la advertencia de descuento_productos_seleccionados (decisión 45)
+cupon_valor_fijo.beneficio = "Descuento de un monto fijo de dinero sobre el pedido al redimir un cupón o código (el valor dependerá de lo que indique la pieza publicitaria)." (propuesta, pendiente de Legal CO)
+cupon_valor_fijo.paraQue = "Respaldo legal para cupones o códigos que descuentan un valor fijo del pedido (ej. \"$10.000 OFF con el código X\"). Úsalo cuando el usuario debe ingresar o activar el cupón para ver la rebaja; el valor, la compra mínima y la vigencia van en la pieza." (propuesta, pendiente de Legal CO)
+cupon_toda_la_tienda.beneficio = "Porcentaje de descuento sobre el valor total del pedido al redimir un cupón o código (el porcentaje y el tope dependerán de lo que indique la pieza publicitaria)." (propuesta, pendiente de Legal CO)
+cupon_toda_la_tienda.paraQue = "Respaldo legal para cupones o códigos que dan un porcentaje de descuento sobre el valor total del pedido (ej. \"20% OFF en toda la tienda con el código X\"). Úsalo cuando el descuento no es automático y el usuario debe ingresar o activar el cupón; el porcentaje, el tope y la compra mínima van en la pieza." (propuesta, pendiente de Legal CO)
+decisión 47: el general de cashback de 2025 se queda publicado con este encabezado: "Estos Términos y Condiciones no aplican a campañas iniciadas a partir del 1 de enero de 2026. Cada campaña de cashback vigente tiene sus propios Términos y Condiciones, publicados en su propio enlace."
+decisión 48: republicar cupones_membresia_pro_black en /colombia/2026/ y cambiar su enlace cuando exista; el de 2024 se queda publicado
+decisión 49: filtro de seis preguntas de sí o no antes de la lista de T&C generales (textos de la respuesta 49, tal cual)
+pantalla final del T&C general, texto nuevo: "Tu pieza debe decir siempre: el mínimo de compra, si lo hay; el máximo de descuento o de cashback; y a qué usuarios aplica, si no es para todos."
