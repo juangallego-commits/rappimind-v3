@@ -94,6 +94,10 @@ Todo en `docs/PENDIENTES_LEGAL.md`. Lo que más urge, en orden:
 - `npm test` antes de cada push, y me muestras el resultado.
 - Los dos recorridos de navegador antes de dar por bueno cualquier cambio de
   interfaz, y abre la demostración para mirar con los ojos lo que cambió.
+- **Empuja directo a `main`.** Te lo autoricé el 18 de septiembre: no reviso
+  código y no quiero pull requests. Eso quiere decir que las pruebas son la única
+  red que queda, así que córrelas siempre, y si tocas algo que no se pueda probar,
+  dímelo en el reporte en vez de darlo por bueno.
 - Puedes usar agentes en paralelo, repartidos por archivos, pero **verifica tú
   mismo lo que te reporten**.
 - Tienes mi autorización para lanzar el despliegue de GitHub Actions, pero avísame

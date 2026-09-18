@@ -805,3 +805,24 @@ elige entre dos frases que Legal ya escribió.
 45. **La barra de pasos se envuelve en dos filas.** Con seis pasos entraba justa;
     al entrar el séptimo, "Organizador" y "Cuándo" se leían pegados, como una
     sola palabra. Solo se vio abriendo el navegador.
+
+## 18 de septiembre · Cómo se empuja el código, de ahora en adelante
+
+46. **Claude Code empuja directo a `main`.** Juan lo autorizó por escrito el 18 de
+    septiembre, con estas palabras: "de ahora en adelante, siempre que lo
+    consideres, ve pusheando a main. yo jamás voy a revisar código, confío en ti".
+    Se acabaron las ramas de trabajo y los pull requests para esto: no aportaban
+    nada, porque nadie los iba a leer.
+
+    Lo que eso cambia de verdad es dónde está la red de seguridad. Antes había, en
+    teoría, una revisión humana al final; ahora no la hay, así que la única barrera
+    entre un defecto y producción son las pruebas. De ahí que la regla de
+    `CLAUDE.md` de correr `npm test` antes de cada push deje de ser una costumbre y
+    pase a ser lo que sostiene todo, junto con los dos recorridos de navegador
+    cuando el cambio se ve en pantalla. Cada push a `main` dispara además el
+    workflow, que vuelve a correr las pruebas y hace `clasp push`: si las pruebas
+    fallan, el código no sube.
+
+    Y una consecuencia que conviene tener presente: un cambio que las pruebas no
+    cubren es un cambio que nadie está mirando. Cuando toques algo que no se pueda
+    probar, dilo en el reporte con todas las letras en vez de darlo por bueno.
