@@ -31,6 +31,9 @@
 if (typeof module !== 'undefined' && typeof require === 'function') {
   var moduloTextoLeyendas = require('./texto.js');
   var normalizarTextoLeyenda = moduloTextoLeyendas.normalizarTexto;
+  // comoLista es de paises.js. En Apps Script ya es global, y declararla otra
+  // vez aqui la pisaria sin avisar: los archivos de src/core/ comparten ambito.
+  var comoLista = require('./paises.js').comoLista;
 }
 
 /** Las llaves de %% que se leen como lista separada por comas. */
@@ -73,16 +76,6 @@ var SENALES_DE_LEYENDA_ROTA = [
 ];
 
 // --- Leer el catalogo ------------------------------------------------------
-
-function comoLista(valor) {
-  var partes = String(valor || '').split(',');
-  var limpias = [];
-  for (var i = 0; i < partes.length; i++) {
-    var parte = partes[i].trim();
-    if (parte) limpias.push(parte);
-  }
-  return limpias;
-}
 
 /**
  * Convierte el archivo de una leyenda en un objeto.
