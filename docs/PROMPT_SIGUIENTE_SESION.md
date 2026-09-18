@@ -1,5 +1,10 @@
 # Prompt para la siguiente sesión de Claude Code
 
+> **Para la sesión del 19 de septiembre en adelante, usa
+> `docs/PROMPT_REVISION_GENERAL.md`**, que es el prompt de la revisión de cierre
+> antes de la etapa de diseño. Este archivo se queda como el estado de las cosas
+> al 18 de septiembre y sirve de contexto, pero el encargo es el otro.
+
 Copia todo lo que está entre las líneas y pégalo como primer mensaje.
 
 ---
