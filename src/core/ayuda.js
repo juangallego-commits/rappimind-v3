@@ -76,7 +76,7 @@ var ACCESOS_SQUARESPACE = {
       { nombre: 'Valery Medina', correo: 'ext-v.reina@rappi.com' },
     ],
     concursos: [],
-    notaConcursos: 'Para concursos todavía no hay una persona asignada. Pídelo por el canal de Legal.',
+    notaConcursos: 'Para concursos todavía no hay una persona asignada. Pídelo en #tyc-rappi.',
   },
 };
 
@@ -84,7 +84,7 @@ var ACCESOS_SQUARESPACE = {
 var CANAL_TC = {
   nombre: '#tyc-rappi',
   url: 'https://rappiplus.slack.com/archives/C0C29SK54HL',
-  para: 'Cualquier solicitud, duda o revisión de T&C. Si no tienes usuario de Squarespace, pide aquí que te publiquen la página.',
+  para: '¿No tienes usuario de Squarespace? Pide que te publiquen la página en',
 };
 
 /**
@@ -103,7 +103,7 @@ var CANAL_TC = {
 var FILTRO_DE_TRAVEL = [
   {
     id: 'pagaRappiTravel',
-    texto: '¿La campaña la paga Rappi Travel o Rappi, y no la marca de un aliado?',
+    texto: '¿La paga Rappi o Rappi Travel, no un aliado?',
     razon: 'Rappi Travel nunca es el Organizador. Si la campaña la paga Rappi Travel, la redacta Legal.',
   },
   {
@@ -113,12 +113,12 @@ var FILTRO_DE_TRAVEL = [
   },
   {
     id: 'azarTravel',
-    texto: '¿Hay sorteo o concurso, o la campaña se anuncia con palabras como "gana"?',
+    texto: '¿Hay sorteo o concurso, o la pieza dice "gana"?',
     razon: 'Las dinámicas con azar necesitan permiso previo de Coljuegos, y la palabra "gana" hace ver la campaña como un concurso.',
   },
   {
     id: 'anunciaPrecio',
-    texto: '¿La campaña anuncia un precio "desde" o una tarifa de vuelo, hotel o paquete?',
+    texto: '¿La pieza anuncia un precio "desde" o una tarifa?',
     razon: 'Los anuncios de tarifas tienen reglas especiales de información y ya generaron una sanción a Rappi Travel.',
   },
   {
@@ -133,17 +133,17 @@ var FILTRO_DE_TRAVEL = [
   },
   {
     id: 'dependeDeBanco',
-    texto: '¿El beneficio depende de pagar con una tarjeta en cuotas o de una condición de un banco?',
+    texto: '¿El beneficio depende de un banco o de cuotas?',
     razon: 'Esas campañas tienen otra entidad responsable y otro documento.',
   },
   {
     id: 'esSeguro',
-    texto: '¿El producto es un seguro con cobertura de una aseguradora, y no una asistencia al viajero?',
+    texto: '¿El producto es un seguro, no una asistencia al viajero?',
     razon: 'Los seguros tienen reglas propias de la Superintendencia Financiera.',
   },
   {
     id: 'empleadosOSinFin',
-    texto: '¿La campaña es solo para empleados o no tiene fecha de fin?',
+    texto: '¿Es solo para empleados o no tiene fecha de fin?',
     razon: 'Necesita un documento distinto.',
   },
 ];
@@ -162,7 +162,7 @@ var PASOS_SQUARESPACE = [
     ve: 'El calendario del mes y, a la izquierda, la lista de los T&C que ya existen.',
   },
   {
-    hace: 'Copia el título de la campaña que te damos aquí abajo y pégalo en el título del evento. No lo cambies ni le agregues nada.',
+    hace: 'Copia el título que te dio RappiMind y pégalo en el título del evento. No lo cambies ni le agregues nada.',
     ve: 'El título arriba, donde dice "Escribe un título para el evento".',
   },
   {
@@ -171,10 +171,10 @@ var PASOS_SQUARESPACE = [
   },
   {
     hace: 'Selecciona todo el documento, cópialo y pégalo en el cuerpo del evento. Revisa que las cláusulas numeradas y las viñetas se vean bien.',
-    ve: 'El texto completo con sus veinte cláusulas.',
+    ve: 'El texto completo, con todas sus cláusulas numeradas.',
   },
   {
-    hace: 'Entra a la pestaña Opciones y reemplaza la dirección del evento por la que te damos aquí abajo. La parte del país no se toca: Squarespace la pone sola.',
+    hace: 'Entra a la pestaña Opciones y reemplaza la dirección del evento por la que te dio RappiMind. La parte del país no se toca: Squarespace la pone sola.',
     ve: 'El campo "URL del evento", con el país a la izquierda y el resto editable.',
   },
   {
@@ -195,7 +195,7 @@ var SI_ALGO_SALE_MAL = [
   { problema: 'El enlace no abre o da error 404.', solucion: 'La página quedó en borrador. Vuelve a Squarespace y dale Publicar, no solo Guardar.' },
   { problema: 'El texto se ve corrido o sin viñetas.', solucion: 'Pégalo otra vez usando Pegar sin formato y deja que Squarespace le aplique el estilo de la página.' },
   { problema: 'El enlace no empieza por promos.rappi.com.', solucion: 'Creaste la página en otro sitio. Tiene que estar dentro de promos.rappi.com para que RappiMind la acepte.' },
-  { problema: 'No tengo usuario de Squarespace.', solucion: 'Es normal: la cuenta la tienen unas pocas personas por país. Pide la publicación por el canal de Legal y pasa el documento y la dirección que te dio RappiMind.' },
+  { problema: 'No tengo usuario de Squarespace.', solucion: 'Es normal: la cuenta la tienen unas pocas personas por país. Pide la publicación en #tyc-rappi y pasa el documento y la dirección que te dio RappiMind.' },
   { problema: 'La dirección que puse quedó distinta a la que me dio la herramienta.', solucion: 'Vuelve a Opciones, corrígela y publica otra vez. Si ya la publicaste con otra dirección, pega en RappiMind el enlace real, no el que te propusimos.' },
   { problema: 'Me equivoqué en un dato y ya generé el documento.', solucion: 'No edites el documento a mano. Genera uno nuevo con los datos corregidos y publica ese. El anterior queda en tu historial sin publicar.' },
 ];
@@ -223,11 +223,11 @@ var PREGUNTAS_FRECUENTES = [
   },
   {
     pregunta: 'Ya publiqué y necesito cambiar las fechas. ¿Puedo?',
-    respuesta: 'Cambiar condiciones de una campaña ya publicada afecta a quien ya participó. Habla con Legal antes de tocar nada: hay reglas sobre qué se puede modificar y qué no.',
+    respuesta: 'Si es para alargarla o subir el presupuesto, sí: en Mis campañas, botón Ampliar. Para acortarla o bajar algo, habla con Legal, porque afecta a quien ya participó.',
   },
   {
     pregunta: 'El NIT del aliado no pasa la validación.',
-    respuesta: 'Casi siempre es el dígito de verificación, el número después del guion. Pídele el RUT a tu contacto y cópialo de ahí. Si el RUT dice un número y la validación lo rechaza, escríbele a Legal.',
+    respuesta: 'Casi siempre es el dígito de verificación, el número después del guion. Pídele el RUT a tu contacto y cópialo de ahí. Si el RUT dice un número y la validación lo rechaza, avísanos en el canal de ayuda: es una falla de la herramienta.',
   },
   {
     pregunta: '¿Puedo poner varias tiendas en una misma campaña?',

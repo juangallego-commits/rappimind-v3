@@ -59,7 +59,7 @@ test('un contacto sin correo no enseña una marca de pendiente', () => {
   }
 
   const pantalla = fs.readFileSync(path.join(__dirname, '..', 'src', 'client', 'js', '68-pantallas.js'), 'utf8');
-  assert.ok(pantalla.indexOf("CONTACTOS[c].correo || 'Escríbele por el canal de Legal.'") !== -1,
+  assert.ok(pantalla.indexOf("CONTACTOS[c].correo || 'Escríbele en #tyc-rappi.'") !== -1,
     'la pantalla ya no ofrece una alternativa cuando el contacto no tiene correo');
 });
 

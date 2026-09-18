@@ -957,3 +957,140 @@ acreditación del documento de la derecha cambia con ella.
    ve en "Así queda en tu T&C". No corrí `capturar-pantallas.js` para no
    desincronizar `docs/encargos/02-revision-interfaz.md`, que es el documento del
    encargo que todavía no se ha trabajado. Se regeneran en esa sesión.
+
+## 18 de septiembre · La respuesta del encargo 02, aplicada a la interfaz
+
+Se trabajó una sola cosa: `docs/encargos/respuestas/02-interfaz.md`. Los otros
+dos encargos quedaron sin tocar. Los números de pantalla que usa esta entrada
+son los de `docs/FRONT_ACTUAL.html`, que van de 1 a 44.
+
+### Lo primero: el bloque trae 93 líneas, no 94
+
+El archivo tiene 93 líneas `pantalla NN | ACTUAL | PROPUESTO`. Además, el bloque
+arranca justo después de "Tres cosas a tener en cuenta al buscar:", sin el
+título "PARA EL REPOSITORIO" que el encargo pedía. Puede que al pegar se haya
+perdido esa línea de título, o una de las propuestas. **Juan: mira si falta
+alguna en la conversación de Claude chat.**
+
+### Cómo se repartieron las 93
+
+| | Cuántas |
+|---|---|
+| Con un texto ACTUAL de verdad | 68 |
+| De esas, encontradas literales en el código | **68, todas. Ninguna se perdió** |
+| Con `ACTUAL: "(recorrido)"`, que no son un texto sino un cambio de comportamiento | 25 |
+| Que se salen de las reglas de diez palabras, ayuda de una línea o guiones como puntuación | **0** |
+
+Las 68 se buscaron letra por letra en `src/core/`, `src/client/` y `data/`. Cada
+una apareció tal cual, sin una sola variante. Y ninguna de las 68 propuestas
+rompe las reglas: se midieron las diez palabras de cada pregunta, que la ayuda
+sea una sola línea que termina en punto, y que no haya guiones como puntuación.
+De paso se midieron las demás reglas de `pruebas/preguntas.test.js` (que la
+pregunta sea una pregunta, que hable de tú, que la nota de cada opción explique
+algo, que el porqué sea largo) y también pasan.
+
+### Se aplicaron 57 de las 68
+
+Quedaron 11 en espera, abajo. Las 57 tocaron 13 archivos: `preguntas.js` (24),
+`ayuda.js` (14), `textos_interfaz.js` (9), `esquemas.js`, `preguntas_pt.js`,
+`identificaciones.js` y seis de `src/client/js/`.
+
+Tres cosas se hicieron con cuidado especial:
+
+- **El "99" del porcentaje** (pantalla 11) aparece 64 veces en el repositorio.
+  Solo se cambió el ejemplo gris del campo, que ahora dice 20.
+- **"Editar" a "Cambiar"** en el resumen: se borró la llave `'Editar'` del
+  diccionario de portugués, porque `'Cambiar'` ya estaba traducida y dos llaves
+  iguales se pisan. Ver decisión 28.
+- **"por el canal de Legal" a "en #tyc-rappi"**: seis sitios, una sola línea del
+  bloque. Claude chat avisó que estaba **suponiendo** que el canal de Legal es
+  #tyc-rappi. El repositorio le da la razón (`CANAL_TC` en `src/core/ayuda.js`
+  ya lo tiene como el canal donde se centraliza todo lo de T&C), así que se
+  aplicó. **Si el canal es otro, dilo y lo devuelvo.**
+
+### Lo que NO se aplicó, y por qué
+
+No es que rompan las reglas del texto. Son decisiones tuyas.
+
+**1. Las diez líneas de `data/tyc_genericos.json` (pantalla 30).**
+Ese archivo es la lista de Legal transcrita como llegó. `pruebas/tyc_genericos.test.js`
+lo dice con todas las letras: las inconsistencias del Excel siguen a la vista y
+no "arregladas", porque corregirlas por cuenta propia sería decidir por Legal.
+Las diez líneas corrigen exactamente eso. Van en tres grupos, por si quieres
+aprobar unos y otros no:
+
+- *Solo tildes y mayúsculas, no cambia lo que dice*: "envio" a "envío",
+  "suscripcion" a "suscripción", "miembros rappi pro" a "miembros Rappi Pro",
+  "Codigo" a "Código", "Cupon" a "Cupón".
+- *Cambian el nombre del T&C en la lista*: "Cupon de descuento - Valor fijo" a
+  "Cupón de descuento de valor fijo", y el de "Toda la tienda" igual. Ojo que
+  esos dos nombres, como están hoy, usan un guion como puntuación, que es
+  justo lo que la regla 8 de `CLAUDE.md` prohíbe. Hay argumento para las dos
+  cosas.
+- *Reescriben las palabras de Legal*: el "para qué sirve" y el "beneficio" de
+  cuatro T&C (tarifa de servicio, suscripción, el del check out y el del canal
+  externo).
+
+Y aparte, las cinco líneas de "Decisión tuya" que ya venían marcadas así: el
+enlace duplicado, el enlace de 2024 de los cupones de membresía, para qué sirven
+los dos cupones, y renovar Tarifa de Servicio Gratis antes del 31 de octubre.
+
+**2. La quinta pregunta del filtro de Travel (pantalla 28).**
+La propia respuesta la condiciona: "Sin esa línea, no cambiar la quinta". La
+versión corta solo funciona si los ejemplos ("noches o niños gratis, cupones,
+millas, eSIM, bonos o cuotas sin interés") se mudan a una línea de ayuda debajo,
+y esa línea es uno de los 25 cambios de recorrido, que hoy no se construyeron:
+`FILTRO_DE_TRAVEL` no tiene campo de ayuda. Aplicarla sola habría borrado los
+ejemplos sin dejarlos en ninguna parte. Las otras siete preguntas del filtro sí
+se acortaron.
+
+### Los 25 cambios de recorrido, sin tocar
+
+No son reemplazos de texto: son comportamiento. Ordenar la Ayuda de otra manera,
+que Turbo y consumo en el local no se puedan marcar a la vez, que el contador de
+preguntas cuente bien, un botón de "Cambiar mi respuesta" en la pantalla de
+Legal, que las tres preguntas que vienen premarcadas arranquen sin marcar, que
+"Ahora dice" muestre las fechas en palabras, partir en dos la sexta pregunta del
+filtro de Travel. Son de otro tamaño y van en su propia sesión, contigo
+decidiendo cuáles.
+
+### Un defecto que salió al regenerar el front
+
+`npm run front` se traía 43 de 44 pantallas: la 36, la de ampliar una campaña,
+desaparecía. No era el encargo, era el reloj. El recorrido armaba la campaña de
+ejemplo con la fecha del contenedor (UTC) y la página corre en `America/Bogota`,
+así que de madrugada no son el mismo día: la campaña arrancaba "mañana", nunca
+estaba en curso y el botón Ampliar no se dibujaba. Arreglado, y ahora la fecha
+sale del mismo reloj que decide si el botón aparece. Ver decisión 27.
+
+### Cómo probarlo
+
+```
+npm test                                          # 432 pruebas, todas pasan
+export NODE_PATH=/opt/node22/lib/node_modules
+export PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
+npm run front                                     # 44 de 44 pantallas
+node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js        # el recorrido completo pasa
+node .claude/skills/flujo-y-ux/scripts/recorrer-en-portugues.js # todo bien
+node .claude/skills/flujo-y-ux/scripts/capturar-pantallas.js    # 33 de 33 capturas
+```
+
+Y para verlo con los ojos: abre `docs/FRONT_ACTUAL.html` con doble clic. Las
+pantallas que más cambiaron son la 1 (la portada), la 22 (el resumen, que ahora
+dice Cambiar), la 24 y la 26 (Squarespace y la Ayuda, con #tyc-rappi) y la 28
+(el filtro de Travel, siete preguntas más cortas).
+
+### Lo que necesito de Juan
+
+1. **Las diez líneas de `data/tyc_genericos.json`**, arriba. Dime si van las
+   tres tandas, solo las tildes, o ninguna.
+2. **La quinta pregunta del filtro de Travel**: ¿construyo la línea de ayuda del
+   filtro y entonces la acorto, o la dejo larga como está?
+3. **¿"el canal de Legal" es #tyc-rappi?** Se aplicó suponiendo que sí.
+4. **Un texto en portugués quedó descuadrado y no lo toqué.** El botón de la
+   pantalla final pasó de "Ver mi historial" a "Ver mis campañas", para que
+   coincidiera con la pantalla que abre. En portugués el mismo botón sigue
+   diciendo "Ver o meu histórico" y la pantalla se llama "Minhas campanhas": el
+   mismo descuadre que acabamos de corregir en español. La traducción que
+   cuadraría es "Ver as minhas campanhas", pero no la escribo yo. ¿La pongo?
+5. **Los 25 cambios de recorrido**: cuáles entran y en qué orden.

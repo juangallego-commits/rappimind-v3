@@ -998,7 +998,7 @@ var ESQUEMAS = {
     // No se pregunta quien fondea: el Organizador es siempre la tienda o la
     // marca, y eso no cambia porque Rappi ponga la plata por detras.
     filtroDeEntrada: [
-      '¿La tienda o la marca exige sus propios términos y condiciones?',
+      '¿La tienda o la marca exige sus propios T&C?',
     ],
   },
   carrera_compras: {
@@ -1011,14 +1011,14 @@ var ESQUEMAS = {
       '¿Hay azar (sorteo, rifa, raspa y gana)?',
       '¿Hay premios distintos por puesto o tabla de puntos?',
       '¿El premio es una boleta, una experiencia o está ligado a un evento?',
-      '¿La tienda o la marca exige sus propios términos y condiciones?',
+      '¿La tienda o la marca exige sus propios T&C?',
       '¿Participan varias tiendas?',
     ],
   },
   cashback_travel: {
     id: 'cashback_travel',
     nombre: 'Cashback Travel',
-    descripcion: 'La marca aliada devuelve un porcentaje de lo que el usuario pagó por su vuelo, hotel, auto o paquete, en Créditos para su Billetera. Solo para campañas de Rappi Travel.',
+    descripcion: 'La marca aliada devuelve un porcentaje de lo que el usuario pagó por su vuelo, hotel, auto o paquete, en Créditos para su Billetera.',
     modelo: 'cashback_travel',
     campos: unir(CAMPOS_TRAVEL_COMUNES, CAMPOS_CASHBACK_TRAVEL),
     // El filtro de Travel reemplaza al general: ver docs/MODELO_BASE_TRAVEL.md,
@@ -1030,7 +1030,7 @@ var ESQUEMAS = {
   descuento_travel: {
     id: 'descuento_travel',
     nombre: 'Descuento Travel',
-    descripcion: 'La marca aliada baja el precio de sus vuelos, hoteles, autos o paquetes. El usuario ve el precio ya rebajado antes de pagar, no recibe Créditos. Solo para campañas de Rappi Travel.',
+    descripcion: 'La marca aliada baja el precio de sus vuelos, hoteles, autos o paquetes. El usuario ve el precio ya rebajado antes de pagar, no recibe Créditos.',
     modelo: 'descuento_travel',
     campos: unir(CAMPOS_TRAVEL_COMUNES, CAMPOS_DESCUENTO_TRAVEL),
     filtroDeEntrada: [],

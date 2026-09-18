@@ -655,3 +655,29 @@ elige entre dos frases que Legal ya escribió.
     que imprime el antes y el después de cada línea distinta, y ese listado es
     lo que va al reporte para Juan. Regenerar sin mirar convierte el caso dorado
     en un espejo del motor y deja de proteger nada.
+
+## 18 de septiembre · Al aplicar la respuesta del encargo 02
+
+27. **El recorrido del front cuenta "hoy" con el reloj de la página, no con el
+    del contenedor.** `scripts/lib/front-recorrido.js` armaba la campaña de la
+    pantalla 36 con la fecha de Node, y el navegador del recorrido corre en
+    `America/Bogota`. Entre medianoche y las cinco de la mañana UTC no son el
+    mismo día: la campaña arrancaba "mañana" para la página, "en curso" no se
+    cumplía, el botón Ampliar no se dibujaba y la pantalla desaparecía del
+    archivo. Salían 43 de 44 y `npm test` lo cazaba, pero solo si el recorrido
+    se corría de madrugada. Ahora el día y el año salen de
+    `RM.estado.estado.configuracion.hoy`, que es el mismo reloj que decide si el
+    botón sale, así que no se pueden desalinear. `finDelAno()` se fue con la
+    misma causa.
+28. **Cuando un botón cambia de palabra, la llave del diccionario se va con
+    él.** El botón del resumen pasó de "Editar" a "Cambiar", y `'Cambiar'` ya
+    estaba traducido (`'Alterar'`) porque lo usa `50-campos.js`. Dejar la llave
+    `'Editar'` habría sido una traducción muerta, y renombrarla habría dejado
+    dos `'Cambiar'` en el mismo objeto, con el segundo pisando al primero: el
+    KAM de Brasil vería "Cambiar" en español. Se borró la llave vieja.
+29. **La prueba que cita un texto de la interfaz se actualiza en el mismo
+    cambio que el texto.** Tres sitios citaban una frase literal que la
+    respuesta del encargo 02 cambió: `pruebas/front.test.js` (el porcentaje),
+    `pruebas/ayuda.test.js` (la alternativa cuando un contacto no tiene correo)
+    y el recorrido de la skill (el atajo a los T&C publicados). Se cambió la
+    cita, no lo que la prueba vigila.

@@ -60,9 +60,9 @@ var TEXTOS_PT = {
   'Te hacemos preguntas simples, una por una. Ninguna te pide escribir texto legal.':
     'Fazemos perguntas simples, uma por uma. Nenhuma pede que você escreva texto jurídico.',
   'Revisa cómo va quedando': 'Veja como está ficando',
-  'El documento se escribe solo, al lado, mientras respondes. Lo que ves es lo que sale.':
-    'O documento se escreve sozinho, ao lado, enquanto você responde. O que você vê é o que sai.',
-  'Publica los T&Cs': 'Publique os T&C',
+  'El documento se va escribiendo mientras respondes. Lo que ves es lo que sale.':
+    'O documento vai sendo escrito enquanto você responde. O que você vê é o que sai.',
+  'Publica los T&C': 'Publique os T&C',
   'Empezar': 'Começar',
   'Seguir con lo que dejaste a medias': 'Continuar de onde você parou',
   'Tu navegador no deja guardar borradores, así que no cierres esta pestaña hasta generar el documento.':
@@ -73,7 +73,7 @@ var TEXTOS_PT = {
   'Dos preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano.':
     'Duas perguntas rápidas. Se alguma for sim, a sua campanha precisa que o Jurídico a redija manualmente.',
   '¿Hay azar: sorteo, rifa, raspa y gana o ruleta?': 'Tem sorte envolvida: sorteio, rifa, raspadinha ou roleta?',
-  '¿La tienda o la marca exige sus propios términos y condiciones?':
+  '¿La tienda o la marca exige sus propios T&C?':
     'A loja ou a marca exige os próprios termos e condições?',
   'Las dinámicas con azar necesitan permiso previo de la autoridad. Legal tiene que revisarlas antes de lanzarlas.':
     'As dinâmicas com sorte precisam de autorização prévia da autoridade. O Jurídico precisa revisá-las antes do lançamento.',
@@ -141,7 +141,6 @@ var TEXTOS_PT = {
   'Revisa antes de generar': 'Revise antes de gerar',
   'Este es el resumen de lo que respondiste. Puedes cambiar cualquier cosa antes de generar el documento.':
     'Este é o resumo do que você respondeu. Você pode alterar qualquer coisa antes de gerar o documento.',
-  'Editar': 'Editar',
   'Falta': 'Falta',
   'Te falta:': 'Está faltando:',
   'Elige el país de la campaña.': 'Escolha o país da campanha.',
@@ -164,9 +163,9 @@ var TEXTOS_PT = {
   'Abrir el documento': 'Abrir o documento',
   'Cuando ya esté publicado': 'Quando já estiver publicado',
   'Hacer otra campaña': 'Fazer outra campanha',
-  'Ver mi historial': 'Ver o meu histórico',
-  'En 2 minutos recibirás un email con el documento generado y listo para publicar en Squarespace. Recuerda seguir las instrucciones para asegurar que los T&Cs queden publicados exitosamente.':
-    'Em 2 minutos você recebe um e-mail com o documento gerado e pronto para publicar no Squarespace. Siga as instruções para garantir que os T&C fiquem publicados corretamente.',
+  'Ver mis campañas': 'Ver o meu histórico',
+  'Te llega por correo en un par de minutos, con los pasos para publicarlo o a quién pasárselo.':
+    'Você recebe por e-mail em poucos minutos, com o passo a passo para publicar ou para saber a quem enviar.',
 
   /* --- El aviso de pais en pruebas ---------------------------------------- */
   ' está en pruebas: genera y revisa, pero todavía no publiques. Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.':
@@ -177,7 +176,7 @@ var TEXTOS_PT = {
 
   /* --- Las descripciones de los tipos de campana --------------------------- */
   'Descuento en porcentaje, envío gratis o tarifa de servicio gratis en una tienda aliada de Brasil. El usuario ve el beneficio aplicado al pagar, no recibe Créditos. Solo para Brasil.':
-    'Desconto em porcentagem, frete grátis ou taxa de serviço grátis em uma loja parceira do Brasil. O usuário vê o benefício aplicado no pagamento, não recebe Créditos. Só para o Brasil.',
+    'Desconto em porcentagem, frete grátis ou taxa de serviço grátis em uma loja parceira do Brasil. O usuário vê o benefício aplicado no pagamento, não recebe Créditos.',
 
   /* --- Historial ----------------------------------------------------------- */
   'Cargando...': 'Carregando...',

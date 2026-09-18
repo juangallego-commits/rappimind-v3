@@ -1676,7 +1676,7 @@ var ACCESOS_SQUARESPACE = {
       { nombre: 'Valery Medina', correo: 'ext-v.reina@rappi.com' },
     ],
     concursos: [],
-    notaConcursos: 'Para concursos todavía no hay una persona asignada. Pídelo por el canal de Legal.',
+    notaConcursos: 'Para concursos todavía no hay una persona asignada. Pídelo en #tyc-rappi.',
   },
 };
 
@@ -1684,7 +1684,7 @@ var ACCESOS_SQUARESPACE = {
 var CANAL_TC = {
   nombre: '#tyc-rappi',
   url: 'https://rappiplus.slack.com/archives/C0C29SK54HL',
-  para: 'Cualquier solicitud, duda o revisión de T&C. Si no tienes usuario de Squarespace, pide aquí que te publiquen la página.',
+  para: '¿No tienes usuario de Squarespace? Pide que te publiquen la página en',
 };
 
 /**
@@ -1703,7 +1703,7 @@ var CANAL_TC = {
 var FILTRO_DE_TRAVEL = [
   {
     id: 'pagaRappiTravel',
-    texto: '¿La campaña la paga Rappi Travel o Rappi, y no la marca de un aliado?',
+    texto: '¿La paga Rappi o Rappi Travel, no un aliado?',
     razon: 'Rappi Travel nunca es el Organizador. Si la campaña la paga Rappi Travel, la redacta Legal.',
   },
   {
@@ -1713,12 +1713,12 @@ var FILTRO_DE_TRAVEL = [
   },
   {
     id: 'azarTravel',
-    texto: '¿Hay sorteo o concurso, o la campaña se anuncia con palabras como "gana"?',
+    texto: '¿Hay sorteo o concurso, o la pieza dice "gana"?',
     razon: 'Las dinámicas con azar necesitan permiso previo de Coljuegos, y la palabra "gana" hace ver la campaña como un concurso.',
   },
   {
     id: 'anunciaPrecio',
-    texto: '¿La campaña anuncia un precio "desde" o una tarifa de vuelo, hotel o paquete?',
+    texto: '¿La pieza anuncia un precio "desde" o una tarifa?',
     razon: 'Los anuncios de tarifas tienen reglas especiales de información y ya generaron una sanción a Rappi Travel.',
   },
   {
@@ -1733,17 +1733,17 @@ var FILTRO_DE_TRAVEL = [
   },
   {
     id: 'dependeDeBanco',
-    texto: '¿El beneficio depende de pagar con una tarjeta en cuotas o de una condición de un banco?',
+    texto: '¿El beneficio depende de un banco o de cuotas?',
     razon: 'Esas campañas tienen otra entidad responsable y otro documento.',
   },
   {
     id: 'esSeguro',
-    texto: '¿El producto es un seguro con cobertura de una aseguradora, y no una asistencia al viajero?',
+    texto: '¿El producto es un seguro, no una asistencia al viajero?',
     razon: 'Los seguros tienen reglas propias de la Superintendencia Financiera.',
   },
   {
     id: 'empleadosOSinFin',
-    texto: '¿La campaña es solo para empleados o no tiene fecha de fin?',
+    texto: '¿Es solo para empleados o no tiene fecha de fin?',
     razon: 'Necesita un documento distinto.',
   },
 ];
@@ -1762,7 +1762,7 @@ var PASOS_SQUARESPACE = [
     ve: 'El calendario del mes y, a la izquierda, la lista de los T&C que ya existen.',
   },
   {
-    hace: 'Copia el título de la campaña que te damos aquí abajo y pégalo en el título del evento. No lo cambies ni le agregues nada.',
+    hace: 'Copia el título que te dio RappiMind y pégalo en el título del evento. No lo cambies ni le agregues nada.',
     ve: 'El título arriba, donde dice "Escribe un título para el evento".',
   },
   {
@@ -1771,10 +1771,10 @@ var PASOS_SQUARESPACE = [
   },
   {
     hace: 'Selecciona todo el documento, cópialo y pégalo en el cuerpo del evento. Revisa que las cláusulas numeradas y las viñetas se vean bien.',
-    ve: 'El texto completo con sus veinte cláusulas.',
+    ve: 'El texto completo, con todas sus cláusulas numeradas.',
   },
   {
-    hace: 'Entra a la pestaña Opciones y reemplaza la dirección del evento por la que te damos aquí abajo. La parte del país no se toca: Squarespace la pone sola.',
+    hace: 'Entra a la pestaña Opciones y reemplaza la dirección del evento por la que te dio RappiMind. La parte del país no se toca: Squarespace la pone sola.',
     ve: 'El campo "URL del evento", con el país a la izquierda y el resto editable.',
   },
   {
@@ -1795,7 +1795,7 @@ var SI_ALGO_SALE_MAL = [
   { problema: 'El enlace no abre o da error 404.', solucion: 'La página quedó en borrador. Vuelve a Squarespace y dale Publicar, no solo Guardar.' },
   { problema: 'El texto se ve corrido o sin viñetas.', solucion: 'Pégalo otra vez usando Pegar sin formato y deja que Squarespace le aplique el estilo de la página.' },
   { problema: 'El enlace no empieza por promos.rappi.com.', solucion: 'Creaste la página en otro sitio. Tiene que estar dentro de promos.rappi.com para que RappiMind la acepte.' },
-  { problema: 'No tengo usuario de Squarespace.', solucion: 'Es normal: la cuenta la tienen unas pocas personas por país. Pide la publicación por el canal de Legal y pasa el documento y la dirección que te dio RappiMind.' },
+  { problema: 'No tengo usuario de Squarespace.', solucion: 'Es normal: la cuenta la tienen unas pocas personas por país. Pide la publicación en #tyc-rappi y pasa el documento y la dirección que te dio RappiMind.' },
   { problema: 'La dirección que puse quedó distinta a la que me dio la herramienta.', solucion: 'Vuelve a Opciones, corrígela y publica otra vez. Si ya la publicaste con otra dirección, pega en RappiMind el enlace real, no el que te propusimos.' },
   { problema: 'Me equivoqué en un dato y ya generé el documento.', solucion: 'No edites el documento a mano. Genera uno nuevo con los datos corregidos y publica ese. El anterior queda en tu historial sin publicar.' },
 ];
@@ -1823,11 +1823,11 @@ var PREGUNTAS_FRECUENTES = [
   },
   {
     pregunta: 'Ya publiqué y necesito cambiar las fechas. ¿Puedo?',
-    respuesta: 'Cambiar condiciones de una campaña ya publicada afecta a quien ya participó. Habla con Legal antes de tocar nada: hay reglas sobre qué se puede modificar y qué no.',
+    respuesta: 'Si es para alargarla o subir el presupuesto, sí: en Mis campañas, botón Ampliar. Para acortarla o bajar algo, habla con Legal, porque afecta a quien ya participó.',
   },
   {
     pregunta: 'El NIT del aliado no pasa la validación.',
-    respuesta: 'Casi siempre es el dígito de verificación, el número después del guion. Pídele el RUT a tu contacto y cópialo de ahí. Si el RUT dice un número y la validación lo rechaza, escríbele a Legal.',
+    respuesta: 'Casi siempre es el dígito de verificación, el número después del guion. Pídele el RUT a tu contacto y cópialo de ahí. Si el RUT dice un número y la validación lo rechaza, avísanos en el canal de ayuda: es una falla de la herramienta.',
   },
   {
     pregunta: '¿Puedo poner varias tiendas en una misma campaña?',
@@ -4498,7 +4498,7 @@ var ESQUEMAS = {
     // No se pregunta quien fondea: el Organizador es siempre la tienda o la
     // marca, y eso no cambia porque Rappi ponga la plata por detras.
     filtroDeEntrada: [
-      '¿La tienda o la marca exige sus propios términos y condiciones?',
+      '¿La tienda o la marca exige sus propios T&C?',
     ],
   },
   carrera_compras: {
@@ -4511,14 +4511,14 @@ var ESQUEMAS = {
       '¿Hay azar (sorteo, rifa, raspa y gana)?',
       '¿Hay premios distintos por puesto o tabla de puntos?',
       '¿El premio es una boleta, una experiencia o está ligado a un evento?',
-      '¿La tienda o la marca exige sus propios términos y condiciones?',
+      '¿La tienda o la marca exige sus propios T&C?',
       '¿Participan varias tiendas?',
     ],
   },
   cashback_travel: {
     id: 'cashback_travel',
     nombre: 'Cashback Travel',
-    descripcion: 'La marca aliada devuelve un porcentaje de lo que el usuario pagó por su vuelo, hotel, auto o paquete, en Créditos para su Billetera. Solo para campañas de Rappi Travel.',
+    descripcion: 'La marca aliada devuelve un porcentaje de lo que el usuario pagó por su vuelo, hotel, auto o paquete, en Créditos para su Billetera.',
     modelo: 'cashback_travel',
     campos: unir(CAMPOS_TRAVEL_COMUNES, CAMPOS_CASHBACK_TRAVEL),
     // El filtro de Travel reemplaza al general: ver docs/MODELO_BASE_TRAVEL.md,
@@ -4530,7 +4530,7 @@ var ESQUEMAS = {
   descuento_travel: {
     id: 'descuento_travel',
     nombre: 'Descuento Travel',
-    descripcion: 'La marca aliada baja el precio de sus vuelos, hoteles, autos o paquetes. El usuario ve el precio ya rebajado antes de pagar, no recibe Créditos. Solo para campañas de Rappi Travel.',
+    descripcion: 'La marca aliada baja el precio de sus vuelos, hoteles, autos o paquetes. El usuario ve el precio ya rebajado antes de pagar, no recibe Créditos.',
     modelo: 'descuento_travel',
     campos: unir(CAMPOS_TRAVEL_COMUNES, CAMPOS_DESCUENTO_TRAVEL),
     filtroDeEntrada: [],
@@ -4881,7 +4881,7 @@ function validarNit(valor) {
   var limpio = String(valor || '').trim().replace(/[.\s]/g, '');
   var partido = /^(\d{9})-?(\d)$/.exec(limpio);
   if (!partido) {
-    return resultado(false, 'El NIT debe tener 9 dígitos y el dígito de verificación, por ejemplo 900.111.222-1.');
+    return resultado(false, 'El NIT tiene 9 dígitos más el de verificación, por ejemplo 900.111.222-1.');
   }
   var cuerpo = partido[1];
   var dv = Number(partido[2]);
@@ -6580,7 +6580,7 @@ var PREGUNTAS = {
   negocio: p({
     paso: 'campana',
     pregunta: '¿La campaña es de Rappi o de Rappi Travel?',
-    ayuda: 'Rappi es el domicilio de siempre. Rappi Travel son vuelos, hoteles, autos y paquetes.',
+    ayuda: 'Si es de vuelos, hoteles, autos o paquetes, es Rappi Travel.',
     porQue: 'Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.',
     avanzaSola: true,
     porDefecto: 'rappi',
@@ -6696,13 +6696,13 @@ var PREGUNTAS = {
   alcance: p({
     paso: 'campana',
     pregunta: '¿Dónde aplica la campaña?',
-    ayuda: 'Nacional es todo el país. Si es solo en algunas ciudades, las escribes en el siguiente paso.',
+    ayuda: 'Si es solo en algunas ciudades, las escribes en la siguiente pregunta.',
     porQue: 'La cobertura define dónde puede reclamar el usuario. Si el documento dice más de lo que la campaña cubre, el usuario tiene derecho a exigirlo.',
     avanzaSola: true,
     porDefecto: 'Nacional',
     opciones: [
       { valor: 'Nacional', etiqueta: 'En todo el país', nota: 'Donde sea que Rappi tenga cobertura.' },
-      { valor: 'Ciudades', etiqueta: 'Solo en algunas ciudades', nota: 'Las escribes tú en el siguiente paso.' },
+      { valor: 'Ciudades', etiqueta: 'Solo en algunas ciudades', nota: 'Por ejemplo: Bogotá y Medellín.' },
     ],
     placeholders: ['TEXTO_TERRITORIO'],
     errores: { vacio: 'Elige si la campaña es nacional o por ciudades.' },
@@ -6739,7 +6739,7 @@ var PREGUNTAS = {
   organizadorRazonSocial: p({
     paso: 'organizador',
     pregunta: '¿Qué empresa paga el beneficio?',
-    ayuda: 'Es el Organizador: la tienda o la marca que pone la plata. Nunca es Rappi. Escribe la razón social como aparece en su RUT.',
+    ayuda: 'Tal como sale en su RUT, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.',
     porQue: 'El Organizador responde por la campaña frente al usuario y frente a la autoridad. Rappi solo pone la plataforma, así que el nombre tiene que ser exacto.',
     ejemplo: 'Alimentos del Norte S.A.S.',
     placeholders: ['ORGANIZADOR'],
@@ -6751,7 +6751,7 @@ var PREGUNTAS = {
   organizadorId: p({
     paso: 'organizador',
     pregunta: '¿Cuál es el NIT de esa empresa?',
-    ayuda: 'Con el dígito de verificación, por ejemplo 900.111.222-1. Está en el RUT del aliado; pídeselo a tu contacto.',
+    ayuda: 'Con dígito de verificación, tal como sale en el RUT: 900.111.222-1.',
     porQue: 'El documento identifica al Organizador con su número tributario. Un número mal escrito deja el documento sin un responsable identificable.',
     ejemplo: '900.111.222-1',
     placeholders: ['ID_ORGANIZADOR'],
@@ -6816,10 +6816,10 @@ var PREGUNTAS = {
 
   porcentaje: p({
     paso: 'beneficio',
-    pregunta: '¿Qué porcentaje del pedido devuelves en Créditos?',
+    pregunta: '¿Qué porcentaje del pedido se devuelve en Créditos?',
     ayuda: 'Solo el número. Con 20, un pedido de $50.000 recibe $10.000 en Créditos.',
     porQue: 'Es la promesa central de la campaña. Una vez publicado, el usuario puede exigir exactamente ese porcentaje.',
-    ejemplo: '99',
+    ejemplo: '20',
     placeholders: ['PORCENTAJE'],
     errores: {
       vacio: 'Escribe el porcentaje que devuelves, sin el signo de porcentaje.',
@@ -6854,9 +6854,9 @@ var PREGUNTAS = {
 
   tope: p({
     paso: 'beneficio',
-    pregunta: '¿Qué es lo máximo que recibe alguien por pedido?',
+    pregunta: '¿Cuál es el máximo de Créditos por pedido?',
     ayuda: 'Aunque el pedido sea grande, no recibe más de esto. Lo más usado es 25.000.',
-    porQue: 'Sin tope, un pedido enorme se lleva el presupuesto entero. El tope es lo que hace que un cashback del 99% sea viable.',
+    porQue: 'Sin tope, un pedido enorme se lleva el presupuesto entero. Con tope, un cashback alto sigue siendo viable.',
     ejemplo: '25000',
     moneda: true,
     placeholders: ['TOPE'],
@@ -6940,8 +6940,8 @@ var PREGUNTAS = {
       },
     },
     paso: 'beneficio',
-    pregunta: '¿Cuántas veces puede ganar la misma persona?',
-    ayuda: 'La mitad de las campañas permite una sola vez por usuario.',
+    pregunta: '¿Cuántas veces puede recibir el beneficio una persona?',
+    ayuda: 'Se cuenta por persona, durante toda la campaña.',
     porQue: 'Sin límite, unos pocos usuarios pueden consumir el presupuesto en horas. Con límite, el beneficio llega a más gente.',
     avanzaSola: true,
     porDefecto: 1,
@@ -6975,7 +6975,7 @@ var PREGUNTAS = {
     // mismo, porque de aqui sale docs/PREGUNTAS_KAM.md.
     paso: 'participantes',
     pregunta: '¿Hay que gastar un mínimo para participar?',
-    ayuda: 'Es opcional: si no exiges un mínimo, deja el campo vacío y sigue.',
+    ayuda: 'Por ejemplo: 30.000. Si no hay mínimo, déjalo vacío.',
     porQue: 'Si lo exiges, tiene que quedar escrito. Si no aparece en el documento, no lo puedes aplicar después.',
     ejemplo: '100000',
     moneda: true,
@@ -6997,13 +6997,13 @@ var PREGUNTAS = {
   condiciones: p({
     paso: 'beneficio',
     pregunta: '¿El beneficio aplica solo en cierto tipo de pedido?',
-    ayuda: 'Es opcional: si el beneficio aplica en cualquier pedido, no marques nada.',
+    ayuda: 'Si aplica en cualquier pedido, no marques nada.',
     porQue: 'Esta pregunta es sobre el pedido con el que el usuario se gana el beneficio, no sobre dónde gasta después los Créditos: eso se pregunta más adelante. Si la restricción no queda escrita, el usuario puede reclamar el beneficio en cualquier pedido.',
     opcional: true,
     multiple: true,
     opciones: [
       { valor: 'turbo', etiqueta: 'Solo si el pedido se hace por Turbo', nota: 'Un pedido por el resto de la app no da el beneficio.' },
-      { valor: 'consumo_local', etiqueta: 'Solo si consume en el local', nota: 'La modalidad de consumo en el local de la app. Un domicilio no da el beneficio.' },
+      { valor: 'consumo_local', etiqueta: 'Solo si consume en el local', nota: 'Pide por la app y come en el local. Un domicilio no da el beneficio.' },
     ],
     placeholders: ['TEXTO_CONDICIONES'],
     errores: {},
@@ -7013,7 +7013,7 @@ var PREGUNTAS = {
 
   carga: p({
     paso: 'creditos',
-    pregunta: '¿Cuándo le llegan los Créditos?',
+    pregunta: '¿Cuándo le llegan los Créditos al usuario?',
     ayuda: 'Es el momento en que el saldo le queda disponible en la Billetera.',
     porQue: 'El documento fija en qué momento el usuario recibe los Créditos, y eso es lo que el usuario va a esperar. Elige lo que el equipo de operaciones puede cumplir.',
     avanzaSola: true,
@@ -7027,7 +7027,7 @@ var PREGUNTAS = {
     errores: { vacio: 'Dinos cuándo le llegan los Créditos al usuario.' },
     variantes: {
       cashback_travel: {
-        pregunta: '¿Cuándo le llegan los Créditos?',
+        pregunta: '¿Cuándo le llegan los Créditos al usuario?',
         ayuda: 'Al confirmarse la reserva, o unos días después de que termine la campaña.',
         opciones: OPCIONES_CARGA_TRAVEL,
         placeholders: ['TEXTO_CARGA_TRAVEL', 'TEXTO_VERIFICACION_TRAVEL'],
@@ -7050,7 +7050,7 @@ var PREGUNTAS = {
   vigencia: p({
     paso: 'creditos',
     pregunta: '¿Hasta cuándo puede usar esos Créditos?',
-    ayuda: 'Casi todos ponen una fecha límite concreta.',
+    ayuda: 'Por ejemplo: hasta el 31 de diciembre, o 30 días desde que le llegan.',
     porQue: 'Los Créditos se vencen y eso tiene que estar escrito. Si no lo dices, el usuario puede sostener que no vencen.',
     avanzaSola: true,
     opciones: [
@@ -7095,8 +7095,8 @@ var PREGUNTAS = {
   redencion: p({
     paso: 'creditos',
     pregunta: '¿Dónde puede gastar los Créditos?',
-    ayuda: 'Siete de cada diez campañas los limitan a la misma tienda.',
-    porQue: 'Define dónde vale el saldo. Lo normal es que se gaste en la misma tienda donde el usuario se ganó el beneficio. En todo caso, estos Créditos casi nunca aplican a RappiFavor, Cajero ATM ni RappiTravel.',
+    ayuda: 'Por ejemplo: solo en la tienda donde se los ganó, que es lo más común.',
+    porQue: 'Define dónde vale el saldo. Lo normal es que se gaste en la misma tienda donde el usuario se ganó el beneficio. En todo caso, estos Créditos casi nunca aplican a RappiFavor, Cajero ATM ni Rappi Travel.',
     avanzaSola: true,
     porDefecto: 'tienda',
     opciones: [
@@ -7619,7 +7619,7 @@ var PREGUNTAS = {
   segmento: p({
     paso: 'participantes',
     pregunta: '¿Quiénes pueden participar?',
-    ayuda: 'La mitad de las campañas es para todos y casi la otra mitad para Pro.',
+    ayuda: 'Por ejemplo: solo Pro, o quienes no compran hace 60 días.',
     porQue: 'Limita quién puede reclamar el beneficio. Si el documento dice "todos", no puedes excluir a nadie después.',
     avanzaSola: true,
     porDefecto: 'todos',
@@ -7654,8 +7654,8 @@ var PREGUNTAS = {
 
   metodoPago: p({
     paso: 'participantes',
-    pregunta: '¿Con qué puede pagar?',
-    ayuda: 'Con "todos" entran tarjetas, billeteras y efectivo donde exista.',
+    pregunta: '¿Con qué medio de pago aplica el beneficio?',
+    ayuda: 'Con "cualquier medio" entran tarjetas, billeteras y efectivo donde exista.',
     porQue: 'Restringir el medio de pago cambia quién puede participar. Los pedidos pagados con Créditos nunca dan beneficio.',
     avanzaSola: true,
     porDefecto: 'todos',
@@ -7675,7 +7675,7 @@ var PREGUNTAS = {
   declaracion: p({
     paso: 'confirmacion',
     pregunta: 'Confirma que la información es correcta',
-    ayuda: 'Confirmo que la información es veraz y corresponde a la campaña aprobada.',
+    ayuda: 'Confirmo que estos datos son ciertos y son los de mi campaña.',
     porQue: 'El documento se genera con lo que escribiste y se publica tal cual. Nadie de Legal lo revisa antes.',
     placeholders: [],
     errores: { vacio: 'Marca la casilla para confirmar que la información es correcta.' },
@@ -7752,7 +7752,7 @@ var PREGUNTAS = {
     porQue: 'Sin regla de desempate, un empate se resuelve al azar, y el azar convierte el concurso en un sorteo.',
     avanzaSola: true,
     opciones: [
-      { valor: 'primero', etiqueta: 'Quien llegó primero', nota: 'Por la fecha y hora de su último pedido.' },
+      { valor: 'primero', etiqueta: 'Quien llegó primero', nota: 'Gana quien hizo antes su último pedido.' },
       { valor: 'mas_pedidos', etiqueta: 'Quien hizo más pedidos', nota: 'Cuenta pedidos válidos.' },
       { valor: 'mayor_valor', etiqueta: 'Quien gastó más', nota: 'Suma el valor de las compras.' },
     ],
@@ -7869,7 +7869,7 @@ var PREGUNTAS = {
     paso: 'tiendas',
     pregunta: '¿Qué tiendas participan?',
     ayuda: 'Mínimo dos. Cada una entra con su razón social, su NIT y su presupuesto.',
-    porQue: 'En un Cashback Day cada tienda organiza su propio beneficio y responde por él. Por eso cada una necesita sus propios datos.',
+    porQue: 'En un Cashback Multitienda cada tienda organiza su propio beneficio y responde por él. Por eso cada una necesita sus propios datos.',
     placeholders: ['TIENDA_MARCA', 'TIENDA_RAZON_SOCIAL', 'TIENDA_ID', 'TIENDA_CIUDADES', 'TIENDA_PRESUPUESTO'],
     errores: {
       minimo: 'Agrega al menos 2 tiendas participantes.',
@@ -8070,7 +8070,7 @@ var PREGUNTAS_PT = {
 
   negocio: {
     pregunta: 'A campanha é da Rappi ou da Rappi Travel?',
-    ayuda: 'Rappi é a entrega de sempre. Rappi Travel são voos, hotéis, carros e pacotes.',
+    ayuda: 'Se for de voos, hotéis, carros ou pacotes, é Rappi Travel.',
     porQue: 'São duas empresas diferentes, e o documento inteiro muda conforme qual seja.',
     opciones: {
       rappi: { etiqueta: 'Rappi', nota: 'Restaurantes, supermercados, farmácias e tudo o que chega por entrega.' },
@@ -8081,7 +8081,7 @@ var PREGUNTAS_PT = {
 
   tipo: {
     pregunta: 'Que tipo de campanha você vai fazer?',
-    ayuda: 'Escolha a que se parece com a sua campanha. Cada opção explica do que se trata.',
+    ayuda: 'Escolha o tipo que mais se parece com a sua campanha.',
     porQue: 'Cada tipo usa um modelo jurídico diferente, aprovado pelo Jurídico. Escolher errado significa gerar o documento errado.',
     errores: { vacio: 'Escolha o tipo de campanha.' },
   },
@@ -8743,9 +8743,9 @@ var TEXTOS_PT = {
   'Te hacemos preguntas simples, una por una. Ninguna te pide escribir texto legal.':
     'Fazemos perguntas simples, uma por uma. Nenhuma pede que você escreva texto jurídico.',
   'Revisa cómo va quedando': 'Veja como está ficando',
-  'El documento se escribe solo, al lado, mientras respondes. Lo que ves es lo que sale.':
-    'O documento se escreve sozinho, ao lado, enquanto você responde. O que você vê é o que sai.',
-  'Publica los T&Cs': 'Publique os T&C',
+  'El documento se va escribiendo mientras respondes. Lo que ves es lo que sale.':
+    'O documento vai sendo escrito enquanto você responde. O que você vê é o que sai.',
+  'Publica los T&C': 'Publique os T&C',
   'Empezar': 'Começar',
   'Seguir con lo que dejaste a medias': 'Continuar de onde você parou',
   'Tu navegador no deja guardar borradores, así que no cierres esta pestaña hasta generar el documento.':
@@ -8756,7 +8756,7 @@ var TEXTOS_PT = {
   'Dos preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano.':
     'Duas perguntas rápidas. Se alguma for sim, a sua campanha precisa que o Jurídico a redija manualmente.',
   '¿Hay azar: sorteo, rifa, raspa y gana o ruleta?': 'Tem sorte envolvida: sorteio, rifa, raspadinha ou roleta?',
-  '¿La tienda o la marca exige sus propios términos y condiciones?':
+  '¿La tienda o la marca exige sus propios T&C?':
     'A loja ou a marca exige os próprios termos e condições?',
   'Las dinámicas con azar necesitan permiso previo de la autoridad. Legal tiene que revisarlas antes de lanzarlas.':
     'As dinâmicas com sorte precisam de autorização prévia da autoridade. O Jurídico precisa revisá-las antes do lançamento.',
@@ -8824,7 +8824,6 @@ var TEXTOS_PT = {
   'Revisa antes de generar': 'Revise antes de gerar',
   'Este es el resumen de lo que respondiste. Puedes cambiar cualquier cosa antes de generar el documento.':
     'Este é o resumo do que você respondeu. Você pode alterar qualquer coisa antes de gerar o documento.',
-  'Editar': 'Editar',
   'Falta': 'Falta',
   'Te falta:': 'Está faltando:',
   'Elige el país de la campaña.': 'Escolha o país da campanha.',
@@ -8847,9 +8846,9 @@ var TEXTOS_PT = {
   'Abrir el documento': 'Abrir o documento',
   'Cuando ya esté publicado': 'Quando já estiver publicado',
   'Hacer otra campaña': 'Fazer outra campanha',
-  'Ver mi historial': 'Ver o meu histórico',
-  'En 2 minutos recibirás un email con el documento generado y listo para publicar en Squarespace. Recuerda seguir las instrucciones para asegurar que los T&Cs queden publicados exitosamente.':
-    'Em 2 minutos você recebe um e-mail com o documento gerado e pronto para publicar no Squarespace. Siga as instruções para garantir que os T&C fiquem publicados corretamente.',
+  'Ver mis campañas': 'Ver o meu histórico',
+  'Te llega por correo en un par de minutos, con los pasos para publicarlo o a quién pasárselo.':
+    'Você recebe por e-mail em poucos minutos, com o passo a passo para publicar ou para saber a quem enviar.',
 
   /* --- El aviso de pais en pruebas ---------------------------------------- */
   ' está en pruebas: genera y revisa, pero todavía no publiques. Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.':
@@ -8860,7 +8859,7 @@ var TEXTOS_PT = {
 
   /* --- Las descripciones de los tipos de campana --------------------------- */
   'Descuento en porcentaje, envío gratis o tarifa de servicio gratis en una tienda aliada de Brasil. El usuario ve el beneficio aplicado al pagar, no recibe Créditos. Solo para Brasil.':
-    'Desconto em porcentagem, frete grátis ou taxa de serviço grátis em uma loja parceira do Brasil. O usuário vê o benefício aplicado no pagamento, não recebe Créditos. Só para o Brasil.',
+    'Desconto em porcentagem, frete grátis ou taxa de serviço grátis em uma loja parceira do Brasil. O usuário vê o benefício aplicado no pagamento, não recebe Créditos.',
 
   /* --- Historial ----------------------------------------------------------- */
   'Cargando...': 'Carregando...',
@@ -11120,11 +11119,11 @@ function pantallaInicio(raiz) {
     },
     {
       titulo: estado.T('Revisa cómo va quedando'),
-      detalle: estado.T('El documento se escribe solo, al lado, mientras respondes. Lo que ves es lo que sale.'),
+      detalle: estado.T('El documento se va escribiendo mientras respondes. Lo que ves es lo que sale.'),
     },
     {
-      titulo: estado.T('Publica los T&Cs'),
-      detalle: estado.T('En 2 minutos recibirás un email con el documento generado y listo para publicar en Squarespace. Recuerda seguir las instrucciones para asegurar que los T&Cs queden publicados exitosamente.'),
+      titulo: estado.T('Publica los T&C'),
+      detalle: estado.T('Te llega por correo en un par de minutos, con los pasos para publicarlo o a quién pasárselo.'),
     },
   ];
 
@@ -11187,7 +11186,7 @@ function pantallaFiltro(raiz) {
   // Primero el tipo, porque el filtro depende de él.
   var preguntas = [
     { id: 'azar', texto: '¿Hay azar: sorteo, rifa, raspa y gana o ruleta?', razon: 'Las dinámicas con azar necesitan permiso previo de la autoridad. Legal tiene que revisarlas antes de lanzarlas.' },
-    { id: 'tycPropios', texto: '¿La tienda o la marca exige sus propios términos y condiciones?', razon: 'Si el aliado impone su documento, hay que revisarlo con Legal antes de publicarlo.' },
+    { id: 'tycPropios', texto: '¿La tienda o la marca exige sus propios T&C?', razon: 'Si el aliado impone su documento, hay que revisarlo con Legal antes de publicarlo.' },
   ];
 
   var respuestas = {};
@@ -11790,7 +11789,7 @@ function preguntaDeCatalogo(campo, campos, indice, pasos) {
   return bloque;
 }
 
-/** "¿Cuántas veces puede ganar la misma persona?" */
+/** "¿Cuántas veces puede recibir el beneficio una persona?" */
 function preguntaDeVeces(campos, indice, pasos, errores) {
   var pregunta = estado.pregunta('maxPedidos');
   var elegido = flujo.opcionDeVeces();
@@ -12146,7 +12145,7 @@ function tarjetaDeAtajo() {
   if ((estado.entrada().negocio || 'rappi') === 'travel') return null;
 
   var caja = crear('div', { clase: 'atajo-tyc' }, [
-    crear('p', { clase: 'pregunta-ayuda', texto: '¿No ves tu campaña en la lista?' }),
+    crear('p', { clase: 'pregunta-ayuda', texto: '¿Es un descuento, un cupón o envío gratis?' }),
   ]);
 
   // La buena noticia solo se da si hay algo que dar. Catorce de los quince
@@ -12729,7 +12728,7 @@ function pantallaResumen(raiz) {
         crear('div', { clase: 'ficha-encabezado' }, [
           crear('h3', { texto: estado.T(seccion.paso.nombre) }),
           crear('button', {
-            clase: 'boton-texto', type: 'button', texto: estado.T('Editar'),
+            clase: 'boton-texto', type: 'button', texto: estado.T('Cambiar'),
             onclick: function () {
               E.pasoActual = seccion.indice;
               E.campoAbierto = seccion.filas[0].campo.id;
@@ -12831,13 +12830,13 @@ function bloqueDeQuienPublica(codigoDePais, tipo) {
     }
     caja.appendChild(lista);
     caja.appendChild(crear('p', {
-      texto: 'Si no eres una de estas personas, pásales el documento y la dirección de aquí arriba, o pídelo por el canal.',
+      texto: 'Si no eres una de estas personas, pásales el documento, el título y la dirección que te dio RappiMind.',
     }));
   } else if (accesos && esConcurso && accesos.notaConcursos) {
     caja.appendChild(crear('p', { texto: accesos.notaConcursos }));
   } else {
     caja.appendChild(crear('p', {
-      texto: 'Todavía no tenemos la lista de tu país. Pide la publicación por el canal de Legal.',
+      texto: 'Todavía no tenemos la lista de tu país. Pide la publicación en #tyc-rappi.',
     }));
   }
 
@@ -12998,7 +12997,7 @@ function pantallaListo(raiz) {
       onclick: function () { estado.reiniciarFormulario({}); RM.app.ir('inicio'); },
     }),
     crear('button', {
-      clase: 'boton boton-secundario', type: 'button', texto: estado.T('Ver mi historial'),
+      clase: 'boton boton-secundario', type: 'button', texto: estado.T('Ver mis campañas'),
       onclick: function () { RM.app.ir('historial'); },
     }),
   ]));
@@ -13031,7 +13030,7 @@ function pantallaHistorial(raiz) {
     crear('h1', { texto: 'Tus campañas' }),
     crear('p', {
       clase: 'pregunta-ayuda',
-      texto: 'Todas las campañas que has generado, con su documento y su estado. Sirve para tres cosas: abrir otra vez un documento que ya generaste, marcar una campaña como publicada cuando ya la subiste a Squarespace, y arrancar una campaña nueva copiando los datos de una anterior con "Usar como base".',
+      texto: 'Abre tus documentos, márcalos como publicados o usa uno como base para una campaña nueva.',
     }),
   ]);
 
@@ -13162,7 +13161,7 @@ function abrirAmpliacion(fila, entrada, destino) {
     crear('h3', { texto: 'Ampliar ' + (fila.nombre_campana || fila.id) }),
     crear('p', {
       clase: 'pregunta-ayuda',
-      texto: 'Esta campaña ya arrancó, así que solo se le puede dar más: más días, más presupuesto, más órdenes o más unidades. Nunca menos, porque cambiaría las condiciones de quien ya compró.',
+      texto: 'Esta campaña ya arrancó: solo puedes darle más, nunca menos, porque cambiaría las condiciones de quien ya compró.',
     }),
   ]);
 
@@ -13296,7 +13295,7 @@ function fichaDeAccesos() {
 
   ficha.appendChild(crear('div', { clase: 'ficha-seccion' }, [
     crear('h3', { texto: 'Los demás países' }),
-    crear('p', { clase: 'pregunta-ayuda', texto: 'Todavía no tenemos la lista. Pide la publicación por el canal de Legal.' }),
+    crear('p', { clase: 'pregunta-ayuda', texto: 'Todavía no tenemos la lista. Pide la publicación en #tyc-rappi.' }),
     crear('p', {}, [
       document.createTextNode(CANAL_TC.para + ' '),
       crear('a', { href: CANAL_TC.url, target: '_blank', rel: 'noopener', texto: CANAL_TC.nombre }),
@@ -13363,7 +13362,7 @@ function pantallaAyuda(raiz) {
 
   contenido.appendChild(crear('h3', { texto: estado.T('¿Quién puede publicar?') }));
   contenido.appendChild(crear('p', {
-    texto: 'No todo el mundo tiene usuario de Squarespace: la cuenta la tienen unas pocas personas por país. Si no eres una de ellas, pásales el documento y la dirección que te dio la herramienta, o pídelo por el canal.',
+    texto: 'No todo el mundo tiene usuario de Squarespace: la cuenta la tienen unas pocas personas por país. Si no eres una de ellas, pásales el documento, el título y la dirección que te dio RappiMind, o pídelo en #tyc-rappi.',
   }));
   contenido.appendChild(fichaDeAccesos());
 
@@ -13398,7 +13397,7 @@ function pantallaAyuda(raiz) {
         clase: 'pregunta-ayuda',
         // Sin correo se dice donde buscarlo, en vez de ensenar un hueco en una
         // pantalla que van a leer los equipos legales de todos los paises.
-        texto: CONTACTOS[c].correo || 'Escríbele por el canal de Legal.',
+        texto: CONTACTOS[c].correo || 'Escríbele en #tyc-rappi.',
       }),
     ]));
   }
@@ -13469,7 +13468,7 @@ function seccionPaises(datos) {
 
   return crear('section', {}, [
     crear('h2', { texto: 'Países' }),
-    crear('p', { clase: 'pregunta-ayuda', texto: 'Activo lo ve cualquiera. Piloto solo lo ve el equipo de pruebas. Bloqueado no lo ve nadie.' }),
+    crear('p', { clase: 'pregunta-ayuda', texto: 'Activo lo ve cualquiera. Piloto lo ven pruebas, legal y administración. Bloqueado no lo ve nadie.' }),
     crear('div', { clase: 'envoltorio-tabla' }, [tabla]),
   ]);
 }

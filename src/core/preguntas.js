@@ -99,7 +99,7 @@ var PREGUNTAS = {
   negocio: p({
     paso: 'campana',
     pregunta: '¿La campaña es de Rappi o de Rappi Travel?',
-    ayuda: 'Rappi es el domicilio de siempre. Rappi Travel son vuelos, hoteles, autos y paquetes.',
+    ayuda: 'Si es de vuelos, hoteles, autos o paquetes, es Rappi Travel.',
     porQue: 'Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.',
     avanzaSola: true,
     porDefecto: 'rappi',
@@ -215,13 +215,13 @@ var PREGUNTAS = {
   alcance: p({
     paso: 'campana',
     pregunta: '¿Dónde aplica la campaña?',
-    ayuda: 'Nacional es todo el país. Si es solo en algunas ciudades, las escribes en el siguiente paso.',
+    ayuda: 'Si es solo en algunas ciudades, las escribes en la siguiente pregunta.',
     porQue: 'La cobertura define dónde puede reclamar el usuario. Si el documento dice más de lo que la campaña cubre, el usuario tiene derecho a exigirlo.',
     avanzaSola: true,
     porDefecto: 'Nacional',
     opciones: [
       { valor: 'Nacional', etiqueta: 'En todo el país', nota: 'Donde sea que Rappi tenga cobertura.' },
-      { valor: 'Ciudades', etiqueta: 'Solo en algunas ciudades', nota: 'Las escribes tú en el siguiente paso.' },
+      { valor: 'Ciudades', etiqueta: 'Solo en algunas ciudades', nota: 'Por ejemplo: Bogotá y Medellín.' },
     ],
     placeholders: ['TEXTO_TERRITORIO'],
     errores: { vacio: 'Elige si la campaña es nacional o por ciudades.' },
@@ -258,7 +258,7 @@ var PREGUNTAS = {
   organizadorRazonSocial: p({
     paso: 'organizador',
     pregunta: '¿Qué empresa paga el beneficio?',
-    ayuda: 'Es el Organizador: la tienda o la marca que pone la plata. Nunca es Rappi. Escribe la razón social como aparece en su RUT.',
+    ayuda: 'Tal como sale en su RUT, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.',
     porQue: 'El Organizador responde por la campaña frente al usuario y frente a la autoridad. Rappi solo pone la plataforma, así que el nombre tiene que ser exacto.',
     ejemplo: 'Alimentos del Norte S.A.S.',
     placeholders: ['ORGANIZADOR'],
@@ -270,7 +270,7 @@ var PREGUNTAS = {
   organizadorId: p({
     paso: 'organizador',
     pregunta: '¿Cuál es el NIT de esa empresa?',
-    ayuda: 'Con el dígito de verificación, por ejemplo 900.111.222-1. Está en el RUT del aliado; pídeselo a tu contacto.',
+    ayuda: 'Con dígito de verificación, tal como sale en el RUT: 900.111.222-1.',
     porQue: 'El documento identifica al Organizador con su número tributario. Un número mal escrito deja el documento sin un responsable identificable.',
     ejemplo: '900.111.222-1',
     placeholders: ['ID_ORGANIZADOR'],
@@ -335,10 +335,10 @@ var PREGUNTAS = {
 
   porcentaje: p({
     paso: 'beneficio',
-    pregunta: '¿Qué porcentaje del pedido devuelves en Créditos?',
+    pregunta: '¿Qué porcentaje del pedido se devuelve en Créditos?',
     ayuda: 'Solo el número. Con 20, un pedido de $50.000 recibe $10.000 en Créditos.',
     porQue: 'Es la promesa central de la campaña. Una vez publicado, el usuario puede exigir exactamente ese porcentaje.',
-    ejemplo: '99',
+    ejemplo: '20',
     placeholders: ['PORCENTAJE'],
     errores: {
       vacio: 'Escribe el porcentaje que devuelves, sin el signo de porcentaje.',
@@ -373,9 +373,9 @@ var PREGUNTAS = {
 
   tope: p({
     paso: 'beneficio',
-    pregunta: '¿Qué es lo máximo que recibe alguien por pedido?',
+    pregunta: '¿Cuál es el máximo de Créditos por pedido?',
     ayuda: 'Aunque el pedido sea grande, no recibe más de esto. Lo más usado es 25.000.',
-    porQue: 'Sin tope, un pedido enorme se lleva el presupuesto entero. El tope es lo que hace que un cashback del 99% sea viable.',
+    porQue: 'Sin tope, un pedido enorme se lleva el presupuesto entero. Con tope, un cashback alto sigue siendo viable.',
     ejemplo: '25000',
     moneda: true,
     placeholders: ['TOPE'],
@@ -459,8 +459,8 @@ var PREGUNTAS = {
       },
     },
     paso: 'beneficio',
-    pregunta: '¿Cuántas veces puede ganar la misma persona?',
-    ayuda: 'La mitad de las campañas permite una sola vez por usuario.',
+    pregunta: '¿Cuántas veces puede recibir el beneficio una persona?',
+    ayuda: 'Se cuenta por persona, durante toda la campaña.',
     porQue: 'Sin límite, unos pocos usuarios pueden consumir el presupuesto en horas. Con límite, el beneficio llega a más gente.',
     avanzaSola: true,
     porDefecto: 1,
@@ -494,7 +494,7 @@ var PREGUNTAS = {
     // mismo, porque de aqui sale docs/PREGUNTAS_KAM.md.
     paso: 'participantes',
     pregunta: '¿Hay que gastar un mínimo para participar?',
-    ayuda: 'Es opcional: si no exiges un mínimo, deja el campo vacío y sigue.',
+    ayuda: 'Por ejemplo: 30.000. Si no hay mínimo, déjalo vacío.',
     porQue: 'Si lo exiges, tiene que quedar escrito. Si no aparece en el documento, no lo puedes aplicar después.',
     ejemplo: '100000',
     moneda: true,
@@ -516,13 +516,13 @@ var PREGUNTAS = {
   condiciones: p({
     paso: 'beneficio',
     pregunta: '¿El beneficio aplica solo en cierto tipo de pedido?',
-    ayuda: 'Es opcional: si el beneficio aplica en cualquier pedido, no marques nada.',
+    ayuda: 'Si aplica en cualquier pedido, no marques nada.',
     porQue: 'Esta pregunta es sobre el pedido con el que el usuario se gana el beneficio, no sobre dónde gasta después los Créditos: eso se pregunta más adelante. Si la restricción no queda escrita, el usuario puede reclamar el beneficio en cualquier pedido.',
     opcional: true,
     multiple: true,
     opciones: [
       { valor: 'turbo', etiqueta: 'Solo si el pedido se hace por Turbo', nota: 'Un pedido por el resto de la app no da el beneficio.' },
-      { valor: 'consumo_local', etiqueta: 'Solo si consume en el local', nota: 'La modalidad de consumo en el local de la app. Un domicilio no da el beneficio.' },
+      { valor: 'consumo_local', etiqueta: 'Solo si consume en el local', nota: 'Pide por la app y come en el local. Un domicilio no da el beneficio.' },
     ],
     placeholders: ['TEXTO_CONDICIONES'],
     errores: {},
@@ -532,7 +532,7 @@ var PREGUNTAS = {
 
   carga: p({
     paso: 'creditos',
-    pregunta: '¿Cuándo le llegan los Créditos?',
+    pregunta: '¿Cuándo le llegan los Créditos al usuario?',
     ayuda: 'Es el momento en que el saldo le queda disponible en la Billetera.',
     porQue: 'El documento fija en qué momento el usuario recibe los Créditos, y eso es lo que el usuario va a esperar. Elige lo que el equipo de operaciones puede cumplir.',
     avanzaSola: true,
@@ -546,7 +546,7 @@ var PREGUNTAS = {
     errores: { vacio: 'Dinos cuándo le llegan los Créditos al usuario.' },
     variantes: {
       cashback_travel: {
-        pregunta: '¿Cuándo le llegan los Créditos?',
+        pregunta: '¿Cuándo le llegan los Créditos al usuario?',
         ayuda: 'Al confirmarse la reserva, o unos días después de que termine la campaña.',
         opciones: OPCIONES_CARGA_TRAVEL,
         placeholders: ['TEXTO_CARGA_TRAVEL', 'TEXTO_VERIFICACION_TRAVEL'],
@@ -569,7 +569,7 @@ var PREGUNTAS = {
   vigencia: p({
     paso: 'creditos',
     pregunta: '¿Hasta cuándo puede usar esos Créditos?',
-    ayuda: 'Casi todos ponen una fecha límite concreta.',
+    ayuda: 'Por ejemplo: hasta el 31 de diciembre, o 30 días desde que le llegan.',
     porQue: 'Los Créditos se vencen y eso tiene que estar escrito. Si no lo dices, el usuario puede sostener que no vencen.',
     avanzaSola: true,
     opciones: [
@@ -614,8 +614,8 @@ var PREGUNTAS = {
   redencion: p({
     paso: 'creditos',
     pregunta: '¿Dónde puede gastar los Créditos?',
-    ayuda: 'Siete de cada diez campañas los limitan a la misma tienda.',
-    porQue: 'Define dónde vale el saldo. Lo normal es que se gaste en la misma tienda donde el usuario se ganó el beneficio. En todo caso, estos Créditos casi nunca aplican a RappiFavor, Cajero ATM ni RappiTravel.',
+    ayuda: 'Por ejemplo: solo en la tienda donde se los ganó, que es lo más común.',
+    porQue: 'Define dónde vale el saldo. Lo normal es que se gaste en la misma tienda donde el usuario se ganó el beneficio. En todo caso, estos Créditos casi nunca aplican a RappiFavor, Cajero ATM ni Rappi Travel.',
     avanzaSola: true,
     porDefecto: 'tienda',
     opciones: [
@@ -1138,7 +1138,7 @@ var PREGUNTAS = {
   segmento: p({
     paso: 'participantes',
     pregunta: '¿Quiénes pueden participar?',
-    ayuda: 'La mitad de las campañas es para todos y casi la otra mitad para Pro.',
+    ayuda: 'Por ejemplo: solo Pro, o quienes no compran hace 60 días.',
     porQue: 'Limita quién puede reclamar el beneficio. Si el documento dice "todos", no puedes excluir a nadie después.',
     avanzaSola: true,
     porDefecto: 'todos',
@@ -1173,8 +1173,8 @@ var PREGUNTAS = {
 
   metodoPago: p({
     paso: 'participantes',
-    pregunta: '¿Con qué puede pagar?',
-    ayuda: 'Con "todos" entran tarjetas, billeteras y efectivo donde exista.',
+    pregunta: '¿Con qué medio de pago aplica el beneficio?',
+    ayuda: 'Con "cualquier medio" entran tarjetas, billeteras y efectivo donde exista.',
     porQue: 'Restringir el medio de pago cambia quién puede participar. Los pedidos pagados con Créditos nunca dan beneficio.',
     avanzaSola: true,
     porDefecto: 'todos',
@@ -1194,7 +1194,7 @@ var PREGUNTAS = {
   declaracion: p({
     paso: 'confirmacion',
     pregunta: 'Confirma que la información es correcta',
-    ayuda: 'Confirmo que la información es veraz y corresponde a la campaña aprobada.',
+    ayuda: 'Confirmo que estos datos son ciertos y son los de mi campaña.',
     porQue: 'El documento se genera con lo que escribiste y se publica tal cual. Nadie de Legal lo revisa antes.',
     placeholders: [],
     errores: { vacio: 'Marca la casilla para confirmar que la información es correcta.' },
@@ -1271,7 +1271,7 @@ var PREGUNTAS = {
     porQue: 'Sin regla de desempate, un empate se resuelve al azar, y el azar convierte el concurso en un sorteo.',
     avanzaSola: true,
     opciones: [
-      { valor: 'primero', etiqueta: 'Quien llegó primero', nota: 'Por la fecha y hora de su último pedido.' },
+      { valor: 'primero', etiqueta: 'Quien llegó primero', nota: 'Gana quien hizo antes su último pedido.' },
       { valor: 'mas_pedidos', etiqueta: 'Quien hizo más pedidos', nota: 'Cuenta pedidos válidos.' },
       { valor: 'mayor_valor', etiqueta: 'Quien gastó más', nota: 'Suma el valor de las compras.' },
     ],
@@ -1388,7 +1388,7 @@ var PREGUNTAS = {
     paso: 'tiendas',
     pregunta: '¿Qué tiendas participan?',
     ayuda: 'Mínimo dos. Cada una entra con su razón social, su NIT y su presupuesto.',
-    porQue: 'En un Cashback Day cada tienda organiza su propio beneficio y responde por él. Por eso cada una necesita sus propios datos.',
+    porQue: 'En un Cashback Multitienda cada tienda organiza su propio beneficio y responde por él. Por eso cada una necesita sus propios datos.',
     placeholders: ['TIENDA_MARCA', 'TIENDA_RAZON_SOCIAL', 'TIENDA_ID', 'TIENDA_CIUDADES', 'TIENDA_PRESUPUESTO'],
     errores: {
       minimo: 'Agrega al menos 2 tiendas participantes.',
