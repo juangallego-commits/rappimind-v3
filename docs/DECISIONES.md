@@ -865,8 +865,9 @@ elige entre dos frases que Legal ya escribió.
     `URL_CORTA` ya no espera una dirección corta distinta: vale la dirección del
     T&C de la campaña, la misma que va en la letra pequeña y en el texto de
     apoyo. Con eso `PENDIENTES_POR_MARCADOR` quedó vacío y la leyenda de push y
-    SMS se entrega, no se retiene. Mide 92 caracteres contra un límite de 70, y
-    la pantalla lo dice; Juan avisó que en push y SMS casi nunca ponen el
+    SMS se entrega, no se retiene. En los casos dorados mide 89 caracteres
+    contra un límite de 70, de los cuales el enlace son 51: sin el enlace son 38
+    y cabe de sobra. La pantalla lo dice; Juan avisó que en push y SMS casi nunca ponen el
     enlace, así que quien arma la pieza decide si lo quita. La constante se dejó
     en el archivo, vacía y con la explicación al lado, porque el día que un
     marcador vuelva a depender de un dato que nadie ha dado, el mecanismo ya

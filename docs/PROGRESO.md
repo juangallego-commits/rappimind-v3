@@ -1360,9 +1360,10 @@ defectos reales, el tercero no lo era.
 Juan lo zanjó así: "el enlace para todo tiene que ser el mismo". Se acabó la
 espera por una dirección corta que nadie había definido. La leyenda de push y SMS
 ya no se retiene como pendiente: sale, con la misma dirección del T&C que va en
-la letra pequeña. Mide 92 caracteres contra un límite de 70 y la pantalla lo
-dice, pero como Juan avisó que en push y SMS casi nunca ponen el enlace, quien
-arma la pieza decide si lo quita y con eso cabe.
+la letra pequeña. En los casos dorados mide 89 caracteres contra un límite de 70,
+y el enlace son 51 de esos 89: sin el enlace son 38 y cabe de sobra. La pantalla
+dice por cuánto se pasa y cuánto pesa el enlace, así que quien arma la pieza
+decide, que es justo lo que Juan dijo que hacen.
 
 De paso, cuando una leyenda no cabe la pantalla ya no dice solo que no cabe:
 dice por cuántos caracteres se pasa y cuánto de ese texto son enlaces. Es

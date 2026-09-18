@@ -773,11 +773,12 @@ final. Lo que queda abierto:
 2. ~~El enlace corto no tiene forma definida.~~ **Cerrado el 18 de septiembre:
    no hay enlace corto.** Juan decidió que el enlace sea uno solo y el mismo en
    todas partes, así que la leyenda de push y SMS ya no se retiene: se entrega
-   con la dirección del T&C de la campaña. Mide 92 caracteres contra un límite de
-   70, y la pantalla lo dice. Juan avisó que en push y SMS casi nunca ponen el
-   enlace, así que quien arma la pieza decide si lo quita. Lo que sigue abierto
-   es de otra naturaleza: aunque se quitara, el banner chico del cashback por ETA
-   mide 567 caracteres contra un límite de 300 y tampoco cabe.
+   con la dirección del T&C de la campaña. En los casos dorados mide 89
+   caracteres contra un límite de 70, y el enlace son 51 de esos 89: sin el
+   enlace son 38 y cabe de sobra. Juan avisó que en push y SMS casi nunca ponen
+   el enlace, así que quien arma la pieza decide. Lo que sigue abierto es de otra
+   naturaleza: el banner chico del cashback por ETA mide 567 caracteres contra un
+   límite de 300 y no cabe ni quitando los dos enlaces.
 3. **Cuatro casos donde la respuesta no dio frase corta**, y por eso la campaña
    no entrega leyenda y dice qué falta. Son los insumos 3, 4 y 5 de la lista 3:
    cómo se dice en una pieza que los Créditos solo sirven en ciertas secciones;
@@ -811,6 +812,13 @@ final. Lo que queda abierto:
    irreductible: no hay nada marcado como recortable. La herramienta lo dice en
    pantalla, que es lo que pide la sección 7D, pero alguien tiene que decidir qué
    se puede quitar o si esas campañas simplemente no salen en banner chico.
+
+   Medido el 18 de septiembre sobre los trece casos dorados de Colombia, seis se
+   pasan del límite del banner: 313, 340, 340, 346, 346 y 399 caracteres contra
+   300. En todos, el enlace son 52 caracteres, así que un enlace más corto
+   arreglaría los cuatro primeros y no los dos últimos. Es el dato que faltaba
+   para decidir, y va contra la decisión del enlace único: hay que escoger entre
+   un enlace igual en todas partes y un banner que quepa.
 9. **El texto de la pregunta nueva en portugués lo escribí yo**, igual que el
    resto de la interfaz en portugués. Va en el mismo paquete que ya está anotado
    para que lo lea alguien de Brasil.
