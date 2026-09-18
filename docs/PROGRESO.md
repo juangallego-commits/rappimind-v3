@@ -769,3 +769,88 @@ El 17 de septiembre, con la autorización de Juan. Todo lo de esta sesión está
 
 Las pruebas y el build volvieron a correr dentro de GitHub antes de subir nada:
 421 en verde. Falta `setup()`, que lo corre Juan.
+
+## 17 de septiembre · El front actual, en un archivo para Claude chat
+
+### Lo que quedó
+
+`docs/FRONT_ACTUAL.html`, 353 KB, un solo archivo y sin una línea de
+JavaScript: **las 44 pantallas de la herramienta funcionando, congeladas**. Cada
+bloque es el mismo HTML que dibuja la aplicación con la misma hoja de estilos,
+así que se ve como se ve en la app y, a la vez, se lee como texto. Es lo que se
+sube al proyecto de Claude chat para que hable del front que existe y no del que
+se imagina.
+
+No es una maqueta, no son capturas y no es un resumen escrito a mano. Lo genera
+`npm run front`: arma la demostración (que lleva el motor real), la recorre con
+un navegador sin interfaz respondiendo la campaña de ejemplo, y guarda el DOM tal
+como quedó.
+
+Lo que trae, en cuatro partes:
+
+| Parte | Pantallas |
+|---|---|
+| El recorrido del comercial | 26, de la portada a la ayuda, una por pregunta |
+| Los otros caminos | 11: Legal, el filtro de Travel, los T&C ya publicados y su detalle, un país en piloto, Cashback Multitienda con su lista de tiendas, Carrera de Compras con la opción bloqueada, un error en vivo, ampliar una campaña publicada y administración |
+| La interfaz en portugués | 4 |
+| En celular | 3, con la hoja deslizable abierta |
+
+Cada pantalla lleva su número, en qué `E.pantalla` vive, el tamaño de ventana, el
+idioma y qué hace el comercial ahí. Al final hay cinco anexos: la hoja de estilos
+literal, la plantilla, **dónde se cambia cada cosa que se ve**, los archivos del
+front y las llaves del estado.
+
+Cinco cosas no salen literales, y el propio archivo lo dice en la portada: el
+aviso de "Modo demostración" (no existe en la herramienta real), la vista previa
+del documento (completa en tres pantallas y marcada en las demás, para no
+repetir el mismo T&C treinta veces), la pantalla final (va la de producción, con
+un enlace de Doc de ejemplo), lo que estaba clavado a la ventana (se clavó al
+marco de cada pantalla) y la pestaña Administración (sale porque la sesión entra
+con rol de administrador, igual que Juan; un CAM no la ve).
+
+### Dónde está
+
+| Archivo | Para qué |
+|---|---|
+| `docs/FRONT_ACTUAL.html` | El archivo que se sube a Claude chat |
+| `scripts/front.js` | La tabla de las 44 pantallas y el orden del documento |
+| `scripts/lib/front-recorrido.js` | El recorrido con el navegador y el congelado de cada pantalla |
+| `scripts/lib/front-documento.js` | El armado del documento y sus anexos |
+| `scripts/lib/estilos-acotados.js` | La hoja de estilos acotada a un marco por pantalla |
+| `pruebas/front.test.js` | 11 pruebas del acotador, de la tabla y del archivo generado |
+
+### Cómo probarlo
+
+```
+npm test                                          # 432 pruebas
+export NODE_PATH=/opt/node22/lib/node_modules     # donde esté playwright
+export PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers  # donde esté Chromium
+npm run front                                     # 44 de 44 pantallas
+```
+
+Y abrir `docs/FRONT_ACTUAL.html` con doble clic. **Hay que volver a correr
+`npm run front` después de cualquier cambio de interfaz**, igual que con las
+capturas: un archivo de contexto viejo es peor que no tenerlo, porque nadie nota
+que miente. Generarlo necesita un navegador, que no es dependencia del proyecto,
+así que ninguna prueba obliga a regenerarlo.
+
+### Un defecto que salió al armarlo
+
+En **Mis campañas**, una campaña publicada y en curso muestra sus dos acciones
+pegadas: se lee `Usar como baseAmpliar`. Entre "Abrir" y "Usar como base" hay un
+espacio y entre "Usar como base" y "Ampliar" no
+(`src/client/js/68-pantallas.js`, la celda de acciones). Se arregla con un
+espacio, como el que ya está tres líneas arriba, pero no lo toqué: no era el
+encargo y cambiar el front cambia también este archivo. Dime y lo hago.
+
+### Lo que necesito de Juan
+
+1. **Subirlo al proyecto de Claude chat** y decirme si el peso le sirve: son
+   353 KB, de los cuales el T&C completo de las tres vistas previas pesa unos
+   90. Si es mucho, dejo una sola vista previa completa y bajamos a 260 KB.
+2. **Si quieres el código del front dentro del archivo** (los 167 KB de
+   `src/client/`), lo agrego como anexo. Hoy va la hoja de estilos y la
+   plantilla completas, y de los archivos de JavaScript va la tabla con qué hace
+   cada uno, no el código.
+3. **El espacio de "Usar como baseAmpliar"**, arriba.
+

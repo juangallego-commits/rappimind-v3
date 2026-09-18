@@ -16,6 +16,7 @@
     "push": "node scripts/push.js",
     "preguntas": "node scripts/preguntas.js",
     "demo": "node scripts/demo.js",
+    "front": "node scripts/front.js",
     "ayuda": "node scripts/ayuda.js",
     "docs": "npm run preguntas && npm run ayuda"
   }
