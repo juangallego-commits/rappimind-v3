@@ -891,3 +891,96 @@ elige entre dos frases que Legal ya escribió.
     viejo no había forma de saber si el error estaba en el dígito o en el cuerpo.
     Ahora el mensaje nombra el dígito que corresponde y pide revisar el número
     completo, que es lo que hace falta cuando alguien copió mal una cifra.
+
+## 18 de septiembre · La revisión general, antes de la etapa de diseño
+
+57. **La concordancia de número la resuelve el motor, no el modelo.** Ocho
+    frases salían en plural cuando la respuesta era 1 ("un (1) días calendario",
+    "una (1) noches", "las una (1) unidades"). Ninguna prueba lo veía porque
+    ningún caso dorado responde 1 a esas preguntas, y la red de seguridad del
+    motor tampoco: esas frases no tienen ningún signo roto, están bien formadas
+    y mal escritas. Se arregló donde el motor arma la frase entera, y el término
+    de días del país lo pone en singular `terminoDeDias()` en `src/core/texto.js`,
+    con una regla mecánica sobre cada palabra (lo que termina en "es" pierde el
+    "es", lo que termina en "s" pierde la "s"). Con dos o más, la salida es
+    carácter por carácter la de antes: los treinta y dos casos dorados no
+    cambiaron. La que queda es la del plazo de confirmación de la Carrera,
+    porque el artículo y el adjetivo viven dentro de la cláusula; está en
+    `docs/PARA_DECIDIR.md`, punto A4.
+
+58. **El mínimo de una pregunta numérica vive en el esquema, no en una
+    validación escrita a mano.** Cinco preguntas tenían su mensaje de "tiene que
+    ser mayor que cero" escrito en `preguntas.js` y nadie lo disparaba, porque
+    el esquema no declaraba `minimo`. El documento se generaba diciendo "igual o
+    superior a cero pesos M/Cte. ($0)" o "Cada ganador recibirá cero (0)
+    Créditos". Es la misma regla que Brasil ya cumplía en sus seis preguntas
+    numéricas y los demás tipos no. Ahora todo número declara su mínimo, salvo
+    el tope y el presupuesto, que tienen una revisión cruzada propia porque su
+    mensaje explica la relación entre los dos. Una prueba lo vigila sobre el
+    esquema, para que un tipo nuevo no nazca con el agujero.
+
+59. **Un fallo de Google se traduce una sola vez, en la frontera del
+    transporte.** Las nueve pantallas que muestran un fallo imprimían el texto
+    crudo de Apps Script, en inglés y con palabras de Google. El comercial leía
+    "No pudimos generar el documento: Lock timeout: another process was holding
+    the lock for too long.", que además es el caso más probable (dos personas
+    generando a la vez) y el más fácil de resolver (esperar diez segundos).
+    `src/core/mensajes_de_falla.js` lo convierte en un paso siguiente, y se
+    aplica en `RM.servidor.llamar`, que es donde el fallo cruza de mundo. Un
+    arreglo por pantalla se olvida en la siguiente. Lo que no reconoce se
+    entrega con el texto de Google al lado: esconderlo dejaría sin diagnóstico a
+    quien tenga que mirarlo.
+
+60. **Si la generación se cae después de crear el documento, el documento se va
+    a la papelera.** El consecutivo y el nombre de la campaña salen del Sheet.
+    Si el Sheet se caía después de crear el Doc, el Doc quedaba suelto en la
+    carpeta del país y la siguiente generación sacaba el mismo número y el mismo
+    nombre: dos documentos idénticos, "RM-20260916-0001" los dos, y nadie puede
+    saber cuál es el bueno. Ahora se descarta el documento, el fallo queda en la
+    pestaña Registro, y lo mismo al ampliar. A la papelera y no borrado, porque
+    es reversible durante treinta días.
+
+61. **Los dobles de Google saben fallar a pedido.** `mundo.fallar` tumba el
+    bloqueo, la creación del documento, el correo, el añadido de filas o la
+    escritura, y con `hojaSolo` o `escrituraSolo` se puede tumbar una sola
+    pestaña. Sin eso, del servidor solo se probaba el camino feliz y nadie sabía
+    si el comercial acababa con un registro a medias. Es lo que permitió
+    reproducir el defecto 60 en Node antes de arreglarlo, que es la regla de la
+    skill de fronteras.
+
+62. **Al cambiar de pantalla, el título recibe el foco y se anuncia.** La
+    aplicación redibuja el `<main>` entero en cada cambio; medido en el
+    navegador, la región de anuncios quedaba vacía y `document.activeElement`
+    volvía al `<body>`. El lector de pantalla no decía nada y el tabulador
+    arrancaba otra vez desde la barra de arriba, en cada pantalla. Va en `ir()` y
+    **no** en `dibujar()`, que corre con cada respuesta dentro de la misma
+    pantalla: ahí mover el foco se lo quitaría al campo que la persona está
+    llenando. El anillo del título solo se quita cuando el foco lo pone el
+    código (`:focus-visible`).
+
+63. **Una opción que el país no puede cumplir se bloquea con su razón, no se
+    esconde.** "En ciertas secciones de Rappi" necesita los nombres de las
+    secciones de la app, que el documento imprime entre comillas, y esa lista
+    solo existe para Colombia. En los cinco países activos restantes el
+    comercial elegía la opción y quedaba delante de una pregunta sin una sola
+    casilla, con una validación imposible de cumplir. Se usa el mecanismo que ya
+    existía (`opcionesDeshabilitadas`), el mismo del desempate. Deshabilitada y
+    no escondida por la misma razón que los T&C vencidos: si desapareciera, el
+    comercial creería que la herramienta no sabe hacerlo.
+
+64. **Las pruebas que necesitan un documento de verdad arman la solicitud con un
+    solo constructor.** `pruebas/dobles/solicitudes.js` llena todas las
+    preguntas obligatorias visibles de cualquier tipo en cualquier país. Existe
+    porque los defectos de concordancia y de límites solo se ven en el texto
+    final: una prueba que llame a la función suelta pasa igual con el defecto
+    puesto. Los números que la prueba no pide salen en cuatro y no en uno, para
+    que ningún singular se cuele sin que la prueba lo haya pedido.
+
+65. **Lo que se puede vigilar de la accesibilidad sin navegador es que el
+    mecanismo siga enchufado.** El comportamiento (dónde queda el foco, qué dice
+    el lector de pantalla) solo se ve en el navegador, y por eso está en el
+    recorrido. En Node se revisa que `ir()` siga llamando a la entrega de la
+    pantalla, que `dibujar()` no lo haga, y que la región de anuncios siga
+    siendo la que usa la interfaz. Es la lección de la skill de flujo: un
+    mecanismo que la interfaz no llama es un mecanismo que no existe, y esa
+    clase de defecto sí se caza leyendo el archivo.

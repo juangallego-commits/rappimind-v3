@@ -1422,3 +1422,157 @@ pantalla final: la de push ya no dice "pendiente", dice por cuánto se pasa.
 2. Lo de siempre, que sigue abierto: el acceso de los KAM a la carpeta de Drive,
    la coma de "Rappi, como operador logístico", las 24 preguntas de la lista 2 y
    el espacio de la letra pequeña y el banner.
+
+## 18 de septiembre (cierre) · La revisión general, antes de la etapa de diseño
+
+Última pasada sobre el fondo. De aquí en adelante solo se toca cómo se ve.
+
+### Lo que estaba roto y se arregló
+
+**1. Con la respuesta "1", ocho frases del documento salían en plural.** Un
+cashback con un día de vigencia de los Créditos publicaba "tendrán una vigencia
+de **un (1) días calendario** contados a partir de su carga". Lo mismo con un
+día sin comprar, un día de anticipación, una noche mínima de hotel, un día de
+alquiler, una unidad con descuento y un producto con el descuento máximo.
+Ninguna prueba lo veía porque ninguno de los treinta y dos casos dorados
+responde 1 a esas preguntas, y la red de seguridad del motor tampoco puede
+verlo: esas frases no tienen ningún signo roto, están bien formadas y mal
+escritas. Con dos o más, el documento sale carácter por carácter igual que
+antes.
+
+**2. Con la respuesta "0", el documento se generaba diciendo cualquier cosa.**
+Una compra mínima de cero salía como "el valor de los productos de tu pedido
+deberá ser igual o superior a cero pesos M/Cte. ($0)". Un premio de cero
+Créditos, como "Cada ganador recibirá cero (0) Créditos". Un tope de cero en
+Rappi Travel, como "sin que puedas recibir más de cero (0) Créditos por orden".
+Una tienda del Multitienda con presupuesto cero, como "Beer Station (Bogotá):
+cero (0) Créditos". Lo más raro: los mensajes de error ya estaban escritos, uno
+por uno, y nadie los disparaba.
+
+**3. El cashback por ETA aceptaba cualquier porcentaje.** Con 500, el título del
+documento salía "15 MINUTOS O 500% CASHBACK". Con 0, el título perdía el
+porcentaje entero: "15 MINUTOS O CASHBACK". El cashback de delivery lo revisa
+desde el principio; el ETA se construyó después y se quedó sin esa revisión.
+
+**4. Cinco países activos ofrecían una respuesta que no podían cumplir.** En
+México, Perú, Argentina, Chile y Uruguay, el comercial elegía "En ciertas
+secciones de Rappi" y se quedaba delante de una pregunta sin una sola casilla
+que marcar, con un error que le pedía marcar al menos una. Sin salida más que
+adivinar que había que devolverse. Ahora la opción se ve bloqueada y dice por
+qué, nombrando al país.
+
+**5. Cuando Google fallaba, el comercial leía inglés.** Los nueve sitios de la
+interfaz que muestran un fallo imprimían el texto crudo de Apps Script: "No
+pudimos generar el documento: Lock timeout: another process was holding the lock
+for too long." Ese caso es el de dos comerciales generando a la vez, o sea el
+más probable, y se arregla esperando diez segundos. Ahora lo dice así.
+
+**6. Un documento podía quedar huérfano en Drive, con el identificador
+repetido.** Si el Sheet se caía después de crear el Doc, el Doc se quedaba en la
+carpeta del país y en el Sheet no quedaba nada. Como el consecutivo sale del
+Sheet, la siguiente generación creaba otro documento con el mismo identificador
+y el mismo título. Comprobado: dos "RM-20260916-0001 · Colombia" en la misma
+carpeta.
+
+**7. Quien no ve la pantalla no se enteraba de que cambió.** La aplicación
+redibuja todo en cada cambio de pantalla. Medido: la región de anuncios quedaba
+vacía y el foco volvía al `<body>`, así que el lector de pantalla se quedaba
+callado y quien navega con teclado tenía que recorrer otra vez la barra de
+arriba antes de llegar a la primera pregunta, en cada pantalla.
+
+### Lo que se revisó y está bien
+
+- **El motor.** Se generaron **26.768 documentos** con todas las combinaciones
+  de respuestas de opción de cada tipo en cada país. Cero marcas sin resolver,
+  cero valores vacíos, cero frases rotas. Los detectores que se probaron encima
+  (comas dobles, paréntesis vacíos, conjunciones colgando, palabras repetidas,
+  `undefined`, `NaN`) no encontraron ni un caso real.
+- **Las fechas.** Un solo día, cambio de mes, cambio de año, fin de febrero, año
+  bisiesto y un año entero, en todos los tipos y países: 1.134 documentos de
+  borde. Lo único que salió fueron los defectos 1 y 2 de arriba.
+- **La red de seguridad del núcleo.** Se rompió el código a propósito en nueve
+  sitios (el límite del banner, el idioma por defecto, el nombre de campaña, el
+  consecutivo, el dominio de publicación, el correo, el canal de la ayuda, el
+  enlace del T&C en las leyendas, la estructura del Doc) y **las nueve veces las
+  pruebas fallaron**. No hay pruebas de adorno en el núcleo.
+- **`setup()` corrido tres veces seguidas** no duplica nada: un libro, diez
+  carpetas, nueve países, una persona en el equipo, cuatro pestañas. Lo único
+  que crece es el Registro, que es correcto.
+- **Un correo que no sale no tumba la generación** y queda anotado en el
+  Registro. Un fallo de Drive no deja ninguna fila escrita. El bloqueo agotado
+  no escribe nada y la siguiente generación funciona igual.
+- **Ningún placeholder de los modelos se quedó sin quien lo llene**, ningún
+  bloque compartido quedó huérfano, y ningún país habilita un tipo que no
+  exista.
+
+### Lo que está frágil y no se arregló, y por qué
+
+- **"Dentro de los un (1) día hábil siguientes"**, en la Carrera de Compras. Es
+  la novena frase de la familia del defecto 1, y la única cuyo artículo y
+  adjetivo viven dentro de la cláusula. Arreglarla es tocar texto de Legal.
+  Punto A4 de `docs/PARA_DECIDIR.md`.
+- **Perú, Argentina, Chile y Uruguay siguen sin caso dorado.** Medido: el
+  documento de cada país imprime 16 valores que salen de su propia fila. Son 64
+  valores publicándose sin que nadie avise si cambian. Punto B1, con el costo.
+- **En celular, "Ayuda" se sale de la pantalla** en ventanas de 360 y 390 px. Se
+  llega deslizando la barra de lado, pero nada dice que se pueda. No se tocó
+  porque es distribución y la etapa de diseño la va a rehacer: queda en
+  `docs/PARA_EL_DISENO.md` con las medidas.
+- **La interfaz sigue sin pruebas de comportamiento en Node.** Son 4.782 líneas
+  entre JavaScript y estilos. Lo que corre sin navegador son revisiones
+  mecánicas (traducciones, ámbitos, variables repetidas, paridad con la
+  demostración, y las nuevas de accesibilidad y de opciones por país). El
+  comportamiento lo ven solo los dos recorridos de navegador, que ahora hacen
+  57 y 26 comprobaciones. **Es el hueco más grande que queda.** Lo que se puede
+  probar sin navegador es que un mecanismo siga enchufado; lo que no se puede es
+  qué ve la persona.
+
+### Lo que no se alcanzó a revisar
+
+- **La pantalla de administración**, con ojos de producto. Se sabe que funciona
+  (está cubierta por pruebas de servidor), no si se entiende.
+- **El historial con muchas campañas.** Se probó con una y con dos. Nadie ha
+  mirado qué pasa con doscientas, ni si la búsqueda sirve a esa escala.
+- **El correo que recibe el comercial**, leído como correo. Se sabe que se manda
+  y qué lleva dentro.
+- **La pantalla de Ayuda entera**, línea por línea, contra el flujo de hoy.
+
+### Los dos documentos nuevos
+
+- **`docs/PARA_DECIDIR.md`**, 41 puntos, ordenados por lo que desbloquean. Se
+  entiende solo: las cláusulas van copiadas y las pantallas descritas, para
+  poder trabajarlo en Claude chat sin el repositorio. Los tres que más
+  desbloquean: **A1** (los nombres de las secciones de la app fuera de
+  Colombia), **A2** (el separador de miles de Ecuador y Costa Rica, que es lo
+  único que les falta para salir de piloto) y **B1** (los cuatro países activos
+  sin caso dorado).
+- **`docs/PARA_EL_DISENO.md`**, con lo que se ve mal y, sobre todo, con lo que
+  **no** se puede tocar.
+
+`docs/PENDIENTES_LEGAL.md` se queda como está, como historia.
+
+### Cómo probarlo
+
+```
+npm test                                                        # 580 pruebas
+npm run demo
+export NODE_PATH=/opt/node22/lib/node_modules
+export PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
+node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js        # 57 revisiones
+node .claude/skills/flujo-y-ux/scripts/recorrer-en-portugues.js # 26 revisiones
+npm run front                                                   # 46 de 46 pantallas
+```
+
+Con los ojos, en la demostración: pon un día de vigencia de los Créditos y mira
+la cláusula 10; escribe 0 en la compra mínima; elige México y mira la pregunta
+de dónde se gastan los Créditos.
+
+### Lo que necesito de Juan
+
+1. **Lee `docs/PARA_DECIDIR.md`**, al menos el bloque A. Son cinco puntos y
+   ninguno pasa de una pantalla.
+2. **Los casos dorados de Perú, Argentina, Chile y Uruguay**: el costo y el
+   riesgo están medidos en el punto B1. Dime sí o no.
+3. **Correr `setup()`** sigue pendiente de la vez pasada, por lo de los países
+   que salieron de piloto.
+4. **El despliegue de GitHub Actions**: avísame si lo lanzo.
