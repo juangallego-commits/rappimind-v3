@@ -48,7 +48,7 @@ function tarjetaDeAtajo() {
   if ((estado.entrada().negocio || 'rappi') === 'travel') return null;
 
   var caja = crear('div', { clase: 'atajo-tyc' }, [
-    crear('p', { clase: 'pregunta-ayuda', texto: '¿No ves tu campaña en la lista?' }),
+    crear('p', { clase: 'pregunta-ayuda', texto: '¿Es un descuento, un cupón o envío gratis?' }),
   ]);
 
   // La buena noticia solo se da si hay algo que dar. Catorce de los quince

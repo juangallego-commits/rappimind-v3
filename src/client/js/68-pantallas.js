@@ -14,7 +14,7 @@ function pantallaHistorial(raiz) {
     crear('h1', { texto: 'Tus campañas' }),
     crear('p', {
       clase: 'pregunta-ayuda',
-      texto: 'Todas las campañas que has generado, con su documento y su estado. Sirve para tres cosas: abrir otra vez un documento que ya generaste, marcar una campaña como publicada cuando ya la subiste a Squarespace, y arrancar una campaña nueva copiando los datos de una anterior con "Usar como base".',
+      texto: 'Abre tus documentos, márcalos como publicados o usa uno como base para una campaña nueva.',
     }),
   ]);
 
@@ -145,7 +145,7 @@ function abrirAmpliacion(fila, entrada, destino) {
     crear('h3', { texto: 'Ampliar ' + (fila.nombre_campana || fila.id) }),
     crear('p', {
       clase: 'pregunta-ayuda',
-      texto: 'Esta campaña ya arrancó, así que solo se le puede dar más: más días, más presupuesto, más órdenes o más unidades. Nunca menos, porque cambiaría las condiciones de quien ya compró.',
+      texto: 'Esta campaña ya arrancó: solo puedes darle más, nunca menos, porque cambiaría las condiciones de quien ya compró.',
     }),
   ]);
 
@@ -279,7 +279,7 @@ function fichaDeAccesos() {
 
   ficha.appendChild(crear('div', { clase: 'ficha-seccion' }, [
     crear('h3', { texto: 'Los demás países' }),
-    crear('p', { clase: 'pregunta-ayuda', texto: 'Todavía no tenemos la lista. Pide la publicación por el canal de Legal.' }),
+    crear('p', { clase: 'pregunta-ayuda', texto: 'Todavía no tenemos la lista. Pide la publicación en #tyc-rappi.' }),
     crear('p', {}, [
       document.createTextNode(CANAL_TC.para + ' '),
       crear('a', { href: CANAL_TC.url, target: '_blank', rel: 'noopener', texto: CANAL_TC.nombre }),
@@ -346,7 +346,7 @@ function pantallaAyuda(raiz) {
 
   contenido.appendChild(crear('h3', { texto: estado.T('¿Quién puede publicar?') }));
   contenido.appendChild(crear('p', {
-    texto: 'No todo el mundo tiene usuario de Squarespace: la cuenta la tienen unas pocas personas por país. Si no eres una de ellas, pásales el documento y la dirección que te dio la herramienta, o pídelo por el canal.',
+    texto: 'No todo el mundo tiene usuario de Squarespace: la cuenta la tienen unas pocas personas por país. Si no eres una de ellas, pásales el documento, el título y la dirección que te dio RappiMind, o pídelo en #tyc-rappi.',
   }));
   contenido.appendChild(fichaDeAccesos());
 
@@ -381,7 +381,7 @@ function pantallaAyuda(raiz) {
         clase: 'pregunta-ayuda',
         // Sin correo se dice donde buscarlo, en vez de ensenar un hueco en una
         // pantalla que van a leer los equipos legales de todos los paises.
-        texto: CONTACTOS[c].correo || 'Escríbele por el canal de Legal.',
+        texto: CONTACTOS[c].correo || 'Escríbele en #tyc-rappi.',
       }),
     ]));
   }
@@ -452,7 +452,7 @@ function seccionPaises(datos) {
 
   return crear('section', {}, [
     crear('h2', { texto: 'Países' }),
-    crear('p', { clase: 'pregunta-ayuda', texto: 'Activo lo ve cualquiera. Piloto solo lo ve el equipo de pruebas. Bloqueado no lo ve nadie.' }),
+    crear('p', { clase: 'pregunta-ayuda', texto: 'Activo lo ve cualquiera. Piloto lo ven pruebas, legal y administración. Bloqueado no lo ve nadie.' }),
     crear('div', { clase: 'envoltorio-tabla' }, [tabla]),
   ]);
 }

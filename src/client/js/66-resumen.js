@@ -95,7 +95,7 @@ function pantallaResumen(raiz) {
         crear('div', { clase: 'ficha-encabezado' }, [
           crear('h3', { texto: estado.T(seccion.paso.nombre) }),
           crear('button', {
-            clase: 'boton-texto', type: 'button', texto: estado.T('Editar'),
+            clase: 'boton-texto', type: 'button', texto: estado.T('Cambiar'),
             onclick: function () {
               E.pasoActual = seccion.indice;
               E.campoAbierto = seccion.filas[0].campo.id;
@@ -197,13 +197,13 @@ function bloqueDeQuienPublica(codigoDePais, tipo) {
     }
     caja.appendChild(lista);
     caja.appendChild(crear('p', {
-      texto: 'Si no eres una de estas personas, pásales el documento y la dirección de aquí arriba, o pídelo por el canal.',
+      texto: 'Si no eres una de estas personas, pásales el documento, el título y la dirección que te dio RappiMind.',
     }));
   } else if (accesos && esConcurso && accesos.notaConcursos) {
     caja.appendChild(crear('p', { texto: accesos.notaConcursos }));
   } else {
     caja.appendChild(crear('p', {
-      texto: 'Todavía no tenemos la lista de tu país. Pide la publicación por el canal de Legal.',
+      texto: 'Todavía no tenemos la lista de tu país. Pide la publicación en #tyc-rappi.',
     }));
   }
 
@@ -364,7 +364,7 @@ function pantallaListo(raiz) {
       onclick: function () { estado.reiniciarFormulario({}); RM.app.ir('inicio'); },
     }),
     crear('button', {
-      clase: 'boton boton-secundario', type: 'button', texto: estado.T('Ver mi historial'),
+      clase: 'boton boton-secundario', type: 'button', texto: estado.T('Ver mis campañas'),
       onclick: function () { RM.app.ir('historial'); },
     }),
   ]));

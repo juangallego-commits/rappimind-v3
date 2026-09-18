@@ -422,7 +422,7 @@ function preguntaDeCatalogo(campo, campos, indice, pasos) {
   return bloque;
 }
 
-/** "¿Cuántas veces puede ganar la misma persona?" */
+/** "¿Cuántas veces puede recibir el beneficio una persona?" */
 function preguntaDeVeces(campos, indice, pasos, errores) {
   var pregunta = estado.pregunta('maxPedidos');
   var elegido = flujo.opcionDeVeces();

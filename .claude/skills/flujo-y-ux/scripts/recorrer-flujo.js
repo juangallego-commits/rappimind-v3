@@ -307,7 +307,7 @@ async function recorrer() {
   await pagina.waitForTimeout(400);
   const conAtajo = await texto();
   revisar('debajo de los tipos está el atajo a los T&C publicados',
-    conAtajo.indexOf('¿No ves tu campaña en la lista?') !== -1 && conAtajo.indexOf('Descuentos, cupones') !== -1,
+    conAtajo.indexOf('¿Es un descuento, un cupón o envío gratis?') !== -1 && conAtajo.indexOf('Descuentos, cupones') !== -1,
     conAtajo.replace(/\n+/g, ' | ').slice(0, 300));
 
   await clic('Descuentos, cupones');

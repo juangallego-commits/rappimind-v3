@@ -34,7 +34,7 @@ var PREGUNTAS_PT = {
 
   negocio: {
     pregunta: 'A campanha é da Rappi ou da Rappi Travel?',
-    ayuda: 'Rappi é a entrega de sempre. Rappi Travel são voos, hotéis, carros e pacotes.',
+    ayuda: 'Se for de voos, hotéis, carros ou pacotes, é Rappi Travel.',
     porQue: 'São duas empresas diferentes, e o documento inteiro muda conforme qual seja.',
     opciones: {
       rappi: { etiqueta: 'Rappi', nota: 'Restaurantes, supermercados, farmácias e tudo o que chega por entrega.' },
@@ -45,7 +45,7 @@ var PREGUNTAS_PT = {
 
   tipo: {
     pregunta: 'Que tipo de campanha você vai fazer?',
-    ayuda: 'Escolha a que se parece com a sua campanha. Cada opção explica do que se trata.',
+    ayuda: 'Escolha o tipo que mais se parece com a sua campanha.',
     porQue: 'Cada tipo usa um modelo jurídico diferente, aprovado pelo Jurídico. Escolher errado significa gerar o documento errado.',
     errores: { vacio: 'Escolha o tipo de campanha.' },
   },

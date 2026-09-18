@@ -476,3 +476,28 @@ Salieron al revisar lo construido la noche anterior. Ninguno cambia texto legal.
     `CLAUDE.md`). Están copiados tal cual del Sheet de Legal. Si ese es el nombre
     oficial de las piezas, se quedan; si no, quedarían como "Cupón de descuento:
     valor fijo" y "Cupón de descuento: toda la tienda". Decisión de Juan.
+13. **T&C generales, las diez correcciones que propuso Claude chat (pantalla 30
+    del encargo 02).** La respuesta del encargo 02 trae diez líneas que corrigen
+    `data/tyc_genericos.json`. No se aplicaron: ese archivo es la lista de Legal
+    transcrita como llegó, y `pruebas/tyc_genericos.test.js` deja escrito que las
+    inconsistencias del Excel siguen a la vista y no "arregladas", porque
+    corregirlas por cuenta propia sería decidir por Legal. Van en tres grupos:
+    - *Solo ortografía, no cambia lo que dice*: "el costo de envio" a "envío",
+      "el precio de la suscripcion" a "suscripción", "miembros rappi pro" a
+      "miembros Rappi Pro" (en dos T&C), y "Codigo de descuento" a "Código".
+    - *Cambian el nombre que se ve en la lista*: los dos cupones del punto 12 de
+      arriba, que Claude chat dejaría como "Cupón de descuento de valor fijo" y
+      "Cupón de descuento en toda la tienda". **Ojo: el punto 12 propone otra
+      redacción para los mismos dos nombres ("Cupón de descuento: valor fijo").
+      Hay que elegir una.** También "Tarifa de servicio $0 (Service Fee OFF)" a
+      "Tarifa de servicio en $0" y "Descuento en el valor de la suscripción (Fee
+      de Membresía OFF)" a "Descuento en el valor de la suscripción".
+    - *Reescriben las palabras de Legal*: el "beneficio" del T&C del canal de
+      venta externo pasaría a "Un externo da el descuento en su propio canal de
+      venta. Por ejemplo: un código del 20% para las boletas de un evento.", y el
+      "para qué sirve" del de precio tachado pasaría de "El descuento se refleja
+      automáticamente en el check out." a "El descuento aparece automáticamente
+      al pagar.". Estos dos son los que más se acercan a redactar por Legal.
+
+    Las líneas exactas están en `docs/encargos/respuestas/02-interfaz.md`, en el
+    bloque final, marcadas como pantalla 30. Decisión de Juan, grupo por grupo.

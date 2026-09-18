@@ -405,16 +405,18 @@ async function recorrer(rutaDeLaDemo, fichas, marcas) {
     await pagina.waitForTimeout(600);
   }
 
-  /** Hoy, como lo cuenta la demostracion: la ampliacion depende de la fecha. */
-  function hoy() {
-    const ahora = new Date();
-    const mes = String(ahora.getMonth() + 1).padStart(2, '0');
-    const dia = String(ahora.getDate()).padStart(2, '0');
-    return ahora.getFullYear() + '-' + mes + '-' + dia;
-  }
-
-  function finDelAno() {
-    return new Date().getFullYear() + '-12-31';
+  /**
+   * Hoy, como lo cuenta la pagina, no como lo cuenta el contenedor.
+   *
+   * El navegador del recorrido corre en America/Bogota y el contenedor en UTC,
+   * asi que entre medianoche y las cinco de la manana UTC no son el mismo dia.
+   * Con la fecha del contenedor, la campana de la pantalla 36 arrancaba
+   * "manana" para la pagina, "En curso" no se cumplia y el boton Ampliar no se
+   * dibujaba: la pantalla desaparecia del archivo, y solo los dias que el
+   * recorrido se corriera de madrugada.
+   */
+  function hoyEnLaPagina() {
+    return pagina.evaluate(() => RM.estado.estado.configuracion.hoy);
   }
 
   const CAMPANA_DE_EJEMPLO = {
@@ -603,9 +605,11 @@ async function recorrer(rutaDeLaDemo, fichas, marcas) {
   await tramo('ampliar una campaña', ['ampliar'], async () => {
     await paginaNueva('escritorio', 'es');
     // En curso hoy: la ampliacion solo existe para una campana publicada que
-    // todavia no termino.
+    // todavia no termino. El dia y el ano salen de la pagina, no del
+    // contenedor: ver hoyEnLaPagina().
+    const hoy = await hoyEnLaPagina();
     await saltarA('resumen', Object.assign({}, CAMPANA_DE_EJEMPLO, {
-      fechaInicio: hoy(), horaInicio: '00:00', fechaFin: finDelAno(),
+      fechaInicio: hoy, horaInicio: '00:00', fechaFin: hoy.slice(0, 4) + '-12-31',
     }));
     await pagina.click('#declaracion');
     await pagina.waitForTimeout(280);

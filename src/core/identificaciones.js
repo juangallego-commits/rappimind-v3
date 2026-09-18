@@ -50,7 +50,7 @@ function validarNit(valor) {
   var limpio = String(valor || '').trim().replace(/[.\s]/g, '');
   var partido = /^(\d{9})-?(\d)$/.exec(limpio);
   if (!partido) {
-    return resultado(false, 'El NIT debe tener 9 dígitos y el dígito de verificación, por ejemplo 900.111.222-1.');
+    return resultado(false, 'El NIT tiene 9 dígitos más el de verificación, por ejemplo 900.111.222-1.');
   }
   var cuerpo = partido[1];
   var dv = Number(partido[2]);

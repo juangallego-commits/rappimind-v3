@@ -147,11 +147,11 @@ function pantallaInicio(raiz) {
     },
     {
       titulo: estado.T('Revisa cómo va quedando'),
-      detalle: estado.T('El documento se escribe solo, al lado, mientras respondes. Lo que ves es lo que sale.'),
+      detalle: estado.T('El documento se va escribiendo mientras respondes. Lo que ves es lo que sale.'),
     },
     {
-      titulo: estado.T('Publica los T&Cs'),
-      detalle: estado.T('En 2 minutos recibirás un email con el documento generado y listo para publicar en Squarespace. Recuerda seguir las instrucciones para asegurar que los T&Cs queden publicados exitosamente.'),
+      titulo: estado.T('Publica los T&C'),
+      detalle: estado.T('Te llega por correo en un par de minutos, con los pasos para publicarlo o a quién pasárselo.'),
     },
   ];
 
@@ -214,7 +214,7 @@ function pantallaFiltro(raiz) {
   // Primero el tipo, porque el filtro depende de él.
   var preguntas = [
     { id: 'azar', texto: '¿Hay azar: sorteo, rifa, raspa y gana o ruleta?', razon: 'Las dinámicas con azar necesitan permiso previo de la autoridad. Legal tiene que revisarlas antes de lanzarlas.' },
-    { id: 'tycPropios', texto: '¿La tienda o la marca exige sus propios términos y condiciones?', razon: 'Si el aliado impone su documento, hay que revisarlo con Legal antes de publicarlo.' },
+    { id: 'tycPropios', texto: '¿La tienda o la marca exige sus propios T&C?', razon: 'Si el aliado impone su documento, hay que revisarlo con Legal antes de publicarlo.' },
   ];
 
   var respuestas = {};

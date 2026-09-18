@@ -148,7 +148,7 @@ test('el texto de la interfaz está literal, no descrito', () => {
   for (const frase of [
     'Genera los Términos y Condiciones de tu campaña',
     '¿Esta campaña la puedo hacer aquí?',
-    '¿Qué porcentaje del pedido devuelves en Créditos?',
+    '¿Qué porcentaje del pedido se devuelve en Créditos?',
     'Cashback Multitienda',
     'No es un problema ni una negativa',
     'Ya es el criterio del ganador',
