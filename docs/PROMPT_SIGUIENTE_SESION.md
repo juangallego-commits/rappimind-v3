@@ -35,9 +35,25 @@ Los recorridos necesitan playwright-core y un Chromium. En el contenedor remoto
 están en `/opt/node22/lib/node_modules` (`export NODE_PATH=...`) y en
 `/opt/pw-browsers`. Si no los encuentras, dímelo y no sigas como si nada.
 
-## Lo que te voy a pegar, y qué hacer con cada cosa
+## Las respuestas de Claude chat, y qué hacer con cada una
 
-### La respuesta del encargo 01 (revisión legal)
+No te las voy a pegar en el chat: las subo al repositorio, enteras y sin editar,
+en `docs/encargos/respuestas/`. Ahí está `LEEME.md` con los nombres y con cómo
+las subo. Antes de tocar nada, mira qué archivos hay:
+
+```
+ls docs/encargos/respuestas/
+```
+
+Si el archivo que te nombro no está, dímelo y no adivines. Trabaja **una
+respuesta por sesión**: cada una toca archivos distintos y mezclarlas es la
+forma más fácil de aplicar mal un texto legal.
+
+Y una regla que vale para las tres: lo que Claude chat recomiende sin dar el
+texto exacto **no lo redactas tú**. Va a `docs/PENDIENTES_LEGAL.md` y me
+preguntas.
+
+### La respuesta del encargo 01 (`respuestas/01-legal.md`)
 
 Viene con un bloque final "PARA EL REPOSITORIO" con líneas como
 `MX.termino_dias = "días naturales"` y `modelo cashback, cláusula 8: ANTES "..."
@@ -49,12 +65,10 @@ DESPUÉS "..."`. Con eso:
 - Los cambios de modelo son texto legal: aplícalos literalmente en `modelos/`,
   regenera las salidas esperadas que cambien (`pruebas/salidas_esperadas/`) y
   dime cuáles cambiaron para que yo las mire.
-- Lo que Claude chat recomiende sin texto exacto **no lo redactes tú**: anótalo
-  en `docs/PENDIENTES_LEGAL.md` y pregúntame.
 - Cuando un país tenga sus cuatro datos confirmados, no lo saques de piloto tú:
   dime que está listo y lo cambio yo en el Sheet.
 
-### La respuesta del encargo 02 (interfaz)
+### La respuesta del encargo 02 (`respuestas/02-interfaz.md`)
 
 Viene con un bloque "PARA EL REPOSITORIO" con líneas
 `pantalla NN | ACTUAL: "..." | PROPUESTO: "..."`. Busca cada "ACTUAL" literal en
@@ -66,7 +80,7 @@ literal del código a la vez, o la traducción muere en silencio (hay una prueba
 que lo caza). Después regenera las capturas con
 `node .claude/skills/flujo-y-ux/scripts/capturar-pantallas.js`.
 
-### La respuesta del encargo 03 (leyendas)
+### La respuesta del encargo 03 (`respuestas/03-leyendas.md`)
 
 Es trabajo nuevo, no un arreglo. Viene con fichas y con un bloque "PARA EL
 REPOSITORIO" en el formato de `modelos/`. Antes de escribir código, léela entera y
