@@ -29,7 +29,7 @@ const {
   listarArchivos,
   existe,
 } = require('./lib/archivos');
-const { cargarModelos, versionDelModelo } = require('./lib/modelos');
+const { cargarModelos, cargarLeyendas, versionDelModelo } = require('./lib/modelos');
 
 const DIST = rutaDesdeRaiz('dist');
 const AVISO = '// Archivo generado por scripts/build.js. No editar a mano.';
@@ -98,6 +98,30 @@ function generarModelos() {
 
   escribirTexto(path.join(DIST, 'Modelos.js'), contenido);
   return { modelos: Object.keys(modelos).length, bloques: Object.keys(bloques).length };
+}
+
+/**
+ * Las leyendas de piezas publicitarias, en su propio archivo.
+ *
+ * Van aparte de Modelos.js porque son otra cosa: no arman un documento, tienen
+ * largo maximo y se entregan todas a la vez en la pantalla final. Quien las
+ * interpreta es src/core/leyendas.js.
+ */
+function generarLeyendas() {
+  const leyendas = cargarLeyendas();
+
+  const contenido = [
+    encabezado('modelos/leyendas/*.md'),
+    '// Los textos legales son la fuente de verdad de Legal. No se editan aqui.',
+    '',
+    'var LEYENDAS = ' + comoLiteral(leyendas) + ';',
+    '',
+    "if (typeof module !== 'undefined') { module.exports = { LEYENDAS: LEYENDAS }; }",
+    '',
+  ].join('\n');
+
+  escribirTexto(path.join(DIST, 'LeyendasCatalogo.js'), contenido);
+  return { leyendas: Object.keys(leyendas).length };
 }
 
 /** Reindenta un literal JSON multilinea para que encaje dentro del objeto. */
@@ -211,7 +235,7 @@ function generarHtml() {
   // y la pantalla se queda a medio pintar.
   const partesDelMotor = [];
 
-  for (const generado of ['Modelos.js', 'PaisesSemilla.js', 'Secciones.js', 'CategoriasTravel.js', 'TycGenericos.js']) {
+  for (const generado of ['Modelos.js', 'LeyendasCatalogo.js', 'PaisesSemilla.js', 'Secciones.js', 'CategoriasTravel.js', 'TycGenericos.js']) {
     partesDelMotor.push('// --- ' + generado + ' ---', leerTexto(path.join(DIST, generado)));
   }
 
@@ -249,6 +273,7 @@ function construir() {
 
   const copiados = copiarCodigoFuente();
   const conteoModelos = generarModelos();
+  const conteoLeyendas = generarLeyendas();
   const conteoDatos = generarDatos();
   generarHtml();
   copiarManifiesto();
@@ -256,6 +281,7 @@ function construir() {
   console.log('Build listo en dist/');
   console.log('  codigo copiado  : ' + copiados.length + ' archivos (' + copiados.join(', ') + ')');
   console.log('  modelos         : ' + conteoModelos.modelos + ' modelos, ' + conteoModelos.bloques + ' bloques');
+  console.log('  leyendas        : ' + conteoLeyendas.leyendas);
   console.log('  paises          : ' + conteoDatos.paises);
   console.log('  archivos en dist: ' + listarArchivos(DIST).join(', '));
   // Otra vez, ahora con todo dist/: los generados (Modelos.js, Secciones.js...)

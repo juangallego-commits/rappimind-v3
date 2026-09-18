@@ -1,0 +1,12 @@
+%% id: leyenda_licores_mx
+%% pais: MX
+%% tipo_campana: todas
+%% categoria: licores
+%% categoria_id: licores
+%% se_elige_en: pregunta
+%% tipo_pieza: complemento
+%% origen: playbook_ssl
+%% largo_max: 50
+%% minimo_irreductible: todo
+%% fuente: docs/encargos/respuestas/03-leyendas.md, sección 9.2
+TODO CON MEDIDA. alcoholinformate.org.mx

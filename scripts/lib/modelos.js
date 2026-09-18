@@ -13,6 +13,7 @@ const { rutaDesdeRaiz, leerTexto, listarArchivos } = require('./archivos');
 
 const CARPETA_MODELOS = rutaDesdeRaiz('modelos');
 const CARPETA_BLOQUES = rutaDesdeRaiz('modelos', 'bloques');
+const CARPETA_LEYENDAS = rutaDesdeRaiz('modelos', 'leyendas');
 
 function nombreDe(archivo) {
   return archivo.replace(/\.md$/, '');
@@ -36,6 +37,22 @@ function cargarModelos() {
   return { modelos, bloques };
 }
 
+/**
+ * Los textos de modelos/leyendas/, tal cual, en { id: texto }.
+ *
+ * Van aparte de cargarModelos porque no son documentos: no se incluyen unos a
+ * otros, no se numeran clausulas y tienen largo maximo. Quien los interpreta es
+ * src/core/leyendas.js, que corre igual en Node, en Apps Script y en el
+ * navegador.
+ */
+function cargarLeyendas() {
+  const leyendas = {};
+  for (const archivo of listarArchivos(CARPETA_LEYENDAS, '.md')) {
+    leyendas[nombreDe(archivo)] = leerTexto(rutaDesdeRaiz('modelos', 'leyendas', archivo));
+  }
+  return leyendas;
+}
+
 /** Version declarada en la primera linea de comentario del modelo. */
 function versionDelModelo(texto) {
   const primera = texto.split('\n')[0] || '';
@@ -55,4 +72,12 @@ function inclusionesDe(texto) {
   return nombres;
 }
 
-module.exports = { cargarModelos, versionDelModelo, inclusionesDe, CARPETA_MODELOS, CARPETA_BLOQUES };
+module.exports = {
+  cargarModelos,
+  cargarLeyendas,
+  versionDelModelo,
+  inclusionesDe,
+  CARPETA_MODELOS,
+  CARPETA_BLOQUES,
+  CARPETA_LEYENDAS,
+};
