@@ -1,5 +1,18 @@
 # Encargo 02 · La revisión de la interfaz
 
+> **Esta versión quedó atrás. No la mandes así.** Las pantallas ahora salen de
+> `docs/FRONT_ACTUAL.html`, que se genera con `npm run front` y trae las 44
+> pantallas con el HTML y los estilos de verdad, más cinco anexos. Ese archivo
+> se adjunta solo, sin capturas. Lo que sigue valiendo de aquí son las reglas
+> del texto, el criterio del comercial y el formato de respuesta. Lo que ya no
+> vale es la numeración: la buena va de 1 a 44 y es la del HTML, no las 33 de
+> abajo. Y las dieciséis capturas de `docs/capturas/revision/` dejaron de hacer
+> falta.
+>
+> Si estás aplicando la respuesta de este encargo, los números de pantalla que
+> venga son los del HTML.
+
+
 **Instrucciones para Juan (esto no se pega).** Abre una conversación nueva en Claude chat y adjunta estas dieciséis capturas de `docs/capturas/revision/`, en este orden (Claude chat acepta veinte archivos por mensaje, así que caben):
 
 - `01-inicio.png`: la portada y sus tres pasos.
