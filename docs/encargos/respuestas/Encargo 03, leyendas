@@ -1,3 +1,230 @@
+Juan, todavía no tengo el catálogo ni el bloque PARA EL REPOSITORIO. Me quedé sin margen antes de terminar de verificar las piezas, y además encontré que el playbook que llegó no es el que pide el encargo, lo que cambia la base de todo. Te dejo lo que alcancé, empezando por el conteo.
+
+1. Conteo de orígenes
+
+Como no hay catálogo todavía, esto cuenta las leyendas completas que existen en las fuentes:
+
+Enteras de un playbook: 12. Nueve del Playbook Legal CO:
+diapositiva 10: cigarrillos, vapes, licores, suplementos dietarios, medicamentos y fitoterapéuticos;
+diapositiva 75: medicamento específico;
+diapositiva 77: varios medicamentos;
+diapositiva 33: disclaimer de tiempo de Turbo.
+Tres de Sponsors: Mundial (diapositivas 3 a 6), Mundial México con INAH (diapositiva 6) y casas de apuestas (diapositiva 9). Aparte hay dos letras pequeñas completas dentro de ejemplos de arte (Legal CO 54 y Sponsors 13), que son ejemplos y no reglas.
+De una pieza real: 5 textos. Apoyo y letra pequeña de la pieza 1, letra pequeña de la 2, el apoyo de la 3 y la 4 (que es el mismo) y la letra pequeña de la 4. La letra pequeña de la 3 no cuenta, porque es de otra campaña.
+Del criterio Legal CO 2024: 0. El criterio no trae texto. Trae tres reglas: mínimo de compra, máximo de cashback y usuarios específicos. Sirven de mínimo irreductible, pero la frase que cumple cada regla tiene que salir de otra fuente o ser propuesta.
+Propuesta mía: 0. No he escrito ninguna frase.
+
+No hay una sola leyenda de cashback entera en ninguna fuente. Toda leyenda de cashback del catálogo va a ser mixta.
+
+2. Qué traen y qué no traen los playbooks
+
+Cashback. Sponsors no trae nada. Legal CO no tiene ninguna diapositiva de texto sobre cashback. Solo tiene un ejemplo de arte en la 54 (Éxito y Barilla, "Llévate $25 de Cashback por la compra de $250 en productos seleccionados") con esta letra pequeña, copiada tal cual: "Aplican Términos & Condiciones. https://promos.rappi.com/colombia/tyc-$25-cahs-back. No incluye tarifa de servicio y costo de envío. Válido del 01/03/2024 al 30/04/2024. Hasta agotar la existencia." Es de monto fijo y de 2024, no dice Créditos ni tope, y el enlace dice "cahs".
+
+Largos en caracteres. Sponsors no trae ninguno. Legal CO trae dos, y ninguno es para la letra pequeña:
+
+"130 caracteres máx." para SMS (diapositiva 31);
+"El copy no debe ser mayor a 30 caracteres" para el Pop Out Corridor (diapositiva 62).
+
+Lo demás está en otras unidades:
+
+Líneas: 4 en banner, splash, Turbo, Pro y monetización; 3 en inapps y correos; 5 en post y stories.
+Palabras: "Máximo 5 palabras en la descripción", aunque una plantilla de inapp dice 10 (diapositiva 20).
+Puntos: la línea de legales va en "tamaño: 5 pts".
+
+La línea de legales no tiene largo máximo en ninguna pieza.
+
+Tipos de pieza. Sponsors no trae, solo ejemplos cuadrados y verticales. Legal CO sí trae:
+
+banner home y banner filtro;
+inapps, correos, post y stories, push y SMS;
+Turbo Restaurantes, Turbo CPGs y Rappi Pro;
+paid media y monetización;
+splash y piezas Invima.
+
+No cubre valla ni exterior, ni impreso u offline.
+
+Países y campañas. Legal CO es solo Colombia. Sponsors no dice país, salvo "Legal para MX." en la diapositiva 6, y sus ejemplos son de Colombia y México.
+
+Perú, Argentina, Chile, Ecuador, Uruguay, Costa Rica y Brasil quedan no cubiertos.
+Carrera de compras, Cashback Multitienda y Travel quedan no cubiertos.
+Las reglas de Legal CO son para "promociones y ofertas" en general (diapositiva 4), pero todas sus plantillas son de descuentos.
+
+Acomodo. En un ejemplo cuadrado de Coca-Cola (Sponsors 11) los legales propios de la marca van girados en el borde izquierdo. En los cuadrados de Michelob (Sponsors 13) todo va abajo.
+
+3. Lo que no cuadra con el repositorio
+
+No llegó el playbook que pide el encargo. El encargo pide SSL PLAYBOOK Q2 26 RappiAds (16 diapositivas). Llegó dos veces el Playbook Legal CO, que es el mismo archivo byte a byte, con 82 diapositivas. Por eso:
+ninguna frase va a llevar [PLAYBOOK SSL];
+lo que el encargo resume del SSL (otros países, apuestas, awareness) no lo puedo citar;
+para Legal CO necesito una etiqueta que el encargo no tiene: [PLAYBOOK LEGAL CO, diapositiva N].
+La sección 5.3 del encargo no describe lo que adjuntaste. "No hay tipos de pieza, ni límites de caracteres, ni leyendas de cashback" se refiere al SSL y a Sponsors.
+La transcripción de las piezas no es literal.
+Pieza 2: la imagen dice "selecionados" y "Imágenes de referencia. Hasta agotar existencias.". El repositorio corrige la palabra e invierte el orden.
+Pieza 3, apoyo: la imagen dice "Valido" sin tilde; el repositorio dice "Válido".
+Las fechas de las piezas 1 y 4 admiten otra lectura. "para redimir ... del 09 al 13" y "del 17 al 23" pueden ser la ventana para gastar los Créditos, no la vigencia de la campaña.
+Leída así, la pieza 1 es del 8 de septiembre, y "¡Solo por HOY!" cuadra.
+La pieza 4 sería del 16, de 11:00 a 3:00, que es exactamente el caso dorado ETA01.
+Dos de las "contradicciones de fecha" dejarían de serlo. Tú sabes cuál era la mecánica.
+En cualquier caso, la frase se presta para leerse de las dos maneras, así que la leyenda tiene que separar las dos vigencias.
+Los marcadores no imprimen lo que dice el encargo.
+Según el encargo, {{TOPE}} imprime pesos. Los casos dorados CB02 y MX01 imprimen "veinticinco mil (25.000) Créditos".
+El encargo dice que {{TEXTO_MINIMO_COMPRA}}, {{TEXTO_SEGMENTO}} y {{TEXTO_METODO_PAGO}} son fragmento. En la especificación y en las salidas son oraciones de más de 150 caracteres.
+El ejemplo del bloque 9.2 saldría con punto doble. Las leyendas van a necesitar versiones cortas de esos datos, que se deducen sin preguntas nuevas.
+El repositorio dice que la pieza 2 "está bien", pero choca con Legal CO.
+Le falta "No incluye tarifa de servicio y costo de envío" (diapositiva 4).
+Le falta el enlace de T&C de Turbo (diapositivas 49 y 53).
+Dice "EN 10*", y la diapositiva 5 manda quitar la referencia a 10 minutos.
+Hay dos enlaces de T&C de Turbo.
+Legal CO usa promos.rappi.com/colombia/terminosycondicionesbotones, que en PENDIENTES_LEGAL figura como el de Cajero ATM y Rappi Favor.
+Sponsors y {{URL_TC_TURBO}} usan el de legal.rappi.com.co del botón Turbo.
+Puede que no todas las piezas estén publicadas. Las de Turbo Restaurantes te llegaron por WhatsApp el 11 de septiembre, para una campaña del 16. Pueden ser borradores de revisión y no piezas publicadas, y eso pesa en cuánto valen como fuente.
+
+4. Frases rotas o mal escritas (copiadas tal cual, para pendientes)
+
+Legal CO:
+"Link especificio de legales" y "una asset genérico", en casi todas las plantillas;
+"tiendas seleccionados" (diapositiva 9);
+"El descuento no incluye tarifa de servicio y costo." cortada, en todas las líneas de legales;
+la comilla que abre y nunca cierra en la 42;
+el "6." repetido en la 20 y los "3.." y "7.." de la 34 a la 36;
+"Hasta agotar existencia" (diapositiva 73).
+Sponsors:
+en la 9, "[Link de T&C's generales del sitio de la Marca].[Nombre de Marca]®" sin espacio, y "XXX de XXX" con doble espacio;
+la 14 dice a la vez "Tier 2" y "Tier 4: National Team".
+Piezas: "selecionados" (2), "Valido" (3 y 4), "valida" y "unicamente" (4).
+
+5. Lo que leí y lo que me falta
+
+El encargo. Lo leí por la búsqueda del proyecto, porque el archivo directo en GitHub no abre desde aquí (el repositorio es privado). Cubrí de la sección 1 al "FIN DEL ENCARGO", pero llega en tramos y no puedo certificar cada línea. CONTEXTO_RAPPIMIND_V3.md no alcancé a leerlo.
+Sponsors. Leí las 16 diapositivas; las notas están vacías. Vi en conjunto los 16 ejemplos de arte y amplié dos.
+Legal CO. Leí las 82 diapositivas y sus notas. Solo dos notas tienen texto: "-Revisar si podemos reducir" (15) y "Revisar Value Prop vs Deal" (36). Saqué el texto de sus 110 imágenes con lectura automática, pero a ojo solo verifiqué la 54. Me faltan las imágenes de la 81 y la 82 (símbolos olímpicos y "Restricciones Perú").
+Piezas. Verifiqué ampliadas la 1, la 2 y el apoyo de la 3. Me falta ampliar la letra pequeña de la 3 y la pieza 4.
+Bloque PARA EL REPOSITORIO. No te lo doy incompleto a propósito, para que Claude Code no lo tome como la respuesta del encargo.
+
+Para seguir necesito una cosa: ¿el Playbook Legal CO reemplaza al SSL en este encargo, o el SSL sigue haciendo falta?
+
+Lo que queda listo (solo lo que viene entero de un playbook, sujeto a la pregunta 1 de Legal)
+
+Licores y suplementos dietarios, Legal CO diapositiva 10.
+Fitoterapéuticos, Legal CO diapositiva 10, con sus variantes PFM y PFT. Necesita el tipo de producto, dato que la herramienta no tiene.
+"*El tiempo de entrega es estimado y depende de condiciones climáticas y de tráfico", Legal CO diapositiva 33. Es igual en la pieza 2 y en Sponsors. No aplica a "15 minutos o cashback" hasta que Legal responda la pregunta 6.
+Leyenda del Mundial, Sponsors 3 a 6, y su variante de México con INAH, Sponsors 6, cuando Legal diga el país. Necesita la marca anunciante, que no siempre es la tienda.
+
+Nada de cashback, piezas reales, medicamentos, apuestas, cigarrillos ni vapes queda listo.
+
+Lo que tiene que responder Legal
+
+¿Sigue vigente el Playbook Piezas publicitarias VF, cuyos ejemplos son de 2024?
+¿Siguen sirviendo las leyendas de cigarrillos y vapes de la diapositiva 10? La Ley 1335 de 2009 prohíbe la promoción de productos de tabaco, y los vapeadores se regularon después de ese playbook.
+Medicamentos: ¿manda la leyenda de la diapositiva 10 o la de las diapositivas 75 y 77?
+¿La línea de legales dice "El descuento no incluye tarifa de servicio y costo." o "No incluye tarifa de servicio y costo de envío"?
+¿Cuál enlace de T&C de Turbo va en la pieza?
+En "15 minutos o cashback", ¿aplica la diapositiva 33 (quitar referencias a minutos y poner el disclaimer de tiempo estimado), si la campaña consiste en garantizar ese tiempo?
+¿Una pieza de Turbo de producto o tienda específica puede decir "10*"?
+¿Los ocho requisitos de la diapositiva 4 aplican al cashback? Si aplican, el 5 obliga a nombrar en la pieza a la empresa oferente, cosa que no hace ninguna de las cuatro.
+¿El tope va como "$25.000 en créditos en Rappi" o como en el T&C, "veinticinco mil (25.000) Créditos"?
+¿Qué frase va para el límite de pedidos?
+"Válido únicamente en la primera orden" puede leerse como "solo usuarios nuevos".
+"Solo se puede realizar un pedido por usuario" es otra opción.
+La tercera es la del T&C.
+Si los Créditos vencen N días después de la carga, ¿la pieza puede anunciar un rango fijo de fechas para redimir?
+¿A qué país aplican las leyendas de apuestas (Sponsors 9) y del Mundial (Sponsors 3 a 6)? ¿Qué llevan el Tier 5 y el Tier 6?
+
+Insumos que nadie nos ha dado
+
+El SSL PLAYBOOK Q2 26 RappiAds.
+La Guía de Propiedad Intelectual y Cumplimiento y la Carta de Indemnidad que cita Sponsors.
+El "legal de Pro" y los T&C de RappiPro que Legal CO manda incluir (diapositivas 15, 41 y 42) y nunca transcribe, y el "link de licores" de la 42.
+Cualquier criterio para valla, exterior e impresos.
+Datos que las leyendas piden y la herramienta no tiene:
+tipo de pieza y categoría del producto;
+unidades por usuario y existencias;
+si la imagen es de referencia;
+registro sanitario y notificación Invima;
+tiendas participantes de una vertical.
+Las especificaciones del ícono +18, la gota de BAT y los sellos de COLJUEGOS y SuperSalud, que el encargo atribuye al SSL.
+
+Juan, me quedé sin herramientas justo antes de juntar el archivo, así que todavía no tienes el 03-leyendas.md. Las partes están escritas en mi espacio de trabajo, no en el repo ni en tu Drive:
+
+Las secciones 0, 6 y 7A a 7G.
+Las fichas de las 55 leyendas.
+Los 55 bloques PARA EL REPOSITORIO.
+
+Los largos salen de un motor de prueba que arma cada leyenda con datos reales, no son estimados. Faltan las tres listas finales y pegar todo.
+
+Lo que encontré en tu Drive
+
+El SSL PLAYBOOK Q2 26 sí estaba ("Copia de SSL_PLAYBOOK_Q2_26_RappiAds", 16 diapositivas) y coincide con lo que cita el encargo. Resuelve dos choques:
+La frase completa es "El descuento no incluye tarifa de servicio y costo de envío". La versión cortada viene del SSL Q1 y del Playbook Legal CO.
+El enlace de Turbo es el de legal.rappi.com.co.
+El Non Sponsors Playbook trae las medidas y los límites de copy de cada formato. Las piezas 1 y 2 son Banner Home (981x936), y la 4 es el mismo formato ampliado 1,33 veces.
+La hoja "Leyendas GBL" está vacía. La Guía de Propiedad Intelectual está enlazada desde Sponsors, pero no la leí.
+
+Conteo de orígenes. Son 55 leyendas: 13 de campaña y 42 complementos de categoría o de país.
+
+40 salen enteras de un playbook.
+6 tienen como base una pieza real, con mezcla.
+0 salen del criterio 2024. El criterio no trae texto, aunque obliga a mostrar tope, mínimo y segmento en 5 de ellas.
+4 tienen como base una propuesta mía: Multitienda, Carrera y las dos de Travel.
+5 son de playbook con frases mías.
+
+Lo que decidí a mi criterio (cada punto queda como pregunta para que lo devuelvas si no te convence)
+
+Enlace (punto 6): enlace previsto y confirmado.
+La herramienta arma la dirección completa al generar el T&C y entrega la leyenda completa en ese momento.
+Cuando el comercial pega el enlace publicado, compara. Si es distinto, rehace la leyenda y avisa que el arte tiene que cambiar.
+Descarté el hueco visible, porque la pieza 4 demuestra que el relleno llega publicado, y el enlace genérico por país, porque choca con "el link exacto" de Legal CO.
+Límites de espacio.
+Texto de apoyo: 350 caracteres.
+Letra pequeña: 620. Sale del ejemplo aprobado más largo, Michelob en Banner Home, con 612.
+Banner corto: 300.
+Push: 70 para la parte legal.
+Recorte. El orden va marcado dentro del texto legal con [[R1]]…[[/R]], así lo revisas tú y no queda escondido en el código. Lo irreductible se sostiene en el artículo 33 de la Ley 1480, el criterio 2024, la diapositiva 4 de Legal CO y el SSL.
+Preguntas nuevas.
+En cashback, la única es la categoría del producto. El resto sale de marcadores cortos derivados de lo que ya se pregunta.
+En descuentos con T&C general: fechas, existencias y dos casillas, Turbo y Pro.
+ETA. Va sin el aviso de "tiempo estimado", porque contradice la promesa. En su lugar va cómo se mide el tiempo.
+
+Hallazgos que necesitan tu decisión
+
+Las fechas de las piezas 1 y 4 no son contradicciones. El T&C del ETA dice que los Créditos se cargan al día siguiente y duran 7 días, y eso da exacto del 17 al 23.
+Hay una contradicción nueva.
+Las piezas 3 y 4 dicen que los Créditos se redimen "en marcas de Turbo Restaurantes".
+La cláusula 9 del T&C dice que se redimen en cualquier sección, salvo Rappi Travel, SOAT, Cajero ATM y Rappi Favor.
+¿Cuál era la intención del negocio? Si era solo Turbo Restaurantes, lo que está mal es el T&C.
+La dirección del ETA mide 97 caracteres, así que no cabe en banners chicos ni en push. Hace falta un enlace corto, y esa es decisión de producto.
+El Mundial terminó el 19 de julio. Esas leyendas quedan como históricas.
+El esquema de Multitienda dice que cada tienda pone su porcentaje y su tope, pero los datos los piden una sola vez.
+
+Ejemplo, pieza 1 (letra pequeña)
+
+Actual: "Promoción válida hasta agotar existencias, Aplican términos y condiciones (https://promos.rappi.com/colombia/cashback99elcorral). Para acceder y obtener este beneficio debes tener tu membresía Pro o ProBlack activa https://promos.rappi.com/colombia/prohome Válido sólo el 08 de septiembre de 2026 en las zonas de cobertura de las tiendas de Mimos en la plataforma Rappi."
+
+Propuesto: "Aplican términos y condiciones: https://promos.rappi.com/colombia/cashback99elcorral. Válido el 8 de septiembre de 2026 o hasta agotar el presupuesto disponible. Cashback del 99% sobre el valor de los productos, sin tarifa de servicio, costo de envío ni propinas. Para acceder debes tener tu membresía Pro o Pro Black activa: https://promos.rappi.com/colombia/prohome. Cashback ofrecido por El Corral. Imágenes de referencia."
+
+Escríbeme "arma el archivo" y en el siguiente turno junto las partes, escribo las tres listas (incluidas las 24 preguntas para Legal) y te entrego el 03-leyendas.md con los pasos para subirlo a docs/encargos/respuestas/.
+
+Continuar
+
+Ahí está el 03-leyendas.md completo. Trae las 55 leyendas, cada una con su ficha y su bloque PARA EL REPOSITORIO, y al final las tres listas: lo que queda listo, 24 preguntas para Legal y 12 insumos que faltan. Revisé que los identificadores coincidan entre fichas y bloques y que no haya guiones fuera de los textos copiados y los enlaces.
+
+Te sugiero empezar por la lista 2 de la sección 9.3. Estas tres preguntas son las que más cambian el diseño:
+
+La 21: dónde se redimen los Créditos del ETA. La pieza y el T&C dicen cosas distintas.
+La 16: el enlace corto. Sin él, el ETA no cabe en banners chicos ni en push.
+La 6: el aviso de "tiempo estimado" en el ETA.
+
+Para subirlo a GitHub
+
+Descarga el archivo desde la tarjeta de abajo.
+Abre https://github.com/juangallego-commits/rappimind-v3/tree/main/docs/encargos/respuestas.
+Haz clic en Add file y después en Upload files.
+Arrastra 03-leyendas.md a la página, o haz clic en choose your files y búscalo en tu carpeta de Descargas.
+En Commit changes, escribe: Respuesta del encargo 03, leyendas.
+Deja marcada la opción Commit directly to the main branch y haz clic en Commit changes.
+
+Antes de subirlo, fíjate en el nombre. La respuesta del encargo 01 quedó en el repo como Encargo 01, legal, sin extensión. A esta le puse 03-leyendas.md porque con .md GitHub muestra las tablas y los bloques con formato. ¿La dejo así o la renombro con el patrón del 01?
+
 # Encargo 03. Leyendas de piezas publicitarias
 
 Respuesta de Claude chat, 17 de septiembre de 2026. Cubre los puntos 6 a 10 del encargo.
