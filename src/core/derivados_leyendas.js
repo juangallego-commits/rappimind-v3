@@ -541,6 +541,40 @@ function faltantesParaLaLeyenda(entrada, pais) {
   return faltantes;
 }
 
+/*
+ * Lo que la pieza tiene que llevar y la leyenda no puede decir.
+ *
+ * Son reglas del arte, no texto legal: un icono es una imagen, y un titular lo
+ * escribe el disenador. La herramienta no las puede imprimir, asi que las dice.
+ * Salen de las respuestas de Juan del 20 de septiembre de 2026 a las preguntas
+ * 7, 18 y 22 del encargo 03 (punto C5).
+ *
+ * Solo Colombia: las tres salen del SSL y del Playbook Legal CO. En los demas
+ * paises lo deciden sus abogados en la prueba.
+ */
+var REGLA_ICONO_MAS_18 = 'La pieza lleva el ícono +18, también si la bebida es 0.0%: el requisito es para licores y cervezas, sin distinguir.';
+var REGLA_TITULAR_DE_TURBO = 'Si el titular habla del tiempo de entrega, dice “en minutos*”, con asterisco, no un número. Un número de minutos solo va en las campañas de “15 minutos o Cashback”.';
+var REGLA_AWARENESS = 'Si la pieza muestra un precio o un porcentaje, no es awareness: lleva esta leyenda completa, no la corta de awareness.';
+
+var CATEGORIAS_CON_MAS_18 = ['licores', 'bebidas_sin_alcohol'];
+
+function reglasDelArte(entrada, pais) {
+  if (String((pais || {}).codigo || '').toUpperCase() !== 'CO') return [];
+  var reglas = [];
+
+  if (CATEGORIAS_CON_MAS_18.indexOf(String(entrada.categoriaProducto || '')) !== -1) {
+    reglas.push(REGLA_ICONO_MAS_18);
+  }
+
+  // En el ETA el numero de minutos si va, y es justo la promesa de la campana.
+  if (esDeTurbo(entrada) && entrada.tipo !== 'cashback_eta') {
+    reglas.push(REGLA_TITULAR_DE_TURBO);
+  }
+
+  reglas.push(REGLA_AWARENESS);
+  return reglas;
+}
+
 /**
  * Todos los marcadores cortos de una campana.
  *
@@ -648,6 +682,7 @@ if (typeof module !== 'undefined') {
     textoBeneficioTravelCorto: textoBeneficioTravelCorto,
     textoDescuentoTravelCorto: textoDescuentoTravelCorto,
     esDeTurbo: esDeTurbo,
+    reglasDelArte: reglasDelArte,
     cifraDeMonto: cifraDeMonto,
     cifraDePorcentaje: cifraDePorcentaje,
   };

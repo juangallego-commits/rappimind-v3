@@ -496,3 +496,73 @@ test('en Perú el anuncio dice cuánto es el presupuesto, y en los demás no', (
   assert.ok(letraPequena(CL).indexOf('o hasta agotar el presupuesto disponible.') !== -1,
     letraPequena(CL));
 });
+
+// --- C5: lo que la pieza lleva y la leyenda no puede decir --------------------
+
+test('la pieza de licores y la de cerveza 0.0% llevan el ícono +18', () => {
+  // Pregunta 22 del encargo 03, cerrada por Juan el 20 de septiembre de 2026.
+  // El icono es una imagen: la herramienta no lo puede imprimir, así que lo dice.
+  const { reglasDelArte } = require('../src/core/derivados_leyendas.js');
+  const con = (extra) => reglasDelArte(campanaDeElCorral(extra), CO).join(' | ');
+
+  assert.ok(con({ categoriaProducto: 'licores' }).indexOf('ícono +18') !== -1);
+  assert.ok(con({ categoriaProducto: 'bebidas_sin_alcohol' }).indexOf('ícono +18') !== -1);
+  assert.strictEqual(con({ categoriaProducto: 'suplementos' }).indexOf('ícono +18'), -1);
+});
+
+test('en Turbo el titular dice "en minutos*", salvo en el ETA', () => {
+  // Pregunta 7 del encargo 03. Un número de minutos solo va en las campañas de
+  // "15 minutos o Cashback", que son las que lo prometen en su T&C.
+  const { reglasDelArte } = require('../src/core/derivados_leyendas.js');
+  const con = (extra) => reglasDelArte(campanaDeElCorral(extra), CO).join(' | ');
+
+  assert.ok(con({ tiendaTurbo: 'turbo' }).indexOf('en minutos*') !== -1);
+  assert.ok(con({ tiendaTurbo: 'ambas' }).indexOf('en minutos*') !== -1);
+  assert.strictEqual(con({ tiendaTurbo: 'normal' }).indexOf('en minutos*'), -1);
+  assert.strictEqual(
+    reglasDelArte({ tipo: 'cashback_eta', tiendaTurbo: 'turbo' }, CO).join(' | ').indexOf('en minutos*'), -1);
+});
+
+test('una pieza con precio o porcentaje no es awareness', () => {
+  // Pregunta 18 del encargo 03. Va siempre: es la regla que decide cuál de las
+  // dos leyendas se usa, y equivocarse deja la pieza sin legales.
+  const { reglasDelArte } = require('../src/core/derivados_leyendas.js');
+  assert.ok(reglasDelArte(campanaDeElCorral(), CO).join(' | ').indexOf('no es awareness') !== -1);
+
+  // Fuera de Colombia no sale ninguna: las tres salen del SSL y del Playbook
+  // Legal CO, y en los demás países lo deciden sus abogados.
+  const MX = require('../data/paises.json').paises.filter((p) => p.codigo === 'MX')[0];
+  assert.deepStrictEqual(reglasDelArte(campanaDeElCorral({ categoriaProducto: 'licores' }), MX), []);
+});
+
+test('en Argentina la leyenda lleva el enlace de la campaña, no el general', () => {
+  /*
+   * Pregunta 19 del encargo 03, cerrada por Juan el 20 de septiembre de 2026.
+   * El SSL manda un enlace general fijo (promocionesargentina2026) y RappiMind
+   * genera T&C específicos para Argentina: va el de la campaña.
+   *
+   * La leyenda del SSL que trae el enlace general sigue en el catálogo, pero
+   * marcada como que no se elige en ninguna parte todavía, así que no se pega a
+   * ninguna pieza. Su texto se queda tal cual vino de Legal.
+   */
+  const AR = require('../data/paises.json').paises.filter((p) => p.codigo === 'AR')[0];
+
+  // Segmento "todos": la campaña de El Corral es para usuarios Pro, y el enlace
+  // de RappiPro de Argentina tampoco está escrito en su fila.
+  const enArgentina = campanaDeElCorral({ pais: 'AR', segmento: 'todos', organizadorId: '30-71234567-8' });
+  const deLaCampana = leyendasDe(enArgentina, AR, { nombreCampana: 'Cashback El Corral' });
+  assert.strictEqual(
+    deLaCampana.leyendas.map((l) => l.texto).join(' ').indexOf('promocionesargentina2026'), -1);
+  assert.deepStrictEqual(deLaCampana.complementos, []);
+
+  // Hoy Argentina no tiene ruta de publicación en su fila, así que los formatos
+  // con enlace quedan pendientes (decisión 71). El día que alguien la escriba,
+  // el enlace que sale es el de la campaña.
+  const conRuta = Object.assign({}, AR, { ruta_promos: 'https://promos.rappi.com/argentina/' });
+  const r = leyendasDe(enArgentina, conRuta, { nombreCampana: 'Cashback El Corral' });
+  const textos = r.leyendas.map((l) => l.texto).join(' ');
+
+  assert.strictEqual(textos.indexOf('promocionesargentina2026'), -1, textos);
+  assert.ok(r.enlacePrevisto.indexOf('/argentina/') !== -1, r.enlacePrevisto);
+  assert.ok(textos.indexOf(r.enlacePrevisto) !== -1, textos);
+});

@@ -366,6 +366,24 @@ function bloqueDeLeyendas(leyendas) {
     })(leyendas.leyendas[i]);
   }
 
+  /*
+   * Lo que la pieza tiene que llevar y la leyenda no puede decir.
+   *
+   * El ícono +18 es una imagen y el titular lo escribe el diseñador: la
+   * herramienta no los puede imprimir, así que los dice. Juan cerró las tres el
+   * 20 de septiembre de 2026 (punto C5, preguntas 7, 18 y 22).
+   */
+  var reglas = leyendas.reglasDelArte || [];
+  if (reglas.length > 0) {
+    var cajaDeReglas = crear('div', { clase: 'aviso' }, [
+      crear('h3', { texto: estado.T('Además, en el arte') }),
+    ]);
+    var listaDeReglas = crear('ul');
+    for (var g = 0; g < reglas.length; g++) listaDeReglas.appendChild(crear('li', { texto: reglas[g] }));
+    cajaDeReglas.appendChild(listaDeReglas);
+    caja.appendChild(cajaDeReglas);
+  }
+
   // Los formatos que esperan una decision, con su razon. No son un error: la
   // push necesita el enlace corto, que todavia no existe.
   for (var p = 0; p < (leyendas.pendientes || []).length; p++) {

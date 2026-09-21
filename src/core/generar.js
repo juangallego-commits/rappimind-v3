@@ -26,6 +26,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var calcularDerivadosDeLeyendas = moduloDerivadosLeyendas.calcularDerivadosDeLeyendas;
   var faltantesParaLaLeyenda = moduloDerivadosLeyendas.faltantesParaLaLeyenda;
   var esDeTurbo = moduloDerivadosLeyendas.esDeTurbo;
+  var reglasDelArte = moduloDerivadosLeyendas.reglasDelArte;
   var PENDIENTES_POR_MARCADOR = moduloDerivadosLeyendas.PENDIENTES_POR_MARCADOR;
   var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
   var urlDelTcDeLaCampana = moduloDerivadosLeyendas.urlDelTcDeLaCampana;
@@ -84,6 +85,7 @@ function generarLeyendasDeLaCampana(entrada, pais, textos, opciones) {
   if (faltantes.length > 0) {
       return {
       hay: false, leyendas: [], complementos: [], faltantes: faltantes, pendientes: [], errores: [],
+      reglasDelArte: [],
       enlacePrevisto: '', enlaceUsado: '', enlaceConfirmado: false, enlaceCambio: false,
     };
   }
@@ -137,6 +139,9 @@ function generarLeyendasDeLaCampana(entrada, pais, textos, opciones) {
     faltantes: [],
     pendientes: pendientes,
     errores: errores,
+    // Lo que la pieza tiene que llevar y la leyenda no puede decir: un icono es
+    // una imagen y un titular lo escribe el disenador.
+    reglasDelArte: reglasDelArte(entrada, pais),
     // El enlace que lleva la leyenda, y si ya esta confirmado contra el
     // publicado. Es el camino 4 de la seccion 6 de la respuesta: la leyenda
     // sale completa el mismo dia, marcada "enlace por confirmar", y cuando el

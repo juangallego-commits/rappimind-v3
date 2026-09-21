@@ -232,6 +232,9 @@ function detalle(tyc) {
     ]),
   ]));
 
+  var loDeLaPieza = loQueLaPiezaTieneQueDecir(tyc);
+  if (loDeLaPieza) contenido.appendChild(loDeLaPieza);
+
   var ficha = crear('div', { clase: 'ficha' });
   var descripcion = descripcionSinRepetir(tyc);
   if (descripcion) ficha.appendChild(seccionDeFicha('Para qué sirve', descripcion));
@@ -241,6 +244,34 @@ function detalle(tyc) {
 
   contenido.appendChild(crear('div', { clase: 'fila-botones' }, [botonVolverALaLista(), botonVolverALosTipos()]));
   return contenido;
+}
+
+/**
+ * Lo que la pieza tiene que decir cuando el T&C es uno general.
+ *
+ * Aqui no se genera documento, asi que la herramienta no sabe los numeros de la
+ * campana: dice la forma de las dos frases y el comercial pone los suyos. Juan
+ * lo cerro el 20 de septiembre de 2026 (punto C5, pregunta 17).
+ *
+ * Solo en los descuentos, que son los T&C generales que llevan esos limites.
+ */
+function loQueLaPiezaTieneQueDecir(tyc) {
+  if (!esDeDescuento(tyc)) return null;
+
+  return crear('div', { clase: 'aviso' }, [
+    crear('h3', { texto: 'Lo que tu pieza tiene que decir' }),
+    crear('p', { texto: 'Si tu campaña tiene esos límites, van con los números de tu campaña:' }),
+    crear('ul', {}, [
+      crear('li', { texto: '“Máximo 1 unidad por usuario.”, o “Máximo 6 unidades por usuario.” si son varias.' }),
+      crear('li', { texto: '“10.000 unidades disponibles.”, o “1 unidad disponible.” si es una sola.' }),
+    ]),
+  ]);
+}
+
+/** Si este T&C general es de descuento. Lo dice su nombre o su beneficio. */
+function esDeDescuento(tyc) {
+  var texto = (String(tyc.nombre || '') + ' ' + String(tyc.beneficio || '')).toLowerCase();
+  return texto.indexOf('descuento') !== -1 || texto.indexOf('cupón') !== -1 || texto.indexOf('cupon') !== -1;
 }
 
 function seccionDeFicha(titulo, texto) {
