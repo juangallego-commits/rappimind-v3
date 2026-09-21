@@ -115,6 +115,14 @@ test('los productos de la Carrera van uno por línea, con su EAN', () => {
   ]);
 });
 
+test('las tiendas de Turbo del cashback por ETA van una por línea', () => {
+  const { tiendasEtaLegibles } = require('../src/core/auditoria.js');
+  assert.strictEqual(
+    tiendasEtaLegibles([{ nombre: 'Turbo Calleja' }, { nombre: 'Turbo Chico' }]),
+    'Turbo Calleja\nTurbo Chico');
+  assert.strictEqual(tiendasEtaLegibles([]), '');
+});
+
 test('solo se llenan las preguntas que se le hicieron al comercial', () => {
   const entrada = {
     tipo: 'cashback', pais: 'CO', tienda: 'El Corral', porcentaje: 50,
@@ -150,6 +158,7 @@ test('el Sheet guarda lo que el comercial leyó, no el identificador interno', (
     etaMinutos: 15, porcentaje: 100, tope: 100000, presupuesto: 37000000, maxPedidos: 1,
     carga: 'dia_siguiente', vigencia: 'dias', diasVigencia: 7,
     exclusionesEta: ['travel', 'soat'], metodoPago: 'sin_efectivo', declaracion: true,
+    tiendasEta: [{ nombre: 'Turbo Calleja' }, { nombre: 'Turbo Chico' }],
   });
 
   assert.strictEqual(fila.resp_metodoPago, 'Con todo menos efectivo');
@@ -157,5 +166,8 @@ test('el Sheet guarda lo que el comercial leyó, no el identificador interno', (
   // Y el tipo va con su nombre: quien audita no tiene por qué saber qué es
   // "cashback_eta".
   assert.strictEqual(fila.resp_tipo, '15 minutos o Cashback');
+  // Y las tiendas de Turbo quedan legibles en su columna: quien audita tiene
+  // que poder ver cuáles se nombraron sin abrir el documento.
+  assert.strictEqual(fila.resp_tiendasEta, 'Turbo Calleja\nTurbo Chico');
 });
 

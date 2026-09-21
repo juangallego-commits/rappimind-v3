@@ -814,6 +814,49 @@ function validarProductos(entrada, esquema) {
 }
 
 /**
+ * Las tiendas de Turbo del cashback por ETA.
+ *
+ * Una fila sin nombre deja el documento sin la vinneta, y el mismo nombre dos
+ * veces deja la clausula nombrando una tienda dos veces. Sin la lista entera la
+ * clausula 5 no se puede escribir: es el mismo criterio de la lista de
+ * productos de la Carrera.
+ */
+function validarTiendasEta(entrada, esquema) {
+  var tiendas = entrada.tiendasEta || [];
+  var definicion = null;
+  for (var i = 0; i < esquema.campos.length; i++) {
+    if (esquema.campos[i].id === 'tiendasEta') definicion = esquema.campos[i];
+  }
+  var minimo = definicion && definicion.minimo !== undefined ? definicion.minimo : 1;
+  var maximo = definicion && definicion.maximo !== undefined ? definicion.maximo : 60;
+
+  if (tiendas.length < minimo) {
+    return [error('tiendasEta', 'Agrega al menos ' + minimo +
+      (minimo === 1 ? ' tienda de Turbo.' : ' tiendas de Turbo.'))];
+  }
+  if (tiendas.length > maximo) {
+    return [error('tiendasEta', 'No puedes agregar más de ' + maximo + ' tiendas.')];
+  }
+
+  var errores = [];
+  var vistas = {};
+  for (var t = 0; t < tiendas.length; t++) {
+    var nombre = String((tiendas[t] || {}).nombre || '').trim();
+    var fila = t + 1;
+    if (!nombre) {
+      errores.push(error('tiendasEta', 'Tienda ' + fila + ': falta el nombre.'));
+      continue;
+    }
+    var llave = nombre.toLowerCase();
+    if (vistas[llave]) {
+      errores.push(error('tiendasEta', 'Tienda ' + fila + ': esa tienda ya está en la lista.'));
+    }
+    vistas[llave] = true;
+  }
+  return errores;
+}
+
+/**
  * La categoria de la pieza que no deja hacer la campana.
  *
  * En Colombia no se hacen campanas de cashback, descuento ni concursos sobre
@@ -879,6 +922,7 @@ function validarSolicitud(entrada, pais, contexto) {
   }
   if (esquema.esPorEta) {
     errores = errores.concat(validarEta(entrada, esquema.id, idioma));
+    errores = errores.concat(validarTiendasEta(entrada, esquema));
   }
   if (entrada.tipo === 'carrera_compras') {
     errores = errores.concat(validarCarrera(entrada, esquema.id, idioma));
@@ -925,5 +969,6 @@ if (typeof module !== 'undefined') {
     validarEta: validarEta,
     validarCategoriaDeLaPieza: validarCategoriaDeLaPieza,
     validarProductos: validarProductos,
+    validarTiendasEta: validarTiendasEta,
   };
 }

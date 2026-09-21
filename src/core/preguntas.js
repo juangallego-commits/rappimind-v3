@@ -1351,6 +1351,22 @@ var PREGUNTAS = {
    * el documento sin decir cual suma al concurso. Los textos son los de la
    * decision 36 (iii) del encargo 01, tal cual (punto D4).
    */
+  tiendasEta: p({
+    paso: 'campana',
+    pregunta: '¿Cuáles tiendas de Turbo participan?',
+    ayuda: 'Una por fila, con el nombre como sale en el botón Turbo de la app. Por ejemplo: Turbo Calleja.',
+    porQue: 'El documento nombra las tiendas una por una. Turbo no es una modalidad: son tiendas por zona, y el usuario tiene que saber en cuál cuenta su orden.',
+    placeholders: ['TEXTO_TIENDAS_ETA'],
+    errores: {
+      minimo: 'Agrega al menos una tienda de Turbo.',
+      maximo: 'No puedes agregar más de 60 tiendas.',
+      repetido: 'Esa tienda ya está en la lista.',
+    },
+    camposPorTienda: {
+      nombre: { pregunta: 'Nombre de la tienda', ayuda: 'Como sale en el botón Turbo.', ejemplo: 'Turbo Calleja' },
+    },
+  }),
+
   productosDetalle: p({
     paso: 'concurso',
     pregunta: '¿Cuáles productos participan?',
@@ -1617,6 +1633,7 @@ var NOMBRE_DEL_HUECO = {
   TIENDA_TURBO: 'en cuál de sus tiendas participa cada marca',
   TEXTO_ETA: 'el tiempo de entrega prometido',
   TEXTO_CIUDAD_ETA: 'la ciudad',
+  TEXTO_TIENDAS_ETA: 'las tiendas del botón turbo que participan',
   TEXTO_LIMITE_ORDENES: 'el máximo de órdenes por persona',
   MODALIDAD_TURBO: 'la modalidad del botón turbo',
   URL_TC_TURBO: 'el enlace de los términos del botón turbo',

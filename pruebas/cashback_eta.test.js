@@ -33,8 +33,13 @@ function campana(extra) {
   }, extra || {});
 }
 
-const BOGOTA = { ciudades: 'Bogotá', fechaInicio: '2026-09-16', fechaFin: '2026-09-16', horaInicio: '11:00', horaFin: '15:00', presupuesto: 37000000 };
-const BARRANQUILLA = { ciudades: 'Barranquilla', fechaInicio: '2026-09-01', fechaFin: '2026-09-01', horaInicio: '07:00', horaFin: '23:00', presupuesto: 95087585 };
+/*
+ * Los nombres de las tiendas son de ejemplo: los documentos publicados no las
+ * listaban, decían "todas las tiendas de la modalidad Turbo Restaurantes de la
+ * ciudad". Juan cambió eso el 21 de septiembre de 2026 (punto D1).
+ */
+const BOGOTA = { ciudades: 'Bogotá', fechaInicio: '2026-09-16', fechaFin: '2026-09-16', horaInicio: '11:00', horaFin: '15:00', presupuesto: 37000000, tiendasEta: [{ nombre: 'Turbo Calleja' }, { nombre: 'Turbo Chico' }] };
+const BARRANQUILLA = { ciudades: 'Barranquilla', fechaInicio: '2026-09-01', fechaFin: '2026-09-01', horaInicio: '07:00', horaFin: '23:00', presupuesto: 95087585, tiendasEta: [{ nombre: 'Turbo Alto Prado' }] };
 
 function documento(extra) {
   const resultado = renderizar('cashback_eta', campana(extra), CO, MODELOS);
@@ -146,3 +151,58 @@ test('los mensajes de error son los que alguien escribió, no el genérico', () 
   assert.strictEqual(delEta.mensaje, 'Escribe en cuántos minutos prometes la entrega.');
 });
 
+// --- D1: el documento nombra las tiendas de Turbo, una por una ---------------
+
+/*
+ * Hasta el 21 de septiembre de 2026 la cláusula 5 decía dos cosas distintas
+ * sobre quién participa: que participan "todas las tiendas virtuales bajo la
+ * modalidad Turbo Restaurantes … habilitadas en la ciudad", y después que el
+ * listado sería el que la app mostrara al momento de la orden. Con tiendas con
+ * nombre propio las dos frases se contradicen, y un usuario lee la que le
+ * conviene. Juan eligió que mande la lista.
+ */
+test('la cláusula de tiendas nombra cada tienda de Turbo', () => {
+  const texto = documento(BOGOTA);
+
+  assert.ok(texto.indexOf('Participarán únicamente las siguientes tiendas virtuales del botón “Turbo” ' +
+    'al interior de la Plataforma Rappi, habilitadas en la ciudad de Bogotá durante la vigencia de la Campaña:') !== -1, texto);
+  assert.ok(texto.indexOf('\n• Turbo Calleja\n• Turbo Chico\n') !== -1, texto);
+  assert.ok(texto.indexOf('La disponibilidad de cada Tienda Participante podrá variar en función de la ' +
+    'operación de cada Aliado Comercial.') !== -1, texto);
+});
+
+test('ninguna frase del documento vuelve a decir que el listado es el de la app', () => {
+  const texto = documento(BOGOTA);
+  assert.strictEqual(texto.indexOf('El listado de Tiendas Participantes será el que se encuentre visible'), -1, texto);
+  // La modalidad tampoco: Turbo no es una modalidad, son tiendas por zona.
+  assert.strictEqual(texto.indexOf('bajo la modalidad'), -1, texto);
+  assert.strictEqual(texto.indexOf('identificadas con la modalidad'), -1, texto);
+});
+
+test('una tienda sin nombre no genera, y el hueco se anuncia', () => {
+  const resultado = renderizar('cashback_eta',
+    campana(Object.assign({}, BOGOTA, { tiendasEta: [{ nombre: 'Turbo Calleja' }, { nombre: '' }] })),
+    CO, MODELOS);
+  assert.deepStrictEqual(resultado.placeholdersVacios, ['TEXTO_TIENDAS_ETA'],
+    'una tienda a medias tiene que dejar el hueco entero, no una viñeta rota');
+});
+
+test('sin ciudad la cláusula no se escribe: nombra la ciudad donde están habilitadas', () => {
+  const { textoTiendasEta } = require('../src/core/derivados_eta.js');
+  assert.strictEqual(textoTiendasEta({ tiendasEta: [{ nombre: 'Turbo Calleja' }] }), '');
+  assert.strictEqual(textoTiendasEta({ ciudades: 'Bogotá', tiendasEta: [] }), '');
+});
+
+test('la lista de tiendas se revisa antes de generar', () => {
+  const { validarTiendasEta } = require('../src/core/validaciones.js');
+  const esquema = esquemaDe('cashback_eta');
+
+  assert.strictEqual(validarTiendasEta({ tiendasEta: [] }, esquema).length, 1, 'sin tiendas tiene que fallar');
+  assert.strictEqual(validarTiendasEta({ tiendasEta: [{ nombre: 'Turbo Chico' }] }, esquema).length, 0);
+
+  // La misma tienda dos veces la nombraría dos veces en la cláusula, y las
+  // mayúsculas no la vuelven otra tienda.
+  const repetida = validarTiendasEta({ tiendasEta: [{ nombre: 'Turbo Chico' }, { nombre: 'turbo chico' }] }, esquema);
+  assert.strictEqual(repetida.length, 1);
+  assert.ok(repetida[0].mensaje.indexOf('ya está en la lista') !== -1, repetida[0].mensaje);
+});

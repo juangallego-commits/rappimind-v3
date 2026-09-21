@@ -651,6 +651,26 @@ async function recorrer(rutaDeLaDemo, fichas, marcas) {
     await capturar('carrera-productos', { porQue: true });
   });
 
+  // Las tiendas de Turbo del cashback por ETA: la misma forma de lista, con un
+  // solo dato por fila. Va aparte porque el documento cambió el 21 de
+  // septiembre de 2026 (punto D1) y es lo que Juan tiene que mirar.
+  await tramo('las tiendas de Turbo del ETA', ['eta-tiendas'], async () => {
+    await paginaNueva('escritorio', 'es');
+    await saltarA('pasos', {
+      pais: 'CO', negocio: 'rappi', tipo: 'cashback_eta', ciudades: 'Bogotá',
+      etaMinutos: 15, porcentaje: 100, tope: 100000, presupuesto: 37000000,
+      tiendasEta: [{ nombre: 'Turbo Calleja' }, { nombre: 'Turbo Chico' }],
+    });
+    await pagina.evaluate(() => {
+      RM.estado.estado.campoAbierto = 'tiendasEta';
+      const pasos = RM.flujo.pasosDelTipo(RM.estado.entrada()).map((p) => p.id);
+      RM.estado.estado.pasoActual = pasos.indexOf('campana');
+      RM.app.dibujar();
+    });
+    await pagina.waitForTimeout(520);
+    await capturar('eta-tiendas', { porQue: true });
+  });
+
   await tramo('Carrera de Compras', ['carrera'], async () => {
     await paginaNueva('escritorio', 'es');
     await clic('Empezar');

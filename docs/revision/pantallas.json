@@ -1,6 +1,6 @@
 {
   "generado": "2026-09-21",
-  "commit": "dc87585",
+  "commit": "30c5245",
   "rama": "claude/dazzling-bell-w5o6pf",
   "partes": [
     {
@@ -490,8 +490,21 @@
       "texto": "RappiMind v3\nGenerar\nMis campañas\nAyuda\nAdministración\nCampaña\nOrganizador\nCuándo\nConcurso\nPremio\nParticipantes\nPieza\nEl concurso\n¿Cuáles productos participan?\n\nUno por fila: el nombre como sale en la app y su EAN, el número del código de barras.\n\nProducto 1: Galletas Lunaria clásicas\nQuitar\n\nNombre. Como sale en la app.\n\nEAN. El número del código de barras.\n\nProducto 2: Galletas Lunaria de chocolate\nQuitar\n\nNombre. Como sale en la app.\n\nEAN. El número del código de barras.\n\nAgregar producto\nPegar desde una hoja de cálculo\n\nUna fila por producto: el nombre y el EAN, separados por tabulación.\n\nAgregar los pegados\n¿Por qué te preguntamos esto?\n\nEl EAN identifica el producto sin discusión. Si dos productos se llaman parecido, el EAN decide qué compra suma.\n\nQuedan 3 preguntas en este paso.\n\nAtrás\nSiguiente\nTu T&C\nFaltan 15 datos\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nCerrar\nES\nBR"
     },
     {
-      "id": "carrera",
+      "id": "eta-tiendas",
       "numero": 37,
+      "titulo": "Formulario, las tiendas de Turbo del cashback por ETA",
+      "parte": "Los otros caminos",
+      "pantalla": "pasos",
+      "ventana": "escritorio",
+      "idioma": "es",
+      "queHace": "El documento nombra las tiendas de Turbo una por una, con el nombre que sale en la app. Antes decía \"todas las tiendas de la modalidad Turbo Restaurantes de la ciudad\" y además que el listado sería el que la app mostrara en ese momento: dos frases que decían cosas distintas sobre quién participa.",
+      "nota": "",
+      "valeFoto": true,
+      "texto": "RappiMind v3\nGenerar\nMis campañas\nAyuda\nAdministración\nCampaña\nCuándo\nBeneficio\nCréditos\nParticipantes\nTu campaña\n¿Cuáles tiendas de Turbo participan?\n\nUna por fila, con el nombre como sale en el botón Turbo de la app. Por ejemplo: Turbo Calleja.\n\nQuitar\nQuitar\nAgregar tienda\nPegar desde una hoja de cálculo\n\nUna tienda por fila, con el nombre como sale en el botón Turbo.\n\nAgregar las pegadas\n¿Por qué te preguntamos esto?\n\nEl documento nombra las tiendas una por una. Turbo no es una modalidad: son tiendas por zona, y el usuario tiene que saber en cuál cuenta su orden.\n\nAtrás\nSiguiente\nTu T&C\nFaltan 5 datos\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nCerrar\nES\nBR"
+    },
+    {
+      "id": "carrera",
+      "numero": 38,
       "titulo": "Formulario, Carrera de Compras con una opción bloqueada",
       "parte": "Los otros caminos",
       "pantalla": "pasos",
@@ -504,7 +517,7 @@
     },
     {
       "id": "error",
-      "numero": 38,
+      "numero": 39,
       "titulo": "Formulario, un error en vivo",
       "parte": "Los otros caminos",
       "pantalla": "pasos",
@@ -517,7 +530,7 @@
     },
     {
       "id": "acuerdo-datos",
-      "numero": 39,
+      "numero": 40,
       "titulo": "Formulario, el acuerdo de transferencia de datos",
       "parte": "Los otros caminos",
       "pantalla": "pasos",
@@ -530,7 +543,7 @@
     },
     {
       "id": "ampliar",
-      "numero": 40,
+      "numero": 41,
       "titulo": "Mis campañas, ampliar una publicada",
       "parte": "Los otros caminos",
       "pantalla": "historial",
@@ -543,7 +556,7 @@
     },
     {
       "id": "admin",
-      "numero": 41,
+      "numero": 42,
       "titulo": "Administración",
       "parte": "Los otros caminos",
       "pantalla": "admin",
@@ -556,7 +569,7 @@
     },
     {
       "id": "pt-inicio",
-      "numero": 42,
+      "numero": 43,
       "titulo": "Inicio, interfaz en portugués",
       "parte": "La interfaz en portugués",
       "pantalla": "inicio",
@@ -569,7 +582,7 @@
     },
     {
       "id": "pt-filtro",
-      "numero": 43,
+      "numero": 44,
       "titulo": "Filtro de entrada, interfaz en portugués",
       "parte": "La interfaz en portugués",
       "pantalla": "filtro",
@@ -582,7 +595,7 @@
     },
     {
       "id": "pt-tipos",
-      "numero": 44,
+      "numero": 45,
       "titulo": "Formulario en portugués, el tipo de campaña",
       "parte": "La interfaz en portugués",
       "pantalla": "pasos",
@@ -595,7 +608,7 @@
     },
     {
       "id": "celular-inicio",
-      "numero": 45,
+      "numero": 46,
       "titulo": "Inicio en celular",
       "parte": "En celular",
       "pantalla": "inicio",
@@ -608,7 +621,7 @@
     },
     {
       "id": "celular-pregunta",
-      "numero": 46,
+      "numero": 47,
       "titulo": "Una pregunta en celular",
       "parte": "En celular",
       "pantalla": "pasos",
@@ -621,7 +634,7 @@
     },
     {
       "id": "celular-hoja",
-      "numero": 47,
+      "numero": 48,
       "titulo": "El documento en la hoja deslizable",
       "parte": "En celular",
       "pantalla": "pasos",

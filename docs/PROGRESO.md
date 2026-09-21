@@ -1943,3 +1943,66 @@ npm run previsualizar BR01   # "1 (um) pedido" y "10% (dez por cento)"
 2. **Los textos de pantalla que propuse yo**, listados arriba.
 3. **La lectura de los abogados de Brasil** del formulario en portugués, que es
    lo que quedó pendiente del punto E2.
+
+---
+
+## D1: el cashback por ETA nombra sus tiendas de Turbo
+
+**21 de septiembre de 2026.** Era el único punto que había quedado bloqueado.
+Juan eligió la forma (b): la lista de tiendas manda y la segunda frase se queda
+hablando solo de disponibilidad. Eligió la forma, no escribió el texto, así que
+el texto lo escribí yo reusando al máximo las palabras del documento aprobado.
+**Está pendiente de su visto bueno antes de publicar el primer T&C con él**, y
+está copiado entero, con el antes y el después, en `docs/PENDIENTES_LEGAL.md`.
+
+### Qué cambia para el comercial
+
+Después de la ciudad aparece una pregunta nueva, **"¿Cuáles tiendas de Turbo
+participan?"**, con una lista que crece: un nombre por fila, un botón para
+agregar y otro para pegar varias desde una hoja de cálculo. Si escribe la misma
+tienda dos veces, la fila se lo dice al salir del campo. Sin al menos una
+tienda, el documento no se genera.
+
+### Qué cambia en el documento
+
+La cláusula de Tiendas Participantes pasa de hablar de "todas las tiendas de la
+modalidad Turbo Restaurantes de la ciudad" a nombrarlas una por una, en viñetas,
+y cierra diciendo que la disponibilidad de cada una puede variar. La viñeta de
+condiciones pierde la cola de la modalidad. Lo demás queda igual, incluida la
+cláusula de Territorio, que ya se apoyaba en "las Tiendas Participantes" y en la
+ciudad.
+
+### Un defecto que salió de paso
+
+Agregar una segunda tienda sin haber hecho clic fuera del primer nombre dejaba
+la pantalla a medio pintar. La causa no era de esta pantalla: quitar de la
+pantalla el campo que tiene el foco dispara su `blur` en ese mismo instante, y
+el redibujo se llamaba a sí mismo en mitad de su propio trabajo. La lista de
+productos de la Carrera tenía el mismo defecto y nadie lo había disparado.
+Arreglado en `dibujar()` de `70-app.js`, que ahora lleva cerrojo, y el recorrido
+de la skill `flujo-y-ux` pasa por ahí para que no vuelva.
+
+### Cómo probarlo
+
+```
+npm test                                # 664 pruebas
+npm run demo
+node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js
+npm run previsualizar ETA01             # la cláusula con las dos tiendas
+```
+
+Con los ojos: **Colombia > Rappi > 15 minutos o Cashback**, escribe Bogotá y
+agrega dos tiendas. Mira que salgan en el documento de al lado mientras las
+escribes, escribe la misma dos veces para ver el aviso, y agrega una tercera sin
+salir del campo anterior, que es el caso que rompía la pantalla. La captura de
+la pantalla está en `docs/FRONT_ACTUAL.html`, número 37.
+
+### Lo que necesito de Juan
+
+Lo mismo de antes, menos el texto de D1, que ya está escrito y solo falta que lo
+apruebe:
+
+1. **El visto bueno de la cláusula 5 del ETA**, tal como quedó en
+   `docs/PENDIENTES_LEGAL.md`. Si la cambia, es una línea en `derivados_eta.js`.
+2. **Los textos de pantalla que propuse yo**, listados más arriba.
+3. **La lectura de los abogados de Brasil** del formulario en portugués.

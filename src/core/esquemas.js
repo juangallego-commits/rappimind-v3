@@ -482,6 +482,11 @@ var CAMPOS_POR_TIENDA = [
   { id: 'tiendaTurbo', etiqueta: 'En cuál de sus tiendas', tipo: 'lista', obligatorio: true, opciones: OPCIONES_TIENDA_TURBO },
 ];
 
+/** Campos de cada fila de la lista de tiendas de Turbo del cashback por ETA. */
+var CAMPOS_POR_TIENDA_ETA = [
+  { id: 'nombre', etiqueta: 'Nombre de la tienda', tipo: 'texto', obligatorio: true },
+];
+
 /** Campos de cada fila de la lista de productos de la Carrera. */
 var CAMPOS_POR_PRODUCTO = [
   { id: 'nombre', etiqueta: 'Nombre', tipo: 'texto', obligatorio: true },
@@ -1082,6 +1087,13 @@ var CAMPOS_CASHBACK_ETA = [
   },
   { id: 'tipo', etiqueta: 'Tipo de campaña', tipo: 'tarjetas', paso: 'campana', obligatorio: true },
   { id: 'ciudades', etiqueta: 'Ciudad', tipo: 'texto', paso: 'campana', obligatorio: true },
+  /*
+   * Las tiendas de Turbo, una por una. Hasta el 21 de septiembre de 2026 el
+   * documento decia "todas las tiendas de la modalidad Turbo Restaurantes de
+   * la ciudad": Juan corrigio que Turbo no es una modalidad, son tiendas por
+   * zona con nombre propio, y eligio que el T&C las liste (punto D1).
+   */
+  { id: 'tiendasEta', etiqueta: 'Tiendas de Turbo', tipo: 'repetible', minimo: 1, maximo: 60, paso: 'campana', obligatorio: true },
 
   { id: 'fechaInicio', etiqueta: 'Fecha de la campaña', tipo: 'fecha', paso: 'vigencia', obligatorio: true },
   { id: 'horaInicio', etiqueta: 'Hora de inicio', tipo: 'hora', paso: 'vigencia', obligatorio: true },
@@ -1219,6 +1231,7 @@ var ESQUEMAS = {
     descripcion: 'Rappi promete un tiempo de entrega en el botón Turbo de una ciudad. Si la orden llega tarde, el usuario recibe en Créditos un porcentaje de lo que pagó. No hay tienda aliada que fondee: el presupuesto lo pone Rappi.',
     modelo: 'cashback_eta',
     campos: CAMPOS_CASHBACK_ETA,
+    camposPorTiendaEta: CAMPOS_POR_TIENDA_ETA,
     filtroDeEntrada: [],
     esPorEta: true,
   },
@@ -1286,6 +1299,7 @@ if (typeof module !== 'undefined') {
   module.exports = {
     ESQUEMAS: ESQUEMAS,
     CAMPOS_POR_TIENDA: CAMPOS_POR_TIENDA,
+    CAMPOS_POR_TIENDA_ETA: CAMPOS_POR_TIENDA_ETA,
     CAMPOS_BRASIL: CAMPOS_BRASIL,
     CAMPOS_CASHBACK_ETA: CAMPOS_CASHBACK_ETA,
     categoriasDe: categoriasDe,

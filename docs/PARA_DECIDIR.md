@@ -1,19 +1,21 @@
 # Lo que depende de Juan
 
-Actualizado el 21 de septiembre de 2026, al aplicar las decisiones del 20 de
-septiembre.
+Actualizado el 21 de septiembre de 2026, al cerrar D1.
 
 Este es el documento de trabajo: **lo que sigue pendiente**. Lo decidido pasó al
 bloque G con su fecha y no vuelve a aparecer como pregunta.
 `docs/PENDIENTES_LEGAL.md` se queda como historia: ahí está cómo llegó cada cosa.
 
-El 20 de septiembre se cerraron **31 de los 41 puntos**, y el 21 los **diez que
-quedaban**. De los diez, nueve se aplicaron enteros y **uno quedó bloqueado por
-un texto que falta**: D1, la cláusula de las tiendas del cashback por ETA.
+El 20 de septiembre se cerraron **31 de los 41 puntos** y el 21 los **diez que
+quedaban**, D1 incluido. **No queda ninguna pregunta abierta.**
 
-Queda entonces **una sola pregunta abierta** y **un bloque de tareas de
-ejecución** que ya no dependen de ninguna decisión: alguien tiene que hacerlas
-fuera del repositorio.
+Lo que sí queda es **un bloque de tareas de ejecución**, que ya no dependen de
+ninguna decisión: alguien tiene que hacerlas fuera del repositorio.
+
+Y queda **una cosa que leer, no que decidir**: el texto de la cláusula 5 del
+cashback por ETA lo escribió la herramienta, porque elegiste la forma y no el
+texto. Está entero, con el antes y el después, en `docs/PENDIENTES_LEGAL.md`.
+Conviene que lo mires antes de publicar el primer T&C de ese tipo.
 
 ## Cómo está armado
 
@@ -29,67 +31,14 @@ a alguien concreto.
 
 Los bloques que quedan:
 
-- **D.** Producto: abre un camino que hoy no existe.
 - **H.** Tareas de ejecución fuera del repositorio. Sin decisión pendiente.
 - **G.** Cerrado, con su fecha. No vuelve a aparecer como pregunta.
 
-Los bloques A, B, C, E y F se vaciaron: ya no queda nada que impida generar un
-documento, usar un país, entregar una leyenda o recorrer una pantalla.
+Los bloques A, B, C, D, E y F se vaciaron: ya no queda nada que impida generar
+un documento, usar un país, entregar una leyenda o recorrer una pantalla.
 
 Todo lo que un punto necesita está escrito adentro: las cláusulas van copiadas,
 las pantallas descritas. No hace falta abrir el repositorio.
-
----
-
-# D. Producto: abre un camino que hoy no existe
-
-## D1. Turbo no es una modalidad, son tiendas por zona
-
-> **Nota del 21 de septiembre de 2026.** El 20 elegiste la opción (c), que el
-> T&C liste las tiendas una por una. **No se pudo construir, y no por tamaño:**
-> el texto de la cláusula 5 y el de la cláusula de Territorio para esa opción no
-> están en ninguna parte del repositorio. Se buscó en `docs/`,
-> `docs/encargos/`, `modelos/` y `data/`. La decisión 33 del encargo 01 solo
-> propuso una lista cerrada de dos modalidades ("Turbo Restaurantes" y "Turbo"),
-> que es justo lo que corregiste. Escribir esa cláusula es una decisión legal, y
-> la regla 3 de `CLAUDE.md` dice que el texto legal es de Legal.
-
-**Qué hay que decidir.** El texto de las dos cláusulas con la lista de tiendas.
-
-**Por qué existe la duda.** Hoy la cláusula 5 dice:
-
-> **5. Tiendas Participantes.** Participarán todas las tiendas virtuales bajo la
-> modalidad "Turbo Restaurantes" al interior de la Plataforma Rappi que se
-> encuentren habilitadas en la ciudad de Bogotá durante la vigencia de la
-> Campaña. El listado de Tiendas Participantes será el que se encuentre visible
-> y disponible para el Usuario/Consumidor dentro del botón "Turbo" de la
-> Plataforma Rappi al momento de realizar la orden, el cual podrá variar en
-> función de la operación y disponibilidad de cada Aliado Comercial.
-
-Con una lista de tiendas con nombre propio (Turbo Calleja, Turbo Chico, Turbo
-Laureles), **la segunda frase contradice a la primera**: una dice que participan
-estas tres y la otra que participan las que la app muestre en ese momento. Dos
-frases que dicen cosas distintas sobre quién participa es exactamente lo que un
-usuario lee a su favor.
-
-**Las opciones.**
-
-- (a) **La lista manda y la segunda frase se va.** La cláusula nombra las
-  tiendas y no dice nada más. Es lo más claro y lo más rígido: si la campaña
-  suma una tienda a mitad de camino, el documento se queda corto.
-- (b) **La lista manda y la segunda frase se queda, hablando solo de
-  disponibilidad.** Algo como "La disponibilidad de cada Tienda Participante
-  puede variar en función de la operación de cada Aliado Comercial". Dice que
-  una tienda puede no estar disponible, sin dejar abierto quién participa. **Es
-  la que propongo**, pero el texto exacto lo escribes tú.
-- (c) **Otra redacción tuya.**
-
-**Qué pasa con la herramienta.** Cualquiera de las tres se aplica igual: entra
-una lista repetible de tiendas, como la del Multitienda, y cambian la cláusula 5
-y la de Territorio. Lo único que falta es el texto. Mientras tanto el cashback
-por ETA sigue nombrando la ciudad, como los dos T&C publicados.
-
-**Quién decide.** Tú, porque es texto legal.
 
 ---
 
@@ -215,6 +164,7 @@ No vuelve a aparecer como pregunta abierta.
 | **B3.** Brasil: la hora y el límite | La campaña arranca a las 00:01, y los pedidos y los porcentajes van con la cifra primero: "1 (um) pedido", "10% (dez por cento)" | 21 sep |
 | **C3.** "Solo consumo en el local" | **Se borra.** En Rappi no existe esa modalidad. Sale del formulario, del modelo, de la leyenda, de las pruebas y de la fila del país | 21 sep |
 | **C5.** Las veintiuna que quedaban | Siete cambian algo y catorce se cierran como hoy se imprimen. Las de medicamentos y nicotina se resolvieron con la regla nueva de Colombia | 21 sep |
+| **D1.** Turbo no es una modalidad, son tiendas por zona | El T&C las nombra una por una. La lista manda y la segunda frase se queda hablando solo de disponibilidad. El texto lo escribió la herramienta y está en `docs/PENDIENTES_LEGAL.md`, para que Juan lo lea | 21 sep |
 | **D3.** El valor del premio en la Carrera | Entra, con los dos textos de la decisión 36 (ii). Solo en Colombia y solo con premio físico | 21 sep |
 | **D4.** Los productos con nombre y EAN | Entra. Filas con nombre y código de barras, validado con su dígito de control | 21 sep |
 | **D6.** El filtro antes de los T&C generales | Entra. Seis preguntas de sí o no, con tres salidas, y los tres requisitos de la pieza en la pantalla del enlace | 21 sep |

@@ -147,7 +147,43 @@ function mostrarError(mensaje) {
   RM.util.anunciar(mensaje);
 }
 
+/*
+ * Redibujar es reentrante, y por eso lleva cerrojo.
+ *
+ * Quitar de la pantalla el campo que tiene el foco dispara su evento blur en
+ * ese mismo instante. Varias pantallas redibujan al salir de un campo (la lista
+ * de productos de la Carrera, la de tiendas de Turbo), así que el blur llamaba
+ * a dibujar() en mitad del dibujar() que lo había provocado: el de adentro
+ * vaciaba la raíz y el de afuera reventaba con "Failed to execute removeChild:
+ * the node to be removed is no longer a child of this node".
+ *
+ * El síntoma que veía el comercial: agregar una segunda tienda sin haber
+ * hecho clic fuera del primer nombre dejaba la pantalla a medio pintar.
+ *
+ * Con el cerrojo, la llamada de adentro no pinta: anota que hay que volver a
+ * pintar, y la de afuera lo hace una sola vez al terminar.
+ */
+var dibujando = false;
+var dibujoPendiente = false;
+
 function dibujar() {
+  if (dibujando) {
+    dibujoPendiente = true;
+    return;
+  }
+  dibujando = true;
+  try {
+    pintarTodo();
+  } finally {
+    dibujando = false;
+  }
+  if (dibujoPendiente) {
+    dibujoPendiente = false;
+    dibujar();
+  }
+}
+
+function pintarTodo() {
   var raiz = RM.util.porId('app');
   vaciar(raiz);
   RM.campos.ocultarGlosario();

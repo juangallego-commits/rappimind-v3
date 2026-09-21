@@ -254,6 +254,40 @@ async function recorrer() {
   await pagina.fill('.pregunta input[type=text]', 'Bogotá');
   await pagina.waitForTimeout(250);
   await clic('Siguiente');
+
+  // Desde el 21 de septiembre de 2026 (punto D1) el documento nombra las
+  // tiendas de Turbo una por una, en vez de hablar de "la modalidad Turbo
+  // Restaurantes de la ciudad".
+  const enLasTiendas = await titulos();
+  revisar('después de la ciudad se piden las tiendas de Turbo',
+    enLasTiendas.length === 1 && enLasTiendas[0].indexOf('¿Cuáles tiendas de Turbo participan?') !== -1,
+    enLasTiendas.join(' | '));
+
+  await clic('Agregar tienda');
+  await pagina.fill('[data-tienda-eta="0"] input[type=text]', 'Turbo Calleja');
+  await pagina.waitForTimeout(250);
+
+  const conUnaTienda = await texto();
+  revisar('la tienda escrita sale en el documento de al lado',
+    conUnaTienda.indexOf('Turbo Calleja') !== -1,
+    conUnaTienda.replace(/\n+/g, ' | ').slice(0, 300));
+
+  // La misma tienda dos veces la nombraría dos veces en la cláusula. El aviso
+  // sale al salir del campo, como en la lista de productos de la Carrera:
+  // redibujar en cada tecla le quitaría el foco a quien está escribiendo.
+  await clic('Agregar tienda');
+  await pagina.fill('[data-tienda-eta="1"] input[type=text]', 'turbo calleja');
+  await pagina.locator('[data-tienda-eta="1"] input[type=text]').blur();
+  await pagina.waitForTimeout(250);
+  const repetida = await texto();
+  revisar('la tienda repetida se avisa en la fila, no al final',
+    repetida.indexOf('ya está en la lista') !== -1,
+    repetida.replace(/\n+/g, ' | ').slice(0, 300));
+
+  await pagina.fill('[data-tienda-eta="1"] input[type=text]', 'Turbo Chico');
+  await pagina.waitForTimeout(250);
+  await clic('Siguiente');
+
   const trasLaCiudad = await titulos();
   revisar('responder y avanzar lleva al paso siguiente',
     trasLaCiudad.length === 1 && trasLaCiudad[0].indexOf('día arranca') !== -1,

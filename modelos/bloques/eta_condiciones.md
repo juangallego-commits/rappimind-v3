@@ -2,7 +2,7 @@
 %% Las viñetas que en los dos documentos publicados son fijas. Las que dependen
 %% de una respuesta del comercial van en el modelo, no aquí.
 § Condiciones y restricciones.
-• Campaña válida únicamente para órdenes realizadas a través de las Tiendas Participantes identificadas con la modalidad “{{MODALIDAD_TURBO}}”.
+• Campaña válida únicamente para órdenes realizadas a través de las Tiendas Participantes.
 • {{TEXTO_LIMITE_ORDENES}}
 • El Beneficio no es acumulable con otras promociones, campañas, cupones o beneficios vigentes en la Plataforma Rappi.
 • La Campaña no requiere el ingreso de código promocional alguno; el Beneficio se aplicará automáticamente cuando se cumplan las condiciones aquí previstas.

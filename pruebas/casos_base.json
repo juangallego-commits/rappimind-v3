@@ -1914,7 +1914,7 @@
     },
     {
       "id": "ETA01",
-      "descripcion": "Cashback por ETA, como el T&C publicado de Bogotá (16/09/2026)",
+      "descripcion": "Cashback por ETA, como el T&C publicado de Bogotá (16/09/2026) (las tiendas son de ejemplo: el publicado no las listaba)",
       "fecha_referencia": "2026-09-16",
       "entrada": {
         "pais": "CO",
@@ -1940,7 +1940,15 @@
         "fechaInicio": "2026-09-16",
         "horaInicio": "11:00",
         "horaFin": "15:00",
-        "presupuesto": 37000000
+        "presupuesto": 37000000,
+        "tiendasEta": [
+          {
+            "nombre": "Turbo Calleja"
+          },
+          {
+            "nombre": "Turbo Chico"
+          }
+        ]
       },
       "esperado": {
         "resultado": "genera",
@@ -1966,7 +1974,7 @@
     },
     {
       "id": "ETA02",
-      "descripcion": "Cashback por ETA, como el T&C publicado de Barranquilla (1/09/2026)",
+      "descripcion": "Cashback por ETA, como el T&C publicado de Barranquilla (1/09/2026) (las tiendas son de ejemplo: el publicado no las listaba)",
       "fecha_referencia": "2026-09-01",
       "entrada": {
         "pais": "CO",
@@ -1992,7 +2000,12 @@
         "fechaInicio": "2026-09-01",
         "horaInicio": "07:00",
         "horaFin": "23:00",
-        "presupuesto": 95087585
+        "presupuesto": 95087585,
+        "tiendasEta": [
+          {
+            "nombre": "Turbo Alto Prado"
+          }
+        ]
       },
       "esperado": {
         "resultado": "genera",

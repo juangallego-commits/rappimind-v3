@@ -1170,3 +1170,34 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
     mismos nombres inventados. Ahora la prueba compara contra
     `ESQUEMAS.cashback_day.camposPorTienda` y revisa que ninguna línea salga
     vacía.
+
+91. **La lista de tiendas del ETA se imprime como valor derivado, no como bloque
+    repetible del motor.** El motor tiene `[[#TIENDAS]]…[[/TIENDAS]]`, pero está
+    amarrado a `entrada.tiendas` y a los seis campos del Multitienda. Las tiendas
+    de Turbo tienen un solo dato por fila, así que siguen el camino de la lista
+    de productos de la Carrera: `TEXTO_TIENDAS_ETA` devuelve varias líneas y el
+    motor las pinta como líneas sueltas. Un mecanismo menos que mantener, y la
+    cláusula se lee entera en un solo sitio de `derivados_eta.js`.
+
+92. **Una fila a medias deja el hueco entero, no una viñeta rota.**
+    `textoTiendasEta` devuelve cadena vacía si falta el nombre de cualquier
+    tienda o si falta la ciudad. Así el motor anuncia el hueco y el documento no
+    se genera, que es la regla 2 de `CLAUDE.md`. Es el mismo criterio de
+    `textoProductos`.
+
+93. **Redibujar la pantalla lleva cerrojo, porque es reentrante.** Quitar de la
+    pantalla el campo que tiene el foco dispara su `blur` en ese mismo instante,
+    y las pantallas que redibujan al salir de un campo llamaban a `dibujar()` en
+    mitad del `dibujar()` que lo había provocado: el de adentro vaciaba la raíz y
+    el de afuera reventaba con *"Failed to execute removeChild: the node to be
+    removed is no longer a child of this node"*. Lo vio el recorrido de la skill
+    `flujo-y-ux` al agregar una segunda tienda sin salir del primer nombre. El
+    cerrojo vive en `dibujar()` de `70-app.js`, no en la pantalla: la lista de
+    productos de la Carrera tenía el mismo defecto latente y nadie lo había
+    disparado.
+
+94. **El aviso de tienda repetida sale al salir del campo, no en cada tecla.**
+    Mientras el comercial escribe solo se refresca el documento de al lado; el
+    redibujo completo, que es el que pinta el mensaje de error de la fila, va en
+    el `blur`. Redibujar en cada tecla le quitaría el foco. Es el mismo trato que
+    tiene la lista de productos.

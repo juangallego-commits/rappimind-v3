@@ -914,3 +914,57 @@ escribir texto legal.
 La reconstrucción, para que Juan la confirme o la corrija, está copiada en el
 punto D3 de `docs/PARA_DECIDIR.md`. **No se aplicó nada mientras tanto**: no se
 aplica a medias, así que la frase del caso de un ganador tampoco entró.
+
+---
+
+## La cláusula 5 del cashback por ETA, escrita por la herramienta
+
+**Aplicado el 21 de septiembre de 2026, punto D1.** Juan eligió la forma (b): la
+lista de tiendas manda y la segunda frase se queda hablando solo de
+disponibilidad. **Eligió la forma, no escribió el texto**, así que lo escribió
+la herramienta y **está pendiente de su visto bueno antes de publicar el primer
+T&C con él**.
+
+**Lo que decía antes**, en los dos documentos publicados de Bogotá y
+Barranquilla:
+
+> **5. Tiendas Participantes.** Participarán todas las tiendas virtuales bajo la
+> modalidad "Turbo Restaurantes" al interior de la Plataforma Rappi que se
+> encuentren habilitadas en la ciudad de Bogotá durante la vigencia de la
+> Campaña. El listado de Tiendas Participantes será el que se encuentre visible
+> y disponible para el Usuario/Consumidor dentro del botón "Turbo" de la
+> Plataforma Rappi al momento de realizar la orden, el cual podrá variar en
+> función de la operación y disponibilidad de cada Aliado Comercial.
+
+**Lo que dice ahora:**
+
+> **5. Tiendas Participantes.** Participarán únicamente las siguientes tiendas
+> virtuales del botón "Turbo" al interior de la Plataforma Rappi, habilitadas en
+> la ciudad de Bogotá durante la vigencia de la Campaña:
+> • Turbo Calleja
+> • Turbo Chico
+> La disponibilidad de cada Tienda Participante podrá variar en función de la
+> operación de cada Aliado Comercial.
+
+**De dónde salió cada palabra.** La primera frase reusa las del documento
+aprobado ("Participarán", "tiendas virtuales", "al interior de la Plataforma
+Rappi", "botón «Turbo»", "habilitadas en la ciudad de … durante la vigencia de
+la Campaña"); lo nuevo es "únicamente las siguientes" y que la modalidad se fue.
+La segunda es la que Juan propuso en su opción (b), con el verbo del documento
+("podrá variar" en vez de "puede variar", que es como habla el resto del
+documento) y sin "y disponibilidad", que sobraba en una frase que ya habla de
+disponibilidad.
+
+**Lo otro que cambió por lo mismo.** La viñeta de condiciones decía "órdenes
+realizadas a través de las Tiendas Participantes identificadas con la modalidad
+«Turbo Restaurantes»". Como Turbo ya no es una modalidad en este documento, esa
+cola se quitó: ahora dice "órdenes realizadas a través de las Tiendas
+Participantes". No se reescribió nada más.
+
+**Lo que no cambió, a propósito.** La cláusula de Territorio: ya decía "dentro de
+las zonas de cobertura de las Tiendas Participantes … en la ciudad de Bogotá", y
+con la lista nombrada sigue leyéndose bien. Y las leyendas de la pieza, que
+siguen diciendo "en todo Turbo Restaurantes Bogotá": salen de piezas reales
+publicadas y el punto D1 hablaba del T&C, no del arte. **Queda la
+inconsistencia**: el documento ya no nombra la modalidad y la pieza sí. Si Juan
+quiere alinearlas, es un cambio de leyenda, no de modelo.

@@ -43,6 +43,9 @@ function comoTexto(campo) {
 
   if (Object.prototype.toString.call(valor) === '[object Array]') {
     if (campo.id === 'tiendas') return valor.length + (valor.length === 1 ? ' tienda' : ' tiendas');
+    if (campo.id === 'tiendasEta') {
+      return valor.map(function (t) { return t.nombre; }).filter(Boolean).join(', ');
+    }
     var etiquetas = valor.map(function (v) {
       var encontrada = (pregunta.opciones || campo.opciones || []).filter(function (o) { return o.valor === v; })[0];
       return encontrada ? encontrada.etiqueta : v;
@@ -539,6 +542,9 @@ function pantallaPasos(raiz) {
       }
       if (campoAbierto.id === 'productosDetalle') {
         bloque = RM.productos.dibujar(function () { RM.app.dibujar(); });
+      }
+      if (campoAbierto.id === 'tiendasEta') {
+        bloque = RM.tiendasEta.dibujar(function () { RM.app.dibujar(); });
       }
       columna.appendChild(bloque);
     }

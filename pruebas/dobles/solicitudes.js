@@ -89,6 +89,11 @@ function valorDePrueba(campo, codigoPais, tipoActual) {
   return '';
 }
 
+/** Dos tiendas de Turbo para el cashback por ETA, que el T&C nombra una por una. */
+function tiendasEtaDePrueba() {
+  return [{ nombre: 'Turbo Calleja' }, { nombre: 'Turbo Chico' }];
+}
+
 /** Dos tiendas válidas para el Cashback Multitienda. */
 function tiendasDePrueba(codigoPais) {
   return [
@@ -117,6 +122,7 @@ function solicitud(codigoPais, tipo, respuestas) {
     entrada.otraCondicion = 'no';
   }
   if (esquema.camposPorTienda) entrada.tiendas = tiendasDePrueba(codigoPais);
+  if (esquema.camposPorTiendaEta) entrada.tiendasEta = tiendasEtaDePrueba();
 
   // Varias vueltas: la visibilidad de un campo depende de lo que se respondió antes.
   for (let vuelta = 0; vuelta < 4; vuelta += 1) {
@@ -135,4 +141,4 @@ function solicitud(codigoPais, tipo, respuestas) {
   return entrada;
 }
 
-module.exports = { solicitud, tiendasDePrueba, IDENTIFICACIONES };
+module.exports = { solicitud, tiendasDePrueba, tiendasEtaDePrueba, IDENTIFICACIONES };

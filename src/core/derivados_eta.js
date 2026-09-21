@@ -100,6 +100,41 @@ function textoCiudadEta(entrada) {
 }
 
 /**
+ * ORACION mas vinnetas: las tiendas de Turbo que participan, una por una.
+ *
+ * Antes la clausula decia "todas las tiendas virtuales bajo la modalidad
+ * “Turbo Restaurantes” … habilitadas en la ciudad de Bogota", y despues que el
+ * listado seria "el que se encuentre visible y disponible … al momento de
+ * realizar la orden". Juan corrigio que Turbo no es una modalidad: son tiendas
+ * por zona, con nombre propio (Turbo Calleja, Turbo Chico, Turbo Laureles), y
+ * el 21 de septiembre de 2026 (punto D1) eligio que el documento las liste.
+ *
+ * Por eso la segunda frase ya no puede decir quien participa: dos frases que
+ * dicen cosas distintas sobre eso es lo que un usuario lee a su favor. Se queda
+ * hablando solo de disponibilidad.
+ *
+ * Una tienda sin nombre deja la vinneta rota, asi que se devuelve vacio entero
+ * y el motor anuncia el hueco, igual que en la lista de productos de la
+ * Carrera.
+ */
+function textoTiendasEta(entrada) {
+  var tiendas = entrada.tiendasEta || [];
+  var ciudad = textoCiudadEta(entrada);
+  if (tiendas.length === 0 || !ciudad) return '';
+
+  var lineas = ['Participarán únicamente las siguientes tiendas virtuales del botón “Turbo” ' +
+    'al interior de la Plataforma Rappi, habilitadas en ' + ciudad + ' durante la vigencia de la Campaña:'];
+  for (var i = 0; i < tiendas.length; i++) {
+    var nombre = String((tiendas[i] || {}).nombre || '').trim();
+    if (!nombre) return '';
+    lineas.push('• ' + nombre);
+  }
+  lineas.push('La disponibilidad de cada Tienda Participante podrá variar en función de la ' +
+    'operación de cada Aliado Comercial.');
+  return lineas.join('\n');
+}
+
+/**
  * ORACION: el maximo de ordenes por persona.
  *
  * Va en femenino porque en este modelo se cuentan ordenes, no pedidos:
@@ -149,6 +184,7 @@ function calcularDerivadosEta(entrada, pais) {
   return {
     TEXTO_ETA: textoEta(entrada),
     TEXTO_CIUDAD_ETA: textoCiudadEta(entrada),
+    TEXTO_TIENDAS_ETA: textoTiendasEta(entrada),
     TEXTO_LIMITE_ORDENES: textoLimiteOrdenes(entrada),
     // Va dentro de la clausula de vigencia y redencion de Creditos, que es
     // donde la ponen los demas modelos. En los documentos publicados estaba
@@ -165,6 +201,7 @@ if (typeof module !== 'undefined') {
     SECCIONES_EXCLUIBLES_ETA: SECCIONES_EXCLUIBLES_ETA,
     seccionesExcluiblesDe: seccionesExcluiblesDe,
     textoSeccionesExcluidas: textoSeccionesExcluidas,
+    textoTiendasEta: textoTiendasEta,
     calcularDerivadosEta: calcularDerivadosEta,
   };
 }

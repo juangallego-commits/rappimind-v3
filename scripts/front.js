@@ -227,6 +227,10 @@ const PARTES = [
         queHace: 'Cuando participan productos específicos, cada uno entra con su nombre y su código de barras EAN. El EAN se revisa entero, con su dígito de control, y el documento nombra los productos uno por uno.',
       },
       {
+        id: 'eta-tiendas', valeFoto: true, titulo: 'Formulario, las tiendas de Turbo del cashback por ETA', pantalla: 'pasos',
+        queHace: 'El documento nombra las tiendas de Turbo una por una, con el nombre que sale en la app. Antes decía "todas las tiendas de la modalidad Turbo Restaurantes de la ciudad" y además que el listado sería el que la app mostrara en ese momento: dos frases que decían cosas distintas sobre quién participa.',
+      },
+      {
         id: 'carrera', valeFoto: true, titulo: 'Formulario, Carrera de Compras con una opción bloqueada', pantalla: 'pasos',
         queHace: 'En una Carrera de Compras el desempate no puede ser el mismo criterio con el que se elige al ganador. La opción se queda a la vista, bloqueada y con su razón: entender por qué no puede es parte de la respuesta.',
       },

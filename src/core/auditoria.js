@@ -138,6 +138,16 @@ function productosLegibles(productos) {
   return lineas.join('\n');
 }
 
+/** Las tiendas de Turbo del cashback por ETA, una por linea. */
+function tiendasEtaLegibles(tiendas) {
+  var lista = tiendas || [];
+  var lineas = [];
+  for (var i = 0; i < lista.length; i++) {
+    lineas.push(String((lista[i] || {}).nombre || ''));
+  }
+  return lineas.join('\n');
+}
+
 /**
  * Las respuestas de una solicitud, listas para escribir en el Sheet.
  *
@@ -165,6 +175,9 @@ function respuestasParaElSheet(entrada) {
   if (esquema.camposPorProducto) {
     fila[PREFIJO_RESPUESTA + 'productosDetalle'] = productosLegibles(datos.productosDetalle);
   }
+  if (esquema.camposPorTiendaEta) {
+    fila[PREFIJO_RESPUESTA + 'tiendasEta'] = tiendasEtaLegibles(datos.tiendasEta);
+  }
   return fila;
 }
 
@@ -174,6 +187,7 @@ if (typeof module !== 'undefined') {
     columnasDeRespuestas: columnasDeRespuestas,
     valorLegible: valorLegible,
     tiendasLegibles: tiendasLegibles,
+    tiendasEtaLegibles: tiendasEtaLegibles,
     productosLegibles: productosLegibles,
     respuestasParaElSheet: respuestasParaElSheet,
   };
