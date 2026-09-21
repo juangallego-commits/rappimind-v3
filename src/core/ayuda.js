@@ -94,6 +94,94 @@ var CANAL_TC = {
  * que el comercial no tenga que deducir nada.
  */
 /**
+ * El filtro de los T&C generales.
+ *
+ * Antes de darle a nadie el enlace de un T&C general hay que saber si su
+ * campana de verdad cabe en ese documento. Hasta el 20 de septiembre de 2026 no
+ * lo revisaba nadie: el comercial entraba a la lista de los quince publicados y
+ * copiaba el enlace, y si su campana tenia una condicion que el general no dice,
+ * esa condicion no se le podia exigir al usuario.
+ *
+ * Los textos son los de la decision 49 del encargo 01, tal cual. Cada pregunta
+ * dice a donde va un "si", y hay tres salidas distintas:
+ *
+ *   - `tipos`: no es un T&C general, la herramienta sabe hacer ese documento.
+ *   - `legal`: lo redacta un abogado, con la razon escrita.
+ *   - `depende`: hay un T&C general que sirve, pero solo en un caso.
+ *
+ * La sexta no es de si o no: abre tres opciones, y cada una lleva a un sitio.
+ */
+var FILTRO_DE_GENERALES = [
+  {
+    id: 'creditosOPremio',
+    texto: '¿El usuario recibe Créditos o gana un premio?',
+    salida: 'tipos',
+    razon: 'Esto no es un T&C general. Vuelve a los tipos y elige Cashback o Carrera de Compras.',
+  },
+  {
+    id: 'eventoEspecial',
+    texto: '¿Es un evento especial, como Hora Loca o Pro Week?',
+    salida: 'legal',
+    razon: 'Las campañas de mucha visibilidad llevan T&C propio.',
+  },
+  {
+    id: 'categoriaRegulada',
+    texto: '¿Es alcohol, tabaco, vapeador, medicamento, fórmula infantil o apuesta?',
+    salida: 'legal',
+    razon: 'Esas categorías tienen reglas propias de publicidad.',
+  },
+  {
+    id: 'dependeDelMedioDePago',
+    texto: '¿El descuento depende del medio de pago?',
+    salida: 'legal',
+    razon: 'Un descuento atado a un banco o a una tarjeta tiene otro responsable y otro documento.',
+  },
+  {
+    id: 'cuponPorFuera',
+    texto: '¿El cupón se usa por fuera de Rappi?',
+    salida: 'depende',
+    razon: 'Solo si es un código de descuento para un evento externo: usa ese T&C general. Si no, lo redacta Legal.',
+  },
+  {
+    id: 'soloCiertosUsuarios',
+    texto: '¿Aplica solo a ciertos usuarios?',
+    salida: 'opciones',
+    opciones: [
+      {
+        valor: 'pro',
+        etiqueta: 'Pro o Pro Black',
+        nota: 'Legal tiene publicados los T&C de esas campañas.',
+        salida: 'lista',
+      },
+      {
+        valor: 'nuevos_turbo',
+        etiqueta: 'Nunca han comprado en Turbo',
+        nota: 'Es el T&C general de Usuarios Nuevos en Turbo.',
+        salida: 'lista',
+      },
+      {
+        valor: 'otra',
+        etiqueta: 'Otra condición',
+        nota: 'Ningún T&C general describe esa condición.',
+        salida: 'legal',
+        razon: 'Ningún T&C general describe esa condición, así que la campaña la redacta Legal.',
+      },
+    ],
+  },
+];
+
+/**
+ * Los tres requisitos de la pieza, en la pantalla final del T&C general.
+ *
+ * Son la base del encargo de leyendas y siguen vigentes (decision 49, punto 4).
+ * Aqui no se genera documento, asi que es lo unico que la herramienta puede
+ * decirle al comercial sobre su arte.
+ */
+var LO_QUE_LA_PIEZA_DEBE_DECIR =
+  'Tu pieza debe decir siempre: el mínimo de compra, si lo hay; el máximo de descuento o de cashback; ' +
+  'y a qué usuarios aplica, si no es para todos.';
+
+/**
  * El filtro de entrada de Rappi Travel.
  *
  * Se muestra despues de elegir uno de los dos tipos de Travel y reemplaza, para
@@ -260,6 +348,8 @@ if (typeof module !== 'undefined') {
     AVISO_AZAR: AVISO_AZAR,
     CONTACTOS: CONTACTOS,
     FILTRO_DE_TRAVEL: FILTRO_DE_TRAVEL,
+    FILTRO_DE_GENERALES: FILTRO_DE_GENERALES,
+    LO_QUE_LA_PIEZA_DEBE_DECIR: LO_QUE_LA_PIEZA_DEBE_DECIR,
     ACCESOS_SQUARESPACE: ACCESOS_SQUARESPACE,
     CANAL_TC: CANAL_TC,
     PASOS_SQUARESPACE: PASOS_SQUARESPACE,

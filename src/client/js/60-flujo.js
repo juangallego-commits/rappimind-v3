@@ -395,6 +395,18 @@ function botonDeCambiarMiRespuesta() {
     onclick: function () {
       if (desde === 'filtro') E.filtroRespondido = false;
       if (desde === 'filtroTravel') E.filtroDeTravelRespondido = false;
+      // El filtro de los T&C generales guarda sus respuestas: volver es volver
+      // a la misma pantalla, con lo marcado, para cambiar la que estuvo mal.
+      if (desde === 'filtroGenerales') { RM.app.ir('filtroGenerales'); return; }
+      // "Mi campaña no es ninguna de estas": se vuelve a la lista de tipos,
+      // abierta en esa misma pregunta.
+      if (desde === 'tipo') {
+        E.motivoDeLegal = null;
+        E.volverDeLegal = null;
+        E.campoAbierto = 'tipo';
+        RM.app.ir('pasos');
+        return;
+      }
       if (desde === 'negocio') {
         estado.fijar('negocio', null);
         E.respondidas.negocio = false;

@@ -28,6 +28,12 @@ var estado = {
   volverDeLegal: null,
   // Cuál de los T&C que Legal ya publicó está mirando. Null = la lista entera.
   tycGenericoElegido: null,
+  // El filtro de seis preguntas que va antes de la lista de T&C generales, y
+  // cuál de ellos resaltar cuando el filtro ya dijo cuál sirve.
+  filtroDeGenerales: {},
+  resaltarGenericos: null,
+  // Por qué volvió a la lista de tipos desde el filtro de los generales.
+  motivoDeLosTipos: null,
   errores: {},
   // Qué preguntas respondió de verdad el comercial. Un valor por defecto NO
   // cuenta como respuesta: la pregunta se muestra igual, con la opción ya
@@ -75,6 +81,9 @@ function reiniciarFormulario(base, yaRespondidas) {
   estado.motivoDeLegal = null;
   estado.volverDeLegal = null;
   estado.tycGenericoElegido = null;
+  estado.filtroDeGenerales = {};
+  estado.resaltarGenericos = null;
+  estado.motivoDeLosTipos = null;
   estado.resultado = null;
   estado.ultimoTextoVistaPrevia = '';
 }

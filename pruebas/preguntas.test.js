@@ -264,7 +264,7 @@ test('la interfaz aplica el valor por defecto del tipo, no solo el general', () 
     path.join(__dirname, '..', 'src', 'client', 'js', '62-pasos.js'), 'utf8'
   );
   assert.ok(
-    /if \(campoId === 'tipo'\) aplicarValoresDelTipo\(valor\);/.test(pasos),
+    /campoId === 'tipo'[\s\S]{0,120}aplicarValoresDelTipo\(valor\);/.test(pasos),
     'al elegir el tipo nadie aplica sus valores por defecto'
   );
 });

@@ -120,7 +120,7 @@ const TANDAS = [
       'Las nueve preguntas del filtro de Travel: son las más difíciles de todo el producto.',
     ],
     pantallas: ['inicio', 'filtro', 'pais', 'negocio', 'tipos', 'pais-en-pruebas',
-      'legal', 'tyc-generales', 'tyc-detalle', 'filtro-travel', 'tipos-travel'],
+      'legal', 'tyc-filtro', 'tyc-generales', 'tyc-detalle', 'filtro-travel', 'tipos-travel'],
     filtrosDe: ['cashback', 'cashback_travel'],
   },
   {

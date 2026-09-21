@@ -563,7 +563,7 @@ async function recorrer(rutaDeLaDemo, fichas, marcas) {
   });
 
   // --- 4. Los T&C que Legal ya publico ----------------------------------------
-  await tramo('los T&C ya publicados', ['tyc-generales', 'tyc-detalle'], async () => {
+  await tramo('los T&C ya publicados', ['tyc-filtro', 'tyc-generales', 'tyc-detalle'], async () => {
     await paginaNueva('escritorio', 'es');
     await clic('Empezar');
     await decirQueNoATodo();
@@ -571,6 +571,15 @@ async function recorrer(rutaDeLaDemo, fichas, marcas) {
     await elegirOpcion('Rappi');
     await clic('Descuentos, cupones');
     await pagina.waitForTimeout(420);
+    await capturar('tyc-filtro');
+
+    // Con las seis en no, la lista entera. Es el camino de la campana que si
+    // cabe en un T&C general, que es la mayoria.
+    await pagina.evaluate(() => {
+      [].slice.call(document.querySelectorAll('.preguntas-filtro .opcion'))
+        .filter((b) => b.textContent.trim() === 'No').forEach((b) => b.click());
+    });
+    await pagina.waitForTimeout(700);
     await capturar('tyc-generales');
 
     await clic('Descuento en Productos Seleccionados');

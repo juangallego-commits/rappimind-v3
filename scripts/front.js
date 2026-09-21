@@ -202,8 +202,12 @@ const PARTES = [
         queHace: 'Después de pasar el filtro vuelve al formulario, con la pregunta del tipo abierta y solo los tipos de Travel.',
       },
       {
+        id: 'tyc-filtro', valeFoto: true, titulo: 'Los T&C que Legal ya publicó, el filtro', pantalla: 'pasos',
+        queHace: 'Seis preguntas de sí o no antes de dar ningún enlace. Sirven para saber si la campaña de verdad cabe en un T&C general: un sí puede devolverlo a los tipos, llevarlo a Legal o señalarle cuál de los generales es el suyo.',
+      },
+      {
         id: 'tyc-generales', valeFoto: true, titulo: 'Los T&C que Legal ya publicó, la lista', pantalla: 'pasos',
-        queHace: 'Entra por el atajo de debajo de los tipos. Si su campaña es un descuento o un cupón corriente, no tiene que generar nada: ya hay un T&C publicado y solo necesita el enlace.',
+        queHace: 'Entra por el atajo que va por encima de los tipos, después de pasar el filtro. Si su campaña es un descuento o un cupón corriente, no tiene que generar nada: ya hay un T&C publicado y solo necesita el enlace.',
       },
       {
         id: 'tyc-detalle', titulo: 'Los T&C que Legal ya publicó, uno con pendiente', pantalla: 'pasos',

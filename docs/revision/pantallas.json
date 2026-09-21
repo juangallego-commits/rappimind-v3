@@ -1,6 +1,6 @@
 {
   "generado": "2026-09-21",
-  "commit": "feaf1e4",
+  "commit": "32b624b",
   "rama": "claude/dazzling-bell-w5o6pf",
   "partes": [
     {
@@ -84,7 +84,7 @@
       "queHace": "Elige el tipo de campaña entre tarjetas con nombre y descripción. Los tipos de Travel no aparecen en esta lista.",
       "nota": "Debajo de los tipos, separado por una línea, está el atajo a los T&C que Legal ya publicó.",
       "valeFoto": true,
-      "texto": "RappiMind v3\nGenerar\nMis campañas\nAyuda\nAdministración\nCampaña\nTu campaña\n¿En qué país corre la campaña?\nCambiar\n\nColombia\n\n¿La campaña es de Rappi o de Rappi Travel?\nCambiar\n\nRappi\n\n¿Qué tipo de campaña vas a hacer?\n\nElige el que se parezca a tu campaña. Cada opción dice de qué se trata.\n\nNo se hacen campañas de cashback, descuento ni concursos sobre medicamentos, productos fitoterapéuticos, cigarrillos, tabaco calentado (como IQOS), vapeadores ni otros productos con nicotina. Si la tienda los vende, el beneficio no puede aplicar a esos productos.\n\nCashback\nLa tienda devuelve un porcentaje de lo que el usuario pagó, en Créditos para su Billetera. El usuario compra hoy y vuelve a gastar ese saldo después.\nCarrera de Compras\nUn concurso con premio: durante unas fechas gana quien más compre en la tienda. No hay azar, gana por lo que compró.\n15 minutos o Cashback\nRappi promete un tiempo de entrega en el botón Turbo de una ciudad. Si la orden llega tarde, el usuario recibe en Créditos un porcentaje de lo que pagó. No hay tienda aliada que fondee: el presupuesto lo pone Rappi.\nCashback Multitienda\nVarias tiendas hacen cashback dentro de una misma jornada comercial. Cada tienda pone su porcentaje, su tope y su presupuesto, y cada una organiza lo suyo.\n\n¿Es un descuento, un cupón o envío gratis?\n\nDescuentos, cupones, envío gratis y tarifa de servicio\nBuena noticia: para estas campañas Legal ya publicó los T&C. No generas ningún documento, te damos el enlace listo para la pieza.\n¿Por qué te preguntamos esto?\n\nCada tipo usa un modelo legal distinto, aprobado por Legal. Elegir mal significa generar el documento equivocado.\n\nAtrás\nSiguiente\nTu T&C\nSin empezar\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nCerrar\nES\nBR"
+      "texto": "RappiMind v3\nGenerar\nMis campañas\nAyuda\nAdministración\nCampaña\nTu campaña\n¿En qué país corre la campaña?\nCambiar\n\nColombia\n\n¿La campaña es de Rappi o de Rappi Travel?\nCambiar\n\nRappi\n\n¿Qué tipo de campaña vas a hacer?\n\nElige el que se parezca a tu campaña. Cada opción dice de qué se trata.\n\nNo se hacen campañas de cashback, descuento ni concursos sobre medicamentos, productos fitoterapéuticos, cigarrillos, tabaco calentado (como IQOS), vapeadores ni otros productos con nicotina. Si la tienda los vende, el beneficio no puede aplicar a esos productos.\n\n¿Es un descuento, un cupón o envío gratis?\n\nDescuentos, cupones, envío gratis y tarifa de servicio\nBuena noticia: para estas campañas Legal ya publicó los T&C. No generas ningún documento, te damos el enlace listo para la pieza.\nCashback\nLa tienda devuelve un porcentaje de lo que el usuario pagó, en Créditos para su Billetera. El usuario compra hoy y vuelve a gastar ese saldo después.\nCarrera de Compras\nUn concurso con premio: durante unas fechas gana quien más compre en la tienda. No hay azar, gana por lo que compró.\n15 minutos o Cashback\nRappi promete un tiempo de entrega en el botón Turbo de una ciudad. Si la orden llega tarde, el usuario recibe en Créditos un porcentaje de lo que pagó. No hay tienda aliada que fondee: el presupuesto lo pone Rappi.\nCashback Multitienda\nVarias tiendas hacen cashback dentro de una misma jornada comercial. Cada tienda pone su porcentaje, su tope y su presupuesto, y cada una organiza lo suyo.\nMi campaña no es ninguna de estas\nTe llevamos al formulario de Legal con el motivo.\n¿Por qué te preguntamos esto?\n\nCada tipo usa un modelo legal distinto, aprobado por Legal. Elegir mal significa generar el documento equivocado.\n\nAtrás\nSiguiente\nTu T&C\nSin empezar\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nCerrar\nES\nBR"
     },
     {
       "id": "tienda",
@@ -409,24 +409,37 @@
       "queHace": "Después de pasar el filtro vuelve al formulario, con la pregunta del tipo abierta y solo los tipos de Travel.",
       "nota": "",
       "valeFoto": false,
-      "texto": "RappiMind v3\nGenerar\nMis campañas\nAyuda\nAdministración\nCampaña\nTu campaña\n¿En qué país corre la campaña?\nCambiar\n\nColombia\n\n¿La campaña es de Rappi o de Rappi Travel?\nCambiar\n\nRappi Travel\n\n¿Qué tipo de campaña vas a hacer?\n\nElige el que se parezca a tu campaña. Cada opción dice de qué se trata.\n\nNo se hacen campañas de cashback, descuento ni concursos sobre medicamentos, productos fitoterapéuticos, cigarrillos, tabaco calentado (como IQOS), vapeadores ni otros productos con nicotina. Si la tienda los vende, el beneficio no puede aplicar a esos productos.\n\nCashback Travel\nLa marca aliada devuelve un porcentaje de lo que el usuario pagó por su vuelo, hotel, auto o paquete, en Créditos para su Billetera.\nDescuento Travel\nLa marca aliada baja el precio de sus vuelos, hoteles, autos o paquetes. El usuario ve el precio ya rebajado antes de pagar, no recibe Créditos.\n¿Por qué te preguntamos esto?\n\nCada tipo usa un modelo legal distinto, aprobado por Legal. Elegir mal significa generar el documento equivocado.\n\nAtrás\nSiguiente\nTu T&C\nSin empezar\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nCerrar\nES\nBR"
+      "texto": "RappiMind v3\nGenerar\nMis campañas\nAyuda\nAdministración\nCampaña\nTu campaña\n¿En qué país corre la campaña?\nCambiar\n\nColombia\n\n¿La campaña es de Rappi o de Rappi Travel?\nCambiar\n\nRappi Travel\n\n¿Qué tipo de campaña vas a hacer?\n\nElige el que se parezca a tu campaña. Cada opción dice de qué se trata.\n\nNo se hacen campañas de cashback, descuento ni concursos sobre medicamentos, productos fitoterapéuticos, cigarrillos, tabaco calentado (como IQOS), vapeadores ni otros productos con nicotina. Si la tienda los vende, el beneficio no puede aplicar a esos productos.\n\nCashback Travel\nLa marca aliada devuelve un porcentaje de lo que el usuario pagó por su vuelo, hotel, auto o paquete, en Créditos para su Billetera.\nDescuento Travel\nLa marca aliada baja el precio de sus vuelos, hoteles, autos o paquetes. El usuario ve el precio ya rebajado antes de pagar, no recibe Créditos.\nMi campaña no es ninguna de estas\nTe llevamos al formulario de Legal con el motivo.\n¿Por qué te preguntamos esto?\n\nCada tipo usa un modelo legal distinto, aprobado por Legal. Elegir mal significa generar el documento equivocado.\n\nAtrás\nSiguiente\nTu T&C\nSin empezar\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nCerrar\nES\nBR"
+    },
+    {
+      "id": "tyc-filtro",
+      "numero": 31,
+      "titulo": "Los T&C que Legal ya publicó, el filtro",
+      "parte": "Los otros caminos",
+      "pantalla": "pasos",
+      "ventana": "escritorio",
+      "idioma": "es",
+      "queHace": "Seis preguntas de sí o no antes de dar ningún enlace. Sirven para saber si la campaña de verdad cabe en un T&C general: un sí puede devolverlo a los tipos, llevarlo a Legal o señalarle cuál de los generales es el suyo.",
+      "nota": "",
+      "valeFoto": true,
+      "texto": "RappiMind v3\nGenerar\nMis campañas\nAyuda\nAdministración\n¿Sirve un T&C general para tu campaña?\n\nSeis preguntas de sí o no. Si todas son no, te damos el enlace que va en la pieza.\n\n¿El usuario recibe Créditos o gana un premio?\nNo\nSí\n¿Es un evento especial, como Hora Loca o Pro Week?\nNo\nSí\n¿Es alcohol, tabaco, vapeador, medicamento, fórmula infantil o apuesta?\nNo\nSí\n¿El descuento depende del medio de pago?\nNo\nSí\n¿El cupón se usa por fuera de Rappi?\nNo\nSí\n¿Aplica solo a ciertos usuarios?\nNo\nSí\nVolver a los tipos de campaña\nES\nBR"
     },
     {
       "id": "tyc-generales",
-      "numero": 31,
+      "numero": 32,
       "titulo": "Los T&C que Legal ya publicó, la lista",
       "parte": "Los otros caminos",
       "pantalla": "pasos",
       "ventana": "escritorio",
       "idioma": "es",
-      "queHace": "Entra por el atajo de debajo de los tipos. Si su campaña es un descuento o un cupón corriente, no tiene que generar nada: ya hay un T&C publicado y solo necesita el enlace.",
+      "queHace": "Entra por el atajo que va por encima de los tipos, después de pasar el filtro. Si su campaña es un descuento o un cupón corriente, no tiene que generar nada: ya hay un T&C publicado y solo necesita el enlace.",
       "nota": "",
       "valeFoto": true,
       "texto": "RappiMind v3\nGenerar\nMis campañas\nAyuda\nAdministración\nPara esta campaña no necesitas crear T&C\n\nLegal ya dispuso los términos y condiciones de estas campañas y ya están publicados. No tienes que generar ningún documento ni esperar a que alguien lo revise: elige el que corresponde a tu campaña y te damos el enlace que va en la pieza.\n\nDescuento en Toda la Tienda\nPorcentaje de descuento sobre el valor total del pedido (el porcentaje específico dependerá de lo que indique el banner o pieza publicitaria en la app).\nEsta es la legal \"comodín\". Úsala cuando la marca quiera dar un descuento general en toda su tienda (Ej: \"Hoy 20% OFF en toda la carta\"). Sirve para cualquier porcentaje porque el número exacto se pone en el banner, no en el texto.\nDel 1 de enero de 2026 al 31 de diciembre de 2026.\nDescuento en Productos Seleccionados\nDescuento porcentual directo (Precio tachado)\nRespaldo legal para ofertas de \"precio tachado\" en la App. Úsalo cuando negocies descuentos directos en productos específicos para que el usuario vea la rebaja automáticamente en la tienda (sin cupones).\nDel 1 de enero de 2026 al 31 de diciembre de 2026.\nDescuento en Valor\nDescuento de monto fijo (Dinero OFF)\nRespaldo legal para descuentos de valor monetario específico. A diferencia del porcentual, este aplica cuando se rebaja una cantidad exacta de dinero al producto (ej. \"$5.000 OFF\"). Úsalo cuando la negociación sea por monto fijo directo en el precio del producto.\nDel 1 de enero de 2026 al 31 de diciembre de 2026.\nDescuento para Usuarios Nuevos en Turbo\nPorcentaje de descuento sobre el valor de los productos (el porcentaje específico y el tope máximo dependerán de lo que indique el banner o pieza publicitaria en la app).\nEsta es la legal \"comodín\" de ADQUISICIÓN para Turbo. Úsala cuando la campaña sea exclusiva para usuarios que NUNCA han comprado en Turbo (Ej: \"50% OFF en Fruver en tu 1ra compra\"). Sirve para cualquier categoría del Botón Turbo (Fruver, Licores, Snacks) pero NO aplica para Turbo Restaurantes.\nDel 1 de enero de 2026 al 31 de diciembre de 2026.\nEnvío Gratis\nCosto de envío $0\nRespaldo legal para eliminar el costo de envío (cobro de domicilio) al usuario. (ej. \"Envío Gratis por compras superiores a $X\"). El descuento aparece automáticamente al pagar.\nDel 1 de enero de 2026 al 31 de diciembre de 2026.\nTarifa de Servicio Gratis\nTarifa de servicio en $0\nRespaldo legal para no cobrar la tarifa de servicio. Ojo: No incluye el envío, solo la tarifa de servicio. Úsalo cuando se quiera eliminar esta barrera de costo adicional para el usuario.\nDel 1 de febrero de 2026 al 31 de octubre de 2026.\nDescuento en Productos Seleccionados Rappi Pro\nPrecio tachado exclusivo para suscriptores (Descuento Pro)\nRespaldo legal para descuentos exclusivos de la membresía. Úsalo cuando se quiera dar un beneficio diferencial solo a usuarios Rappi Pro (segmentado). El usuario normal verá el precio full, el usuario Pro verá el precio tachado.\nDel 1 de enero de 2026 al 31 de diciembre de 2026.\nDescuento en Toda la Tienda Rappi Pro\n% OFF en todo el menú para suscriptores (Exclusivo Pro)\nRespaldo legal para descuentos generales en el menú exclusivos para miembros Rappi Pro. Úsalo para negociaciones donde se quiera premiar la fidelidad del usuario Pro. El descuento aplica a todo el catálogo de la tienda participante, pero solo es visible y aplicable para usuarios con la membresía activa.\nDel 1 de enero de 2026 al 31 de diciembre de 2026.\nDescuento en Valor Rappi Pro\nDescuento de monto fijo exclusivo para suscriptores ($ OFF)\nRespaldo legal para descuentos de dinero fijo exclusivos para miembros Rappi Pro. Similar al \"Descuento en Valor\" normal, pero el beneficio de restar un monto exacto (ej. \"$10.000 OFF\") solo aplica y es visible para usuarios Rappi Pro.\nDel 1 de enero de 2026 al 31 de diciembre de 2026.\nDescuento en la Membresía Rappi Pro\nDescuento en el valor de la suscripción\nRespaldo legal para vender la membresía Rappi Pro más barata. Úsalo exclusivamente cuando la oferta sea sobre el precio de la suscripción. No sirve para descuentos en comida o productos.\nDel 1 de enero de 2026 al 31 de diciembre de 2026.\nCupones de Descuento para Membresía Rappi Pro y Black\nDescuento en la suscripción vía Código (Cupón)\nRespaldo legal para códigos promocionales que rebajan el precio de la membresía. Úsalo para estrategias donde entregas un código alfanumérico que el usuario debe redimir manualmente para pagar menos por su plan Rappi Pro.\nEl enlace apunta a la versión de 2024 aunque la vigencia dice 2026. Confírmalo con Legal antes de publicar la pieza.\nDel 1 de enero de 2026 al 31 de diciembre de 2026.\nCupón de descuento de valor fijo\nDescuento de un monto fijo de dinero sobre el pedido al redimir un cupón o código (el valor dependerá de lo que indique la pieza publicitaria).\nRespaldo legal para cupones o códigos que descuentan un valor fijo del pedido (ej. \"$10.000 OFF con el código X\"). Úsalo cuando el usuario debe ingresar o activar el cupón para ver la rebaja; el valor, la compra mínima y la vigencia van en la pieza.\nDel 1 de enero de 2026 al 31 de diciembre de 2026.\nCupón de descuento en toda la tienda\nPorcentaje de descuento sobre el valor total del pedido al redimir un cupón o código (el porcentaje y el tope dependerán de lo que indique la pieza publicitaria).\nRespaldo legal para cupones o códigos que dan un porcentaje de descuento sobre el valor total del pedido (ej. \"20% OFF en toda la tienda con el código X\"). Úsalo cuando el descuento no es automático y el usuario debe ingresar o activar el cupón; el porcentaje, el tope y la compra mínima van en la pieza.\nDel 1 de enero de 2026 al 31 de diciembre de 2026.\nCódigo de descuento para eventos externos\nUn externo da el descuento en su propio canal de venta. Por ejemplo: un código del 20% para las boletas de un evento.\nDel 1 de enero de 2026 al 31 de diciembre de 2026.\n\nSi tu campaña es un cashback, una carrera de compras o un concurso, no es ninguno de estos: vuelve a los tipos y la herramienta te arma el documento.\n\nVolver a los tipos de campaña\nES\nBR"
     },
     {
       "id": "tyc-detalle",
-      "numero": 32,
+      "numero": 33,
       "titulo": "Los T&C que Legal ya publicó, uno con pendiente",
       "parte": "Los otros caminos",
       "pantalla": "pasos",
@@ -435,11 +448,11 @@
       "queHace": "Abre uno de la lista y recibe el enlace para la pieza. Cuando Legal dejó algo por confirmar, lo lee antes del enlace, no después.",
       "nota": "",
       "valeFoto": false,
-      "texto": "RappiMind v3\nGenerar\nMis campañas\nAyuda\nAdministración\nDescuento en Productos Seleccionados\nListo, no tienes que generar nada\n\nLegal ya publicó estos T&C. Copia el enlace de abajo y ponlo en la pieza: ese es el enlace que va, tal cual.\n\nEnlace para la pieza\nCopiar\nhttps://promos.rappi.com/colombia/2026/descuentoprodselecc\n\nPégalo tal cual, sin acortarlo y sin cambiarle nada.\n\nAbrir los T&C\nLo que tu pieza tiene que decir\n\nSi tu campaña tiene esos límites, van con los números de tu campaña:\n\n“Máximo 1 unidad por usuario.”, o “Máximo 6 unidades por usuario.” si son varias.\n“10.000 unidades disponibles.”, o “1 unidad disponible.” si es una sola.\nPara qué sirve\n\nRespaldo legal para ofertas de \"precio tachado\" en la App. Úsalo cuando negocies descuentos directos en productos específicos para que el usuario vea la rebaja automáticamente en la tienda (sin cupones).\n\nQué beneficio cubre\n\nDescuento porcentual directo (Precio tachado)\n\nVigencia\n\nDel 1 de enero de 2026 al 31 de diciembre de 2026.\n\nVer los otros T&C publicados\nVolver a los tipos de campaña\nES\nBR"
+      "texto": "RappiMind v3\nGenerar\nMis campañas\nAyuda\nAdministración\nDescuento en Productos Seleccionados\nListo, no tienes que generar nada\n\nLegal ya publicó estos T&C. Copia el enlace de abajo y ponlo en la pieza: ese es el enlace que va, tal cual.\n\nEnlace para la pieza\nCopiar\nhttps://promos.rappi.com/colombia/2026/descuentoprodselecc\n\nPégalo tal cual, sin acortarlo y sin cambiarle nada.\n\nAbrir los T&C\nLo que tu pieza tiene que decir\n\nTu pieza debe decir siempre: el mínimo de compra, si lo hay; el máximo de descuento o de cashback; y a qué usuarios aplica, si no es para todos.\n\nY si tu campaña tiene esos límites, van con los números de tu campaña:\n\n“Máximo 1 unidad por usuario.”, o “Máximo 6 unidades por usuario.” si son varias.\n“10.000 unidades disponibles.”, o “1 unidad disponible.” si es una sola.\nPara qué sirve\n\nRespaldo legal para ofertas de \"precio tachado\" en la App. Úsalo cuando negocies descuentos directos en productos específicos para que el usuario vea la rebaja automáticamente en la tienda (sin cupones).\n\nQué beneficio cubre\n\nDescuento porcentual directo (Precio tachado)\n\nVigencia\n\nDel 1 de enero de 2026 al 31 de diciembre de 2026.\n\nVer los otros T&C publicados\nVolver a los tipos de campaña\nES\nBR"
     },
     {
       "id": "pais-en-pruebas",
-      "numero": 33,
+      "numero": 34,
       "titulo": "Formulario en un país en piloto",
       "parte": "Los otros caminos",
       "pantalla": "pasos",
@@ -448,11 +461,11 @@
       "queHace": "Elige México, que está en piloto. El aviso de no publicar todavía lo acompaña en el formulario, en el resumen y en la pantalla final.",
       "nota": "",
       "valeFoto": false,
-      "texto": "RappiMind v3\nGenerar\nMis campañas\nAyuda\nAdministración\nCampaña\nTu campaña\n¿En qué país corre la campaña?\nCambiar\n\nEcuador\n\n¿La campaña es de Rappi o de Rappi Travel?\nCambiar\n\nRappi\n\n¿Qué tipo de campaña vas a hacer?\n\nElige el que se parezca a tu campaña. Cada opción dice de qué se trata.\n\nCashback\nLa tienda devuelve un porcentaje de lo que el usuario pagó, en Créditos para su Billetera. El usuario compra hoy y vuelve a gastar ese saldo después.\n¿Por qué te preguntamos esto?\nAtrás\nSiguiente\nTu T&C\nSin empezar\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nCerrar\nES\nBR"
+      "texto": "RappiMind v3\nGenerar\nMis campañas\nAyuda\nAdministración\nCampaña\nTu campaña\n¿En qué país corre la campaña?\nCambiar\n\nEcuador\n\n¿La campaña es de Rappi o de Rappi Travel?\nCambiar\n\nRappi\n\n¿Qué tipo de campaña vas a hacer?\n\nElige el que se parezca a tu campaña. Cada opción dice de qué se trata.\n\nCashback\nLa tienda devuelve un porcentaje de lo que el usuario pagó, en Créditos para su Billetera. El usuario compra hoy y vuelve a gastar ese saldo después.\nMi campaña no es ninguna de estas\nTe llevamos al formulario de Legal con el motivo.\n¿Por qué te preguntamos esto?\nAtrás\nSiguiente\nTu T&C\nSin empezar\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nCerrar\nES\nBR"
     },
     {
       "id": "cashback-day",
-      "numero": 34,
+      "numero": 35,
       "titulo": "Formulario, Cashback Multitienda y su lista de tiendas",
       "parte": "Los otros caminos",
       "pantalla": "pasos",
@@ -465,7 +478,7 @@
     },
     {
       "id": "carrera",
-      "numero": 35,
+      "numero": 36,
       "titulo": "Formulario, Carrera de Compras con una opción bloqueada",
       "parte": "Los otros caminos",
       "pantalla": "pasos",
@@ -478,7 +491,7 @@
     },
     {
       "id": "error",
-      "numero": 36,
+      "numero": 37,
       "titulo": "Formulario, un error en vivo",
       "parte": "Los otros caminos",
       "pantalla": "pasos",
@@ -491,7 +504,7 @@
     },
     {
       "id": "acuerdo-datos",
-      "numero": 37,
+      "numero": 38,
       "titulo": "Formulario, el acuerdo de transferencia de datos",
       "parte": "Los otros caminos",
       "pantalla": "pasos",
@@ -504,7 +517,7 @@
     },
     {
       "id": "ampliar",
-      "numero": 38,
+      "numero": 39,
       "titulo": "Mis campañas, ampliar una publicada",
       "parte": "Los otros caminos",
       "pantalla": "historial",
@@ -517,7 +530,7 @@
     },
     {
       "id": "admin",
-      "numero": 39,
+      "numero": 40,
       "titulo": "Administración",
       "parte": "Los otros caminos",
       "pantalla": "admin",
@@ -530,7 +543,7 @@
     },
     {
       "id": "pt-inicio",
-      "numero": 40,
+      "numero": 41,
       "titulo": "Inicio, interfaz en portugués",
       "parte": "La interfaz en portugués",
       "pantalla": "inicio",
@@ -543,7 +556,7 @@
     },
     {
       "id": "pt-filtro",
-      "numero": 41,
+      "numero": 42,
       "titulo": "Filtro de entrada, interfaz en portugués",
       "parte": "La interfaz en portugués",
       "pantalla": "filtro",
@@ -556,7 +569,7 @@
     },
     {
       "id": "pt-negocio",
-      "numero": 42,
+      "numero": 43,
       "titulo": "Formulario en portugués, el negocio",
       "parte": "La interfaz en portugués",
       "pantalla": "pasos",
@@ -569,7 +582,7 @@
     },
     {
       "id": "pt-tipos",
-      "numero": 43,
+      "numero": 44,
       "titulo": "Formulario en portugués, el tipo de campaña",
       "parte": "La interfaz en portugués",
       "pantalla": "pasos",
@@ -578,11 +591,11 @@
       "queHace": "Los tipos disponibles en Brasil, con la interfaz en portugués.",
       "nota": "",
       "valeFoto": true,
-      "texto": "RappiMind v3\nGerar\nMinhas campanhas\nAjuda\nAdministração\nModo demonstração\n\nNenhum documento é criado, nenhum e-mail é enviado e nada fica salvo. No final você vê o texto que teria saído.\n\nCampanha\nSua campanha\nEm qual país a campanha acontece?\nAlterar\n\nBrasil\n\nA campanha é da Rappi ou da Rappi Travel?\nAlterar\n\nRappi\n\nQue tipo de campanha você vai fazer?\n\nEscolha o tipo que mais se parece com a sua campanha.\n\nPromoção Brasil\nDesconto em porcentagem, frete grátis ou taxa de serviço grátis em uma loja parceira do Brasil. O usuário vê o benefício aplicado no pagamento, não recebe Créditos.\nPor que perguntamos isso?\n\nCada tipo usa um modelo jurídico diferente, aprovado pelo Jurídico. Escolher errado significa gerar o documento errado.\n\nVoltar\nAvançar\nSeu T&C\nAinda não começou\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nFechar\nES\nBR"
+      "texto": "RappiMind v3\nGerar\nMinhas campanhas\nAjuda\nAdministração\nModo demonstração\n\nNenhum documento é criado, nenhum e-mail é enviado e nada fica salvo. No final você vê o texto que teria saído.\n\nCampanha\nSua campanha\nEm qual país a campanha acontece?\nAlterar\n\nBrasil\n\nA campanha é da Rappi ou da Rappi Travel?\nAlterar\n\nRappi\n\nQue tipo de campanha você vai fazer?\n\nEscolha o tipo que mais se parece com a sua campanha.\n\nPromoção Brasil\nDesconto em porcentagem, frete grátis ou taxa de serviço grátis em uma loja parceira do Brasil. O usuário vê o benefício aplicado no pagamento, não recebe Créditos.\nMi campaña no es ninguna de estas\nTe llevamos al formulario de Legal con el motivo.\nPor que perguntamos isso?\n\nCada tipo usa um modelo jurídico diferente, aprovado pelo Jurídico. Escolher errado significa gerar o documento errado.\n\nVoltar\nAvançar\nSeu T&C\nAinda não começou\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nFechar\nES\nBR"
     },
     {
       "id": "celular-inicio",
-      "numero": 44,
+      "numero": 45,
       "titulo": "Inicio en celular",
       "parte": "En celular",
       "pantalla": "inicio",
@@ -595,7 +608,7 @@
     },
     {
       "id": "celular-pregunta",
-      "numero": 45,
+      "numero": 46,
       "titulo": "Una pregunta en celular",
       "parte": "En celular",
       "pantalla": "pasos",
@@ -608,7 +621,7 @@
     },
     {
       "id": "celular-hoja",
-      "numero": 46,
+      "numero": 47,
       "titulo": "El documento en la hoja deslizable",
       "parte": "En celular",
       "pantalla": "pasos",

@@ -60,7 +60,11 @@ function tarjetaDeAtajo() {
     clase: 'opcion', type: 'button',
     onclick: function () {
       E.tycGenericoElegido = null;
-      RM.app.ir('tycGenericos');
+      // Al filtro, no directo a la lista: antes de dar un enlace hay que saber
+      // si la campana de verdad cabe en ese documento (punto D6).
+      E.filtroDeGenerales = {};
+      E.resaltarGenericos = null;
+      RM.app.ir('filtroGenerales');
     },
   }, [
     crear('span', { clase: 'opcion-titulo', texto: 'Descuentos, cupones, envío gratis y tarifa de servicio' }),
@@ -74,6 +78,151 @@ function tarjetaDeAtajo() {
 
   caja.appendChild(grupo);
   return caja;
+}
+
+// --- El filtro de seis preguntas --------------------------------------------
+
+/**
+ * Antes de dar el enlace de un T&C general, seis preguntas de si o no.
+ *
+ * Nadie revisaba si la campana del comercial de verdad cabia en el documento
+ * general que iba a usar, y una condicion que el general no dice no se le puede
+ * exigir al usuario. Los textos son los de la decision 49 del encargo 01, y
+ * Juan lo cerro el 20 de septiembre de 2026 (punto D6).
+ *
+ * Cada "si" cambia el camino, y las salidas son tres: volver a los tipos,
+ * porque la herramienta sabe hacer ese documento; ir a Legal, con la razon
+ * escrita; o mostrar la lista, cuando hay un general que si sirve.
+ */
+function pantallaFiltro(raiz) {
+  if (!E.filtroDeGenerales) E.filtroDeGenerales = {};
+  var respuestas = E.filtroDeGenerales;
+
+  var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
+    crear('h1', { texto: '¿Sirve un T&C general para tu campaña?' }),
+    crear('p', {
+      clase: 'pregunta-ayuda',
+      texto: 'Seis preguntas de sí o no. Si todas son no, te damos el enlace que va en la pieza.',
+    }),
+  ]);
+
+  var lista = crear('div', { clase: 'preguntas-filtro' });
+  for (var i = 0; i < FILTRO_DE_GENERALES.length; i++) {
+    lista.appendChild(bloqueDePregunta(FILTRO_DE_GENERALES[i], respuestas));
+  }
+  contenido.appendChild(lista);
+
+  contenido.appendChild(crear('div', { clase: 'fila-botones' }, [botonVolverALosTipos()]));
+  raiz.appendChild(contenido);
+}
+
+/** Una pregunta del filtro, con su salida y con la razon cuando la tiene. */
+function bloqueDePregunta(pregunta, respuestas) {
+  var bloque = crear('div', { clase: 'pregunta' }, [
+    crear('h2', { clase: 'pregunta-titulo', texto: pregunta.texto }),
+  ]);
+
+  var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': pregunta.texto });
+  [['No', false], ['Sí', true]].forEach(function (par) {
+    grupo.appendChild(crear('button', {
+      clase: 'opcion' + (respuestas[pregunta.id] === par[1] ? ' elegida' : ''),
+      type: 'button', role: 'radio', texto: par[0],
+      'aria-checked': String(respuestas[pregunta.id] === par[1]),
+      onclick: function () {
+        respuestas[pregunta.id] = par[1];
+        // Un "no" puede dejar respondidas las seis: hay que revisar entonces.
+        if (par[1] === false) { revisarElFiltro(respuestas); return; }
+        if (pregunta.salida === 'opciones') { RM.app.dibujar(); return; }
+        salirDelFiltro(pregunta);
+      },
+    }));
+  });
+  bloque.appendChild(grupo);
+
+  // La sexta no es de si o no: un "si" abre tres opciones, y cada una lleva a
+  // un sitio distinto.
+  if (pregunta.salida === 'opciones' && respuestas[pregunta.id] === true) {
+    bloque.appendChild(subpreguntaDeUsuarios(pregunta, respuestas));
+  }
+
+  // Un "si" que lleva a un general concreto se queda a la vista con su razon,
+  // en vez de mover la pantalla sin explicar por que.
+  if (pregunta.salida === 'depende' && respuestas[pregunta.id] === true) {
+    bloque.appendChild(crear('div', { clase: 'aviso' }, [
+      crear('p', { texto: pregunta.razon }),
+      crear('div', { clase: 'fila-botones' }, [
+        crear('button', {
+          clase: 'boton', type: 'button', texto: 'Es un código para un evento externo',
+          onclick: function () {
+            E.resaltarGenericos = 'evento_externo';
+            RM.app.ir('tycGenericos');
+          },
+        }),
+        crear('button', {
+          clase: 'boton boton-secundario', type: 'button', texto: 'No es eso',
+          onclick: function () { aLegal(pregunta.razon); },
+        }),
+      ]),
+    ]));
+  }
+
+  return bloque;
+}
+
+/** Las tres opciones de "¿Aplica solo a ciertos usuarios?". */
+function subpreguntaDeUsuarios(pregunta, respuestas) {
+  var caja = crear('div', { clase: 'aviso' }, [
+    crear('p', { texto: '¿A cuáles?' }),
+  ]);
+  var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': '¿A cuáles usuarios?' });
+
+  for (var i = 0; i < pregunta.opciones.length; i++) {
+    (function (opcion) {
+      grupo.appendChild(crear('button', {
+        clase: 'opcion', type: 'button', role: 'radio', 'aria-checked': 'false',
+        onclick: function () {
+          if (opcion.salida === 'legal') { aLegal(opcion.razon); return; }
+          E.resaltarGenericos = opcion.valor;
+          RM.app.ir('tycGenericos');
+        },
+      }, [
+        crear('span', { clase: 'opcion-titulo', texto: opcion.etiqueta }),
+        crear('span', { clase: 'opcion-nota', texto: opcion.nota }),
+      ]));
+    })(pregunta.opciones[i]);
+  }
+
+  caja.appendChild(grupo);
+  return caja;
+}
+
+/** Lo que pasa con un "si" en las cinco primeras. */
+function salirDelFiltro(pregunta) {
+  if (pregunta.salida === 'tipos') {
+    E.motivoDeLosTipos = pregunta.razon;
+    E.campoAbierto = 'tipo';
+    RM.app.ir('pasos');
+    return;
+  }
+  if (pregunta.salida === 'legal') { aLegal(pregunta.razon); return; }
+  // "depende" se queda en la pantalla con sus dos salidas.
+  RM.app.dibujar();
+}
+
+function aLegal(razon) {
+  E.motivoDeLegal = razon;
+  E.volverDeLegal = 'filtroGenerales';
+  RM.app.ir('legal');
+}
+
+/** Con las seis en no, la lista completa. */
+function revisarElFiltro(respuestas) {
+  var todas = FILTRO_DE_GENERALES.every(function (pregunta) {
+    return respuestas[pregunta.id] === false;
+  });
+  if (!todas) { RM.app.dibujar(); return; }
+  E.resaltarGenericos = null;
+  RM.app.ir('tycGenericos');
 }
 
 // --- La pantalla -------------------------------------------------------------
@@ -94,6 +243,30 @@ function pantalla(raiz) {
   var elegido = E.tycGenericoElegido ? tycGenericoPorId(codigo, E.tycGenericoElegido) : null;
   raiz.appendChild(elegido ? detalle(elegido) : listado(lista, codigo));
 }
+
+/*
+ * Los T&C generales que el filtro ya senalo, por su respuesta.
+ *
+ * No se esconden los demas: esconderlos dejaria al comercial creyendo que la
+ * herramienta no los tiene. Se ponen primero, con una linea que dice por que.
+ */
+var GENERALES_QUE_SIRVEN = {
+  evento_externo: {
+    ids: ['codigo_descuento_eventos_externos'],
+    porQue: 'Por tu respuesta, el que sirve es este. Los demás no cubren un cupón que se usa por fuera de Rappi.',
+  },
+  pro: {
+    ids: [
+      'descuento_productos_seleccionados_pro', 'descuento_toda_la_tienda_pro',
+      'descuento_en_valor_pro', 'descuento_membresia_pro', 'cupones_membresia_pro_black',
+    ],
+    porQue: 'Por tu respuesta, los que sirven son los de Rappi Pro y Pro Black.',
+  },
+  nuevos_turbo: {
+    ids: ['descuento_usuarios_nuevos_turbo'],
+    porQue: 'Por tu respuesta, el que sirve es el de Usuarios Nuevos en Turbo.',
+  },
+};
 
 /** Paso 1: los T&C publicados, con su descripcion y su vigencia. */
 function listado(lista, codigo) {
@@ -122,9 +295,17 @@ function listado(lista, codigo) {
         : null,
     ]);
 
+  var senalados = GENERALES_QUE_SIRVEN[E.resaltarGenericos];
+  if (senalados) {
+    contenido.appendChild(crear('div', { clase: 'aviso' }, [
+      crear('p', { texto: senalados.porQue }),
+    ]));
+  }
+
   var grupo = crear('div', { clase: 'opciones' });
-  for (var i = 0; i < lista.length; i++) {
-    grupo.appendChild(tarjetaDeUno(lista[i]));
+  var ordenada = senalados ? ordenarPorLosQueSirven(lista, senalados.ids) : lista;
+  for (var i = 0; i < ordenada.length; i++) {
+    grupo.appendChild(tarjetaDeUno(ordenada[i]));
   }
   contenido.appendChild(grupo);
 
@@ -134,6 +315,17 @@ function listado(lista, codigo) {
   }));
   contenido.appendChild(crear('div', { clase: 'fila-botones' }, [botonVolverALosTipos()]));
   return contenido;
+}
+
+/** Los senalados primero, los demas detras y en su mismo orden. */
+function ordenarPorLosQueSirven(lista, ids) {
+  var primero = [];
+  var despues = [];
+  for (var i = 0; i < lista.length; i++) {
+    if (ids.indexOf(lista[i].id) !== -1) primero.push(lista[i]);
+    else despues.push(lista[i]);
+  }
+  return primero.concat(despues);
 }
 
 /** La descripcion, salvo cuando el Excel repite el nombre: no se muestra dos veces. */
@@ -232,6 +424,11 @@ function detalle(tyc) {
     ]),
   ]));
 
+  contenido.appendChild(crear('div', { clase: 'aviso' }, [
+    crear('h3', { texto: 'Lo que tu pieza tiene que decir' }),
+    crear('p', { texto: LO_QUE_LA_PIEZA_DEBE_DECIR }),
+  ]));
+
   var loDeLaPieza = loQueLaPiezaTieneQueDecir(tyc);
   if (loDeLaPieza) contenido.appendChild(loDeLaPieza);
 
@@ -259,8 +456,7 @@ function loQueLaPiezaTieneQueDecir(tyc) {
   if (!esDeDescuento(tyc)) return null;
 
   return crear('div', { clase: 'aviso' }, [
-    crear('h3', { texto: 'Lo que tu pieza tiene que decir' }),
-    crear('p', { texto: 'Si tu campaña tiene esos límites, van con los números de tu campaña:' }),
+    crear('p', { texto: 'Y si tu campaña tiene esos límites, van con los números de tu campaña:' }),
     crear('ul', {}, [
       crear('li', { texto: '“Máximo 1 unidad por usuario.”, o “Máximo 6 unidades por usuario.” si son varias.' }),
       crear('li', { texto: '“10.000 unidades disponibles.”, o “1 unidad disponible.” si es una sola.' }),
@@ -306,5 +502,6 @@ function botonVolverALosTipos() {
 
 RM.tycGenericos = {
   pantalla: pantalla,
+  pantallaFiltro: pantallaFiltro,
   tarjetaDeAtajo: tarjetaDeAtajo,
 };

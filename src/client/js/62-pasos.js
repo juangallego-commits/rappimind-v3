@@ -572,6 +572,27 @@ function preguntaDeCatalogo(campo, campos, indice, pasos) {
   var avisoDeLaCategoria = avisoDeCategoriasProhibidas(campo);
   if (avisoDeLaCategoria) bloque.appendChild(avisoDeLaCategoria);
 
+  // Por qué volvió aquí desde el filtro de los T&C generales. Es la razón
+  // concreta, como en la pantalla de Legal: "vuelve a los tipos" sin decir por
+  // qué deja al comercial sin saber cuál elegir.
+  if (campo.id === 'tipo' && E.motivoDeLosTipos) {
+    bloque.appendChild(crear('div', { clase: 'aviso' }, [
+      crear('p', { texto: E.motivoDeLosTipos }),
+    ]));
+  }
+
+  /*
+   * El atajo a los T&C que Legal ya publicó, por encima de los cuatro tipos.
+   *
+   * Es casi la mitad de la demanda real y estaba al final de la lista, después
+   * de cuatro tipos que no son el suyo. Juan lo subió el 20 de septiembre de
+   * 2026 (punto F8).
+   */
+  if (campo.id === 'tipo') {
+    var atajoArriba = RM.tycGenericos.tarjetaDeAtajo();
+    if (atajoArriba) bloque.appendChild(atajoArriba);
+  }
+
   var elegido = estado.entrada()[campo.id];
   var grupo = crear('div', { clase: 'opciones', role: 'radiogroup' });
 
@@ -609,12 +630,24 @@ function preguntaDeCatalogo(campo, campos, indice, pasos) {
 
   bloque.appendChild(grupo);
 
-  // Junto a los tipos, pero separado de ellos: hay campanas para las que Legal
-  // ya publico los T&C y no hay que generar nada. Es donde el comercial busca
-  // su campana, asi que es donde tiene que enterarse.
+  // Y la salida de quien no se reconoce en ninguna de las opciones. Sin ella,
+  // el unico camino era cerrar la pestana y escribirle a Legal, que es lo que
+  // esta herramienta existe para evitar.
   if (campo.id === 'tipo') {
-    var atajo = RM.tycGenericos.tarjetaDeAtajo();
-    if (atajo) bloque.appendChild(atajo);
+    bloque.appendChild(crear('div', { clase: 'opciones' }, [
+      crear('button', {
+        clase: 'opcion', type: 'button',
+        onclick: function () {
+          E.motivoDeLegal = 'Tu campaña no encaja en ninguno de los tipos que la herramienta sabe generar ' +
+            'ni en los T&C que Legal ya publicó, así que la redacta un abogado.';
+          E.volverDeLegal = 'tipo';
+          RM.app.ir('legal');
+        },
+      }, [
+        crear('span', { clase: 'opcion-titulo', texto: estado.T('Mi campaña no es ninguna de estas') }),
+        crear('span', { clase: 'opcion-nota', texto: estado.T('Te llevamos al formulario de Legal con el motivo.') }),
+      ]),
+    ]));
   }
 
   bloque.appendChild(crear('details', { clase: 'por-que' }, [
@@ -785,7 +818,12 @@ function alResponder(campoId, valor, campos, indice) {
   E.errores[campoId] = true;
   E.respondidas[campoId] = true;
 
-  if (campoId === 'tipo') aplicarValoresDelTipo(valor);
+  if (campoId === 'tipo') {
+    aplicarValoresDelTipo(valor);
+    // La razón por la que el filtro de los generales lo devolvió aquí ya hizo
+    // su trabajo: dejarla pegada la repetiría en cada vuelta a esta pregunta.
+    E.motivoDeLosTipos = null;
+  }
 
   // Al elegir el día de inicio se propone el mismo día de fin: tres de cada
   // cuatro campañas de cashback duran un solo día. Y si el tipo no pregunta la

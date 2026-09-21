@@ -7,6 +7,7 @@ const assert = require('node:assert');
 
 const {
   AVISO_AZAR, CONTACTOS, PASOS_SQUARESPACE, SI_ALGO_SALE_MAL, PREGUNTAS_FRECUENTES,
+  FILTRO_DE_GENERALES, LO_QUE_LA_PIEZA_DEBE_DECIR,
 } = require('../src/core/ayuda.js');
 
 test('el aviso de azar está marcado como borrador para revisión', () => {
@@ -126,4 +127,70 @@ test('la ayuda no usa guiones como puntuación ni emojis', () => {
 test('la ayuda sostiene la regla de que Rappi nunca organiza', () => {
   const texto = JSON.stringify(PREGUNTAS_FRECUENTES);
   assert.ok(/Rappi no puede ser el organizador/i.test(texto), 'falta explicar por qué Rappi no organiza');
+});
+
+// --- D6: el filtro de los T&C generales -------------------------------------
+
+test('el filtro de los generales son las seis preguntas de la decisión 49', () => {
+  /*
+   * Nadie revisaba si la campaña del comercial de verdad cabía en el T&C
+   * general que iba a usar, y una condición que el general no dice no se le
+   * puede exigir al usuario. Juan lo cerró el 20 de septiembre de 2026.
+   */
+  assert.deepStrictEqual(FILTRO_DE_GENERALES.map((p) => p.texto), [
+    '¿El usuario recibe Créditos o gana un premio?',
+    '¿Es un evento especial, como Hora Loca o Pro Week?',
+    '¿Es alcohol, tabaco, vapeador, medicamento, fórmula infantil o apuesta?',
+    '¿El descuento depende del medio de pago?',
+    '¿El cupón se usa por fuera de Rappi?',
+    '¿Aplica solo a ciertos usuarios?',
+  ]);
+});
+
+test('cada "sí" del filtro dice a dónde va y por qué', () => {
+  // Ir a Legal sin razón concreta no le sirve a nadie: es la regla de la skill
+  // de flujo, y aquí se comprueba pregunta por pregunta.
+  assert.deepStrictEqual(FILTRO_DE_GENERALES.map((p) => p.salida),
+    ['tipos', 'legal', 'legal', 'legal', 'depende', 'opciones']);
+
+  for (const pregunta of FILTRO_DE_GENERALES) {
+    if (pregunta.salida === 'opciones') continue;
+    assert.ok(pregunta.razon && pregunta.razon.length > 20, pregunta.id + ': sin razón');
+  }
+});
+
+test('la sexta abre tres opciones, y cada una lleva a un sitio', () => {
+  const sexta = FILTRO_DE_GENERALES[5];
+  assert.deepStrictEqual(sexta.opciones.map((o) => o.etiqueta),
+    ['Pro o Pro Black', 'Nunca han comprado en Turbo', 'Otra condición']);
+  assert.deepStrictEqual(sexta.opciones.map((o) => o.salida), ['lista', 'lista', 'legal']);
+  assert.ok(sexta.opciones[2].razon.indexOf('Legal') !== -1);
+});
+
+test('la pantalla final del T&C general dice los tres requisitos de la pieza', () => {
+  // Decisión 49, punto 4: siguen vigentes y van también aquí, donde no se
+  // genera documento y es lo único que la herramienta puede decir del arte.
+  assert.strictEqual(LO_QUE_LA_PIEZA_DEBE_DECIR,
+    'Tu pieza debe decir siempre: el mínimo de compra, si lo hay; el máximo de descuento o de cashback; ' +
+    'y a qué usuarios aplica, si no es para todos.');
+
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const pantalla = fs.readFileSync(
+    path.join(__dirname, '..', 'src', 'client', 'js', '63-tyc-genericos.js'), 'utf8');
+  assert.ok(pantalla.indexOf('LO_QUE_LA_PIEZA_DEBE_DECIR') !== -1,
+    'la pantalla del T&C general no muestra los tres requisitos de la pieza');
+});
+
+test('el filtro va antes de la lista, no después', () => {
+  // El atajo llevaba directo a los quince enlaces. Ahora pasa por el filtro.
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const pantalla = fs.readFileSync(
+    path.join(__dirname, '..', 'src', 'client', 'js', '63-tyc-genericos.js'), 'utf8');
+  const atajo = pantalla.slice(pantalla.indexOf('function tarjetaDeAtajo'),
+    pantalla.indexOf('// --- El filtro de seis preguntas'));
+  assert.ok(atajo.indexOf("RM.app.ir('filtroGenerales')") !== -1,
+    'el atajo sigue llevando directo a la lista de enlaces');
+  assert.strictEqual(atajo.indexOf("RM.app.ir('tycGenericos')"), -1);
 });

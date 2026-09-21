@@ -549,12 +549,96 @@ async function recorrer() {
   await clic('Rappi');
   await pagina.waitForTimeout(400);
   const conAtajo = await texto();
-  revisar('debajo de los tipos está el atajo a los T&C publicados',
-    conAtajo.indexOf('¿Es un descuento, un cupón o envío gratis?') !== -1 && conAtajo.indexOf('Descuentos, cupones') !== -1,
+  // Por encima de los cuatro tipos desde el 20 de septiembre de 2026 (F8): es
+  // casi la mitad de la demanda real y estaba al final de la lista.
+  revisar('el atajo a los T&C publicados va por encima de los tipos',
+    conAtajo.indexOf('¿Es un descuento, un cupón o envío gratis?') !== -1 &&
+    conAtajo.indexOf('¿Es un descuento, un cupón o envío gratis?') < conAtajo.indexOf('Cashback'),
     conAtajo.replace(/\n+/g, ' | ').slice(0, 300));
+  revisar('y debajo de los tipos está la salida de quien no se reconoce',
+    conAtajo.indexOf('Mi campaña no es ninguna de estas') !== -1 &&
+    conAtajo.indexOf('Cashback') < conAtajo.indexOf('Mi campaña no es ninguna de estas'),
+    conAtajo.replace(/\n+/g, ' | ').slice(0, 400));
 
   await clic('Descuentos, cupones');
   await pagina.waitForTimeout(400);
+
+  // --- 6 bis. El filtro de seis preguntas antes de la lista ------------------
+  //
+  // Punto D6. Nadie revisaba si la campana cabia de verdad en el general que
+  // iba a usar, y una condicion que el general no dice no se le puede exigir al
+  // usuario. Cualquier si cambia el camino, y las salidas son tres.
+  const elFiltro = await texto();
+  revisar('antes de la lista van las seis preguntas del filtro',
+    elFiltro.indexOf('¿Sirve un T&C general para tu campaña?') !== -1 &&
+    elFiltro.indexOf('¿El usuario recibe Créditos o gana un premio?') !== -1 &&
+    elFiltro.indexOf('¿Aplica solo a ciertos usuarios?') !== -1,
+    elFiltro.replace(/\n+/g, ' | ').slice(0, 400));
+
+  async function responderDelFiltro(pregunta, respuesta) {
+    await pagina.evaluate(function (par) {
+      var bloque = [].slice.call(document.querySelectorAll('.pregunta'))
+        .filter(function (b) { return b.textContent.indexOf(par[0]) !== -1; })[0];
+      var opcion = [].slice.call(bloque.querySelectorAll('.opcion'))
+        .filter(function (o) { return o.textContent.trim() === par[1]; })[0];
+      opcion.click();
+    }, [pregunta, respuesta]);
+    await pagina.waitForTimeout(450);
+  }
+
+  async function volverAlFiltro() {
+    await desdeElInicio();
+    await decirQueNoATodo();
+    await clic('Colombia');
+    await clic('Rappi');
+    await clic('Descuentos, cupones');
+    await pagina.waitForTimeout(400);
+  }
+
+  // Salida 1: no es un T&C general, y la herramienta sabe hacer ese documento.
+  await responderDelFiltro('¿El usuario recibe Créditos o gana un premio?', 'Sí');
+  const aLosTipos = await texto();
+  revisar('un premio o Créditos devuelve a los tipos, con la razón',
+    aLosTipos.indexOf('Vuelve a los tipos y elige Cashback o Carrera de Compras') !== -1,
+    aLosTipos.replace(/\n+/g, ' | ').slice(0, 300));
+
+  // Salida 2: a Legal, con la razon, y con vuelta a lo respondido.
+  await volverAlFiltro();
+  await responderDelFiltro('¿Es un evento especial', 'Sí');
+  const aLegalDelFiltro = await texto();
+  revisar('un evento especial va a Legal con su razón',
+    aLegalDelFiltro.indexOf('Esta campaña la redacta Legal') !== -1 &&
+    aLegalDelFiltro.indexOf('mucha visibilidad llevan T&C propio') !== -1,
+    aLegalDelFiltro.replace(/\n+/g, ' | ').slice(0, 300));
+  await clic('Cambiar mi respuesta');
+  await pagina.waitForTimeout(400);
+  const deVueltaAlFiltroDeGenerales = await pagina.evaluate(() => ({
+    pantalla: RM.estado.estado.pantalla,
+    respuestas: RM.estado.estado.filtroDeGenerales,
+  }));
+  revisar('y "Cambiar mi respuesta" vuelve al filtro con lo marcado',
+    deVueltaAlFiltroDeGenerales.pantalla === 'filtroGenerales' &&
+    deVueltaAlFiltroDeGenerales.respuestas.eventoEspecial === true,
+    JSON.stringify(deVueltaAlFiltroDeGenerales));
+
+  // Salida 3: hay un general que sirve, y la lista lo pone primero.
+  await volverAlFiltro();
+  await responderDelFiltro('¿Aplica solo a ciertos usuarios?', 'Sí');
+  await clic('Pro o Pro Black');
+  await pagina.waitForTimeout(400);
+  const senalados = await texto();
+  revisar('la respuesta de Pro señala cuáles sirven, sin esconder los demás',
+    senalados.indexOf('los que sirven son los de Rappi Pro y Pro Black') !== -1 &&
+    senalados.indexOf('Envío Gratis') !== -1,
+    senalados.replace(/\n+/g, ' | ').slice(0, 400));
+
+  // Y con las seis en no, la lista entera.
+  await volverAlFiltro();
+  await pagina.evaluate(() => {
+    [].slice.call(document.querySelectorAll('.preguntas-filtro .opcion'))
+      .filter((b) => b.textContent.trim() === 'No').forEach((b) => b.click());
+  });
+  await pagina.waitForTimeout(700);
   const listaTyc = await texto();
   revisar('la lista de T&C publicados se lee como buena noticia',
     listaTyc.indexOf('no necesitas crear T&C') !== -1, listaTyc.replace(/\n+/g, ' | ').slice(0, 200));
@@ -596,6 +680,9 @@ async function recorrer() {
   await clic('Envío Gratis');
   await pagina.waitForTimeout(400);
   const limpio = await texto();
+  revisar('el detalle dice lo que la pieza tiene que decir',
+    limpio.indexOf('Tu pieza debe decir siempre') !== -1,
+    limpio.replace(/\n+/g, ' | ').slice(0, 400));
   revisar('un T&C sin pendientes sí dice que está listo',
     limpio.indexOf('Listo, no tienes que generar nada') !== -1 && limpio.indexOf('confirma con Legal') === -1,
     limpio.replace(/\n+/g, ' | ').slice(0, 300));
