@@ -38,6 +38,49 @@ El orden importa: la tanda 1 es la que más devuelve, porque son las pantallas
 donde el comercial decide si se queda. Si solo hay tiempo para tres, que sean la
 1, la 2 y la 3.
 
+## Dónde está cada cosa
+
+Todo vive en `docs/revision/`, dentro del repositorio. En GitHub se abre en
+`https://github.com/juangallego-commits/rappimind-v3/tree/main/docs/revision`.
+
+| Archivo | Para qué |
+|---|---|
+| `LEEME.md` | Esto que estás leyendo |
+| `PROMPT.md` | Lo que se pega al empezar cada conversación |
+| `tanda-1-la-entrada.md` | Tanda 1: La entrada: donde el comercial decide si esto le sirve |
+| `tanda-2-cashback.md` | Tanda 2: El Cashback, pregunta por pregunta |
+| `tanda-3-el-cierre.md` | Tanda 3: El cierre: revisar, generar y publicar |
+| `tanda-4-otros-tipos.md` | Tanda 4: Los otros tipos de campaña de Rappi |
+| `tanda-5-travel.md` | Tanda 5: Rappi Travel: los dos tipos, y las preguntas que nadie ha revisado |
+| `tanda-6-brasil.md` | Tanda 6: Brasil y la interfaz en portugués |
+| `tanda-7-celular-y-fallas.md` | Tanda 7: El celular, los errores y los límites |
+| `capturas/` | Las 21 fotos que se adjuntan |
+| `respuestas/` | Donde va lo que responda Claude chat |
+| `pantallas.json` | El texto de las pantallas, del que se arman las tandas. No se lee a mano |
+
+**Las fotos** están en `docs/revision/capturas/` y llevan delante el número de
+la pantalla, así que se ordenan solas. Cada tanda te dice cuáles adjuntar, pero
+si prefieres verlo de un golpe, este es el reparto:
+
+| Tanda | Fotos que le tocan |
+|---|---|
+| 1 | `01-inicio.png`, `02-filtro.png`, `03-pais.png`, `05-tipos.png`, `28-legal.png`, `31-tyc-generales.png`, `29-filtro-travel.png` |
+| 2 | `09-identificacion.png`, `36-error.png`, `11-porcentaje.png`, `14-veces.png` |
+| 3 | `23-resumen.png`, `25-listo.png`, `26-historial.png`, `27-ayuda.png`, `39-admin.png` |
+| 4 | `34-cashback-day.png`, `35-carrera.png` |
+| 5 | ninguna, esta tanda es de preguntas sin pantalla propia |
+| 6 | `43-pt-tipos.png` |
+| 7 | `45-celular-pregunta.png`, `46-celular-hoja.png` |
+
+**Para bajarlas desde GitHub**, abre la foto y dale al botón de descargar
+(arriba a la derecha, el de la flecha hacia abajo). Bajarlas una por una es
+lento: si vas a hacer varias tandas, conviene bajar el repositorio entero una
+vez, con el botón verde **Code** y luego **Download ZIP**.
+
+**Y `docs/FRONT_ACTUAL.html`**, que no está en esta carpeta sino un nivel
+arriba, en `docs/`. Ese es el front entero en un archivo, para verlo tú con
+doble clic. No se lo mandes a Claude chat: el porqué está más arriba.
+
 ## Cómo se hace cada tanda
 
 1. Abre una **conversación nueva** en Claude chat. Nueva de verdad, una por tanda:

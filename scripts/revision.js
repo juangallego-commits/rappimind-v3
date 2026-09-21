@@ -591,6 +591,7 @@ function main() {
       kb: Math.round(texto.length / 1024),
       pantallas: suyas.length,
       fotos: suyas.filter((pantalla) => pantalla.foto).length,
+      nombresDeFotos: suyas.filter((pantalla) => pantalla.foto).map((pantalla) => pantalla.foto),
       preguntas: (texto.match(/^#### /gm) || []).length,
     });
   });
@@ -602,6 +603,7 @@ function main() {
   escribirTexto(path.join(CARPETA, 'LEEME.md'), require('./lib/revision-prompt').leeme({
     tandas: archivos,
     pantallas: datos.pantallas.length,
+    fotos: datos.pantallas.filter((pantalla) => pantalla.foto).length,
     generado: datos.generado,
     commit: datos.commit,
   }));

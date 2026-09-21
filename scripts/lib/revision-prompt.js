@@ -181,6 +181,9 @@ function prompt(datos) {
 }
 
 /** El LEEME: como se usa el paquete, sin terminal. */
+/** El repositorio, para los enlaces de GitHub. */
+const REPO = 'https://github.com/juangallego-commits/rappimind-v3';
+
 function leeme(datos) {
   const lineas = [];
 
@@ -232,6 +235,46 @@ function leeme(datos) {
   lineas.push('El orden importa: la tanda 1 es la que más devuelve, porque son las pantallas');
   lineas.push('donde el comercial decide si se queda. Si solo hay tiempo para tres, que sean la');
   lineas.push('1, la 2 y la 3.');
+  lineas.push('');
+
+  lineas.push('## Dónde está cada cosa');
+  lineas.push('');
+  lineas.push('Todo vive en `docs/revision/`, dentro del repositorio. En GitHub se abre en');
+  lineas.push('`' + REPO + '/tree/main/docs/revision`.');
+  lineas.push('');
+  lineas.push('| Archivo | Para qué |');
+  lineas.push('|---|---|');
+  lineas.push('| `LEEME.md` | Esto que estás leyendo |');
+  lineas.push('| `PROMPT.md` | Lo que se pega al empezar cada conversación |');
+  for (const archivo of datos.tandas) {
+    lineas.push('| `' + archivo.nombre + '` | Tanda ' + archivo.numero + ': ' +
+      archivo.tanda.titulo + ' |');
+  }
+  lineas.push('| `capturas/` | Las ' + datos.fotos + ' fotos que se adjuntan |');
+  lineas.push('| `respuestas/` | Donde va lo que responda Claude chat |');
+  lineas.push('| `pantallas.json` | El texto de las pantallas, del que se arman las tandas. No se lee a mano |');
+  lineas.push('');
+  lineas.push('**Las fotos** están en `docs/revision/capturas/` y llevan delante el número de');
+  lineas.push('la pantalla, así que se ordenan solas. Cada tanda te dice cuáles adjuntar, pero');
+  lineas.push('si prefieres verlo de un golpe, este es el reparto:');
+  lineas.push('');
+  lineas.push('| Tanda | Fotos que le tocan |');
+  lineas.push('|---|---|');
+  for (const archivo of datos.tandas) {
+    const suyas = (archivo.nombresDeFotos || []);
+    lineas.push('| ' + archivo.numero + ' | ' +
+      (suyas.length ? suyas.map((nombre) => '`' + nombre + '`').join(', ') : 'ninguna, esta tanda es de preguntas sin pantalla propia') +
+      ' |');
+  }
+  lineas.push('');
+  lineas.push('**Para bajarlas desde GitHub**, abre la foto y dale al botón de descargar');
+  lineas.push('(arriba a la derecha, el de la flecha hacia abajo). Bajarlas una por una es');
+  lineas.push('lento: si vas a hacer varias tandas, conviene bajar el repositorio entero una');
+  lineas.push('vez, con el botón verde **Code** y luego **Download ZIP**.');
+  lineas.push('');
+  lineas.push('**Y `docs/FRONT_ACTUAL.html`**, que no está en esta carpeta sino un nivel');
+  lineas.push('arriba, en `docs/`. Ese es el front entero en un archivo, para verlo tú con');
+  lineas.push('doble clic. No se lo mandes a Claude chat: el porqué está más arriba.');
   lineas.push('');
 
   lineas.push('## Cómo se hace cada tanda');
