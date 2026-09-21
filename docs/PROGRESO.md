@@ -7,6 +7,7 @@
 | 2 | listo, falta verificar en Google | `npm test` (157 pruebas) | Correr `setup()` y completar las propiedades |
 | 3 | listo | `npm run demo` y abrir `demo/index.html` | Revisar las capturas y los textos |
 | 4 | pendiente | | Falta el despliegue versionado, que lo dispara Juan |
+| 9 · identidad | cerrado | `npm test` (681), `npm run contraste` y los dos recorridos | Mirar el titular y la píldora Publicado en pantalla, y decidir el correo, el lockup y los estados del historial |
 
 ## Bloque 0 · Repo, build y despliegue
 
@@ -2164,3 +2165,159 @@ en la columna de la derecha mientras pegas.
    anunció, en el beneficio por producto. Viene de las dos piezas publicadas, no
    la inventé, pero conviene confirmarla a propósito.
 3. **Lo de las cuotas**, que es donde no le di la razón.
+
+---
+
+# Bloque 9 · El cambio de identidad
+
+Cerrado el 21 de septiembre de 2026. Es el encargo de `docs/PROMPT_IDENTIDAD.md`,
+ejecutado entero: la foto del antes, la ronda de lectura, las ocho fases, las cinco
+auditorías y el revisor.
+
+**Es un cambio de piel, no de producto.** Cero líneas tocadas en `modelos/`,
+`data/` y `src/core/`, que es donde vive el texto legal y la lógica del documento.
+
+## Cómo probarlo
+
+```
+npm test                       681 pruebas
+npm run contraste              la puerta de contraste, devuelve 1 si algo no llega
+npm run demo                   abre demo/index.html con doble clic
+export NODE_PATH=/opt/node22/lib/node_modules
+export PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
+node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js
+node .claude/skills/flujo-y-ux/scripts/recorrer-en-portugues.js
+npm run front                  regenera docs/FRONT_ACTUAL.html, 48 pantallas
+```
+
+**Lo primero que conviene mirar con los ojos**, porque es lo que más cambia de
+aspecto y es reversible en una línea:
+
+1. El titular. Abre `demo/index.html` y compara el inicio, que va a 48px, con
+   cualquier pregunta, que va a 34px. Hasta la ronda 4 iba a 28px, que era el
+   tamaño del sistema anterior.
+2. La píldora "Publicado" del historial. Lleva un gradiente hundido, más terroso
+   que el de marca, porque el de marca con letra blanca encima no llega al mínimo
+   de contraste en ningún punto de su recorrido.
+
+## Qué quedó
+
+**Los tokens que se sirven viven en `src/client/tokens/`**, cinco archivos que el
+build concatena en ese orden, con `rappimind.css` el último porque es la capa de
+aplicación y pisa a los de marca. `docs/diseno/tokens/` se queda como la entrega
+original de Claude Design, intacta: producción lleva seis valores cambiados, que
+son los arreglos de contraste, y sin ellos `npm run contraste` devuelve 1.
+
+**No hay ningún `@import`.** El orden está escrito una sola vez, en
+`scripts/lib/hoja-completa.js`, y lo usan los cuatro que sirven la hoja: el build,
+la demostración, `npm run front` y las pruebas. Que las pruebas lean por ahí es la
+red, no comodidad.
+
+**La letra.** PP Object Sans viaja incrustada en base64, y solo una cara, la de
+peso 900, para los titulares y la marca. El cuerpo va con Archivo desde Google
+Fonts. La decisión la tomó Juan con la medición delante: los cuatro pesos costaban
+un 42,9% más en cada carga, y uno solo cuesta un 10,4%. La primera visita pesa
+menos que antes del cambio.
+
+**El contraste pasó de 9 pares por debajo a cero**, con 41 pares medidos. Entre
+ellos, dos que no existían y que dejaron pasar defectos reales: el blanco sobre el
+gradiente sin recortar y la superficie de un control contra el fondo de página.
+
+## Qué falta, y de quién es
+
+| Qué | De quién |
+|---|---|
+| El correo que envía la herramienta sigue con la paleta y la letra anteriores | De Juan. Está en `src/core/correo.js` y el encargo prohibió esa carpeta |
+| El lockup de la marca | De Juan. La marca de la barra es texto en el DOM y el SVG no es autosuficiente. Decisión 110 |
+| El adorno del bigote del héroe | De Juan. Cuesta 67 KB sin comprimir por una decoración al 10%. Decisión 111 |
+| Si el historial emite sus cuatro estados o se queda con dos | De Juan. La hoja tiene los cuatro escritos; el JavaScript emite dos |
+| El color del contador de la hoja por estado | Necesita una clase del JavaScript, que esta ronda no podía tocar. Hoy va neutro |
+
+## Lo que nadie ha mirado, y conviene decirlo
+
+- **Esto nunca se ha abierto en Apps Script.** El encargo prohibió `clasp push` y
+  se respetó. Las cuatro comprobaciones de frontera están en verde, pero verde en
+  la prueba no es verde en producción.
+- **Nadie probó qué pasa si Archivo no llega.** Se pide a Google Fonts por la red.
+  Si no llega, todo menos el titular cae a la letra del sistema.
+- **El estado "vencido" de una opción nunca se ha visto pintado**, porque los T&C
+  generales de Colombia vencen el 31 de diciembre. Su estilo existe y se midió
+  sobre los tokens, no en pantalla.
+- **`docs/FRONT_ACTUAL.html` no puede medir grosores de borde.** Encoge cada
+  pantalla con zoom 0.78, y un borde de 1px y otro de 2px le salen los dos en
+  1,28px. Cuatro de los cinco auditores midieron grosores ahí sin saberlo.
+
+## Tres cosas que se dieron por hechas y no lo estaban
+
+Van escritas porque el patrón importa más que los tres casos: **en esta aplicación
+el modo de falla es silencioso**, y un mensaje de commit que dice "arreglado" no es
+una prueba.
+
+1. *"El botón conserva su nombre y su tamaño de blanco"* al caer las etiquetas de
+   la barra. El nombre sí; el blanco medía 4px de alto.
+2. *"Los tres niveles de aviso se reconocen en blanco y negro."* En modo de
+   colores forzados el informativo y el serio salían idénticos.
+3. *"Se esconde el nombre en las mismas cinco condiciones."* Las cinco reglas
+   usaban `:has()` dentro de `:has()`, que no existe: el navegador las tiraba
+   enteras sin decir nada.
+
+Las tres las encontraron los auditores, no yo, y las tres están arregladas. De la
+tercera salió la prueba que ahora comprueba que las reglas de la hoja se puedan
+leer, que no existía.
+
+## La vara
+
+El encargo pide que al final el diff de `textos.json` salga vacío. **No sale
+vacío, y no se está escondiendo.** Salen 15 pantallas idénticas de 31, y 16 con
+diferencias registradas una a una; quince de esas dieciséis son la línea "Paso n
+de m", que la especificación manda hacer visible cuando las etiquetas de la barra
+se caen.
+
+La vara pasó a comprobar algo más útil que "el diff está vacío": que las únicas
+diferencias contra la foto del antes sean exactamente las aceptadas. Cualquier
+línea de más o de menos es una regresión.
+
+Y desde la ronda 4 compara también la vara ancha de 48 pantallas, que la fase 0
+guardó y que hasta entonces nadie había comparado. Cubre lo que la de 31 no
+alcanza: Travel, los T&C generales, el país en piloto, la ampliación, la
+administración y las tres vistas de celular.
+
+---
+
+# Bloque 10 · El correo, pendiente
+
+No está hecho y es el siguiente. Se deja escrito aquí para que no se pierda, con
+el contexto completo, porque quien lo tome puede no haber estado en el bloque 9.
+
+**Qué es.** Cuando el comercial genera su T&C, RappiMind le manda un correo con el
+documento y los pasos para publicarlo. Ese correo lo arma `src/core/correo.js`, y
+su apariencia está escrita a mano dentro del código, no en la hoja de estilos.
+
+**Qué pasa.** Los cuatro colores están clavados en las líneas 29 a 32 y son los del
+sistema anterior: `#FF441F`, `#16181D`, `#5D626D` y `#E3E5EA`. La línea 81 pide la
+letra Lato, que el bloque 9 quitó de la aplicación, y las líneas 77 y 78 pintan el
+fondo con el gris frío viejo. O sea que desde el cambio de identidad la aplicación
+se ve de una marca y el correo que la aplicación envía se ve de otra.
+
+Importa más de lo que parece: es el único artefacto de RappiMind que sale de la
+herramienta y llega a la bandeja de alguien.
+
+**Por qué no entró en el bloque 9.** El encargo dice, con esas palabras, "cero
+cambios en `modelos/`, `data/` y `src/core/`: nada de ahí es estilo". Esa regla se
+escribió para proteger el texto legal, y `correo.js` es lo único de esa carpeta que
+sí es estilo. Se dejó fuera a propósito, para no saltarse la regla por cuenta
+propia, y Juan lo sabe.
+
+**Qué haría falta.** Cuatro colores y una familia de letra. Dos avisos para quien
+lo tome:
+
+- Los clientes de correo no cargan fuentes web con fiabilidad, así que PP Object
+  Sans no se puede dar por hecha. La pila tiene que aguantar caer a la del sistema.
+- Los tokens ya tienen lo que hace falta y hoy no los usa nadie:
+  `--color-email-text` en `colors.css` y `--email-title-size`, `--email-body-size`
+  y `--email-cta-size` en `typography.css`.
+
+**Y una vara propia.** El correo no pasa por `npm run contraste`, porque ese script
+mide los tokens que se sirven en la aplicación. Si el correo entra al sistema, sus
+pares tienen que entrar a `PARES` en `scripts/contraste.js`, o se queda fuera de la
+única puerta que hay.

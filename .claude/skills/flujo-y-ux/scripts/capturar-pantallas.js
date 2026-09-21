@@ -4,7 +4,7 @@
  * Recorre la demostracion con Playwright y regenera las capturas de revision.
  *
  * Deja en docs/capturas/revision/ una captura por pantalla del recorrido del
- * comercial (33 en total, con los mismos nombres de siempre) y un textos.json
+ * comercial (31 en total) y un textos.json
  * con, por cada captura, { archivo, titulo, texto }: el texto literal que se
  * lee en esa pantalla, linea por linea, tal como lo devuelve innerText.
  *
@@ -59,25 +59,23 @@ const PANTALLAS = [
   { archivo: '12-pregunta-tope.png', titulo: 'Formulario, el tope por pedido' },
   { archivo: '13-pregunta-presupuesto.png', titulo: 'Formulario, el presupuesto' },
   { archivo: '14-pregunta-veces-por-persona.png', titulo: 'Formulario, cuántas veces puede ganar' },
-  { archivo: '15-pregunta-condiciones.png', titulo: 'Formulario, el tipo de pedido' },
-  { archivo: '16-pregunta-carga-de-creditos.png', titulo: 'Formulario, cuándo llegan los Créditos' },
-  { archivo: '17-pregunta-vigencia-de-creditos.png', titulo: 'Formulario, hasta cuándo sirven los Créditos' },
-  { archivo: '18-pregunta-donde-se-gastan.png', titulo: 'Formulario, dónde se gastan los Créditos' },
-  { archivo: '19-pregunta-segmento.png', titulo: 'Formulario, quién participa' },
-  { archivo: '20-pregunta-medio-de-pago.png', titulo: 'Formulario, el medio de pago' },
-  { archivo: '21-pregunta-compra-minima.png', titulo: 'Formulario, la compra mínima' },
-  { archivo: '22-resumen.png', titulo: 'Resumen, con algo pendiente' },
-  { archivo: '23-resumen-declaracion.png', titulo: 'Resumen, ya completo' },
-  { archivo: '24-listo.png', titulo: 'Listo' },
-  { archivo: '25-mis-campanas.png', titulo: 'Mis campañas' },
-  { archivo: '26-ayuda.png', titulo: 'Ayuda' },
-  { archivo: '27-legal.png', titulo: 'Legal' },
-  { archivo: '28-filtro-travel.png', titulo: 'Filtro de Rappi Travel' },
-  { archivo: '29-tipos-travel.png', titulo: 'Formulario, el tipo de campaña de Rappi Travel' },
-  { archivo: '30-inicio-portugues.png', titulo: 'Inicio, interfaz en portugués' },
-  { archivo: '31-filtro-portugues.png', titulo: 'Filtro de entrada, interfaz en portugués' },
-  { archivo: '32-pregunta-negocio-portugues.png', titulo: 'Formulario en portugués, el negocio' },
-  { archivo: '33-tipos-portugues.png', titulo: 'Formulario en portugués, el tipo de campaña' },
+  { archivo: '15-pregunta-carga-de-creditos.png', titulo: 'Formulario, cuándo llegan los Créditos' },
+  { archivo: '16-pregunta-vigencia-de-creditos.png', titulo: 'Formulario, hasta cuándo sirven los Créditos' },
+  { archivo: '17-pregunta-donde-se-gastan.png', titulo: 'Formulario, dónde se gastan los Créditos' },
+  { archivo: '18-pregunta-segmento.png', titulo: 'Formulario, quién participa' },
+  { archivo: '19-pregunta-medio-de-pago.png', titulo: 'Formulario, el medio de pago' },
+  { archivo: '20-pregunta-compra-minima.png', titulo: 'Formulario, la compra mínima' },
+  { archivo: '21-resumen.png', titulo: 'Resumen, con algo pendiente' },
+  { archivo: '22-resumen-declaracion.png', titulo: 'Resumen, ya completo' },
+  { archivo: '23-listo.png', titulo: 'Listo' },
+  { archivo: '24-mis-campanas.png', titulo: 'Mis campañas' },
+  { archivo: '25-ayuda.png', titulo: 'Ayuda' },
+  { archivo: '26-legal.png', titulo: 'Legal' },
+  { archivo: '27-filtro-travel.png', titulo: 'Filtro de Rappi Travel' },
+  { archivo: '28-tipos-travel.png', titulo: 'Formulario, el tipo de campaña de Rappi Travel' },
+  { archivo: '29-inicio-portugues.png', titulo: 'Inicio, interfaz en portugués' },
+  { archivo: '30-filtro-portugues.png', titulo: 'Filtro de entrada, interfaz en portugués' },
+  { archivo: '31-tipos-portugues.png', titulo: 'Formulario en portugués, el tipo de campaña' },
 ];
 
 /** Busca playwright-core y un Chromium sin instalar nada (igual que recorrer-flujo.js). */
@@ -287,7 +285,7 @@ async function capturarTodo() {
     }, { vistaPrevia: MARCA_VISTA_PREVIA, documento: MARCA_DOCUMENTO });
   }
 
-  /** Captura la pantalla numero n (1 a 33) y guarda su texto. */
+  /** Captura la pantalla numero n (1 a 31) y guarda su texto. */
   async function capturar(numero, opciones) {
     const pantalla = PANTALLAS[numero - 1];
     if (opciones && opciones.porQue) await abrirPorQue();
@@ -319,7 +317,7 @@ async function capturarTodo() {
   }
 
   // --- 1 a 26. La campana de ejemplo, de principio a fin -------------------
-  await tramo('el recorrido del Cashback', rango(1, 26), async () => {
+  await tramo('el recorrido del Cashback', rango(1, 25), async () => {
     await paginaNueva();
     await capturar(1);
 
@@ -340,6 +338,11 @@ async function capturarTodo() {
 
     await escribir('Farmatodo');
     await siguiente();
+    // Entre la tienda y la cobertura entro "En cual de sus tiendas se gana el
+    // cashback". Se responde pero no se captura, para que los nombres de las
+    // 33 pantallas de PANTALLAS sigan senalando la misma pantalla de siempre;
+    // el texto de esa pregunta si queda en docs/revision/pantallas.json.
+    await elegirOpcion('Solo en la tienda normal');
     await capturar(7, { porQue: true });
 
     await elegirOpcion('En todo el país');
@@ -380,27 +383,22 @@ async function capturarTodo() {
     await elegirOpcion('Una sola vez');
     await capturar(15, { porQue: true });
 
-    // Desde el 20 de septiembre de 2026 (punto D2) es una sola eleccion y
-    // avanza sola: ya no hace falta pulsar Siguiente.
-    await elegirOpcion('Solo pedidos por Turbo');
-    await capturar(16, { porQue: true });
-
     await elegirOpcion('Al día siguiente del pedido');
-    await capturar(17, { porQue: true });
+    await capturar(16, { porQue: true });
 
     await elegirOpcion('Hasta una fecha');
     await escribir('2026-12-31', 'date');
     await siguiente();
-    await capturar(18, { porQue: true });
+    await capturar(17, { porQue: true });
 
     await elegirOpcion('Solo en esta tienda');
-    await capturar(19, { porQue: true });
+    await capturar(18, { porQue: true });
 
     await elegirOpcion('Todos los usuarios');
-    await capturar(20, { porQue: true });
+    await capturar(19, { porQue: true });
 
     await elegirOpcion('Con cualquier medio de pago');
-    await capturar(21, { porQue: true });
+    await capturar(20, { porQue: true });
 
     await escribir('30000');
     // Con la pregunta de la categoria detras, el boton de la compra minima dice
@@ -412,64 +410,61 @@ async function capturarTodo() {
     // asistente avanza solo, y como es la ultima, avanza al resumen.
     await elegirOpcion('Licores y cervezas');
     await pagina.waitForTimeout(500);
-    await capturar(22);
+    await capturar(21);
 
     await pagina.click('#declaracion');
     await pagina.waitForTimeout(300);
-    await capturar(23);
+    await capturar(22);
 
     await clic('Generar T&C');
     await pagina.waitForTimeout(900);
-    await capturar(24);
+    await capturar(23);
 
     await clic('Mis campañas');
     await pagina.waitForTimeout(700);
-    await capturar(25);
+    await capturar(24);
 
     await clic('Ayuda');
-    await capturar(26);
+    await capturar(25);
   });
 
   // --- 27. Legal, respondiendo Si en el filtro de entrada ------------------
-  await tramo('el camino a Legal', [27], async () => {
+  await tramo('el camino a Legal', [26], async () => {
     await paginaNueva();
     await clic('Empezar');
     await elegirOpcion('Sí');
     await pagina.waitForTimeout(400);
-    await capturar(27);
+    await capturar(26);
   });
 
   // --- 28 y 29. Rappi Travel en Colombia ------------------------------------
-  await tramo('el camino de Rappi Travel', [28, 29], async () => {
+  await tramo('el camino de Rappi Travel', [27, 28], async () => {
     await paginaNueva();
     await clic('Empezar');
     await decirQueNoATodo();
     await elegirOpcion('Colombia');
     await elegirOpcion('Rappi Travel');
     await pagina.waitForTimeout(300);
-    await capturar(28);
+    await capturar(27);
 
     await decirQueNoATodo();
-    await capturar(29, { porQue: true });
+    await capturar(28, { porQue: true });
   });
 
   // --- 30 a 33. La interfaz en portugues, con Brasil ------------------------
-  await tramo('la interfaz en portugués', rango(30, 33), async () => {
+  await tramo('la interfaz en portugués', rango(29, 31), async () => {
     await paginaNueva();
     await pagina.evaluate(() => { window.localStorage.setItem('rappimind.idioma', 'pt'); });
     await pagina.reload();
     await prepararPagina();
-    await capturar(30);
+    await capturar(29);
 
     await clic('Começar');
-    await capturar(31);
+    await capturar(30);
 
     await decirQueNoATodo();
     await elegirOpcion('Brasil');
-    await capturar(32, { porQue: true });
-
-    await elegirOpcion('Rappi');
-    await capturar(33, { porQue: true });
+    await capturar(31, { porQue: true });
   });
 
   // El idioma vuelve a espanol, para no dejar la demostracion en portugues.

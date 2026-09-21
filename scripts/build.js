@@ -29,6 +29,7 @@ const {
   listarArchivos,
   existe,
 } = require('./lib/archivos');
+const { hojaCompleta } = require('./lib/hoja-completa');
 const { cargarModelos, cargarLeyendas, versionDelModelo } = require('./lib/modelos');
 
 const DIST = rutaDesdeRaiz('dist');
@@ -200,7 +201,7 @@ function generarHtml() {
 
   escribirTexto(
     path.join(DIST, 'Estilos.html'),
-    envolver('style', leerTexto(rutaDesdeRaiz('src', 'client', 'estilos.css')), 'Generado desde src/client/estilos.css')
+    envolver('style', hojaCompleta({ incrustarFuentes: true, sinComentarios: true }), 'Generado desde src/client/tokens/ y src/client/estilos.css')
   );
 
   // La interfaz vive en varios archivos, que se concatenan en orden alfabetico.

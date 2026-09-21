@@ -205,6 +205,21 @@ function acotarEstilos(css, marco) {
         continue;
       }
 
+      // Una consulta de contenedor no mide la ventana sino al ancestro que se
+      // declaro contenedor, asi que dentro del marco sigue midiendo lo mismo
+      // que en la aplicacion y no hay nada que traducir: basta con acotar lo
+      // de dentro, igual que con @supports.
+      //
+      // La usa la barra de progreso. Su regla es que las etiquetas se caen si
+      // hay mas de seis pasos O si un segmento baja de 88px, y esa segunda
+      // mitad no se puede medir con una consulta de ancho de ventana: la barra
+      // vive en una columna cuyo ancho depende de la rejilla, no de la pantalla.
+      if (arroba === '@container') {
+        salida += prefacio + '{\n' + acotarEstilos(bloque.cuerpo, marco) + '\n}';
+        i = bloque.fin;
+        continue;
+      }
+
       throw new Error(
         'No se como acotar "' + cabeza + '". Revisa scripts/lib/estilos-acotados.js.'
       );

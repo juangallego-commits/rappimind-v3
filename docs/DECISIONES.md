@@ -1240,3 +1240,199 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
     legal, para que el comercial sepa dónde encaja su campaña. Si algún día hace
     falta la categoría entera, es una línea en `MODALIDAD_POR_ALCANCE` y el
     nombre impreso lo da Legal.
+
+98. **El botón primario lleva texto blanco grande sobre un gradiente recortado.**
+    Decidido por Juan el 21 de septiembre de 2026, al cerrar el análisis del
+    cambio de identidad. El brand book de Rappi manda blanco sobre el neón
+    (`Neon/gradient → white only`) y el encargo manda 4.5:1 de contraste. Las dos
+    reglas no pueden cumplirse a la vez: medido con WCAG 2.1, el blanco sobre el
+    gradiente `#FF7A4D → #FF2526 → #FF4583` da entre 2.58:1 y 3.79:1, y 3.79 es
+    el máximo de todo el tramo. La salida es usar el umbral de texto grande, que
+    es 3:1 a partir de 18.66px en negrita: el botón lleva su texto a 19px en peso
+    700 y el gradiente del botón arranca en el 17% del tramo (desde `#FF6041`),
+    que es donde el blanco cruza ese umbral. Así se respeta la regla de marca y
+    se cumple AA. El gradiente completo se sigue usando donde no lleva texto.
+    El detalle está en `docs/PLAN_IDENTIDAD.md`, sección 3.1.
+
+99. **La tipografía se decide con el peso medido, no antes.** PP Object Sans no
+    está en Google Fonts, y Apps Script no sirve archivos del repositorio, así que
+    los cuatro pesos tendrían que ir en base64 dentro del HTML y suman a cada
+    carga de la aplicación. En vez de comprometer eso a ciegas, primero se mide
+    cuánto pesan los cuatro pesos convertidos y cuánto crece el HTML servido. Con
+    ese número se elige entre las tres opciones: la familia completa, un
+    subconjunto de pesos, o Archivo desde Google Fonts como respaldo con PP Object
+    Sans primero en la pila. La medición necesita `assets/fonts/`, que todavía no
+    está en el repositorio.
+
+## Bloque 8: el cambio de identidad
+
+100. **La decisión 99 se cierra con un solo peso incrustado.** Medido: los
+     cuatro pesos de PP Object Sans pesan 89,8 KB en woff2 recortado y 119,7 KB
+     en base64. Parecía un 14% sobre la carga y no lo es: el base64 es la única
+     parte de lo que se descarga que no se comprime, porque el woff2 ya viene
+     comprimido por dentro, mientras el resto de la aplicación baja cuatro a uno
+     con gzip. Sobre lo que de verdad viaja, los cuatro pesos cuestan un 42,9% en
+     cada carga, y Apps Script arma el HTML con `doGet` en cada petición y no lo
+     cachea. Juan eligió el 21 de septiembre de 2026 incrustar solo Heavy 900, que
+     es donde se reconoce la marca, y tomar 400, 500 y 700 de Archivo en Google
+     Fonts, que responde con un año de caché. Cuesta un 10,4% comprimido, y la
+     primera visita pesa 4,3 KB menos que hoy, porque Archivo es variable y los
+     cuatro pesos salen de un solo archivo de 34,1 KB mientras hoy se bajan Lato
+     más Poppins, que son 60,9 KB. Los números están en
+     `docs/diseno/MEDICION_FUENTES.md`.
+
+101. **Hay dos familias de letra, y la separación no es de estilo sino de
+     mecánica.** De PP Object Sans se sirve una sola cara, la de peso 900. Dentro
+     de una familia, cuando el peso pedido no existe el navegador elige el más
+     cercano que sí exista: con una sola cara declarada, pedir 400 devuelve la de
+     900. Si esa familia estuviera en la pila del cuerpo de texto, la aplicación
+     entera saldría en Heavy y nada fallaría. Por eso `--rm-display` lleva
+     PP Object Sans y solo vale donde el peso es 900, y el cuerpo va con Archivo,
+     que es variable y cubre de 400 a 900. Lo cuida la prueba `una familia de
+     display solo se usa en peso 900`.
+
+102. **Los tokens de producción viven en `src/client/tokens/` y el build los
+     concatena; no hay ningún `@import`.** Apps Script sirve la hoja embebida en
+     un solo `<style>`, así que un `@import` apunta a una ruta que del lado del
+     usuario no existe y no lanza ningún error: el navegador se queda sin esos
+     valores y la aplicación sale despintada. El orden está escrito una sola vez,
+     en `scripts/lib/hoja-completa.js`, y lo usan los cuatro que sirven la hoja:
+     el build, la demostración, `npm run front` y las pruebas. Que las pruebas
+     lean por ahí es la red: si alguien agrega un archivo de tokens y se olvida de
+     ponerlo en `ORDEN`, la prueba `toda variable de estilo que se usa está
+     definida` lo dice por su nombre.
+
+103. **`docs/diseno/tokens/` se queda como llegó y `src/client/tokens/` es lo que
+     se sirve.** No son copias: producción lleva los seis arreglos de
+     `docs/diseno/AUDITORIA_CONTRASTE.md`, sin los cuales `npm run contraste`
+     devuelve 1 con nueve pares por debajo del mínimo. Por eso ese script mide
+     ahora los de producción y no los de la entrega: medir la entrega sería medir
+     algo que nadie ve.
+
+104. **El anillo de foco se queda como `outline`, no pasa al halo del prototipo.**
+     El prototipo lo dibuja con dos capas de `box-shadow` en alfa .45 y .30, que
+     dan 1.99:1 y 1.57:1. El anillo que la aplicación ya tenía da 3.44:1 y el foco
+     visible está entre los intocables de `docs/PARA_EL_DISENO.md`, así que
+     copiarlo habría sido una regresión sobre algo que funcionaba. Queda un color
+     sólido, `#FF2526`, usado con `outline`: 3.79:1. De paso conserva la forma que
+     ya cuida `pruebas/interfaz_accesible.test.js`.
+
+105. **La hoja conserva sus nombres cortos como capa de alias.** Los 275 `var()`
+     de `estilos.css` siguen llamando a `--tinta`, `--papel` o `--borde`, y esos
+     nombres apuntan a los tokens de identidad. No es comodidad: `scripts/lib/
+     front-documento.js` usa doce de esos nombres y no los define, los hereda al
+     pegar la hoja dentro de `docs/FRONT_ACTUAL.html`. Si un nombre desaparece sin
+     avisar, el documento que envuelve a las 48 pantallas se queda sin colores ni
+     tipografía, en silencio, y ese documento es justo la herramienta con la que
+     se verifica cada fase. Solo se renombraron los tres que mentían: los naranjas
+     pasaron a `--neon` y `--neon-texto`, y en el mismo commit se actualizó
+     `front-documento.js`.
+
+106. **Dos tokens que hacían dos trabajos se parten antes de renombrar.**
+     `--borde-control` era a la vez el contorno de los campos, que necesita 3:1, y
+     el color de letra del deshabilitado, que necesita legibilidad; con el alfa
+     .44 que pide el contorno esa letra quedaba ilegible, así que la letra pasa a
+     `--texto-off`. `--rojo-alerta` era a la vez borde de error, que con 3:1 basta,
+     y texto de error, que necesita 4.5:1; se parte en `--neon` y `--neon-texto`.
+
+107. **La hoja vacía se queda como está y la opción elegida no lleva sombra.**
+     Las dos las decidió Juan el 21 de septiembre de 2026. La hoja vacía en
+     miniatura habría obligado a tocar `src/client/js/40-documento.js` y a
+     inventar un texto de cláusula de ejemplo que no viene de `modelos/`, o sea
+     contenido y no pintura. La sombra de la opción elegida habría roto el
+     principio de una sola superficie elevada, que es lo que hace que la hoja del
+     documento destaque sobre todo lo demás.
+
+108. **Las pantallas de momento son las tres que nombra la especificación:** el
+     inicio, "Tu T&C está listo" y el bloque de azar de la Ayuda. Legal, el error
+     y el país en piloto quedan fuera aunque hoy existan: las tres son callejones
+     donde la campaña no sigue por la herramienta, y un panel grande ahí no
+     celebra nada, subraya que te quedaste afuera. La regla del flujo dice
+     expresamente que ir a Legal no es un castigo.
+
+109. **El panel de momento se arma con el `h1` y su bajada, no con un contenedor
+     nuevo.** El prototipo dibuja el momento como una sección propia, pero el
+     JavaScript no emite ningún contenedor para ella y la ronda 2 del encargo
+     prohíbe agregarlo. Se arma con lo que ya hay: el `h1` y el párrafo que lo
+     sigue comparten el fondo beige, se les quita el margen de en medio y cada
+     uno redondea su mitad. A la vista es un solo panel, y la regla de gradiente
+     de 96 por 6 va entre los dos con un `::after` del título.
+
+     Los dos selectores están medidos contra las 48 pantallas congeladas, no
+     deducidos: el primero da exactamente las tres vistas del inicio, la de
+     escritorio, la de portugués y la de celular, y el segundo da solo "Tu T&C
+     está listo". El tercer momento, el bloque de azar de la Ayuda, ya quedó
+     resuelto en la fase 6: es el aviso serio, que es panel beige con regla de
+     gradiente arriba.
+
+110. **El lockup no entra en esta ronda, y no es por el peso.** La marca de la
+     barra superior es texto en el DOM (`RappiMind` más un `em` con `v3`, más la
+     corona en SVG), así que cambiarla por la imagen del lockup es tocar
+     `src/client/js/70-app.js`, que la ronda prohíbe. Además el SVG del lockup
+     todavía no es autosuficiente: el logotipo entra por referencia relativa a
+     `../logo/rappi-logo-440.png`, así que carga dentro de un HTML pero no dentro
+     de un `<img>`, y "Mind" y "By Legal" van como `<text>`, que dependen de que
+     PP Object Sans esté disponible. De la familia solo se sirve la cara de peso
+     900, así que esos dos textos saldrían los dos en Heavy.
+
+     Lo que sí se midió, por si sirve al decidir: el lockup en SVG cuesta 12,5 KB
+     en base64 contra los 36,0 KB del logo en PNG de 220, y además es texto, así
+     que gzip sí lo comprime. El favicon en SVG cuesta 11,0 KB contra 72,3 KB en
+     PNG. O sea que la ruta del SVG es mucho más barata en cuanto sea
+     autosuficiente.
+
+111. **El adorno del bigote del prototipo no entra.** El héroe del prototipo
+     lleva `rappi-bigote.png` de fondo, a 320px y al 10% de opacidad. Cuesta 67,3
+     KB en base64, que es la parte de la carga que no se comprime, en una
+     herramienta cuyo peso de descarga ya está anotado como problema en
+     `docs/PARA_EL_DISENO.md` sección 7 y que va a crecer cuando entren los
+     catálogos de leyendas de los otros ocho países. Setenta kilobytes en cada
+     carga por una decoración que se ve al 10% no es un cambio que se pague solo.
+     Si Juan lo quiere, la ruta barata es un SVG.
+
+112. **El título del aviso serio no va en caja alta.** Es una desviación
+     deliberada de `docs/diseno/ESPECIFICACION_ESTADOS.md` sección 2, autorizada
+     por Juan el 21 de septiembre de 2026. La regla se pensó para una etiqueta
+     corta, y los siete títulos que la aplicación pone en ese sitio son frases:
+     "Antes de usar este enlace, confirma con Legal", "La leyenda cambió. Cambia
+     el arte antes de publicarlo.", "Antes de lanzar: ¿tu dinámica tiene azar?".
+     Una frase de ocho palabras en mayúsculas no se lee, se escanea, y estas son
+     advertencias legales. No se pierde nada del sistema: lo que distingue al
+     nivel serio del informativo es el panel beige y la regla de gradiente de
+     arriba, que son estructura y cumplen por sí solas la regla del brand book de
+     no distinguir por color. La caja alta se queda donde sí hay etiquetas
+     cortas, que son las cabeceras de tabla y la marca de "Opcional".
+
+113. **El gradiente son tres gradientes, no uno.** El de marca (`--rm-grad`) con
+     blanco encima da entre 2.58:1 y 3.79:1, y ese 3.79 es el máximo de todo el
+     tramo: una letra normal en blanco no llega a 4.5 en ningún punto. El botón
+     primario sale por el umbral de texto grande, recortando el tramo al 17% y
+     subiendo su texto a 19px en peso 700 (decisión 98), y eso sirve donde el
+     texto puede crecer. La píldora de "Publicado" va a 13px dentro de una tabla
+     y no puede, así que existe `--rm-grad-texto`: el mismo gradiente con las tres
+     paradas hundidas hasta que el blanco pasa 4.5:1 en todo el tramo, con 4.62:1
+     en el peor punto. Conserva la señal, que es que Publicado sea el único estado
+     con gradiente. Lo usan también el visto de "Así queda" y el disco de la
+     opción elegida, que llevan algo encima y daban 2.58:1 donde les toca 3.
+
+114. **El elemento activo del menú se queda con su subrayado neón y no toma la
+     píldora beige del prototipo.** El prototipo lo dibuja como píldora `#FFF0DD`,
+     que es exactamente el mismo beige de la píldora "Generado" del historial y
+     del panel del aviso serio. Una píldora beige en la barra superior se leería
+     como un estado de campaña y no como "estás aquí". El subrayado de 2px en neón
+     dice la posición sin competir con el vocabulario de estados. Queda escrito
+     porque el auditor de FIDELIDAD lo marcó como desviación sin justificar, y
+     tenía razón en que no lo estaba.
+
+115. **La escala de titular se aplica desde la hoja y no pantalla por pantalla.**
+     El prototipo dibuja el titular entre 34 y 60px según la pantalla. Replicar
+     ese escalón uno a uno ataría la hoja de estilos a la lista de pantallas y se
+     desincronizaría con la primera que entre. Se toma 34px como base, que es el
+     escalón más bajo del prototipo, y los dos paneles de momento suben a 48px con
+     su propia regla, que ya existía.
+
+     Esto llegó tarde y conviene decir por qué: la fase 2 escribió "los tamaños no
+     se tocan aquí, eso es de las fases de componente" y ninguna de las fases 3 a 8
+     volvió por ellos. Los tres titulares se quedaron en 28, 21 y 17px, que son
+     exactamente los valores del sistema anterior. La identidad llegó a 3 de las
+     48 pantallas hasta que el auditor de FIDELIDAD midió los 48 titulares.

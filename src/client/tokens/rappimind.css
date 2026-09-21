@@ -1,0 +1,152 @@
+/* RappiMind · Capa de aplicación
+   PRODUCCIÓN. La entrega original de Claude Design está en
+   docs/diseno/tokens/rappimind.css y se queda ahí tal como llegó.
+
+   Extiende los tokens de RappiAds con lo que el design system no cubre:
+   estados de control, avisos y estados de campaña.
+   Se concatena SIEMPRE el último, para que pueda pisar a los anteriores.
+
+   Qué cambia respecto de la entrega, y por qué. Son los seis arreglos de
+   docs/diseno/AUDITORIA_CONTRASTE.md, que se reproducen con `npm run contraste`:
+
+     1. --rm-borde-control      .18 -> .44   daba 1.5:1 donde WCAG pide 3
+     2. --rm-placeholder    #8A8A8A -> #707070   daba 3.45:1 donde pide 4.5
+     3. --rm-aviso-error-color  neón -> #D91F20  daba 3.79:1 donde pide 4.5
+     4. --rm-hueco-subrayado  alfa .6 -> #D91F20 daba 2.32:1 donde pide 3
+     5. --rm-anillo y --rm-anillo-campo, que eran halos de box-shadow con alfa
+        .45 y .30, daban 1.99:1 y 1.57:1. El anillo de hoy ya cumple con 3.44:1
+        y el foco visible está entre los intocables de docs/PARA_EL_DISENO.md,
+        así que copiarlos habría sido una regresión sobre algo que funcionaba.
+        Quedan como un color sólido que se usa con outline: 3.79:1.
+     6. --color-muted del design system, .55 -> .57 (ver colors.css)
+
+   Regla general: ningún estado se comunica con opacity. Bajar la opacidad
+   arrastra el texto por debajo del contraste mínimo. Se usan colores planos.
+
+   Aquí solo hay tokens. Las animaciones y la consulta de movimiento reducido
+   viven en src/client/estilos.css, que ya las tenía y además apaga el
+   scroll-behavior, cosa que la entrega original no hacía. */
+
+:root {
+  /* === SUPERFICIES === */
+  --rm-papel: #FFFFFF;
+  --rm-niebla: #F4F5F6;            /* fondo de página y de control deshabilitado */
+  --rm-tinta: #0A0A0A;
+
+  /* === LETRA ===
+     Dos familias, y la separación es deliberada. Ver el comentario largo de
+     fonts.css: de PP Object Sans se sirve una sola cara, la de peso 900, así
+     que si esa familia estuviera en la pila del cuerpo el navegador la usaría
+     también para 400, 500 y 700 y la aplicación entera saldría en Heavy. */
+  --rm-display: 'PPObjectSans', 'Archivo', system-ui, -apple-system, sans-serif;
+  --rm-texto-familia: 'Archivo', system-ui, -apple-system, sans-serif;
+
+  /* === TEXTO === */
+  --rm-texto: #0A0A0A;
+  --rm-texto-2: #595959;           /* 7.0:1 sobre blanco · secundario */
+  --rm-texto-off: #6B6B6B;         /* 4.88:1 sobre #F4F5F6 · deshabilitado */
+  --rm-placeholder: #707070;       /* 4.95:1 sobre papel, 4.54:1 sobre niebla */
+
+  /* === LÍNEAS === */
+  --rm-linea: rgba(10,10,10,.10);
+  --rm-borde-control: rgba(10,10,10,.44);   /* 3.07:1 sobre papel, 3.01:1 sobre niebla */
+  --rm-borde-secundario: rgba(10,10,10,.22);
+  --rm-borde-hover: rgba(10,10,10,.66);    /* el paso intermedio: ni vacío ni lleno */
+  --rm-borde-opcion: rgba(10,10,10,.12);    /* la tarjeta de opción sin elegir */
+
+  /* === ACENTO ===
+     Dos neones y la diferencia importa. El plano es para lo que NO lleva texto
+     encima, donde el mínimo es 3:1 y lo pasa. El de texto es el mismo neón al
+     85% de brillo, para lo que sí lleva texto, donde el mínimo es 4.5:1. */
+  --rm-neon: #FF2526;
+  --rm-neon-texto: #D41D1E;        /* 5.26 papel · 4.82 niebla · 4.70 beige · 4.50 celeste */
+  --rm-grad: linear-gradient(135deg, #FF7A4D 0%, #FF2526 55%, #FF4583 100%);
+  --rm-grad-hover: linear-gradient(135deg, #E8623A 0%, #D91F20 55%, #E03A72 100%);
+
+  /* El gradiente PARA SUPERFICIES QUE LLEVAN TEXTO ENCIMA.
+     El gradiente de marca no sirve para eso: su máximo con blanco es 3.79:1 y
+     su punto más claro 2.58:1, así que una letra normal encima no llega a 4.5
+     en NINGÚN punto. El botón primario lo resuelve recortando el tramo y
+     subiendo el texto a 19px en peso 700 (decisión 98), pero eso solo vale
+     donde el texto puede crecer. La píldora de Publicado va a 13px dentro de
+     una tabla y no puede.
+     Este es el mismo gradiente con las tres paradas hundidas hasta que el
+     blanco pasa 4.5:1 en TODO el tramo: el peor punto da 4.62:1. Conserva la
+     señal, que es que Publicado sea el único estado con gradiente. */
+  --rm-grad-texto: linear-gradient(135deg, #B95838 0%, #E42122 55%, #D2396C 100%);
+
+  /* El gradiente del botón primario, recortado al 17% del tramo. Decisión 98.
+     El blanco no llega a 4.5:1 en NINGÚN punto del gradiente completo: el
+     máximo de todo el tramo es 3.79:1. Recortando en el 17%, que es donde
+     empieza #FF6041, el blanco cruza 3.00:1, que es el umbral de texto grande,
+     y por eso el botón lleva su texto a 19px en peso 700. Las paradas de
+     dentro se recolocan: el 55% del tramo original cae en el 45.8% del
+     recortado. */
+  --rm-grad-boton: linear-gradient(135deg, #FF6041 0%, #FF2526 46%, #FF4583 100%);
+  --rm-anillo-color: #FF2526;      /* 3.79:1 · se usa con outline, no con halo */
+  --rm-neon-presionado: #A81718;   /* 7.56:1 con blanco · el neón hundido, para :active */
+
+  /* === CAMPOS ===
+     El campo con valor lleva borde TINTA, no neón.
+     El neón queda reservado para el error: si "lleno" y "mal" comparten
+     color, no se distinguen. */
+  --rm-campo-vacio: var(--rm-borde-control);
+  --rm-campo-lleno: var(--rm-tinta);
+  --rm-campo-error: #FF2526;       /* 2px, no 1.5px */
+  --rm-campo-off-bg: var(--rm-niebla);
+  --rm-campo-off-borde: var(--rm-linea);
+
+  /* === OPCIONES === */
+  --rm-opcion-sel-bg: rgba(255,37,38,.045);
+  --rm-opcion-sel-borde: #FF2526;
+  --rm-opcion-off-bg: var(--rm-niebla);
+
+  /* === PROGRESO === */
+  --rm-paso-hecho: var(--rm-tinta);
+  --rm-paso-actual: var(--rm-grad);
+  --rm-paso-pendiente: rgba(10,10,10,.12);
+  --rm-paso-alto: 4px;
+  --rm-paso-min-etiqueta: 88px;    /* por debajo, las etiquetas se ocultan */
+  --rm-paso-max-etiqueta: 6;       /* con más pasos, las etiquetas se ocultan */
+
+  /* === AVISOS ===
+     Tres niveles, distinguidos por ESTRUCTURA, no por color de borde.
+     1 informativo: panel celeste, sin título en caja alta.
+     2 serio:       panel beige + regla de 3px en el borde SUPERIOR + título en caja alta.
+     3 error campo: sin panel, pegado al campo. */
+  --rm-aviso-info-bg: #D9F1FF;
+  --rm-aviso-serio-bg: #FFF0DD;
+  --rm-aviso-serio-regla: var(--rm-grad);
+  --rm-aviso-error-color: var(--rm-neon-texto);
+
+  /* === ESTADOS DE CAMPAÑA ===
+     Ordenados por peso visual, no por matiz. El verde sale: no es de marca. */
+  --rm-estado-publicado-bg: var(--rm-grad-texto);
+  --rm-estado-publicado-fg: #FFFFFF;
+  --rm-estado-generado-bg: #FFF0DD;
+  --rm-estado-generado-fg: #0A0A0A;
+  --rm-estado-borrador-bg: var(--rm-niebla);
+  --rm-estado-borrador-fg: #595959;
+  --rm-estado-vencido-borde: rgba(10,10,10,.20);
+  --rm-estado-vencido-fg: #595959;
+
+  /* === DOCUMENTO === */
+  --rm-hueco-bg: #FFF0DD;
+  --rm-hueco-subrayado: 1.5px dotted #D91F20;   /* 4.5:1 sobre el beige del hueco */
+  --rm-destello: rgba(255,122,77,.45);
+  --rm-hoja-sombra: 0 1px 4px rgba(10,10,10,.08);
+
+  /* === SOMBRAS Y VELOS QUE NO DEFINE NINGÚN ARCHIVO DE TOKENS ===
+     Los tres existen hoy en la hoja como valores crudos sobre la tinta vieja
+     rgba(22,24,29). Suben a token para que el rebrand no los deje atrás, y su
+     rgb pasa a la tinta nueva. */
+  --rm-cortina: rgba(10,10,10,.35);
+  --rm-sombra-glosario: 0 6px 20px rgba(10,10,10,.25);
+  --rm-sombra-flotante: 0 2px 12px rgba(10,10,10,.12);
+
+  /* === MOVIMIENTO === */
+  --rm-t-control: 200ms;
+  --rm-t-entrada: 380ms;
+  --rm-t-destello: 900ms;
+  --rm-ease-entrada: cubic-bezier(.16, 1, .3, 1);
+}

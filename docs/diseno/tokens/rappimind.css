@@ -1,0 +1,107 @@
+/* RappiMind · Capa de aplicación
+   Extiende los tokens de RappiAds con lo que el design system no cubre:
+   estados de control, avisos y estados de campaña.
+   Importar SIEMPRE después de los cuatro tokens de RappiAds.
+
+   Regla general: ningún estado se comunica con opacity. Bajar la opacidad
+   arrastra el texto por debajo del contraste mínimo. Se usan colores planos. */
+
+:root {
+  /* === SUPERFICIES === */
+  --rm-papel: #FFFFFF;
+  --rm-niebla: #F4F5F6;            /* fondo de página y de control deshabilitado */
+  --rm-tinta: #0A0A0A;
+
+  /* === TEXTO === */
+  --rm-texto: #0A0A0A;
+  --rm-texto-2: #595959;           /* 7.0:1 sobre blanco · secundario */
+  --rm-texto-off: #6B6B6B;         /* 5.3:1 sobre #F4F5F6 · deshabilitado */
+  --rm-placeholder: #8A8A8A;
+
+  /* === LÍNEAS === */
+  --rm-linea: rgba(10,10,10,.10);
+  --rm-borde-control: rgba(10,10,10,.18);
+  --rm-borde-secundario: rgba(10,10,10,.22);
+
+  /* === ACENTO === */
+  --rm-neon: #FF2526;
+  --rm-grad: linear-gradient(135deg, #FF7A4D 0%, #FF2526 55%, #FF4583 100%);
+  --rm-grad-hover: linear-gradient(135deg, #E8623A 0%, #D91F20 55%, #E03A72 100%);
+  --rm-anillo: 0 0 0 2px #FFFFFF, 0 0 0 5px rgba(255,37,38,.45);
+  --rm-anillo-campo: 0 0 0 3px rgba(255,37,38,.30);
+
+  /* === CAMPOS ===
+     El campo con valor lleva borde TINTA, no neón.
+     El neón queda reservado para el error: si "lleno" y "mal" comparten
+     color, no se distinguen. */
+  --rm-campo-vacio: var(--rm-borde-control);
+  --rm-campo-lleno: var(--rm-tinta);
+  --rm-campo-error: #FF2526;       /* 2px, no 1.5px */
+  --rm-campo-off-bg: var(--rm-niebla);
+  --rm-campo-off-borde: var(--rm-linea);
+
+  /* === OPCIONES === */
+  --rm-opcion-sel-bg: rgba(255,37,38,.045);
+  --rm-opcion-sel-borde: #FF2526;
+  --rm-opcion-sel-sombra: 0 4px 16px rgba(255,37,38,.12);
+  --rm-opcion-off-bg: var(--rm-niebla);
+
+  /* === PROGRESO === */
+  --rm-paso-hecho: var(--rm-tinta);
+  --rm-paso-actual: var(--rm-grad);
+  --rm-paso-pendiente: rgba(10,10,10,.12);
+  --rm-paso-alto: 4px;
+  --rm-paso-min-etiqueta: 88px;    /* por debajo, las etiquetas se ocultan */
+  --rm-paso-max-etiqueta: 6;       /* con más pasos, las etiquetas se ocultan */
+
+  /* === AVISOS ===
+     Tres niveles, distinguidos por ESTRUCTURA, no por color de borde.
+     1 informativo: panel celeste, sin título.
+     2 serio:       panel beige + regla de 3px en el borde SUPERIOR + título en caja alta.
+     3 error campo: sin panel, pegado al campo. */
+  --rm-aviso-info-bg: #D9F1FF;
+  --rm-aviso-serio-bg: #FFF0DD;
+  --rm-aviso-serio-regla: var(--rm-grad);
+  --rm-aviso-error-color: #FF2526;
+
+  /* === ESTADOS DE CAMPAÑA ===
+     Ordenados por peso visual, no por matiz. El verde sale: no es de marca. */
+  --rm-estado-publicado-bg: var(--rm-grad);
+  --rm-estado-publicado-fg: #FFFFFF;
+  --rm-estado-generado-bg: #FFF0DD;
+  --rm-estado-generado-fg: #0A0A0A;
+  --rm-estado-borrador-bg: var(--rm-niebla);
+  --rm-estado-borrador-fg: #595959;
+  --rm-estado-vencido-borde: rgba(10,10,10,.20);
+  --rm-estado-vencido-fg: #595959;
+
+  /* === DOCUMENTO === */
+  --rm-hueco-bg: #FFF0DD;
+  --rm-hueco-subrayado: 1.5px dotted rgba(255,37,38,.6);
+  --rm-destello: rgba(255,122,77,.45);
+  --rm-hoja-sombra: 0 1px 4px rgba(10,10,10,.08);
+
+  /* === MOVIMIENTO === */
+  --rm-t-control: 200ms;
+  --rm-t-entrada: 380ms;
+  --rm-t-destello: 900ms;
+  --rm-ease-entrada: cubic-bezier(.16, 1, .3, 1);
+}
+
+@keyframes rm-destello {
+  0%   { background: var(--rm-destello); }
+  100% { background: transparent; }
+}
+
+@keyframes rm-entra {
+  0%   { opacity: 0; transform: translateY(14px); }
+  100% { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}

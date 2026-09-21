@@ -6,38 +6,85 @@
  */
 
 :root {
-  --naranja-marca: #ff441f;
-  --naranja-accion: #d32f0f;
-  --naranja-presionado: #a82409;
-  --tinta: #16181d;
-  --gris-lapiz: #5d626d;
-  --papel: #ffffff;
-  --niebla: #f4f6f8;
+  /*
+   * Capa de alias. Los valores viven en src/client/tokens/ y se concatenan
+   * antes que esto; aqui solo estan los nombres cortos con que la hoja los
+   * llama, que son 275 llamadas a var(). Existe por dos razones concretas.
+   *
+   * Una: que la marca pueda mover un token sin que haya que tocar 275 sitios.
+   * Dos, y es la que muerde: scripts/lib/front-documento.js usa doce de estos
+   * nombres y NO los define, los hereda de aqui al pegar la hoja dentro de
+   * docs/FRONT_ACTUAL.html. Si un nombre desaparece sin avisar, el documento
+   * que envuelve a las 48 pantallas se queda sin colores ni tipografia, en
+   * silencio y sin error, y ese documento es justo la herramienta con la que
+   * se verifica cada fase del rebrand.
+   */
 
-  --verde-confirma: #0b7a52;
-  --verde-palido: #e6f4ee;
-  --rojo-alerta: #c4320a;
-  --rojo-palido: #fdece6;
-  --rubor: #ffede8;
+  /* Dos neones, y la diferencia no es cosmetica: el plano es para lo que no
+     lleva texto encima (bordes, anillos, viñetas), donde el minimo es 3:1; el
+     de texto es el mismo neon al 85% de brillo, para lo que si lo lleva, donde
+     el minimo es 4.5:1. Ver el hallazgo 3.6 de docs/PLAN_IDENTIDAD.md. */
+  --neon: var(--rm-neon);
+  --neon-texto: var(--rm-neon-texto);
+  --neon-presionado: var(--rm-neon-presionado);
+  --gradiente: var(--rm-grad);
+  --gradiente-boton: var(--rm-grad-boton);
+  --gradiente-hover: var(--rm-grad-hover);
+  --gradiente-texto: var(--rm-grad-texto);
 
-  --borde: #e2e6eb;
-  --borde-control: #767e8c;
+  --tinta: var(--rm-tinta);
+  --gris-lapiz: var(--rm-texto-2);
+  --texto-off: var(--rm-texto-off);
+  --papel: var(--rm-papel);
+  --niebla: var(--rm-niebla);
+  --beige: var(--rm-hueco-bg);
+  --celeste: var(--rm-aviso-info-bg);
 
-  --titulos: 'Poppins', system-ui, -apple-system, sans-serif;
-  --cuerpo: 'Lato', system-ui, -apple-system, sans-serif;
+  --borde: var(--rm-linea);
+  --borde-control: var(--rm-borde-control);
+  --borde-opcion: var(--rm-borde-opcion);
+
+  --campo-vacio: var(--rm-campo-vacio);
+  --borde-hover: var(--rm-borde-hover);
+  --campo-lleno: var(--rm-campo-lleno);
+  --campo-error: var(--rm-campo-error);
+  --campo-off-bg: var(--rm-campo-off-bg);
+  --campo-off-borde: var(--rm-campo-off-borde);
+  --marcador: var(--rm-placeholder);
+
+  --paso-hecho: var(--rm-paso-hecho);
+  --paso-actual: var(--rm-paso-actual);
+  --paso-pendiente: var(--rm-paso-pendiente);
+  --paso-alto: var(--rm-paso-alto);
+
+  /* Tres familias, y son dos de verdad. --display es PP Object Sans, de la que
+     se sirve UNA sola cara, la de peso 900, así que solo vale donde el peso es
+     900: si se usara en otro peso el navegador resolvería con la única cara que
+     hay y saldría Heavy sin avisar. --titulos y --cuerpo son Archivo, variable
+     de 400 a 900, y siguen separadas porque la hoja las llama por nombre en 275
+     sitios y porque el día que la marca traiga una segunda familia real entra
+     por aquí sin tocar nada más. */
+  --display: var(--rm-display);
+  --titulos: var(--rm-texto-familia);
+  --cuerpo: var(--rm-texto-familia);
 
   --e1: 4px; --e2: 8px; --e3: 12px; --e4: 16px;
   --e5: 24px; --e6: 32px; --e7: 48px; --e8: 64px;
 
-  --r-control: 6px;
-  --r-panel: 10px;
-  --r-hoja: 14px;
+  --r-control: var(--radius-sm);
+  --r-panel: var(--radius-md);
+  --r-hoja: var(--radius-lg);
+  --r-pildora: var(--radius-pill);
 
-  --sombra-hoja: 0 1px 2px rgba(22, 24, 29, 0.05), 0 8px 24px rgba(22, 24, 29, 0.07);
+  --sombra-hoja: var(--rm-hoja-sombra);
+  --sombra-glosario: var(--rm-sombra-glosario);
+  --sombra-flotante: var(--rm-sombra-flotante);
+  --cortina: var(--rm-cortina);
+  --destello: var(--rm-destello);
 
-  --t-rapido: 160ms;
-  --t-hoja: 220ms;
-  --t-destello: 900ms;
+  --t-rapido: var(--rm-t-control);
+  --t-hoja: var(--rm-t-entrada);
+  --t-destello: var(--rm-t-destello);
 }
 
 * { box-sizing: border-box; }
@@ -50,19 +97,48 @@ body {
   color: var(--tinta);
   font-family: var(--cuerpo);
   font-size: 16px;
+  font-weight: 500;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, .marca, button, .opcion-titulo { font-family: var(--titulos); font-weight: 600; }
-h1 { font-size: 28px; line-height: 1.2; margin: 0 0 var(--e3); letter-spacing: -0.015em; }
-h2 { font-size: 21px; line-height: 1.3; margin: 0 0 var(--e2); letter-spacing: -0.01em; }
-h3 { font-size: 17px; line-height: 1.35; margin: 0 0 var(--e2); }
+/*
+ * Los titulares llevan la letra de marca y van SIEMPRE en peso 900: es la
+ * única cara de PP Object Sans que se sirve. Lo vigila la prueba
+ * `una familia de display solo se usa en peso 900`.
+ *
+ * Hay un h1 por pantalla dentro de #app, que es parte del contrato de
+ * accesibilidad de docs/PARA_EL_DISENO.md, así que la letra de marca aparece
+ * en las 48 pantallas sin que haga falta incrustar ningún peso más.
+ */
+h1, h2, .marca { font-family: var(--display); font-weight: 900; }
+h3, button, .opcion-titulo { font-family: var(--titulos); font-weight: 700; }
+/*
+ * LA ESCALA DE TITULAR, que es el gesto mas visible de esta identidad: titular
+ * grande, muy apretado y en Heavy.
+ *
+ * Hasta la ronda 3 esto se habia quedado a medias sin que nadie lo notara. El
+ * commit de la fase 2 dice "los tamanos no se tocan aqui: eso es de las fases de
+ * componente", y ninguna de las fases 3 a 8 volvio por ellos: los tres titulares
+ * seguian en 28, 21 y 17px, o sea EXACTAMENTE los valores del sistema anterior,
+ * con el espaciado apretado y nada mas. La identidad llego a 3 de las 48
+ * pantallas, las dos de momento. Lo encontro el auditor de FIDELIDAD midiendo
+ * los 48 titulares, uno por uno.
+ *
+ * El prototipo dibuja entre 34 y 60px segun la pantalla, con -.04 o -.045em de
+ * espaciado. Aqui se toma 34px como base, que es su escalon mas bajo, y los
+ * paneles de momento suben a 48px con su propia regla. No se replica escalon por
+ * escalon pantalla por pantalla: eso ataria la hoja a la lista de pantallas y se
+ * desincronizaria con la primera que entre.
+ */
+h1 { font-size: 34px; line-height: 1.05; margin: 0 0 var(--e4); letter-spacing: -0.04em; }
+h2 { font-size: 26px; line-height: 1.1; margin: 0 0 var(--e3); letter-spacing: -0.035em; }
+h3 { font-size: 17px; line-height: 1.35; margin: 0 0 var(--e2); letter-spacing: -0.01em; }
 p { margin: 0 0 var(--e3); }
-a { color: var(--naranja-accion); }
+a { color: var(--neon-texto); }
 
 :focus-visible {
-  outline: 3px solid var(--naranja-marca);
+  outline: 3px solid var(--neon);
   outline-offset: 2px;
   border-radius: var(--r-control);
 }
@@ -87,9 +163,13 @@ a { color: var(--naranja-accion); }
   position: absolute;
   width: 14px; height: 9px;
   top: -2px; left: 40px;
-  color: var(--naranja-marca);
+  color: var(--neon);
 }
-.marca em { font-style: normal; color: var(--gris-lapiz); font-weight: 500; }
+/* El "v3" que va detras de RappiMind, en la barra de arriba. Declara su
+ * familia a proposito: si no, hereda de .marca la de display, de la que solo
+ * hay cara de peso 900, y en peso 500 saldria en Heavy igual que el nombre,
+ * con lo que la distincion entre el nombre y la version se perderia. */
+.marca em { font-style: normal; font-family: var(--titulos); color: var(--gris-lapiz); font-weight: 500; }
 
 /* --- Estructura --------------------------------------------------------- */
 
@@ -100,15 +180,22 @@ a { color: var(--naranja-accion); }
   border-bottom: 1px solid var(--borde);
   position: sticky; top: 0; z-index: 30;
 }
+/* La regla de gradiente que el prototipo pone en el borde de arriba de toda la
+   cabecera. Se hace con un fondo superpuesto, igual que la del aviso serio, para
+   no necesitar un elemento que el JavaScript no emite. */
+.barra-superior {
+  background: var(--gradiente) top/100% 3px no-repeat, var(--papel);
+  padding-top: calc(var(--e3) + 3px);
+}
 .barra-superior nav { margin-left: auto; display: flex; gap: var(--e1); flex-wrap: wrap; }
 
 .enlace-nav {
-  font-family: var(--titulos); font-weight: 600; font-size: 14px;
+  font-family: var(--titulos); font-weight: 700; font-size: 14px;
   color: var(--gris-lapiz); background: none; border: 0;
   padding: var(--e2) var(--e3); border-radius: var(--r-control); cursor: pointer;
 }
 .enlace-nav:hover { background: var(--niebla); color: var(--tinta); }
-.enlace-nav[aria-current='page'] { color: var(--tinta); box-shadow: inset 0 -2px 0 var(--naranja-marca); }
+.enlace-nav[aria-current='page'] { color: var(--tinta); box-shadow: inset 0 -2px 0 var(--neon); }
 
 /*
  * El titulo de la pantalla recibe el foco al cambiar de pantalla, para que el
@@ -131,48 +218,139 @@ h1[tabindex='-1']:focus:not(:focus-visible) { outline: none; }
 
 /* --- Aviso -------------------------------------------------------------- */
 
+/*
+ * LOS TRES NIVELES DE AVISO
+ *
+ * Se distinguen por ESTRUCTURA, no por color de borde, asi que se reconocen
+ * aunque se vean en blanco y negro. El brand book prohibe el borde izquierdo
+ * de color, que hasta ahora era lo unico que separaba .aviso de .aviso-serio:
+ * dos avisos con la misma forma y distinto matiz no se distinguen si el matiz
+ * no se ve.
+ *
+ *   1 informativo   panel celeste, sin adorno
+ *   2 serio         panel beige, regla de gradiente ARRIBA y titulo en caja alta
+ *   3 error de campo  sin panel, pegado al campo (vive con los campos)
+ *
+ * El titulo en caja alta es del nivel 2 y solo de el: es lo que lo separa del
+ * informativo, que tambien puede llevar h3 ("¿Quien puede publicar?") y se
+ * queda en caja normal.
+ */
 .aviso {
-  background: var(--rubor);
-  border-left: 3px solid var(--naranja-marca);
-  border-radius: 0 var(--r-control) var(--r-control) 0;
-  padding: var(--e3) var(--e4);
+  background: var(--celeste);
+  border-radius: var(--r-panel);
+  padding: var(--e4) 18px;
   margin: 0 0 var(--e5);
-  font-size: 15px;
+  font-size: 14.5px;
 }
-.aviso h3 { margin-bottom: var(--e1); }
+.aviso h3 { margin-bottom: var(--e1); font-size: 15px; }
 .aviso p:last-child { margin-bottom: 0; }
-.aviso-serio { border-left-color: var(--rojo-alerta); }
+
+/* La regla superior se hace con dos fondos y no con un elemento nuevo, porque
+   el JavaScript no emite ninguno y la ronda prohibe agregarlo. */
+.aviso-serio {
+  background: var(--rm-aviso-serio-regla) top/100% 3px no-repeat, var(--rm-aviso-serio-bg);
+  padding-top: 19px;
+}
+/*
+ * El titulo del aviso serio NO va en caja alta, y es una desviacion deliberada
+ * de la especificacion, autorizada por Juan el 21 de septiembre de 2026.
+ *
+ * La regla se penso para una etiqueta corta. Los siete titulos que la
+ * aplicacion pone aqui son frases: "Antes de usar este enlace, confirma con
+ * Legal", "La leyenda cambio. Cambia el arte antes de publicarlo.", "Antes de
+ * lanzar: ¿tu dinamica tiene azar?". Una frase de ocho palabras en mayusculas
+ * no se lee, se escanea, y estas son advertencias legales: la del azar es la
+ * que evita que alguien lance una rifa sin permiso previo.
+ *
+ * No se pierde nada del sistema. Lo que distingue al nivel serio del
+ * informativo es el panel beige y la regla de gradiente de arriba, que son
+ * estructura y cumplen por si solas la regla del brand book de no distinguir
+ * por color. La caja alta se queda donde de verdad hay etiquetas cortas: las
+ * cabeceras de tabla y la marca de "Opcional".
+ */
+.aviso-serio h3 {
+  font-family: var(--titulos); font-size: 14px; font-weight: 900;
+  letter-spacing: -0.01em; margin: 0 0 6px;
+}
+
+/*
+ * Un solo pastel por pieza. Si en la misma pantalla coinciden dos avisos, el
+ * de mayor prioridad se queda con su color y el otro baja a tarjeta blanca.
+ * La prioridad es error > serio > informativo.
+ *
+ * En CSS esto solo se puede cuando los dos son hermanos y el serio va primero.
+ * Cuando no lo son, o cuando el informativo va antes en el DOM, no hay
+ * selector que lo resuelva sin tocar el JavaScript, asi que ahi se queda como
+ * esta: son dos pasteles, y es preferible eso a mover el JavaScript en una
+ * ronda que es de piel.
+ */
+.aviso-serio ~ .aviso:not(.aviso-serio) {
+  background: var(--papel); border: 1px solid var(--borde);
+}
 
 /* --- Botones ------------------------------------------------------------ */
 
 button { font-size: 15px; cursor: pointer; }
 
+/*
+ * El boton primario, y aqui aterriza la decision 98.
+ *
+ * El brand book manda blanco sobre el gradiente neon, y el encargo manda 4.5:1
+ * de contraste. Las dos reglas no pueden cumplirse a la vez: medido con WCAG
+ * 2.1, el blanco sobre el gradiente completo da entre 2.58:1 y 3.79:1, y ese
+ * 3.79 es el MAXIMO de todo el tramo. No es que falte afinar un tono; el minimo
+ * de texto normal no se alcanza en ningun punto.
+ *
+ * La salida es el umbral de texto grande, que WCAG baja a 3:1 desde 18.66px en
+ * negrita. Por eso el texto va a 19px en peso 700, y por eso el gradiente
+ * arranca en el 17% del tramo, que es donde el blanco cruza ese 3:1. Los dos
+ * numeros van juntos: bajar el tamano o correr el recorte hacia el naranja
+ * rompe la cuenta. El par `blanco sobre el arranque del gradiente del boton`
+ * de npm run contraste lo vigila, y da 3:1 exactos.
+ *
+ * El gradiente completo se sigue usando donde no lleva texto encima.
+ */
 .boton {
   display: inline-flex; align-items: center; justify-content: center; gap: var(--e2);
   padding: 13px var(--e5);
-  border-radius: var(--r-control);
+  border-radius: var(--r-pildora);
   border: 1px solid transparent;
-  background: var(--naranja-accion);
+  background: var(--gradiente-boton);
   color: var(--papel);
-  transition: background var(--t-rapido);
+  font-size: 19px; font-weight: 700; line-height: 1.2;
+  transition: background var(--t-rapido), box-shadow var(--t-rapido);
 }
-.boton:hover { background: #b82a0c; }
-.boton:active { background: var(--naranja-presionado); }
+.boton:hover { background: var(--gradiente-hover); }
+.boton:active { background: var(--neon-presionado); }
+
+/* Sin opacity: bajarla arrastraria el texto por debajo del contraste minimo.
+   Fondo plano, letra apagada, y el borde se va con el fondo. */
+/* El fondo de pagina TAMBIEN es niebla, asi que un deshabilitado en niebla sin
+   borde no se lee como boton: desaparece y queda una etiqueta gris suelta al
+   lado de "Atras", que si es una pildora con borde. Superficie de papel y
+   borde visible: sigue apagado, pero se ve que es un boton que espera algo. */
 .boton[disabled] {
-  background: var(--borde); color: var(--borde-control);
-  cursor: not-allowed; border-color: var(--borde);
+  background: var(--papel); color: var(--texto-off);
+  cursor: not-allowed; border-color: var(--rm-borde-secundario);
 }
 
 .boton-secundario {
   background: transparent; color: var(--tinta);
   border-color: var(--borde-control);
+  font-size: 15px; font-weight: 700;
 }
-.boton-secundario:hover { background: var(--niebla); }
-.boton-secundario[disabled] { color: var(--borde-control); background: transparent; }
+.boton-secundario:hover { background: var(--niebla); border-color: var(--tinta); }
+/* El relleno de niebla es del mismo color que la pagina, asi que en un telefono,
+   donde no existe el paso del raton por encima, pulsar "Atras" o "Cerrar" no
+   producia NINGUN cambio visible. El borde a tinta si se ve al tacto. */
+.boton-secundario:active { background: var(--niebla); border-color: var(--tinta); }
+.boton-secundario[disabled] {
+  color: var(--texto-off); background: transparent; border-color: var(--borde);
+}
 
 .boton-texto {
   background: none; border: 0; padding: var(--e1) 0;
-  color: var(--naranja-accion); font-family: var(--cuerpo); font-size: 14px;
+  color: var(--neon-texto); font-family: var(--cuerpo); font-size: 14px;
   text-decoration: underline; text-underline-offset: 3px;
 }
 
@@ -180,23 +358,162 @@ button { font-size: 15px; cursor: pointer; }
 
 /* --- Barra de progreso -------------------------------------------------- */
 
-.progreso-compacto { display: none; }
-
-/* Los pasos se reparten el ancho, y si no caben pasan a una segunda fila.
-   Con seis pasos entraban justos; al entrar el de la pieza publicitaria, el
-   septimo, "Organizador" y "Cuando" se leian pegados, como una sola palabra. */
-.progreso { display: flex; flex-wrap: wrap; gap: var(--e1) var(--e3); margin: 0 0 var(--e6); list-style: none; padding: 0; }
-.progreso li { flex: 1 1 auto; min-width: 82px; }
-.progreso button {
-  width: 100%; text-align: left; background: none; border: 0;
-  padding: var(--e2) 0 var(--e2);
-  border-bottom: 2px solid var(--borde);
-  font-family: var(--cuerpo); font-size: 13px; color: var(--gris-lapiz);
-  line-height: 1.25; word-break: normal; hyphens: none;
+/*
+ * LA BARRA DE PROGRESO
+ *
+ * Una sola fila, siempre, con un segmento por paso, y la barra ENCIMA de la
+ * etiqueta en vez de debajo. La aplicacion muestra entre cinco y nueve pasos
+ * segun el tipo de campana: Brasil cinco, el cashback por ETA seis, el
+ * Cashback Travel nueve.
+ *
+ * La regla, que es una sola: las etiquetas se ven si hay SEIS PASOS O MENOS y
+ * cada segmento mide 88px O MAS. Si falla cualquiera de las dos, se caen
+ * TODAS a la vez, nunca algunas si y otras no. Cuando se caen, el nombre del
+ * paso queda igual en la linea de encima, que dice "Paso 7 de 9 · Participantes".
+ *
+ * Esa linea ya existia: es .progreso-compacto, que se dibuja siempre y hasta
+ * ahora solo se veia en celular. No hace falta que el JavaScript agregue nada.
+ *
+ * La mitad del numero de pasos se resuelve con :has(). La de los 88px NO se
+ * puede resolver con una consulta de ancho de ventana, porque la barra vive en
+ * una columna cuyo ancho lo decide la rejilla: en escritorio es media pantalla
+ * y en el filtro es la pagina angosta. Por eso .columna-preguntas se declara
+ * contenedor y la medida se hace con @container, sobre el ancho real de la
+ * barra. El acotador de scripts/lib/estilos-acotados.js aprendio @container
+ * para esto.
+ *
+ * Los umbrales salen de la cuenta: n segmentos de 88px mas (n-1) huecos de
+ * 12px. Dos 188, tres 288, cuatro 388, cinco 488, seis 588.
+ */
+/*
+ * La linea de encima. Existia y solo se veia en celular; la fase 4 la hizo
+ * visible en escritorio porque es a donde se muda el nombre del paso cuando
+ * las etiquetas de la barra se caen.
+ *
+ * Dos cosas que hubo que afinar despues:
+ *
+ * El nombre salia DOS VECES, aqui y en la etiqueta de la barra, cuando las
+ * etiquetas se ven. Asi que aqui se esconde el nombre, no la cuenta, en las
+ * mismas cinco condiciones en que las etiquetas estan visibles. La cuenta
+ * ("Paso 3 de 7") se queda siempre: no la dice nadie mas.
+ *
+ * Y la linea de avance (.progreso-linea) se queda solo en celular. Lleva
+ * role="progressbar" sin nombre de autor, que ARIA pide, y en escritorio no
+ * hace falta porque la barra por segmentos ya dice lo mismo y con nombre.
+ */
+.progreso-compacto {
+  display: block; margin: 0 0 var(--e3);
+  font-size: 13px; font-weight: 700; color: var(--gris-lapiz);
 }
-.progreso .hecho button { border-bottom-color: var(--naranja-accion); color: var(--tinta); }
-.progreso .actual button { border-bottom-color: var(--naranja-marca); color: var(--tinta); font-weight: 700; }
+.progreso-compacto strong { color: var(--tinta); font-family: var(--titulos); font-weight: 900; }
+.progreso-cuenta { color: var(--gris-lapiz); }
+.progreso-linea { display: none; }
+
+.columna-preguntas, .pagina-angosta { container: barra / inline-size; }
+
+.progreso {
+  display: flex; flex-wrap: nowrap; gap: var(--e3);
+  margin: 0 0 var(--e6); list-style: none; padding: 0;
+}
+.progreso li { flex: 1 1 0; min-width: 0; }
+.progreso button {
+  width: 100%; text-align: left; background: none; border: 0; padding: 0;
+  font-family: var(--cuerpo); font-size: 11.5px; font-weight: 600;
+  color: var(--texto-off); line-height: 1.3; letter-spacing: -0.01em;
+  /* Las etiquetas arrancan caidas y solo bajan a la vista si se cumplen las
+     dos condiciones. Se esconden con sangria y no con display:none ni
+     font-size:0, para que el boton conserve su nombre accesible y su tamano
+     de blanco: quien navega con teclado sigue pudiendo volver a un paso. */
+  text-indent: -9999px; overflow: hidden; white-space: nowrap;
+  /* El alto lo pone el relleno, no una altura fija. Con height: var(--paso-alto)
+     la barra se veia bien pero el BLANCO DE CLIC medida 4px: el boton seguia
+     teniendo nombre accesible y seguia siendo alcanzable con el tabulador, pero
+     acertarle con el raton era imposible. La barra puede verse de 4px sin que
+     el blanco mida 4px. */
+  height: auto; padding-bottom: 20px;
+}
+.progreso button::before {
+  content: ''; display: block; height: var(--paso-alto); text-indent: 0;
+  border-radius: var(--r-pildora); background: var(--paso-pendiente);
+  margin-bottom: var(--e2);
+}
+.progreso .hecho button::before { background: var(--paso-hecho); }
+.progreso .actual button::before { background: var(--paso-actual); }
+.progreso .hecho button { color: var(--tinta); }
+.progreso .actual button { color: var(--tinta); font-weight: 800; }
 .progreso button[disabled] { cursor: default; }
+
+/* Con siete pasos o mas, caidas pase lo que pase. */
+@container barra (min-width: 188px) {
+  .progreso:not(:has(li:nth-child(3))) button { text-indent: 0; padding-bottom: 0; }
+}
+@container barra (min-width: 288px) {
+  .progreso:not(:has(li:nth-child(4))) button { text-indent: 0; padding-bottom: 0; }
+}
+@container barra (min-width: 388px) {
+  .progreso:not(:has(li:nth-child(5))) button { text-indent: 0; padding-bottom: 0; }
+}
+@container barra (min-width: 488px) {
+  .progreso:not(:has(li:nth-child(6))) button { text-indent: 0; padding-bottom: 0; }
+}
+@container barra (min-width: 588px) {
+  .progreso:not(:has(li:nth-child(7))) button { text-indent: 0; padding-bottom: 0; }
+}
+
+
+
+/*
+ * El nombre del paso no se dice dos veces.
+ *
+ * La linea de encima dice "Paso 3 de 7 · Beneficio". Cuando las etiquetas de la
+ * barra SI se ven, el nombre queda repetido, uno encima del otro, y en la
+ * pregunta del pais se llegaba a leer "Campaña" tres veces en sesenta pixeles.
+ *
+ * Asi que cuando las etiquetas se ven, la linea entera sobra: la barra ya dice
+ * en que paso va y como se llama. Esconder solo el nombre no servia, porque el
+ * separador " · " es un nodo de texto suelto que el JavaScript escribe y que
+ * CSS no puede alcanzar: la linea quedaba como "Paso 1 de 1 ·", con el punto
+ * colgando. Y ademas devuelve al escritorio el comportamiento que tenia antes
+ * de esta ronda cuando las etiquetas caben, que es no mostrar nada ahi.
+ *
+ * OJO CON LA FORMA DEL SELECTOR. El primer intento fue
+ * `:has(.progreso:not(:has(li:nth-child(3))))`, y ESO NO EXISTE: la
+ * especificacion prohibe :has() dentro de :has(), el navegador tira la regla
+ * entera y no dice nada. Estuvo escrito, commiteado y dado por arreglado sin
+ * que nada fallara, que es exactamente el modo de falla que describe
+ * docs/DISENO.md. La forma que si vale es :not(:has()), con el :has por dentro.
+ * Lo cuida la prueba `ninguna regla de la hoja anida :has() dentro de :has()`.
+ */
+@container barra (min-width: 188px) {
+  .pagina-angosta:not(:has(.progreso li:nth-child(3))) .progreso-compacto,
+  .columna-preguntas:not(:has(.progreso li:nth-child(3))) .progreso-compacto {
+    display: none;
+  }
+}
+@container barra (min-width: 288px) {
+  .pagina-angosta:not(:has(.progreso li:nth-child(4))) .progreso-compacto,
+  .columna-preguntas:not(:has(.progreso li:nth-child(4))) .progreso-compacto {
+    display: none;
+  }
+}
+@container barra (min-width: 388px) {
+  .pagina-angosta:not(:has(.progreso li:nth-child(5))) .progreso-compacto,
+  .columna-preguntas:not(:has(.progreso li:nth-child(5))) .progreso-compacto {
+    display: none;
+  }
+}
+@container barra (min-width: 488px) {
+  .pagina-angosta:not(:has(.progreso li:nth-child(6))) .progreso-compacto,
+  .columna-preguntas:not(:has(.progreso li:nth-child(6))) .progreso-compacto {
+    display: none;
+  }
+}
+@container barra (min-width: 588px) {
+  .pagina-angosta:not(:has(.progreso li:nth-child(7))) .progreso-compacto,
+  .columna-preguntas:not(:has(.progreso li:nth-child(7))) .progreso-compacto {
+    display: none;
+  }
+}
 
 /* --- Preguntas ---------------------------------------------------------- */
 
@@ -206,15 +523,20 @@ button { font-size: 15px; cursor: pointer; }
 .pregunta:first-child { padding-top: 0; }
 .pregunta:last-child { border-bottom: 0; }
 
-.pregunta-titulo { font-family: var(--titulos); font-weight: 600; font-size: 21px; line-height: 1.3; margin: 0 0 var(--e2); }
+.pregunta-titulo { font-family: var(--titulos); font-weight: 800; font-size: 23px; line-height: 1.25; letter-spacing: -0.025em; margin: 0 0 var(--e2); }
 .pregunta-ayuda { color: var(--gris-lapiz); font-size: 14px; margin: 0 0 var(--e3); }
 
 /* Marca de pregunta opcional, al lado del titulo. */
+/* El fondo pasa de niebla a papel: con la identidad nueva el fondo de pagina
+   ya es niebla, y un chip niebla sobre niebla desaparece. La caja alta es solo
+   visual; el texto sigue diciendo "opcional" para quien lo lee en voz alta. */
 .marca-opcional {
   display: inline-block; vertical-align: middle; margin-left: var(--e2);
-  padding: 2px 8px; border: 1px solid var(--borde); border-radius: 999px;
-  font-family: var(--cuerpo); font-weight: 700; font-size: 12px;
-  letter-spacing: 0.02em; color: var(--gris-lapiz); background: var(--niebla);
+  padding: 3px 10px; border: 1.5px solid var(--rm-borde-secundario);
+  border-radius: var(--r-pildora);
+  font-family: var(--titulos); font-weight: 800; font-size: 11px;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--gris-lapiz); background: var(--papel);
 }
 
 /* Un dato listo para copiar: el titulo y la direccion de Squarespace. */
@@ -227,7 +549,7 @@ button { font-size: 15px; cursor: pointer; }
   gap: var(--e3); margin-bottom: var(--e2);
 }
 .copiable-etiqueta {
-  font-family: var(--titulos); font-weight: 600; font-size: 13px;
+  font-family: var(--titulos); font-weight: 700; font-size: 13px;
   letter-spacing: 0.02em; color: var(--gris-lapiz);
 }
 .copiable-valor {
@@ -237,11 +559,13 @@ button { font-size: 15px; cursor: pointer; }
   padding: var(--e2) var(--e3); word-break: break-word;
 }
 .copiable .pregunta-ayuda { margin: var(--e2) 0 0; }
-.boton-chico { padding: 4px 12px; font-size: 13px; min-height: 0; }
+/* Se usa sobre .boton-secundario, en la tarjeta del dato copiable. Anula el
+   tamano del primario a proposito: ahi no hay texto sobre gradiente. */
+.boton-chico { padding: 4px 12px; font-size: 13px; font-weight: 700; min-height: 0; }
 
 .por-que { margin: var(--e2) 0 0; }
 .por-que summary {
-  color: var(--naranja-accion); font-size: 14px; cursor: pointer;
+  color: var(--neon-texto); font-size: 14px; cursor: pointer;
   list-style: none; display: inline-block; text-decoration: underline; text-underline-offset: 3px;
 }
 .por-que summary::-webkit-details-marker { display: none; }
@@ -257,24 +581,81 @@ button { font-size: 15px; cursor: pointer; }
 
 input[type='text'], input[type='number'], input[type='date'], input[type='time'], input[type='search'], select, textarea {
   width: 100%;
-  font-family: var(--cuerpo); font-size: 16px; color: var(--tinta);
+  font-family: var(--cuerpo); font-size: 17px; font-weight: 500; color: var(--tinta);
   background: var(--papel);
-  border: 1px solid var(--borde-control);
-  border-radius: var(--r-control);
+  border: 1.5px solid var(--campo-vacio);
+  border-radius: var(--r-panel);
   padding: 12px var(--e3);
+  transition: border-color var(--t-rapido);
 }
-input:hover, select:hover, textarea:hover { border-color: var(--gris-lapiz); }
-input:focus, select:focus, textarea:focus { border-color: var(--naranja-marca); }
-input[disabled], select[disabled] { background: var(--niebla); color: var(--borde-control); cursor: not-allowed; }
+::placeholder { color: var(--marcador); opacity: 1; }
+
+/*
+ * El campo CON VALOR lleva borde tinta, no neon. Es el unico punto donde la
+ * especificacion pisa al prototipo, y con razon: alli el campo lleno y el
+ * campo en error compartian el borde neon y no se distinguian. Si "lleno" y
+ * "mal" son del mismo color, el color deja de decir nada. El neon queda
+ * reservado para el error.
+ *
+ * No hace falta que el JavaScript marque nada. Se comprobo en Chromium que
+ * placeholder="" (vacio, que es lo que pone src/client/js/50-campos.js cuando
+ * la pregunta no trae ejemplo) sigue contando como marcador mostrado mientras
+ * el campo este vacio: 36 de las 100 preguntas traen ejemplo y las otras 64
+ * llevan el atributo puesto en cadena vacia, asi que las dos funcionan.
+ *
+ * Lo que NO funciona es date y time: no tienen marcador, asi que siempre
+ * coincidirian con :not(:placeholder-shown) y una fecha sin responder se veria
+ * como respondida. Por eso quedan fuera por su tipo.
+ */
+input:not([type='date']):not([type='time']):not([id^='ampliar-']):not(:placeholder-shown),
+select:not([disabled]),
+textarea:not(:placeholder-shown) { border-color: var(--campo-lleno); }
+
+/* El hover de un campo VACIO no puede pintar el borde tinta, porque tinta es lo
+   que significa "ya lo respondiste": pasar el raton por encima decia que el
+   campo estaba lleno. Va a un tono intermedio que no se confunde con ninguno
+   de los dos estados. */
+input:hover:not([disabled]), select:hover:not([disabled]), textarea:hover:not([disabled]) {
+  border-color: var(--borde-hover);
+}
+
+/* El foco NO pinta el borde de neon: el anillo de :focus-visible es lo que
+   avisa, y el neon es del error. Si el foco pintara el borde, un campo
+   enfocado y un campo mal se verian igual. */
+input[disabled], select[disabled] {
+  background: var(--campo-off-bg); color: var(--texto-off);
+  border-color: var(--campo-off-borde); cursor: not-allowed;
+}
 
 .con-moneda input { padding-left: 34px; }
 .simbolo-moneda {
-  position: absolute; left: var(--e3); color: var(--gris-lapiz); font-size: 16px; pointer-events: none;
+  position: absolute; left: var(--e3); color: var(--gris-lapiz); font-size: 17px; pointer-events: none;
 }
 
-.campo-error input, .campo-error select { border-color: var(--rojo-alerta); }
-.mensaje-error { color: var(--rojo-alerta); font-size: 14px; margin: var(--e2) 0 0; display: flex; gap: var(--e2); }
-.mensaje-ok { color: var(--verde-confirma); font-size: 14px; margin: var(--e2) 0 0; display: flex; gap: var(--e2); align-items: center; }
+/*
+ * El error se escribe con la MISMA forma negada que el campo con valor, y no
+ * con un selector mas corto. Con `.campo-error input` a secas la regla del
+ * campo lleno gana por especificidad (0,3,1 contra 0,1,1), asi que un campo
+ * lleno y mal validado, que es el unico caso que de verdad ocurre, salia con
+ * borde tinta igual que uno bien lleno: se quedaba solo el grosor y el color
+ * del error no llegaba nunca.
+ */
+.campo-error input:not([type='date']):not([type='time']):not([id^='ampliar-']),
+.campo-error input[id^='ampliar-'],
+.campo-error input[type='date'], .campo-error input[type='time'],
+.campo-error select, .campo-error textarea {
+  border-color: var(--campo-error); border-width: 2px;
+}
+.mensaje-error { color: var(--neon-texto); font-size: 13.5px; font-weight: 700; margin: var(--e2) 0 0; display: flex; gap: var(--e2); }
+/* Sin verde. El visto va dentro de un circulo con el gradiente, que es lo que
+   da la senal, y el texto se queda en tinta. El icono es un SVG que emite el
+   JavaScript con stroke currentColor, asi que el circulo se consigue desde
+   aqui sin tocarlo. */
+.mensaje-ok { color: var(--tinta); font-size: 13.5px; font-weight: 700; margin: var(--e2) 0 0; display: flex; gap: 7px; align-items: center; }
+.mensaje-ok svg {
+  width: 18px; height: 18px; padding: 3px; box-sizing: border-box; flex: none;
+  border-radius: var(--r-pildora); background: var(--gradiente-texto); color: var(--papel);
+}
 
 .asi-queda {
   margin: var(--e3) 0 0; padding: var(--e3);
@@ -289,21 +670,59 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 .opciones { display: grid; gap: var(--e2); margin: 0; padding: 0; border: 0; }
 .opciones legend { padding: 0; }
 
+/*
+ * La marca redonda de la izquierda se dibuja con ::before y no con un elemento
+ * propio: el JavaScript no lo emite y la ronda prohibe agregar clases desde
+ * ahi. Va en posicion absoluta y no en rejilla porque una misma opcion puede
+ * traer hasta cuatro .opcion-nota, y con rejilla la marca se centraria
+ * respecto de todas en vez de quedarse junto al titulo.
+ *
+ * El borde se queda en 1.5px elegida y sin elegir, asi que desaparece la
+ * compensacion de relleno que hacia falta cuando engordaba a 2px.
+ */
 .opcion {
+  position: relative;
   display: block; width: 100%; text-align: left;
-  border: 1px solid var(--borde-control); border-radius: var(--r-control);
-  background: var(--papel); padding: var(--e3) var(--e4);
+  border: 1.5px solid var(--borde-opcion); border-radius: var(--r-panel);
+  background: var(--papel); padding: var(--e4) 18px var(--e4) 46px;
   font-family: var(--cuerpo); font-size: 15px; color: var(--tinta);
   transition: border-color var(--t-rapido), background var(--t-rapido);
 }
-.opcion:hover:not([disabled]) { border-color: var(--gris-lapiz); }
-.opcion[aria-pressed='true'], .opcion.elegida {
-  border: 2px solid var(--naranja-marca); background: var(--rubor); padding: 11px 15px;
+.opcion::before {
+  content: ''; position: absolute; left: 18px; top: 18px;
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 1.5px solid var(--borde-control); background: transparent;
 }
-.opcion[disabled] { opacity: 0.55; cursor: not-allowed; }
-.opcion-titulo { display: block; font-size: 15px; }
-.opcion-nota { display: block; color: var(--gris-lapiz); font-size: 13px; margin-top: 2px; }
-.opcion[disabled] .opcion-nota { color: var(--rojo-alerta); }
+.opcion:hover:not([disabled]):not(.opcion-vencida) { border-color: var(--campo-lleno); }
+
+/* Sin sombra, por decision de Juan del 21 de septiembre: la hoja del documento
+   sigue siendo la unica superficie elevada de toda la aplicacion, que es lo
+   que la hace destacar. La opcion elegida se distingue por borde y fondo. */
+.opcion[aria-pressed='true'], .opcion.elegida {
+  border-color: var(--rm-opcion-sel-borde); background: var(--rm-opcion-sel-bg);
+}
+.opcion[aria-pressed='true']::before, .opcion.elegida::before {
+  border-color: transparent; background: var(--gradiente-texto);
+  box-shadow: inset 0 0 0 4px var(--papel);
+}
+
+.opcion-titulo { display: block; font-size: 16px; font-weight: 800; letter-spacing: -0.015em; }
+.opcion-nota { display: block; color: var(--gris-lapiz); font-size: 13.5px; font-weight: 500; margin-top: 3px; }
+
+/* Nada de opacity: arrastra el texto por debajo del contraste minimo. Fondo
+   plano y letra apagada.
+   Y la nota deja de ir en rojo: que algo no se pueda elegir no es un error de
+   quien responde, y ademas el neon esta reservado para el error de verdad. */
+.opcion[disabled] {
+  /* Superficie de papel y borde visible, por lo mismo que el boton apagado: el
+     fondo de pagina TAMBIEN es niebla, asi que una tarjeta en niebla sin borde
+     se disuelve y deja de leerse como opcion. */
+  cursor: not-allowed; background: var(--papel);
+  border-color: var(--rm-borde-secundario); color: var(--gris-lapiz);
+}
+.opcion[disabled]::before { border-color: var(--borde-control); background: transparent; }
+.opcion[disabled] .opcion-titulo { color: var(--gris-lapiz); }
+.opcion[disabled] .opcion-nota { color: var(--texto-off); }
 
 /* El buscador del historial. Sin la regla de arriba para type=search, el
    campo salia con el ancho del navegador y cortaba su propio texto de ayuda:
@@ -319,36 +738,55 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
    en gris. No va con disabled: un boton deshabilitado no recibe foco y quien
    navega con teclado o lector de pantalla pasaria de largo sin enterarse de
    que existe ni de que vencio. */
-.opcion-vencida { opacity: 0.7; cursor: not-allowed; }
-.opcion-vencida .opcion-nota { color: var(--gris-lapiz); }
-.opcion-vencida .opcion-nota-vencido { color: var(--rojo-alerta); }
+.opcion-vencida {
+  cursor: not-allowed; background: var(--papel);
+  border-color: var(--rm-borde-secundario);
+}
+.opcion-vencida .opcion-titulo { color: var(--gris-lapiz); }
+.opcion-vencida .opcion-nota { color: var(--texto-off); }
+/* La razon del vencimiento es una frase larga ("Venció el 31 de diciembre de
+   2026..."), asi que va como texto y no como pildora en caja alta: una frase
+   asi en mayusculas no se lee. */
+.opcion-vencida .opcion-nota-vencido { color: var(--neon-texto); font-size: 13.5px; font-weight: 700; }
 
 .casillas { display: grid; gap: var(--e2); border: 0; padding: 0; margin: 0; }
 .casilla { display: flex; gap: var(--e3); align-items: flex-start; cursor: pointer; padding: var(--e2) 0; }
-.casilla input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--naranja-accion); flex: none; }
+.casilla input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--neon-texto); flex: none; }
 .casilla span { font-size: 15px; }
 .casilla small { display: block; color: var(--gris-lapiz); font-size: 13px; }
 
 .sugerencias { display: flex; flex-wrap: wrap; gap: var(--e2); margin: var(--e2) 0 0; }
 .sugerencia {
-  border: 1px solid var(--borde-control); background: var(--papel);
-  border-radius: 999px; padding: 5px var(--e3); font-size: 13px; font-family: var(--cuerpo);
+  border: 1.5px solid var(--borde-control); background: var(--papel);
+  border-radius: var(--r-pildora); padding: 5px var(--e3); font-size: 13px;
+  font-family: var(--cuerpo); font-weight: 700; color: var(--tinta);
 }
-.sugerencia:hover { background: var(--rubor); border-color: var(--naranja-marca); }
+.sugerencia:hover { background: var(--niebla); border-color: var(--campo-lleno); }
+
+/* Dos clases que el JavaScript genera y que la hoja nunca vistio, asi que el
+   rebrand las saltaba sin que nada fallara. Las encontro la auditoria de
+   cobertura recorriendo las 48 pantallas.
+
+   .nota es la nota del panel del acuerdo de transferencia de datos y salia mas
+   grande y mas oscura que la ayuda de su propia seccion, pegada al boton de
+   arriba. .pagina-seccion envuelve "El texto legal de tus piezas" en la
+   pantalla final y salia sin margen, pegada a la seccion anterior. */
+.nota { color: var(--gris-lapiz); font-size: 14px; margin: var(--e2) 0 0; }
+.pagina-seccion { margin-top: var(--e6); }
 
 /* --- Glosario ----------------------------------------------------------- */
 
 .glosario {
-  border-bottom: 1px dotted var(--gris-lapiz); cursor: help;
+  border-bottom: 1.5px dotted var(--campo-lleno); cursor: help;
   background: none; border-top: 0; border-left: 0; border-right: 0;
   font: inherit; color: inherit; padding: 0;
 }
 .glosario-panel {
   position: absolute; z-index: 50; max-width: 260px;
   background: var(--tinta); color: var(--papel);
-  padding: var(--e3); border-radius: var(--r-control);
+  padding: var(--e3); border-radius: var(--r-panel);
   font-size: 13px; line-height: 1.45;
-  box-shadow: 0 6px 20px rgba(22, 24, 29, 0.25);
+  box-shadow: var(--sombra-glosario);
 }
 .glosario-panel strong { display: block; margin-bottom: var(--e1); }
 
@@ -357,8 +795,24 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 .columna-documento { position: sticky; top: 84px; min-width: 0; }
 .documento-encabezado { display: flex; align-items: baseline; gap: var(--e3); margin-bottom: var(--e3); }
 .documento-encabezado h2 { margin: 0; font-size: 17px; }
-.documento-encabezado .cuenta { color: var(--gris-lapiz); font-size: 13px; margin-left: auto; }
+/* El contador que dice en que punto va la hoja ("Sin empezar", "Faltan 13
+   datos"). Los dos prototipos le dan una pildora, y salia como texto gris
+   suelto. Va neutra y no con color por estado: el color por estado necesita que
+   el JavaScript emita una clase, y esta ronda no podia tocarlo. Queda anotado. */
+.documento-encabezado .cuenta {
+  margin-left: auto; color: var(--gris-lapiz);
+  font-family: var(--titulos); font-size: 12px; font-weight: 800;
+  padding: 5px 12px; border-radius: var(--r-pildora);
+  background: var(--niebla); border: 1px solid var(--borde);
+}
 
+/*
+ * La unica superficie elevada de toda la aplicacion, y por decision de Juan
+ * del 21 de septiembre sigue siendolo: nada mas lleva sombra.
+ *
+ * La sombra entra cuando hay contenido de verdad. Con la hoja vacia el borde
+ * se queda solo, y ese cambio es lo que marca que el documento arranco.
+ */
 .hoja {
   background: var(--papel);
   border: 1px solid var(--borde);
@@ -373,31 +827,54 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
   line-height: 1.65;
 }
 
-.hoja .doc-titulo { font-family: var(--titulos); font-size: 17px; text-align: center; margin: 0 0 var(--e2); }
-.hoja .doc-subtitulo { font-family: var(--titulos); font-size: 15px; text-align: center; margin: 0 0 var(--e5); }
+/* Las dos etiquetas en caja alta del centro del producto. Iban en peso 500 y sin
+   espaciado, o sea heredando el peso del cuerpo, asi que el subtitulo competia
+   en tamano con el titulo en vez de someterse a el. Van con el idioma de
+   etiqueta de la marca, y en em y no en px por lo mismo que el hueco: la hoja
+   tiene su propia escala. */
+.hoja .doc-titulo {
+  font-family: var(--titulos); font-size: 1em; font-weight: 900;
+  letter-spacing: 0.06em; text-align: center; margin: 0 0 var(--e2);
+}
+.hoja .doc-subtitulo {
+  font-family: var(--titulos); font-size: 0.8em; font-weight: 800;
+  letter-spacing: 0.1em; color: var(--gris-lapiz);
+  text-align: center; margin: 0 0 var(--e5);
+}
 .hoja .doc-parrafo { margin: 0 0 var(--e3); text-align: justify; }
 .hoja .doc-clausula { margin: 0 0 var(--e3); text-align: justify; }
 .hoja .doc-vineta { margin: 0 0 var(--e2) var(--e4); position: relative; text-align: justify; }
 .hoja .doc-vineta::before { content: '\2022'; position: absolute; left: -14px; color: var(--gris-lapiz); }
 
 .hoja mark {
-  background: var(--rubor); color: inherit; border-radius: 3px; padding: 0 2px;
+  background: transparent; color: inherit; border-radius: 3px; padding: 0 2px;
   animation: destello var(--t-destello) ease-out forwards;
 }
 @keyframes destello {
-  0% { background: #ffd2c4; }
+  0% { background: var(--destello); }
   100% { background: transparent; }
 }
 
+/*
+ * El hueco: lo que todavia falta por responder, dentro del documento que se va
+ * llenando. Es la pieza que sostiene la promesa del producto, asi que se ve
+ * sin esfuerzo pero sin gritar.
+ *
+ * El tamano va en em y no en px. El prototipo lo dibuja a 10px, pero alli el
+ * documento entero esta a 12px: es una maqueta a escala. Sobre la hoja real,
+ * que va a 15px, el equivalente es 0.85em. Copiar el 10px literal dejaria
+ * ilegible justo esto.
+ */
 .falta {
-  display: inline; color: var(--gris-lapiz);
-  border-bottom: 2px dotted var(--borde-control);
-  background: var(--niebla); border-radius: 3px; padding: 0 4px;
-  font-size: 13px;
+  display: inline; color: inherit; font-weight: 700; letter-spacing: 0.02em;
+  border-bottom: var(--rm-hueco-subrayado);
+  background: var(--rm-hueco-bg); border-radius: 5px; padding: 1px 6px;
+  font-size: 0.85em;
 }
 
+.hoja:has(.hoja-vacia) { box-shadow: none; }
 .hoja-vacia {
-  color: var(--gris-lapiz); text-align: center;
+  color: var(--gris-lapiz); text-align: center; font-size: 13px;
   padding: var(--e7) var(--e4); max-width: 34ch; margin: 0 auto;
 }
 
@@ -411,23 +888,58 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 .ficha-encabezado button { margin-left: auto; }
 .ficha dl { display: grid; grid-template-columns: max-content 1fr; gap: var(--e2) var(--e5); margin: 0; }
 .ficha dt { color: var(--gris-lapiz); font-size: 14px; }
-.ficha dd { margin: 0; font-size: 14px; }
+.ficha dd { margin: 0; font-size: 14px; font-weight: 700; }
 
-.te-falta { margin: var(--e4) 0 0; padding: 0 0 0 var(--e4); }
-.te-falta li { color: var(--rojo-alerta); font-size: 14px; margin-bottom: var(--e1); }
+/* La vineta lleva el neon y el texto se queda en tinta. Con toda la lista en
+   rojo la pantalla del resumen quedaba en alarma cuando lo que dice es
+   simplemente que faltan datos. */
+.te-falta { margin: var(--e4) 0 0; padding: 0; list-style: none; }
+.te-falta li {
+  position: relative; padding-left: 18px; color: var(--tinta);
+  font-size: 14.5px; margin-bottom: var(--e2);
+}
+.te-falta li::before {
+  content: ''; position: absolute; left: 0; top: 8px;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--neon);
+}
 
 /* --- Tablas de historial y administración ------------------------------- */
 
 .tabla { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--papel); }
 .tabla th, .tabla td { text-align: left; padding: var(--e3); border-bottom: 1px solid var(--borde); }
-.tabla th { font-family: var(--titulos); font-weight: 600; font-size: 13px; color: var(--gris-lapiz); }
+.tabla th {
+  font-family: var(--titulos); font-weight: 800; font-size: 11.5px;
+  letter-spacing: 0.05em; text-transform: uppercase; color: var(--gris-lapiz);
+}
 .tabla tr:last-child td { border-bottom: 0; }
 .envoltorio-tabla { border: 1px solid var(--borde); border-radius: var(--r-panel); overflow: auto; }
 
-.estado { display: inline-flex; align-items: center; gap: var(--e1); font-size: 13px; font-weight: 700; }
-.estado-generado { color: var(--gris-lapiz); }
-.estado-publicado { color: var(--verde-confirma); }
+/*
+ * LOS ESTADOS DE UNA CAMPANA, ORDENADOS POR PESO VISUAL Y NO POR MATIZ
+ *
+ * El verde sale: no es de marca, y ademas era lo unico que distinguia una
+ * campana publicada de una generada. Ahora Publicado es el unico estado con
+ * gradiente, asi que se encuentra de un vistazo en una lista larga, y el
+ * sistema aguanta un quinto estado sin inventar colores fuera de la paleta.
+ *
+ * Borrador y Vencido se escriben igual aunque hoy no se vean: el historial
+ * solo emite dos, publicado o generado (src/client/js/68-pantallas.js). Emitir
+ * los otros dos es JavaScript y producto, no piel.
+ */
+.estado {
+  display: inline-flex; align-items: center; gap: var(--e1);
+  font-size: 13px; font-weight: 800;
+  padding: 6px 14px; border-radius: var(--r-pildora);
+}
+.estado-generado { background: var(--rm-estado-generado-bg); color: var(--rm-estado-generado-fg); }
+.estado-publicado { background: var(--rm-estado-publicado-bg); color: var(--rm-estado-publicado-fg); }
+.estado-borrador { background: var(--rm-estado-borrador-bg); color: var(--rm-estado-borrador-fg); }
+.estado-vencido { background: transparent; border: 1.5px solid var(--rm-estado-vencido-borde); color: var(--rm-estado-vencido-fg); }
 
+/* El punto se dibujaba con currentColor al lado del texto. Con la pildora
+   sobra, y encima del gradiente de Publicado quedaria un lunar blanco. Sigue
+   en el DOM porque es decorativo y quitarlo seria tocar el JavaScript. */
+.estado .punto { display: none; }
 .punto { width: 7px; height: 7px; border-radius: 50%; background: currentColor; display: inline-block; }
 
 /* --- Hoja deslizable del celular ---------------------------------------- */
@@ -435,20 +947,28 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 .boton-flotante { display: none; }
 
 .cortina {
-  position: fixed; inset: 0; background: rgba(22, 24, 29, 0.35);
-  z-index: 40; opacity: 0; pointer-events: none; transition: opacity var(--t-hoja);
+  position: fixed; inset: 0; background: var(--cortina);
+  z-index: 40; opacity: 0; pointer-events: none; transition: opacity var(--t-rapido);
 }
 .cortina.abierta { opacity: 1; pointer-events: auto; }
 
+/* Donde vive la promesa del producto en un telefono. La sombra va hacia
+   ARRIBA: es lo unico que la separa del contenido cuando la cortina todavia es
+   translucida. */
 .hoja-deslizable {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 45;
   background: var(--papel);
   border-radius: var(--r-hoja) var(--r-hoja) 0 0;
+  /* La sombra SOLO cuando esta abierta. La hoja vive fija abajo y desplazada
+     hacia abajo su propio alto, asi que en escritorio, donde no se usa, su
+     borde superior queda justo al filo de la ventana y la sombra se derramaba
+     hacia arriba en TODAS las pantallas. */
   max-height: 86vh; display: flex; flex-direction: column;
-  transform: translateY(100%); transition: transform var(--t-hoja);
+  transform: translateY(100%);
+  transition: transform var(--t-hoja) var(--rm-ease-entrada);
 }
-.hoja-deslizable.abierta { transform: translateY(0); }
-.asa { width: 36px; height: 4px; border-radius: 2px; background: var(--borde); margin: var(--e3) auto; flex: none; }
+.hoja-deslizable.abierta { transform: translateY(0); box-shadow: 0 -8px 32px rgba(10, 10, 10, 0.13); }
+.asa { width: 36px; height: 4px; border-radius: var(--r-pildora); background: var(--rm-estado-vencido-borde); margin: var(--e3) auto; flex: none; }
 
 /* --- Selector de idioma de la interfaz ------------------------------------
  *
@@ -461,16 +981,17 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
   display: flex; align-items: center; gap: 2px;
   padding: 4px; border-radius: 999px;
   background: var(--papel); border: 1px solid var(--borde);
-  box-shadow: 0 2px 12px rgba(22, 24, 29, 0.12);
+  box-shadow: var(--sombra-flotante);
 }
 .selector-idioma button {
   border: 0; background: transparent; cursor: pointer;
   padding: 6px 12px; border-radius: 999px;
-  font: inherit; font-size: 0.82rem; font-weight: 600; color: var(--gris-lapiz);
+  font: inherit; font-size: 0.82rem; font-weight: 700; color: var(--gris-lapiz);
 }
 .selector-idioma button:hover { background: var(--niebla); }
-.selector-idioma button[aria-pressed="true"] { background: var(--naranja-marca); color: #fff; }
-.selector-idioma button:focus-visible { outline: 2px solid var(--naranja-marca); outline-offset: 2px; }
+.selector-idioma button[aria-pressed="true"] { background: var(--neon-texto); color: var(--papel); }
+/* Sin outline propio: hereda el global de 3px. Era el unico control de toda
+   la aplicacion que se salia del contrato del anillo. */
 
 /* --- Pantalla final ------------------------------------------------------ */
 
@@ -479,9 +1000,61 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 .pasos-publicar li::before {
   content: counter(paso); position: absolute; left: 0; top: 0;
   width: 24px; height: 24px; border-radius: 50%;
-  background: var(--rubor); color: var(--naranja-accion);
-  font-family: var(--titulos); font-weight: 600; font-size: 13px;
+  background: var(--beige); color: var(--neon-texto);
+  font-family: var(--titulos); font-weight: 800; font-size: 13px;
   display: flex; align-items: center; justify-content: center;
+}
+
+/* --- Paneles de momento -------------------------------------------------
+ *
+ * Las tres pantallas que Juan aprobo como momento el 21 de septiembre: el
+ * inicio, "Tu T&C esta listo" y el bloque de azar de la Ayuda. Legal, el error
+ * y el pais en piloto quedaron fuera a proposito: son callejones donde la
+ * campana no sigue por la herramienta, y un panel grande ahi no celebra nada,
+ * subraya que te quedaste afuera.
+ *
+ * El de la Ayuda ya esta hecho: es el aviso serio de la fase 6, que es panel
+ * beige con regla de gradiente arriba. Aqui van los otros dos.
+ *
+ * El prototipo dibuja el momento como una seccion propia, pero el JavaScript
+ * no emite ningun contenedor para ella y la ronda prohibe agregarlo. El panel
+ * se arma con lo que si hay: el h1 y el parrafo que lo sigue comparten fondo,
+ * se les quita el margen de en medio y cada uno redondea su mitad. A la vista
+ * es un solo panel.
+ *
+ * Los dos selectores estan medidos contra las 48 pantallas congeladas, para no
+ * pintar de mas: el primero da las tres vistas del inicio (escritorio,
+ * portugues y celular) y el segundo da solo "Tu T&C esta listo".
+ */
+.pagina-angosta:has(> .pasos-publicar) > h1:has(+ .pregunta-ayuda),
+.pagina-angosta:has(.pasos-publicar):not(:has(> .pasos-publicar)) > h1:has(+ .pregunta-ayuda) {
+  background: var(--beige);
+  margin: 0;
+  padding: var(--e7) var(--e7) 0;
+  border-radius: var(--r-hoja) var(--r-hoja) 0 0;
+  font-size: clamp(32px, 4.4vw, 48px);
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+
+/* La regla de gradiente que separa el titular de su bajada. */
+.pagina-angosta:has(> .pasos-publicar) > h1:has(+ .pregunta-ayuda)::after,
+.pagina-angosta:has(.pasos-publicar):not(:has(> .pasos-publicar)) > h1:has(+ .pregunta-ayuda)::after {
+  content: ''; display: block;
+  width: 96px; height: 6px; margin-top: var(--e5);
+  border-radius: var(--r-pildora); background: var(--gradiente);
+}
+
+.pagina-angosta:has(> .pasos-publicar) > h1:has(+ .pregunta-ayuda) + .pregunta-ayuda,
+.pagina-angosta:has(.pasos-publicar):not(:has(> .pasos-publicar)) > h1:has(+ .pregunta-ayuda) + .pregunta-ayuda {
+  background: var(--beige);
+  margin: 0 0 var(--e6);
+  padding: var(--e5) var(--e7) var(--e7);
+  border-radius: 0 0 var(--r-hoja) var(--r-hoja);
+  /* Sin max-width: el tope de medida iba en la SUPERFICIE, no en el texto, asi
+     que la mitad de abajo del panel salia 156px mas estrecha que la de arriba
+     y el panel se veia partido en dos rectangulos con un escalon a la derecha. */
+  font-size: 19px; color: var(--gris-lapiz);
 }
 
 /* --- Celular ------------------------------------------------------------ */
@@ -492,40 +1065,64 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
   .pagina { padding: var(--e5) var(--e4) 136px; }
   .dos-columnas { grid-template-columns: 1fr; gap: var(--e5); }
   .columna-documento { display: none; }
-  h1 { font-size: 23px; }
-  .pregunta-titulo { font-size: 19px; }
+  h1 { font-size: 27px; line-height: 1.1; }
+  .pregunta-titulo { font-size: 21px; }
+  /* En celular no caben siete nombres sin encaramarse, asi que la barra por
+     segmentos se va entera y se queda la linea de texto con su carril, que ya
+     se ve en escritorio como la linea de encima. */
   .progreso { display: none; }
-  .progreso-compacto {
-    display: block; margin: 0 0 var(--e5); font-size: 14px; color: var(--gris-lapiz);
-  }
-  .progreso-compacto strong { color: var(--tinta); font-family: var(--titulos); font-weight: 600; }
+  /* En celular la barra por segmentos se va entera, asi que esta linea es la
+     unica senal de avance que queda y se muestra SIEMPRE, pase lo que pase con
+     las consultas de contenedor de arriba. */
+  .progreso-compacto { display: block; margin: 0 0 var(--e5); font-size: 14px; }
+  .progreso-compacto strong { display: inline; }
   .progreso-linea {
-    display: block; height: 2px; margin-top: var(--e2);
-    background: var(--borde); border-radius: 1px; position: relative;
+    display: block; height: var(--paso-alto); margin-top: var(--e2);
+    background: var(--paso-pendiente); border-radius: var(--r-pildora); position: relative;
   }
   .progreso-linea::before {
     content: ''; position: absolute; inset: 0 auto 0 0;
-    width: var(--avance); background: var(--naranja-marca); border-radius: 1px;
+    width: var(--avance); background: var(--paso-actual); border-radius: var(--r-pildora);
   }
 
   .barra-superior { padding: var(--e2) var(--e4); gap: var(--e3); }
   .marca { font-size: 15px; white-space: nowrap; flex: none; }
   .marca .corona { width: 11px; left: 36px; }
+  /* El carril se declara con overflow-x: auto y el navegador sube el otro eje a
+     auto tambien, asi que recorta arriba y abajo. La caja media exactamente lo
+     que el boton, o sea cero holgura, y el anillo de foco (3px mas 2px de
+     separacion) se perdia entero: computaba bien y no se veia. Cinco pixeles de
+     holgura, restados del relleno de la barra para que no crezca. */
   .barra-superior nav {
     flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    scrollbar-width: none; padding: 5px 0; margin: -5px 0;
   }
   .barra-superior nav::-webkit-scrollbar { display: none; }
   .enlace-nav { white-space: nowrap; padding: var(--e2); font-size: 13px; }
 
+  /* El relleno del panel de momento baja: 48px a cada lado se comen una
+     pantalla de 360px. */
+  .pagina-angosta:has(> .pasos-publicar) > h1:has(+ .pregunta-ayuda),
+  .pagina-angosta:has(.pasos-publicar):not(:has(> .pasos-publicar)) > h1:has(+ .pregunta-ayuda) {
+    padding: var(--e5) var(--e4) 0;
+  }
+  .pagina-angosta:has(> .pasos-publicar) > h1:has(+ .pregunta-ayuda) + .pregunta-ayuda,
+  .pagina-angosta:has(.pasos-publicar):not(:has(> .pasos-publicar)) > h1:has(+ .pregunta-ayuda) + .pregunta-ayuda {
+    padding: var(--e3) var(--e4) var(--e5); font-size: 16px;
+  }
+
   .selector-idioma { bottom: 76px; }
 
+  /* Abre la hoja del documento. Va en tinta y no en gradiente a proposito: el
+     gradiente es del boton que hace avanzar la campana, y si los dos lo
+     llevaran competirian. Aqui el que manda es "Siguiente". */
   .boton-flotante {
     display: flex; align-items: center; justify-content: center; gap: var(--e2);
     position: fixed; left: var(--e4); right: var(--e4); bottom: var(--e4); z-index: 35;
-    padding: 14px; border-radius: var(--r-control); border: 0;
+    padding: 14px; border-radius: var(--r-pildora); border: 0;
     background: var(--tinta); color: var(--papel);
-    font-family: var(--titulos); font-weight: 600; font-size: 15px;
+    font-family: var(--titulos); font-weight: 800; font-size: 15px;
+    box-shadow: var(--sombra-flotante);
   }
   .hoja { max-height: none; border: 0; box-shadow: none; border-radius: 0; padding: var(--e4) var(--e5) var(--e6); }
   .ficha dl { grid-template-columns: 1fr; gap: var(--e1); }
@@ -540,5 +1137,30 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
     scroll-behavior: auto !important;
   }
   /* Sin animación, el destello se queda como borde fijo hasta el próximo cambio. */
-  .hoja mark { background: var(--rubor); outline: 2px solid var(--naranja-marca); outline-offset: 1px; }
+  .hoja mark { background: var(--destello); outline: 2px solid var(--neon); outline-offset: 1px; }
+}
+
+/* --- Colores forzados ----------------------------------------------------
+ *
+ * En modo de contraste alto (el de Windows, sobre todo) el navegador tira los
+ * colores de fondo y pinta con su propia paleta. Dos cosas de este cambio de
+ * identidad se apoyan en el relleno y se perdian enteras:
+ *
+ * La barra de progreso. La fase 4 cambio el borde inferior del paso por un
+ * relleno y un gradiente, y ninguno de los dos sobrevive: la barra desaparecia
+ * y no quedaba ninguna senal de en que paso va.
+ *
+ * Y los tres niveles de aviso. El commit de la fase 6 afirma que se distinguen
+ * "aunque se vean en blanco y negro", y en colores forzados no era cierto: el
+ * informativo y el serio quedaban identicos, porque lo que los separa es el
+ * pastel y la regla de gradiente, que son relleno. La estructura que la
+ * especificacion queria decir se consigue con un borde, que si sobrevive.
+ */
+@media (forced-colors: active) {
+  .progreso button::before { border: 1px solid CanvasText; }
+  .progreso .hecho button::before,
+  .progreso .actual button::before { background: CanvasText; forced-color-adjust: none; }
+
+  .aviso { border: 1px solid CanvasText; }
+  .aviso-serio { border-top-width: 3px; }
 }

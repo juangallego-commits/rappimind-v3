@@ -13,6 +13,7 @@ const { rutaDesdeRaiz, leerTexto, listarArchivos, existe } = require('../scripts
 const { cargarModelos } = require('../scripts/lib/modelos');
 const { tieneRetornoDeCarro, normalizarTexto } = require('../src/core/texto.js');
 const { construir, DIST, revisarColisionesDeNombre } = require('../scripts/build.js');
+const { ORDEN } = require('../scripts/lib/hoja-completa');
 
 /** Lo que debe quedar en dist/: el codigo de src/ mas lo que genera el build. */
 function archivosEsperados() {
@@ -226,4 +227,46 @@ test('ningún archivo de core renombra lo que importa de otro archivo de core', 
 
   assert.deepStrictEqual(renombrados, [],
     'estos alias quedan sin definir fuera de Node:\n  ' + renombrados.join('\n  '));
+});
+
+test('dist/Estilos.html cruza la frontera: sin @import, con la letra incrustada', () => {
+  // La cuarta frontera de la skill frontera-apps-script, y falla callada.
+  //
+  // Apps Script sirve la hoja embebida en un solo <style>, dentro del HTML que
+  // arma doGet. Ahí no existe el sistema de archivos del repositorio: un
+  // @import a "tokens/colors.css" y una url() a "../assets/fonts/x.woff2"
+  // apuntan a rutas que del lado del usuario no están. No lanzan ningún error.
+  // El navegador se queda sin esos valores, cada var() cae a su valor por
+  // defecto, y la aplicación sale despintada sin que nada avise.
+  //
+  // Por eso scripts/lib/hoja-completa.js concatena los cinco archivos de
+  // tokens y mete la letra en base64, y por eso esta prueba mira dist/ y no la
+  // demostración: la demo hereda dist/Estilos.html, así que no ve la frontera.
+  const estilos = leerTexto(path.join(DIST, 'Estilos.html'));
+
+  assert.ok(estilos.indexOf('@import') === -1,
+    'quedó un @import en dist/Estilos.html, y no sobrevive a Apps Script');
+
+  // Se exige que TODA url() sea un data:, no que ninguna lleve "../". Buscar el
+  // patron de la ruta relativa dejaba pasar url('logo.png') y
+  // url('assets/logo/x.png'), que en Apps Script tampoco resuelven, y ademas
+  // incrustarLetras solo sabe convertir las de tipo de letra: una imagen se
+  // colaria intacta.
+  const sinResolver = (estilos.match(/url\(\s*(?!['"]?data:)[^)]*\)/g) || []);
+  assert.deepStrictEqual(sinResolver, [],
+    'quedaron url() sin resolver en dist/Estilos.html, y en Apps Script no existe el sistema de archivos del repositorio: ' + sinResolver.join(', '));
+
+  // Las cinco capas de token tienen que estar, y rappimind.css la última, que
+  // es la que pisa a las de marca.
+  for (const relativa of ORDEN) {
+    assert.ok(estilos.indexOf('/* src/client/' + relativa + ' */') !== -1,
+      'dist/Estilos.html no trae ' + relativa);
+  }
+  const posiciones = ORDEN.map((r) => estilos.indexOf('/* src/client/' + r + ' */'));
+  const ordenadas = posiciones.slice().sort((a, b) => a - b);
+  assert.deepStrictEqual(posiciones, ordenadas,
+    'los archivos de la hoja salieron en otro orden, así que las capas se pisan al revés');
+
+  assert.ok(/@font-face\s*\{[^}]*url\(data:font\/woff2;base64,/.test(estilos),
+    'la letra de marca no viajó en base64: en Apps Script no se vería');
 });
