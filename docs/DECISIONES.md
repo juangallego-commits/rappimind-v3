@@ -1402,3 +1402,37 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      arriba, que son estructura y cumplen por sí solas la regla del brand book de
      no distinguir por color. La caja alta se queda donde sí hay etiquetas
      cortas, que son las cabeceras de tabla y la marca de "Opcional".
+
+113. **El gradiente son tres gradientes, no uno.** El de marca (`--rm-grad`) con
+     blanco encima da entre 2.58:1 y 3.79:1, y ese 3.79 es el máximo de todo el
+     tramo: una letra normal en blanco no llega a 4.5 en ningún punto. El botón
+     primario sale por el umbral de texto grande, recortando el tramo al 17% y
+     subiendo su texto a 19px en peso 700 (decisión 98), y eso sirve donde el
+     texto puede crecer. La píldora de "Publicado" va a 13px dentro de una tabla
+     y no puede, así que existe `--rm-grad-texto`: el mismo gradiente con las tres
+     paradas hundidas hasta que el blanco pasa 4.5:1 en todo el tramo, con 4.62:1
+     en el peor punto. Conserva la señal, que es que Publicado sea el único estado
+     con gradiente. Lo usan también el visto de "Así queda" y el disco de la
+     opción elegida, que llevan algo encima y daban 2.58:1 donde les toca 3.
+
+114. **El elemento activo del menú se queda con su subrayado neón y no toma la
+     píldora beige del prototipo.** El prototipo lo dibuja como píldora `#FFF0DD`,
+     que es exactamente el mismo beige de la píldora "Generado" del historial y
+     del panel del aviso serio. Una píldora beige en la barra superior se leería
+     como un estado de campaña y no como "estás aquí". El subrayado de 2px en neón
+     dice la posición sin competir con el vocabulario de estados. Queda escrito
+     porque el auditor de FIDELIDAD lo marcó como desviación sin justificar, y
+     tenía razón en que no lo estaba.
+
+115. **La escala de titular se aplica desde la hoja y no pantalla por pantalla.**
+     El prototipo dibuja el titular entre 34 y 60px según la pantalla. Replicar
+     ese escalón uno a uno ataría la hoja de estilos a la lista de pantallas y se
+     desincronizaría con la primera que entre. Se toma 34px como base, que es el
+     escalón más bajo del prototipo, y los dos paneles de momento suben a 48px con
+     su propia regla, que ya existía.
+
+     Esto llegó tarde y conviene decir por qué: la fase 2 escribió "los tamaños no
+     se tocan aquí, eso es de las fases de componente" y ninguna de las fases 3 a 8
+     volvió por ellos. Los tres titulares se quedaron en 28, 21 y 17px, que son
+     exactamente los valores del sistema anterior. La identidad llegó a 3 de las
+     48 pantallas hasta que el auditor de FIDELIDAD midió los 48 titulares.

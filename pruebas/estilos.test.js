@@ -340,3 +340,42 @@ test('los pesos de letra que usa la hoja están en la escala declarada', () => {
     'pesos fuera de la escala declarada: ' + fuera.join(', ') +
     '. Si hacen falta, agrégalos a esta lista y di por qué en docs/DECISIONES.md');
 });
+
+test('ninguna regla de la hoja anida :has() dentro de :has()', () => {
+  // Esto pasó de verdad, y pasó callado. Cinco reglas escritas para que el
+  // nombre del paso no saliera dos veces usaban
+  // `:has(.progreso:not(:has(li:nth-child(3))))`. La especificación de CSS
+  // prohíbe :has() dentro del argumento de otro :has(), así que el navegador
+  // tira la regla ENTERA y no dice nada: quedaron commiteadas, dadas por
+  // arregladas, y viajando a Apps Script en cada carga sin hacer nada.
+  //
+  // Es exactamente el modo de falla que describe la skill frontera-apps-script,
+  // ocurrido en el mismo cambio que lo escribió. Ninguna de las otras pruebas
+  // comprueba que las reglas de la hoja se puedan siquiera leer.
+  const limpia = HOJA.replace(/\/\*[\s\S]*?\*\//g, '');
+  const malas = [];
+
+  for (const regla of limpia.match(/[^{}]+\{/g) || []) {
+    const selector = regla.slice(0, -1).trim();
+    if (selector.indexOf('@') === 0 || selector.indexOf(':has(') === -1) continue;
+
+    // Recorre contando paréntesis: si aparece otro :has( mientras seguimos
+    // dentro del argumento del primero, está anidado.
+    let dentro = 0;
+    for (let i = 0; i < selector.length; i++) {
+      if (selector.startsWith(':has(', i)) {
+        if (dentro > 0) { malas.push(selector); break; }
+        dentro = 1; i += 4;
+        continue;
+      }
+      if (dentro > 0) {
+        if (selector[i] === '(') dentro++;
+        else if (selector[i] === ')') dentro--;
+      }
+    }
+  }
+
+  assert.deepStrictEqual(malas, [],
+    'estos selectores anidan :has() dentro de :has(), así que el navegador los tira enteros sin avisar:\n  ' +
+    malas.join('\n  '));
+});

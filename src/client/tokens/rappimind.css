@@ -51,6 +51,7 @@
   --rm-linea: rgba(10,10,10,.10);
   --rm-borde-control: rgba(10,10,10,.44);   /* 3.07:1 sobre papel, 3.01:1 sobre niebla */
   --rm-borde-secundario: rgba(10,10,10,.22);
+  --rm-borde-hover: rgba(10,10,10,.66);    /* el paso intermedio: ni vacío ni lleno */
   --rm-borde-opcion: rgba(10,10,10,.12);    /* la tarjeta de opción sin elegir */
 
   /* === ACENTO ===
