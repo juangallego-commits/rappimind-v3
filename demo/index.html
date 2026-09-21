@@ -645,9 +645,26 @@ h1[tabindex='-1']:focus:not(:focus-visible) { outline: none; }
   background: var(--rm-aviso-serio-regla) top/100% 3px no-repeat, var(--rm-aviso-serio-bg);
   padding-top: 19px;
 }
+/*
+ * El titulo del aviso serio NO va en caja alta, y es una desviacion deliberada
+ * de la especificacion, autorizada por Juan el 21 de septiembre de 2026.
+ *
+ * La regla se penso para una etiqueta corta. Los siete titulos que la
+ * aplicacion pone aqui son frases: "Antes de usar este enlace, confirma con
+ * Legal", "La leyenda cambio. Cambia el arte antes de publicarlo.", "Antes de
+ * lanzar: ¿tu dinamica tiene azar?". Una frase de ocho palabras en mayusculas
+ * no se lee, se escanea, y estas son advertencias legales: la del azar es la
+ * que evita que alguien lance una rifa sin permiso previo.
+ *
+ * No se pierde nada del sistema. Lo que distingue al nivel serio del
+ * informativo es el panel beige y la regla de gradiente de arriba, que son
+ * estructura y cumplen por si solas la regla del brand book de no distinguir
+ * por color. La caja alta se queda donde de verdad hay etiquetas cortas: las
+ * cabeceras de tabla y la marca de "Opcional".
+ */
 .aviso-serio h3 {
-  font-family: var(--titulos); font-size: 11.5px; font-weight: 900;
-  letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 6px;
+  font-family: var(--titulos); font-size: 14px; font-weight: 900;
+  letter-spacing: -0.01em; margin: 0 0 6px;
 }
 
 /*

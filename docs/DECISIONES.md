@@ -1389,3 +1389,16 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      catálogos de leyendas de los otros ocho países. Setenta kilobytes en cada
      carga por una decoración que se ve al 10% no es un cambio que se pague solo.
      Si Juan lo quiere, la ruta barata es un SVG.
+
+112. **El título del aviso serio no va en caja alta.** Es una desviación
+     deliberada de `docs/diseno/ESPECIFICACION_ESTADOS.md` sección 2, autorizada
+     por Juan el 21 de septiembre de 2026. La regla se pensó para una etiqueta
+     corta, y los siete títulos que la aplicación pone en ese sitio son frases:
+     "Antes de usar este enlace, confirma con Legal", "La leyenda cambió. Cambia
+     el arte antes de publicarlo.", "Antes de lanzar: ¿tu dinámica tiene azar?".
+     Una frase de ocho palabras en mayúsculas no se lee, se escanea, y estas son
+     advertencias legales. No se pierde nada del sistema: lo que distingue al
+     nivel serio del informativo es el panel beige y la regla de gradiente de
+     arriba, que son estructura y cumplen por sí solas la regla del brand book de
+     no distinguir por color. La caja alta se queda donde sí hay etiquetas
+     cortas, que son las cabeceras de tabla y la marca de "Opcional".
