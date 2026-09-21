@@ -69,6 +69,10 @@ function prompt(datos) {
   lineas.push('- **Las primeras líneas de cada pantalla del formulario** (Campaña, Organizador,');
   lineas.push('  Cuándo, Beneficio, Créditos, Participantes, Pieza) son la barra de progreso, no');
   lineas.push('  preguntas.');
+  lineas.push('- **Las fotos, si las hay.** Puede que te adjunte fotos de algunas pantallas de');
+  lineas.push('  la tanda, no de todas: las demás son la misma forma con otro texto. El texto');
+  lineas.push('  de todas va completo en el mensaje, así que si no ves foto de una pantalla,');
+  lineas.push('  revísala igual con su texto.');
   lineas.push('- **En todas las pantallas** hay una barra superior con RappiMind v3 y las secciones');
   lineas.push('  Generar, Mis campañas, Ayuda y Administración (esta última solo la ve un');
   lineas.push('  administrador), y un botón fijo abajo a la derecha con ES y BR que cambia el');
@@ -136,13 +140,26 @@ function prompt(datos) {
   lineas.push('```');
   lineas.push('### H-<tanda>.<número> · <título corto del hallazgo>');
   lineas.push('');
-  lineas.push('- **Dónde:** Pantalla <número> · <nombre de la pantalla>');
+  lineas.push('- **Dónde:** <ver abajo, según de dónde venga>');
   lineas.push('- **Gravedad:** alta | media | nit');
   lineas.push('- **Qué pasa:** una o dos frases.');
   lineas.push('- **Dice hoy:** «el texto actual, copiado letra por letra, con sus tildes»');
   lineas.push('- **Debería decir:** «el texto nuevo, listo para pegar»');
   lineas.push('- **Por qué:** una frase, desde el comercial.');
   lineas.push('```');
+  lineas.push('');
+  lineas.push('**El campo Dónde**, según de dónde venga el hallazgo. No todo lo que te paso es');
+  lineas.push('una pantalla: hay tandas que son listas de preguntas, y bloques de mensajes que');
+  lineas.push('solo salen cuando algo se equivoca.');
+  lineas.push('');
+  lineas.push('- De una pantalla: `Pantalla 12 · Formulario, el tope por pedido`');
+  lineas.push('- De una pregunta sin pantalla: `Pregunta «¿Qué categorías de Travel');
+  lineas.push('  participan?» · campo categorias`. Ese "campo" sale en la ficha de cada');
+  lineas.push('  pregunta, en la fila "Campo interno". Cópialo: es con lo que la encuentro.');
+  lineas.push('- De un mensaje de validación: `Validación de «¿Cuál es el máximo de Créditos');
+  lineas.push('  por pedido?» · cuando lo deja en blanco`');
+  lineas.push('- De la traducción al portugués: `Portugués · «Mis campañas»`, con el texto en');
+  lineas.push('  español, que es la clave del diccionario.');
   lineas.push('');
   lineas.push('Las tres gravedades:');
   lineas.push('');
@@ -181,6 +198,9 @@ function prompt(datos) {
 }
 
 /** El LEEME: como se usa el paquete, sin terminal. */
+/** El repositorio, para los enlaces de GitHub. */
+const REPO = 'https://github.com/juangallego-commits/rappimind-v3';
+
 function leeme(datos) {
   const lineas = [];
 
@@ -232,6 +252,54 @@ function leeme(datos) {
   lineas.push('El orden importa: la tanda 1 es la que más devuelve, porque son las pantallas');
   lineas.push('donde el comercial decide si se queda. Si solo hay tiempo para tres, que sean la');
   lineas.push('1, la 2 y la 3.');
+  lineas.push('');
+
+  lineas.push('## Dónde está cada cosa');
+  lineas.push('');
+  lineas.push('Todo vive en `docs/revision/`, dentro del repositorio. En GitHub se abre en');
+  lineas.push('`' + REPO + '/tree/main/docs/revision`.');
+  lineas.push('');
+  lineas.push('| Archivo | Para qué |');
+  lineas.push('|---|---|');
+  lineas.push('| `LEEME.md` | Esto que estás leyendo |');
+  lineas.push('| `PROMPT.md` | Lo que se pega al empezar cada conversación |');
+  for (const archivo of datos.tandas) {
+    lineas.push('| `' + archivo.nombre + '` | Tanda ' + archivo.numero + ': ' +
+      archivo.tanda.titulo + ' |');
+  }
+  lineas.push('| `respuestas/` | Donde va lo que responda Claude chat |');
+  lineas.push('| `pantallas.json` | El texto de las pantallas, del que se arman las tandas. No se lee a mano |');
+  lineas.push('');
+
+  lineas.push('## Las fotos las tomas tú');
+  lineas.push('');
+  lineas.push('En el repositorio no hay capturas, a propósito. Las tomas tú de la aplicación');
+  lineas.push('cuando vayas a hacer la tanda, y así son de la versión que está corriendo ese');
+  lineas.push('día y no de un recorrido de hace tres semanas.');
+  lineas.push('');
+  lineas.push('Cada tanda te dice, al principio, qué pantallas suyas vale la pena fotografiar.');
+  lineas.push('Son ' + datos.fotos + ' en total, repartidas así:');
+  lineas.push('');
+  lineas.push('| Tanda | Qué fotografiar |');
+  lineas.push('|---|---|');
+  for (const archivo of datos.tandas) {
+    const suyas = (archivo.nombresDeFotos || []);
+    lineas.push('| ' + archivo.numero + ' | ' +
+      (suyas.length ? suyas.join('; ')
+        : (archivo.pantallas ? 'ninguna hace falta: son formas de pantalla que ya salen en otra tanda'
+          : 'nada: esta tanda es de preguntas, no de pantallas')) + ' |');
+  }
+  lineas.push('');
+  lineas.push('No son todas las pantallas de cada tanda, y no hacen falta: las demás son la');
+  lineas.push('misma forma con otro texto, y el texto va completo dentro de la tanda. Con una');
+  lineas.push('por forma de pantalla, Claude chat entiende cómo se ve el producto.');
+  lineas.push('');
+  lineas.push('Si no adjuntas ninguna, la revisión igual funciona. Pierdes lo visual, que es');
+  lineas.push('el aire, la jerarquía y el tamaño de los botones, no el copy, que es el grueso.');
+  lineas.push('');
+  lineas.push('**Y `docs/FRONT_ACTUAL.html`**, que no está en esta carpeta sino un nivel');
+  lineas.push('arriba, en `docs/`. Ese es el front entero en un archivo, para verlo tú con');
+  lineas.push('doble clic. No se lo mandes a Claude chat: el porqué está más arriba.');
   lineas.push('');
 
   lineas.push('## Cómo se hace cada tanda');

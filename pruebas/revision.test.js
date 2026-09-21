@@ -18,7 +18,7 @@ const assert = require('node:assert');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { TANDAS, CAMPOS_DE_LA_PANTALLA, CARPETA } = require('../scripts/revision');
+const { TANDAS, FUERA_DE_REVISION, CAMPOS_DE_LA_PANTALLA, CARPETA } = require('../scripts/revision');
 const { fichasDePantalla } = require('../scripts/front');
 const { PREGUNTAS } = require('../src/core/preguntas.js');
 const { ESQUEMAS } = require('../src/core/esquemas.js');
@@ -56,13 +56,33 @@ test('las tandas piden pantallas que existen, y ninguna va dos veces', () => {
   }
 });
 
-test('ninguna pantalla se queda fuera de las tandas', () => {
+test('ninguna pantalla se queda fuera sin que alguien lo haya decidido', () => {
   const vistas = new Set();
   for (const tanda of TANDAS) for (const id of tanda.pantallas || []) vistas.add(id);
 
-  const fuera = fichasDePantalla().filter((ficha) => !vistas.has(ficha.id)).map((ficha) => ficha.id);
-  assert.deepStrictEqual(fuera, [],
-    'estas pantallas no se revisarían nunca y nadie se enteraría: ' + fuera.join(', '));
+  const sueltas = fichasDePantalla()
+    .filter((ficha) => !vistas.has(ficha.id) && !FUERA_DE_REVISION[ficha.id])
+    .map((ficha) => ficha.id);
+  assert.deepStrictEqual(sueltas, [],
+    'estas pantallas no se revisarían nunca y nadie se enteraría. Ponlas en una tanda, ' +
+    'o en FUERA_DE_REVISION con el motivo: ' + sueltas.join(', '));
+});
+
+test('lo que se deja fuera existe y dice por qué', () => {
+  const existentes = new Set(fichasDePantalla().map((ficha) => ficha.id));
+  const enTandas = new Set();
+  for (const tanda of TANDAS) for (const id of tanda.pantallas || []) enTandas.add(id);
+
+  for (const id of Object.keys(FUERA_DE_REVISION)) {
+    assert.ok(existentes.has(id),
+      'FUERA_DE_REVISION habla de la pantalla "' + id + '", que ya no existe');
+    assert.ok(!enTandas.has(id),
+      'la pantalla "' + id + '" está a la vez fuera de revisión y dentro de una tanda');
+    // Un motivo de tres palabras no es un motivo: dentro de seis meses nadie va
+    // a saber si fue una decision o un descuido.
+    assert.ok(FUERA_DE_REVISION[id].length > 30,
+      'la pantalla "' + id + '" queda fuera sin un motivo que se entienda');
+  }
 });
 
 test('los siete tipos de campaña quedan cubiertos', () => {
@@ -91,7 +111,13 @@ test('cada pantalla apunta a campos que existen', () => {
 
 // --- Lo que quedo en el repositorio -----------------------------------------
 
-test('el paquete generado está en el repositorio', () => {
+test('el paquete generado está en el repositorio, y sin capturas', () => {
+  // Las fotos las toma Juan de la aplicacion cuando va a hacer la tanda, no
+  // las genera el recorrido: asi son de la version que corre ese dia. Si vuelve
+  // a aparecer la carpeta, es que alguien revivio el codigo que las tomaba.
+  assert.ok(!fs.existsSync(path.join(CARPETA, 'capturas')),
+    'volvió docs/revision/capturas: las fotos las toma Juan, no el recorrido');
+
   for (const archivo of ['pantallas.json', 'PROMPT.md', 'LEEME.md']) {
     assert.ok(fs.existsSync(path.join(CARPETA, archivo)),
       'falta docs/revision/' + archivo + ': corre `npm run front` y luego `npm run revision`');

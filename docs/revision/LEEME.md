@@ -4,7 +4,7 @@ Este paquete existe para revisar el front de RappiMind pantalla por pantalla y
 caso por caso, con Claude chat, y que lo que salga se pueda aplicar sin volver a
 escribirlo a mano.
 
-Generado el 2026-09-21 desde el commit `15c48ac`, con el
+Generado el 2026-09-21 desde el commit `f6bb8b1`, con el
 texto de 46 pantallas sacado de la aplicación tal como se lee.
 
 ## Por qué en tandas y no en un solo archivo
@@ -28,15 +28,64 @@ libre para revisar de verdad.
 |---|---|---|---|
 | 1 | `tanda-1-la-entrada.md` | La entrada: donde el comercial decide si esto le sirve | 11 pantallas, 7 fotos |
 | 2 | `tanda-2-cashback.md` | El Cashback, pregunta por pregunta | 18 pantallas, 4 fotos |
-| 3 | `tanda-3-el-cierre.md` | El cierre: revisar, generar y publicar | 7 pantallas, 5 fotos |
+| 3 | `tanda-3-el-cierre.md` | El cierre: revisar, generar y publicar | 3 pantallas, 2 fotos |
 | 4 | `tanda-4-otros-tipos.md` | Los otros tipos de campaña de Rappi | 3 pantallas, 17 preguntas, 2 fotos |
 | 5 | `tanda-5-travel.md` | Rappi Travel: los dos tipos, y las preguntas que nadie ha revisado | 41 preguntas |
 | 6 | `tanda-6-brasil.md` | Brasil y la interfaz en portugués | 4 pantallas, 2 preguntas, 1 foto, el diccionario del portugués |
-| 7 | `tanda-7-celular-y-fallas.md` | El celular, los errores y los límites | 3 pantallas, 2 fotos, los mensajes de error |
+| 7 | `tanda-7-alrededores.md` | Mis campañas, la Ayuda, Administración y lo que se lee cuando algo falla | 4 pantallas, 3 fotos, los mensajes de error |
 
 El orden importa: la tanda 1 es la que más devuelve, porque son las pantallas
 donde el comercial decide si se queda. Si solo hay tiempo para tres, que sean la
 1, la 2 y la 3.
+
+## Dónde está cada cosa
+
+Todo vive en `docs/revision/`, dentro del repositorio. En GitHub se abre en
+`https://github.com/juangallego-commits/rappimind-v3/tree/main/docs/revision`.
+
+| Archivo | Para qué |
+|---|---|
+| `LEEME.md` | Esto que estás leyendo |
+| `PROMPT.md` | Lo que se pega al empezar cada conversación |
+| `tanda-1-la-entrada.md` | Tanda 1: La entrada: donde el comercial decide si esto le sirve |
+| `tanda-2-cashback.md` | Tanda 2: El Cashback, pregunta por pregunta |
+| `tanda-3-el-cierre.md` | Tanda 3: El cierre: revisar, generar y publicar |
+| `tanda-4-otros-tipos.md` | Tanda 4: Los otros tipos de campaña de Rappi |
+| `tanda-5-travel.md` | Tanda 5: Rappi Travel: los dos tipos, y las preguntas que nadie ha revisado |
+| `tanda-6-brasil.md` | Tanda 6: Brasil y la interfaz en portugués |
+| `tanda-7-alrededores.md` | Tanda 7: Mis campañas, la Ayuda, Administración y lo que se lee cuando algo falla |
+| `respuestas/` | Donde va lo que responda Claude chat |
+| `pantallas.json` | El texto de las pantallas, del que se arman las tandas. No se lee a mano |
+
+## Las fotos las tomas tú
+
+En el repositorio no hay capturas, a propósito. Las tomas tú de la aplicación
+cuando vayas a hacer la tanda, y así son de la versión que está corriendo ese
+día y no de un recorrido de hace tres semanas.
+
+Cada tanda te dice, al principio, qué pantallas suyas vale la pena fotografiar.
+Son 21 en total, repartidas así:
+
+| Tanda | Qué fotografiar |
+|---|---|
+| 1 | pantalla 1, Inicio; pantalla 2, Filtro de entrada; pantalla 3, Formulario, el país; pantalla 5, Formulario, el tipo de campaña de Rappi; pantalla 28, Legal; pantalla 31, Los T&C que Legal ya publicó, la lista; pantalla 29, Filtro de Rappi Travel |
+| 2 | pantalla 9, Formulario, la identificación del organizador; pantalla 36, Formulario, un error en vivo; pantalla 11, Formulario, el porcentaje; pantalla 14, Formulario, cuántas veces puede ganar |
+| 3 | pantalla 23, Resumen, con algo pendiente; pantalla 25, Listo |
+| 4 | pantalla 34, Formulario, Cashback Multitienda y su lista de tiendas; pantalla 35, Formulario, Carrera de Compras con una opción bloqueada |
+| 5 | nada: esta tanda es de preguntas, no de pantallas |
+| 6 | pantalla 43, Formulario en portugués, el tipo de campaña |
+| 7 | pantalla 26, Mis campañas; pantalla 27, Ayuda; pantalla 39, Administración |
+
+No son todas las pantallas de cada tanda, y no hacen falta: las demás son la
+misma forma con otro texto, y el texto va completo dentro de la tanda. Con una
+por forma de pantalla, Claude chat entiende cómo se ve el producto.
+
+Si no adjuntas ninguna, la revisión igual funciona. Pierdes lo visual, que es
+el aire, la jerarquía y el tamaño de los botones, no el copy, que es el grueso.
+
+**Y `docs/FRONT_ACTUAL.html`**, que no está en esta carpeta sino un nivel
+arriba, en `docs/`. Ese es el front entero en un archivo, para verlo tú con
+doble clic. No se lo mandes a Claude chat: el porqué está más arriba.
 
 ## Cómo se hace cada tanda
 

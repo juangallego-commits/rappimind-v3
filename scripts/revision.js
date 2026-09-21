@@ -82,6 +82,26 @@ const CAMPOS_DE_LA_PANTALLA = {
   'celular-pregunta': ['tope'],
 };
 
+/**
+ * Las pantallas que a proposito no entran en ninguna tanda, y por que.
+ *
+ * Esto existe para que una pantalla fuera de revision sea una decision escrita y
+ * no un olvido. La prueba de pruebas/revision.test.js exige que toda pantalla
+ * este en una tanda o aqui: si manana se agrega una y nadie la reparte, la
+ * prueba lo dice antes de que la revision salga incompleta sin que se note.
+ */
+const EL_CELULAR = 'Juan lo dejó fuera el 21 de septiembre de 2026: el celular no es por donde los ' +
+  'comerciales usan la herramienta, y las tres pantallas se llevaban el sitio de Administración, ' +
+  'Mis campañas y la Ayuda, que sí importan y nunca se habían mirado con ojos de producto. Las ' +
+  'pantallas siguen en docs/FRONT_ACTUAL.html, así que no se perdieron: lo que no se hace es ' +
+  'pedirle a Claude chat que las revise.';
+
+const FUERA_DE_REVISION = {
+  'celular-inicio': EL_CELULAR,
+  'celular-pregunta': EL_CELULAR,
+  'celular-hoja': EL_CELULAR,
+};
+
 /** Las tandas, en el orden en que conviene revisarlas. */
 const TANDAS = [
   {
@@ -127,17 +147,18 @@ const TANDAS = [
     id: 'el-cierre',
     titulo: 'El cierre: revisar, generar y publicar',
     deQueVa:
-      'Lo que pasa después de la última pregunta. El resumen con lo que falta, la declaración ' +
-      'que firma el comercial, la pantalla final con lo que hay que pegar en Squarespace, el ' +
-      'historial, la ampliación de una campaña en curso y la ayuda.',
+      'Lo que pasa después de la última pregunta. El resumen con lo que todavía falta, la ' +
+      'declaración que firma el comercial, y la pantalla final con lo que hay que pegar en ' +
+      'Squarespace. Son tres pantallas y son el momento de más riesgo del producto: aquí el ' +
+      'documento deja de ser un borrador y se publica.',
     mirar: [
       'El resumen: ¿se entiende qué falta y cómo se arregla, sin bajar a buscarlo?',
-      'La declaración: ¿el comercial entiende qué está firmando?',
-      'La pantalla final: es el momento de más riesgo del producto. ¿Queda claro qué se copia, dónde se pega y qué pasa después?',
-      'El historial: ¿se distingue un borrador de una campaña publicada? ¿Se entiende "Usar como base" y "Ampliar"?',
-      'La ayuda: ¿responde lo que el comercial se va a preguntar, en el orden en que se lo va a preguntar?',
+      'La declaración: ¿el comercial entiende qué está firmando? Es lo único que firma en todo el recorrido.',
+      'La pantalla final: ¿queda claro qué se copia, dónde se pega y qué pasa después?',
+      'Si en la pantalla final falta algo que el comercial va a necesitar y no tiene: a quién avisarle, qué hacer si se equivocó, cómo se corrige un T&C ya publicado.',
+      'El paso de "generando" y la espera: ¿sabe que el correo le va a llegar, y en cuánto?',
     ],
-    pantallas: ['resumen', 'resumen-completo', 'listo', 'historial', 'ampliar', 'ayuda', 'admin'],
+    pantallas: ['resumen', 'resumen-completo', 'listo'],
   },
   {
     id: 'otros-tipos',
@@ -194,19 +215,24 @@ const TANDAS = [
     diccionarioPt: true,
   },
   {
-    id: 'celular-y-fallas',
-    titulo: 'El celular, los errores y los límites',
+    id: 'alrededores',
+    titulo: 'Mis campañas, la Ayuda, Administración y lo que se lee cuando algo falla',
     deQueVa:
-      'Lo que se rompe. Las tres pantallas en celular, todos los mensajes de validación del ' +
-      'formulario juntos, y lo que el comercial lee cuando Google falla a mitad de una ' +
-      'generación.',
+      'Todo lo que no es el formulario. El historial de sus campañas y la ampliación de una ' +
+      'que está en curso, la pantalla de Ayuda entera, la de Administración, y los mensajes ' +
+      'que salen cuando algo se equivoca o cuando Google falla. Son las pantallas menos ' +
+      'miradas del producto, y a las que el comercial llega justo cuando algo no le está ' +
+      'saliendo.',
     mirar: [
-      'En celular: ¿se entiende que el documento está detrás del botón flotante?',
-      'Los mensajes de validación, leídos de corrido: ¿hablan todos igual? ¿Alguno culpa al comercial?',
-      'Los mensajes de falla: ¿dicen si se perdió lo respondido y qué hacer ahora?',
-      'Si algún mensaje usa una palabra técnica que el comercial no conoce.',
+      'Mis campañas: ¿se distingue de un vistazo un borrador de una campaña ya publicada? ¿Se entiende qué hacen "Usar como base" y "Ampliar", y en qué se diferencian?',
+      'Mis campañas con veinte campañas encima: ¿se encuentra la de uno? Nadie ha mirado esta pantalla con más de dos.',
+      'Ampliar: es cambiarle la fecha a un documento ya publicado. ¿Entiende el comercial que el T&C se vuelve a generar y se vuelve a publicar?',
+      'La Ayuda, línea por línea: ¿responde lo que el comercial se va a preguntar, y en el orden en que se lo va a preguntar? ¿Sobra algo? ¿Falta lo de "ya publiqué y me equivoqué"?',
+      'Administración: la usa Legal, no el comercial. ¿Se entiende qué hace cada cosa y cuál es peligrosa? Nadie la ha mirado nunca con ojos de producto.',
+      'Los mensajes de validación, leídos de corrido: ¿hablan todos igual? ¿Alguno culpa al comercial? ¿Alguno dice que está mal sin decir cómo se arregla?',
+      'Los mensajes de falla: ¿dicen si se perdió lo que ya había respondido, y qué hacer ahora?',
     ],
-    pantallas: ['celular-inicio', 'celular-pregunta', 'celular-hoja'],
+    pantallas: ['historial', 'ampliar', 'ayuda', 'admin'],
     validaciones: true,
     fallas: true,
   },
@@ -524,17 +550,21 @@ function armarTanda(tanda, numero, indice, total) {
   if (pantallas.length) {
     lineas.push('Van ' + pantallas.length + ' pantallas, con su texto tal como se lee en la aplicación.', '');
 
-    const conFoto = pantallas.filter((pantalla) => pantalla.foto);
+    const conFoto = pantallas.filter((pantalla) => pantalla.valeFoto);
     if (conFoto.length) {
       lineas.push('');
-      lineas.push('**Para adjuntar en el mismo mensaje** (Claude chat lee imágenes, y es lo único');
-      lineas.push('que le deja juzgar el aire, la jerarquía y el tamaño de los botones). Están en');
-      lineas.push('`docs/revision/capturas/`:', '');
+      lineas.push('**Las pantallas que vale la pena fotografiar en esta tanda.** Claude chat lee');
+      lineas.push('imágenes pero no dibuja HTML, así que una foto es lo único que le deja juzgar');
+      lineas.push('el aire, la jerarquía y el tamaño de los botones. Las tomas tú, de la');
+      lineas.push('aplicación, y las adjuntas en el mismo mensaje:', '');
       for (const pantalla of conFoto) {
-        lineas.push('- `' + pantalla.foto + '` · pantalla ' + pantalla.numero + ', ' + pantalla.titulo);
+        lineas.push('- Pantalla ' + pantalla.numero + ', ' + pantalla.titulo +
+          (pantalla.idioma === 'pt' ? ' (con la interfaz en portugués)' : ''));
       }
       lineas.push('');
-      lineas.push('Si no las adjuntas, la revisión igual funciona: el texto va completo aquí.', '');
+      lineas.push('Las demás pantallas de esta tanda son la misma forma con otro texto, y el texto');
+      lineas.push('ya va completo abajo. Si no adjuntas ninguna foto, la revisión igual funciona:');
+      lineas.push('pierdes lo visual, no el copy.', '');
     }
 
     lineas.push('---', '');
@@ -590,7 +620,9 @@ function main() {
       tanda: tanda,
       kb: Math.round(texto.length / 1024),
       pantallas: suyas.length,
-      fotos: suyas.filter((pantalla) => pantalla.foto).length,
+      fotos: suyas.filter((pantalla) => pantalla.valeFoto).length,
+      nombresDeFotos: suyas.filter((pantalla) => pantalla.valeFoto)
+        .map((pantalla) => 'pantalla ' + pantalla.numero + ', ' + pantalla.titulo),
       preguntas: (texto.match(/^#### /gm) || []).length,
     });
   });
@@ -602,6 +634,7 @@ function main() {
   escribirTexto(path.join(CARPETA, 'LEEME.md'), require('./lib/revision-prompt').leeme({
     tandas: archivos,
     pantallas: datos.pantallas.length,
+    fotos: datos.pantallas.filter((pantalla) => pantalla.valeFoto).length,
     generado: datos.generado,
     commit: datos.commit,
   }));
@@ -614,15 +647,20 @@ function main() {
     console.log('  ' + archivo.nombre.padEnd(30) + archivo.kb + ' KB');
   }
 
-  const sueltas = datos.pantallas.filter((pantalla) => !usadas.has(pantalla.id));
+  const sueltas = datos.pantallas.filter((pantalla) =>
+    !usadas.has(pantalla.id) && !FUERA_DE_REVISION[pantalla.id]);
   if (sueltas.length) {
-    console.log('\nPantallas que no quedaron en ninguna tanda (agrégalas a TANDAS):');
+    console.log('\nPantallas que no quedaron en ninguna tanda. Agrégalas a TANDAS, o a');
+    console.log('FUERA_DE_REVISION con el motivo si de verdad no se revisan:');
     for (const pantalla of sueltas) console.log('  ' + pantalla.id + ' · ' + pantalla.titulo);
     return 1;
   }
+
+  const fuera = Object.keys(FUERA_DE_REVISION).length;
+  if (fuera) console.log('\n' + fuera + ' pantallas quedan fuera a propósito (ver FUERA_DE_REVISION).');
   return 0;
 }
 
-module.exports = { TANDAS, CAMPOS_DE_LA_PANTALLA, CARPETA, main };
+module.exports = { TANDAS, FUERA_DE_REVISION, CAMPOS_DE_LA_PANTALLA, CARPETA, main };
 
 if (require.main === module) process.exit(main());
