@@ -917,16 +917,36 @@ aplica a medias, así que la frase del caso de un ganador tampoco entró.
 
 ---
 
-## La cláusula 5 del cashback por ETA, escrita por la herramienta
+## La cláusula 5 del cashback por ETA: dos formas, y una escrita aquí
 
-**Aplicado el 21 de septiembre de 2026, punto D1.** Juan eligió la forma (b): la
-lista de tiendas manda y la segunda frase se queda hablando solo de
-disponibilidad. **Eligió la forma, no escribió el texto**, así que lo escribió
-la herramienta y **está pendiente de su visto bueno antes de publicar el primer
-T&C con él**.
+**21 de septiembre de 2026, punto D1, en dos vueltas.**
 
-**Lo que decía antes**, en los dos documentos publicados de Bogotá y
-Barranquilla:
+**La primera vuelta se hizo sobre una premisa equivocada, y se deshizo.** La
+decisión 33 proponía volver `MODALIDAD_TURBO` una lista cerrada de dos, "Turbo
+Restaurantes" y "Turbo". Juan la corrigió diciendo que en la práctica son las
+tiendas Turbo de cada zona, con nombre propio: Turbo Calleja, Turbo Chico, Turbo
+Laureles. Esa corrección se aplicó al modelo del ETA y el documento pasó a
+listar tiendas siempre.
+
+Juan lo leyó y lo paró: **esa corrección era sobre el otro Turbo.** Las dark
+stores tipo Turbo Carulla venden CPGs y sí se nombran por zona; las campañas de
+"15 minutos o Cashback" corren normalmente en **Turbo Restaurantes**, donde están
+El Corral Turbo, McDonald's Turbo y las demás marcas. Listar esas marcas serían
+decenas y cambiarían de un día para otro, que es justo lo que resolvía la
+segunda frase del texto aprobado.
+
+Lo confirma el repositorio: la pieza real se llama "15 minutos o 100% cashback,
+Turbo Restaurantes Bogotá" y dice "para redimir en marcas de Turbo
+Restaurantes"; los dos T&C publicados nombran la modalidad; y
+`data/secciones.json` lista "Turbo" y "Turbo Restaurantes" como dos secciones
+distintas de la app.
+
+**Cómo quedó.** El formulario pregunta primero **"¿En qué corre la campaña?"**,
+con tres respuestas, y el documento tiene dos formas.
+
+**Forma 1, categoría** (las dos primeras respuestas: Turbo Restaurantes, que
+viene marcada, o Turbo). El texto aprobado, **palabra por palabra**, con su
+segunda frase:
 
 > **5. Tiendas Participantes.** Participarán todas las tiendas virtuales bajo la
 > modalidad "Turbo Restaurantes" al interior de la Plataforma Rappi que se
@@ -936,7 +956,13 @@ Barranquilla:
 > Plataforma Rappi al momento de realizar la orden, el cual podrá variar en
 > función de la operación y disponibilidad de cada Aliado Comercial.
 
-**Lo que dice ahora:**
+Aquí las dos frases no se contradicen: la primera nombra una categoría y la
+segunda dice cómo se sabe quién está dentro. Los casos dorados ETA01 y ETA02
+quedaron **idénticos, carácter por carácter, a como estaban antes de D1**.
+
+**Forma 2, tiendas concretas** (la tercera respuesta). Esta sí la escribió la
+herramienta, con la forma (b) que eligió Juan, y **está pendiente de su visto
+bueno antes de publicar un T&C con ella**:
 
 > **5. Tiendas Participantes.** Participarán únicamente las siguientes tiendas
 > virtuales del botón "Turbo" al interior de la Plataforma Rappi, habilitadas en
@@ -949,22 +975,28 @@ Barranquilla:
 **De dónde salió cada palabra.** La primera frase reusa las del documento
 aprobado ("Participarán", "tiendas virtuales", "al interior de la Plataforma
 Rappi", "botón «Turbo»", "habilitadas en la ciudad de … durante la vigencia de
-la Campaña"); lo nuevo es "únicamente las siguientes" y que la modalidad se fue.
-La segunda es la que Juan propuso en su opción (b), con el verbo del documento
-("podrá variar" en vez de "puede variar", que es como habla el resto del
-documento) y sin "y disponibilidad", que sobraba en una frase que ya habla de
+la Campaña"); lo nuevo es "únicamente las siguientes" y que la modalidad se fue,
+porque aquí sí habría contradicción. La segunda es la que Juan propuso, con el
+verbo del documento ("podrá variar" en vez de "puede variar", que es como habla
+el resto) y sin "y disponibilidad", que sobraba en una frase que ya habla de
 disponibilidad.
 
-**Lo otro que cambió por lo mismo.** La viñeta de condiciones decía "órdenes
+**La viñeta de condiciones sigue a la cláusula.** Con categoría dice "órdenes
 realizadas a través de las Tiendas Participantes identificadas con la modalidad
-«Turbo Restaurantes»". Como Turbo ya no es una modalidad en este documento, esa
-cola se quitó: ahora dice "órdenes realizadas a través de las Tiendas
-Participantes". No se reescribió nada más.
+«Turbo Restaurantes»", igual que el documento aprobado. Con tiendas concretas no
+hay categoría que nombrar y cierra en "las Tiendas Participantes".
 
-**Lo que no cambió, a propósito.** La cláusula de Territorio: ya decía "dentro de
-las zonas de cobertura de las Tiendas Participantes … en la ciudad de Bogotá", y
-con la lista nombrada sigue leyéndose bien. Y las leyendas de la pieza, que
-siguen diciendo "en todo Turbo Restaurantes Bogotá": salen de piezas reales
-publicadas y el punto D1 hablaba del T&C, no del arte. **Queda la
-inconsistencia**: el documento ya no nombra la modalidad y la pieza sí. Si Juan
-quiere alinearlas, es un cambio de leyenda, no de modelo.
+**Lo que falta, y es dato de Juan.** Las dos categorías que el documento sabe
+nombrar hoy son **"Turbo Restaurantes"** y **"Turbo"**, que son las que propuso
+la decisión 33 y las que están en `data/secciones.json`. Si una campaña de ETA
+puede correr en **Turbo Carulla** como categoría entera, hace falta **el nombre
+exacto con el que Legal quiere que salga impreso**, y entra como una opción más
+en `MODALIDAD_POR_ALCANCE` de `src/core/derivados_eta.js`. Mientras tanto, una
+campaña en dark stores concretas se cubre con la forma 2, nombrándolas.
+
+**Lo que no cambió, a propósito.** La cláusula de Territorio, que ya decía
+"dentro de las zonas de cobertura de las Tiendas Participantes … en la ciudad de
+Bogotá" y sirve para las dos formas. Y las leyendas de la pieza, que siguen
+diciendo "en todo Turbo Restaurantes Bogotá": salen de piezas reales publicadas
+y D1 hablaba del T&C, no del arte. Con la forma 1 ya no hay inconsistencia
+ninguna; con la forma 2, la leyenda habría que mirarla.

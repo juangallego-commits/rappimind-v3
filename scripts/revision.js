@@ -74,7 +74,7 @@ const CAMPOS_DE_LA_PANTALLA = {
   'resumen-completo': ['declaracion'],
   'cashback-day': ['tiendas'],
   'carrera-productos': ['productosDetalle'],
-  'eta-tiendas': ['tiendasEta'],
+  'eta-tiendas': ['alcanceTurbo', 'tiendasEta'],
   carrera: ['desempate'],
   'acuerdo-datos': ['acuerdoDatos'],
   'pais-en-pruebas': ['pais'],

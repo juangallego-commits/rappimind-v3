@@ -1914,7 +1914,7 @@
     },
     {
       "id": "ETA01",
-      "descripcion": "Cashback por ETA, como el T&C publicado de Bogotá (16/09/2026) (las tiendas son de ejemplo: el publicado no las listaba)",
+      "descripcion": "Cashback por ETA, como el T&C publicado de Bogotá (16/09/2026)",
       "fecha_referencia": "2026-09-16",
       "entrada": {
         "pais": "CO",
@@ -1941,14 +1941,7 @@
         "horaInicio": "11:00",
         "horaFin": "15:00",
         "presupuesto": 37000000,
-        "tiendasEta": [
-          {
-            "nombre": "Turbo Calleja"
-          },
-          {
-            "nombre": "Turbo Chico"
-          }
-        ]
+        "alcanceTurbo": "restaurantes"
       },
       "esperado": {
         "resultado": "genera",
@@ -1959,7 +1952,8 @@
           "cien por ciento (100%)",
           "cien mil (100.000) Créditos",
           "treinta y siete millones (37.000.000) de Créditos",
-          "Rappi se obliga a cumplir con el ETA exhibido"
+          "Rappi se obliga a cumplir con el ETA exhibido",
+          "bajo la modalidad “Turbo Restaurantes”"
         ],
         "no_contiene": [
           "{{",
@@ -1974,7 +1968,7 @@
     },
     {
       "id": "ETA02",
-      "descripcion": "Cashback por ETA, como el T&C publicado de Barranquilla (1/09/2026) (las tiendas son de ejemplo: el publicado no las listaba)",
+      "descripcion": "Cashback por ETA, como el T&C publicado de Barranquilla (1/09/2026)",
       "fecha_referencia": "2026-09-01",
       "entrada": {
         "pais": "CO",
@@ -2001,18 +1995,15 @@
         "horaInicio": "07:00",
         "horaFin": "23:00",
         "presupuesto": 95087585,
-        "tiendasEta": [
-          {
-            "nombre": "Turbo Alto Prado"
-          }
-        ]
+        "alcanceTurbo": "restaurantes"
       },
       "esperado": {
         "resultado": "genera",
         "contiene": [
           "en la ciudad de Barranquilla, dentro de la República de Colombia",
           "desde las 7:00 a. m. hasta las 11:00 p. m. del 1 de septiembre de 2026",
-          "noventa y cinco millones ochenta y siete mil quinientos ochenta y cinco (95.087.585) Créditos"
+          "noventa y cinco millones ochenta y siete mil quinientos ochenta y cinco (95.087.585) Créditos",
+          "bajo la modalidad “Turbo Restaurantes”"
         ],
         "no_contiene": [
           "{{",
@@ -2022,6 +2013,66 @@
           "undefined",
           "NaN",
           "Organizador"
+        ]
+      }
+    },
+    {
+      "id": "ETA03",
+      "descripcion": "Cashback por ETA en unas tiendas concretas de Turbo, que el documento nombra una por una",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "CO",
+        "negocio": "rappi",
+        "tipo": "cashback_eta",
+        "etaMinutos": 15,
+        "porcentaje": 100,
+        "tope": 100000,
+        "maxPedidos": 1,
+        "sinLimite": false,
+        "carga": "dia_siguiente",
+        "vigencia": "dias",
+        "diasVigencia": 7,
+        "exclusionesEta": [
+          "travel",
+          "soat",
+          "atm",
+          "favor"
+        ],
+        "metodoPago": "sin_efectivo",
+        "declaracion": true,
+        "ciudades": "Bogotá",
+        "fechaInicio": "2026-09-16",
+        "horaInicio": "11:00",
+        "horaFin": "15:00",
+        "presupuesto": 37000000,
+        "alcanceTurbo": "tiendas",
+        "tiendasEta": [
+          {
+            "nombre": "Turbo Calleja"
+          },
+          {
+            "nombre": "Turbo Chico"
+          }
+        ]
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "Participarán únicamente las siguientes tiendas virtuales del botón “Turbo”",
+          "• Turbo Calleja",
+          "• Turbo Chico",
+          "La disponibilidad de cada Tienda Participante podrá variar en función de la operación de cada Aliado Comercial.",
+          "Campaña válida únicamente para órdenes realizadas a través de las Tiendas Participantes."
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          "..",
+          "()",
+          "undefined",
+          "NaN",
+          "Organizador",
+          "bajo la modalidad"
         ]
       }
     }

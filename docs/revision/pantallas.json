@@ -1,6 +1,6 @@
 {
   "generado": "2026-09-21",
-  "commit": "30c5245",
+  "commit": "16c1960",
   "rama": "claude/dazzling-bell-w5o6pf",
   "partes": [
     {
@@ -497,10 +497,10 @@
       "pantalla": "pasos",
       "ventana": "escritorio",
       "idioma": "es",
-      "queHace": "El documento nombra las tiendas de Turbo una por una, con el nombre que sale en la app. Antes decía \"todas las tiendas de la modalidad Turbo Restaurantes de la ciudad\" y además que el listado sería el que la app mostrara en ese momento: dos frases que decían cosas distintas sobre quién participa.",
-      "nota": "",
+      "queHace": "Casi todas estas campañas corren en toda una categoría del botón Turbo, normalmente Turbo Restaurantes, y ahí el documento la nombra y no pide ninguna lista. Esta es la otra forma: cuando corre en unas tiendas concretas, las dark stores de una zona, el documento las nombra una por una.",
+      "nota": "La pregunta que decide entre las dos es \"¿En qué corre la campaña?\", justo después de la ciudad.",
       "valeFoto": true,
-      "texto": "RappiMind v3\nGenerar\nMis campañas\nAyuda\nAdministración\nCampaña\nCuándo\nBeneficio\nCréditos\nParticipantes\nTu campaña\n¿Cuáles tiendas de Turbo participan?\n\nUna por fila, con el nombre como sale en el botón Turbo de la app. Por ejemplo: Turbo Calleja.\n\nQuitar\nQuitar\nAgregar tienda\nPegar desde una hoja de cálculo\n\nUna tienda por fila, con el nombre como sale en el botón Turbo.\n\nAgregar las pegadas\n¿Por qué te preguntamos esto?\n\nEl documento nombra las tiendas una por una. Turbo no es una modalidad: son tiendas por zona, y el usuario tiene que saber en cuál cuenta su orden.\n\nAtrás\nSiguiente\nTu T&C\nFaltan 5 datos\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nCerrar\nES\nBR"
+      "texto": "RappiMind v3\nGenerar\nMis campañas\nAyuda\nAdministración\nCampaña\nCuándo\nBeneficio\nCréditos\nParticipantes\nTu campaña\n¿Cuáles tiendas de Turbo participan?\n\nUna por fila, con el nombre como sale en el botón Turbo de la app. Por ejemplo: Turbo Calleja.\n\nQuitar\nQuitar\nAgregar tienda\nPegar desde una hoja de cálculo\n\nUna tienda por fila, con el nombre como sale en el botón Turbo.\n\nAgregar las pegadas\n¿Por qué te preguntamos esto?\n\nEl documento las nombra una por una, así que el usuario sabe exactamente en cuál cuenta su orden.\n\nAtrás\nSiguiente\nTu T&C\nFaltan 5 datos\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nCerrar\nES\nBR"
     },
     {
       "id": "carrera",

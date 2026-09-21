@@ -228,7 +228,8 @@ const PARTES = [
       },
       {
         id: 'eta-tiendas', valeFoto: true, titulo: 'Formulario, las tiendas de Turbo del cashback por ETA', pantalla: 'pasos',
-        queHace: 'El documento nombra las tiendas de Turbo una por una, con el nombre que sale en la app. Antes decía "todas las tiendas de la modalidad Turbo Restaurantes de la ciudad" y además que el listado sería el que la app mostrara en ese momento: dos frases que decían cosas distintas sobre quién participa.',
+        queHace: 'Casi todas estas campañas corren en toda una categoría del botón Turbo, normalmente Turbo Restaurantes, y ahí el documento la nombra y no pide ninguna lista. Esta es la otra forma: cuando corre en unas tiendas concretas, las dark stores de una zona, el documento las nombra una por una.',
+        nota: 'La pregunta que decide entre las dos es "¿En qué corre la campaña?", justo después de la ciudad.',
       },
       {
         id: 'carrera', valeFoto: true, titulo: 'Formulario, Carrera de Compras con una opción bloqueada', pantalla: 'pasos',

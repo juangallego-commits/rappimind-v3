@@ -34,9 +34,9 @@ function salidaEsperada(caso) {
   return normalizarParaComparar(leerTexto(rutaDesdeRaiz('pruebas', 'salidas_esperadas', caso.id + '.txt')));
 }
 
-test('hay treinta y nueve casos, veintiséis que generan y trece que fallan', () => {
-  assert.strictEqual(casos.length, 39);
-  assert.strictEqual(generan.length, 26);
+test('hay cuarenta casos, veintisiete que generan y trece que fallan', () => {
+  assert.strictEqual(casos.length, 40);
+  assert.strictEqual(generan.length, 27);
   assert.strictEqual(fallan.length, 13);
 
   /*
@@ -79,10 +79,11 @@ test('hay treinta y nueve casos, veintiséis que generan y trece que fallan', ()
   // datos del ganador. Sin él, ese texto no tenía quien lo protegiera.
   assert.ok(casos.filter((caso) => caso.id === 'CC03').length === 1);
 
-  // Los dos del cashback por ETA, los publicados de Bogotá y Barranquilla:
-  // un tipo sin fecha de fin que hasta hoy no tenía caso dorado.
+  // Tres del cashback por ETA: los dos publicados de Bogotá y Barranquilla, que
+  // corren en toda la categoría Turbo Restaurantes, y uno de unas tiendas
+  // concretas. Las dos formas de la cláusula quedan protegidas letra por letra.
   const deEta = casos.filter((caso) => String(caso.id).indexOf('ETA') === 0);
-  assert.strictEqual(deEta.length, 2);
+  assert.strictEqual(deEta.length, 3);
 
   // Los cuatro de Brasil, uno por forma del beneficio: el texto aprobado por
   // Legal Brasil queda protegido carácter por carácter, como el de Colombia.

@@ -30,16 +30,23 @@ function campana(extra) {
     maxPedidos: 1, carga: 'dia_siguiente', vigencia: 'dias', diasVigencia: 7,
     exclusionesEta: ['travel', 'soat', 'atm', 'favor'],
     metodoPago: 'sin_efectivo', declaracion: true,
+    // Los dos documentos publicados corren en Turbo Restaurantes, que es
+    // ademas como corren casi todas.
+    alcanceTurbo: 'restaurantes',
   }, extra || {});
 }
 
+const BOGOTA = { ciudades: 'Bogotá', fechaInicio: '2026-09-16', fechaFin: '2026-09-16', horaInicio: '11:00', horaFin: '15:00', presupuesto: 37000000 };
+const BARRANQUILLA = { ciudades: 'Barranquilla', fechaInicio: '2026-09-01', fechaFin: '2026-09-01', horaInicio: '07:00', horaFin: '23:00', presupuesto: 95087585 };
+
 /*
- * Los nombres de las tiendas son de ejemplo: los documentos publicados no las
- * listaban, decían "todas las tiendas de la modalidad Turbo Restaurantes de la
- * ciudad". Juan cambió eso el 21 de septiembre de 2026 (punto D1).
+ * La otra forma: unas tiendas concretas de Turbo, con nombre propio. Son las
+ * dark stores tipo Turbo Carulla, no las marcas de Turbo Restaurantes.
  */
-const BOGOTA = { ciudades: 'Bogotá', fechaInicio: '2026-09-16', fechaFin: '2026-09-16', horaInicio: '11:00', horaFin: '15:00', presupuesto: 37000000, tiendasEta: [{ nombre: 'Turbo Calleja' }, { nombre: 'Turbo Chico' }] };
-const BARRANQUILLA = { ciudades: 'Barranquilla', fechaInicio: '2026-09-01', fechaFin: '2026-09-01', horaInicio: '07:00', horaFin: '23:00', presupuesto: 95087585, tiendasEta: [{ nombre: 'Turbo Alto Prado' }] };
+const TIENDAS_CONCRETAS = Object.assign({}, BOGOTA, {
+  alcanceTurbo: 'tiendas',
+  tiendasEta: [{ nombre: 'Turbo Calleja' }, { nombre: 'Turbo Chico' }],
+});
 
 function documento(extra) {
   const resultado = renderizar('cashback_eta', campana(extra), CO, MODELOS);
@@ -151,18 +158,39 @@ test('los mensajes de error son los que alguien escribió, no el genérico', () 
   assert.strictEqual(delEta.mensaje, 'Escribe en cuántos minutos prometes la entrega.');
 });
 
-// --- D1: el documento nombra las tiendas de Turbo, una por una ---------------
+// --- D1: las dos formas en que puede correr una campaña del ETA -------------
 
 /*
- * Hasta el 21 de septiembre de 2026 la cláusula 5 decía dos cosas distintas
- * sobre quién participa: que participan "todas las tiendas virtuales bajo la
- * modalidad Turbo Restaurantes … habilitadas en la ciudad", y después que el
- * listado sería el que la app mostrara al momento de la orden. Con tiendas con
- * nombre propio las dos frases se contradicen, y un usuario lee la que le
- * conviene. Juan eligió que mande la lista.
+ * La decisión 33 proponía una lista cerrada de dos categorías. Juan la corrigió
+ * diciendo que son tiendas por zona con nombre propio, y el punto D1 hizo que el
+ * documento las listara siempre. El 21 de septiembre de 2026 aclaró que esa
+ * corrección era sobre las dark stores tipo Turbo Carulla, que venden CPGs: las
+ * campañas de "15 minutos o Cashback" corren normalmente en Turbo Restaurantes,
+ * donde están El Corral Turbo, McDonald's Turbo y las demás marcas. Listarlas
+ * serían decenas y cambiarían de un día para otro. Existen las dos cosas, así
+ * que el formulario pregunta y el documento tiene dos formas.
  */
-test('la cláusula de tiendas nombra cada tienda de Turbo', () => {
+
+test('por defecto el documento dice lo mismo que los dos publicados', () => {
   const texto = documento(BOGOTA);
+  assert.ok(texto.indexOf('Participarán todas las tiendas virtuales bajo la modalidad “Turbo Restaurantes” ' +
+    'al interior de la Plataforma Rappi que se encuentren habilitadas en la ciudad de Bogotá ' +
+    'durante la vigencia de la Campaña.') !== -1, texto);
+  assert.ok(texto.indexOf('El listado de Tiendas Participantes será el que se encuentre visible y disponible ' +
+    'para el Usuario/Consumidor dentro del botón “Turbo” de la Plataforma Rappi al momento de realizar ' +
+    'la orden, el cual podrá variar en función de la operación y disponibilidad de cada Aliado Comercial.') !== -1, texto);
+  assert.ok(texto.indexOf('órdenes realizadas a través de las Tiendas Participantes identificadas con la ' +
+    'modalidad “Turbo Restaurantes”.') !== -1, texto);
+});
+
+test('la categoría Turbo sale nombrada donde antes estaba fija', () => {
+  const texto = documento(Object.assign({}, BOGOTA, { alcanceTurbo: 'turbo' }));
+  assert.ok(texto.indexOf('bajo la modalidad “Turbo” al interior de la Plataforma Rappi') !== -1, texto);
+  assert.strictEqual(texto.indexOf('Turbo Restaurantes'), -1, texto);
+});
+
+test('con tiendas concretas la cláusula las nombra una por una', () => {
+  const texto = documento(TIENDAS_CONCRETAS);
 
   assert.ok(texto.indexOf('Participarán únicamente las siguientes tiendas virtuales del botón “Turbo” ' +
     'al interior de la Plataforma Rappi, habilitadas en la ciudad de Bogotá durante la vigencia de la Campaña:') !== -1, texto);
@@ -171,38 +199,67 @@ test('la cláusula de tiendas nombra cada tienda de Turbo', () => {
     'operación de cada Aliado Comercial.') !== -1, texto);
 });
 
-test('ninguna frase del documento vuelve a decir que el listado es el de la app', () => {
-  const texto = documento(BOGOTA);
+test('con tiendas concretas ninguna frase dice que el listado es el de la app', () => {
+  // Las dos juntas se contradicen: una dice que participan estas dos y la otra
+  // que participan las que la app muestre. El usuario lee la que le conviene.
+  const texto = documento(TIENDAS_CONCRETAS);
   assert.strictEqual(texto.indexOf('El listado de Tiendas Participantes será el que se encuentre visible'), -1, texto);
-  // La modalidad tampoco: Turbo no es una modalidad, son tiendas por zona.
   assert.strictEqual(texto.indexOf('bajo la modalidad'), -1, texto);
+  // Y la viñeta de condiciones cierra sin categoría, porque no hay ninguna.
+  assert.ok(texto.indexOf('órdenes realizadas a través de las Tiendas Participantes.') !== -1, texto);
   assert.strictEqual(texto.indexOf('identificadas con la modalidad'), -1, texto);
 });
 
 test('una tienda sin nombre no genera, y el hueco se anuncia', () => {
   const resultado = renderizar('cashback_eta',
-    campana(Object.assign({}, BOGOTA, { tiendasEta: [{ nombre: 'Turbo Calleja' }, { nombre: '' }] })),
+    campana(Object.assign({}, TIENDAS_CONCRETAS, { tiendasEta: [{ nombre: 'Turbo Calleja' }, { nombre: '' }] })),
     CO, MODELOS);
   assert.deepStrictEqual(resultado.placeholdersVacios, ['TEXTO_TIENDAS_ETA'],
     'una tienda a medias tiene que dejar el hueco entero, no una viñeta rota');
 });
 
-test('sin ciudad la cláusula no se escribe: nombra la ciudad donde están habilitadas', () => {
+test('sin ciudad la cláusula no se escribe, en ninguna de las dos formas', () => {
   const { textoTiendasEta } = require('../src/core/derivados_eta.js');
-  assert.strictEqual(textoTiendasEta({ tiendasEta: [{ nombre: 'Turbo Calleja' }] }), '');
-  assert.strictEqual(textoTiendasEta({ ciudades: 'Bogotá', tiendasEta: [] }), '');
+  assert.strictEqual(textoTiendasEta({ alcanceTurbo: 'restaurantes' }), '');
+  assert.strictEqual(textoTiendasEta({ alcanceTurbo: 'tiendas', tiendasEta: [{ nombre: 'Turbo Calleja' }] }), '');
+  assert.strictEqual(textoTiendasEta({ ciudades: 'Bogotá', alcanceTurbo: 'tiendas', tiendasEta: [] }), '');
 });
 
-test('la lista de tiendas se revisa antes de generar', () => {
+test('las tres formas del ETA tienen su texto, y solo la de tiendas pide lista', () => {
+  const { MODALIDAD_POR_ALCANCE, modalidadTurbo } = require('../src/core/derivados_eta.js');
+  const { ESQUEMAS } = require('../src/core/esquemas.js');
+  const campo = ESQUEMAS.cashback_eta.campos.filter((c) => c.id === 'alcanceTurbo')[0];
+  const valores = campo.opciones.map((o) => o.valor);
+
+  assert.deepStrictEqual(valores, ['restaurantes', 'turbo', 'tiendas']);
+  // Las etiquetas del formulario y los nombres que salen impresos viven en dos
+  // archivos distintos a propósito. Esto cuida que no se separen.
+  for (const valor of valores) {
+    if (valor === 'tiendas') {
+      assert.strictEqual(modalidadTurbo({ alcanceTurbo: valor }), '', 'la de tiendas no nombra categoría');
+      continue;
+    }
+    assert.ok(MODALIDAD_POR_ALCANCE[valor], valor + ' no tiene nombre para imprimir');
+  }
+  // Sin respuesta, el documento dice lo que decían los dos publicados.
+  assert.strictEqual(modalidadTurbo({}), 'Turbo Restaurantes');
+});
+
+test('la lista de tiendas se revisa, y solo cuando aplica', () => {
   const { validarTiendasEta } = require('../src/core/validaciones.js');
   const esquema = esquemaDe('cashback_eta');
 
-  assert.strictEqual(validarTiendasEta({ tiendasEta: [] }, esquema).length, 1, 'sin tiendas tiene que fallar');
-  assert.strictEqual(validarTiendasEta({ tiendasEta: [{ nombre: 'Turbo Chico' }] }, esquema).length, 0);
+  // Una campaña de categoría no lleva lista, así que no se le exige.
+  assert.deepStrictEqual(validarTiendasEta({ alcanceTurbo: 'restaurantes' }, esquema), []);
 
-  // La misma tienda dos veces la nombraría dos veces en la cláusula, y las
-  // mayúsculas no la vuelven otra tienda.
-  const repetida = validarTiendasEta({ tiendasEta: [{ nombre: 'Turbo Chico' }, { nombre: 'turbo chico' }] }, esquema);
+  assert.strictEqual(validarTiendasEta({ alcanceTurbo: 'tiendas', tiendasEta: [] }, esquema).length, 1);
+  assert.strictEqual(
+    validarTiendasEta({ alcanceTurbo: 'tiendas', tiendasEta: [{ nombre: 'Turbo Chico' }] }, esquema).length, 0);
+
+  // La misma tienda dos veces la nombraría dos veces, y las mayúsculas no la
+  // vuelven otra tienda.
+  const repetida = validarTiendasEta(
+    { alcanceTurbo: 'tiendas', tiendasEta: [{ nombre: 'Turbo Chico' }, { nombre: 'turbo chico' }] }, esquema);
   assert.strictEqual(repetida.length, 1);
   assert.ok(repetida[0].mensaje.indexOf('ya está en la lista') !== -1, repetida[0].mensaje);
 });

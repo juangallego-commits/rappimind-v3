@@ -1946,63 +1946,84 @@ npm run previsualizar BR01   # "1 (um) pedido" y "10% (dez por cento)"
 
 ---
 
-## D1: el cashback por ETA nombra sus tiendas de Turbo
+## D1: el cashback por ETA pregunta en qué corre
 
-**21 de septiembre de 2026.** Era el único punto que había quedado bloqueado.
-Juan eligió la forma (b): la lista de tiendas manda y la segunda frase se queda
-hablando solo de disponibilidad. Eligió la forma, no escribió el texto, así que
-el texto lo escribí yo reusando al máximo las palabras del documento aprobado.
-**Está pendiente de su visto bueno antes de publicar el primer T&C con él**, y
-está copiado entero, con el antes y el después, en `docs/PENDIENTES_LEGAL.md`.
+**21 de septiembre de 2026, en dos vueltas.** La primera la hice sobre una
+premisa equivocada y Juan la paró antes de que llegara a `main`.
+
+### Qué pasó
+
+La decisión 33 proponía una lista cerrada de dos categorías del botón Turbo.
+Juan la corrigió diciendo que son tiendas por zona con nombre propio, como Turbo
+Calleja o Turbo Chico, y yo apliqué esa corrección al modelo del ETA: el
+documento pasó a listar tiendas siempre. Juan lo leyó y aclaró que **esa
+corrección era sobre el otro Turbo**: las dark stores tipo Turbo Carulla, que
+venden CPGs. Las campañas de "15 minutos o Cashback" corren normalmente en
+**Turbo Restaurantes**, donde están El Corral Turbo, McDonald's Turbo y las
+demás marcas. Listarlas serían decenas y cambiarían de un día para otro.
+
+Lo confirmaba el propio repositorio, que no miré a tiempo: la pieza real se
+llama "15 minutos o 100% cashback, Turbo Restaurantes Bogotá", y
+`data/secciones.json` tiene "Turbo" y "Turbo Restaurantes" como dos secciones
+distintas de la app.
 
 ### Qué cambia para el comercial
 
-Después de la ciudad aparece una pregunta nueva, **"¿Cuáles tiendas de Turbo
-participan?"**, con una lista que crece: un nombre por fila, un botón para
-agregar y otro para pegar varias desde una hoja de cálculo. Si escribe la misma
-tienda dos veces, la fila se lo dice al salir del campo. Sin al menos una
-tienda, el documento no se genera.
+Justo después de la ciudad aparece **"¿En qué corre la campaña?"**, con tres
+respuestas:
+
+- **En todo Turbo Restaurantes de la ciudad**, que viene marcada porque es como
+  corren casi todas. No pide ninguna lista.
+- **En todo Turbo de la ciudad**, la otra categoría que propuso la decisión 33.
+- **En unas tiendas concretas de Turbo**, y ahí sí aparece la lista que crece,
+  un nombre por fila, con aviso de tienda repetida y pegado desde una hoja de
+  cálculo.
 
 ### Qué cambia en el documento
 
-La cláusula de Tiendas Participantes pasa de hablar de "todas las tiendas de la
-modalidad Turbo Restaurantes de la ciudad" a nombrarlas una por una, en viñetas,
-y cierra diciendo que la disponibilidad de cada una puede variar. La viñeta de
-condiciones pierde la cola de la modalidad. Lo demás queda igual, incluida la
-cláusula de Territorio, que ya se apoyaba en "las Tiendas Participantes" y en la
-ciudad.
+Con categoría, la cláusula es **el texto aprobado palabra por palabra**, con su
+segunda frase. Ahí las dos frases no se contradicen: una nombra una categoría y
+la otra dice cómo se sabe quién está dentro. Con tiendas concretas, la cláusula
+las nombra una por una y la segunda frase se queda hablando solo de
+disponibilidad, que es la forma que eligió Juan. La viñeta de condiciones sigue
+a la cláusula, y el título de la campaña también: "Turbo Restaurantes Bogotá",
+"Turbo Bogotá" o solo "Bogotá" según la respuesta.
+
+**ETA01 y ETA02 quedaron idénticos, carácter por carácter, a como estaban antes
+de todo esto.** Entró ETA03, que protege la otra forma con el mismo detalle.
 
 ### Un defecto que salió de paso
 
 Agregar una segunda tienda sin haber hecho clic fuera del primer nombre dejaba
-la pantalla a medio pintar. La causa no era de esta pantalla: quitar de la
+la pantalla a medio pintar. La causa no era de esa pantalla: quitar de la
 pantalla el campo que tiene el foco dispara su `blur` en ese mismo instante, y
 el redibujo se llamaba a sí mismo en mitad de su propio trabajo. La lista de
 productos de la Carrera tenía el mismo defecto y nadie lo había disparado.
-Arreglado en `dibujar()` de `70-app.js`, que ahora lleva cerrojo, y el recorrido
-de la skill `flujo-y-ux` pasa por ahí para que no vuelva.
+Arreglado en `dibujar()` de `70-app.js`, que ahora lleva cerrojo.
 
 ### Cómo probarlo
 
 ```
-npm test                                # 664 pruebas
+npm test                                # 669 pruebas
 npm run demo
 node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js
-npm run previsualizar ETA01             # la cláusula con las dos tiendas
+npm run previsualizar ETA01             # la categoría, como el publicado
+npm run previsualizar ETA03             # las tiendas nombradas una por una
 ```
 
 Con los ojos: **Colombia > Rappi > 15 minutos o Cashback**, escribe Bogotá y
-agrega dos tiendas. Mira que salgan en el documento de al lado mientras las
-escribes, escribe la misma dos veces para ver el aviso, y agrega una tercera sin
-salir del campo anterior, que es el caso que rompía la pantalla. La captura de
-la pantalla está en `docs/FRONT_ACTUAL.html`, número 37.
+mira la pregunta nueva. Con la primera respuesta el documento tiene que decir
+"bajo la modalidad Turbo Restaurantes" y no pedirte ninguna lista. Con la
+tercera, agrega dos tiendas, escribe la misma dos veces para ver el aviso, y
+agrega una tercera sin salir del campo anterior, que es el caso que rompía la
+pantalla. La captura está en `docs/FRONT_ACTUAL.html`, número 37.
 
 ### Lo que necesito de Juan
 
-Lo mismo de antes, menos el texto de D1, que ya está escrito y solo falta que lo
-apruebe:
-
-1. **El visto bueno de la cláusula 5 del ETA**, tal como quedó en
-   `docs/PENDIENTES_LEGAL.md`. Si la cambia, es una línea en `derivados_eta.js`.
-2. **Los textos de pantalla que propuse yo**, listados más arriba.
-3. **La lectura de los abogados de Brasil** del formulario en portugués.
+1. **El nombre exacto de Turbo Carulla como categoría**, si una campaña de ETA
+   puede correr ahí entera. Hoy el documento sabe nombrar "Turbo Restaurantes" y
+   "Turbo"; una campaña en dark stores concretas se cubre nombrándolas.
+2. **El visto bueno de la cláusula de tiendas concretas**, la única que escribí
+   yo, tal como quedó en `docs/PENDIENTES_LEGAL.md`.
+3. **Los textos de pantalla que propuse yo**, listados más arriba.
+4. **La lectura de los abogados de Brasil** del formulario en portugués.

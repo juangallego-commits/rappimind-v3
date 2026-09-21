@@ -255,11 +255,42 @@ async function recorrer() {
   await pagina.waitForTimeout(250);
   await clic('Siguiente');
 
-  // Desde el 21 de septiembre de 2026 (punto D1) el documento nombra las
-  // tiendas de Turbo una por una, en vez de hablar de "la modalidad Turbo
-  // Restaurantes de la ciudad".
+  /*
+   * Desde el 21 de septiembre de 2026 (punto D1) el documento tiene dos formas:
+   * nombra la categoria del boton Turbo, que es como corren casi todas, o
+   * nombra unas tiendas concretas una por una. Lo primero que se revisa es que
+   * la forma por defecto, la de los dos documentos publicados, no obligue a
+   * nadie a escribir una lista que no tiene.
+   */
+  const enElAlcance = await titulos();
+  revisar('después de la ciudad se pregunta en qué corre la campaña',
+    enElAlcance.length === 1 && enElAlcance[0].indexOf('¿En qué corre la campaña?') !== -1,
+    enElAlcance.join(' | '));
+
+  const textoDelAlcance = await texto();
+  revisar('la opción de casi todas las campañas va primero y se explica',
+    textoDelAlcance.indexOf('En todo Turbo Restaurantes de la ciudad') !== -1 &&
+    textoDelAlcance.indexOf('El Corral Turbo') !== -1,
+    textoDelAlcance.replace(/\n+/g, ' | ').slice(0, 300));
+
+  await clic('En todo Turbo Restaurantes de la ciudad');
+  const trasLaCategoria = await titulos();
+  revisar('con una categoría no se pide ninguna lista de tiendas',
+    trasLaCategoria.length === 1 && trasLaCategoria[0].indexOf('día arranca') !== -1,
+    trasLaCategoria.join(' | '));
+
+  const documentoDeCategoria = await texto();
+  revisar('el documento dice la modalidad, como los dos publicados',
+    documentoDeCategoria.indexOf('bajo la modalidad') !== -1 ||
+    documentoDeCategoria.indexOf('Turbo Restaurantes') !== -1,
+    documentoDeCategoria.replace(/\n+/g, ' | ').slice(0, 300));
+
+  // Y ahora la otra forma: unas tiendas concretas, que el documento lista.
+  await clic('Atrás');
+  await clic('En unas tiendas concretas de Turbo');
+
   const enLasTiendas = await titulos();
-  revisar('después de la ciudad se piden las tiendas de Turbo',
+  revisar('con tiendas concretas se piden las tiendas de Turbo',
     enLasTiendas.length === 1 && enLasTiendas[0].indexOf('¿Cuáles tiendas de Turbo participan?') !== -1,
     enLasTiendas.join(' | '));
 

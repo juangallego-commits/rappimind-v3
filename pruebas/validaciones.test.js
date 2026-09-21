@@ -247,7 +247,7 @@ function solicitudEta(cambios) {
     etaMinutos: 15, porcentaje: 100, tope: 100000, presupuesto: 37000000,
     maxPedidos: 1, sinLimite: false, carga: 'dia_siguiente', vigencia: 'dias', diasVigencia: 7,
     exclusionesEta: ['travel', 'soat', 'atm', 'favor'], metodoPago: 'sin_efectivo', declaracion: true,
-    tiendasEta: [{ nombre: 'Turbo Calleja' }, { nombre: 'Turbo Chico' }],
+    alcanceTurbo: 'restaurantes',
   }, cambios || {});
 }
 

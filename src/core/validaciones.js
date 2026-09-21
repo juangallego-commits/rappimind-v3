@@ -822,6 +822,10 @@ function validarProductos(entrada, esquema) {
  * productos de la Carrera.
  */
 function validarTiendasEta(entrada, esquema) {
+  // Solo la campana de tiendas concretas trae lista. Las de categoria nombran
+  // la categoria y el listado es el que el usuario ve en la app.
+  if (entrada.alcanceTurbo !== 'tiendas') return [];
+
   var tiendas = entrada.tiendasEta || [];
   var definicion = null;
   for (var i = 0; i < esquema.campos.length; i++) {

@@ -1171,13 +1171,17 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
     `ESQUEMAS.cashback_day.camposPorTienda` y revisa que ninguna línea salga
     vacía.
 
-91. **La lista de tiendas del ETA se imprime como valor derivado, no como bloque
-    repetible del motor.** El motor tiene `[[#TIENDAS]]…[[/TIENDAS]]`, pero está
-    amarrado a `entrada.tiendas` y a los seis campos del Multitienda. Las tiendas
-    de Turbo tienen un solo dato por fila, así que siguen el camino de la lista
-    de productos de la Carrera: `TEXTO_TIENDAS_ETA` devuelve varias líneas y el
-    motor las pinta como líneas sueltas. Un mecanismo menos que mantener, y la
-    cláusula se lee entera en un solo sitio de `derivados_eta.js`.
+91. **La cláusula de Tiendas Participantes del ETA es un solo valor derivado con
+    dos formas, no dos cláusulas en el modelo.** `TEXTO_TIENDAS_ETA` devuelve el
+    texto aprobado cuando la campaña corre en una categoría del botón Turbo, y
+    la lista con nombre propio cuando corre en unas tiendas concretas. Las dos
+    formas se leen juntas en `derivados_eta.js`, con la historia de por qué
+    existe cada una, en vez de repartirse entre un bloque opcional del modelo y
+    un derivado. Y la lista va como valor derivado y no como bloque repetible
+    del motor: `[[#TIENDAS]]…[[/TIENDAS]]` existe, pero está amarrado a
+    `entrada.tiendas` y a los seis campos del Multitienda, mientras que estas
+    tienen un solo dato por fila. Es el camino de la lista de productos de la
+    Carrera: el valor devuelve varias líneas y el motor las pinta sueltas.
 
 92. **Una fila a medias deja el hueco entero, no una viñeta rota.**
     `textoTiendasEta` devuelve cadena vacía si falta el nombre de cualquier
@@ -1201,3 +1205,20 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
     redibujo completo, que es el que pinta el mensaje de error de la fila, va en
     el `blur`. Redibujar en cada tecla le quitaría el foco. Es el mismo trato que
     tiene la lista de productos.
+
+95. **Los nombres que salen impresos y las etiquetas del formulario viven en
+    archivos distintos, a propósito.** `OPCIONES_ALCANCE_TURBO` está en
+    `esquemas.js`, que es lo que el comercial lee, y `MODALIDAD_POR_ALCANCE` en
+    `derivados_eta.js`, que es lo que sale impreso en el T&C. Llegué a cruzarlas
+    con un `require` entre dos archivos de `src/core/`: funciona en Node y rompe
+    en Apps Script, donde esos archivos son globales y no hay `require`, así que
+    la segunda declaración dejaba el valor en `undefined` según el orden de
+    carga. La prueba "las tres formas del ETA tienen su texto" cuida que las dos
+    listas no se separen.
+
+96. **El título de la campaña del ETA sigue la categoría elegida.** Estaba fijo
+    en "Turbo Restaurantes", así que una campaña de Turbo se habría titulado
+    "Turbo Restaurantes Bogotá". Con tiendas concretas no hay categoría que
+    nombrar y el título queda con la ciudad: cinco dark stores no caben en un
+    título, y reusar "Turbo" haría indistinguibles dos campañas distintas en el
+    historial.

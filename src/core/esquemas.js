@@ -1072,6 +1072,22 @@ function llevaTopeBr(entrada) {
  *
  * Base: los T&C publicados de Bogota (16/09/2026) y Barranquilla (1/09/2026).
  */
+/*
+ * Las formas en que puede correr una campana de cashback por ETA.
+ *
+ * Los dos nombres de categoria son los que ya estan confirmados: "Turbo
+ * Restaurantes" es la de los dos T&C publicados y la de la pieza real, y
+ * "Turbo" es la otra que propuso la decision 33. Los dos aparecen en
+ * data/secciones.json como secciones de la app. Si hace falta otra categoria
+ * (Turbo Carulla, por ejemplo), el nombre exacto lo da Legal y entra aqui: ver
+ * docs/PENDIENTES_LEGAL.md.
+ */
+var OPCIONES_ALCANCE_TURBO = [
+  { valor: 'restaurantes', etiqueta: 'En todo Turbo Restaurantes de la ciudad' },
+  { valor: 'turbo', etiqueta: 'En todo Turbo de la ciudad' },
+  { valor: 'tiendas', etiqueta: 'En unas tiendas concretas de Turbo' },
+];
+
 var CAMPOS_CASHBACK_ETA = [
   { id: 'pais', etiqueta: 'País', tipo: 'lista', paso: 'campana', obligatorio: true },
   {
@@ -1088,12 +1104,38 @@ var CAMPOS_CASHBACK_ETA = [
   { id: 'tipo', etiqueta: 'Tipo de campaña', tipo: 'tarjetas', paso: 'campana', obligatorio: true },
   { id: 'ciudades', etiqueta: 'Ciudad', tipo: 'texto', paso: 'campana', obligatorio: true },
   /*
-   * Las tiendas de Turbo, una por una. Hasta el 21 de septiembre de 2026 el
-   * documento decia "todas las tiendas de la modalidad Turbo Restaurantes de
-   * la ciudad": Juan corrigio que Turbo no es una modalidad, son tiendas por
-   * zona con nombre propio, y eligio que el T&C las liste (punto D1).
+   * En que corre la campana: en toda una categoria del boton Turbo o en unas
+   * tiendas concretas.
+   *
+   * Historia, porque importa. La decision 33 proponia una lista cerrada de dos
+   * categorias, "Turbo Restaurantes" y "Turbo". Juan la corrigio diciendo que
+   * son tiendas por zona con nombre propio (Turbo Calleja, Turbo Chico), y de
+   * ahi salio el punto D1, que hizo que el documento las listara siempre. El 21
+   * de septiembre de 2026 Juan aclaro que esa correccion era sobre el otro
+   * Turbo, el de las dark stores tipo Turbo Carulla que venden CPGs: las
+   * campanas de "15 minutos o Cashback" corren normalmente en Turbo
+   * Restaurantes, donde estan El Corral Turbo, McDonald's Turbo y las demas
+   * marcas. Las dos cosas existen, asi que se pregunta.
    */
-  { id: 'tiendasEta', etiqueta: 'Tiendas de Turbo', tipo: 'repetible', minimo: 1, maximo: 60, paso: 'campana', obligatorio: true },
+  {
+    id: 'alcanceTurbo',
+    etiqueta: 'En qué corre la campaña',
+    tipo: 'lista',
+    paso: 'campana',
+    obligatorio: true,
+    porDefecto: 'restaurantes',
+    opciones: OPCIONES_ALCANCE_TURBO,
+  },
+  {
+    id: 'tiendasEta',
+    etiqueta: 'Tiendas de Turbo',
+    tipo: 'repetible',
+    minimo: 1,
+    maximo: 60,
+    paso: 'campana',
+    visible: function (entrada) { return entrada.alcanceTurbo === 'tiendas'; },
+    obligatorio: function (entrada) { return entrada.alcanceTurbo === 'tiendas'; },
+  },
 
   { id: 'fechaInicio', etiqueta: 'Fecha de la campaña', tipo: 'fecha', paso: 'vigencia', obligatorio: true },
   { id: 'horaInicio', etiqueta: 'Hora de inicio', tipo: 'hora', paso: 'vigencia', obligatorio: true },
@@ -1300,6 +1342,7 @@ if (typeof module !== 'undefined') {
     ESQUEMAS: ESQUEMAS,
     CAMPOS_POR_TIENDA: CAMPOS_POR_TIENDA,
     CAMPOS_POR_TIENDA_ETA: CAMPOS_POR_TIENDA_ETA,
+    OPCIONES_ALCANCE_TURBO: OPCIONES_ALCANCE_TURBO,
     CAMPOS_BRASIL: CAMPOS_BRASIL,
     CAMPOS_CASHBACK_ETA: CAMPOS_CASHBACK_ETA,
     categoriasDe: categoriasDe,

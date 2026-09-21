@@ -29,7 +29,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var textosDelIdioma = moduloIdiomas.textosDelIdioma;
   var conElIdiomaDe = moduloIdiomas.conElIdiomaDe;
   var partesDeFecha = require('./fechas.js').partesDeFecha;
-  var MODALIDAD_TURBO_POR_DEFECTO = require('./derivados_eta.js').MODALIDAD_TURBO_POR_DEFECTO;
+  var modalidadTurbo = require('./derivados_eta.js').modalidadTurbo;
   var tiendaDelCashback = require('./texto.js').tiendaDelCashback;
 }
 
@@ -139,7 +139,11 @@ function nombreDeCampanaEnElIdioma(entrada, esquema) {
   // preguntara nunca por El Corral.
   if (esquema && esquema.esPorEta) {
     var ciudad = String(datos.ciudades || '').trim();
-    tienda = ciudad ? MODALIDAD_TURBO_POR_DEFECTO + ' ' + ciudad : '';
+    // La categoria la elige el comercial desde el 21 de septiembre de 2026: una
+    // campana de Turbo no se puede titular "Turbo Restaurantes Bogota". Cuando
+    // corre en unas tiendas concretas no hay categoria, asi que queda la ciudad.
+    var categoria = modalidadTurbo(datos);
+    tienda = ciudad ? (categoria ? categoria + ' ' + ciudad : ciudad) : '';
   }
   // Muchas marcas tienen dos tiendas en la app. Cuando el cashback se gana solo
   // en la de Turbo, el nombre lo dice: "El Corral Turbo". Juan lo decidio el 20

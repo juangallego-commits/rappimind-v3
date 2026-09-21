@@ -1351,11 +1351,36 @@ var PREGUNTAS = {
    * el documento sin decir cual suma al concurso. Los textos son los de la
    * decision 36 (iii) del encargo 01, tal cual (punto D4).
    */
+  alcanceTurbo: p({
+    paso: 'campana',
+    pregunta: '¿En qué corre la campaña?',
+    ayuda: 'Casi todas corren en todo Turbo Restaurantes de la ciudad, que es donde están El Corral Turbo, McDonald\u2019s Turbo y las demás marcas.',
+    porQue: 'El documento dice quién participa. Si la campaña es de toda una categoría, la nombra y el listado es el que el usuario ve en la app. Si es de unas tiendas concretas, las nombra una por una.',
+    avanzaSola: true,
+    porDefecto: 'restaurantes',
+    opciones: [
+      {
+        valor: 'restaurantes', etiqueta: 'En todo Turbo Restaurantes de la ciudad',
+        nota: 'Es como corren casi todas. Participan las marcas de restaurantes del botón Turbo.',
+      },
+      {
+        valor: 'turbo', etiqueta: 'En todo Turbo de la ciudad',
+        nota: 'Toda la categoría Turbo, no solo los restaurantes.',
+      },
+      {
+        valor: 'tiendas', etiqueta: 'En unas tiendas concretas de Turbo',
+        nota: 'Las dark stores de una zona, por ejemplo Turbo Calleja. El documento las nombra una por una.',
+      },
+    ],
+    placeholders: ['TEXTO_TIENDAS_ETA'],
+    errores: { vacio: 'Dinos en qué corre la campaña.' },
+  }),
+
   tiendasEta: p({
     paso: 'campana',
     pregunta: '¿Cuáles tiendas de Turbo participan?',
     ayuda: 'Una por fila, con el nombre como sale en el botón Turbo de la app. Por ejemplo: Turbo Calleja.',
-    porQue: 'El documento nombra las tiendas una por una. Turbo no es una modalidad: son tiendas por zona, y el usuario tiene que saber en cuál cuenta su orden.',
+    porQue: 'El documento las nombra una por una, así que el usuario sabe exactamente en cuál cuenta su orden.',
     placeholders: ['TEXTO_TIENDAS_ETA'],
     errores: {
       minimo: 'Agrega al menos una tienda de Turbo.',
@@ -1634,6 +1659,7 @@ var NOMBRE_DEL_HUECO = {
   TEXTO_ETA: 'el tiempo de entrega prometido',
   TEXTO_CIUDAD_ETA: 'la ciudad',
   TEXTO_TIENDAS_ETA: 'las tiendas del botón turbo que participan',
+  TEXTO_MODALIDAD_CONDICIONES: 'la categoría del botón turbo',
   TEXTO_LIMITE_ORDENES: 'el máximo de órdenes por persona',
   MODALIDAD_TURBO: 'la modalidad del botón turbo',
   URL_TC_TURBO: 'el enlace de los términos del botón turbo',

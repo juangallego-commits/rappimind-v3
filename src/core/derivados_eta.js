@@ -29,6 +29,23 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 /** La modalidad del boton Turbo. Los dos documentos publicados usan esta. */
 var MODALIDAD_TURBO_POR_DEFECTO = 'Turbo Restaurantes';
 
+/*
+ * El nombre que el documento imprime para cada categoria del boton Turbo.
+ *
+ * Vive aqui y no en esquemas.js a proposito: las etiquetas del formulario y los
+ * nombres que salen impresos en el T&C son dos cosas distintas, y cruzarlas con
+ * un require entre archivos de src/core/ rompe en Apps Script, donde estos
+ * archivos son globales y no hay require. La prueba
+ * "las tres formas del ETA tienen su texto" cuida que las dos listas no se
+ * separen.
+ *
+ * La tercera opcion, 'tiendas', no tiene categoria: nombra las tiendas.
+ */
+var MODALIDAD_POR_ALCANCE = {
+  restaurantes: 'Turbo Restaurantes',
+  turbo: 'Turbo',
+};
+
 /**
  * Las secciones que se pueden excluir de la redencion, con su nombre impreso.
  *
@@ -100,27 +117,61 @@ function textoCiudadEta(entrada) {
 }
 
 /**
- * ORACION mas vinnetas: las tiendas de Turbo que participan, una por una.
+ * La categoria del boton Turbo en la que corre la campana, como se imprime.
  *
- * Antes la clausula decia "todas las tiendas virtuales bajo la modalidad
- * “Turbo Restaurantes” … habilitadas en la ciudad de Bogota", y despues que el
- * listado seria "el que se encuentre visible y disponible … al momento de
- * realizar la orden". Juan corrigio que Turbo no es una modalidad: son tiendas
- * por zona, con nombre propio (Turbo Calleja, Turbo Chico, Turbo Laureles), y
- * el 21 de septiembre de 2026 (punto D1) eligio que el documento las liste.
+ * Por defecto "Turbo Restaurantes", que es lo que dicen los dos documentos
+ * publicados y la pieza real de la campana de Bogota. Una campana de tiendas
+ * concretas no nombra categoria: las nombra a ellas.
+ */
+function modalidadTurbo(entrada) {
+  var elegida = MODALIDAD_POR_ALCANCE[entrada.alcanceTurbo];
+  if (elegida) return elegida;
+  return entrada.alcanceTurbo === 'tiendas' ? '' : MODALIDAD_TURBO_POR_DEFECTO;
+}
+
+/**
+ * ORACION (o varias): quien participa, en la clausula de Tiendas Participantes.
  *
- * Por eso la segunda frase ya no puede decir quien participa: dos frases que
- * dicen cosas distintas sobre eso es lo que un usuario lee a su favor. Se queda
- * hablando solo de disponibilidad.
+ * Tiene dos formas, y la historia de por que explica las dos.
  *
- * Una tienda sin nombre deja la vinneta rota, asi que se devuelve vacio entero
- * y el motor anuncia el hueco, igual que en la lista de productos de la
- * Carrera.
+ * La decision 33 proponia una lista cerrada de dos categorias. Juan la corrigio
+ * diciendo que son tiendas por zona con nombre propio (Turbo Calleja, Turbo
+ * Chico), y el punto D1 hizo que el documento las listara siempre. El 21 de
+ * septiembre de 2026 Juan aclaro que esa correccion era sobre las dark stores
+ * tipo Turbo Carulla, que venden CPGs: las campanas de "15 minutos o Cashback"
+ * corren normalmente en Turbo Restaurantes, donde estan las marcas. Listar esas
+ * marcas serian decenas y cambiarian de un dia para otro, que es justo lo que
+ * resolvia la segunda frase del texto aprobado.
+ *
+ * Asi que:
+ *
+ * - Categoria (Turbo Restaurantes o Turbo): el texto aprobado, palabra por
+ *   palabra, con su segunda frase. Nombrar una categoria y decir que el listado
+ *   es el que la app muestra no se contradice: es como se sabe quien participa.
+ * - Tiendas concretas: la lista con nombre propio, y la segunda frase se queda
+ *   hablando solo de disponibilidad, que es la forma que Juan eligio ese mismo
+ *   dia. Ahi si habria contradiccion.
+ *
+ * Una tienda sin nombre, o sin ciudad, deja vacio el valor entero: el motor
+ * anuncia el hueco y no se genera, igual que en la lista de productos.
  */
 function textoTiendasEta(entrada) {
-  var tiendas = entrada.tiendasEta || [];
   var ciudad = textoCiudadEta(entrada);
-  if (tiendas.length === 0 || !ciudad) return '';
+  if (!ciudad) return '';
+
+  if (entrada.alcanceTurbo !== 'tiendas') {
+    var modalidad = modalidadTurbo(entrada);
+    if (!modalidad) return '';
+    return 'Participarán todas las tiendas virtuales bajo la modalidad “' + modalidad +
+      '” al interior de la Plataforma Rappi que se encuentren habilitadas en ' + ciudad +
+      ' durante la vigencia de la Campaña. El listado de Tiendas Participantes será el que se ' +
+      'encuentre visible y disponible para el Usuario/Consumidor dentro del botón “Turbo” de la ' +
+      'Plataforma Rappi al momento de realizar la orden, el cual podrá variar en función de la ' +
+      'operación y disponibilidad de cada Aliado Comercial.';
+  }
+
+  var tiendas = entrada.tiendasEta || [];
+  if (tiendas.length === 0) return '';
 
   var lineas = ['Participarán únicamente las siguientes tiendas virtuales del botón “Turbo” ' +
     'al interior de la Plataforma Rappi, habilitadas en ' + ciudad + ' durante la vigencia de la Campaña:'];
@@ -132,6 +183,18 @@ function textoTiendasEta(entrada) {
   lineas.push('La disponibilidad de cada Tienda Participante podrá variar en función de la ' +
     'operación de cada Aliado Comercial.');
   return lineas.join('\n');
+}
+
+/**
+ * FRAGMENTO: la cola de la vinneta de condiciones que nombra la categoria.
+ *
+ * Con categoria, la vinneta dice lo mismo que el documento aprobado. Con
+ * tiendas concretas no hay categoria que nombrar, asi que la vinneta cierra
+ * despues de "Tiendas Participantes".
+ */
+function textoModalidadEnCondiciones(entrada) {
+  var modalidad = modalidadTurbo(entrada);
+  return modalidad ? ' identificadas con la modalidad “' + modalidad + '”' : '';
 }
 
 /**
@@ -190,7 +253,8 @@ function calcularDerivadosEta(entrada, pais) {
     // donde la ponen los demas modelos. En los documentos publicados estaba
     // suelta entre las restricciones. Ver docs/MEJORAS_ETA.md.
     TEXTO_LUGAR_REDENCION: textoRedencionEta(entrada, pais),
-    MODALIDAD_TURBO: MODALIDAD_TURBO_POR_DEFECTO,
+    MODALIDAD_TURBO: modalidadTurbo(entrada),
+    TEXTO_MODALIDAD_CONDICIONES: textoModalidadEnCondiciones(entrada),
     PRESUPUESTO: presupuestoEta(entrada, pais),
   };
 }
@@ -198,10 +262,12 @@ function calcularDerivadosEta(entrada, pais) {
 if (typeof module !== 'undefined') {
   module.exports = {
     MODALIDAD_TURBO_POR_DEFECTO: MODALIDAD_TURBO_POR_DEFECTO,
+    MODALIDAD_POR_ALCANCE: MODALIDAD_POR_ALCANCE,
     SECCIONES_EXCLUIBLES_ETA: SECCIONES_EXCLUIBLES_ETA,
     seccionesExcluiblesDe: seccionesExcluiblesDe,
     textoSeccionesExcluidas: textoSeccionesExcluidas,
     textoTiendasEta: textoTiendasEta,
+    modalidadTurbo: modalidadTurbo,
     calcularDerivadosEta: calcularDerivadosEta,
   };
 }
