@@ -1,70 +1,59 @@
 # Insumos del cambio de identidad
 
-Aquí van las piezas del nuevo estilo, tal como salieron de donde se hicieron.
-Esta carpeta es material de referencia, no código: nada de lo que está aquí se
-sube a Apps Script ni entra en el build.
+Material de referencia, no código: nada de esta carpeta se sube a Apps Script ni
+entra en el build.
 
-Las reglas de producto no cambian. Lo que se cambia es la pintura: color,
-tipografía, espaciado, radios, sombras y la forma de los componentes. El
-recorrido, las preguntas, los textos y el documento generado se quedan como
-están. Lo que no se puede tocar está en `docs/PARA_EL_DISENO.md`.
+## Qué hay
 
-## Cómo subir los archivos
+| Archivo | Qué es |
+|---|---|
+| `ESPECIFICACION_ESTADOS.md` | Los estados, los tres niveles de aviso, el progreso de 5 a 9 pasos y los contrastes ya medidos. **Es el que hay que leer primero** |
+| `readme.md` | El RappiAds Design System, derivado del Rappi Brand Book 2026. La fuente de marca |
+| `SKILL.md` | La definición de skill del design system, con las reglas de marca en corto |
+| `styles.css` | La hoja de entrada del design system. Importa los cinco archivos de `tokens/` |
+| `_ds_manifest.json`, `_ds_bundle.js`, `doc-page.js` | El andamiaje del design system. No se leen para implementar |
+| `RappiAds-Design-System.html` y su versión de impresión | El design system navegable |
 
-Arrástralos aquí con el nombre que ya tengan y ponles un prefijo para que se
-agrupen solos:
+## Qué falta y dónde va
 
-| Prefijo | Qué es | Cuánto manda |
-|---|---|---|
-| `rappi-` | El template original del equipo de diseño de Rappi | Manda en color y tipografía: es la marca, sin interpretación |
-| `sistema-` | El Design System: tokens, escala tipográfica, espaciado, radios, componentes | Manda en las reglas, y es lo que cubre las pantallas que nadie dibujó |
-| `pantalla-` | Los ejemplos del flujo ya diseñados, en HTML y CSS | Manda en los valores exactos de lo que sí está dibujado |
-| `prompt-` | El prompt con que se generó el diseño | No sirve para regenerar, sirve para entender la intención |
+Está en `Identidad corporativa Rappi (2).zip`, en la carpeta de Drive. Al
+descomprimirlo, esta es la estructura que la implementación espera:
 
-Si dos fuentes se contradicen, gana la de más arriba de la tabla, salvo en un
-caso: si el ejemplo dibujado se ve distinto de lo que dice el sistema, gana el
-ejemplo y hay que corregir el token.
+```
+docs/diseno/
+  tokens/          fonts.css, colors.css, typography.css, spacing.css
+                   y rappimind.css, que se importa AL FINAL y pisa a los otros
+  assets/
+    fonts/         PP Object Sans, cuatro pesos, en OTF y TTF
+    logo/          rappi-logo-220.png (el de la barra), -440, y el bigote
+    lockup/        cuatro versiones más favicon, en SVG y PNG a 3x
+  prototipo/       los tres .dc.html con su support.js al lado
+```
 
-## Qué formatos sirven
+`styles.css` busca `tokens/` por ruta relativa, así que esa subcarpeta tiene que
+llamarse así y estar al lado.
 
-Sirven HTML, CSS, JSON de tokens, Markdown y texto plano. De ahí se leen los
-valores literales.
+Los tres `.dc.html` necesitan `support.js` en la misma carpeta para abrirse.
+El que resuelve los estados es `RappiMind Estados.dc.html`.
 
-Sirven a medias PDF, PNG y presentaciones de marca: valen como referencia
-visual, pero los colores y los tamaños no se sacan de una imagen, se sacan del
-código. Si lo único que hay es una imagen, lo digo y decidimos.
+## Cuál fuente manda cuando dos se contradicen
 
-No sirve un archivo de Figma suelto. Si el original vive en Figma, hace falta
-un export de tokens o el enlace.
+1. **El Rappi Brand Book**, a través de `readme.md` y `SKILL.md`. Es la marca.
+2. **`ESPECIFICACION_ESTADOS.md`**, que resuelve lo que el brand book no cubre
+   y corrige al prototipo donde hace falta.
+3. **Los `.dc.html`**, para los valores exactos de lo que sí está dibujado.
+4. **El prompt original**, para entender la intención en lo que nadie dibujó.
 
-## Qué se hace con esto
+Con una excepción que ya está peleada y resuelta: **el campo con valor lleva
+borde tinta, no neón**. El prototipo los pintaba los dos en neón y no se
+distinguían del campo en error.
 
-Al llegar los archivos, antes de tocar una línea de `src/client/`, sale un
-análisis con seis cosas:
+## Lo que no se lee de aquí
 
-1. Los 44 tokens de hoy contra los nuevos: cuáles cambian de valor, cuáles se
-   agregan y cuáles sobran.
-2. Cuántas de las 46 pantallas quedan cubiertas por un ejemplo y cuántas hay
-   que deducir.
-3. Los estados que ningún ejemplo dibuja. Son unos diecisiete en la hoja actual
-   (campo en error, opción elegida, opción vencida, paso hecho, hoja vacía y
-   los demás) y son donde se cuela el criterio de quien programa en lugar del
-   de quien diseñó.
-4. El contraste de cada par de colores que lleve texto encima, medido contra
-   WCAG AA. Hoy hay dos naranjas justamente por esto y está explicado en
-   `docs/DISENO.md`.
-5. Lo que Apps Script no va a cargar: tipografías que no estén en Google Fonts
-   y cualquier recurso que no venga por HTTPS.
-6. Lo que obligaría a tocar el JavaScript de la interfaz, que es la única parte
-   con riesgo de mover el flujo.
+El texto legal, las preguntas, el recorrido y el copy. Nada de eso cambia. Está
+en `modelos/`, `src/core/preguntas.js` y `docs/PARA_EL_DISENO.md`.
 
-Con eso se arma el plan y se decide. Nada se implementa antes.
+## Por dónde se empieza
 
-## Inventario
-
-Una línea por archivo, escrita a mano al subirlo. Si algo no está aquí, no se
-sabe qué es.
-
-| Archivo | Qué es | De dónde salió |
-|---|---|---|
-| | | |
+`docs/PROMPT_IDENTIDAD.md` es el encargo completo, con el reparto entre agentes
+y las rondas de auditoría. `docs/PLAN_IDENTIDAD.md` es el análisis del que sale.

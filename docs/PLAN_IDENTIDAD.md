@@ -20,15 +20,17 @@ componente y método de trabajo. Está completa y bien pensada.
 System**, derivado del Rappi Brand Book 2026. Esa es la fuente de marca de verdad,
 y resuelve varias cosas que el prompt daba por sabidas.
 
-**Lo que todavía falta**, y hace falta para implementar:
+**Lo que falta llegar al repositorio.** Claude Design ya lo produjo todo y está en
+`Identidad corporativa Rappi (2).zip` (1.7 MB) en la carpeta de Drive. Contiene los
+cinco archivos de `tokens/` (los cuatro del design system más `rappimind.css`, que
+se importa al final), `assets/fonts/` con PP Object Sans en OTF y TTF,
+`assets/logo/` con versiones reducidas para base64, `assets/lockup/` con las cuatro
+versiones y el favicon, y los tres `.dc.html` del proyecto de identidad con su
+`support.js`, incluido el nuevo `RappiMind Estados.dc.html`.
 
-| Falta | Para qué | Peso |
-|---|---|---|
-| `tokens/colors.css`, `fonts.css`, `typography.css`, `spacing.css` | Los valores literales. Hoy `styles.css` los importa y no están | kilobytes |
-| `assets/fonts/` (PP Object Sans, cuatro pesos) | Sin esto la app entera se ve en la tipografía de respaldo | ver 3.5 |
-| `assets/logo/rappi-logo.png` y `rappi-bigote.png` | La barra superior y la marca de agua del inicio | kilobytes |
-| `RappiMind Identidad.dc.html` | El prototipo de las ocho pantallas. Es otro proyecto, no está en este bundle | |
-| `RappiMind Logo.dc.html` más el SVG limpio | El lockup. El propio prompt lo pide antes de implementar | |
+Las advertencias de entrega (fuentes sin convertir, qué logo usar, por qué el SVG
+del lockup todavía no es autosuficiente) están en
+`docs/diseno/ESPECIFICACION_ESTADOS.md`, sección 7.
 
 Los dos ZIP de Drive no se pudieron abrir desde aquí: la política de salida a
 internet bloquea `drive.google.com`.
@@ -106,46 +108,31 @@ que sí es un cambio visible.
 Es la señal de que falta un dato, o sea lo que sostiene la promesa central del
 producto.
 
-### 3.3 La barra de progreso no tiene seis pasos
+### 3.3 La barra de progreso no tiene seis pasos · RESUELTO
 
-El prompt describe "la barra de progreso de los 6 pasos". El código tiene trece
-pasos definidos, y cada tipo de campaña muestra un subconjunto distinto:
+El prompt describía seis pasos. El código tiene trece definidos y muestra entre
+cinco y nueve según el tipo de campaña: Brasil 5, Cashback por ETA 6, Cashback y
+Carrera y Descuento Travel y Cashback Day 8, Cashback Travel 9. Con nueve pasos en
+una pantalla de 360px cada barra queda por debajo de 35px, que es el defecto que la
+hoja de estilos ya había arreglado con `flex-wrap`.
 
-| Tipo de campaña | Pasos que se ven |
-|---|---|
-| Promoção Brasil | 5 |
-| Cashback por ETA | 6 |
-| Cashback, Carrera de Compras, Descuento Travel, Cashback Day | 8 |
-| Cashback Travel | **9** |
+**Resuelto** el 21 de septiembre: la barra se queda en una fila, las etiquetas por
+paso se caen todas a la vez cuando hay más de seis pasos o cuando un segmento baja
+de 88px, y el nombre del paso actual pasa a la línea de encima. Detalle en
+`docs/diseno/ESPECIFICACION_ESTADOS.md`, sección 1.
 
-Seis es el caso del Cashback por ETA, probablemente el que vio quien diseñó.
+### 3.4 Los avisos pierden su única distinción · RESUELTO
 
-Y hay un antecedente escrito en la propia hoja de estilos: con seis pasos entraban
-justos, y al entrar el séptimo "Organizador" y "Cuándo" se leían pegados. Por eso
-hoy `.progreso` usa `flex-wrap: wrap` con `min-width: 82px`, o sea que los pasos
-pasan a una segunda fila cuando no caben. El diseño del prototipo, una barra de
-4px por paso en una sola fila con la etiqueta recortada, reintroduce el defecto que
-ya se había arreglado: con nueve pasos en una pantalla de 360px cada barra queda
-por debajo de 35px.
+El brand book prohíbe el borde izquierdo de color, y hoy es lo único que distingue
+`.aviso` de `.aviso-serio`. Además el brand book permite un solo pastel por pieza.
 
-La regla de diseño se mantiene (barras, no subrayados; el actual con gradiente).
-Lo que hay que rehacer es cómo se comporta cuando no caben.
-
-### 3.4 Quitar el borde izquierdo de los avisos borra una distinción que hoy existe
-
-El brand book lo confirma: `No decorative borders as brand device (no
-left-border-only accent cards)`. O sea que el borde se va, no hay discusión.
-
-El problema es otro. Hoy `.aviso` y `.aviso-serio` **se distinguen solo por el
-color de ese borde**. Comparten fondo, radio, tipografía y espaciado. Si se quita
-sin más, los dos quedan idénticos y se pierde la diferencia entre "ten esto en
-cuenta" y "esto es serio".
-
-Y hay una restricción del brand book que complica el reemplazo: `One secondary +
-Neon = valid. Two secondaries without Neon = not allowed.` **Un solo pastel por
-pieza.** El plan del prompt usa beige para pendientes y huecos, celeste para
-explicaciones y lavanda para lo opcional, que en varias pantallas coinciden. Hay
-que decidir el mapeo pantalla por pantalla, no solo por componente.
+**Resuelto** el 21 de septiembre: los tres niveles se distinguen por estructura, no
+por color, así que se reconocen en blanco y negro. Informativo es panel celeste sin
+título; serio es panel beige con una regla de gradiente en el borde superior y
+título en caja alta; el error de campo no lleva panel. Si dos coinciden, el de mayor
+prioridad se queda con su pastel y el otro baja a tarjeta blanca. Detalle en
+`docs/diseno/ESPECIFICACION_ESTADOS.md`, sección 2. Los estados del historial sin
+verde están en la sección 3 del mismo archivo.
 
 ### 3.5 Tipografía y assets: lo que Apps Script no perdona
 
@@ -163,23 +150,38 @@ casos raros; es lo que vería todo el mundo.
 Además el `Index.html` de hoy carga Lato 400 y 700 y Poppins 500 y 600. La nueva
 especificación pide cuatro pesos, incluido 900. Hay que rehacer esa carga.
 
-### 3.6 Renombrar tokens rompe pruebas que hoy pasan
+### 3.6 El mensaje de error en neón tampoco pasa
+
+Salió de verificar la especificación nueva. El mensaje de error suelto va en neón
+`#FF2526` a 13.5px en peso 700. Eso es texto normal para WCAG, no texto grande, así
+que el mínimo es 4.5:1 y el neón da 3.79:1 sobre papel y 3.47:1 sobre niebla. Es
+justo el texto que tiene que leerse.
+
+El arreglo es `#D91F20`, el mismo neón al 85% de brillo, que da 5.81:1 sobre papel.
+El `#FF2526` se queda para el borde del campo y el anillo de foco, donde el mínimo
+es 3:1 y lo pasa. O sea que hacen falta dos tokens, `--neon` y `--neon-texto`, que
+es el mismo patrón que hoy tienen `--naranja-marca` y `--naranja-accion`.
+
+También quedó anotada una corrección menor: el texto deshabilitado `#6B6B6B` sobre
+`#F4F5F6` da 4.88:1, no 5.3:1 como afirma la especificación. Pasa igual, pero tiene
+menos margen del que parece.
+
+### 3.7 Renombrar tokens rompe pruebas que hoy pasan
 
 `pruebas/estilos.test.js` afirma literalmente que la regla del selector de idioma
 lleva `background: var(--naranja-marca)` y `color: #fff`. Si `--naranja-marca`
 desaparece en favor de `--neon`, esa prueba falla. Existe por un defecto real: se
-escribió `var(--marca)` en lugar de `--naranja-marca`, la variable no existía, y el
-botón del idioma elegido quedó con texto blanco sobre fondo blanco, o sea
-invisible.
+escribió `var(--marca)`, la variable no existía, y el botón del idioma elegido quedó
+con texto blanco sobre fondo blanco.
 
 Otra prueba del mismo archivo mide el `bottom` del selector de idioma contra el
-`padding` de `.pagina` en celular, para que la última fila de botones no quede
-tapada. Si cambian los espaciados, hay que rehacer esa cuenta.
+`padding` de `.pagina` en celular. Si cambian los espaciados, hay que rehacer la
+cuenta.
 
 No es un obstáculo: es la red que hace seguro el cambio. Pero las pruebas se
 actualizan en el mismo commit que renombra los tokens, no después.
 
-### 3.7 Diferencias menores entre el prompt y el brand book
+### 3.8 Diferencias menores entre el prompt y el brand book
 
 Ninguna es grave, pero conviene resolverlas de una vez:
 
@@ -192,7 +194,7 @@ Ninguna es grave, pero conviene resolverlas de una vez:
 
 Lo del ángulo importa: `135deg` y `−45deg` en CSS apuntan a lados distintos.
 
-### 3.8 Los íconos se quedan como están
+### 3.9 Los íconos se quedan como están
 
 El brand book **no define un sistema de íconos**: el propio readme dice que usa
 Lucide como sustituto provisional. RappiMind ya tiene los suyos, SVG de un solo
