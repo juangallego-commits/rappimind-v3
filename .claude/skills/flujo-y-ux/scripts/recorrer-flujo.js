@@ -75,6 +75,20 @@ async function recorrer() {
   pagina.on('pageerror', function (e) { erroresDeJs.push(e.message); });
 
   const texto = () => pagina.evaluate(() => document.body.innerText);
+
+  /*
+   * Busca una frase sin importar la caja.
+   *
+   * texto() devuelve innerText, o sea lo que el usuario VE, y eso es lo que
+   * queremos comprobar. Pero desde el cambio de identidad el titulo del aviso
+   * serio lleva text-transform: uppercase, asi que innerText lo devuelve en
+   * mayusculas aunque en el DOM siga escrito en caja normal. Una busqueda
+   * exacta fallaria por la caja y no por lo que de verdad se comprueba, que es
+   * que el aviso este y este ANTES del enlace.
+   */
+  const donde = (todo, frase) =>
+    todo.toLocaleLowerCase('es').indexOf(frase.toLocaleLowerCase('es'));
+  const contiene = (todo, frase) => donde(todo, frase) !== -1;
   const titulos = () => pagina.evaluate(() =>
     [].map.call(document.querySelectorAll('.pregunta .pregunta-titulo'), (t) => t.textContent.trim()));
 
@@ -859,8 +873,8 @@ async function recorrer() {
   await pagina.waitForTimeout(400);
   const conPendiente = await texto();
   revisar('un T&C con algo pendiente avisa antes de dar el enlace',
-    conPendiente.indexOf('Antes de usar este enlace, confirma con Legal') !== -1 &&
-    conPendiente.indexOf('Antes de usar este enlace, confirma con Legal') < conPendiente.indexOf('Enlace para la pieza'),
+    contiene(conPendiente, 'Antes de usar este enlace, confirma con Legal') &&
+    donde(conPendiente, 'Antes de usar este enlace, confirma con Legal') < donde(conPendiente, 'Enlace para la pieza'),
     conPendiente.replace(/\n+/g, ' | ').slice(0, 400));
   revisar('con algo pendiente no dice "listo, tal cual"',
     conPendiente.indexOf('ese es el enlace que va, tal cual') === -1);
@@ -873,7 +887,7 @@ async function recorrer() {
   await pagina.waitForTimeout(400);
   const yaNoRepetido = await texto();
   revisar('el T&C que estuvo repetido ya no pide confirmar cuál va',
-    yaNoRepetido.indexOf('Antes de usar este enlace, confirma con Legal') === -1 &&
+    !contiene(yaNoRepetido, 'Antes de usar este enlace, confirma con Legal') &&
     yaNoRepetido.indexOf('ese es el enlace que va, tal cual') !== -1,
     yaNoRepetido.replace(/\n+/g, ' | ').slice(0, 400));
 
