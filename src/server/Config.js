@@ -42,7 +42,7 @@ var PESTANAS = {
     // Datos que solo usan las leyendas de piezas publicitarias. La ruta del
     // pais es la carpeta de Squarespace donde se publican los T&C, y con ella
     // la herramienta arma la direccion de la campana antes de que exista.
-    'ruta_promos', 'url_tc_pro', 'nombre_modalidad_local',
+    'ruta_promos', 'url_tc_pro',
     // El modelo de acuerdo de transferencia de datos de cada pais. Se firma una
     // vez por marca, y sin el Rappi no le puede pasar al Organizador los datos
     // del ganador de una Carrera. Chile y Costa Rica no tienen modelo.

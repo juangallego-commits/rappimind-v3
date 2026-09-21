@@ -108,30 +108,46 @@ function tieneRetornoDeCarro(texto) {
 }
 
 /**
- * En que pedidos se gana el beneficio, como una sola respuesta.
+ * En cual de las tiendas de la marca se gana el cashback.
  *
- * Hasta el 20 de septiembre de 2026 esto eran dos casillas que se podian marcar
- * a la vez, y el documento salia con dos "unicamente" que no pueden ser ciertos
- * los dos: uno decia que solo por Turbo y el otro que solo consumiendo en el
- * local. Juan lo convirtio en una sola eleccion (punto D2).
+ * Muchas marcas tienen dos tiendas en la app: la normal y la de Turbo. Hasta el
+ * 20 de septiembre de 2026 la pregunta era otra, "en que pedidos aplica el
+ * beneficio", y el documento no decia en cual de las dos tiendas contaba el
+ * pedido: el usuario podia reclamar el cashback en cualquiera de las dos. Juan
+ * la reemplazo ese dia, y de paso quito "Solo consumo en el local", que en
+ * Rappi no existe como modalidad (punto C3).
  *
- * Las campanas guardadas antes de ese dia tienen una lista, asi que esto lee las
- * dos formas. Sin esto, "Usar como base" sobre una campana vieja recorreria una
- * cadena letra por letra.
+ * Devuelve 'normal', 'turbo', 'ambas', 'sin_turbo', o cadena vacia si nadie ha
+ * respondido todavia. Sirve igual para una campana entera (el Cashback) y para
+ * una fila de la lista de tiendas (el Multitienda), porque las dos guardan la
+ * respuesta con el mismo nombre.
+ *
+ * Lo guardado antes sigue sirviendo, que es lo que pidio Juan: una campana con
+ * "Solo pedidos por Turbo" abre en "Solo en la tienda de Turbo", y una con "En
+ * cualquier pedido" abre sin respuesta, para que el comercial elija. Las de
+ * antes del punto D2 guardaron una lista, asi que tambien se lee esa forma.
  */
-function condicionDePedido(entrada) {
-  var valor = (entrada || {}).condiciones;
-  if (Object.prototype.toString.call(valor) === '[object Array]') {
-    return valor.length > 0 ? String(valor[0]) : 'cualquiera';
-  }
-  var texto = String(valor === null || valor === undefined ? '' : valor).trim();
-  return texto || 'cualquiera';
+function tiendaDelCashback(entrada) {
+  var datos = entrada || {};
+  var elegida = String(datos.tiendaTurbo === null || datos.tiendaTurbo === undefined ? '' : datos.tiendaTurbo).trim();
+  if (elegida) return elegida;
+
+  var viejo = datos.condiciones;
+  if (Object.prototype.toString.call(viejo) === '[object Array]') viejo = viejo.length > 0 ? viejo[0] : '';
+  return String(viejo === null || viejo === undefined ? '' : viejo).trim() === 'turbo' ? 'turbo' : '';
+}
+
+/** true si la respuesta incluye la tienda de Turbo. */
+function incluyeTurbo(entrada) {
+  var cual = tiendaDelCashback(entrada);
+  return cual === 'turbo' || cual === 'ambas';
 }
 
 if (typeof module !== 'undefined') {
   module.exports = {
     tieneValor: tieneValor,
-    condicionDePedido: condicionDePedido,
+    tiendaDelCashback: tiendaDelCashback,
+    incluyeTurbo: incluyeTurbo,
     normalizarTexto: normalizarTexto,
     lineasDe: lineasDe,
     recortarFinalDeLinea: recortarFinalDeLinea,

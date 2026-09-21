@@ -289,63 +289,92 @@ test('las tres preguntas que decidían a quién excluir arrancan sin marcar', ()
   }
 });
 
-// --- D2: en qué pedidos se gana el beneficio ---------------------------------
+// --- En cuál de sus tiendas se gana el cashback ------------------------------
 
-test('las condiciones del pedido son una sola elección, no dos casillas', () => {
+test('la pregunta es en cuál de sus tiendas, con cuatro opciones y ninguna marcada', () => {
   /*
-   * Punto D2. Se podían marcar Turbo y consumo en el local a la vez, y el
-   * documento salía con dos "únicamente" que no pueden ser ciertos los dos:
-   * uno decía que solo por Turbo y el otro que solo consumiendo en el local.
-   * Quien pidió a domicilio podía leer las dos a su favor.
+   * Reemplaza a "¿El beneficio aplica solo en cierto tipo de pedido?", que se
+   * borró el 20 de septiembre de 2026 con la decisión de Juan. Aquella ofrecía
+   * "Solo consumo en el local", una modalidad que en Rappi no existe (punto
+   * C3), y no resolvía el caso real: muchas marcas tienen dos tiendas en la
+   * app, la normal y la de Turbo, y el documento no decía en cuál contaba el
+   * pedido.
    */
   const { ESQUEMAS } = require('../src/core/esquemas.js');
   const { PREGUNTAS } = require('../src/core/preguntas.js');
 
-  const campo = ESQUEMAS.cashback.campos.filter((c) => c.id === 'condiciones')[0];
-  assert.strictEqual(campo.tipo, 'lista', 'volvieron a ser casillas');
-  assert.strictEqual(PREGUNTAS.condiciones.multiple, undefined, 'la pregunta volvió a admitir varias');
-  assert.deepStrictEqual(PREGUNTAS.condiciones.opciones.map((o) => o.etiqueta),
-    ['En cualquier pedido', 'Solo pedidos por Turbo', 'Solo consumo en el local']);
+  assert.strictEqual(PREGUNTAS.condiciones, undefined, 'volvió la pregunta de la condición del pedido');
+
+  const campo = ESQUEMAS.cashback.campos.filter((c) => c.id === 'tiendaTurbo')[0];
+  assert.ok(campo, 'el Cashback ya no pregunta en cuál de sus tiendas');
+  assert.strictEqual(campo.tipo, 'lista');
+  assert.strictEqual(campo.obligatorio, true, 'dejó de ser obligatoria: el documento saldría sin decirlo');
+  assert.strictEqual(campo.paso, 'campana', 'se fue del paso donde está la tienda');
+  assert.strictEqual(PREGUNTAS.tiendaTurbo.porDefecto, undefined, 'alguna opción quedó marcada de entrada');
+  assert.deepStrictEqual(PREGUNTAS.tiendaTurbo.opciones.map((o) => o.etiqueta),
+    ['Solo en la tienda normal', 'Solo en la tienda de Turbo', 'En las dos', 'No tiene tienda en Turbo']);
+
+  // El Multitienda pregunta lo mismo una vez por marca.
+  const porTienda = ESQUEMAS.cashback_day.camposPorTienda.filter((c) => c.id === 'tiendaTurbo')[0];
+  assert.ok(porTienda, 'la lista de tiendas no pregunta en cuál de sus tiendas');
+  assert.strictEqual(porTienda.obligatorio, true);
 });
 
-test('el documento imprime una sola condición, y ninguna con "En cualquier pedido"', () => {
+test('cada respuesta imprime su frase, y "No tiene tienda en Turbo" no imprime ninguna', () => {
   const { calcularDerivados } = require('../src/core/derivados.js');
   const { leerJson, rutaDesdeRaiz } = require('../scripts/lib/archivos');
   const CO = leerJson(rutaDesdeRaiz('data', 'paises.json')).paises.filter((p) => p.codigo === 'CO')[0];
-  const con = (condiciones) => calcularDerivados({ tipo: 'cashback', condiciones: condiciones }, CO).TEXTO_CONDICIONES;
+  const con = (valor) => calcularDerivados({ tipo: 'cashback', tiendaTurbo: valor }, CO).TEXTO_TIENDA_TURBO;
 
-  assert.strictEqual(con('cualquiera'), '');
+  assert.strictEqual(con('normal'),
+    'El Beneficio aplica únicamente para pedidos realizados en la Tienda Participante por fuera del botón “Turbo” de la Plataforma Rappi. ' +
+    'Los pedidos realizados en la Tienda Participante dentro del botón “Turbo” no generan el Beneficio.');
   assert.strictEqual(con('turbo'),
-    'El Beneficio aplica únicamente para pedidos realizados a través de Turbo.');
-
-  // Y una campaña guardada antes del 20 de septiembre de 2026 trae una lista.
-  // "Usar como base" sobre una de esas tiene que seguir funcionando.
-  assert.strictEqual(con(['turbo']), con('turbo'));
-  assert.strictEqual(con([]), '');
+    'El Beneficio aplica únicamente para pedidos realizados en la Tienda Participante dentro del botón “Turbo” de la Plataforma Rappi. ' +
+    'Los pedidos realizados en la Tienda Participante por fuera de ese botón no generan el Beneficio.');
+  assert.strictEqual(con('ambas'),
+    'El Beneficio aplica para pedidos realizados en la Tienda Participante, tanto dentro como por fuera del botón “Turbo” de la Plataforma Rappi.');
+  assert.strictEqual(con('sin_turbo'), '');
   assert.strictEqual(con(undefined), '');
-
-  // El caso que ya no puede pasar: las dos a la vez. De una lista vieja con las
-  // dos se lee la primera, no se imprimen las dos frases incompatibles.
-  const dosALaVez = con(['turbo', 'consumo_local']);
-  assert.strictEqual(dosALaVez, con('turbo'));
-  assert.strictEqual((dosALaVez.match(/únicamente/g) || []).length, 1,
-    'volvieron los dos "únicamente" en la misma cláusula: ' + dosALaVez);
 });
 
-test('"Solo consumo en el local" no se ofrece mientras ningún país diga cómo se llama', () => {
-  // El modelo cita ese nombre entre comillas, y hoy nombre_modalidad_local está
-  // vacío en los nueve países. Ofrecer la opción sería un camino que arranca y
-  // muere: la campaña se quedaría además sin ninguna de sus cinco leyendas.
-  const { leerJson, rutaDesdeRaiz } = require('../scripts/lib/archivos');
-  const paises = leerJson(rutaDesdeRaiz('data', 'paises.json')).paises;
-  const conNombre = paises.filter((p) => String(p.nombre_modalidad_local || '').trim() !== '');
-  assert.deepStrictEqual(conNombre.map((p) => p.codigo), [],
-    'un país ya tiene nombre_modalidad_local: quita este recordatorio y revisa la opción');
+test('una campaña guardada antes del cambio abre donde Juan dijo', () => {
+  // "Solo pedidos por Turbo" abre en "Solo en la tienda de Turbo". "En
+  // cualquier pedido" abre sin respuesta, para que el comercial elija. Y las de
+  // antes del punto D2 guardaron una lista, no un texto.
+  const { tiendaDelCashback } = require('../src/core/texto.js');
 
-  const fuente = require('node:fs').readFileSync(
-    require('node:path').join(__dirname, '..', 'src', 'client', 'js', '62-pasos.js'), 'utf8');
-  assert.ok(fuente.indexOf("campo.id === 'condiciones'") !== -1,
-    'la interfaz ya no filtra las opciones de la condición del pedido');
-  assert.ok(fuente.indexOf('nombre_modalidad_local') !== -1,
-    'la interfaz ya no mira si el país tiene el nombre de la modalidad');
+  assert.strictEqual(tiendaDelCashback({ condiciones: 'turbo' }), 'turbo');
+  assert.strictEqual(tiendaDelCashback({ condiciones: ['turbo'] }), 'turbo');
+  assert.strictEqual(tiendaDelCashback({ condiciones: 'cualquiera' }), '');
+  assert.strictEqual(tiendaDelCashback({ condiciones: [] }), '');
+  assert.strictEqual(tiendaDelCashback({ condiciones: ['consumo_local'] }), '');
+  assert.strictEqual(tiendaDelCashback({}), '');
+  // Y lo respondido hoy manda sobre lo guardado ayer.
+  assert.strictEqual(tiendaDelCashback({ condiciones: 'turbo', tiendaTurbo: 'normal' }), 'normal');
+});
+
+test('"Solo consumo en el local" no queda en ninguna parte', () => {
+  // En Rappi no existe esa modalidad. Juan cerró el punto C3 borrándola del
+  // formulario, del modelo, de la leyenda y de la fila del país.
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const raiz = path.join(__dirname, '..');
+  const carpetas = ['src/core', 'src/client/js', 'src/server', 'modelos', 'modelos/bloques', 'modelos/leyendas', 'data'];
+  const restos = [];
+
+  for (const carpeta of carpetas) {
+    const ruta = path.join(raiz, carpeta);
+    for (const archivo of fs.readdirSync(ruta)) {
+      const completa = path.join(ruta, archivo);
+      if (!fs.statSync(completa).isFile()) continue;
+      // Sin comentarios: los de este repositorio cuentan qué se quitó y por
+      // qué, y esta prueba busca código vivo, no memoria.
+      const texto = fs.readFileSync(completa, 'utf8')
+        .replace(/\/\*[\s\S]*?\*\//g, ' ')
+        .replace(/^\s*(\/\/|%%).*$/gm, ' ');
+      if (/consumo_local|nombre_modalidad_local|consumo en el local/.test(texto)) restos.push(carpeta + '/' + archivo);
+    }
+  }
+  assert.deepStrictEqual(restos, [], 'volvió el consumo en el local');
 });

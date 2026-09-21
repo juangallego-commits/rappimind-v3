@@ -261,23 +261,35 @@ var CAMPOS_CREDITOS = [
     obligatorio: false,
     visible: function (entrada) { return entrada.redencion === 'general'; },
   },
-  {
-    // Una sola eleccion desde el 20 de septiembre de 2026 (punto D2): marcar
-    // Turbo y consumo en el local a la vez sacaba un documento con dos
-    // "unicamente" incompatibles. Sigue sin ser obligatoria, porque la primera
-    // opcion es la respuesta de casi todas las campanas.
-    id: 'condiciones',
-    etiqueta: 'En qué pedidos aplica',
-    tipo: 'lista',
-    paso: 'beneficio',
-    obligatorio: false,
-    opciones: [
-      { valor: 'cualquiera', etiqueta: 'En cualquier pedido' },
-      { valor: 'turbo', etiqueta: 'Solo pedidos por Turbo' },
-      { valor: 'consumo_local', etiqueta: 'Solo consumo en el local' },
-    ],
-  },
 ];
+
+/*
+ * En cual de las tiendas de la marca se gana el cashback.
+ *
+ * Reemplaza a "En que pedidos aplica", que se borro el 20 de septiembre de 2026
+ * con la pregunta nueva de Juan. Aquella ofrecia "Solo consumo en el local",
+ * una modalidad que en Rappi no existe (punto C3), y no resolvia el caso real:
+ * muchas marcas tienen dos tiendas en la app, la normal y la de Turbo, y sin
+ * esta respuesta el documento no decia en cual contaba el pedido.
+ *
+ * Es obligatoria: de ella sale una frase del articulado, y sin respuesta el
+ * usuario puede reclamar el cashback en cualquiera de las dos.
+ */
+var OPCIONES_TIENDA_TURBO = [
+  { valor: 'normal', etiqueta: 'Solo en la tienda normal' },
+  { valor: 'turbo', etiqueta: 'Solo en la tienda de Turbo' },
+  { valor: 'ambas', etiqueta: 'En las dos' },
+  { valor: 'sin_turbo', etiqueta: 'No tiene tienda en Turbo' },
+];
+
+var CAMPO_TIENDA_TURBO = {
+  id: 'tiendaTurbo',
+  etiqueta: 'En cuál de sus tiendas',
+  tipo: 'lista',
+  paso: 'campana',
+  obligatorio: true,
+  opciones: OPCIONES_TIENDA_TURBO,
+};
 
 var CAMPOS_CARRERA = [
   {
@@ -441,6 +453,9 @@ var CAMPOS_POR_TIENDA = [
   },
   { id: 'nacional', etiqueta: 'Cobertura nacional', tipo: 'casilla', obligatorio: false },
   { id: 'presupuesto', etiqueta: 'Presupuesto', tipo: 'numero', minimo: 1, obligatorio: true },
+  // La misma pregunta del Cashback de una tienda, una vez por marca: en el
+  // Multitienda cada una puede tener su propia respuesta.
+  { id: 'tiendaTurbo', etiqueta: 'En cuál de sus tiendas', tipo: 'lista', obligatorio: true, opciones: OPCIONES_TIENDA_TURBO },
 ];
 
 /** Inserta un campo justo despues de otro, por identificador. */
@@ -1117,7 +1132,12 @@ var ESQUEMAS = {
     // El presupuesto va justo despues del tope: son el mismo tema y la
     // calculadora avisa cuando el tope se come el presupuesto entero.
     campos: insertarDespuesDe(
-      unir(CAMPOS_COMUNES, CAMPOS_TIENDA_Y_ORGANIZADOR, CAMPOS_CREDITOS),
+      insertarDespuesDe(
+        unir(CAMPOS_COMUNES, CAMPOS_TIENDA_Y_ORGANIZADOR, CAMPOS_CREDITOS),
+        // Justo detras de la tienda: las dos preguntas hablan de lo mismo.
+        'tienda',
+        CAMPO_TIENDA_TURBO
+      ),
       'tope',
       { id: 'presupuesto', etiqueta: 'Presupuesto total', tipo: 'numero', paso: 'beneficio', obligatorio: true }
     ),

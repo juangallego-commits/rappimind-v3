@@ -30,6 +30,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var conElIdiomaDe = moduloIdiomas.conElIdiomaDe;
   var partesDeFecha = require('./fechas.js').partesDeFecha;
   var MODALIDAD_TURBO_POR_DEFECTO = require('./derivados_eta.js').MODALIDAD_TURBO_POR_DEFECTO;
+  var tiendaDelCashback = require('./texto.js').tiendaDelCashback;
 }
 
 var SEPARADOR_NOMBRE = ' · ';
@@ -139,6 +140,12 @@ function nombreDeCampanaEnElIdioma(entrada, esquema) {
   if (esquema && esquema.esPorEta) {
     var ciudad = String(datos.ciudades || '').trim();
     tienda = ciudad ? MODALIDAD_TURBO_POR_DEFECTO + ' ' + ciudad : '';
+  }
+  // Muchas marcas tienen dos tiendas en la app. Cuando el cashback se gana solo
+  // en la de Turbo, el nombre lo dice: "El Corral Turbo". Juan lo decidio el 20
+  // de septiembre de 2026, con la pregunta de en cual de sus tiendas aplica.
+  if (tienda && esquema && esquema.id === 'cashback' && tiendaDelCashback(datos) === 'turbo') {
+    tienda += ' Turbo';
   }
   if (tienda) tramos.push(tienda);
 

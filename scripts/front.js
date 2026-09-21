@@ -93,6 +93,10 @@ const PARTES = [
         queHace: 'Escribe la marca comercial de la tienda. Es la primera pregunta después de elegir el tipo, y desde aquí la columna de la derecha empieza a llenarse con el documento.',
       },
       {
+        id: 'tienda-turbo', titulo: 'Formulario, en cuál de sus tiendas', pantalla: 'pasos',
+        queHace: 'Dice en cuál de las dos tiendas de la marca se gana el cashback: la normal, la de Turbo, las dos, o si no tiene tienda en Turbo. De aquí sale una frase de la cláusula de tienda participante.',
+      },
+      {
         id: 'cobertura', titulo: 'Formulario, la cobertura', pantalla: 'pasos',
         queHace: 'Dice si la campaña corre en todo el país o solo en algunas ciudades. Aquí aparece por primera vez la línea "Así queda en tu T&C", que le muestra la frase exacta que va al documento.',
       },
@@ -124,10 +128,6 @@ const PARTES = [
       {
         id: 'veces', valeFoto: true, titulo: 'Formulario, cuántas veces puede ganar', pantalla: 'pasos',
         queHace: 'Elige si el beneficio se puede repetir por persona. Si elige varias veces, aparece un campo extra para decir cuántas.',
-      },
-      {
-        id: 'condiciones', titulo: 'Formulario, el tipo de pedido', pantalla: 'pasos',
-        queHace: 'Puede restringir el beneficio a cierto tipo de pedido. Es opcional y puede seguir sin marcar nada.',
       },
       {
         id: 'carga', titulo: 'Formulario, cuándo llegan los Créditos', pantalla: 'pasos',

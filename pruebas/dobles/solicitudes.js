@@ -73,10 +73,6 @@ function valorDePrueba(campo, codigoPais, tipoActual) {
   if (campo.tipo === 'identificacion') return IDENTIFICACIONES[codigoPais];
   if (campo.tipo === 'texto') return campo.id === 'ciudades' ? 'Bogotá' : 'Texto de prueba';
   if (campo.tipo === 'casillas') {
-    if (campo.id === 'condiciones') {
-      // Sin nombre_modalidad_local no se ofrece "Solo consumo en el local".
-      return 'cualquiera';
-    }
     if (campo.id === 'exclusionesRedencion') {
       return seccionesExcluiblesDe(codigoPais).map((s) => s.valor);
     }
@@ -99,12 +95,12 @@ function tiendasDePrueba(codigoPais) {
     {
       marca: 'Beer Station', razonSocial: 'Tienda Prueba Uno S.A.S.',
       id: codigoPais === 'CO' ? '900777888-2' : IDENTIFICACIONES[codigoPais],
-      ciudades: 'Bogotá', nacional: false, presupuesto: 5000000,
+      ciudades: 'Bogotá', nacional: false, presupuesto: 5000000, tiendaTurbo: 'normal',
     },
     {
       marca: 'EVOK', razonSocial: 'Tienda Prueba Tres S.A.S.',
       id: codigoPais === 'CO' ? '830111222-6' : IDENTIFICACIONES[codigoPais],
-      ciudades: '', nacional: true, presupuesto: 1500000,
+      ciudades: '', nacional: true, presupuesto: 1500000, tiendaTurbo: 'sin_turbo',
     },
   ];
 }

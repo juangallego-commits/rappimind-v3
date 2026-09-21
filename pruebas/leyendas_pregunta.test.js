@@ -45,7 +45,7 @@ function campanaBase(cambios) {
     organizadorRazonSocial: 'El Corral S.A.S.', organizadorId: '900111222-1',
     porcentaje: 20, tope: 25000, presupuesto: 15000000, maxPedidos: 1, sinLimite: false,
     carga: 'dia_siguiente', vigencia: 'dias', diasVigencia: 7,
-    redencion: 'tienda', condiciones: [], categoriaProducto: 'ninguna',
+    redencion: 'tienda', tiendaTurbo: 'sin_turbo', categoriaProducto: 'ninguna',
   }, cambios || {});
 }
 

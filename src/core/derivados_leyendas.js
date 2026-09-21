@@ -32,7 +32,8 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 
   var moduloTextoLey = require('./texto.js');
   var tieneValor = moduloTextoLey.tieneValor;
-  var condicionDePedido = moduloTextoLey.condicionDePedido;
+  var tiendaDelCashback = moduloTextoLey.tiendaDelCashback;
+  var incluyeTurbo = moduloTextoLey.incluyeTurbo;
   var direccionDeCampana = require('./nombres.js').direccionDeCampana;
   var SECCIONES_EXCLUIBLES_ETA = require('./derivados_eta.js').SECCIONES_EXCLUIBLES_ETA;
   var categoriaPideRegistro = require('./leyendas.js').categoriaPideRegistro;
@@ -271,20 +272,45 @@ function textoPagoCorto(entrada) {
 }
 
 /**
- * ORACION opcional: en que pedidos se gana.
+ * ORACION opcional: en cual de las dos tiendas de la marca vale.
  *
- * El consumo en el local depende de como se llame esa modalidad dentro de la
- * app, que es el insumo 3 de la lista 3 de la respuesta y sigue vacio en
- * data/paises.json. Sin nombre no hay frase, y sin frase no se entrega.
+ * Solo hay frase cuando la respuesta restringe. "En las dos" y "No tiene tienda
+ * en Turbo" no dicen nada en la pieza, porque no hay nada que el usuario tenga
+ * que saber antes de pedir.
  */
-function textoCondicionesCorto(entrada, pais) {
-  var condicion = condicionDePedido(entrada);
-  if (condicion === 'turbo') return 'Válido solo en pedidos por Turbo.';
-  if (condicion === 'consumo_local') {
-    if (!tieneValor(pais.nombre_modalidad_local)) return '';
-    return 'Válido solo en pedidos por “' + pais.nombre_modalidad_local + '”.';
-  }
+function frasePorTienda(cual) {
+  if (cual === 'normal') return 'No aplica en pedidos por Turbo.';
+  if (cual === 'turbo') return 'Válido solo en pedidos por Turbo.';
   return '';
+}
+
+function textoCondicionesCorto(entrada) {
+  if (entrada.tipo === 'cashback_day') return textoCondicionesCortoMultitienda(entrada);
+  return frasePorTienda(tiendaDelCashback(entrada));
+}
+
+/**
+ * Lo mismo, con varias tiendas.
+ *
+ * Si todas dicen lo mismo va la frase de siempre. Si se mezclan, la pieza no
+ * puede afirmar nada general y remite a los terminos, que es donde cada marca
+ * tiene su propia vineta.
+ *
+ * Se comparan las frases, no las respuestas: "En las dos" y "No tiene tienda en
+ * Turbo" no restringen nada, asi que una campana con unas y otras no tiene por
+ * que mandar a nadie a leer los terminos.
+ */
+function textoCondicionesCortoMultitienda(entrada) {
+  var tiendas = entrada.tiendas || [];
+  if (tiendas.length === 0) return '';
+
+  var primera = frasePorTienda(tiendaDelCashback(tiendas[0]));
+  for (var i = 1; i < tiendas.length; i++) {
+    if (frasePorTienda(tiendaDelCashback(tiendas[i])) !== primera) {
+      return 'Revisa en los términos en qué tienda aplica cada marca.';
+    }
+  }
+  return primera;
 }
 
 /** Si la campana es de Turbo, para saber si se pega la leyenda de Turbo. */
@@ -304,7 +330,17 @@ function esDeTurbo(entrada) {
    * escrito en su propio cuerpo, asi que no se pierde nada al no pegarlo.
    */
   if (entrada.tipo === 'cashback_eta') return false;
-  return condicionDePedido(entrada) === 'turbo';
+
+  // En el Multitienda cada marca responde por su cuenta: basta con que una
+  // incluya Turbo para que la pieza lleve el complemento.
+  if (entrada.tipo === 'cashback_day') {
+    var tiendas = entrada.tiendas || [];
+    for (var i = 0; i < tiendas.length; i++) {
+      if (incluyeTurbo(tiendas[i])) return true;
+    }
+    return false;
+  }
+  return incluyeTurbo(entrada);
 }
 
 // --- Cashback Multitienda --------------------------------------------------
@@ -330,6 +366,9 @@ function listaTiendasCorta(entrada) {
     var tienda = tiendas[i];
     var nombre = String(tienda.marca || '').trim();
     if (!nombre) return '';
+    // La marca que solo participa con su tienda de Turbo se nombra asi en la
+    // pieza, que es como el usuario la encuentra en la app.
+    if (tiendaDelCashback(tienda) === 'turbo') nombre += ' Turbo';
     if (tienda.nacional) {
       nombre += ' (todo el país)';
     } else {
@@ -495,10 +534,6 @@ var PENDIENTES_POR_MARCADOR = {
 function faltantesParaLaLeyenda(entrada, pais) {
   var faltantes = [];
 
-  if (condicionDePedido(entrada) === 'consumo_local' && !tieneValor(pais.nombre_modalidad_local)) {
-    faltantes.push('cómo se llama dentro de la app la modalidad de consumo en el local');
-  }
-
   if (entrada.segmento === 'pro' && !tieneValor(pais.url_tc_pro)) {
     faltantes.push('el enlace de los términos de RappiPro de este país');
   }
@@ -563,7 +598,7 @@ function calcularDerivadosDeLeyendas(entrada, pais, valoresDelDocumento, opcione
     TEXTO_TERRITORIO_CORTO: textoTerritorioCorto(entrada),
     TEXTO_SEGMENTO_CORTO: textoSegmentoCorto(entrada, pais),
     TEXTO_PAGO_CORTO: textoPagoCorto(entrada),
-    TEXTO_CONDICIONES_CORTO: textoCondicionesCorto(entrada, pais),
+    TEXTO_CONDICIONES_CORTO: textoCondicionesCorto(entrada),
     TEXTO_TIENDAS_SELECCIONADAS: textoTiendasSeleccionadas(entrada),
     LISTA_TIENDAS_CORTA: listaTiendasCorta(entrada),
     TEXTO_GANADORES_CORTO: textoGanadoresCorto(entrada),

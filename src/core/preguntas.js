@@ -192,6 +192,13 @@ var PREGUNTAS = {
 
   tienda: p({
     variantes: {
+      // Sin "sin la palabra Turbo" el comercial escribia "El Corral Turbo" aqui
+      // y la pregunta siguiente, la de en cual de sus tiendas aplica, quedaba
+      // contestada dos veces y en dos sitios distintos.
+      cashback: {
+        ayuda: 'La marca como aparece en la app, sin la palabra Turbo. Por ejemplo: El Corral.',
+        ejemplo: 'El Corral',
+      },
       promocao_br: {
         pregunta: '¿En qué parceiro aplica?',
         ayuda: 'El nombre del socio como aparece en la app. Por ejemplo: Petz, Drogasmil, Raia.',
@@ -542,36 +549,31 @@ var PREGUNTAS = {
   }),
 
   /*
-   * En que pedidos se gana el beneficio.
+   * En cual de las tiendas de la marca se gana el cashback.
    *
-   * Eran dos casillas y se podian marcar las dos, y entonces el documento salia
-   * con dos "unicamente" que no pueden ser ciertos a la vez: uno decia que solo
-   * por Turbo y el otro que solo consumiendo en el local. Quien pidio a
-   * domicilio podia leer las dos a su favor. Juan lo convirtio en una sola
-   * eleccion el 20 de septiembre de 2026 (punto D2).
+   * Reemplaza a "El beneficio aplica solo en cierto tipo de pedido?", que se
+   * borro el 20 de septiembre de 2026. Aquella ofrecia "Solo consumo en el
+   * local", una modalidad que en Rappi no existe (punto C3), y no resolvia el
+   * caso real: muchas marcas tienen dos tiendas en la app, la normal y la de
+   * Turbo, y el documento no decia en cual contaba el pedido.
    *
-   * "Solo consumo en el local" no se ofrece mientras el pais no diga con que
-   * nombre muestra la app esa modalidad, porque el texto la cita entre comillas.
-   * Hoy no lo dice ninguno.
+   * Sin nada marcado a proposito: aqui no hay respuesta mayoritaria, y una
+   * marcada de entrada se publicaria sin que nadie la mire.
    */
-  condiciones: p({
-    paso: 'beneficio',
-    pregunta: '¿El beneficio aplica solo en cierto tipo de pedido?',
-    ayuda: 'Si la marca no puso ninguna condición, deja la primera opción.',
-    porQue: 'Esta pregunta es sobre el pedido con el que el usuario se gana el beneficio, no sobre dónde gasta después los Créditos: eso se pregunta más adelante. Si la restricción no queda escrita, el usuario puede reclamar el beneficio en cualquier pedido.',
+  tiendaTurbo: p({
+    paso: 'campana',
+    pregunta: '¿En cuál de sus tiendas se gana el cashback?',
+    ayuda: 'Muchas marcas tienen dos tiendas en la app: la normal y la de Turbo.',
+    porQue: 'El documento dice en cuál tienda cuenta el pedido. Si no lo dice, el usuario puede reclamar el cashback en cualquiera de las dos.',
     avanzaSola: true,
-    // Casi ninguna campana pone condicion, asi que "En cualquier pedido" viene
-    // marcada, como pasa con "Ninguna" en la categoria del producto. Marcada no
-    // es respondida: la pregunta se muestra igual y alguien tiene que verla.
-    opcional: true,
-    porDefecto: 'cualquiera',
     opciones: [
-      { valor: 'cualquiera', etiqueta: 'En cualquier pedido', nota: 'Domicilio, Turbo o cualquier forma de pedir.' },
-      { valor: 'turbo', etiqueta: 'Solo pedidos por Turbo', nota: 'Un pedido por el resto de la app no da el beneficio.' },
-      { valor: 'consumo_local', etiqueta: 'Solo consumo en el local', nota: 'Pide por la app y come en el local. Un domicilio no da el beneficio.' },
+      { valor: 'normal', etiqueta: 'Solo en la tienda normal', nota: 'Un pedido en su tienda de Turbo no da el cashback.' },
+      { valor: 'turbo', etiqueta: 'Solo en la tienda de Turbo', nota: 'Un pedido en su tienda normal no da el cashback.' },
+      { valor: 'ambas', etiqueta: 'En las dos', nota: 'Cuenta en cualquiera de las dos. Si la de Turbo la opera otra empresa, usa el Multitienda.' },
+      { valor: 'sin_turbo', etiqueta: 'No tiene tienda en Turbo', nota: 'Si no sabes, búscala en el botón Turbo de la app.' },
     ],
-    placeholders: ['TEXTO_CONDICIONES'],
-    errores: { vacio: 'Dinos en qué pedidos se gana el beneficio.' },
+    placeholders: ['TEXTO_TIENDA_TURBO'],
+    errores: { vacio: 'Dinos en cuál de sus tiendas se gana el cashback.' },
   }),
 
   // --- Los Créditos -------------------------------------------------------
@@ -1574,6 +1576,7 @@ var PREGUNTAS = {
       ciudades: { pregunta: 'Ciudades', ayuda: 'Separadas por comas, o marca cobertura nacional.', ejemplo: 'Bogotá, Medellín' },
       nacional: { pregunta: 'Cobertura nacional', ayuda: 'Marca esto y no necesitas escribir ciudades.' },
       presupuesto: { pregunta: 'Presupuesto', ayuda: 'De esta tienda, no el total.', ejemplo: '5000000' },
+      tiendaTurbo: { pregunta: '¿En cuál de sus tiendas?', ayuda: 'La normal, la de Turbo, o las dos.' },
     },
   }),
 };
@@ -1583,6 +1586,8 @@ var PREGUNTAS = {
  * Es lo que dice el espacio en blanco del documento: "falta el porcentaje".
  */
 var NOMBRE_DEL_HUECO = {
+  TEXTO_TIENDA_TURBO: 'en cuál de sus tiendas se gana el cashback',
+  TIENDA_TURBO: 'en cuál de sus tiendas participa cada marca',
   TEXTO_ETA: 'el tiempo de entrega prometido',
   TEXTO_CIUDAD_ETA: 'la ciudad',
   TEXTO_LIMITE_ORDENES: 'el máximo de órdenes por persona',

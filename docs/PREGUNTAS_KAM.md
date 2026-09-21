@@ -133,6 +133,32 @@ formulario manual.
 
 - `vacio`: Escribe la tienda donde aplica la campaña.
 
+### ¿En cuál de sus tiendas se gana el cashback?
+
+> Muchas marcas tienen dos tiendas en la app: la normal y la de Turbo.
+
+**Por qué te preguntamos esto.** El documento dice en cuál tienda cuenta el pedido. Si no lo dice, el usuario puede reclamar el cashback en cualquiera de las dos.
+
+| | |
+|---|---|
+| Campo interno | `tiendaTurbo` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_TIENDA_TURBO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Solo en la tienda normal**: Un pedido en su tienda de Turbo no da el cashback.
+- **Solo en la tienda de Turbo**: Un pedido en su tienda normal no da el cashback.
+- **En las dos**: Cuenta en cualquiera de las dos. Si la de Turbo la opera otra empresa, usa el Multitienda.
+- **No tiene tienda en Turbo**: Si no sabes, búscala en el botón Turbo de la app.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos en cuál de sus tiendas se gana el cashback.
+
 ### ¿Dónde aplica la campaña?
 
 > Si es solo en algunas ciudades, las escribes en la siguiente pregunta.
@@ -407,32 +433,6 @@ formulario manual.
 ### sinLimite
 
 No tiene pregunta propia: se responde dentro de **maxPedidos**.
-
-### ¿El beneficio aplica solo en cierto tipo de pedido?
-
-> Si la marca no puso ninguna condición, deja la primera opción.
-
-**Por qué te preguntamos esto.** Esta pregunta es sobre el pedido con el que el usuario se gana el beneficio, no sobre dónde gasta después los Créditos: eso se pregunta más adelante. Si la restricción no queda escrita, el usuario puede reclamar el beneficio en cualquier pedido.
-
-| | |
-|---|---|
-| Campo interno | `condiciones` |
-| Paso | Beneficio |
-| Tipo de control | lista |
-| Obligatorio | no |
-| Valor por defecto | cualquiera |
-| Avanza sola | sí |
-| Llena en el documento | `TEXTO_CONDICIONES` |
-
-**Opciones** (botones grandes, una sola):
-
-- **En cualquier pedido**: Domicilio, Turbo o cualquier forma de pedir.
-- **Solo pedidos por Turbo**: Un pedido por el resto de la app no da el beneficio.
-- **Solo consumo en el local**: Pide por la app y come en el local. Un domicilio no da el beneficio.
-
-**Mensajes de validación:**
-
-- `vacio`: Dinos en qué pedidos se gana el beneficio.
 
 ## Paso: Créditos
 
@@ -4643,32 +4643,6 @@ formulario manual.
 
 No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
-### ¿El beneficio aplica solo en cierto tipo de pedido?
-
-> Si la marca no puso ninguna condición, deja la primera opción.
-
-**Por qué te preguntamos esto.** Esta pregunta es sobre el pedido con el que el usuario se gana el beneficio, no sobre dónde gasta después los Créditos: eso se pregunta más adelante. Si la restricción no queda escrita, el usuario puede reclamar el beneficio en cualquier pedido.
-
-| | |
-|---|---|
-| Campo interno | `condiciones` |
-| Paso | Beneficio |
-| Tipo de control | lista |
-| Obligatorio | no |
-| Valor por defecto | cualquiera |
-| Avanza sola | sí |
-| Llena en el documento | `TEXTO_CONDICIONES` |
-
-**Opciones** (botones grandes, una sola):
-
-- **En cualquier pedido**: Domicilio, Turbo o cualquier forma de pedir.
-- **Solo pedidos por Turbo**: Un pedido por el resto de la app no da el beneficio.
-- **Solo consumo en el local**: Pide por la app y come en el local. Un domicilio no da el beneficio.
-
-**Mensajes de validación:**
-
-- `vacio`: Dinos en qué pedidos se gana el beneficio.
-
 ## Paso: Créditos
 
 ### ¿Cuándo le llegan los Créditos al usuario?
@@ -4877,6 +4851,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 - **Ciudades**: Separadas por comas, o marca cobertura nacional. Ejemplo: Bogotá, Medellín
 - **Cobertura nacional**: Marca esto y no necesitas escribir ciudades.
 - **Presupuesto**: De esta tienda, no el total. Ejemplo: 5000000
+- **¿En cuál de sus tiendas?**: La normal, la de Turbo, o las dos.
 
 ## Paso: Participantes
 
@@ -5058,6 +5033,8 @@ la pregunta que lo llena. Estos son los nombres:
 
 | En el modelo | Dice en pantalla |
 |---|---|
+| `TEXTO_TIENDA_TURBO` | en cuál de sus tiendas se gana el cashback |
+| `TIENDA_TURBO` | en cuál de sus tiendas participa cada marca |
 | `TEXTO_ETA` | el tiempo de entrega prometido |
 | `TEXTO_CIUDAD_ETA` | la ciudad |
 | `TEXTO_LIMITE_ORDENES` | el máximo de órdenes por persona |

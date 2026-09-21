@@ -432,40 +432,60 @@ async function recorrer() {
     deVueltaAlFiltro.indexOf('Esta campaña la redacta Legal') === -1,
     deVueltaAlFiltro.replace(/\n+/g, ' | ').slice(0, 300));
 
-  // --- 5a. "En que pedidos se gana el beneficio" -------------------------
+  // --- 5a. "En cual de sus tiendas se gana el cashback" -------------------
   //
-  // Punto D2, 20 de septiembre de 2026. Eran dos casillas que se podian marcar
-  // a la vez, y el documento salia con dos "unicamente" incompatibles. Ahora es
-  // una sola eleccion, y la tercera opcion no se ofrece mientras ningun pais
-  // diga con que nombre muestra la app esa modalidad.
+  // Reemplazo a "en que pedidos se gana el beneficio" el 20 de septiembre de
+  // 2026. Va en el paso de la campana, justo detras de la tienda, porque las
+  // dos preguntas hablan de lo mismo, y arranca sin nada marcado: aqui no hay
+  // respuesta mayoritaria que se pueda premarcar.
   await pagina.goto(DEMO);
   await pagina.waitForTimeout(800);
   await pagina.evaluate(() => {
     RM.estado.reiniciarFormulario(Object.assign(RM.app.valoresIniciales(),
-      { pais: 'CO', negocio: 'rappi', tipo: 'cashback' }), {});
+      { pais: 'CO', negocio: 'rappi', tipo: 'cashback', tienda: 'El Corral' }), {});
     RM.estado.estado.filtroRespondido = true;
-    RM.estado.estado.campoAbierto = 'condiciones';
+    RM.estado.estado.campoAbierto = 'tiendaTurbo';
     const pasos = RM.flujo.pasosDelTipo(RM.estado.entrada()).map((x) => x.id);
-    RM.estado.estado.pasoActual = pasos.indexOf('beneficio');
+    RM.estado.estado.pasoActual = pasos.indexOf('campana');
     RM.app.ir('pasos');
   });
   await pagina.waitForTimeout(600);
-  const condiciones = await pagina.evaluate(() => {
+  const tiendaTurbo = await pagina.evaluate(() => {
     const bloque = [].slice.call(document.querySelectorAll('.pregunta'))
-      .filter((q) => /tipo de pedido/i.test(q.textContent)).pop();
+      .filter((q) => /cuál de sus tiendas/i.test(q.textContent)).pop();
     if (!bloque) return null;
     return {
       casillas: bloque.querySelectorAll('.casillas').length,
+      marcadas: bloque.querySelectorAll('.opcion.elegida').length,
       opciones: [].map.call(bloque.querySelectorAll('.opcion'),
         (o) => o.querySelector('.opcion-titulo').textContent.trim()),
     };
   });
-  revisar('la condición del pedido es una sola elección, no casillas',
-    !!condiciones && condiciones.casillas === 0, JSON.stringify(condiciones));
-  revisar('y ofrece las dos que se pueden cumplir hoy, no la tercera',
-    !!condiciones &&
-    condiciones.opciones.join(' | ') === 'En cualquier pedido | Solo pedidos por Turbo',
-    JSON.stringify(condiciones));
+  revisar('en cuál de sus tiendas es una sola elección, no casillas',
+    !!tiendaTurbo && tiendaTurbo.casillas === 0, JSON.stringify(tiendaTurbo));
+  revisar('ofrece las cuatro respuestas de Juan',
+    !!tiendaTurbo &&
+    tiendaTurbo.opciones.join(' | ') ===
+      'Solo en la tienda normal | Solo en la tienda de Turbo | En las dos | No tiene tienda en Turbo',
+    JSON.stringify(tiendaTurbo));
+  revisar('y arranca sin ninguna marcada',
+    !!tiendaTurbo && tiendaTurbo.marcadas === 0, JSON.stringify(tiendaTurbo));
+
+  // Y al responderla, la cláusula aparece en el documento de al lado.
+  const clausulaDeTurbo = await pagina.evaluate(() => {
+    const bloque = [].slice.call(document.querySelectorAll('.pregunta'))
+      .filter((q) => /cuál de sus tiendas/i.test(q.textContent)).pop();
+    const opcion = [].slice.call(bloque.querySelectorAll('.opcion'))
+      .filter((o) => /Solo en la tienda de Turbo/.test(o.textContent))[0];
+    opcion.click();
+    return new Promise((listo) => setTimeout(() => {
+      const hoja = document.querySelector('[data-hoja]');
+      listo(hoja ? hoja.textContent : '');
+    }, 500));
+  });
+  revisar('y la cláusula sale en el documento de al lado',
+    clausulaDeTurbo.indexOf('dentro del botón “Turbo” de la Plataforma Rappi') !== -1,
+    clausulaDeTurbo.slice(0, 200));
 
   // --- 5b. Las tres preguntas que dejaron de venir marcadas ----------------
   //
@@ -563,7 +583,7 @@ async function recorrer() {
     fechaInicio: '2026-12-01', horaInicio: '00:00', fechaFin: '2026-12-02', horaFin: '23:59',
     organizadorRazonSocial: 'Comercial Tía S.A.', organizadorId: '1791234561001',
     porcentaje: 20, tope: 200, presupuesto: 100000, maxPedidos: 1, sinLimite: false,
-    carga: 'inmediata', vigencia: 'dias', diasVigencia: 30, redencion: 'tienda', condiciones: [],
+    carga: 'inmediata', vigencia: 'dias', diasVigencia: 30, redencion: 'tienda', tiendaTurbo: 'sin_turbo',
   };
   async function irAlResumenCon(unaPagina, campana) {
     await unaPagina.goto(DEMO);
@@ -599,7 +619,7 @@ async function recorrer() {
     organizadorRazonSocial: 'El Corral S.A.S.', organizadorId: '900111222-1',
     porcentaje: 20, tope: 25000, presupuesto: 50000000, maxPedidos: 1, sinLimite: false,
     carga: 'dia_siguiente', vigencia: 'dias', diasVigencia: 30, redencion: 'tienda',
-    condiciones: [], compraMinima: 30000, categoriaProducto: 'licores',
+    tiendaTurbo: 'sin_turbo', compraMinima: 30000, categoriaProducto: 'licores',
   };
   await irAlResumenCon(pagina, campanaConLeyendas);
   await pagina.click('#declaracion');

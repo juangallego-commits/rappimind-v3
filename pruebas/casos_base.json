@@ -30,8 +30,8 @@
         "vigencia": "fecha",
         "fechaFinRedencion": "2026-09-20",
         "redencion": "tienda",
-        "condiciones": [],
-        "negocio": "rappi"
+        "negocio": "rappi",
+        "tiendaTurbo": "normal"
       },
       "esperado": {
         "resultado": "genera",
@@ -44,7 +44,8 @@
           "podrán redimirse hasta las 11:59 p. m. del 20 de septiembre de 2026",
           "desde las 9:00 a. m. del 17 de septiembre de 2026",
           "el territorio nacional de la República de Colombia",
-          "Rappi no es el organizador de la Campaña"
+          "Rappi no es el organizador de la Campaña",
+          "por fuera del botón “Turbo” de la Plataforma Rappi"
         ],
         "no_contiene": [
           "{{",
@@ -56,7 +57,7 @@
     },
     {
       "id": "CB02",
-      "descripcion": "Cashback CO tipo Domino's: Pro, RappiCard, una ciudad, secciones y vigencia por días",
+      "descripcion": "Cashback CO tipo Domino's: Pro, RappiCard, una ciudad, secciones, vigencia por días y solo en su tienda de Turbo",
       "fecha_referencia": "2026-09-16",
       "entrada": {
         "pais": "CO",
@@ -87,10 +88,8 @@
           "Restaurantes"
         ],
         "compraMinima": 50000,
-        "condiciones": [
-          "consumo_local"
-        ],
-        "negocio": "rappi"
+        "negocio": "rappi",
+        "tiendaTurbo": "turbo"
       },
       "esperado": {
         "resultado": "genera",
@@ -102,7 +101,7 @@
           "cincuenta mil pesos M/Cte. ($50.000)",
           "únicamente para pedidos pagados con RappiCard",
           "no establece un número máximo de pedidos",
-          "consumo en el local"
+          "dentro del botón “Turbo” de la Plataforma Rappi"
         ],
         "no_contiene": [
           "{{",
@@ -140,8 +139,8 @@
         "vigencia": "dias",
         "diasVigencia": 30,
         "redencion": "tienda",
-        "condiciones": [],
-        "negocio": "rappi"
+        "negocio": "rappi",
+        "tiendaTurbo": "sin_turbo"
       },
       "esperado": {
         "resultado": "falla",
@@ -180,8 +179,8 @@
         "vigencia": "dias",
         "diasVigencia": 30,
         "redencion": "tienda",
-        "condiciones": [],
-        "negocio": "rappi"
+        "negocio": "rappi",
+        "tiendaTurbo": "sin_turbo"
       },
       "esperado": {
         "resultado": "falla",
@@ -219,8 +218,8 @@
         "vigencia": "dias",
         "diasVigencia": 30,
         "redencion": "tienda",
-        "condiciones": [],
-        "negocio": "rappi"
+        "negocio": "rappi",
+        "tiendaTurbo": "sin_turbo"
       },
       "esperado": {
         "resultado": "falla",
@@ -399,7 +398,6 @@
         "vigencia": "dias",
         "diasVigencia": 3,
         "redencion": "tienda",
-        "condiciones": [],
         "tiendas": [
           {
             "marca": "Beer Station",
@@ -407,7 +405,8 @@
             "id": "900777888-2",
             "ciudades": "Bogotá, Medellín",
             "nacional": false,
-            "presupuesto": 5000000
+            "presupuesto": 5000000,
+            "tiendaTurbo": "normal"
           },
           {
             "marca": "Leños & Carbon",
@@ -415,7 +414,8 @@
             "id": "901222333-9",
             "ciudades": "Cali",
             "nacional": false,
-            "presupuesto": 500000
+            "presupuesto": 500000,
+            "tiendaTurbo": "turbo"
           },
           {
             "marca": "EVOK",
@@ -423,7 +423,8 @@
             "id": "830111222-6",
             "ciudades": "",
             "nacional": true,
-            "presupuesto": 1500000
+            "presupuesto": 1500000,
+            "tiendaTurbo": "sin_turbo"
           }
         ],
         "negocio": "rappi"
@@ -434,7 +435,8 @@
           "• Beer Station: Tienda Prueba Uno S.A.S., identificada con NIT 900.777.888-2.",
           "• Leños & Carbon (Cali): quinientos mil (500.000) Créditos",
           "• EVOK (cobertura nacional): un millón quinientos mil (1.500.000) Créditos",
-          "• Beer Station (Bogotá y Medellín): cinco millones (5.000.000) de Créditos"
+          "• Beer Station (Bogotá y Medellín): cinco millones (5.000.000) de Créditos",
+          "solo en su tienda dentro del botón “Turbo”"
         ],
         "no_contiene": [
           "{{",
@@ -468,7 +470,6 @@
         "vigencia": "dias",
         "diasVigencia": 3,
         "redencion": "tienda",
-        "condiciones": [],
         "tiendas": [],
         "negocio": "rappi"
       },
@@ -515,9 +516,9 @@
           "atm",
           "favor"
         ],
-        "condiciones": [],
         "compraMinima": 200000,
-        "negocio": "rappi"
+        "negocio": "rappi",
+        "tiendaTurbo": "sin_turbo"
       },
       "esperado": {
         "resultado": "genera",
@@ -576,9 +577,9 @@
           "atm",
           "favor"
         ],
-        "condiciones": [],
         "compraMinima": 200000,
-        "negocio": "rappi"
+        "negocio": "rappi",
+        "tiendaTurbo": "sin_turbo"
       },
       "esperado": {
         "resultado": "genera",
@@ -638,9 +639,9 @@
           "atm",
           "favor"
         ],
-        "condiciones": [],
         "compraMinima": 200000,
-        "negocio": "rappi"
+        "negocio": "rappi",
+        "tiendaTurbo": "sin_turbo"
       },
       "esperado": {
         "resultado": "genera",
@@ -701,9 +702,9 @@
           "atm",
           "favor"
         ],
-        "condiciones": [],
         "compraMinima": 200000,
-        "negocio": "rappi"
+        "negocio": "rappi",
+        "tiendaTurbo": "sin_turbo"
       },
       "esperado": {
         "resultado": "genera",
@@ -764,9 +765,9 @@
           "atm",
           "favor"
         ],
-        "condiciones": [],
         "compraMinima": 200000,
-        "negocio": "rappi"
+        "negocio": "rappi",
+        "tiendaTurbo": "sin_turbo"
       },
       "esperado": {
         "resultado": "genera",
@@ -827,9 +828,9 @@
           "atm",
           "favor"
         ],
-        "condiciones": [],
         "compraMinima": 200000,
-        "negocio": "rappi"
+        "negocio": "rappi",
+        "tiendaTurbo": "sin_turbo"
       },
       "esperado": {
         "resultado": "genera",
@@ -890,9 +891,9 @@
           "atm",
           "favor"
         ],
-        "condiciones": [],
         "compraMinima": 200000,
-        "negocio": "rappi"
+        "negocio": "rappi",
+        "tiendaTurbo": "sin_turbo"
       },
       "esperado": {
         "resultado": "genera",

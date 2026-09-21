@@ -99,7 +99,7 @@ function solicitudValida(cambios) {
     vigencia: 'dias',
     diasVigencia: 30,
     redencion: 'tienda',
-    condiciones: [],
+    tiendaTurbo: 'sin_turbo',
   }, cambios || {});
 }
 

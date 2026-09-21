@@ -448,7 +448,7 @@ async function recorrer(rutaDeLaDemo, fichas, marcas) {
     fechaInicio: '2026-10-01', horaInicio: '00:00', fechaFin: '2026-10-31', horaFin: '23:59',
     organizadorRazonSocial: 'Farmatodo Colombia S.A.S.', organizadorId: '900111222-1',
     porcentaje: 20, tope: 20000, presupuesto: 5000000, maxPedidos: 1, sinLimite: false,
-    carga: 'inmediata', vigencia: 'dias', diasVigencia: 30, redencion: 'tienda', condiciones: [],
+    carga: 'inmediata', vigencia: 'dias', diasVigencia: 30, redencion: 'tienda', tiendaTurbo: 'normal',
     categoriaProducto: 'licores',
   };
 
@@ -463,7 +463,8 @@ async function recorrer(rutaDeLaDemo, fichas, marcas) {
     { opcion: 'Colombia' }, { captura: 'negocio', porQue: true },
     { opcion: 'Rappi' }, { captura: 'tipos', porQue: true },
     { opcion: 'Cashback' }, { captura: 'tienda', porQue: true },
-    { texto: 'Farmatodo' }, { siguiente: true }, { captura: 'cobertura', porQue: true },
+    { texto: 'Farmatodo' }, { siguiente: true }, { captura: 'tienda-turbo', porQue: true },
+    { opcion: 'Solo en la tienda normal' }, { captura: 'cobertura', porQue: true },
     { opcion: 'En todo el país' }, { captura: 'organizador', porQue: true },
     { texto: 'Farmatodo Colombia S.A.S.' }, { siguiente: true },
     // El NIT se escribe antes de capturar: la pantalla lo muestra ya validado.
@@ -478,8 +479,7 @@ async function recorrer(rutaDeLaDemo, fichas, marcas) {
     { texto: '20' }, { siguiente: true }, { captura: 'tope', porQue: true },
     { texto: '20000' }, { siguiente: true }, { captura: 'presupuesto', porQue: true },
     { texto: '5000000' }, { siguiente: true }, { captura: 'veces', porQue: true },
-    { opcion: 'Una sola vez' }, { captura: 'condiciones', porQue: true },
-    { opcion: 'Solo pedidos por Turbo' }, { captura: 'carga', porQue: true },
+    { opcion: 'Una sola vez' }, { captura: 'carga', porQue: true },
     { opcion: 'Al día siguiente del pedido' }, { captura: 'vigencia', porQue: true },
     { opcion: 'Hasta una fecha' }, { fecha: '2026-12-31' }, { siguiente: true }, { captura: 'redencion', porQue: true },
     { opcion: 'Solo en esta tienda' }, { captura: 'segmento', porQue: true },

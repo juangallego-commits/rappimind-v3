@@ -25,7 +25,9 @@ function tiendas() {
 }
 
 function tiendaVacia() {
-  return { marca: '', razonSocial: '', id: '', ciudades: '', nacional: false, presupuesto: null };
+  // tiendaTurbo arranca sin respuesta a proposito: cada marca tiene la suya y
+  // no hay una mayoritaria que se pueda premarcar.
+  return { marca: '', razonSocial: '', id: '', ciudades: '', nacional: false, presupuesto: null, tiendaTurbo: '' };
 }
 
 /** Revisa una fila y devuelve los problemas, campo por campo. */
@@ -38,6 +40,7 @@ function revisarTienda(tienda, indice, todas) {
   if (!tienda.razonSocial) problemas.razonSocial = 'Falta la razón social.';
   if (!tienda.presupuesto) problemas.presupuesto = 'Falta el presupuesto de esta tienda.';
   if (!tienda.nacional && !tienda.ciudades) problemas.ciudades = 'Escribe las ciudades o marca cobertura nacional.';
+  if (!tienda.tiendaTurbo) problemas.tiendaTurbo = 'Dinos en cuál de sus tiendas se gana el cashback.';
 
   if (!tienda.id) {
     problemas.id = 'Falta el NIT de esta tienda.';
@@ -132,7 +135,43 @@ function filaDeTienda(tienda, indice, alCambiar) {
 
   fila.appendChild(campoTexto('ciudades', false));
   fila.appendChild(campoTexto('presupuesto', true));
+  fila.appendChild(campoDeTiendaTurbo(tienda, indice, textos, problemas, alCambiar));
   return fila;
+}
+
+/**
+ * En cual de sus tiendas se gana el cashback, una vez por marca.
+ *
+ * Va como lista desplegable y no como botones: con sesenta tiendas, cuatro
+ * botones por fila serian doscientos cuarenta botones en una pantalla.
+ */
+function campoDeTiendaTurbo(tienda, indice, textos, problemas, alCambiar) {
+  var opciones = esquemaDe('cashback_day').camposPorTienda.filter(function (campo) {
+    return campo.id === 'tiendaTurbo';
+  })[0].opciones;
+
+  var control = crear('select', {
+    'aria-label': textos.tiendaTurbo.pregunta + ' de la tienda ' + (indice + 1),
+  });
+  control.appendChild(crear('option', { value: '', texto: 'Elige una' }));
+  for (var i = 0; i < opciones.length; i++) {
+    control.appendChild(crear('option', { value: opciones[i].valor, texto: opciones[i].etiqueta }));
+  }
+  control.value = tienda.tiendaTurbo || '';
+
+  control.addEventListener('change', function () {
+    var lista = tiendas().slice();
+    lista[indice].tiendaTurbo = control.value;
+    estado.fijar('tiendas', lista);
+    RM.flujo.refrescarDocumento();
+    alCambiar();
+  });
+
+  return crear('label', { clase: 'campo' }, [
+    crear('p', { clase: 'pregunta-ayuda', texto: textos.tiendaTurbo.pregunta + ' ' + textos.tiendaTurbo.ayuda }),
+    crear('div', { clase: 'campo-caja' }, [control]),
+    problemas.tiendaTurbo ? crear('p', { clase: 'mensaje-error', texto: problemas.tiendaTurbo }) : null,
+  ]);
 }
 
 /** Pegar desde Excel: una fila por tienda, columnas separadas por tabulación. */

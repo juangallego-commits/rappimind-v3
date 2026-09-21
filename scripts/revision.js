@@ -62,7 +62,7 @@ const CAMPOS_DE_LA_PANTALLA = {
   tope: ['tope'],
   presupuesto: ['presupuesto'],
   veces: ['maxPedidos', 'sinLimite'],
-  condiciones: ['condiciones'],
+  'tienda-turbo': ['tiendaTurbo'],
   carga: ['carga', 'fechaCarga'],
   vigencia: ['vigencia', 'diasVigencia', 'fechaFinRedencion'],
   redencion: ['redencion'],
@@ -140,7 +140,7 @@ const TANDAS = [
       'Lo opcional: ¿se ve que se puede dejar en blanco?',
     ],
     pantallas: ['tienda', 'cobertura', 'organizador', 'identificacion', 'error', 'fecha-inicio',
-      'porcentaje', 'tope', 'presupuesto', 'veces', 'condiciones', 'carga', 'vigencia',
+      'porcentaje', 'tope', 'presupuesto', 'veces', 'tienda-turbo', 'carga', 'vigencia',
       'redencion', 'segmento', 'medio-de-pago', 'compra-minima', 'categoria-producto'],
   },
   {

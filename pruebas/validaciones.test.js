@@ -45,7 +45,7 @@ function solicitudBase(cambios) {
     vigencia: 'dias',
     diasVigencia: 30,
     redencion: 'tienda',
-    condiciones: [],
+    tiendaTurbo: 'sin_turbo',
   };
   return Object.assign(base, cambios || {});
 }
@@ -184,8 +184,8 @@ test('el Cashback Day exige al menos dos tiendas y no permite ID repetido', () =
       alcance: undefined,
     });
   }
-  const una = { marca: 'Uno', razonSocial: 'Uno S.A.S.', id: '900777888-2', ciudades: 'Bogotá', presupuesto: 1000 };
-  const otra = { marca: 'Dos', razonSocial: 'Dos S.A.S.', id: '901222333-9', nacional: true, presupuesto: 2000 };
+  const una = { marca: 'Uno', razonSocial: 'Uno S.A.S.', id: '900777888-2', ciudades: 'Bogotá', presupuesto: 1000, tiendaTurbo: 'normal' };
+  const otra = { marca: 'Dos', razonSocial: 'Dos S.A.S.', id: '901222333-9', nacional: true, presupuesto: 2000, tiendaTurbo: 'sin_turbo' };
 
   assert.deepStrictEqual(campos(day([])), ['tiendas']);
   assert.deepStrictEqual(campos(day([una])), ['tiendas']);
@@ -198,8 +198,8 @@ test('el Cashback Day no pide organizador', () => {
     tipo: 'cashback_day',
     presupuesto: null,
     tiendas: [
-      { marca: 'Uno', razonSocial: 'Uno S.A.S.', id: '900777888-2', ciudades: 'Bogotá', presupuesto: 1000 },
-      { marca: 'Dos', razonSocial: 'Dos S.A.S.', id: '901222333-9', nacional: true, presupuesto: 2000 },
+      { marca: 'Uno', razonSocial: 'Uno S.A.S.', id: '900777888-2', ciudades: 'Bogotá', presupuesto: 1000, tiendaTurbo: 'normal' },
+      { marca: 'Dos', razonSocial: 'Dos S.A.S.', id: '901222333-9', nacional: true, presupuesto: 2000, tiendaTurbo: 'sin_turbo' },
     ],
   });
   delete entrada.organizadorRazonSocial;

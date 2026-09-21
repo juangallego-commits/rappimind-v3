@@ -139,7 +139,7 @@ test('un dato del país con una nota interna no deja generar', () => {
     fechaInicio: '2026-09-20', fechaFin: '2026-09-20', horaInicio: '00:00', horaFin: '23:59',
     segmento: 'todos', metodoPago: 'todos', porcentaje: 20, tope: 25000, presupuesto: 15000000,
     maxPedidos: 1, carga: 'dia_siguiente', vigencia: 'dias', diasVigencia: 7,
-    redencion: 'tienda', declaracion: true,
+    redencion: 'tienda', tiendaTurbo: 'sin_turbo', declaracion: true,
   };
 
   assert.deepStrictEqual(validarSolicitud(entrada, colombia, opciones).errores, [],

@@ -49,7 +49,7 @@ function campanaDeElCorral(cambios) {
     organizadorRazonSocial: 'El Corral S.A.S.', organizadorId: '900111222-1',
     porcentaje: 99, tope: 25000, presupuesto: 50000000, maxPedidos: 1, sinLimite: false,
     carga: 'dia_siguiente', vigencia: 'fecha', fechaFinRedencion: '2026-09-13',
-    redencion: 'tienda', condiciones: [],
+    redencion: 'tienda', tiendaTurbo: 'sin_turbo',
   }, cambios || {});
 }
 
@@ -212,12 +212,34 @@ test('las ciudades y los segmentos que sí restringen se escriben', () => {
     'Solo para usuarios sin pedidos en Rappi en los 90 días anteriores al inicio de la campaña.');
   assert.strictEqual(textoPagoCorto({ metodoPago: 'sin_efectivo' }), 'Válido con cualquier medio de pago excepto efectivo.');
   assert.strictEqual(textoPagoCorto({ metodoPago: 'rappicard' }), 'Válido solo para pagos con RappiCard.');
-  assert.strictEqual(textoCondicionesCorto({ condiciones: ['turbo'] }, CO), 'Válido solo en pedidos por Turbo.');
+  assert.strictEqual(textoCondicionesCorto({ tiendaTurbo: 'turbo' }), 'Válido solo en pedidos por Turbo.');
+  assert.strictEqual(textoCondicionesCorto({ tiendaTurbo: 'normal' }), 'No aplica en pedidos por Turbo.');
+  // "En las dos" y "No tiene tienda en Turbo" no restringen nada, así que no
+  // gastan caracteres de la pieza.
+  assert.strictEqual(textoCondicionesCorto({ tiendaTurbo: 'ambas' }), '');
+  assert.strictEqual(textoCondicionesCorto({ tiendaTurbo: 'sin_turbo' }), '');
+});
+
+test('con varias tiendas la pieza solo afirma algo si todas dicen lo mismo', () => {
+  // Punto nuevo del 20 de septiembre de 2026. Si se mezclan, la pieza no puede
+  // afirmar nada general: cada marca tiene su propia viñeta en los términos.
+  const con = (valores) => textoCondicionesCorto({
+    tipo: 'cashback_day',
+    tiendas: valores.map((v) => ({ marca: 'Tienda', tiendaTurbo: v })),
+  });
+
+  assert.strictEqual(con(['turbo', 'turbo']), 'Válido solo en pedidos por Turbo.');
+  assert.strictEqual(con(['normal', 'normal']), 'No aplica en pedidos por Turbo.');
+  assert.strictEqual(con(['normal', 'turbo']), 'Revisa en los términos en qué tienda aplica cada marca.');
+  // Ninguna de estas dos restringe nada, así que no hay nada que revisar.
+  assert.strictEqual(con(['ambas', 'sin_turbo']), '');
 });
 
 test('la lista de tiendas del Multitienda es la del caso real', () => {
+  // La marca que solo participa con su tienda de Turbo se nombra así, que es
+  // como el usuario la encuentra en la app.
   assert.strictEqual(listaTiendasCorta(caso('CD01')),
-    'Beer Station (Bogotá y Medellín), Leños & Carbon (Cali) y EVOK (todo el país)');
+    'Beer Station (Bogotá y Medellín), Leños & Carbon Turbo (Cali) y EVOK (todo el país)');
 });
 
 test('con más de cinco tiendas la lista remite a los términos', () => {
@@ -261,17 +283,15 @@ test('la cifra de un monto usa la moneda y el separador del país', () => {
 
 // --- Lo que todavía no se puede -------------------------------------------
 
-test('sin frase aprobada no hay leyenda, y se dice por qué', () => {
+test('ya no queda ninguna campaña de cashback sin frase aprobada', () => {
   // Eran tres casos sin frase corta aprobada. La regla 3 de CLAUDE.md dice que
   // el texto legal es de Legal: aquí no se inventa una. Juan escribió dos el 20
-  // de septiembre (punto C3) y queda solo el del consumo en el local, que
-  // depende de un dato que todavía nadie tiene: el nombre exacto con el que la
-  // app de Colombia muestra hoy esa modalidad.
-  const local = faltantesParaLaLeyenda({ condiciones: ['consumo_local'] }, CO);
-  assert.ok(local[0].indexOf('consumo en el local') !== -1, local.join(' | '));
-
-  // Y una campaña normal no tiene nada pendiente.
+  // de septiembre (punto C3) y el tercero, el del consumo en el local, dejó de
+  // existir ese mismo día: en Rappi no hay esa modalidad.
   assert.deepStrictEqual(faltantesParaLaLeyenda(campanaDeElCorral(), CO), []);
+  for (const cual of ['normal', 'turbo', 'ambas', 'sin_turbo']) {
+    assert.deepStrictEqual(faltantesParaLaLeyenda(campanaDeElCorral({ tiendaTurbo: cual }), CO), [], cual);
+  }
 });
 
 test('las dos frases que Juan escribió el 20 de septiembre ya salen', () => {
@@ -296,7 +316,10 @@ test('las dos frases que Juan escribió el 20 de septiembre ya salen', () => {
 });
 
 test('una campaña sin frase aprobada no entrega ninguna leyenda a medias', () => {
-  const r = leyendasDe(caso('CB02'));
+  // El único caso que queda es el del enlace de RappiPro, que sale de la fila
+  // del país. Sin él, una campaña para usuarios Pro no tiene leyenda.
+  const sinEnlacePro = Object.assign({}, CO, { url_tc_pro: '' });
+  const r = leyendasDe(campanaDeElCorral({ segmento: 'pro' }), sinEnlacePro);
   assert.strictEqual(r.hay, false);
   assert.deepStrictEqual(r.leyendas, []);
   assert.ok(r.faltantes.length > 0);
@@ -355,10 +378,21 @@ test('un país sin ruta de publicación no inventa un enlace', () => {
 // --- Los complementos ------------------------------------------------------
 
 test('una campaña de Turbo pega la leyenda de Turbo sin preguntar nada', () => {
-  assert.strictEqual(esDeTurbo({ condiciones: ['turbo'] }), true);
-  assert.strictEqual(esDeTurbo({ condiciones: [] }), false);
+  assert.strictEqual(esDeTurbo({ tiendaTurbo: 'turbo' }), true);
+  // "En las dos" también incluye Turbo, así que también lo lleva.
+  assert.strictEqual(esDeTurbo({ tiendaTurbo: 'ambas' }), true);
+  assert.strictEqual(esDeTurbo({ tiendaTurbo: 'normal' }), false);
+  assert.strictEqual(esDeTurbo({ tiendaTurbo: 'sin_turbo' }), false);
+  assert.strictEqual(esDeTurbo({}), false);
 
-  const r = leyendasDe(campanaDeElCorral({ condiciones: ['turbo'] }));
+  // En el Multitienda basta con que una marca incluya Turbo.
+  const multitienda = (valores) => esDeTurbo({
+    tipo: 'cashback_day', tiendas: valores.map((v) => ({ tiendaTurbo: v })),
+  });
+  assert.strictEqual(multitienda(['normal', 'turbo']), true);
+  assert.strictEqual(multitienda(['normal', 'sin_turbo']), false);
+
+  const r = leyendasDe(campanaDeElCorral({ tiendaTurbo: 'turbo' }));
   assert.deepStrictEqual(r.complementos, ['leyenda_turbo_co']);
   assert.ok(porFormato(r, 'letra_pequena').texto.indexOf('El tiempo de entrega es estimado') !== -1);
 });

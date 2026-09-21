@@ -41,7 +41,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
   var moduloTextoDerivados = require('./texto.js');
   var tieneValor = moduloTextoDerivados.tieneValor;
-  var condicionDePedido = moduloTextoDerivados.condicionDePedido;
+  var tiendaDelCashback = moduloTextoDerivados.tiendaDelCashback;
   var terminoDeDias = moduloTextoDerivados.terminoDeDias;
 }
 
@@ -59,9 +59,34 @@ var TEXTO_METODO_PAGO_POR_OPCION = {
   rappicard: 'Campaña válida únicamente para pedidos pagados con RappiCard. Los pedidos pagados total o parcialmente con Créditos no son válidos para la Campaña.',
 };
 
-var TEXTO_CONDICION_POR_OPCION = {
-  turbo: 'El Beneficio aplica únicamente para pedidos realizados a través de Turbo.',
-  consumo_local: 'El Beneficio aplica únicamente para pedidos realizados bajo la modalidad de consumo en el local disponible en la Plataforma Rappi.',
+/*
+ * En cual de las dos tiendas de la marca se gana el cashback.
+ *
+ * Va en la clausula "Tienda y productos participantes", detras de la frase que
+ * ya tiene. Antes esto era "El Beneficio aplica unicamente para pedidos
+ * realizados a traves de Turbo", en Mecanica y beneficio, y no resolvia el caso
+ * real: muchas marcas tienen dos tiendas en la app, la normal y la de Turbo, y
+ * el documento no decia en cual contaba el pedido. Juan escribio estas tres
+ * frases el 20 de septiembre de 2026.
+ *
+ * "No tiene tienda en Turbo" no imprime nada: no hay nada que aclarar.
+ */
+var TEXTO_TIENDA_TURBO_POR_OPCION = {
+  normal: 'El Beneficio aplica únicamente para pedidos realizados en la Tienda Participante por fuera del botón “Turbo” de la Plataforma Rappi. Los pedidos realizados en la Tienda Participante dentro del botón “Turbo” no generan el Beneficio.',
+  turbo: 'El Beneficio aplica únicamente para pedidos realizados en la Tienda Participante dentro del botón “Turbo” de la Plataforma Rappi. Los pedidos realizados en la Tienda Participante por fuera de ese botón no generan el Beneficio.',
+  ambas: 'El Beneficio aplica para pedidos realizados en la Tienda Participante, tanto dentro como por fuera del botón “Turbo” de la Plataforma Rappi.',
+};
+
+/*
+ * Lo mismo, dentro de cada vineta de "Tiendas participantes" del Multitienda.
+ *
+ * FRAGMENTO: se pega detras del nombre de la marca, sin punto final, porque la
+ * vineta no lo lleva.
+ */
+var SUFIJO_TIENDA_TURBO = {
+  normal: ', solo en su tienda por fuera del botón “Turbo”',
+  turbo: ', solo en su tienda dentro del botón “Turbo”',
+  ambas: ', tanto dentro como por fuera del botón “Turbo”',
 };
 
 var TEXTO_CARGA_POR_OPCION = {
@@ -375,6 +400,7 @@ function valoresDeTienda(tienda, pais) {
     TIENDA_ID: identificacion.valido ? identificacion.formateado : '',
     TIENDA_CIUDADES: tienda.nacional ? 'cobertura nacional' : listaY(separarPorComas(tienda.ciudades)),
     TIENDA_PRESUPUESTO: tieneValor(tienda.presupuesto) ? cantidadCreditos(tienda.presupuesto, pais) : '',
+    TIENDA_TURBO: SUFIJO_TIENDA_TURBO[tiendaDelCashback(tienda)] || '',
   };
 }
 
@@ -427,8 +453,7 @@ function calcularDerivadosEnElIdiomaDelPais(entrada, pais) {
 
   valores.TEXTO_LIMITE_PEDIDOS = textoLimitePedidos(entrada);
 
-  // Una sola condicion, no dos. Ver condicionDePedido() en texto.js.
-  valores.TEXTO_CONDICIONES = TEXTO_CONDICION_POR_OPCION[condicionDePedido(entrada)] || '';
+  valores.TEXTO_TIENDA_TURBO = TEXTO_TIENDA_TURBO_POR_OPCION[tiendaDelCashback(entrada)] || '';
 
   if (tieneValor(entrada.porcentaje)) valores.PORCENTAJE = porcentajeEnLetras(entrada.porcentaje);
   if (tieneValor(entrada.tope)) valores.TOPE = cantidadCreditos(entrada.tope, pais);
@@ -494,6 +519,7 @@ if (typeof module !== 'undefined') {
     textoProductos: textoProductos,
     TEXTO_SEGMENTO_POR_OPCION: TEXTO_SEGMENTO_POR_OPCION,
     TEXTO_METODO_PAGO_POR_OPCION: TEXTO_METODO_PAGO_POR_OPCION,
-    TEXTO_CONDICION_POR_OPCION: TEXTO_CONDICION_POR_OPCION,
+    TEXTO_TIENDA_TURBO_POR_OPCION: TEXTO_TIENDA_TURBO_POR_OPCION,
+    SUFIJO_TIENDA_TURBO: SUFIJO_TIENDA_TURBO,
   };
 }
