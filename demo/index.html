@@ -476,10 +476,6 @@
   --paso-pendiente: var(--rm-paso-pendiente);
   --paso-alto: var(--rm-paso-alto);
 
-  /* Se va en la fase 6, cuando el historial deje de distinguir Publicado por
-     el matiz y pase a distinguirlo por peso visual. El verde no es de marca. */
-  --verde-confirma: #0b7a52;
-
   /* Tres familias, y son dos de verdad. --display es PP Object Sans, de la que
      se sirve UNA sola cara, la de peso 900, así que solo vale donde el peso es
      900: si se usara en otro peso el navegador resolvería con la única cara que
@@ -616,17 +612,58 @@ h1[tabindex='-1']:focus:not(:focus-visible) { outline: none; }
 
 /* --- Aviso -------------------------------------------------------------- */
 
+/*
+ * LOS TRES NIVELES DE AVISO
+ *
+ * Se distinguen por ESTRUCTURA, no por color de borde, asi que se reconocen
+ * aunque se vean en blanco y negro. El brand book prohibe el borde izquierdo
+ * de color, que hasta ahora era lo unico que separaba .aviso de .aviso-serio:
+ * dos avisos con la misma forma y distinto matiz no se distinguen si el matiz
+ * no se ve.
+ *
+ *   1 informativo   panel celeste, sin adorno
+ *   2 serio         panel beige, regla de gradiente ARRIBA y titulo en caja alta
+ *   3 error de campo  sin panel, pegado al campo (vive con los campos)
+ *
+ * El titulo en caja alta es del nivel 2 y solo de el: es lo que lo separa del
+ * informativo, que tambien puede llevar h3 ("¿Quien puede publicar?") y se
+ * queda en caja normal.
+ */
 .aviso {
-  background: var(--beige);
-  border-left: 3px solid var(--neon);
-  border-radius: 0 var(--r-control) var(--r-control) 0;
-  padding: var(--e3) var(--e4);
+  background: var(--celeste);
+  border-radius: var(--r-panel);
+  padding: var(--e4) 18px;
   margin: 0 0 var(--e5);
-  font-size: 15px;
+  font-size: 14.5px;
 }
-.aviso h3 { margin-bottom: var(--e1); }
+.aviso h3 { margin-bottom: var(--e1); font-size: 15px; }
 .aviso p:last-child { margin-bottom: 0; }
-.aviso-serio { border-left-color: var(--neon); }
+
+/* La regla superior se hace con dos fondos y no con un elemento nuevo, porque
+   el JavaScript no emite ninguno y la ronda prohibe agregarlo. */
+.aviso-serio {
+  background: var(--rm-aviso-serio-regla) top/100% 3px no-repeat, var(--rm-aviso-serio-bg);
+  padding-top: 19px;
+}
+.aviso-serio h3 {
+  font-family: var(--titulos); font-size: 11.5px; font-weight: 900;
+  letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 6px;
+}
+
+/*
+ * Un solo pastel por pieza. Si en la misma pantalla coinciden dos avisos, el
+ * de mayor prioridad se queda con su color y el otro baja a tarjeta blanca.
+ * La prioridad es error > serio > informativo.
+ *
+ * En CSS esto solo se puede cuando los dos son hermanos y el serio va primero.
+ * Cuando no lo son, o cuando el informativo va antes en el DOM, no hay
+ * selector que lo resuelva sin tocar el JavaScript, asi que ahi se queda como
+ * esta: son dos pasteles, y es preferible eso a mover el JavaScript en una
+ * ronda que es de piel.
+ */
+.aviso-serio ~ .aviso:not(.aviso-serio) {
+  background: var(--papel); border: 1px solid var(--borde);
+}
 
 /* --- Botones ------------------------------------------------------------ */
 
@@ -884,7 +921,15 @@ input[disabled], select[disabled] {
   border-color: var(--campo-error); border-width: 2px;
 }
 .mensaje-error { color: var(--neon-texto); font-size: 13.5px; font-weight: 700; margin: var(--e2) 0 0; display: flex; gap: var(--e2); }
-.mensaje-ok { color: var(--verde-confirma); font-size: 14px; margin: var(--e2) 0 0; display: flex; gap: var(--e2); align-items: center; }
+/* Sin verde. El visto va dentro de un circulo con el gradiente, que es lo que
+   da la senal, y el texto se queda en tinta. El icono es un SVG que emite el
+   JavaScript con stroke currentColor, asi que el circulo se consigue desde
+   aqui sin tocarlo. */
+.mensaje-ok { color: var(--tinta); font-size: 13.5px; font-weight: 700; margin: var(--e2) 0 0; display: flex; gap: 7px; align-items: center; }
+.mensaje-ok svg {
+  width: 18px; height: 18px; padding: 3px; box-sizing: border-box; flex: none;
+  border-radius: var(--r-pildora); background: var(--gradiente); color: var(--papel);
+}
 
 .asi-queda {
   margin: var(--e3) 0 0; padding: var(--e3);
@@ -1084,8 +1129,18 @@ input[disabled], select[disabled] {
 .ficha dt { color: var(--gris-lapiz); font-size: 14px; }
 .ficha dd { margin: 0; font-size: 14px; }
 
-.te-falta { margin: var(--e4) 0 0; padding: 0 0 0 var(--e4); }
-.te-falta li { color: var(--neon-texto); font-size: 14px; margin-bottom: var(--e1); }
+/* La vineta lleva el neon y el texto se queda en tinta. Con toda la lista en
+   rojo la pantalla del resumen quedaba en alarma cuando lo que dice es
+   simplemente que faltan datos. */
+.te-falta { margin: var(--e4) 0 0; padding: 0; list-style: none; }
+.te-falta li {
+  position: relative; padding-left: 18px; color: var(--tinta);
+  font-size: 14.5px; margin-bottom: var(--e2);
+}
+.te-falta li::before {
+  content: ''; position: absolute; left: 0; top: 8px;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--neon);
+}
 
 /* --- Tablas de historial y administración ------------------------------- */
 
@@ -1095,10 +1150,32 @@ input[disabled], select[disabled] {
 .tabla tr:last-child td { border-bottom: 0; }
 .envoltorio-tabla { border: 1px solid var(--borde); border-radius: var(--r-panel); overflow: auto; }
 
-.estado { display: inline-flex; align-items: center; gap: var(--e1); font-size: 13px; font-weight: 700; }
-.estado-generado { color: var(--gris-lapiz); }
-.estado-publicado { color: var(--verde-confirma); }
+/*
+ * LOS ESTADOS DE UNA CAMPANA, ORDENADOS POR PESO VISUAL Y NO POR MATIZ
+ *
+ * El verde sale: no es de marca, y ademas era lo unico que distinguia una
+ * campana publicada de una generada. Ahora Publicado es el unico estado con
+ * gradiente, asi que se encuentra de un vistazo en una lista larga, y el
+ * sistema aguanta un quinto estado sin inventar colores fuera de la paleta.
+ *
+ * Borrador y Vencido se escriben igual aunque hoy no se vean: el historial
+ * solo emite dos, publicado o generado (src/client/js/68-pantallas.js). Emitir
+ * los otros dos es JavaScript y producto, no piel.
+ */
+.estado {
+  display: inline-flex; align-items: center; gap: var(--e1);
+  font-size: 13px; font-weight: 800;
+  padding: 6px 14px; border-radius: var(--r-pildora);
+}
+.estado-generado { background: var(--rm-estado-generado-bg); color: var(--rm-estado-generado-fg); }
+.estado-publicado { background: var(--rm-estado-publicado-bg); color: var(--rm-estado-publicado-fg); }
+.estado-borrador { background: var(--rm-estado-borrador-bg); color: var(--rm-estado-borrador-fg); }
+.estado-vencido { background: transparent; border: 1.5px solid var(--rm-estado-vencido-borde); color: var(--rm-estado-vencido-fg); }
 
+/* El punto se dibujaba con currentColor al lado del texto. Con la pildora
+   sobra, y encima del gradiente de Publicado quedaria un lunar blanco. Sigue
+   en el DOM porque es decorativo y quitarlo seria tocar el JavaScript. */
+.estado .punto { display: none; }
 .punto { width: 7px; height: 7px; border-radius: 50%; background: currentColor; display: inline-block; }
 
 /* --- Hoja deslizable del celular ---------------------------------------- */
