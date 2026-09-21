@@ -2281,3 +2281,43 @@ Y desde la ronda 4 compara también la vara ancha de 48 pantallas, que la fase 0
 guardó y que hasta entonces nadie había comparado. Cubre lo que la de 31 no
 alcanza: Travel, los T&C generales, el país en piloto, la ampliación, la
 administración y las tres vistas de celular.
+
+---
+
+# Bloque 10 · El correo, pendiente
+
+No está hecho y es el siguiente. Se deja escrito aquí para que no se pierda, con
+el contexto completo, porque quien lo tome puede no haber estado en el bloque 9.
+
+**Qué es.** Cuando el comercial genera su T&C, RappiMind le manda un correo con el
+documento y los pasos para publicarlo. Ese correo lo arma `src/core/correo.js`, y
+su apariencia está escrita a mano dentro del código, no en la hoja de estilos.
+
+**Qué pasa.** Los cuatro colores están clavados en las líneas 29 a 32 y son los del
+sistema anterior: `#FF441F`, `#16181D`, `#5D626D` y `#E3E5EA`. La línea 81 pide la
+letra Lato, que el bloque 9 quitó de la aplicación, y las líneas 77 y 78 pintan el
+fondo con el gris frío viejo. O sea que desde el cambio de identidad la aplicación
+se ve de una marca y el correo que la aplicación envía se ve de otra.
+
+Importa más de lo que parece: es el único artefacto de RappiMind que sale de la
+herramienta y llega a la bandeja de alguien.
+
+**Por qué no entró en el bloque 9.** El encargo dice, con esas palabras, "cero
+cambios en `modelos/`, `data/` y `src/core/`: nada de ahí es estilo". Esa regla se
+escribió para proteger el texto legal, y `correo.js` es lo único de esa carpeta que
+sí es estilo. Se dejó fuera a propósito, para no saltarse la regla por cuenta
+propia, y Juan lo sabe.
+
+**Qué haría falta.** Cuatro colores y una familia de letra. Dos avisos para quien
+lo tome:
+
+- Los clientes de correo no cargan fuentes web con fiabilidad, así que PP Object
+  Sans no se puede dar por hecha. La pila tiene que aguantar caer a la del sistema.
+- Los tokens ya tienen lo que hace falta y hoy no los usa nadie:
+  `--color-email-text` en `colors.css` y `--email-title-size`, `--email-body-size`
+  y `--email-cta-size` en `typography.css`.
+
+**Y una vara propia.** El correo no pasa por `npm run contraste`, porque ese script
+mide los tokens que se sirven en la aplicación. Si el correo entra al sistema, sus
+pares tienen que entrar a `PARES` en `scripts/contraste.js`, o se queda fuera de la
+única puerta que hay.
