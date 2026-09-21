@@ -28,6 +28,7 @@
 const fs = require('fs');
 const path = require('path');
 const { rutaDesdeRaiz, leerTexto, escribirTexto, asegurarCarpeta } = require('./lib/archivos');
+const { hojaCompleta } = require('./lib/hoja-completa');
 
 const RAIZ = rutaDesdeRaiz();
 const SALIDA = rutaDesdeRaiz('docs', 'FRONT_ACTUAL.html');
@@ -376,7 +377,7 @@ async function main() {
     fichas: fichas,
     capturas: recorrido.capturas,
     fallas: recorrido.fallas,
-    estilos: leerTexto(rutaDesdeRaiz('src', 'client', 'estilos.css')),
+    estilos: hojaCompleta(),
     plantilla: leerTexto(rutaDesdeRaiz('src', 'client', 'Index.html')),
     lineas: lineas,
   });

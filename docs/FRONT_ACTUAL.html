@@ -16,6 +16,396 @@
 <style>
 /* La hoja de estilos de la app, acotada a .rm-pantalla. NO ES LA FUENTE: la
  * fuente literal es src/client/estilos.css y va completa en el anexo A. */
+/* src/client/tokens/fonts.css */
+/* RappiMind · Las caras de letra que se sirven de verdad
+   Producción. La entrega original de Claude Design está en
+   docs/diseno/tokens/fonts.css, que declara las cuatro caras de PP Object Sans
+   apuntando a archivos del repositorio.
+
+   Aquí se sirve una sola: PP Object Sans Heavy 900. La decisión 99 la tomó Juan
+   el 21 de septiembre de 2026, con la medición de docs/diseno/MEDICION_FUENTES.md
+   delante. El resumen de por qué:
+
+     · Apps Script arma el HTML con doGet en cada petición y no lo cachea, así que
+       un kilobyte incrustado se paga en cada carga. Google Fonts responde con un
+       año de caché: se paga una vez por navegador.
+     · El base64 es la única parte de la carga que no se comprime. El resto de la
+       aplicación baja cuatro a uno con gzip; el woff2 no baja nada porque ya viene
+       comprimido por dentro. Por eso los cuatro pesos parecían costar un 14% y
+       sobre lo que de verdad viaja costaban un 43%, en cada carga y para siempre.
+     · La marca se reconoce en el peso Heavy, no en el cuerpo de texto a 17px.
+
+   OJO, Y ES LA TRAMPA DE ESTE ARCHIVO. Aquí se declara UNA sola cara de la
+   familia PPObjectSans, la de peso 900. Si esa familia se pusiera primero en la
+   pila del cuerpo de texto, el navegador la usaría también para 400, 500 y 700:
+   dentro de una familia, cuando el peso pedido no existe, se elige el más cercano
+   que sí exista, y aquí el único que existe es el 900. La aplicación entera
+   saldría en Heavy sin que nada fallara.
+
+   Por eso hay dos familias separadas y no una:
+     --display  lleva PPObjectSans y SOLO se usa donde el peso es 900.
+     --titulos y --cuerpo llevan Archivo, que es variable y cubre 400 a 900.
+
+   La prueba `una familia de display solo se usa en peso 900`
+   (pruebas/estilos.test.js) es la que impide que eso se rompa en silencio.
+
+   El archivo se incrusta en base64 al construir: scripts/lib/hoja-completa.js
+   reemplaza la url() por el contenido del woff2, porque Apps Script no sirve
+   archivos del repositorio. Si el archivo no está, el build se cae con un
+   mensaje claro en vez de servir una url() que nadie puede resolver. */
+
+@font-face {
+  font-family: 'PPObjectSans';
+  src: url('../assets/fonts/PPObjectSans-Heavy.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* src/client/tokens/colors.css */
+/* RappiAds · Color Tokens
+   Source: Rappi Brand Book 2026 · Cap. 5
+
+   PRODUCCIÓN. La entrega original está en docs/diseno/tokens/colors.css.
+   Único cambio: --color-muted pasa de .55 a .57, arreglo 6 de
+   docs/diseno/AUDITORIA_CONTRASTE.md. */
+
+:root {
+  /* === NEON GRADIENT (primary external communication) === */
+  --color-neon-orange: #FF7A4D;
+  --color-neon-red: #FF2526;
+  --color-neon-pink: #FF4583;
+  --color-plain-neon: #FE3F23;
+
+  /* Gradient shortcuts */
+  --gradient-neon: linear-gradient(135deg, #FF7A4D 0%, #FF2526 55%, #FF4583 100%); /* @kind color */
+  --gradient-neon-hero: radial-gradient(circle at 18% 20%, #FF8559 0%, #FF2526 48%, #E61E5C 100%); /* @kind color */
+  --gradient-neon-dark: radial-gradient(circle at 80% 90%, #B8001F 0%, #FF2526 60%, #FF7A4D 100%); /* @kind color */
+  --gradient-neon-45: linear-gradient(-45deg, #FF7A4D 0%, #FF2526 50%, #FF4583 100%); /* @kind color */
+
+  /* === COUNTRY SIGNATURES ===
+     MX / CL: Pídelo por Rappi
+     CO / PE / EC: Pide un Rappi
+     AR / UY: Pedí un Rappi
+     BR: Pede no Rappi
+  */
+
+  /* === APP SECONDARY PALETTE (own media / in-app only) === */
+  --color-celeste: #D9F1FF;
+  --color-morado: #E5DCFF;
+  --color-rosado: #F4DFF6;
+  --color-lavanda: #F4F0FC;
+  --color-beige: #FFF0DD;
+
+  /* === TURBO === */
+  --color-turbo-green: #248F63;
+  --color-turbo-dark: #00453E;
+
+  /* === PRO (light) === */
+  --color-pro-bg: #ECEFF3;
+  --color-pro-text: #000000;
+  --color-pro-muted: #646464;
+  --color-pro-gold-light: #F0B769;
+  --color-pro-gold-dark: #E8A24C;
+
+  /* === PRO BLACK (dark) === */
+  --color-pro-black-bg: #2A2B2B;
+  --color-pro-black-text: #FFFFFF;
+  --color-pro-black-surface: #ECEFF3;
+
+  /* === NEUTRALS === */
+  --color-ink: #0A0A0A;
+  --color-muted: rgba(10,10,10,0.57);   /* .55 daba 4.42:1 sobre papel, por debajo de 4.5 */
+  --color-line: rgba(10,10,10,0.10);
+  --color-cream: #FAEEDA;
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+
+  /* === EMAIL BODY === */
+  --color-email-text: #383838;
+
+  /* === SEMANTIC ALIASES === */
+  --surface-page: var(--color-white);
+  --surface-card: var(--color-white);
+  --surface-neon: var(--gradient-neon);
+  --text-primary: var(--color-ink);
+  --text-secondary: var(--color-muted);
+  --text-on-neon: var(--color-white);
+  --text-on-dark: var(--color-white);
+  --accent-primary: var(--color-neon-red);
+  --accent-gradient: var(--gradient-neon);
+  --accent-gold: var(--color-pro-gold-light);
+}
+
+/* src/client/tokens/typography.css */
+/* RappiAds · Typography Tokens
+   Source: Rappi Brand Book 2026 · Cap. 5 §5.15–5.16 */
+
+:root {
+  /* === FONT FAMILIES === */
+  --font-primary: 'PPObjectSans', sans-serif;
+  /* Email only — Jornada Sans not available; using PP Object Sans as fallback */
+  --font-email: 'PPObjectSans', sans-serif;
+
+  /* === WEIGHTS === */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+  --weight-heavy: 900;
+
+  /* === TYPE SCALE (brand-canonical sizes) === */
+  /* Display — dominante, cover headlines */
+  --text-display: 900 clamp(64px, calc(var(--rm-ancho-ventana) * 0.12), 230px)/0.86 var(--font-primary);
+  --text-display-size: clamp(64px, calc(var(--rm-ancho-ventana) * 0.12), 230px);
+
+  /* Section heading */
+  --text-h1-size: clamp(40px, calc(var(--rm-ancho-ventana) * 0.06), 100px);
+  --text-h1: 900 var(--text-h1-size)/0.96 var(--font-primary);
+
+  /* Content heading */
+  --text-h2-size: clamp(28px, calc(var(--rm-ancho-ventana) * 0.04), 64px);
+  --text-h2: 900 var(--text-h2-size)/1.03 var(--font-primary);
+
+  /* Sub-heading */
+  --text-h3-size: clamp(20px, calc(var(--rm-ancho-ventana) * 0.025), 40px);
+  --text-h3: 700 var(--text-h3-size)/1.15 var(--font-primary);
+
+  /* Body */
+  --text-body-size: 17px;
+  --text-body: 500 var(--text-body-size)/1.7 var(--font-primary);
+
+  /* Lede / intro */
+  --text-lede-size: 22px;
+  --text-lede: 500 var(--text-lede-size)/1.55 var(--font-primary);
+
+  /* Meta / eyebrow */
+  --text-meta-size: 12px;
+  --text-meta: 600 var(--text-meta-size)/1 var(--font-primary);
+
+  /* Legal / fine print */
+  --text-legal-size: 11px;
+  --text-legal: 400 var(--text-legal-size)/1.5 var(--font-primary);
+
+  /* === IN-APP FORMAT SIZES (Brand Book §6) === */
+  --inapp-title-size: 33px;  /* Inapp titular · Heavy */
+  --inapp-desc-size: 21px;   /* Inapp description · Medium */
+  --banner-home-title: 26px; /* Banner Home · Heavy */
+  --banner-home-sub: 20px;   /* Banner Home · Medium */
+  --banner-filtro-title: 88px; /* Banner Filtro · Heavy */
+  --banner-filtro-desc: 40px;  /* Banner Filtro · Medium */
+
+  /* === EMAIL SIZES === */
+  --email-title-size: 40px;  /* Jornada Sans · Heavy */
+  --email-body-size: 20px;   /* Jornada Sans · Medium */
+  --email-cta-size: 28px;    /* Jornada Sans · Heavy */
+
+  /* === LETTER SPACING === */
+  --tracking-tight: -0.045em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.12em;
+  --tracking-widest: 0.16em;
+}
+
+/* src/client/tokens/spacing.css */
+/* RappiAds · Spacing & Layout Tokens */
+
+:root {
+  /* === BASE SCALE (4px base) === */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-14: 56px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-30: 120px;
+
+  /* === SEMANTIC SPACING === */
+  --gap-xs: var(--space-2);
+  --gap-sm: var(--space-3);
+  --gap-md: var(--space-6);
+  --gap-lg: var(--space-10);
+  --gap-xl: var(--space-16);
+
+  /* === LAYOUT === */
+  --page-margin: var(--space-30);   /* 120px — standard slide/page margin */
+  --content-max: 1280px;
+  --card-padding: var(--space-6);   /* 24px */
+  --card-padding-lg: var(--space-10); /* 40px */
+
+  /* === BORDER RADIUS === */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+  --radius-pill: 9999px;
+
+  /* === LOGO SAFE AREA === */
+  /* X = height of the symbol; safe area = 1X on all sides */
+  --logo-safe-area: 1em; /* relative to logo height */
+
+  /* === FORMAT DIMENSIONS (Brand Book §6) === */
+  --inapp-w: 300px;
+  --inapp-h: 400px;
+  --banner-home-w: 320px;
+  --banner-home-h: 136px;
+  --push-image-w: 600px;
+  --push-image-h: 300px;
+
+  /* === SHADOWS === */
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.13);
+}
+
+/* src/client/tokens/rappimind.css */
+/* RappiMind · Capa de aplicación
+   PRODUCCIÓN. La entrega original de Claude Design está en
+   docs/diseno/tokens/rappimind.css y se queda ahí tal como llegó.
+
+   Extiende los tokens de RappiAds con lo que el design system no cubre:
+   estados de control, avisos y estados de campaña.
+   Se concatena SIEMPRE el último, para que pueda pisar a los anteriores.
+
+   Qué cambia respecto de la entrega, y por qué. Son los seis arreglos de
+   docs/diseno/AUDITORIA_CONTRASTE.md, que se reproducen con `npm run contraste`:
+
+     1. --rm-borde-control      .18 -> .44   daba 1.5:1 donde WCAG pide 3
+     2. --rm-placeholder    #8A8A8A -> #707070   daba 3.45:1 donde pide 4.5
+     3. --rm-aviso-error-color  neón -> #D91F20  daba 3.79:1 donde pide 4.5
+     4. --rm-hueco-subrayado  alfa .6 -> #D91F20 daba 2.32:1 donde pide 3
+     5. --rm-anillo y --rm-anillo-campo, que eran halos de box-shadow con alfa
+        .45 y .30, daban 1.99:1 y 1.57:1. El anillo de hoy ya cumple con 3.44:1
+        y el foco visible está entre los intocables de docs/PARA_EL_DISENO.md,
+        así que copiarlos habría sido una regresión sobre algo que funcionaba.
+        Quedan como un color sólido que se usa con outline: 3.79:1.
+     6. --color-muted del design system, .55 -> .57 (ver colors.css)
+
+   Regla general: ningún estado se comunica con opacity. Bajar la opacidad
+   arrastra el texto por debajo del contraste mínimo. Se usan colores planos.
+
+   Aquí solo hay tokens. Las animaciones y la consulta de movimiento reducido
+   viven en src/client/estilos.css, que ya las tenía y además apaga el
+   scroll-behavior, cosa que la entrega original no hacía. */
+
+:root {
+  /* === SUPERFICIES === */
+  --rm-papel: #FFFFFF;
+  --rm-niebla: #F4F5F6;            /* fondo de página y de control deshabilitado */
+  --rm-tinta: #0A0A0A;
+
+  /* === LETRA ===
+     Dos familias, y la separación es deliberada. Ver el comentario largo de
+     fonts.css: de PP Object Sans se sirve una sola cara, la de peso 900, así
+     que si esa familia estuviera en la pila del cuerpo el navegador la usaría
+     también para 400, 500 y 700 y la aplicación entera saldría en Heavy. */
+  --rm-display: 'PPObjectSans', 'Archivo', system-ui, -apple-system, sans-serif;
+  --rm-texto-familia: 'Archivo', system-ui, -apple-system, sans-serif;
+
+  /* === TEXTO === */
+  --rm-texto: #0A0A0A;
+  --rm-texto-2: #595959;           /* 7.0:1 sobre blanco · secundario */
+  --rm-texto-off: #6B6B6B;         /* 4.88:1 sobre #F4F5F6 · deshabilitado */
+  --rm-placeholder: #707070;       /* 4.95:1 sobre papel, 4.54:1 sobre niebla */
+
+  /* === LÍNEAS === */
+  --rm-linea: rgba(10,10,10,.10);
+  --rm-borde-control: rgba(10,10,10,.44);   /* 3.07:1 sobre papel, 3.01:1 sobre niebla */
+  --rm-borde-secundario: rgba(10,10,10,.22);
+  --rm-borde-opcion: rgba(10,10,10,.12);    /* la tarjeta de opción sin elegir */
+
+  /* === ACENTO ===
+     Dos neones y la diferencia importa. El plano es para lo que NO lleva texto
+     encima, donde el mínimo es 3:1 y lo pasa. El de texto es el mismo neón al
+     85% de brillo, para lo que sí lleva texto, donde el mínimo es 4.5:1. */
+  --rm-neon: #FF2526;
+  --rm-neon-texto: #D91F20;        /* 5.04:1 sobre papel, 4.53:1 sobre niebla */
+  --rm-grad: linear-gradient(135deg, #FF7A4D 0%, #FF2526 55%, #FF4583 100%);
+  --rm-grad-hover: linear-gradient(135deg, #E8623A 0%, #D91F20 55%, #E03A72 100%);
+
+  /* El gradiente del botón primario, recortado al 17% del tramo. Decisión 98.
+     El blanco no llega a 4.5:1 en NINGÚN punto del gradiente completo: el
+     máximo de todo el tramo es 3.79:1. Recortando en el 17%, que es donde
+     empieza #FF6041, el blanco cruza 3.00:1, que es el umbral de texto grande,
+     y por eso el botón lleva su texto a 19px en peso 700. Las paradas de
+     dentro se recolocan: el 55% del tramo original cae en el 45.8% del
+     recortado. */
+  --rm-grad-boton: linear-gradient(135deg, #FF6041 0%, #FF2526 46%, #FF4583 100%);
+  --rm-anillo-color: #FF2526;      /* 3.79:1 · se usa con outline, no con halo */
+  --rm-neon-presionado: #A81718;   /* 7.56:1 con blanco · el neón hundido, para :active */
+
+  /* === CAMPOS ===
+     El campo con valor lleva borde TINTA, no neón.
+     El neón queda reservado para el error: si "lleno" y "mal" comparten
+     color, no se distinguen. */
+  --rm-campo-vacio: var(--rm-borde-control);
+  --rm-campo-lleno: var(--rm-tinta);
+  --rm-campo-error: #FF2526;       /* 2px, no 1.5px */
+  --rm-campo-off-bg: var(--rm-niebla);
+  --rm-campo-off-borde: var(--rm-linea);
+
+  /* === OPCIONES === */
+  --rm-opcion-sel-bg: rgba(255,37,38,.045);
+  --rm-opcion-sel-borde: #FF2526;
+  --rm-opcion-off-bg: var(--rm-niebla);
+
+  /* === PROGRESO === */
+  --rm-paso-hecho: var(--rm-tinta);
+  --rm-paso-actual: var(--rm-grad);
+  --rm-paso-pendiente: rgba(10,10,10,.12);
+  --rm-paso-alto: 4px;
+  --rm-paso-min-etiqueta: 88px;    /* por debajo, las etiquetas se ocultan */
+  --rm-paso-max-etiqueta: 6;       /* con más pasos, las etiquetas se ocultan */
+
+  /* === AVISOS ===
+     Tres niveles, distinguidos por ESTRUCTURA, no por color de borde.
+     1 informativo: panel celeste, sin título en caja alta.
+     2 serio:       panel beige + regla de 3px en el borde SUPERIOR + título en caja alta.
+     3 error campo: sin panel, pegado al campo. */
+  --rm-aviso-info-bg: #D9F1FF;
+  --rm-aviso-serio-bg: #FFF0DD;
+  --rm-aviso-serio-regla: var(--rm-grad);
+  --rm-aviso-error-color: var(--rm-neon-texto);
+
+  /* === ESTADOS DE CAMPAÑA ===
+     Ordenados por peso visual, no por matiz. El verde sale: no es de marca. */
+  --rm-estado-publicado-bg: var(--rm-grad);
+  --rm-estado-publicado-fg: #FFFFFF;
+  --rm-estado-generado-bg: #FFF0DD;
+  --rm-estado-generado-fg: #0A0A0A;
+  --rm-estado-borrador-bg: var(--rm-niebla);
+  --rm-estado-borrador-fg: #595959;
+  --rm-estado-vencido-borde: rgba(10,10,10,.20);
+  --rm-estado-vencido-fg: #595959;
+
+  /* === DOCUMENTO === */
+  --rm-hueco-bg: #FFF0DD;
+  --rm-hueco-subrayado: 1.5px dotted #D91F20;   /* 4.5:1 sobre el beige del hueco */
+  --rm-destello: rgba(255,122,77,.45);
+  --rm-hoja-sombra: 0 1px 4px rgba(10,10,10,.08);
+
+  /* === SOMBRAS Y VELOS QUE NO DEFINE NINGÚN ARCHIVO DE TOKENS ===
+     Los tres existen hoy en la hoja como valores crudos sobre la tinta vieja
+     rgba(22,24,29). Suben a token para que el rebrand no los deje atrás, y su
+     rgb pasa a la tinta nueva. */
+  --rm-cortina: rgba(10,10,10,.35);
+  --rm-sombra-glosario: 0 6px 20px rgba(10,10,10,.25);
+  --rm-sombra-flotante: 0 2px 12px rgba(10,10,10,.12);
+
+  /* === MOVIMIENTO === */
+  --rm-t-control: 200ms;
+  --rm-t-entrada: 380ms;
+  --rm-t-destello: 900ms;
+  --rm-ease-entrada: cubic-bezier(.16, 1, .3, 1);
+}
+
+/* src/client/estilos.css */
 /*
  * RappiMind v3. El sistema completo está en docs/DISENO.md.
  *
@@ -24,38 +414,67 @@
  */
 
 :root {
-  --naranja-marca: #ff441f;
-  --naranja-accion: #d32f0f;
-  --naranja-presionado: #a82409;
-  --tinta: #16181d;
-  --gris-lapiz: #5d626d;
-  --papel: #ffffff;
-  --niebla: #f4f6f8;
+  /*
+   * Capa de alias. Los valores viven en src/client/tokens/ y se concatenan
+   * antes que esto; aqui solo estan los nombres cortos con que la hoja los
+   * llama, que son 275 llamadas a var(). Existe por dos razones concretas.
+   *
+   * Una: que la marca pueda mover un token sin que haya que tocar 275 sitios.
+   * Dos, y es la que muerde: scripts/lib/front-documento.js usa doce de estos
+   * nombres y NO los define, los hereda de aqui al pegar la hoja dentro de
+   * docs/FRONT_ACTUAL.html. Si un nombre desaparece sin avisar, el documento
+   * que envuelve a las 48 pantallas se queda sin colores ni tipografia, en
+   * silencio y sin error, y ese documento es justo la herramienta con la que
+   * se verifica cada fase del rebrand.
+   */
 
+  /* Dos neones, y la diferencia no es cosmetica: el plano es para lo que no
+     lleva texto encima (bordes, anillos, viñetas), donde el minimo es 3:1; el
+     de texto es el mismo neon al 85% de brillo, para lo que si lo lleva, donde
+     el minimo es 4.5:1. Ver el hallazgo 3.6 de docs/PLAN_IDENTIDAD.md. */
+  --neon: var(--rm-neon);
+  --neon-texto: var(--rm-neon-texto);
+  --neon-presionado: var(--rm-neon-presionado);
+  --gradiente: var(--rm-grad);
+  --gradiente-boton: var(--rm-grad-boton);
+  --gradiente-hover: var(--rm-grad-hover);
+
+  --tinta: var(--rm-tinta);
+  --gris-lapiz: var(--rm-texto-2);
+  --texto-off: var(--rm-texto-off);
+  --papel: var(--rm-papel);
+  --niebla: var(--rm-niebla);
+  --beige: var(--rm-hueco-bg);
+  --celeste: var(--rm-aviso-info-bg);
+
+  --borde: var(--rm-linea);
+  --borde-control: var(--rm-borde-control);
+  --borde-opcion: var(--rm-borde-opcion);
+
+  /* Se va en la fase 6, cuando el historial deje de distinguir Publicado por
+     el matiz y pase a distinguirlo por peso visual. El verde no es de marca. */
   --verde-confirma: #0b7a52;
-  --verde-palido: #e6f4ee;
-  --rojo-alerta: #c4320a;
-  --rojo-palido: #fdece6;
-  --rubor: #ffede8;
 
-  --borde: #e2e6eb;
-  --borde-control: #767e8c;
-
-  --titulos: 'Poppins', system-ui, -apple-system, sans-serif;
-  --cuerpo: 'Lato', system-ui, -apple-system, sans-serif;
+  --titulos: 'Poppins', system-ui, -apple-system, sans-serif;   /* fase 2 */
+  --cuerpo: 'Lato', system-ui, -apple-system, sans-serif;       /* fase 2 */
 
   --e1: 4px; --e2: 8px; --e3: 12px; --e4: 16px;
   --e5: 24px; --e6: 32px; --e7: 48px; --e8: 64px;
 
-  --r-control: 6px;
-  --r-panel: 10px;
-  --r-hoja: 14px;
+  --r-control: var(--radius-sm);
+  --r-panel: var(--radius-md);
+  --r-hoja: var(--radius-lg);
+  --r-pildora: var(--radius-pill);
 
-  --sombra-hoja: 0 1px 2px rgba(22, 24, 29, 0.05), 0 8px 24px rgba(22, 24, 29, 0.07);
+  --sombra-hoja: var(--rm-hoja-sombra);
+  --sombra-glosario: var(--rm-sombra-glosario);
+  --sombra-flotante: var(--rm-sombra-flotante);
+  --cortina: var(--rm-cortina);
+  --destello: var(--rm-destello);
 
-  --t-rapido: 160ms;
-  --t-hoja: 220ms;
-  --t-destello: 900ms;
+  --t-rapido: var(--rm-t-control);
+  --t-hoja: var(--rm-t-entrada);
+  --t-destello: var(--rm-t-destello);
 }
 
 .rm-pantalla, .rm-pantalla * { box-sizing: border-box; }
@@ -77,10 +496,10 @@
 .rm-pantalla h2 { font-size: 21px; line-height: 1.3; margin: 0 0 var(--e2); letter-spacing: -0.01em; }
 .rm-pantalla h3 { font-size: 17px; line-height: 1.35; margin: 0 0 var(--e2); }
 .rm-pantalla p { margin: 0 0 var(--e3); }
-.rm-pantalla a { color: var(--naranja-accion); }
+.rm-pantalla a { color: var(--neon-texto); }
 
 .rm-pantalla :focus-visible {
-  outline: 3px solid var(--naranja-marca);
+  outline: 3px solid var(--neon);
   outline-offset: 2px;
   border-radius: var(--r-control);
 }
@@ -105,7 +524,7 @@
   position: absolute;
   width: 14px; height: 9px;
   top: -2px; left: 40px;
-  color: var(--naranja-marca);
+  color: var(--neon);
 }
 .rm-pantalla .marca em { font-style: normal; color: var(--gris-lapiz); font-weight: 500; }
 
@@ -126,7 +545,7 @@
   padding: var(--e2) var(--e3); border-radius: var(--r-control); cursor: pointer;
 }
 .rm-pantalla .enlace-nav:hover { background: var(--niebla); color: var(--tinta); }
-.rm-pantalla .enlace-nav[aria-current='page'] { color: var(--tinta); box-shadow: inset 0 -2px 0 var(--naranja-marca); }
+.rm-pantalla .enlace-nav[aria-current='page'] { color: var(--tinta); box-shadow: inset 0 -2px 0 var(--neon); }
 
 /*
  * El titulo de la pantalla recibe el foco al cambiar de pantalla, para que el
@@ -150,8 +569,8 @@
 /* --- Aviso -------------------------------------------------------------- */
 
 .rm-pantalla .aviso {
-  background: var(--rubor);
-  border-left: 3px solid var(--naranja-marca);
+  background: var(--beige);
+  border-left: 3px solid var(--neon);
   border-radius: 0 var(--r-control) var(--r-control) 0;
   padding: var(--e3) var(--e4);
   margin: 0 0 var(--e5);
@@ -159,7 +578,7 @@
 }
 .rm-pantalla .aviso h3 { margin-bottom: var(--e1); }
 .rm-pantalla .aviso p:last-child { margin-bottom: 0; }
-.rm-pantalla .aviso-serio { border-left-color: var(--rojo-alerta); }
+.rm-pantalla .aviso-serio { border-left-color: var(--neon); }
 
 /* --- Botones ------------------------------------------------------------ */
 
@@ -170,14 +589,14 @@
   padding: 13px var(--e5);
   border-radius: var(--r-control);
   border: 1px solid transparent;
-  background: var(--naranja-accion);
+  background: var(--neon-texto);
   color: var(--papel);
   transition: background var(--t-rapido);
 }
-.rm-pantalla .boton:hover { background: #b82a0c; }
-.rm-pantalla .boton:active { background: var(--naranja-presionado); }
+.rm-pantalla .boton:hover { background: var(--neon-presionado); }
+.rm-pantalla .boton:active { background: var(--neon-presionado); }
 .rm-pantalla .boton[disabled] {
-  background: var(--borde); color: var(--borde-control);
+  background: var(--niebla); color: var(--texto-off);
   cursor: not-allowed; border-color: var(--borde);
 }
 
@@ -186,11 +605,11 @@
   border-color: var(--borde-control);
 }
 .rm-pantalla .boton-secundario:hover { background: var(--niebla); }
-.rm-pantalla .boton-secundario[disabled] { color: var(--borde-control); background: transparent; }
+.rm-pantalla .boton-secundario[disabled] { color: var(--texto-off); background: transparent; }
 
 .rm-pantalla .boton-texto {
   background: none; border: 0; padding: var(--e1) 0;
-  color: var(--naranja-accion); font-family: var(--cuerpo); font-size: 14px;
+  color: var(--neon-texto); font-family: var(--cuerpo); font-size: 14px;
   text-decoration: underline; text-underline-offset: 3px;
 }
 
@@ -212,8 +631,8 @@
   font-family: var(--cuerpo); font-size: 13px; color: var(--gris-lapiz);
   line-height: 1.25; word-break: normal; hyphens: none;
 }
-.rm-pantalla .progreso .hecho button { border-bottom-color: var(--naranja-accion); color: var(--tinta); }
-.rm-pantalla .progreso .actual button { border-bottom-color: var(--naranja-marca); color: var(--tinta); font-weight: 700; }
+.rm-pantalla .progreso .hecho button { border-bottom-color: var(--neon-texto); color: var(--tinta); }
+.rm-pantalla .progreso .actual button { border-bottom-color: var(--neon); color: var(--tinta); font-weight: 700; }
 .rm-pantalla .progreso button[disabled] { cursor: default; }
 
 /* --- Preguntas ---------------------------------------------------------- */
@@ -259,7 +678,7 @@
 
 .rm-pantalla .por-que { margin: var(--e2) 0 0; }
 .rm-pantalla .por-que summary {
-  color: var(--naranja-accion); font-size: 14px; cursor: pointer;
+  color: var(--neon-texto); font-size: 14px; cursor: pointer;
   list-style: none; display: inline-block; text-decoration: underline; text-underline-offset: 3px;
 }
 .rm-pantalla .por-que summary::-webkit-details-marker { display: none; }
@@ -282,16 +701,16 @@
   padding: 12px var(--e3);
 }
 .rm-pantalla input:hover, .rm-pantalla select:hover, .rm-pantalla textarea:hover { border-color: var(--gris-lapiz); }
-.rm-pantalla input:focus, .rm-pantalla select:focus, .rm-pantalla textarea:focus { border-color: var(--naranja-marca); }
-.rm-pantalla input[disabled], .rm-pantalla select[disabled] { background: var(--niebla); color: var(--borde-control); cursor: not-allowed; }
+.rm-pantalla input:focus, .rm-pantalla select:focus, .rm-pantalla textarea:focus { border-color: var(--neon); }
+.rm-pantalla input[disabled], .rm-pantalla select[disabled] { background: var(--niebla); color: var(--texto-off); cursor: not-allowed; }
 
 .rm-pantalla .con-moneda input { padding-left: 34px; }
 .rm-pantalla .simbolo-moneda {
   position: absolute; left: var(--e3); color: var(--gris-lapiz); font-size: 16px; pointer-events: none;
 }
 
-.rm-pantalla .campo-error input, .rm-pantalla .campo-error select { border-color: var(--rojo-alerta); }
-.rm-pantalla .mensaje-error { color: var(--rojo-alerta); font-size: 14px; margin: var(--e2) 0 0; display: flex; gap: var(--e2); }
+.rm-pantalla .campo-error input, .rm-pantalla .campo-error select { border-color: var(--neon); }
+.rm-pantalla .mensaje-error { color: var(--neon-texto); font-size: 14px; margin: var(--e2) 0 0; display: flex; gap: var(--e2); }
 .rm-pantalla .mensaje-ok { color: var(--verde-confirma); font-size: 14px; margin: var(--e2) 0 0; display: flex; gap: var(--e2); align-items: center; }
 
 .rm-pantalla .asi-queda {
@@ -316,12 +735,12 @@
 }
 .rm-pantalla .opcion:hover:not([disabled]) { border-color: var(--gris-lapiz); }
 .rm-pantalla .opcion[aria-pressed='true'], .rm-pantalla .opcion.elegida {
-  border: 2px solid var(--naranja-marca); background: var(--rubor); padding: 11px 15px;
+  border: 2px solid var(--neon); background: var(--beige); padding: 11px 15px;
 }
 .rm-pantalla .opcion[disabled] { opacity: 0.55; cursor: not-allowed; }
 .rm-pantalla .opcion-titulo { display: block; font-size: 15px; }
 .rm-pantalla .opcion-nota { display: block; color: var(--gris-lapiz); font-size: 13px; margin-top: 2px; }
-.rm-pantalla .opcion[disabled] .opcion-nota { color: var(--rojo-alerta); }
+.rm-pantalla .opcion[disabled] .opcion-nota { color: var(--neon-texto); }
 
 /* El buscador del historial. Sin la regla de arriba para type=search, el
    campo salia con el ancho del navegador y cortaba su propio texto de ayuda:
@@ -339,11 +758,11 @@
    que existe ni de que vencio. */
 .rm-pantalla .opcion-vencida { opacity: 0.7; cursor: not-allowed; }
 .rm-pantalla .opcion-vencida .opcion-nota { color: var(--gris-lapiz); }
-.rm-pantalla .opcion-vencida .opcion-nota-vencido { color: var(--rojo-alerta); }
+.rm-pantalla .opcion-vencida .opcion-nota-vencido { color: var(--neon-texto); }
 
 .rm-pantalla .casillas { display: grid; gap: var(--e2); border: 0; padding: 0; margin: 0; }
 .rm-pantalla .casilla { display: flex; gap: var(--e3); align-items: flex-start; cursor: pointer; padding: var(--e2) 0; }
-.rm-pantalla .casilla input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--naranja-accion); flex: none; }
+.rm-pantalla .casilla input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--neon-texto); flex: none; }
 .rm-pantalla .casilla span { font-size: 15px; }
 .rm-pantalla .casilla small { display: block; color: var(--gris-lapiz); font-size: 13px; }
 
@@ -352,7 +771,7 @@
   border: 1px solid var(--borde-control); background: var(--papel);
   border-radius: 999px; padding: 5px var(--e3); font-size: 13px; font-family: var(--cuerpo);
 }
-.rm-pantalla .sugerencia:hover { background: var(--rubor); border-color: var(--naranja-marca); }
+.rm-pantalla .sugerencia:hover { background: var(--beige); border-color: var(--neon); }
 
 /* --- Glosario ----------------------------------------------------------- */
 
@@ -366,7 +785,7 @@
   background: var(--tinta); color: var(--papel);
   padding: var(--e3); border-radius: var(--r-control);
   font-size: 13px; line-height: 1.45;
-  box-shadow: 0 6px 20px rgba(22, 24, 29, 0.25);
+  box-shadow: var(--sombra-glosario);
 }
 .rm-pantalla .glosario-panel strong { display: block; margin-bottom: var(--e1); }
 
@@ -399,11 +818,11 @@
 .rm-pantalla .hoja .doc-vineta::before { content: '\2022'; position: absolute; left: -14px; color: var(--gris-lapiz); }
 
 .rm-pantalla .hoja mark {
-  background: var(--rubor); color: inherit; border-radius: 3px; padding: 0 2px;
+  background: var(--beige); color: inherit; border-radius: 3px; padding: 0 2px;
   animation: destello var(--t-destello) ease-out forwards;
 }
 @keyframes destello {
-  0% { background: #ffd2c4; }
+  0% { background: var(--destello); }
   100% { background: transparent; }
 }
 
@@ -432,7 +851,7 @@
 .rm-pantalla .ficha dd { margin: 0; font-size: 14px; }
 
 .rm-pantalla .te-falta { margin: var(--e4) 0 0; padding: 0 0 0 var(--e4); }
-.rm-pantalla .te-falta li { color: var(--rojo-alerta); font-size: 14px; margin-bottom: var(--e1); }
+.rm-pantalla .te-falta li { color: var(--neon-texto); font-size: 14px; margin-bottom: var(--e1); }
 
 /* --- Tablas de historial y administración ------------------------------- */
 
@@ -453,7 +872,7 @@
 .rm-pantalla .boton-flotante { display: none; }
 
 .rm-pantalla .cortina {
-  position: absolute; inset: 0; background: rgba(22, 24, 29, 0.35);
+  position: absolute; inset: 0; background: var(--cortina);
   z-index: 40; opacity: 0; pointer-events: none; transition: opacity var(--t-hoja);
 }
 .rm-pantalla .cortina.abierta { opacity: 1; pointer-events: auto; }
@@ -479,7 +898,7 @@
   display: flex; align-items: center; gap: 2px;
   padding: 4px; border-radius: 999px;
   background: var(--papel); border: 1px solid var(--borde);
-  box-shadow: 0 2px 12px rgba(22, 24, 29, 0.12);
+  box-shadow: var(--sombra-flotante);
 }
 .rm-pantalla .selector-idioma button {
   border: 0; background: transparent; cursor: pointer;
@@ -487,8 +906,8 @@
   font: inherit; font-size: 0.82rem; font-weight: 600; color: var(--gris-lapiz);
 }
 .rm-pantalla .selector-idioma button:hover { background: var(--niebla); }
-.rm-pantalla .selector-idioma button[aria-pressed="true"] { background: var(--naranja-marca); color: #fff; }
-.rm-pantalla .selector-idioma button:focus-visible { outline: 2px solid var(--naranja-marca); outline-offset: 2px; }
+.rm-pantalla .selector-idioma button[aria-pressed="true"] { background: var(--neon-texto); color: var(--papel); }
+.rm-pantalla .selector-idioma button:focus-visible { outline: 2px solid var(--neon); outline-offset: 2px; }
 
 /* --- Pantalla final ------------------------------------------------------ */
 
@@ -497,7 +916,7 @@
 .rm-pantalla .pasos-publicar li::before {
   content: counter(paso); position: absolute; left: 0; top: 0;
   width: 24px; height: 24px; border-radius: 50%;
-  background: var(--rubor); color: var(--naranja-accion);
+  background: var(--beige); color: var(--neon-texto);
   font-family: var(--titulos); font-weight: 600; font-size: 13px;
   display: flex; align-items: center; justify-content: center;
 }
@@ -524,7 +943,7 @@
   }
   .rm-pantalla.rm-celular .progreso-linea::before {
     content: ''; position: absolute; inset: 0 auto 0 0;
-    width: var(--avance); background: var(--naranja-marca); border-radius: 1px;
+    width: var(--avance); background: var(--neon); border-radius: 1px;
   }
 
   .rm-pantalla.rm-celular .barra-superior { padding: var(--e2) var(--e4); gap: var(--e3); }
@@ -560,7 +979,7 @@
     scroll-behavior: auto !important;
   }
   /* Sin animación, el destello se queda como borde fijo hasta el próximo cambio. */
-  .rm-pantalla .hoja mark { background: var(--rubor); outline: 2px solid var(--naranja-marca); outline-offset: 1px; }
+  .rm-pantalla .hoja mark { background: var(--beige); outline: 2px solid var(--neon); outline-offset: 1px; }
 
 }
 
@@ -599,7 +1018,7 @@ body.doc-cuerpo {
 .doc-portada li { margin-bottom: 6px; }
 
 .doc-caja {
-  background: var(--niebla); border-left: 3px solid var(--naranja-marca);
+  background: var(--niebla); border-left: 3px solid var(--neon);
   border-radius: 0 6px 6px 0; padding: 14px 18px; margin: 20px 0;
 }
 .doc-caja h2 { margin-top: 0; }
@@ -615,7 +1034,7 @@ body.doc-cuerpo {
 .doc-indice h2 { font-family: var(--titulos); font-size: 21px; margin: 0 0 16px; }
 .doc-indice ol { list-style: none; padding: 0; margin: 0 0 24px; columns: 2; column-gap: 40px; }
 .doc-indice li { margin-bottom: 4px; font-size: 14px; break-inside: avoid; }
-.doc-indice a { color: var(--naranja-accion); text-decoration: none; }
+.doc-indice a { color: var(--neon-texto); text-decoration: none; }
 .doc-indice a:hover { text-decoration: underline; }
 .doc-indice .doc-numero-indice { color: var(--gris-lapiz); display: inline-block; min-width: 26px; }
 .doc-indice h3 { font-family: var(--titulos); font-size: 15px; margin: 0 0 8px; color: var(--gris-lapiz); }
@@ -628,7 +1047,7 @@ body.doc-cuerpo {
 .doc-pantalla:first-of-type { border-top: 0; }
 .doc-numero {
   font-family: var(--titulos); font-size: 12px; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--naranja-accion); margin: 0 0 4px;
+  text-transform: uppercase; color: var(--neon-texto); margin: 0 0 4px;
 }
 .doc-pantalla h3 { font-family: var(--titulos); font-size: 22px; margin: 0 0 6px; letter-spacing: -0.01em; }
 .doc-ficha { color: var(--gris-lapiz); font-size: 13px; margin: 0 0 12px; }
@@ -699,7 +1118,7 @@ body.doc-cuerpo {
     <h1>RappiMind v3, el front actual</h1>
     <p class="doc-firma">
       48 pantallas de la herramienta funcionando, congeladas.
-      Generado el 21 de septiembre de 2026 desde <code>881bc36</code> de la rama
+      Generado el 21 de septiembre de 2026 desde <code>f5cb5a1</code> de la rama
       <code>claude/inspiring-feynman-atlswz</code>.
     </p>
 
@@ -1433,7 +1852,397 @@ carla@rappi.com" aria-label="Correos, separados por comas o por líneas"></texta
     <code>scripts/lib/estilos-acotados.js</code>. Si vas a cambiar un estilo, el cambio va en el
     archivo de abajo.
   </p>
-  <pre class="doc-codigo">/*
+  <pre class="doc-codigo">/* src/client/tokens/fonts.css */
+/* RappiMind · Las caras de letra que se sirven de verdad
+   Producción. La entrega original de Claude Design está en
+   docs/diseno/tokens/fonts.css, que declara las cuatro caras de PP Object Sans
+   apuntando a archivos del repositorio.
+
+   Aquí se sirve una sola: PP Object Sans Heavy 900. La decisión 99 la tomó Juan
+   el 21 de septiembre de 2026, con la medición de docs/diseno/MEDICION_FUENTES.md
+   delante. El resumen de por qué:
+
+     · Apps Script arma el HTML con doGet en cada petición y no lo cachea, así que
+       un kilobyte incrustado se paga en cada carga. Google Fonts responde con un
+       año de caché: se paga una vez por navegador.
+     · El base64 es la única parte de la carga que no se comprime. El resto de la
+       aplicación baja cuatro a uno con gzip; el woff2 no baja nada porque ya viene
+       comprimido por dentro. Por eso los cuatro pesos parecían costar un 14% y
+       sobre lo que de verdad viaja costaban un 43%, en cada carga y para siempre.
+     · La marca se reconoce en el peso Heavy, no en el cuerpo de texto a 17px.
+
+   OJO, Y ES LA TRAMPA DE ESTE ARCHIVO. Aquí se declara UNA sola cara de la
+   familia PPObjectSans, la de peso 900. Si esa familia se pusiera primero en la
+   pila del cuerpo de texto, el navegador la usaría también para 400, 500 y 700:
+   dentro de una familia, cuando el peso pedido no existe, se elige el más cercano
+   que sí exista, y aquí el único que existe es el 900. La aplicación entera
+   saldría en Heavy sin que nada fallara.
+
+   Por eso hay dos familias separadas y no una:
+     --display  lleva PPObjectSans y SOLO se usa donde el peso es 900.
+     --titulos y --cuerpo llevan Archivo, que es variable y cubre 400 a 900.
+
+   La prueba `una familia de display solo se usa en peso 900`
+   (pruebas/estilos.test.js) es la que impide que eso se rompa en silencio.
+
+   El archivo se incrusta en base64 al construir: scripts/lib/hoja-completa.js
+   reemplaza la url() por el contenido del woff2, porque Apps Script no sirve
+   archivos del repositorio. Si el archivo no está, el build se cae con un
+   mensaje claro en vez de servir una url() que nadie puede resolver. */
+
+@font-face {
+  font-family: 'PPObjectSans';
+  src: url('../assets/fonts/PPObjectSans-Heavy.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* src/client/tokens/colors.css */
+/* RappiAds · Color Tokens
+   Source: Rappi Brand Book 2026 · Cap. 5
+
+   PRODUCCIÓN. La entrega original está en docs/diseno/tokens/colors.css.
+   Único cambio: --color-muted pasa de .55 a .57, arreglo 6 de
+   docs/diseno/AUDITORIA_CONTRASTE.md. */
+
+:root {
+  /* === NEON GRADIENT (primary external communication) === */
+  --color-neon-orange: #FF7A4D;
+  --color-neon-red: #FF2526;
+  --color-neon-pink: #FF4583;
+  --color-plain-neon: #FE3F23;
+
+  /* Gradient shortcuts */
+  --gradient-neon: linear-gradient(135deg, #FF7A4D 0%, #FF2526 55%, #FF4583 100%); /* @kind color */
+  --gradient-neon-hero: radial-gradient(circle at 18% 20%, #FF8559 0%, #FF2526 48%, #E61E5C 100%); /* @kind color */
+  --gradient-neon-dark: radial-gradient(circle at 80% 90%, #B8001F 0%, #FF2526 60%, #FF7A4D 100%); /* @kind color */
+  --gradient-neon-45: linear-gradient(-45deg, #FF7A4D 0%, #FF2526 50%, #FF4583 100%); /* @kind color */
+
+  /* === COUNTRY SIGNATURES ===
+     MX / CL: Pídelo por Rappi
+     CO / PE / EC: Pide un Rappi
+     AR / UY: Pedí un Rappi
+     BR: Pede no Rappi
+  */
+
+  /* === APP SECONDARY PALETTE (own media / in-app only) === */
+  --color-celeste: #D9F1FF;
+  --color-morado: #E5DCFF;
+  --color-rosado: #F4DFF6;
+  --color-lavanda: #F4F0FC;
+  --color-beige: #FFF0DD;
+
+  /* === TURBO === */
+  --color-turbo-green: #248F63;
+  --color-turbo-dark: #00453E;
+
+  /* === PRO (light) === */
+  --color-pro-bg: #ECEFF3;
+  --color-pro-text: #000000;
+  --color-pro-muted: #646464;
+  --color-pro-gold-light: #F0B769;
+  --color-pro-gold-dark: #E8A24C;
+
+  /* === PRO BLACK (dark) === */
+  --color-pro-black-bg: #2A2B2B;
+  --color-pro-black-text: #FFFFFF;
+  --color-pro-black-surface: #ECEFF3;
+
+  /* === NEUTRALS === */
+  --color-ink: #0A0A0A;
+  --color-muted: rgba(10,10,10,0.57);   /* .55 daba 4.42:1 sobre papel, por debajo de 4.5 */
+  --color-line: rgba(10,10,10,0.10);
+  --color-cream: #FAEEDA;
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+
+  /* === EMAIL BODY === */
+  --color-email-text: #383838;
+
+  /* === SEMANTIC ALIASES === */
+  --surface-page: var(--color-white);
+  --surface-card: var(--color-white);
+  --surface-neon: var(--gradient-neon);
+  --text-primary: var(--color-ink);
+  --text-secondary: var(--color-muted);
+  --text-on-neon: var(--color-white);
+  --text-on-dark: var(--color-white);
+  --accent-primary: var(--color-neon-red);
+  --accent-gradient: var(--gradient-neon);
+  --accent-gold: var(--color-pro-gold-light);
+}
+
+/* src/client/tokens/typography.css */
+/* RappiAds · Typography Tokens
+   Source: Rappi Brand Book 2026 · Cap. 5 §5.15–5.16 */
+
+:root {
+  /* === FONT FAMILIES === */
+  --font-primary: 'PPObjectSans', sans-serif;
+  /* Email only — Jornada Sans not available; using PP Object Sans as fallback */
+  --font-email: 'PPObjectSans', sans-serif;
+
+  /* === WEIGHTS === */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+  --weight-heavy: 900;
+
+  /* === TYPE SCALE (brand-canonical sizes) === */
+  /* Display — dominante, cover headlines */
+  --text-display: 900 clamp(64px, 12vw, 230px)/0.86 var(--font-primary);
+  --text-display-size: clamp(64px, 12vw, 230px);
+
+  /* Section heading */
+  --text-h1-size: clamp(40px, 6vw, 100px);
+  --text-h1: 900 var(--text-h1-size)/0.96 var(--font-primary);
+
+  /* Content heading */
+  --text-h2-size: clamp(28px, 4vw, 64px);
+  --text-h2: 900 var(--text-h2-size)/1.03 var(--font-primary);
+
+  /* Sub-heading */
+  --text-h3-size: clamp(20px, 2.5vw, 40px);
+  --text-h3: 700 var(--text-h3-size)/1.15 var(--font-primary);
+
+  /* Body */
+  --text-body-size: 17px;
+  --text-body: 500 var(--text-body-size)/1.7 var(--font-primary);
+
+  /* Lede / intro */
+  --text-lede-size: 22px;
+  --text-lede: 500 var(--text-lede-size)/1.55 var(--font-primary);
+
+  /* Meta / eyebrow */
+  --text-meta-size: 12px;
+  --text-meta: 600 var(--text-meta-size)/1 var(--font-primary);
+
+  /* Legal / fine print */
+  --text-legal-size: 11px;
+  --text-legal: 400 var(--text-legal-size)/1.5 var(--font-primary);
+
+  /* === IN-APP FORMAT SIZES (Brand Book §6) === */
+  --inapp-title-size: 33px;  /* Inapp titular · Heavy */
+  --inapp-desc-size: 21px;   /* Inapp description · Medium */
+  --banner-home-title: 26px; /* Banner Home · Heavy */
+  --banner-home-sub: 20px;   /* Banner Home · Medium */
+  --banner-filtro-title: 88px; /* Banner Filtro · Heavy */
+  --banner-filtro-desc: 40px;  /* Banner Filtro · Medium */
+
+  /* === EMAIL SIZES === */
+  --email-title-size: 40px;  /* Jornada Sans · Heavy */
+  --email-body-size: 20px;   /* Jornada Sans · Medium */
+  --email-cta-size: 28px;    /* Jornada Sans · Heavy */
+
+  /* === LETTER SPACING === */
+  --tracking-tight: -0.045em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.12em;
+  --tracking-widest: 0.16em;
+}
+
+/* src/client/tokens/spacing.css */
+/* RappiAds · Spacing &amp; Layout Tokens */
+
+:root {
+  /* === BASE SCALE (4px base) === */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-14: 56px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-30: 120px;
+
+  /* === SEMANTIC SPACING === */
+  --gap-xs: var(--space-2);
+  --gap-sm: var(--space-3);
+  --gap-md: var(--space-6);
+  --gap-lg: var(--space-10);
+  --gap-xl: var(--space-16);
+
+  /* === LAYOUT === */
+  --page-margin: var(--space-30);   /* 120px — standard slide/page margin */
+  --content-max: 1280px;
+  --card-padding: var(--space-6);   /* 24px */
+  --card-padding-lg: var(--space-10); /* 40px */
+
+  /* === BORDER RADIUS === */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+  --radius-pill: 9999px;
+
+  /* === LOGO SAFE AREA === */
+  /* X = height of the symbol; safe area = 1X on all sides */
+  --logo-safe-area: 1em; /* relative to logo height */
+
+  /* === FORMAT DIMENSIONS (Brand Book §6) === */
+  --inapp-w: 300px;
+  --inapp-h: 400px;
+  --banner-home-w: 320px;
+  --banner-home-h: 136px;
+  --push-image-w: 600px;
+  --push-image-h: 300px;
+
+  /* === SHADOWS === */
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.13);
+}
+
+/* src/client/tokens/rappimind.css */
+/* RappiMind · Capa de aplicación
+   PRODUCCIÓN. La entrega original de Claude Design está en
+   docs/diseno/tokens/rappimind.css y se queda ahí tal como llegó.
+
+   Extiende los tokens de RappiAds con lo que el design system no cubre:
+   estados de control, avisos y estados de campaña.
+   Se concatena SIEMPRE el último, para que pueda pisar a los anteriores.
+
+   Qué cambia respecto de la entrega, y por qué. Son los seis arreglos de
+   docs/diseno/AUDITORIA_CONTRASTE.md, que se reproducen con `npm run contraste`:
+
+     1. --rm-borde-control      .18 -&gt; .44   daba 1.5:1 donde WCAG pide 3
+     2. --rm-placeholder    #8A8A8A -&gt; #707070   daba 3.45:1 donde pide 4.5
+     3. --rm-aviso-error-color  neón -&gt; #D91F20  daba 3.79:1 donde pide 4.5
+     4. --rm-hueco-subrayado  alfa .6 -&gt; #D91F20 daba 2.32:1 donde pide 3
+     5. --rm-anillo y --rm-anillo-campo, que eran halos de box-shadow con alfa
+        .45 y .30, daban 1.99:1 y 1.57:1. El anillo de hoy ya cumple con 3.44:1
+        y el foco visible está entre los intocables de docs/PARA_EL_DISENO.md,
+        así que copiarlos habría sido una regresión sobre algo que funcionaba.
+        Quedan como un color sólido que se usa con outline: 3.79:1.
+     6. --color-muted del design system, .55 -&gt; .57 (ver colors.css)
+
+   Regla general: ningún estado se comunica con opacity. Bajar la opacidad
+   arrastra el texto por debajo del contraste mínimo. Se usan colores planos.
+
+   Aquí solo hay tokens. Las animaciones y la consulta de movimiento reducido
+   viven en src/client/estilos.css, que ya las tenía y además apaga el
+   scroll-behavior, cosa que la entrega original no hacía. */
+
+:root {
+  /* === SUPERFICIES === */
+  --rm-papel: #FFFFFF;
+  --rm-niebla: #F4F5F6;            /* fondo de página y de control deshabilitado */
+  --rm-tinta: #0A0A0A;
+
+  /* === LETRA ===
+     Dos familias, y la separación es deliberada. Ver el comentario largo de
+     fonts.css: de PP Object Sans se sirve una sola cara, la de peso 900, así
+     que si esa familia estuviera en la pila del cuerpo el navegador la usaría
+     también para 400, 500 y 700 y la aplicación entera saldría en Heavy. */
+  --rm-display: 'PPObjectSans', 'Archivo', system-ui, -apple-system, sans-serif;
+  --rm-texto-familia: 'Archivo', system-ui, -apple-system, sans-serif;
+
+  /* === TEXTO === */
+  --rm-texto: #0A0A0A;
+  --rm-texto-2: #595959;           /* 7.0:1 sobre blanco · secundario */
+  --rm-texto-off: #6B6B6B;         /* 4.88:1 sobre #F4F5F6 · deshabilitado */
+  --rm-placeholder: #707070;       /* 4.95:1 sobre papel, 4.54:1 sobre niebla */
+
+  /* === LÍNEAS === */
+  --rm-linea: rgba(10,10,10,.10);
+  --rm-borde-control: rgba(10,10,10,.44);   /* 3.07:1 sobre papel, 3.01:1 sobre niebla */
+  --rm-borde-secundario: rgba(10,10,10,.22);
+  --rm-borde-opcion: rgba(10,10,10,.12);    /* la tarjeta de opción sin elegir */
+
+  /* === ACENTO ===
+     Dos neones y la diferencia importa. El plano es para lo que NO lleva texto
+     encima, donde el mínimo es 3:1 y lo pasa. El de texto es el mismo neón al
+     85% de brillo, para lo que sí lleva texto, donde el mínimo es 4.5:1. */
+  --rm-neon: #FF2526;
+  --rm-neon-texto: #D91F20;        /* 5.04:1 sobre papel, 4.53:1 sobre niebla */
+  --rm-grad: linear-gradient(135deg, #FF7A4D 0%, #FF2526 55%, #FF4583 100%);
+  --rm-grad-hover: linear-gradient(135deg, #E8623A 0%, #D91F20 55%, #E03A72 100%);
+
+  /* El gradiente del botón primario, recortado al 17% del tramo. Decisión 98.
+     El blanco no llega a 4.5:1 en NINGÚN punto del gradiente completo: el
+     máximo de todo el tramo es 3.79:1. Recortando en el 17%, que es donde
+     empieza #FF6041, el blanco cruza 3.00:1, que es el umbral de texto grande,
+     y por eso el botón lleva su texto a 19px en peso 700. Las paradas de
+     dentro se recolocan: el 55% del tramo original cae en el 45.8% del
+     recortado. */
+  --rm-grad-boton: linear-gradient(135deg, #FF6041 0%, #FF2526 46%, #FF4583 100%);
+  --rm-anillo-color: #FF2526;      /* 3.79:1 · se usa con outline, no con halo */
+  --rm-neon-presionado: #A81718;   /* 7.56:1 con blanco · el neón hundido, para :active */
+
+  /* === CAMPOS ===
+     El campo con valor lleva borde TINTA, no neón.
+     El neón queda reservado para el error: si &quot;lleno&quot; y &quot;mal&quot; comparten
+     color, no se distinguen. */
+  --rm-campo-vacio: var(--rm-borde-control);
+  --rm-campo-lleno: var(--rm-tinta);
+  --rm-campo-error: #FF2526;       /* 2px, no 1.5px */
+  --rm-campo-off-bg: var(--rm-niebla);
+  --rm-campo-off-borde: var(--rm-linea);
+
+  /* === OPCIONES === */
+  --rm-opcion-sel-bg: rgba(255,37,38,.045);
+  --rm-opcion-sel-borde: #FF2526;
+  --rm-opcion-off-bg: var(--rm-niebla);
+
+  /* === PROGRESO === */
+  --rm-paso-hecho: var(--rm-tinta);
+  --rm-paso-actual: var(--rm-grad);
+  --rm-paso-pendiente: rgba(10,10,10,.12);
+  --rm-paso-alto: 4px;
+  --rm-paso-min-etiqueta: 88px;    /* por debajo, las etiquetas se ocultan */
+  --rm-paso-max-etiqueta: 6;       /* con más pasos, las etiquetas se ocultan */
+
+  /* === AVISOS ===
+     Tres niveles, distinguidos por ESTRUCTURA, no por color de borde.
+     1 informativo: panel celeste, sin título en caja alta.
+     2 serio:       panel beige + regla de 3px en el borde SUPERIOR + título en caja alta.
+     3 error campo: sin panel, pegado al campo. */
+  --rm-aviso-info-bg: #D9F1FF;
+  --rm-aviso-serio-bg: #FFF0DD;
+  --rm-aviso-serio-regla: var(--rm-grad);
+  --rm-aviso-error-color: var(--rm-neon-texto);
+
+  /* === ESTADOS DE CAMPAÑA ===
+     Ordenados por peso visual, no por matiz. El verde sale: no es de marca. */
+  --rm-estado-publicado-bg: var(--rm-grad);
+  --rm-estado-publicado-fg: #FFFFFF;
+  --rm-estado-generado-bg: #FFF0DD;
+  --rm-estado-generado-fg: #0A0A0A;
+  --rm-estado-borrador-bg: var(--rm-niebla);
+  --rm-estado-borrador-fg: #595959;
+  --rm-estado-vencido-borde: rgba(10,10,10,.20);
+  --rm-estado-vencido-fg: #595959;
+
+  /* === DOCUMENTO === */
+  --rm-hueco-bg: #FFF0DD;
+  --rm-hueco-subrayado: 1.5px dotted #D91F20;   /* 4.5:1 sobre el beige del hueco */
+  --rm-destello: rgba(255,122,77,.45);
+  --rm-hoja-sombra: 0 1px 4px rgba(10,10,10,.08);
+
+  /* === SOMBRAS Y VELOS QUE NO DEFINE NINGÚN ARCHIVO DE TOKENS ===
+     Los tres existen hoy en la hoja como valores crudos sobre la tinta vieja
+     rgba(22,24,29). Suben a token para que el rebrand no los deje atrás, y su
+     rgb pasa a la tinta nueva. */
+  --rm-cortina: rgba(10,10,10,.35);
+  --rm-sombra-glosario: 0 6px 20px rgba(10,10,10,.25);
+  --rm-sombra-flotante: 0 2px 12px rgba(10,10,10,.12);
+
+  /* === MOVIMIENTO === */
+  --rm-t-control: 200ms;
+  --rm-t-entrada: 380ms;
+  --rm-t-destello: 900ms;
+  --rm-ease-entrada: cubic-bezier(.16, 1, .3, 1);
+}
+
+/* src/client/estilos.css */
+/*
  * RappiMind v3. El sistema completo está en docs/DISENO.md.
  *
  * Una sola superficie elevada en toda la aplicación: la hoja del documento.
@@ -1441,38 +2250,67 @@ carla@rappi.com" aria-label="Correos, separados por comas o por líneas"></texta
  */
 
 :root {
-  --naranja-marca: #ff441f;
-  --naranja-accion: #d32f0f;
-  --naranja-presionado: #a82409;
-  --tinta: #16181d;
-  --gris-lapiz: #5d626d;
-  --papel: #ffffff;
-  --niebla: #f4f6f8;
+  /*
+   * Capa de alias. Los valores viven en src/client/tokens/ y se concatenan
+   * antes que esto; aqui solo estan los nombres cortos con que la hoja los
+   * llama, que son 275 llamadas a var(). Existe por dos razones concretas.
+   *
+   * Una: que la marca pueda mover un token sin que haya que tocar 275 sitios.
+   * Dos, y es la que muerde: scripts/lib/front-documento.js usa doce de estos
+   * nombres y NO los define, los hereda de aqui al pegar la hoja dentro de
+   * docs/FRONT_ACTUAL.html. Si un nombre desaparece sin avisar, el documento
+   * que envuelve a las 48 pantallas se queda sin colores ni tipografia, en
+   * silencio y sin error, y ese documento es justo la herramienta con la que
+   * se verifica cada fase del rebrand.
+   */
 
+  /* Dos neones, y la diferencia no es cosmetica: el plano es para lo que no
+     lleva texto encima (bordes, anillos, viñetas), donde el minimo es 3:1; el
+     de texto es el mismo neon al 85% de brillo, para lo que si lo lleva, donde
+     el minimo es 4.5:1. Ver el hallazgo 3.6 de docs/PLAN_IDENTIDAD.md. */
+  --neon: var(--rm-neon);
+  --neon-texto: var(--rm-neon-texto);
+  --neon-presionado: var(--rm-neon-presionado);
+  --gradiente: var(--rm-grad);
+  --gradiente-boton: var(--rm-grad-boton);
+  --gradiente-hover: var(--rm-grad-hover);
+
+  --tinta: var(--rm-tinta);
+  --gris-lapiz: var(--rm-texto-2);
+  --texto-off: var(--rm-texto-off);
+  --papel: var(--rm-papel);
+  --niebla: var(--rm-niebla);
+  --beige: var(--rm-hueco-bg);
+  --celeste: var(--rm-aviso-info-bg);
+
+  --borde: var(--rm-linea);
+  --borde-control: var(--rm-borde-control);
+  --borde-opcion: var(--rm-borde-opcion);
+
+  /* Se va en la fase 6, cuando el historial deje de distinguir Publicado por
+     el matiz y pase a distinguirlo por peso visual. El verde no es de marca. */
   --verde-confirma: #0b7a52;
-  --verde-palido: #e6f4ee;
-  --rojo-alerta: #c4320a;
-  --rojo-palido: #fdece6;
-  --rubor: #ffede8;
 
-  --borde: #e2e6eb;
-  --borde-control: #767e8c;
-
-  --titulos: 'Poppins', system-ui, -apple-system, sans-serif;
-  --cuerpo: 'Lato', system-ui, -apple-system, sans-serif;
+  --titulos: 'Poppins', system-ui, -apple-system, sans-serif;   /* fase 2 */
+  --cuerpo: 'Lato', system-ui, -apple-system, sans-serif;       /* fase 2 */
 
   --e1: 4px; --e2: 8px; --e3: 12px; --e4: 16px;
   --e5: 24px; --e6: 32px; --e7: 48px; --e8: 64px;
 
-  --r-control: 6px;
-  --r-panel: 10px;
-  --r-hoja: 14px;
+  --r-control: var(--radius-sm);
+  --r-panel: var(--radius-md);
+  --r-hoja: var(--radius-lg);
+  --r-pildora: var(--radius-pill);
 
-  --sombra-hoja: 0 1px 2px rgba(22, 24, 29, 0.05), 0 8px 24px rgba(22, 24, 29, 0.07);
+  --sombra-hoja: var(--rm-hoja-sombra);
+  --sombra-glosario: var(--rm-sombra-glosario);
+  --sombra-flotante: var(--rm-sombra-flotante);
+  --cortina: var(--rm-cortina);
+  --destello: var(--rm-destello);
 
-  --t-rapido: 160ms;
-  --t-hoja: 220ms;
-  --t-destello: 900ms;
+  --t-rapido: var(--rm-t-control);
+  --t-hoja: var(--rm-t-entrada);
+  --t-destello: var(--rm-t-destello);
 }
 
 * { box-sizing: border-box; }
@@ -1494,10 +2332,10 @@ h1 { font-size: 28px; line-height: 1.2; margin: 0 0 var(--e3); letter-spacing: -
 h2 { font-size: 21px; line-height: 1.3; margin: 0 0 var(--e2); letter-spacing: -0.01em; }
 h3 { font-size: 17px; line-height: 1.35; margin: 0 0 var(--e2); }
 p { margin: 0 0 var(--e3); }
-a { color: var(--naranja-accion); }
+a { color: var(--neon-texto); }
 
 :focus-visible {
-  outline: 3px solid var(--naranja-marca);
+  outline: 3px solid var(--neon);
   outline-offset: 2px;
   border-radius: var(--r-control);
 }
@@ -1522,7 +2360,7 @@ a { color: var(--naranja-accion); }
   position: absolute;
   width: 14px; height: 9px;
   top: -2px; left: 40px;
-  color: var(--naranja-marca);
+  color: var(--neon);
 }
 .marca em { font-style: normal; color: var(--gris-lapiz); font-weight: 500; }
 
@@ -1543,7 +2381,7 @@ a { color: var(--naranja-accion); }
   padding: var(--e2) var(--e3); border-radius: var(--r-control); cursor: pointer;
 }
 .enlace-nav:hover { background: var(--niebla); color: var(--tinta); }
-.enlace-nav[aria-current='page'] { color: var(--tinta); box-shadow: inset 0 -2px 0 var(--naranja-marca); }
+.enlace-nav[aria-current='page'] { color: var(--tinta); box-shadow: inset 0 -2px 0 var(--neon); }
 
 /*
  * El titulo de la pantalla recibe el foco al cambiar de pantalla, para que el
@@ -1567,8 +2405,8 @@ h1[tabindex='-1']:focus:not(:focus-visible) { outline: none; }
 /* --- Aviso -------------------------------------------------------------- */
 
 .aviso {
-  background: var(--rubor);
-  border-left: 3px solid var(--naranja-marca);
+  background: var(--beige);
+  border-left: 3px solid var(--neon);
   border-radius: 0 var(--r-control) var(--r-control) 0;
   padding: var(--e3) var(--e4);
   margin: 0 0 var(--e5);
@@ -1576,7 +2414,7 @@ h1[tabindex='-1']:focus:not(:focus-visible) { outline: none; }
 }
 .aviso h3 { margin-bottom: var(--e1); }
 .aviso p:last-child { margin-bottom: 0; }
-.aviso-serio { border-left-color: var(--rojo-alerta); }
+.aviso-serio { border-left-color: var(--neon); }
 
 /* --- Botones ------------------------------------------------------------ */
 
@@ -1587,14 +2425,14 @@ button { font-size: 15px; cursor: pointer; }
   padding: 13px var(--e5);
   border-radius: var(--r-control);
   border: 1px solid transparent;
-  background: var(--naranja-accion);
+  background: var(--neon-texto);
   color: var(--papel);
   transition: background var(--t-rapido);
 }
-.boton:hover { background: #b82a0c; }
-.boton:active { background: var(--naranja-presionado); }
+.boton:hover { background: var(--neon-presionado); }
+.boton:active { background: var(--neon-presionado); }
 .boton[disabled] {
-  background: var(--borde); color: var(--borde-control);
+  background: var(--niebla); color: var(--texto-off);
   cursor: not-allowed; border-color: var(--borde);
 }
 
@@ -1603,11 +2441,11 @@ button { font-size: 15px; cursor: pointer; }
   border-color: var(--borde-control);
 }
 .boton-secundario:hover { background: var(--niebla); }
-.boton-secundario[disabled] { color: var(--borde-control); background: transparent; }
+.boton-secundario[disabled] { color: var(--texto-off); background: transparent; }
 
 .boton-texto {
   background: none; border: 0; padding: var(--e1) 0;
-  color: var(--naranja-accion); font-family: var(--cuerpo); font-size: 14px;
+  color: var(--neon-texto); font-family: var(--cuerpo); font-size: 14px;
   text-decoration: underline; text-underline-offset: 3px;
 }
 
@@ -1629,8 +2467,8 @@ button { font-size: 15px; cursor: pointer; }
   font-family: var(--cuerpo); font-size: 13px; color: var(--gris-lapiz);
   line-height: 1.25; word-break: normal; hyphens: none;
 }
-.progreso .hecho button { border-bottom-color: var(--naranja-accion); color: var(--tinta); }
-.progreso .actual button { border-bottom-color: var(--naranja-marca); color: var(--tinta); font-weight: 700; }
+.progreso .hecho button { border-bottom-color: var(--neon-texto); color: var(--tinta); }
+.progreso .actual button { border-bottom-color: var(--neon); color: var(--tinta); font-weight: 700; }
 .progreso button[disabled] { cursor: default; }
 
 /* --- Preguntas ---------------------------------------------------------- */
@@ -1676,7 +2514,7 @@ button { font-size: 15px; cursor: pointer; }
 
 .por-que { margin: var(--e2) 0 0; }
 .por-que summary {
-  color: var(--naranja-accion); font-size: 14px; cursor: pointer;
+  color: var(--neon-texto); font-size: 14px; cursor: pointer;
   list-style: none; display: inline-block; text-decoration: underline; text-underline-offset: 3px;
 }
 .por-que summary::-webkit-details-marker { display: none; }
@@ -1699,16 +2537,16 @@ input[type='text'], input[type='number'], input[type='date'], input[type='time']
   padding: 12px var(--e3);
 }
 input:hover, select:hover, textarea:hover { border-color: var(--gris-lapiz); }
-input:focus, select:focus, textarea:focus { border-color: var(--naranja-marca); }
-input[disabled], select[disabled] { background: var(--niebla); color: var(--borde-control); cursor: not-allowed; }
+input:focus, select:focus, textarea:focus { border-color: var(--neon); }
+input[disabled], select[disabled] { background: var(--niebla); color: var(--texto-off); cursor: not-allowed; }
 
 .con-moneda input { padding-left: 34px; }
 .simbolo-moneda {
   position: absolute; left: var(--e3); color: var(--gris-lapiz); font-size: 16px; pointer-events: none;
 }
 
-.campo-error input, .campo-error select { border-color: var(--rojo-alerta); }
-.mensaje-error { color: var(--rojo-alerta); font-size: 14px; margin: var(--e2) 0 0; display: flex; gap: var(--e2); }
+.campo-error input, .campo-error select { border-color: var(--neon); }
+.mensaje-error { color: var(--neon-texto); font-size: 14px; margin: var(--e2) 0 0; display: flex; gap: var(--e2); }
 .mensaje-ok { color: var(--verde-confirma); font-size: 14px; margin: var(--e2) 0 0; display: flex; gap: var(--e2); align-items: center; }
 
 .asi-queda {
@@ -1733,12 +2571,12 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 }
 .opcion:hover:not([disabled]) { border-color: var(--gris-lapiz); }
 .opcion[aria-pressed='true'], .opcion.elegida {
-  border: 2px solid var(--naranja-marca); background: var(--rubor); padding: 11px 15px;
+  border: 2px solid var(--neon); background: var(--beige); padding: 11px 15px;
 }
 .opcion[disabled] { opacity: 0.55; cursor: not-allowed; }
 .opcion-titulo { display: block; font-size: 15px; }
 .opcion-nota { display: block; color: var(--gris-lapiz); font-size: 13px; margin-top: 2px; }
-.opcion[disabled] .opcion-nota { color: var(--rojo-alerta); }
+.opcion[disabled] .opcion-nota { color: var(--neon-texto); }
 
 /* El buscador del historial. Sin la regla de arriba para type=search, el
    campo salia con el ancho del navegador y cortaba su propio texto de ayuda:
@@ -1756,11 +2594,11 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
    que existe ni de que vencio. */
 .opcion-vencida { opacity: 0.7; cursor: not-allowed; }
 .opcion-vencida .opcion-nota { color: var(--gris-lapiz); }
-.opcion-vencida .opcion-nota-vencido { color: var(--rojo-alerta); }
+.opcion-vencida .opcion-nota-vencido { color: var(--neon-texto); }
 
 .casillas { display: grid; gap: var(--e2); border: 0; padding: 0; margin: 0; }
 .casilla { display: flex; gap: var(--e3); align-items: flex-start; cursor: pointer; padding: var(--e2) 0; }
-.casilla input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--naranja-accion); flex: none; }
+.casilla input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--neon-texto); flex: none; }
 .casilla span { font-size: 15px; }
 .casilla small { display: block; color: var(--gris-lapiz); font-size: 13px; }
 
@@ -1769,7 +2607,7 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
   border: 1px solid var(--borde-control); background: var(--papel);
   border-radius: 999px; padding: 5px var(--e3); font-size: 13px; font-family: var(--cuerpo);
 }
-.sugerencia:hover { background: var(--rubor); border-color: var(--naranja-marca); }
+.sugerencia:hover { background: var(--beige); border-color: var(--neon); }
 
 /* --- Glosario ----------------------------------------------------------- */
 
@@ -1783,7 +2621,7 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
   background: var(--tinta); color: var(--papel);
   padding: var(--e3); border-radius: var(--r-control);
   font-size: 13px; line-height: 1.45;
-  box-shadow: 0 6px 20px rgba(22, 24, 29, 0.25);
+  box-shadow: var(--sombra-glosario);
 }
 .glosario-panel strong { display: block; margin-bottom: var(--e1); }
 
@@ -1816,11 +2654,11 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 .hoja .doc-vineta::before { content: '\2022'; position: absolute; left: -14px; color: var(--gris-lapiz); }
 
 .hoja mark {
-  background: var(--rubor); color: inherit; border-radius: 3px; padding: 0 2px;
+  background: var(--beige); color: inherit; border-radius: 3px; padding: 0 2px;
   animation: destello var(--t-destello) ease-out forwards;
 }
 @keyframes destello {
-  0% { background: #ffd2c4; }
+  0% { background: var(--destello); }
   100% { background: transparent; }
 }
 
@@ -1849,7 +2687,7 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 .ficha dd { margin: 0; font-size: 14px; }
 
 .te-falta { margin: var(--e4) 0 0; padding: 0 0 0 var(--e4); }
-.te-falta li { color: var(--rojo-alerta); font-size: 14px; margin-bottom: var(--e1); }
+.te-falta li { color: var(--neon-texto); font-size: 14px; margin-bottom: var(--e1); }
 
 /* --- Tablas de historial y administración ------------------------------- */
 
@@ -1870,7 +2708,7 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 .boton-flotante { display: none; }
 
 .cortina {
-  position: fixed; inset: 0; background: rgba(22, 24, 29, 0.35);
+  position: fixed; inset: 0; background: var(--cortina);
   z-index: 40; opacity: 0; pointer-events: none; transition: opacity var(--t-hoja);
 }
 .cortina.abierta { opacity: 1; pointer-events: auto; }
@@ -1896,7 +2734,7 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
   display: flex; align-items: center; gap: 2px;
   padding: 4px; border-radius: 999px;
   background: var(--papel); border: 1px solid var(--borde);
-  box-shadow: 0 2px 12px rgba(22, 24, 29, 0.12);
+  box-shadow: var(--sombra-flotante);
 }
 .selector-idioma button {
   border: 0; background: transparent; cursor: pointer;
@@ -1904,8 +2742,8 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
   font: inherit; font-size: 0.82rem; font-weight: 600; color: var(--gris-lapiz);
 }
 .selector-idioma button:hover { background: var(--niebla); }
-.selector-idioma button[aria-pressed=&quot;true&quot;] { background: var(--naranja-marca); color: #fff; }
-.selector-idioma button:focus-visible { outline: 2px solid var(--naranja-marca); outline-offset: 2px; }
+.selector-idioma button[aria-pressed=&quot;true&quot;] { background: var(--neon-texto); color: var(--papel); }
+.selector-idioma button:focus-visible { outline: 2px solid var(--neon); outline-offset: 2px; }
 
 /* --- Pantalla final ------------------------------------------------------ */
 
@@ -1914,7 +2752,7 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 .pasos-publicar li::before {
   content: counter(paso); position: absolute; left: 0; top: 0;
   width: 24px; height: 24px; border-radius: 50%;
-  background: var(--rubor); color: var(--naranja-accion);
+  background: var(--beige); color: var(--neon-texto);
   font-family: var(--titulos); font-weight: 600; font-size: 13px;
   display: flex; align-items: center; justify-content: center;
 }
@@ -1940,7 +2778,7 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
   }
   .progreso-linea::before {
     content: ''; position: absolute; inset: 0 auto 0 0;
-    width: var(--avance); background: var(--naranja-marca); border-radius: 1px;
+    width: var(--avance); background: var(--neon); border-radius: 1px;
   }
 
   .barra-superior { padding: var(--e2) var(--e4); gap: var(--e3); }
@@ -1975,7 +2813,7 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
     scroll-behavior: auto !important;
   }
   /* Sin animación, el destello se queda como borde fijo hasta el próximo cambio. */
-  .hoja mark { background: var(--rubor); outline: 2px solid var(--naranja-marca); outline-offset: 1px; }
+  .hoja mark { background: var(--beige); outline: 2px solid var(--neon); outline-offset: 1px; }
 }
 </pre>
 
@@ -2041,7 +2879,7 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--bord
 <thead><tr><th>Archivo</th><th>Líneas</th><th>Qué hace</th></tr></thead>
 <tbody>
 <tr><td><code>src/client/Index.html</code></td><td>26</td><td>La plantilla que evalúa Apps Script. Mete los estilos, el motor y la interfaz. Va completa en el anexo B.</td></tr>
-<tr><td><code>src/client/estilos.css</code></td><td>545</td><td>La hoja de estilos entera. Una sola superficie elevada en toda la app: la hoja del documento. Va completa en el anexo A.</td></tr>
+<tr><td><code>src/client/estilos.css</code></td><td>574</td><td>La hoja de estilos entera. Una sola superficie elevada en toda la app: la hoja del documento. Va completa en el anexo A.</td></tr>
 <tr><td><code>src/client/js/10-util.js</code></td><td>229</td><td>Crear elementos, copiar al portapapeles, iconos, anuncios para lectores de pantalla. Todo dato del usuario entra como texto, nunca como HTML.</td></tr>
 <tr><td><code>src/client/js/20-estado.js</code></td><td>226</td><td>El estado del recorrido (E), el borrador en el navegador, el idioma de la interfaz y el texto de cada pregunta.</td></tr>
 <tr><td><code>src/client/js/30-servidor.js</code></td><td>71</td><td>La única puerta al servidor. En Apps Script llama con google.script.run; en la demostración, al servidor simulado.</td></tr>

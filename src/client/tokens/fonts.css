@@ -1,0 +1,44 @@
+/* RappiMind · Las caras de letra que se sirven de verdad
+   Producción. La entrega original de Claude Design está en
+   docs/diseno/tokens/fonts.css, que declara las cuatro caras de PP Object Sans
+   apuntando a archivos del repositorio.
+
+   Aquí se sirve una sola: PP Object Sans Heavy 900. La decisión 99 la tomó Juan
+   el 21 de septiembre de 2026, con la medición de docs/diseno/MEDICION_FUENTES.md
+   delante. El resumen de por qué:
+
+     · Apps Script arma el HTML con doGet en cada petición y no lo cachea, así que
+       un kilobyte incrustado se paga en cada carga. Google Fonts responde con un
+       año de caché: se paga una vez por navegador.
+     · El base64 es la única parte de la carga que no se comprime. El resto de la
+       aplicación baja cuatro a uno con gzip; el woff2 no baja nada porque ya viene
+       comprimido por dentro. Por eso los cuatro pesos parecían costar un 14% y
+       sobre lo que de verdad viaja costaban un 43%, en cada carga y para siempre.
+     · La marca se reconoce en el peso Heavy, no en el cuerpo de texto a 17px.
+
+   OJO, Y ES LA TRAMPA DE ESTE ARCHIVO. Aquí se declara UNA sola cara de la
+   familia PPObjectSans, la de peso 900. Si esa familia se pusiera primero en la
+   pila del cuerpo de texto, el navegador la usaría también para 400, 500 y 700:
+   dentro de una familia, cuando el peso pedido no existe, se elige el más cercano
+   que sí exista, y aquí el único que existe es el 900. La aplicación entera
+   saldría en Heavy sin que nada fallara.
+
+   Por eso hay dos familias separadas y no una:
+     --display  lleva PPObjectSans y SOLO se usa donde el peso es 900.
+     --titulos y --cuerpo llevan Archivo, que es variable y cubre 400 a 900.
+
+   La prueba `una familia de display solo se usa en peso 900`
+   (pruebas/estilos.test.js) es la que impide que eso se rompa en silencio.
+
+   El archivo se incrusta en base64 al construir: scripts/lib/hoja-completa.js
+   reemplaza la url() por el contenido del woff2, porque Apps Script no sirve
+   archivos del repositorio. Si el archivo no está, el build se cae con un
+   mensaje claro en vez de servir una url() que nadie puede resolver. */
+
+@font-face {
+  font-family: 'PPObjectSans';
+  src: url('../assets/fonts/PPObjectSans-Heavy.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}

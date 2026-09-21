@@ -3,7 +3,7 @@
 /**
  * Mide el contraste de la paleta de identidad contra WCAG 2.1.
  *
- * Lee los valores de docs/diseno/tokens/, asi que no hay numeros escritos a
+ * Lee los valores de src/client/tokens/, asi que no hay numeros escritos a
  * mano aqui: si un token cambia, la medicion cambia con el. Lo unico escrito a
  * mano es la lista de PARES, que dice que va encima de que, porque eso no se
  * puede deducir de un archivo de tokens.
@@ -22,7 +22,10 @@
 const path = require('path');
 const { rutaDesdeRaiz, leerTexto, listarArchivos } = require('./lib/archivos');
 
-const CARPETA_TOKENS = rutaDesdeRaiz('docs', 'diseno', 'tokens');
+// Los de PRODUCCION, no los de la entrega: son los que de verdad se sirven.
+// docs/diseno/tokens/ se queda como llego de Claude Design, y los seis
+// arreglos de docs/diseno/AUDITORIA_CONTRASTE.md solo estan aqui.
+const CARPETA_TOKENS = rutaDesdeRaiz('src', 'client', 'tokens');
 
 /** Saca { nombre: valor } de todos los archivos de tokens. */
 function leerTokens() {
@@ -126,12 +129,28 @@ const PARES = [
   { que: 'borde del campo en error', frente: '--rm-campo-error', fondo: '#FFFFFF', min: 3 },
   { que: 'borde del campo vacio', frente: '--rm-campo-vacio', fondo: '#FFFFFF', min: 3 },
   { que: 'borde de la opcion elegida', frente: '--rm-opcion-sel-borde', fondo: '#FFFFFF', min: 3 },
+
+  // El punto exacto de la decision 98: el blanco sobre el ARRANQUE del gradiente
+  // recortado, que es la parada mas clara y por tanto la peor de todo el boton.
+  // Le toca 3 y no 4.5 porque el texto va a 19px en peso 700, y el umbral de
+  // texto grande de WCAG empieza en 18.66px en negrita. Si alguien mueve el
+  // recorte hacia el naranja, esta linea se pone en rojo.
+  { que: 'blanco sobre el arranque del gradiente del boton', frente: '#FFFFFF', fondo: '--rm-grad-boton', min: 3 },
+  { que: 'blanco sobre el neon hundido', frente: '#FFFFFF', fondo: '--rm-neon-presionado', min: 4.5 },
   { que: 'borde del control deshabilitado', frente: '--rm-campo-off-borde', fondo: '--rm-niebla', min: 3,
     nota: 'WCAG exime los componentes inactivos' },
 
   // --- Indicadores de foco: WCAG 2.4.11 los mide contra el color de al lado
-  { que: 'anillo de foco del control', frente: '--rm-anillo', colorNumero: 1, fondo: '#FFFFFF', min: 3 },
-  { que: 'anillo del campo enfocado', frente: '--rm-anillo-campo', fondo: '#FFFFFF', min: 3 },
+  //
+  // Un solo anillo para todo control, y es un outline solido, no el halo de
+  // box-shadow de la entrega: aquel daba 1.99:1 en el control y 1.57:1 en el
+  // campo, cuando el anillo que la aplicacion ya tenia cumplia con 3.44:1.
+  // El foco visible esta entre los intocables de docs/PARA_EL_DISENO.md, asi
+  // que bajarlo habria sido una regresion. Se mide contra los dos fondos sobre
+  // los que aparece de verdad.
+  { que: 'anillo de foco sobre papel', frente: '--rm-anillo-color', fondo: '#FFFFFF', min: 3 },
+  { que: 'anillo de foco sobre niebla', frente: '--rm-anillo-color', fondo: '--rm-niebla', min: 3 },
+  { que: 'anillo de foco sobre el beige del aviso serio', frente: '--rm-anillo-color', fondo: '--rm-aviso-serio-bg', min: 3 },
 
   // --- Objetos graficos que comunican estado ------------------------------
   { que: 'barra del paso hecho', frente: '--rm-paso-hecho', fondo: '#FFFFFF', min: 3 },
@@ -159,7 +178,7 @@ function medir() {
   const avisos = [];
 
   console.log('Contraste de la paleta de identidad, medido contra WCAG 2.1.');
-  console.log('Fuente de los valores: docs/diseno/tokens/\n');
+  console.log('Fuente de los valores: src/client/tokens/\n');
 
   for (const par of PARES) {
     const fondo = aColor(soloElColor(resolver(par.fondo, tokens)));

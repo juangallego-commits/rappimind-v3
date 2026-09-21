@@ -113,7 +113,7 @@ body.doc-cuerpo {
 .doc-portada li { margin-bottom: 6px; }
 
 .doc-caja {
-  background: var(--niebla); border-left: 3px solid var(--naranja-marca);
+  background: var(--niebla); border-left: 3px solid var(--neon);
   border-radius: 0 6px 6px 0; padding: 14px 18px; margin: 20px 0;
 }
 .doc-caja h2 { margin-top: 0; }
@@ -129,7 +129,7 @@ body.doc-cuerpo {
 .doc-indice h2 { font-family: var(--titulos); font-size: 21px; margin: 0 0 16px; }
 .doc-indice ol { list-style: none; padding: 0; margin: 0 0 24px; columns: 2; column-gap: 40px; }
 .doc-indice li { margin-bottom: 4px; font-size: 14px; break-inside: avoid; }
-.doc-indice a { color: var(--naranja-accion); text-decoration: none; }
+.doc-indice a { color: var(--neon-texto); text-decoration: none; }
 .doc-indice a:hover { text-decoration: underline; }
 .doc-indice .doc-numero-indice { color: var(--gris-lapiz); display: inline-block; min-width: 26px; }
 .doc-indice h3 { font-family: var(--titulos); font-size: 15px; margin: 0 0 8px; color: var(--gris-lapiz); }
@@ -142,7 +142,7 @@ body.doc-cuerpo {
 .doc-pantalla:first-of-type { border-top: 0; }
 .doc-numero {
   font-family: var(--titulos); font-size: 12px; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--naranja-accion); margin: 0 0 4px;
+  text-transform: uppercase; color: var(--neon-texto); margin: 0 0 4px;
 }
 .doc-pantalla h3 { font-family: var(--titulos); font-size: 22px; margin: 0 0 6px; letter-spacing: -0.01em; }
 .doc-ficha { color: var(--gris-lapiz); font-size: 13px; margin: 0 0 12px; }

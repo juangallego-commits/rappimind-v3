@@ -1263,3 +1263,89 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
     subconjunto de pesos, o Archivo desde Google Fonts como respaldo con PP Object
     Sans primero en la pila. La medición necesita `assets/fonts/`, que todavía no
     está en el repositorio.
+
+## Bloque 8: el cambio de identidad
+
+100. **La decisión 99 se cierra con un solo peso incrustado.** Medido: los
+     cuatro pesos de PP Object Sans pesan 89,8 KB en woff2 recortado y 119,7 KB
+     en base64. Parecía un 14% sobre la carga y no lo es: el base64 es la única
+     parte de lo que se descarga que no se comprime, porque el woff2 ya viene
+     comprimido por dentro, mientras el resto de la aplicación baja cuatro a uno
+     con gzip. Sobre lo que de verdad viaja, los cuatro pesos cuestan un 42,9% en
+     cada carga, y Apps Script arma el HTML con `doGet` en cada petición y no lo
+     cachea. Juan eligió el 21 de septiembre de 2026 incrustar solo Heavy 900, que
+     es donde se reconoce la marca, y tomar 400, 500 y 700 de Archivo en Google
+     Fonts, que responde con un año de caché. Cuesta un 10,4% comprimido, y la
+     primera visita pesa 4,3 KB menos que hoy, porque Archivo es variable y los
+     cuatro pesos salen de un solo archivo de 34,1 KB mientras hoy se bajan Lato
+     más Poppins, que son 60,9 KB. Los números están en
+     `docs/diseno/MEDICION_FUENTES.md`.
+
+101. **Hay dos familias de letra, y la separación no es de estilo sino de
+     mecánica.** De PP Object Sans se sirve una sola cara, la de peso 900. Dentro
+     de una familia, cuando el peso pedido no existe el navegador elige el más
+     cercano que sí exista: con una sola cara declarada, pedir 400 devuelve la de
+     900. Si esa familia estuviera en la pila del cuerpo de texto, la aplicación
+     entera saldría en Heavy y nada fallaría. Por eso `--rm-display` lleva
+     PP Object Sans y solo vale donde el peso es 900, y el cuerpo va con Archivo,
+     que es variable y cubre de 400 a 900. Lo cuida la prueba `una familia de
+     display solo se usa en peso 900`.
+
+102. **Los tokens de producción viven en `src/client/tokens/` y el build los
+     concatena; no hay ningún `@import`.** Apps Script sirve la hoja embebida en
+     un solo `<style>`, así que un `@import` apunta a una ruta que del lado del
+     usuario no existe y no lanza ningún error: el navegador se queda sin esos
+     valores y la aplicación sale despintada. El orden está escrito una sola vez,
+     en `scripts/lib/hoja-completa.js`, y lo usan los cuatro que sirven la hoja:
+     el build, la demostración, `npm run front` y las pruebas. Que las pruebas
+     lean por ahí es la red: si alguien agrega un archivo de tokens y se olvida de
+     ponerlo en `ORDEN`, la prueba `toda variable de estilo que se usa está
+     definida` lo dice por su nombre.
+
+103. **`docs/diseno/tokens/` se queda como llegó y `src/client/tokens/` es lo que
+     se sirve.** No son copias: producción lleva los seis arreglos de
+     `docs/diseno/AUDITORIA_CONTRASTE.md`, sin los cuales `npm run contraste`
+     devuelve 1 con nueve pares por debajo del mínimo. Por eso ese script mide
+     ahora los de producción y no los de la entrega: medir la entrega sería medir
+     algo que nadie ve.
+
+104. **El anillo de foco se queda como `outline`, no pasa al halo del prototipo.**
+     El prototipo lo dibuja con dos capas de `box-shadow` en alfa .45 y .30, que
+     dan 1.99:1 y 1.57:1. El anillo que la aplicación ya tenía da 3.44:1 y el foco
+     visible está entre los intocables de `docs/PARA_EL_DISENO.md`, así que
+     copiarlo habría sido una regresión sobre algo que funcionaba. Queda un color
+     sólido, `#FF2526`, usado con `outline`: 3.79:1. De paso conserva la forma que
+     ya cuida `pruebas/interfaz_accesible.test.js`.
+
+105. **La hoja conserva sus nombres cortos como capa de alias.** Los 275 `var()`
+     de `estilos.css` siguen llamando a `--tinta`, `--papel` o `--borde`, y esos
+     nombres apuntan a los tokens de identidad. No es comodidad: `scripts/lib/
+     front-documento.js` usa doce de esos nombres y no los define, los hereda al
+     pegar la hoja dentro de `docs/FRONT_ACTUAL.html`. Si un nombre desaparece sin
+     avisar, el documento que envuelve a las 48 pantallas se queda sin colores ni
+     tipografía, en silencio, y ese documento es justo la herramienta con la que
+     se verifica cada fase. Solo se renombraron los tres que mentían: los naranjas
+     pasaron a `--neon` y `--neon-texto`, y en el mismo commit se actualizó
+     `front-documento.js`.
+
+106. **Dos tokens que hacían dos trabajos se parten antes de renombrar.**
+     `--borde-control` era a la vez el contorno de los campos, que necesita 3:1, y
+     el color de letra del deshabilitado, que necesita legibilidad; con el alfa
+     .44 que pide el contorno esa letra quedaba ilegible, así que la letra pasa a
+     `--texto-off`. `--rojo-alerta` era a la vez borde de error, que con 3:1 basta,
+     y texto de error, que necesita 4.5:1; se parte en `--neon` y `--neon-texto`.
+
+107. **La hoja vacía se queda como está y la opción elegida no lleva sombra.**
+     Las dos las decidió Juan el 21 de septiembre de 2026. La hoja vacía en
+     miniatura habría obligado a tocar `src/client/js/40-documento.js` y a
+     inventar un texto de cláusula de ejemplo que no viene de `modelos/`, o sea
+     contenido y no pintura. La sombra de la opción elegida habría roto el
+     principio de una sola superficie elevada, que es lo que hace que la hoja del
+     documento destaque sobre todo lo demás.
+
+108. **Las pantallas de momento son las tres que nombra la especificación:** el
+     inicio, "Tu T&C está listo" y el bloque de azar de la Ayuda. Legal, el error
+     y el país en piloto quedan fuera aunque hoy existan: las tres son callejones
+     donde la campaña no sigue por la herramienta, y un panel grande ahí no
+     celebra nada, subraya que te quedaste afuera. La regla del flujo dice
+     expresamente que ir a Legal no es un castigo.
