@@ -364,6 +364,27 @@ var CAMPOS_CARRERA = [
   },
   {
     /*
+     * El valor comercial del premio, solo en Colombia y solo con premio fisico.
+     *
+     * Decision 36 (ii) del encargo 01, que Juan confirmo el 20 de septiembre de
+     * 2026 (punto D3). Los dos textos dicen "pesos M/Cte." y "IVA incluido", que
+     * son de Colombia, asi que la pregunta sale solo alli: hoy la Carrera de
+     * Compras solo esta habilitada en Colombia, y cada pais escribe su frase el
+     * dia que se habilite alla. En los demas la clausula queda como estaba.
+     *
+     * Obligatoria donde se pregunta: la frase del premio la nombra, y sin valor
+     * saldria a medias.
+     */
+    id: 'valorPremio',
+    etiqueta: 'Valor comercial del premio',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'premio',
+    visible: pideValorDelPremio,
+    obligatorio: pideValorDelPremio,
+  },
+  {
+    /*
      * Solo con premio fisico. Con Creditos no hay entrega que repartir: Rappi
      * los acredita en la Billetera, y preguntar quien entrega hacia que el
      * documento dijera que el Organizador se encarga de una entrega que no
@@ -422,6 +443,11 @@ var CAMPOS_CARRERA = [
   { id: 'fechaNotificacion', etiqueta: 'Fecha de notificación', tipo: 'fecha', paso: 'premio', obligatorio: true },
   { id: 'plazoConfirmacion', etiqueta: 'Plazo para confirmar', tipo: 'numero', minimo: 1, maximo: 30, porDefecto: 5, paso: 'premio', obligatorio: true },
 ];
+
+/** Solo Colombia y solo con premio fisico: ver el campo valorPremio. */
+function pideValorDelPremio(entrada) {
+  return String(entrada.pais || '').toUpperCase() === 'CO' && entrada.tipoPremio === 'fisico';
+}
 
 var CAMPOS_CASHBACK_DAY = [
   { id: 'tiendas', etiqueta: 'Tiendas participantes', tipo: 'repetible', minimo: 2, maximo: 60, paso: 'tiendas', obligatorio: true },

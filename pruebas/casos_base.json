@@ -313,7 +313,8 @@
         "medioNotificacion": "plataforma",
         "fechaNotificacion": "2026-10-05",
         "plazoConfirmacion": 1,
-        "negocio": "rappi"
+        "negocio": "rappi",
+        "valorPremio": 1200000
       },
       "esperado": {
         "resultado": "falla",
@@ -354,7 +355,8 @@
         "fechaNotificacion": "2026-10-05",
         "plazoConfirmacion": 5,
         "compraMinima": 30000,
-        "negocio": "rappi"
+        "negocio": "rappi",
+        "valorPremio": 1200000
       },
       "esperado": {
         "resultado": "genera",
@@ -363,7 +365,8 @@
           "al aceptar el premio autorizas a Rappi para transferir al Organizador",
           "dirección de entrega y número de documento de identidad",
           "deberá suprimirlos una vez cumplida esa finalidad",
-          "La entrega del premio estará a cargo exclusivamente del Organizador"
+          "La entrega del premio estará a cargo exclusivamente del Organizador",
+          "con un valor comercial de un millón doscientos mil pesos M/Cte. ($1.200.000), IVA incluido"
         ],
         "no_contiene": [
           "{{",

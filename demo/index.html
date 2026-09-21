@@ -2523,6 +2523,38 @@ function textoProductos(entrada) {
   return '';
 }
 
+/**
+ * La frase del premio fisico, con su valor comercial cuando el pais lo pide.
+ *
+ * Los dos textos con valor son los de la decision 36 (ii) del encargo 01, que
+ * Juan confirmo el 20 de septiembre de 2026 (punto D3). Dicen "pesos M/Cte." y
+ * "IVA incluido", que son de Colombia, asi que solo salen alli: la pregunta del
+ * valor tampoco se hace en otro pais. En los demas la frase queda como estaba,
+ * y cada pais escribe la suya el dia que la Carrera se habilite alla.
+ *
+ * Con varios ganadores el total es el valor de un premio por el numero de
+ * ganadores: es lo que el documento tiene que declarar, y calcularlo aqui evita
+ * que alguien escriba dos numeros que no cuadren.
+ */
+function fraseDelPremioFisico(entrada, pais, ganadores) {
+  var quien = ganadores > 1 ? 'Cada ganador' : 'El ganador';
+  var descripcion = entrada.descripcionPremio;
+
+  if (String(pais.codigo || '').toUpperCase() !== 'CO' || !tieneValor(entrada.valorPremio)) {
+    return quien + ' recibirá el siguiente premio: ' + descripcion + '.';
+  }
+
+  var unitario = montoConMoneda(entrada.valorPremio, pais);
+  if (ganadores > 1) {
+    var total = montoConMoneda(Number(entrada.valorPremio) * ganadores, pais);
+    return 'Cada ganador recibirá el siguiente premio: ' + descripcion +
+      ', con un valor comercial unitario de ' + unitario + ', IVA incluido. ' +
+      'El valor comercial total de los premios de la Campaña es de ' + total + '.';
+  }
+  return 'El ganador recibirá el siguiente premio: ' + descripcion +
+    ', con un valor comercial de ' + unitario + ', IVA incluido.';
+}
+
 /** Derivados propios de la Carrera de Compras. */
 function derivadosCarrera(entrada, pais, valores) {
   valores.TEXTO_PRODUCTOS = textoProductos(entrada);
@@ -2544,7 +2576,7 @@ function derivadosCarrera(entrada, pais, valores) {
       'no constituyen dinero en efectivo, no son transferibles a terceros y se rigen por los Términos y Condiciones de Funcionamiento ' +
       'de los Créditos de la Plataforma Rappi, disponibles en: ' + pais.url_tc_creditos + '.';
   } else if (entrada.tipoPremio === 'fisico' && tieneValor(entrada.descripcionPremio)) {
-    valores.LISTA_PREMIOS = quien + ' recibirá el siguiente premio: ' + entrada.descripcionPremio + '.';
+    valores.LISTA_PREMIOS = fraseDelPremioFisico(entrada, pais, ganadores);
     valores.TEXTO_NATURALEZA_PREMIO =
       'El premio consiste en un bien de carácter físico, cuya existencia, calidad, garantía y entrega son responsabilidad exclusiva ' +
       'del Organizador. Rappi no fabrica, comercializa ni garantiza dicho bien.';
@@ -4929,6 +4961,27 @@ var CAMPOS_CARRERA = [
   },
   {
     /*
+     * El valor comercial del premio, solo en Colombia y solo con premio fisico.
+     *
+     * Decision 36 (ii) del encargo 01, que Juan confirmo el 20 de septiembre de
+     * 2026 (punto D3). Los dos textos dicen "pesos M/Cte." y "IVA incluido", que
+     * son de Colombia, asi que la pregunta sale solo alli: hoy la Carrera de
+     * Compras solo esta habilitada en Colombia, y cada pais escribe su frase el
+     * dia que se habilite alla. En los demas la clausula queda como estaba.
+     *
+     * Obligatoria donde se pregunta: la frase del premio la nombra, y sin valor
+     * saldria a medias.
+     */
+    id: 'valorPremio',
+    etiqueta: 'Valor comercial del premio',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'premio',
+    visible: pideValorDelPremio,
+    obligatorio: pideValorDelPremio,
+  },
+  {
+    /*
      * Solo con premio fisico. Con Creditos no hay entrega que repartir: Rappi
      * los acredita en la Billetera, y preguntar quien entrega hacia que el
      * documento dijera que el Organizador se encarga de una entrega que no
@@ -4987,6 +5040,11 @@ var CAMPOS_CARRERA = [
   { id: 'fechaNotificacion', etiqueta: 'Fecha de notificación', tipo: 'fecha', paso: 'premio', obligatorio: true },
   { id: 'plazoConfirmacion', etiqueta: 'Plazo para confirmar', tipo: 'numero', minimo: 1, maximo: 30, porDefecto: 5, paso: 'premio', obligatorio: true },
 ];
+
+/** Solo Colombia y solo con premio fisico: ver el campo valorPremio. */
+function pideValorDelPremio(entrada) {
+  return String(entrada.pais || '').toUpperCase() === 'CO' && entrada.tipoPremio === 'fisico';
+}
 
 var CAMPOS_CASHBACK_DAY = [
   { id: 'tiendas', etiqueta: 'Tiendas participantes', tipo: 'repetible', minimo: 2, maximo: 60, paso: 'tiendas', obligatorio: true },
@@ -9974,6 +10032,27 @@ var PREGUNTAS = {
     errores: {
       vacio: 'Describe el premio.',
       largo: 'La descripción no puede pasar de 150 caracteres. Déjala en una línea concreta.',
+    },
+  }),
+
+  /*
+   * El valor comercial del premio, solo en Colombia y solo con premio fisico.
+   *
+   * Decision 36 (ii) del encargo 01, confirmada por Juan el 20 de septiembre de
+   * 2026 (punto D3). El enunciado y la ayuda los propongo yo: la decision trae
+   * los dos textos del documento, no los de la pantalla.
+   */
+  valorPremio: p({
+    paso: 'premio',
+    pregunta: '¿Cuánto vale el premio?',
+    ayuda: 'El valor comercial de un premio, con IVA. Si hay varios ganadores, el de uno solo.',
+    porQue: 'El documento declara cuánto vale el premio y, cuando hay varios ganadores, cuánto suman todos. Es lo que dice el tamaño real del concurso.',
+    ejemplo: '500000',
+    moneda: true,
+    placeholders: ['LISTA_PREMIOS'],
+    errores: {
+      vacio: 'Escribe cuánto vale el premio.',
+      cero: 'El valor del premio tiene que ser mayor que cero.',
     },
   }),
 

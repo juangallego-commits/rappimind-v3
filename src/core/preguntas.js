@@ -1441,6 +1441,27 @@ var PREGUNTAS = {
     },
   }),
 
+  /*
+   * El valor comercial del premio, solo en Colombia y solo con premio fisico.
+   *
+   * Decision 36 (ii) del encargo 01, confirmada por Juan el 20 de septiembre de
+   * 2026 (punto D3). El enunciado y la ayuda los propongo yo: la decision trae
+   * los dos textos del documento, no los de la pantalla.
+   */
+  valorPremio: p({
+    paso: 'premio',
+    pregunta: '¿Cuánto vale el premio?',
+    ayuda: 'El valor comercial de un premio, con IVA. Si hay varios ganadores, el de uno solo.',
+    porQue: 'El documento declara cuánto vale el premio y, cuando hay varios ganadores, cuánto suman todos. Es lo que dice el tamaño real del concurso.',
+    ejemplo: '500000',
+    moneda: true,
+    placeholders: ['LISTA_PREMIOS'],
+    errores: {
+      vacio: 'Escribe cuánto vale el premio.',
+      cero: 'El valor del premio tiene que ser mayor que cero.',
+    },
+  }),
+
   entregaPor: p({
     paso: 'premio',
     pregunta: '¿Quién entrega el premio?',

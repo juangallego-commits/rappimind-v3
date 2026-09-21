@@ -343,6 +343,38 @@ function textoProductos(entrada) {
   return '';
 }
 
+/**
+ * La frase del premio fisico, con su valor comercial cuando el pais lo pide.
+ *
+ * Los dos textos con valor son los de la decision 36 (ii) del encargo 01, que
+ * Juan confirmo el 20 de septiembre de 2026 (punto D3). Dicen "pesos M/Cte." y
+ * "IVA incluido", que son de Colombia, asi que solo salen alli: la pregunta del
+ * valor tampoco se hace en otro pais. En los demas la frase queda como estaba,
+ * y cada pais escribe la suya el dia que la Carrera se habilite alla.
+ *
+ * Con varios ganadores el total es el valor de un premio por el numero de
+ * ganadores: es lo que el documento tiene que declarar, y calcularlo aqui evita
+ * que alguien escriba dos numeros que no cuadren.
+ */
+function fraseDelPremioFisico(entrada, pais, ganadores) {
+  var quien = ganadores > 1 ? 'Cada ganador' : 'El ganador';
+  var descripcion = entrada.descripcionPremio;
+
+  if (String(pais.codigo || '').toUpperCase() !== 'CO' || !tieneValor(entrada.valorPremio)) {
+    return quien + ' recibirá el siguiente premio: ' + descripcion + '.';
+  }
+
+  var unitario = montoConMoneda(entrada.valorPremio, pais);
+  if (ganadores > 1) {
+    var total = montoConMoneda(Number(entrada.valorPremio) * ganadores, pais);
+    return 'Cada ganador recibirá el siguiente premio: ' + descripcion +
+      ', con un valor comercial unitario de ' + unitario + ', IVA incluido. ' +
+      'El valor comercial total de los premios de la Campaña es de ' + total + '.';
+  }
+  return 'El ganador recibirá el siguiente premio: ' + descripcion +
+    ', con un valor comercial de ' + unitario + ', IVA incluido.';
+}
+
 /** Derivados propios de la Carrera de Compras. */
 function derivadosCarrera(entrada, pais, valores) {
   valores.TEXTO_PRODUCTOS = textoProductos(entrada);
@@ -364,7 +396,7 @@ function derivadosCarrera(entrada, pais, valores) {
       'no constituyen dinero en efectivo, no son transferibles a terceros y se rigen por los Términos y Condiciones de Funcionamiento ' +
       'de los Créditos de la Plataforma Rappi, disponibles en: ' + pais.url_tc_creditos + '.';
   } else if (entrada.tipoPremio === 'fisico' && tieneValor(entrada.descripcionPremio)) {
-    valores.LISTA_PREMIOS = quien + ' recibirá el siguiente premio: ' + entrada.descripcionPremio + '.';
+    valores.LISTA_PREMIOS = fraseDelPremioFisico(entrada, pais, ganadores);
     valores.TEXTO_NATURALEZA_PREMIO =
       'El premio consiste en un bien de carácter físico, cuya existencia, calidad, garantía y entrega son responsabilidad exclusiva ' +
       'del Organizador. Rappi no fabrica, comercializa ni garantiza dicho bien.';

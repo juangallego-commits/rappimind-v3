@@ -1233,6 +1233,27 @@ formulario manual.
 - `vacio`: Describe el premio.
 - `largo`: La descripción no puede pasar de 150 caracteres. Déjala en una línea concreta.
 
+### ¿Cuánto vale el premio?
+
+> El valor comercial de un premio, con IVA. Si hay varios ganadores, el de uno solo.
+
+**Por qué te preguntamos esto.** El documento declara cuánto vale el premio y, cuando hay varios ganadores, cuánto suman todos. Es lo que dice el tamaño real del concurso.
+
+| | |
+|---|---|
+| Campo interno | `valorPremio` |
+| Paso | Premio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 500000 |
+| Avanza sola | no |
+| Llena en el documento | `LISTA_PREMIOS` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe cuánto vale el premio.
+- `cero`: El valor del premio tiene que ser mayor que cero.
+
 ### ¿Quién entrega el premio?
 
 > El Organizador responde por el premio, entregue quien entregue.

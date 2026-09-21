@@ -378,3 +378,71 @@ test('"Solo consumo en el local" no queda en ninguna parte', () => {
   }
   assert.deepStrictEqual(restos, [], 'volvió el consumo en el local');
 });
+
+// --- D3: el valor del premio en la Carrera de Compras ------------------------
+
+test('el premio físico declara su valor comercial, y solo en Colombia', () => {
+  /*
+   * Decisión 36 (ii) del encargo 01, confirmada por Juan el 20 de septiembre de
+   * 2026 (punto D3). Los dos textos dicen "pesos M/Cte." y "IVA incluido", que
+   * son de Colombia. Hoy la Carrera solo está habilitada allí, y cada país
+   * escribe su frase el día que se habilite.
+   */
+  const { calcularDerivados } = require('../src/core/derivados.js');
+  const { ESQUEMAS, camposVisibles } = require('../src/core/esquemas.js');
+  const { leerJson, rutaDesdeRaiz } = require('../scripts/lib/archivos');
+  const paises = leerJson(rutaDesdeRaiz('data', 'paises.json')).paises;
+  const CO = paises.filter((p) => p.codigo === 'CO')[0];
+  const MX = paises.filter((p) => p.codigo === 'MX')[0];
+
+  const base = {
+    pais: 'CO', tipo: 'carrera_compras', tipoPremio: 'fisico',
+    descripcionPremio: 'Una bicicleta de montaña rodado 29', valorPremio: 1200000,
+  };
+
+  assert.strictEqual(
+    calcularDerivados(Object.assign({}, base, { numeroGanadores: 1 }), CO).LISTA_PREMIOS,
+    'El ganador recibirá el siguiente premio: Una bicicleta de montaña rodado 29, ' +
+    'con un valor comercial de un millón doscientos mil pesos M/Cte. ($1.200.000), IVA incluido.'
+  );
+
+  // Con varios, el total lo calcula la herramienta: dos números escritos a mano
+  // se pueden contradecir.
+  assert.strictEqual(
+    calcularDerivados(Object.assign({}, base, { numeroGanadores: 3 }), CO).LISTA_PREMIOS,
+    'Cada ganador recibirá el siguiente premio: Una bicicleta de montaña rodado 29, ' +
+    'con un valor comercial unitario de un millón doscientos mil pesos M/Cte. ($1.200.000), IVA incluido. ' +
+    'El valor comercial total de los premios de la Campaña es de ' +
+    'tres millones seiscientos mil pesos M/Cte. ($3.600.000).'
+  );
+
+  // Fuera de Colombia la cláusula queda como estaba, sin valor.
+  assert.strictEqual(
+    calcularDerivados(Object.assign({}, base, { pais: 'MX', numeroGanadores: 1 }), MX).LISTA_PREMIOS,
+    'El ganador recibirá el siguiente premio: Una bicicleta de montaña rodado 29.'
+  );
+});
+
+test('la pregunta del valor sale solo en Colombia y solo con premio físico', () => {
+  const { camposVisibles } = require('../src/core/esquemas.js');
+  const { PREGUNTAS } = require('../src/core/preguntas.js');
+  const campos = (entrada) => camposVisibles('carrera_compras', entrada).map((c) => c.id);
+
+  assert.ok(campos({ pais: 'CO', tipoPremio: 'fisico' }).indexOf('valorPremio') !== -1);
+  assert.strictEqual(campos({ pais: 'CO', tipoPremio: 'creditos' }).indexOf('valorPremio'), -1);
+  assert.strictEqual(campos({ pais: 'MX', tipoPremio: 'fisico' }).indexOf('valorPremio'), -1);
+
+  // Donde se pregunta es obligatoria: la frase del premio la nombra, y sin
+  // valor saldría a medias.
+  const { validarSolicitud } = require('../src/core/validaciones.js');
+  const { leerJson, rutaDesdeRaiz } = require('../scripts/lib/archivos');
+  const CO = leerJson(rutaDesdeRaiz('data', 'paises.json')).paises.filter((p) => p.codigo === 'CO')[0];
+  const { casos } = leerJson(rutaDesdeRaiz('pruebas', 'casos_base.json'));
+  const cc03 = casos.filter((c) => c.id === 'CC03')[0].entrada;
+  const sinValor = Object.assign({}, cc03);
+  delete sinValor.valorPremio;
+
+  const revision = validarSolicitud(sinValor, CO, { fechaReferencia: '2026-09-17', usuarioEnEquipo: true });
+  assert.deepStrictEqual(revision.errores.map((e) => e.campo), ['valorPremio']);
+  assert.strictEqual(revision.errores[0].mensaje, PREGUNTAS.valorPremio.errores.vacio);
+});
