@@ -30,6 +30,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var travelDisponible = require('./paises.js').travelDisponible;
 
   var preguntaDe = require('./preguntas.js').preguntaDe;
+  var categoriaProhibida = require('./leyendas.js').categoriaProhibida;
   var preguntaEnIdioma = require('./preguntas_pt.js').preguntaEnIdioma;
 }
 
@@ -761,6 +762,26 @@ function validarNegocio(entrada, esquema) {
 }
 
 /**
+ * La categoria de la pieza que no deja hacer la campana.
+ *
+ * En Colombia no se hacen campanas de cashback, descuento ni concursos sobre
+ * medicamentos, productos fitoterapeuticos, cigarrillos, tabaco calentado,
+ * vapeadores ni otros productos con nicotina. Juan lo cerro el 20 de septiembre
+ * de 2026. Fundamento: para el tabaco y la nicotina, la Ley 1335 de 2009 y la
+ * Ley 2354 de 2024; para medicamentos y fitoterapeuticos, una regla de Legal CO
+ * mas estricta que el Playbook Farmacias.
+ *
+ * La pregunta de la pieza no bloquea nunca el documento por estar sin responder
+ * (el T&C no la usa), pero esta respuesta si: no es un dato que falte, es una
+ * campana que no se puede hacer.
+ */
+function validarCategoriaDeLaPieza(entrada, pais, idioma) {
+  if (!categoriaProhibida((pais || {}).codigo, entrada.categoriaProducto)) return [];
+  return [error('categoriaProducto', mensajeDe('categoriaProducto', entrada.tipo, 'prohibida', idioma,
+    'Esta campaña no se puede hacer.'))];
+}
+
+/**
  * Valida la solicitud completa.
  *
  * contexto: { fechaReferencia, usuarioEnEquipo, idioma, ampliacion }
@@ -793,6 +814,7 @@ function validarSolicitud(entrada, pais, contexto) {
   errores = errores.concat(validarNegocio(entrada, esquema));
 
   errores = errores.concat(validarAnotacionesDelPais(pais));
+  errores = errores.concat(validarCategoriaDeLaPieza(entrada, pais, idioma));
 
   // El cashback por ETA tiene los mismos dos numeros y el mismo riesgo: un tope
   // mayor que el presupuesto deja que la primera orden se lleve la campana.
@@ -848,5 +870,6 @@ if (typeof module !== 'undefined') {
     validarIdiomaDelPais: validarIdiomaDelPais,
     fechaFinDeLaCampana: fechaFinDeLaCampana,
     validarEta: validarEta,
+    validarCategoriaDeLaPieza: validarCategoriaDeLaPieza,
   };
 }

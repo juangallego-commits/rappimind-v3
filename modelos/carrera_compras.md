@@ -31,6 +31,7 @@ Antes de declarar a los ganadores, Rappi verificará la elegibilidad de cada par
 • Los pedidos pagados con medios de pago diferentes a los aplicables para la Campaña.
 • Los pedidos realizados fuera de la vigencia de la Campaña.
 • El valor de propinas, costos de envío, tarifas de servicio e impuestos.
+[[?TEXTO_EXCLUSION_SALUD]]{{TEXTO_EXCLUSION_SALUD}}[[/?]]
 § Impuestos. Los impuestos que se generen con ocasión del premio estarán a cargo de quien corresponda conforme a la legislación tributaria aplicable. Cuando haya lugar a retenciones o tributos a cargo del ganador, estos se aplicarán en los términos de la ley.
 [[INCLUIR:publicidad]]
 [[INCLUIR:atencion]]

@@ -711,28 +711,15 @@ var PREGUNTAS = {
     opcional: true,
     porQue: 'Algunas categorías tienen que llevar una advertencia por ley dentro de la pieza, como los licores o los medicamentos. La leyenda que te damos ya la trae.',
     avanzaSola: true,
-    errores: { vacio: 'Elige una categoría, o Ninguna si el producto no es de ninguna de esas.' },
-  }),
-
-  registroSanitario: p({
-    paso: 'pieza',
-    pregunta: '¿Cuál es el registro sanitario?',
-    ayuda: 'Está en el empaque. Sin él no te damos la leyenda de la pieza.',
-    opcional: true,
-    porQue: 'Una pieza de un medicamento o de un fitoterapéutico tiene que mostrar su registro sanitario. Sin ese número no se puede publicar.',
-    ejemplo: 'INVIMA 2020M-0012345',
-    placeholders: ['REGISTRO_SANITARIO'],
-    errores: { vacio: 'Escribe el registro sanitario del producto.' },
-  }),
-
-  notificacionInvima: p({
-    paso: 'pieza',
-    pregunta: '¿Tiene número de notificación ante el INVIMA?',
-    ayuda: 'Es opcional. Si no lo tienes a la mano, déjalo vacío.',
-    porQue: 'Cuando la pieza de un medicamento se notificó al INVIMA, el número va dentro de la leyenda. Si no lo pones, la leyenda sale sin esa frase.',
-    ejemplo: '20251234567',
-    opcional: true,
-    placeholders: ['NOTIFICACION_INVIMA'],
+    errores: {
+      vacio: 'Elige una categoría, o Ninguna si el producto no es de ninguna de esas.',
+      // La respuesta que no deja seguir, solo en Colombia. No es un dato que
+      // falte: es una campana que no se puede hacer.
+      prohibida: 'No se hacen campañas de cashback, descuento ni concursos sobre medicamentos, productos fitoterapéuticos, cigarrillos, tabaco calentado (como IQOS), vapeadores ni otros productos con nicotina. Esta campaña no se puede hacer. Si tienes dudas, escríbenos a #tyc-rappi.',
+    },
+    // El mismo aviso, arriba de la lista de tipos de campana, para que el
+    // comercial se entere antes de llenar el formulario entero.
+    avisoDeTipos: 'No se hacen campañas de cashback, descuento ni concursos sobre medicamentos, productos fitoterapéuticos, cigarrillos, tabaco calentado (como IQOS), vapeadores ni otros productos con nicotina. Si la tienda los vende, el beneficio no puede aplicar a esos productos.',
   }),
 
   /*
@@ -1587,6 +1574,7 @@ var PREGUNTAS = {
  */
 var NOMBRE_DEL_HUECO = {
   TEXTO_TIENDA_TURBO: 'en cuál de sus tiendas se gana el cashback',
+  TEXTO_EXCLUSION_SALUD: 'la exclusión de medicamentos y productos con nicotina',
   TIENDA_TURBO: 'en cuál de sus tiendas participa cada marca',
   TEXTO_ETA: 'el tiempo de entrega prometido',
   TEXTO_CIUDAD_ETA: 'la ciudad',

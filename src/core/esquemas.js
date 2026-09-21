@@ -27,8 +27,6 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var moduloLeyendasEsquemas = require('./leyendas.js');
   var categoriasDeProducto = moduloLeyendasEsquemas.categoriasDeProducto;
   var hayLeyendasDeCampana = moduloLeyendasEsquemas.hayLeyendasDeCampana;
-  var categoriaPideRegistro = moduloLeyendasEsquemas.categoriaPideRegistro;
-  var categoriaPideInvima = moduloLeyendasEsquemas.categoriaPideInvima;
 }
 
 function siempre() {
@@ -95,19 +93,24 @@ var CAMPOS_COMUNES = [
   // condiciona nada y se publica igual. El mensaje ya estaba escrito en
   // preguntas.js (errores.cero) y no lo disparaba nadie.
   { id: 'compraMinima', etiqueta: 'Compra mínima', tipo: 'numero', minimo: 1, paso: 'participantes', obligatorio: false },
-  // La pieza publicitaria. Estas tres no cambian una coma del T&C: deciden la
-  // leyenda que va dentro del arte, que hasta ahora el comercial le pedia a
-  // Legal por correo. Por eso van en su propio paso, al final.
+  // La pieza publicitaria. No cambia una coma del T&C: decide la leyenda que va
+  // dentro del arte, que hasta ahora el comercial le pedia a Legal por correo.
+  // Por eso va en su propio paso, al final.
+  //
+  // Eran tres preguntas. El registro sanitario y la notificacion ante el INVIMA
+  // se fueron el 20 de septiembre de 2026 con las cuatro categorias que los
+  // pedian: en Colombia ya no se hacen campanas sobre medicamentos ni
+  // fitoterapeuticos.
   {
     id: 'categoriaProducto',
     etiqueta: 'Categoría del producto',
     tipo: 'lista',
     paso: 'pieza',
     porDefecto: 'ninguna',
-    // Ninguna de las tres puede bloquear el documento: el T&C no las usa para
-    // nada. Lo que bloquean es la leyenda de la pieza, y eso lo dice
-    // faltantesParaLaLeyenda con su razon. Un comercial que solo quiere su T&C
-    // no se puede quedar sin el por una pregunta del arte.
+    // No bloquea el documento por estar sin responder: el T&C no la usa para
+    // nada, y un comercial que solo quiere su T&C no se puede quedar sin el por
+    // una pregunta del arte. Lo que si bloquea es elegir la categoria que no se
+    // puede hacer, y eso lo dice validaciones.js.
     obligatorio: false,
     // Solo donde hay algo que imprimir. Un pais sin leyenda de campana no tiene
     // donde pegar el complemento, y uno sin categorias no tiene que ofrecer.
@@ -115,22 +118,6 @@ var CAMPOS_COMUNES = [
       return hayLeyendasDeCampana(entrada.pais, entrada.tipo) &&
         categoriasDeProducto(entrada.pais).length > 0;
     },
-  },
-  {
-    id: 'registroSanitario',
-    etiqueta: 'Registro sanitario',
-    tipo: 'texto',
-    paso: 'pieza',
-    visible: function (entrada) { return categoriaPideRegistro(entrada.categoriaProducto); },
-    obligatorio: false,
-  },
-  {
-    id: 'notificacionInvima',
-    etiqueta: 'Notificación ante el INVIMA',
-    tipo: 'texto',
-    paso: 'pieza',
-    visible: function (entrada) { return categoriaPideInvima(entrada.categoriaProducto); },
-    obligatorio: false,
   },
   {
     id: 'declaracion',

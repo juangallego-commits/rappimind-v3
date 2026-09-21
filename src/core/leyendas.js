@@ -66,30 +66,58 @@ var TIPOS_DE_PIEZA = [
  * Mundial se escalan a Legal, y awareness y promociones son tipos de campana que
  * v3 no genera.
  */
-var FORMAS_DE_ELEGIR = ['pregunta', 'condicion_turbo', 'ninguna_parte_todavia'];
+var FORMAS_DE_ELEGIR = ['pregunta', 'condicion_turbo', 'ninguna_parte_todavia', 'no_se_ofrece'];
 
-/**
- * Las categorias cuya pieza tiene que mostrar el registro sanitario.
+/*
+ * La categoria que no deja seguir, solo en Colombia.
  *
- * Legal CO lo pide para medicamentos y fitoterapeuticos (diapositiva 10). Sin el
- * registro la pieza no se puede publicar, asi que la pregunta aparece sola y,
- * mientras no se responda, no hay leyenda.
+ * Desde el 20 de septiembre de 2026 no se hacen campanas de cashback, descuento
+ * ni concursos sobre medicamentos, productos fitoterapeuticos, cigarrillos,
+ * tabaco calentado, vapeadores ni otros productos con nicotina. Fundamento: para
+ * el tabaco y la nicotina, la Ley 1335 de 2009 y la Ley 2354 de 2024; para
+ * medicamentos y fitoterapeuticos, una regla de Legal CO mas estricta que el
+ * Playbook Farmacias.
  *
- * Viven aqui, con el catalogo, y no en los esquemas: son categorias del
- * catalogo, y asi la pregunta y la leyenda las leen del mismo sitio.
+ * Las siete categorias que se ofrecian antes salieron del catalogo (su
+ * `se_elige_en` dice `no_se_ofrece`) y en su lugar va esta, que existe para
+ * decirle al comercial que esa campana no se puede hacer, en vez de dejarlo
+ * elegir "Ninguna" y publicar igual.
+ *
+ * Solo Colombia: en los demas paises lo deciden sus abogados en la prueba.
  */
-var CATEGORIAS_CON_REGISTRO = ['medicamento', 'medicamentos_varios', 'fitoterapeutico_pfm', 'fitoterapeutico_pft'];
+var CATEGORIA_BLOQUEADA = {
+  valor: 'medicamentos_y_nicotina',
+  etiqueta: 'Medicamentos, fitoterapéuticos, cigarrillos, tabaco calentado, vapeadores o productos con nicotina',
+  bloquea: true,
+};
 
-/** Solo los medicamentos llevan ademas el numero de notificacion ante el INVIMA. */
-var CATEGORIAS_CON_INVIMA = ['medicamento', 'medicamentos_varios'];
+var PAISES_CON_CATEGORIA_BLOQUEADA = ['CO'];
 
-function categoriaPideRegistro(categoria) {
-  return CATEGORIAS_CON_REGISTRO.indexOf(String(categoria || '')) !== -1;
+function categoriaQueBloquea(codigoPais) {
+  return PAISES_CON_CATEGORIA_BLOQUEADA.indexOf(String(codigoPais || '').toUpperCase()) !== -1
+    ? CATEGORIA_BLOQUEADA.valor : '';
 }
 
-function categoriaPideInvima(categoria) {
-  return CATEGORIAS_CON_INVIMA.indexOf(String(categoria || '')) !== -1;
+/** true si esta respuesta impide hacer la campana en este pais. */
+function categoriaProhibida(codigoPais, categoria) {
+  var bloqueada = categoriaQueBloquea(codigoPais);
+  return !!bloqueada && String(categoria || '') === bloqueada;
 }
+
+/*
+ * El registro sanitario y la notificacion ante el INVIMA ya no se preguntan.
+ *
+ * Los pedia Legal CO para las piezas de medicamentos y de fitoterapeuticos, que
+ * eran las cuatro categorias que los usaban. Las cuatro salieron del catalogo el
+ * 20 de septiembre de 2026, con la decision de Juan de no hacer campanas sobre
+ * esos productos, asi que no queda ninguna categoria que los pida y las dos
+ * preguntas se fueron del formulario con ellas.
+ *
+ * Los marcadores REGISTRO_SANITARIO y NOTIFICACION_INVIMA siguen calculandose
+ * (vacios) porque las cuatro leyendas se quedaron en modelos/leyendas/ con su
+ * texto tal cual vino de Legal. El dia que se reabra alguna, las dos preguntas
+ * vuelven: esta escrito en docs/PENDIENTES_LEGAL.md.
+ */
 
 /** Lo que nunca puede quedar dentro de una leyenda entregada. */
 var MARCAS_SIN_RESOLVER_EN_LEYENDA = /\{\{|\}\}|\[\[|\]\]/;
@@ -248,6 +276,18 @@ function categoriasDelPais(catalogo, codigoPais) {
   // Por como se lee la etiqueta, no por el identificador: la lista la recorre
   // una persona buscando su producto, no el catalogo.
   opciones.sort(function (a, b) { return a.etiqueta.localeCompare(b.etiqueta, 'es'); });
+
+  // La que no deja seguir va al final, fuera del orden alfabetico: no es un
+  // producto mas, es el aviso de que esa campana no se hace.
+  if (categoriaQueBloquea(codigoPais)) {
+    opciones.push({
+      valor: CATEGORIA_BLOQUEADA.valor,
+      etiqueta: CATEGORIA_BLOQUEADA.etiqueta,
+      leyenda: '',
+      adelanto: '',
+      bloquea: true,
+    });
+  }
   return opciones;
 }
 
@@ -517,10 +557,9 @@ if (typeof module !== 'undefined') {
     usarCatalogo: usarCatalogo,
     catalogoActual: catalogoActual,
     categoriasDeProducto: categoriasDeProducto,
-    categoriaPideRegistro: categoriaPideRegistro,
-    categoriaPideInvima: categoriaPideInvima,
-    CATEGORIAS_CON_REGISTRO: CATEGORIAS_CON_REGISTRO,
-    CATEGORIAS_CON_INVIMA: CATEGORIAS_CON_INVIMA,
+    CATEGORIA_BLOQUEADA: CATEGORIA_BLOQUEADA,
+    categoriaQueBloquea: categoriaQueBloquea,
+    categoriaProhibida: categoriaProhibida,
     hayLeyendasDeCampana: hayLeyendasDeCampana,
     categoriasDelPais: categoriasDelPais,
     complementosQueAplican: complementosQueAplican,

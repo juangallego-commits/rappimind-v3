@@ -317,16 +317,22 @@ async function recorrer() {
   revisar('la pregunta de la categoría del producto sale con sus opciones',
     laPieza.indexOf('¿Qué categoría tiene el producto de la pieza?') !== -1 &&
     laPieza.indexOf('Ninguna de estas') !== -1 &&
-    laPieza.indexOf('Licores y cervezas') !== -1 &&
-    laPieza.indexOf('Un medicamento de venta libre') !== -1,
+    laPieza.indexOf('Licores y cervezas') !== -1,
     laPieza.replace(/\n+/g, ' | ').slice(0, 400));
 
-  // Cada opcion adelanta la advertencia que se va a imprimir. Sin eso, las diez
+  // Cada opcion adelanta la advertencia que se va a imprimir. Sin eso, todas
   // decian lo mismo debajo y no habia con que elegir.
   revisar('cada categoría adelanta la advertencia que va a imprimir',
-    laPieza.indexOf('El exceso de alcohol es perjudicial para la salud') !== -1 &&
-    laPieza.indexOf('Es medicamento, leer indicaciones') !== -1,
+    laPieza.indexOf('El exceso de alcohol es perjudicial para la salud') !== -1,
     laPieza.replace(/\n+/g, ' | ').slice(0, 400));
+
+  // Las siete categorias de medicamentos y nicotina ya no se ofrecen: en su
+  // lugar va una sola opcion, la que no deja seguir (20 de septiembre de 2026).
+  revisar('las siete categorías de medicamentos y nicotina ya no se ofrecen',
+    laPieza.indexOf('Un medicamento de venta libre') === -1 &&
+    laPieza.indexOf('Cigarrillos') === -1 &&
+    laPieza.indexOf('Medicamentos, fitoterapéuticos, cigarrillos, tabaco calentado, vapeadores o productos con nicotina') !== -1,
+    laPieza.replace(/\n+/g, ' | ').slice(0, 500));
 
   // "Ninguna" viene marcada, pero la pregunta se muestra igual: marcar no es
   // responder, y un dato que nadie confirmo sale impreso en una pieza.
@@ -342,16 +348,44 @@ async function recorrer() {
     categoriaMarcada.marcada === 'Ninguna de estas' && categoriaMarcada.respondida === false,
     JSON.stringify(categoriaMarcada));
 
-  // Elegir un medicamento abre las dos condicionales, y la respondida de arriba
-  // se lee con su etiqueta y no con el nombre interno del campo.
-  await clic('Un medicamento de venta libre');
+  // Elegir la categoria que no se puede hacer se queda en la pregunta, con su
+  // razon, en vez de avanzar al resumen y dejar que alguien pulse Generar.
+  await clic('Medicamentos, fitoterapéuticos, cigarrillos');
   await pagina.waitForTimeout(400);
-  const conMedicamento = await texto();
-  revisar('un medicamento abre el registro sanitario y se lee la etiqueta elegida',
-    conMedicamento.indexOf('¿Cuál es el registro sanitario?') !== -1 &&
-    conMedicamento.indexOf('Un medicamento de venta libre') !== -1 &&
-    conMedicamento.indexOf('\nmedicamento\n') === -1,
-    conMedicamento.replace(/\n+/g, ' | ').slice(0, 400));
+  const bloqueada = await pagina.evaluate(function () {
+    return {
+      texto: document.body.innerText,
+      pantalla: RM.estado.estado.pantalla,
+      abierto: RM.estado.estado.campoAbierto,
+    };
+  });
+  revisar('la categoría que no se puede hacer no deja seguir, y dice por qué',
+    bloqueada.texto.indexOf('Esta campaña no se puede hacer') !== -1 &&
+    bloqueada.texto.indexOf('#tyc-rappi') !== -1 &&
+    bloqueada.pantalla === 'pasos',
+    JSON.stringify({ pantalla: bloqueada.pantalla, abierto: bloqueada.abierto }));
+
+  // Y la misma regla se avisa arriba de la lista de tipos, antes de llenar
+  // veinte preguntas para enterarse al final.
+  await desdeElInicio();
+  await decirQueNoATodo();
+  await clic('Colombia');
+  await clic('Rappi');
+  await pagina.waitForTimeout(400);
+  const avisoEnLosTipos = await texto();
+  revisar('la advertencia sale arriba de la lista de tipos, en Colombia',
+    avisoEnLosTipos.indexOf('No se hacen campañas de cashback, descuento ni concursos sobre medicamentos') !== -1,
+    avisoEnLosTipos.replace(/\n+/g, ' | ').slice(0, 400));
+
+  await desdeElInicio();
+  await decirQueNoATodo();
+  await clic('México');
+  await clic('Rappi');
+  await pagina.waitForTimeout(400);
+  const sinAvisoEnMexico = await texto();
+  revisar('y no sale en los países donde esa regla no existe',
+    sinAvisoEnMexico.indexOf('No se hacen campañas de cashback, descuento ni concursos') === -1,
+    sinAvisoEnMexico.replace(/\n+/g, ' | ').slice(0, 300));
 
   // Mexico ya tiene leyendas de campana desde el 20 de septiembre de 2026
   // (punto C4), asi que su paso de la pieza existe y ofrece las categorias

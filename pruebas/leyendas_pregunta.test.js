@@ -20,11 +20,7 @@ const { cargarLeyendas, cargarModelos } = require('../scripts/lib/modelos');
 usarCatalogo(cargarLeyendas());
 
 const { camposVisibles } = require('../src/core/esquemas.js');
-const {
-  categoriaPideRegistro,
-  categoriaPideInvima,
-  CATEGORIAS_CON_REGISTRO,
-} = require('../src/core/leyendas.js');
+const { categoriaProhibida, categoriaQueBloquea } = require('../src/core/leyendas.js');
 const { PREGUNTAS, PASOS } = require('../src/core/preguntas.js');
 const { validarSolicitud } = require('../src/core/validaciones.js');
 const { generarTexto, generarLeyendasDeLaCampana } = require('../src/core/generar.js');
@@ -80,38 +76,68 @@ test('la pregunta solo aparece donde hay una leyenda que darle', () => {
   assert.deepStrictEqual(camposDePieza({ pais: 'BR', tipo: 'promocao_br' }), []);
 });
 
-test('las dos condicionales solo salen con su categoría', () => {
+test('la categoría es la única pregunta del paso de la pieza', () => {
+  // Eran tres. El registro sanitario y la notificación ante el INVIMA se fueron
+  // el 20 de septiembre de 2026 con las cuatro categorías que los pedían: en
+  // Colombia ya no se hacen campañas sobre medicamentos ni fitoterapéuticos.
   assert.deepStrictEqual(camposDePieza({ pais: 'CO', tipo: 'cashback', categoriaProducto: 'licores' }),
     ['categoriaProducto']);
-  assert.deepStrictEqual(camposDePieza({ pais: 'CO', tipo: 'cashback', categoriaProducto: 'medicamento' }),
-    ['categoriaProducto', 'registroSanitario', 'notificacionInvima']);
-  assert.deepStrictEqual(camposDePieza({ pais: 'CO', tipo: 'cashback', categoriaProducto: 'medicamentos_varios' }),
-    ['categoriaProducto', 'registroSanitario', 'notificacionInvima']);
-  // Los fitoterapéuticos llevan registro pero no notificación ante el INVIMA.
-  assert.deepStrictEqual(camposDePieza({ pais: 'CO', tipo: 'cashback', categoriaProducto: 'fitoterapeutico_pfm' }),
-    ['categoriaProducto', 'registroSanitario']);
+  assert.strictEqual(PREGUNTAS.registroSanitario, undefined);
+  assert.strictEqual(PREGUNTAS.notificacionInvima, undefined);
 });
 
-test('cada categoría que pide registro existe en el catálogo', () => {
-  // Si alguien renombra una categoría en modelos/leyendas/ y no toca esta
-  // lista, la pregunta del registro sanitario deja de aparecer y la pieza de un
-  // medicamento sale sin su número, sin que nada se queje.
+test('las siete categorías de medicamentos y nicotina ya no se ofrecen en Colombia', () => {
   const delCatalogo = categoriasDeProducto('CO').map((c) => c.valor);
-  for (const categoria of CATEGORIAS_CON_REGISTRO) {
-    assert.ok(delCatalogo.indexOf(categoria) !== -1,
-      categoria + ' pide registro sanitario pero no existe en el catálogo de Colombia');
+  for (const categoria of ['cigarrillos', 'vapeadores', 'vapeadores_pmi', 'medicamento',
+    'medicamentos_varios', 'fitoterapeutico_pfm', 'fitoterapeutico_pft']) {
+    assert.strictEqual(delCatalogo.indexOf(categoria), -1,
+      categoria + ' volvió a la lista de Colombia');
   }
-  assert.strictEqual(categoriaPideRegistro('licores'), false);
-  assert.strictEqual(categoriaPideInvima('fitoterapeutico_pfm'), false);
-  assert.strictEqual(categoriaPideInvima('medicamento'), true);
+
+  // En su lugar va una sola opción, la que no deja seguir.
+  assert.strictEqual(delCatalogo[delCatalogo.length - 1], 'medicamentos_y_nicotina');
+  assert.strictEqual(categoriaQueBloquea('CO'), 'medicamentos_y_nicotina');
+
+  // Y en los demás países no cambia nada: lo deciden sus abogados en la prueba.
+  assert.strictEqual(categoriaQueBloquea('MX'), '');
+  assert.ok(categoriasDeProducto('MX').map((c) => c.valor).indexOf('medicamentos') !== -1);
+});
+
+test('elegir esa categoría no deja generar, y dice por qué', () => {
+  const entrada = campanaBase({ categoriaProducto: 'medicamentos_y_nicotina' });
+  const revision = validarSolicitud(entrada, CO, CONTEXTO);
+  assert.strictEqual(revision.valido, false);
+  assert.strictEqual(revision.errores[0].campo, 'categoriaProducto');
+  assert.strictEqual(revision.errores[0].mensaje, PREGUNTAS.categoriaProducto.errores.prohibida);
+  assert.ok(revision.errores[0].mensaje.indexOf('#tyc-rappi') !== -1);
+
+  // En México la misma respuesta no existe, así que no bloquea nada.
+  assert.strictEqual(categoriaProhibida('MX', 'medicamentos_y_nicotina'), false);
+  assert.strictEqual(categoriaProhibida('CO', 'licores'), false);
+});
+
+test('la advertencia de la pantalla de tipos dice lo mismo que el bloqueo', () => {
+  // Las dos salen de preguntas.js para que no se separen: si una cambia y la
+  // otra no, el comercial lee dos reglas distintas.
+  const aviso = PREGUNTAS.categoriaProducto.avisoDeTipos;
+  for (const palabra of ['medicamentos', 'fitoterapéuticos', 'cigarrillos', 'tabaco calentado',
+    'vapeadores', 'nicotina']) {
+    assert.ok(aviso.indexOf(palabra) !== -1, 'el aviso no nombra ' + palabra);
+    assert.ok(PREGUNTAS.categoriaProducto.errores.prohibida.indexOf(palabra) !== -1,
+      'el bloqueo no nombra ' + palabra);
+  }
+
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const pasos = fs.readFileSync(path.join(__dirname, '..', 'src', 'client', 'js', '62-pasos.js'), 'utf8');
+  assert.ok(pasos.indexOf('avisoDeCategoriasProhibidas') !== -1,
+    'la pantalla de tipos ya no muestra la advertencia');
 });
 
 test('la pregunta se ve opcional, porque el T&C no la necesita', () => {
   // Regla de la skill: lo opcional se ve opcional. Si pareciera obligatoria, un
   // comercial que no sabe la categoría inventaría una.
   assert.strictEqual(PREGUNTAS.categoriaProducto.opcional, true);
-  assert.strictEqual(PREGUNTAS.registroSanitario.opcional, true);
-  assert.strictEqual(PREGUNTAS.notificacionInvima.opcional, true);
 });
 
 test('"Ninguna" viene por defecto, pero no cuenta como respondida', () => {
@@ -123,8 +149,8 @@ test('ninguna pregunta de la pieza bloquea el documento', () => {
   // ni el registro sanitario, así que quien solo quiere su documento lo tiene.
   for (const entrada of [
     campanaBase({ categoriaProducto: '' }),
-    campanaBase({ categoriaProducto: 'medicamento' }),
-    campanaBase({ categoriaProducto: 'medicamento', registroSanitario: '' }),
+    campanaBase({ categoriaProducto: 'licores' }),
+    campanaBase({ categoriaProducto: 'suplementos' }),
   ]) {
     assert.deepStrictEqual(validarSolicitud(entrada, CO, CONTEXTO).errores, [],
       JSON.stringify(entrada.categoriaProducto));
@@ -132,56 +158,27 @@ test('ninguna pregunta de la pieza bloquea el documento', () => {
   }
 });
 
-test('sin registro sanitario no hay leyenda, y se dice por qué', () => {
-  // Al revés que el documento: la pieza de un medicamento no se puede publicar
-  // sin el registro (Legal CO, diapositiva 10). La leyenda lo lleva en un
-  // bloque opcional, así que sin este aviso desaparecería en silencio.
-  const sinRegistro = generarLeyendasDeLaCampana(
-    campanaBase({ categoriaProducto: 'medicamento' }), CO, cargarLeyendas(),
-    { nombreCampana: 'Campaña de prueba' });
-  assert.strictEqual(sinRegistro.hay, false);
-  assert.ok(sinRegistro.faltantes.join(' ').indexOf('registro sanitario') !== -1,
-    sinRegistro.faltantes.join(' | '));
-
-  const conRegistro = generarLeyendasDeLaCampana(
-    campanaBase({ categoriaProducto: 'medicamento', registroSanitario: 'INVIMA 2020M-0012345' }),
-    CO, cargarLeyendas(), { nombreCampana: 'Campaña de prueba' });
-  assert.strictEqual(conRegistro.hay, true);
-  assert.deepStrictEqual(conRegistro.errores, [], conRegistro.errores.join(' | '));
-  const letra = conRegistro.leyendas.filter((l) => l.formato === 'letra_pequena')[0].texto;
-  assert.ok(letra.indexOf('Registro sanitario No. INVIMA 2020M-0012345.') !== -1, letra);
-  // Sin número de notificación, esa frase no sale, y la leyenda no queda rota.
-  assert.strictEqual(letra.indexOf('Notificación ante el INVIMA'), -1, letra);
-});
-
-test('con notificación del INVIMA la leyenda la incluye', () => {
-  const r = generarLeyendasDeLaCampana(
-    campanaBase({
-      categoriaProducto: 'medicamento',
-      registroSanitario: 'INVIMA 2020M-0012345',
-      notificacionInvima: '20251234567',
-    }), CO, cargarLeyendas(), { nombreCampana: 'Campaña de prueba' });
-  const letra = r.leyendas.filter((l) => l.formato === 'letra_pequena')[0].texto;
-  assert.ok(letra.indexOf('Notificación ante el INVIMA No. 20251234567.') !== -1, letra);
-});
-
 test('las opciones que ve el comercial traen un adelanto de lo que se imprime', () => {
-  // Las diez decían lo mismo debajo y no se podía elegir con criterio.
-  const opciones = categoriasDeProducto('CO');
+  // Decían todas lo mismo debajo y no se podía elegir con criterio. La que no
+  // deja seguir no imprime nada, así que no tiene adelanto que mostrar.
+  const opciones = categoriasDeProducto('CO').filter((o) => !o.bloquea);
   const adelantos = opciones.map((o) => o.adelanto);
   assert.strictEqual(new Set(adelantos).size, adelantos.length, 'hay dos adelantos iguales');
   for (const opcion of opciones) {
     assert.ok(opcion.adelanto.length > 20, opcion.valor + ': adelanto demasiado corto');
     assert.strictEqual(/\{\{|\[\[/.test(opcion.adelanto), false, opcion.valor + ': ' + opcion.adelanto);
   }
-  assert.ok(categoriasDeProducto('CO').filter((o) => o.valor === 'licores')[0].adelanto
+  assert.ok(opciones.filter((o) => o.valor === 'licores')[0].adelanto
     .indexOf('El exceso de alcohol es perjudicial para la salud') === 0);
 });
 
 test('las opciones se ordenan por lo que se lee, no por el identificador', () => {
-  const etiquetas = categoriasDeProducto('CO').map((o) => o.etiqueta);
+  // La que no deja seguir va al final, fuera del orden: no es un producto más.
+  const opciones = categoriasDeProducto('CO');
+  const etiquetas = opciones.filter((o) => !o.bloquea).map((o) => o.etiqueta);
   const ordenadas = etiquetas.slice().sort((a, b) => a.localeCompare(b, 'es'));
   assert.deepStrictEqual(etiquetas, ordenadas);
+  assert.strictEqual(opciones[opciones.length - 1].bloquea, true);
 });
 
 test('la categoría de un país no se cuela en otro', () => {
@@ -190,21 +187,20 @@ test('la categoría de un país no se cuela en otro', () => {
   assert.deepStrictEqual(categoriasDeProducto('BR'), []);
 });
 
-test('la pregunta y sus condicionales están traducidas al portugués', () => {
-  // Un KAM de Brasil no las ve hoy, pero quien deje la interfaz en portugués y
+test('la pregunta está traducida al portugués', () => {
+  // Un KAM de Brasil no la ve hoy, pero quien deje la interfaz en portugués y
   // arme una campaña de Colombia sí. La regla es que no se mezclen idiomas.
   const { PREGUNTAS_PT } = require('../src/core/preguntas_pt.js');
-  for (const id of ['categoriaProducto', 'registroSanitario', 'notificacionInvima']) {
-    assert.ok(PREGUNTAS_PT[id], id + ' no está traducida');
-    assert.ok(PREGUNTAS_PT[id].pregunta && PREGUNTAS_PT[id].ayuda && PREGUNTAS_PT[id].porQue, id);
-  }
+  assert.ok(PREGUNTAS_PT.categoriaProducto);
+  assert.ok(PREGUNTAS_PT.categoriaProducto.pregunta && PREGUNTAS_PT.categoriaProducto.ayuda &&
+    PREGUNTAS_PT.categoriaProducto.porQue);
 });
 
 test('el documento de una campaña con categoría sale igual que sin ella', () => {
   // La prueba de que la pregunta no toca el T&C: mismo texto, letra por letra.
   const sin = generarTexto(campanaBase(), CO, MODELOS, CONTEXTO);
   const con = generarTexto(
-    campanaBase({ categoriaProducto: 'licores', registroSanitario: 'X' }), CO, MODELOS, CONTEXTO);
+    campanaBase({ categoriaProducto: 'licores' }), CO, MODELOS, CONTEXTO);
   assert.strictEqual(sin.texto, con.texto);
 });
 

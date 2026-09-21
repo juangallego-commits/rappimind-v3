@@ -725,42 +725,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 **Mensajes de validación:**
 
 - `vacio`: Elige una categoría, o Ninguna si el producto no es de ninguna de esas.
-
-### ¿Cuál es el registro sanitario?
-
-> Está en el empaque. Sin él no te damos la leyenda de la pieza.
-
-**Por qué te preguntamos esto.** Una pieza de un medicamento o de un fitoterapéutico tiene que mostrar su registro sanitario. Sin ese número no se puede publicar.
-
-| | |
-|---|---|
-| Campo interno | `registroSanitario` |
-| Paso | Pieza |
-| Tipo de control | texto |
-| Obligatorio | no |
-| Ejemplo | INVIMA 2020M-0012345 |
-| Avanza sola | no |
-| Llena en el documento | `REGISTRO_SANITARIO` |
-
-**Mensajes de validación:**
-
-- `vacio`: Escribe el registro sanitario del producto.
-
-### ¿Tiene número de notificación ante el INVIMA?
-
-> Es opcional. Si no lo tienes a la mano, déjalo vacío.
-
-**Por qué te preguntamos esto.** Cuando la pieza de un medicamento se notificó al INVIMA, el número va dentro de la leyenda. Si no lo pones, la leyenda sale sin esa frase.
-
-| | |
-|---|---|
-| Campo interno | `notificacionInvima` |
-| Paso | Pieza |
-| Tipo de control | texto |
-| Obligatorio | no |
-| Ejemplo | 20251234567 |
-| Avanza sola | no |
-| Llena en el documento | `NOTIFICACION_INVIMA` |
+- `prohibida`: No se hacen campañas de cashback, descuento ni concursos sobre medicamentos, productos fitoterapéuticos, cigarrillos, tabaco calentado (como IQOS), vapeadores ni otros productos con nicotina. Esta campaña no se puede hacer. Si tienes dudas, escríbenos a #tyc-rappi.
 
 ## Paso: Revisar
 
@@ -1493,42 +1458,7 @@ formulario manual.
 **Mensajes de validación:**
 
 - `vacio`: Elige una categoría, o Ninguna si el producto no es de ninguna de esas.
-
-### ¿Cuál es el registro sanitario?
-
-> Está en el empaque. Sin él no te damos la leyenda de la pieza.
-
-**Por qué te preguntamos esto.** Una pieza de un medicamento o de un fitoterapéutico tiene que mostrar su registro sanitario. Sin ese número no se puede publicar.
-
-| | |
-|---|---|
-| Campo interno | `registroSanitario` |
-| Paso | Pieza |
-| Tipo de control | texto |
-| Obligatorio | no |
-| Ejemplo | INVIMA 2020M-0012345 |
-| Avanza sola | no |
-| Llena en el documento | `REGISTRO_SANITARIO` |
-
-**Mensajes de validación:**
-
-- `vacio`: Escribe el registro sanitario del producto.
-
-### ¿Tiene número de notificación ante el INVIMA?
-
-> Es opcional. Si no lo tienes a la mano, déjalo vacío.
-
-**Por qué te preguntamos esto.** Cuando la pieza de un medicamento se notificó al INVIMA, el número va dentro de la leyenda. Si no lo pones, la leyenda sale sin esa frase.
-
-| | |
-|---|---|
-| Campo interno | `notificacionInvima` |
-| Paso | Pieza |
-| Tipo de control | texto |
-| Obligatorio | no |
-| Ejemplo | 20251234567 |
-| Avanza sola | no |
-| Llena en el documento | `NOTIFICACION_INVIMA` |
+- `prohibida`: No se hacen campañas de cashback, descuento ni concursos sobre medicamentos, productos fitoterapéuticos, cigarrillos, tabaco calentado (como IQOS), vapeadores ni otros productos con nicotina. Esta campaña no se puede hacer. Si tienes dudas, escríbenos a #tyc-rappi.
 
 ## Paso: Revisar
 
@@ -4967,42 +4897,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 **Mensajes de validación:**
 
 - `vacio`: Elige una categoría, o Ninguna si el producto no es de ninguna de esas.
-
-### ¿Cuál es el registro sanitario?
-
-> Está en el empaque. Sin él no te damos la leyenda de la pieza.
-
-**Por qué te preguntamos esto.** Una pieza de un medicamento o de un fitoterapéutico tiene que mostrar su registro sanitario. Sin ese número no se puede publicar.
-
-| | |
-|---|---|
-| Campo interno | `registroSanitario` |
-| Paso | Pieza |
-| Tipo de control | texto |
-| Obligatorio | no |
-| Ejemplo | INVIMA 2020M-0012345 |
-| Avanza sola | no |
-| Llena en el documento | `REGISTRO_SANITARIO` |
-
-**Mensajes de validación:**
-
-- `vacio`: Escribe el registro sanitario del producto.
-
-### ¿Tiene número de notificación ante el INVIMA?
-
-> Es opcional. Si no lo tienes a la mano, déjalo vacío.
-
-**Por qué te preguntamos esto.** Cuando la pieza de un medicamento se notificó al INVIMA, el número va dentro de la leyenda. Si no lo pones, la leyenda sale sin esa frase.
-
-| | |
-|---|---|
-| Campo interno | `notificacionInvima` |
-| Paso | Pieza |
-| Tipo de control | texto |
-| Obligatorio | no |
-| Ejemplo | 20251234567 |
-| Avanza sola | no |
-| Llena en el documento | `NOTIFICACION_INVIMA` |
+- `prohibida`: No se hacen campañas de cashback, descuento ni concursos sobre medicamentos, productos fitoterapéuticos, cigarrillos, tabaco calentado (como IQOS), vapeadores ni otros productos con nicotina. Esta campaña no se puede hacer. Si tienes dudas, escríbenos a #tyc-rappi.
 
 ## Paso: Revisar
 
@@ -5034,6 +4929,7 @@ la pregunta que lo llena. Estos son los nombres:
 | En el modelo | Dice en pantalla |
 |---|---|
 | `TEXTO_TIENDA_TURBO` | en cuál de sus tiendas se gana el cashback |
+| `TEXTO_EXCLUSION_SALUD` | la exclusión de medicamentos y productos con nicotina |
 | `TIENDA_TURBO` | en cuál de sus tiendas participa cada marca |
 | `TEXTO_ETA` | el tiempo de entrega prometido |
 | `TEXTO_CIUDAD_ETA` | la ciudad |

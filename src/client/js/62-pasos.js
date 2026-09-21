@@ -537,6 +537,23 @@ function confirmacionDe(campo) {
   return revision.valido ? revision.formateado + ' válido' : null;
 }
 
+/**
+ * El aviso de los productos sobre los que no se hacen campanas.
+ *
+ * Solo arriba de la lista de tipos, y solo donde la regla existe: hoy Colombia.
+ * El texto vive en preguntas.js, junto al mensaje que sale al elegir la
+ * categoria bloqueada, para que los dos digan lo mismo.
+ */
+function avisoDeCategoriasProhibidas(campo) {
+  if (campo.id !== 'tipo') return null;
+  var pais = flujo.paisElegido();
+  if (!pais || !categoriaQueBloquea(pais.codigo)) return null;
+
+  return crear('div', { clase: 'aviso' }, [
+    crear('p', { texto: estado.pregunta('categoriaProducto').avisoDeTipos }),
+  ]);
+}
+
 /** País y tipo: las opciones vienen del servidor, no del esquema. */
 function preguntaDeCatalogo(campo, campos, indice, pasos) {
   var pregunta = estado.pregunta(campo.id);
@@ -544,6 +561,16 @@ function preguntaDeCatalogo(campo, campos, indice, pasos) {
     crear('h2', { clase: 'pregunta-titulo', texto: pregunta.pregunta }),
     crear('p', { clase: 'pregunta-ayuda' }, [RM.campos.conGlosario(pregunta.ayuda)]),
   ]);
+
+  /*
+   * Lo que no se puede hacer, antes de elegir el tipo.
+   *
+   * La misma regla sale despues como respuesta bloqueada en la categoria de la
+   * pieza, que es la ultima pregunta del formulario. Decirlo solo ahi seria
+   * dejar que alguien llene veinte preguntas para enterarse al final.
+   */
+  var avisoDeLaCategoria = avisoDeCategoriasProhibidas(campo);
+  if (avisoDeLaCategoria) bloque.appendChild(avisoDeLaCategoria);
 
   var elegido = estado.entrada()[campo.id];
   var grupo = crear('div', { clase: 'opciones', role: 'radiogroup' });
@@ -803,6 +830,16 @@ function alResponder(campoId, valor, campos, indice) {
     flujo.refrescarDocumento();
     RM.app.dibujar();
     return true;
+  }
+  // La categoria que no deja seguir: se queda en la pregunta con su razon, en
+  // vez de avanzar al resumen y dejar que alguien pulse Generar.
+  if (campoId === 'categoriaProducto') {
+    var pais = flujo.paisElegido();
+    if (pais && categoriaProhibida(pais.codigo, valor)) {
+      flujo.refrescarDocumento();
+      RM.app.dibujar();
+      return true;
+    }
   }
   if (campoId === 'criterioGanador' && estado.entrada().desempate === valor) estado.fijar('desempate', null);
 

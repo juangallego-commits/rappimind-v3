@@ -69,7 +69,7 @@ const CAMPOS_DE_LA_PANTALLA = {
   segmento: ['segmento', 'diasSinCompra'],
   'medio-de-pago': ['metodoPago'],
   'compra-minima': ['compraMinima'],
-  'categoria-producto': ['categoriaProducto', 'registroSanitario', 'notificacionInvima'],
+  'categoria-producto': ['categoriaProducto'],
   resumen: ['declaracion'],
   'resumen-completo': ['declaracion'],
   'cashback-day': ['tiendas'],

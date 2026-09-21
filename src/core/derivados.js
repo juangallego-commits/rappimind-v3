@@ -83,6 +83,34 @@ var TEXTO_TIENDA_TURBO_POR_OPCION = {
  * FRAGMENTO: se pega detras del nombre de la marca, sin punto final, porque la
  * vineta no lo lleva.
  */
+/*
+ * Medicamentos, fitoterapeuticos y productos con nicotina, solo en Colombia.
+ *
+ * Desde el 20 de septiembre de 2026 no se hacen campanas sobre esos productos.
+ * La pieza y el formulario lo dicen antes, pero el documento tiene que dejarlo
+ * escrito: una tienda de la campana puede venderlos igual, y sin la frase el
+ * usuario podria reclamar el beneficio sobre ellos.
+ *
+ * Fundamento: para el tabaco y la nicotina, la Ley 1335 de 2009 y la Ley 2354
+ * de 2024; para medicamentos y fitoterapeuticos, una regla de Legal CO mas
+ * estricta que el Playbook Farmacias. En los demas paises no sale: lo deciden
+ * sus abogados en la prueba.
+ */
+var TEXTO_EXCLUSION_SALUD_POR_TIPO = {
+  cashback: 'Se excluyen del Beneficio los medicamentos, los productos fitoterapéuticos, los cigarrillos, los productos de tabaco calentado, los vapeadores y los demás productos con nicotina.',
+  cashback_day: 'Se excluyen del Beneficio los medicamentos, los productos fitoterapéuticos, los cigarrillos, los productos de tabaco calentado, los vapeadores y los demás productos con nicotina.',
+  // En la Carrera va como vineta, dentro de la lista de lo que no suma.
+  carrera_compras: '• Las compras de medicamentos, productos fitoterapéuticos, cigarrillos, productos de tabaco calentado, vapeadores y demás productos con nicotina.',
+};
+
+var PAISES_CON_EXCLUSION_DE_SALUD = ['CO'];
+
+function textoExclusionDeSalud(entrada, pais) {
+  var codigo = String((pais || {}).codigo || '').toUpperCase();
+  if (PAISES_CON_EXCLUSION_DE_SALUD.indexOf(codigo) === -1) return '';
+  return TEXTO_EXCLUSION_SALUD_POR_TIPO[entrada.tipo] || '';
+}
+
 var SUFIJO_TIENDA_TURBO = {
   normal: ', solo en su tienda por fuera del botón “Turbo”',
   turbo: ', solo en su tienda dentro del botón “Turbo”',
@@ -454,6 +482,7 @@ function calcularDerivadosEnElIdiomaDelPais(entrada, pais) {
   valores.TEXTO_LIMITE_PEDIDOS = textoLimitePedidos(entrada);
 
   valores.TEXTO_TIENDA_TURBO = TEXTO_TIENDA_TURBO_POR_OPCION[tiendaDelCashback(entrada)] || '';
+  valores.TEXTO_EXCLUSION_SALUD = textoExclusionDeSalud(entrada, pais);
 
   if (tieneValor(entrada.porcentaje)) valores.PORCENTAJE = porcentajeEnLetras(entrada.porcentaje);
   if (tieneValor(entrada.tope)) valores.TOPE = cantidadCreditos(entrada.tope, pais);
@@ -521,5 +550,6 @@ if (typeof module !== 'undefined') {
     TEXTO_METODO_PAGO_POR_OPCION: TEXTO_METODO_PAGO_POR_OPCION,
     TEXTO_TIENDA_TURBO_POR_OPCION: TEXTO_TIENDA_TURBO_POR_OPCION,
     SUFIJO_TIENDA_TURBO: SUFIJO_TIENDA_TURBO,
+    textoExclusionDeSalud: textoExclusionDeSalud,
   };
 }

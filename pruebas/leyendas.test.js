@@ -145,10 +145,12 @@ test('cada complemento dice cómo se elige, y con un identificador estable', () 
 test('un país solo ofrece las categorías que tiene leyenda para imprimir', () => {
   // Las opciones salen del catálogo, no de una lista escrita a mano: una
   // categoría sin leyenda no se puede elegir, porque no tendría nada que decir.
+  // Colombia tenía diez. Las siete de medicamentos, fitoterapéuticos y nicotina
+  // salieron del catálogo el 20 de septiembre de 2026, y en su lugar va una
+  // sola opción que no deja seguir.
   const colombia = categoriasDelPais(CATALOGO, 'CO').map((c) => c.valor);
   assert.deepStrictEqual(colombia.slice().sort(), [
-    'bebidas_sin_alcohol', 'cigarrillos', 'fitoterapeutico_pfm', 'fitoterapeutico_pft',
-    'licores', 'medicamento', 'medicamentos_varios', 'suplementos', 'vapeadores', 'vapeadores_pmi',
+    'bebidas_sin_alcohol', 'licores', 'medicamentos_y_nicotina', 'suplementos',
   ]);
 
   const mexico = categoriasDelPais(CATALOGO, 'MX').map((c) => c.valor);

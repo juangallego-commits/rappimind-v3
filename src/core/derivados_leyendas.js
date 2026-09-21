@@ -36,7 +36,6 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var incluyeTurbo = moduloTextoLey.incluyeTurbo;
   var direccionDeCampana = require('./nombres.js').direccionDeCampana;
   var SECCIONES_EXCLUIBLES_ETA = require('./derivados_eta.js').SECCIONES_EXCLUIBLES_ETA;
-  var categoriaPideRegistro = require('./leyendas.js').categoriaPideRegistro;
 }
 
 /** Donde vive el T&C publicado. La ruta del pais sale de la fila del pais. */
@@ -538,15 +537,6 @@ function faltantesParaLaLeyenda(entrada, pais) {
     faltantes.push('el enlace de los términos de RappiPro de este país');
   }
 
-
-  // El registro sanitario no bloquea el documento, pero sin el la pieza de un
-  // medicamento o de un fitoterapeutico no se puede publicar (Legal CO,
-  // diapositiva 10). La leyenda lo lleva en un bloque opcional, asi que sin
-  // este aviso desapareceria en silencio y nadie se enteraria.
-  if (categoriaPideRegistro(entrada.categoriaProducto) &&
-      !tieneValor(entrada.registroSanitario)) {
-    faltantes.push('el registro sanitario del producto, que la pieza tiene que mostrar');
-  }
 
   return faltantes;
 }

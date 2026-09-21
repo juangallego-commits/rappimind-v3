@@ -7,6 +7,40 @@ del archivo: `npm run previsualizar CB01` (o CB02, CC01, CD01, MX01). Al
 implementar la sección 5 no apareció ningún error en los textos de Legal: todo
 lo que hay que confirmar es lo que ya está en esta lista.
 
+## Medicamentos, fitoterapéuticos y nicotina: qué haría falta para reabrirlos
+
+Juan cerró el 20 de septiembre de 2026 que en Colombia **no se hacen campañas
+de cashback, descuento ni concursos** sobre medicamentos, productos
+fitoterapéuticos, cigarrillos, tabaco calentado, vapeadores ni otros productos
+con nicotina. Fundamento: para el tabaco y la nicotina, la Ley 1335 de 2009 y la
+Ley 2354 de 2024; para medicamentos y fitoterapéuticos, una regla de Legal CO
+más estricta que el Playbook Farmacias, que sí permite el descuento anunciado en
+el propio medicamento.
+
+Las siete categorías salieron de la pregunta de la pieza y sus siete leyendas
+salieron del catálogo. **Los archivos se quedaron** en `modelos/leyendas/`, con
+su texto tal cual vino de Legal y con `se_elige_en: no_se_ofrece`. Con ellas se
+fueron del formulario la pregunta del registro sanitario y la de la notificación
+ante el INVIMA, porque ninguna otra categoría las usaba.
+
+**Si algún día se reabren**, tres cosas:
+
+1. La fórmula aprobada para los medicamentos es la del **Playbook Farmacias de
+   Legal** (Drive, id `1iF-ZK8ZoTT0BKQc1GqWLiLS8Mh8pusgK`), no la que está hoy
+   en el catálogo:
+   - Uno: "Es un medicamento. No exceder su consumo. Leer indicaciones y
+     contraindicaciones. Si los síntomas persisten consultar al médico."
+   - Varios: "Son medicamentos. No exceder su consumo. Leer indicaciones y
+     contraindicaciones. Si los síntomas persisten consultar al médico."
+2. Vuelven las dos preguntas del registro sanitario y de la notificación ante el
+   INVIMA, que las cuatro leyendas de medicamentos y fitoterapéuticos siguen
+   citando con sus marcadores.
+3. Hay que decidir si la opción que hoy bloquea se retira o se parte en las
+   categorías que se reabran.
+
+En los demás países no cambia nada: lo deciden sus abogados en la prueba.
+México sigue ofreciendo sus categorías de medicamentos y de bolsas de nicotina.
+
 ## Cashback: cambios frente al modelo aprobado de julio
 1. El rol de Rappi pasó a la cláusula 1 (antes estaba al final), para que "Rappi" quede definido antes de usarse.
 2. Se agregó la frase: los términos con mayúscula inicial tienen el significado de los T&C de Uso de la Plataforma.
@@ -19,7 +53,11 @@ lo que hay que confirmar es lo que ya está en esta lista.
 ## Textos nuevos o ajustados
 1. Medios de pago: se agregó en "Todos" y "RappiCard" que los pedidos pagados con Créditos no son válidos (antes solo estaba en "excepto efectivo").
 2. Segmentos nuevos: Nuevos usuarios y Usuarios reactivados (con días sin compra).
-3. Condiciones opcionales: "solo Turbo" y "solo consumo en el local".
+3. ~~Condiciones opcionales: "solo Turbo" y "solo consumo en el local".~~
+   **Cambiado el 20 de septiembre de 2026.** "Solo consumo en el local" se borró
+   (en Rappi no existe esa modalidad) y la pregunta pasó a ser en cuál de las dos
+   tiendas de la marca se gana el cashback: la normal, la de Turbo, las dos, o
+   ninguna porque no tiene tienda en Turbo.
 4. Nombres de las secciones para la redención (`data/secciones.json`). En las 1.184
    solicitudes reales aparece una sección **Express** que no está en el archivo, y no
    aparecen **Farmacia** ni **Tiendas especializadas**, que sí están. No toqué
