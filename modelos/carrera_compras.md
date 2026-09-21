@@ -10,6 +10,7 @@ Por medio del presente documento se dan a conocer los términos y condiciones de
 • Tener una cuenta activa en la Plataforma Rappi.
 • Cumplir la mecánica descrita en los presentes Términos y Condiciones.
 La participación es gratuita y no exige pago alguno por concepto de inscripción.
+[[INCLUIR:inhabilidades]]
 § Productos participantes. {{TEXTO_PRODUCTOS}} Los productos son ofrecidos y comercializados directamente por los Aliados Comerciales.
 § Mecánica del concurso. Para participar debes:
 • Realizar uno o más pedidos de Productos Participantes en la Tienda Participante a través de la Plataforma Rappi durante la vigencia de la Campaña.

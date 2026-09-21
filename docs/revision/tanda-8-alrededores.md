@@ -116,6 +116,7 @@ Carrera de Compras: gana quien más compre durante la vigencia. El resultado dep
 Cashback Multitienda: varias tiendas hacen cashback dentro de la misma jornada, cada una con su propio porcentaje, su tope y su presupuesto.
 15 minutos o Cashback: Rappi promete un tiempo de entrega en el botón Turbo y, si la orden llega tarde, devuelve en Créditos parte de lo que el usuario pagó.
 Cashback Travel y Descuento Travel: las dos formas de campaña de vuelos, hoteles, autos y paquetes.
+Millas: un programa de lealtad aliado da millas por comprar, en la Plataforma Rappi o en Rappi Travel. Todos los que cumplen las reciben.
 No sirven: las redacta Legal
 Sorteo entre todos los participantes, aunque sea "entre quienes compren".
 Rifa con boletas o números.
@@ -263,7 +264,7 @@ Países
 Activo lo ve cualquiera. Piloto lo ven pruebas, legal y administración. Bloqueado no lo ve nadie.
 
 País	Tipos habilitados	Estado
-CO · Colombia	cashback, carrera_compras, cashback_day, cashback_eta, cashback_travel, descuento_travel	
+CO · Colombia	cashback, carrera_compras, cashback_day, cashback_eta, cashback_travel, descuento_travel, millas, millas_travel	
 activo
 piloto
 bloqueado

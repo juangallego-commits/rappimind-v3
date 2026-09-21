@@ -271,16 +271,31 @@ function pantallaFiltro(raiz) {
 /**
  * El filtro de Rappi Travel.
  *
- * Se muestra despues de elegir uno de los dos tipos de Travel, no antes: las
- * nueve preguntas solo tienen sentido sabiendo que la campana es de viajes.
- * Reemplaza, para Travel, las preguntas generales de fondeo y de T&C propios.
+ * Se muestra despues de elegir Rappi Travel, no antes: las preguntas solo
+ * tienen sentido sabiendo que la campana es de viajes. Reemplaza, para Travel,
+ * las preguntas generales de fondeo y de T&C propios.
+ *
+ * Cuantas son se cuenta, no se escribe. La pantalla decia "Nueve preguntas
+ * rapidas" y el filtro ya iba por ocho: quitar una pregunta y dejar el numero
+ * escrito en otro sitio es el mismo descuido que hizo inalcanzable Rappi Travel
+ * entero (ver la skill flujo-y-ux). Con el filtro creciendo y encogiendo cada
+ * semana, el numero tiene que salir de la lista.
  */
+function cuantasPreguntasDelFiltro() {
+  var cuantas = FILTRO_DE_TRAVEL.length;
+  var enLetras = ['cero', 'Una', 'Dos', 'Tres', 'Cuatro', 'Cinco', 'Seis', 'Siete', 'Ocho', 'Nueve', 'Diez',
+    'Once', 'Doce'];
+  return enLetras[cuantas] || String(cuantas);
+}
+
 function pantallaFiltroTravel(raiz) {
+  var cuantas = FILTRO_DE_TRAVEL.length;
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
     crear('h1', { texto: 'Antes de seguir con tu campaña de Rappi Travel' }),
     crear('p', {
       clase: 'pregunta-ayuda',
-      texto: 'Nueve preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano. No es un castigo: es un caso que un abogado tiene que mirar.',
+      texto: cuantasPreguntasDelFiltro() + (cuantas === 1 ? ' pregunta rápida' : ' preguntas rápidas') +
+        '. Si alguna es sí, tu campaña necesita que Legal la redacte a mano. No es un castigo: es un caso que un abogado tiene que mirar.',
     }),
   ]);
 

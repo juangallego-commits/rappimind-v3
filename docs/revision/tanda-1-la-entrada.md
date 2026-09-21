@@ -223,6 +223,8 @@ Cashback
 La tienda devuelve un porcentaje de lo que el usuario pagó, en Créditos para su Billetera. El usuario compra hoy y vuelve a gastar ese saldo después.
 Carrera de Compras
 Un concurso con premio: durante unas fechas gana quien más compre en la tienda. No hay azar, gana por lo que compró.
+Millas
+Un programa de lealtad aliado le da millas al usuario por comprar en una tienda de la Plataforma Rappi. El programa organiza la campaña y acredita las millas; Rappi difunde y transmite la orden.
 15 minutos o Cashback
 Rappi promete un tiempo de entrega en el botón Turbo de una ciudad. Si la orden llega tarde, el usuario recibe en Créditos un porcentaje de lo que pagó. No hay tienda aliada que fondee: el presupuesto lo pone Rappi.
 Cashback Multitienda
@@ -230,8 +232,8 @@ Varias tiendas hacen cashback dentro de una misma jornada comercial. Cada tienda
 
 ¿Es un descuento, un cupón o envío gratis?
 
-Descuentos, cupones, envío gratis y tarifa de servicio
-Buena noticia: para estas campañas Legal ya publicó los T&C. No generas ningún documento, te damos el enlace listo para la pieza.
+Descuentos, cupones, envío gratis, Rappi Pro y más
+Buena noticia: para estas campañas Legal ya publicó los T&C. Entra y mira la lista completa antes de seguir, porque son más de las que caben en este título. No generas ningún documento: te damos el enlace listo para la pieza.
 ¿Por qué te preguntamos esto?
 
 Cada tipo usa un modelo legal distinto, aprobado por Legal. Elegir mal significa generar el documento equivocado.
@@ -441,21 +443,18 @@ Volver a los tipos de campaña
 ```
 Antes de seguir con tu campaña de Rappi Travel
 
-Nueve preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano. No es un castigo: es un caso que un abogado tiene que mirar.
+Ocho preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano. No es un castigo: es un caso que un abogado tiene que mirar.
 
-¿La paga Rappi o Rappi Travel, no un aliado?
-No
-Sí
 ¿El aliado exige sus propios términos y condiciones?
 No
 Sí
-¿Hay sorteo o concurso, o la pieza dice "gana"?
+¿Hay sorteo o concurso?
 No
 Sí
 ¿La pieza anuncia un precio "desde" o una tarifa?
 No
 Sí
-¿El beneficio es distinto a Créditos o a un descuento en el precio? Por ejemplo: noches o niños gratis, cupones, millas, eSIM, bonos o cuotas sin interés.
+¿El beneficio es distinto a Créditos, a millas de un programa de lealtad o a un descuento en el precio? Por ejemplo: noches o niños gratis, cupones, eSIM, bonos o cuotas sin interés.
 No
 Sí
 ¿El porcentaje, el tope o la compra mínima cambian según el destino, el producto o el tipo de usuario, o se mezcla descuento con cashback?
@@ -504,6 +503,8 @@ Cashback Travel
 La marca aliada devuelve un porcentaje de lo que el usuario pagó por su vuelo, hotel, auto o paquete, en Créditos para su Billetera.
 Descuento Travel
 La marca aliada baja el precio de sus vuelos, hoteles, autos o paquetes. El usuario ve el precio ya rebajado antes de pagar, no recibe Créditos.
+Millas Travel
+Un programa de lealtad aliado le da millas al usuario por comprar su vuelo, hotel, auto, tour o paquete en Rappi Travel. El programa organiza la campaña y acredita las millas.
 ¿Por qué te preguntamos esto?
 
 Cada tipo usa un modelo legal distinto, aprobado por Legal. Elegir mal significa generar el documento equivocado.
