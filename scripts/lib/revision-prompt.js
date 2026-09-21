@@ -310,11 +310,12 @@ function leeme(datos) {
   lineas.push('   hasta el final. Es el mismo para todas las tandas.');
   lineas.push('3. Pega debajo el contenido de la tanda, por ejemplo `' + datos.tandas[0].nombre + '`.');
   lineas.push('   Todo en el mismo mensaje.');
-  lineas.push('4. Adjunta, en ese mismo mensaje, las fotos que la propia tanda te lista. Están');
-  lineas.push('   en `docs/revision/capturas/` y son una por forma de pantalla, nunca más de');
-  lineas.push('   nueve por tanda. Claude chat lee imágenes pero no dibuja HTML, así que son lo');
-  lineas.push('   único que le deja juzgar el aire, la jerarquía y el tamaño de los botones. Si');
-  lineas.push('   no las adjuntas, la revisión igual funciona: el texto va completo en la tanda.');
+  lineas.push('4. Adjunta, en ese mismo mensaje, las fotos que la propia tanda te lista. Las');
+  lineas.push('   tomas tú de la aplicación, como dice más arriba: en el repositorio no hay');
+  lineas.push('   capturas a propósito. Son una por forma de pantalla, nunca más de nueve por');
+  lineas.push('   tanda. Claude chat lee imágenes pero no dibuja HTML, así que son lo único que');
+  lineas.push('   le deja juzgar el aire, la jerarquía y el tamaño de los botones. Si no las');
+  lineas.push('   adjuntas, la revisión igual funciona: el texto va completo en la tanda.');
   lineas.push('5. Cuando responda, si se quedó a mitad, dile "sigue". Si se quedó sin espacio,');
   lineas.push('   pídele que continúe en otro mensaje.');
   lineas.push('6. Copia la respuesta **entera, tal cual**, y guárdala en');

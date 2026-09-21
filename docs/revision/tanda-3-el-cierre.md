@@ -235,7 +235,7 @@ FARMATODO · 20% CASHBACK · 1 OCT 2026
 ```
 Tu T&C está listo
 
-Te mandamos el documento por correo. Solicitud RM-20260920-0001.
+Te mandamos el documento por correo. Solicitud RM-20260921-0001.
 
 Abrir el documento
 Lo que vas a pegar en Squarespace

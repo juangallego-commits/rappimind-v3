@@ -6,7 +6,9 @@
 > de respuesta. Empieza por `docs/revision/LEEME.md`. Lo que sigue valiendo de
 > aquí son las reglas del texto y el criterio del comercial, que ya están dentro
 > de `docs/revision/PROMPT.md`. Lo que ya no vale es la numeración de las 33
-> pantallas de abajo ni las dieciséis capturas de `docs/capturas/revision/`.
+> pantallas de abajo ni las dieciséis capturas de `docs/capturas/revision/`,
+> que se borraron el 21 de septiembre de 2026: las capturas ya no se guardan en
+> el repositorio, se sacan de la aplicación cuando hacen falta.
 >
 > `docs/FRONT_ACTUAL.html` sigue existiendo y sigue sirviendo para ver el front
 > entero de corrido, pero para revisarlo pesa demasiado: el porqué está en

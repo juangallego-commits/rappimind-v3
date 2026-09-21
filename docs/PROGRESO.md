@@ -177,7 +177,8 @@ npm run demo
 Y abrir `demo/index.html` con doble clic. Es la aplicación completa, con el motor
 real y un servidor simulado en memoria. No toca nada de producción.
 
-Las capturas están en `docs/capturas/`, con su índice.
+Las capturas de ese día se borraron el 21 de septiembre de 2026, junto con el
+resto de las capturas versionadas. Se sacan de la aplicación cuando hacen falta.
 
 ### Lo que encontré mirando la aplicación funcionando
 
@@ -1633,7 +1634,7 @@ ficha con el texto de hoy y el texto propuesto.
   Ya está al día, y con él `docs/CONTENIDO_AYUDA.md`.
 - **Las 41 preguntas propias de Rappi Travel nunca han pasado por una revisión
   de copy.** Son la tanda 5 y, de todo el paquete, es donde más hay que mirar.
-- **`docs/encargos/02-revision-interfaz.md` y `docs/REVISION_FRONT.md` quedaron
+- **`docs/encargos/02-revision-interfaz.md` quedó
   atrás.** Los reemplaza este paquete. Se dejan como historia de lo que ya se
   revisó una vez.
 

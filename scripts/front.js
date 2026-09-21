@@ -54,9 +54,10 @@ const MARCA_DOCUMENTO =
 /**
  * Las pantallas del documento, en orden.
  *
- * `queHace` es lo que hace el comercial ahi, con las mismas palabras de
- * docs/REVISION_FRONT.md para las que ya estaban descritas. `nota` es lo que
- * hay que saber para leer el marco.
+ * `queHace` es lo que hace el comercial ahi. Las primeras salieron de la
+ * revision del front de septiembre de 2026, que ya se borro; de ahi vienen
+ * algunas con esas mismas palabras. `nota` es lo que hay que saber para leer
+ * el marco.
  */
 const PARTES = [
   {

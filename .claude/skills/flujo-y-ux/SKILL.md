@@ -166,10 +166,11 @@ terminó": al resumen, en blanco.
    tocaste. `npm run demo` y luego `scripts/recorrer-flujo.js` de esta skill,
    que hace el recorrido entero y revisa los invariantes de arriba. Si tocaste
    algo que un KAM de Brasil ve, también `scripts/recorrer-en-portugues.js`.
-   Y para que Juan o Claude chat lo vean sin abrir la app,
-   `scripts/capturar-pantallas.js` regenera las 33 capturas de
-   `docs/capturas/revision/` y deja `textos.json` con el texto literal de cada
-   pantalla: de ahí se arma `docs/encargos/02-revision-interfaz.md`.
+   Y para verlo sin abrir la app, `scripts/capturar-pantallas.js` deja 33
+   capturas y un `textos.json` con el texto literal de cada pantalla en
+   `docs/capturas/revision/`. Esa carpeta **no se versiona**, a propósito: una
+   captura guardada es de la versión de hace tres semanas, no de la que corre
+   hoy. Córrelo cuando las necesites y bórralas cuando termines.
 2. **Recorre también el camino que no tocaste.** El defecto del filtro de Travel
    rompió Rappi Travel arreglando otra cosa. Si tocaste el negocio, prueba
    Rappi. Si tocaste Travel, prueba Colombia y México.
