@@ -1089,3 +1089,26 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
     piloto a mano. Lo mismo con la comprobación del recorrido que abría el
     detalle de un T&C con algo pendiente: los cupones dejaron de tener pendiente
     y pasó a usar los de membresía, que sí lo tienen.
+
+80. **El botón primario lleva texto blanco grande sobre un gradiente recortado.**
+    Decidido por Juan el 21 de septiembre de 2026, al cerrar el análisis del
+    cambio de identidad. El brand book de Rappi manda blanco sobre el neón
+    (`Neon/gradient → white only`) y el encargo manda 4.5:1 de contraste. Las dos
+    reglas no pueden cumplirse a la vez: medido con WCAG 2.1, el blanco sobre el
+    gradiente `#FF7A4D → #FF2526 → #FF4583` da entre 2.58:1 y 3.79:1, y 3.79 es
+    el máximo de todo el tramo. La salida es usar el umbral de texto grande, que
+    es 3:1 a partir de 18.66px en negrita: el botón lleva su texto a 19px en peso
+    700 y el gradiente del botón arranca en el 17% del tramo (desde `#FF6041`),
+    que es donde el blanco cruza ese umbral. Así se respeta la regla de marca y
+    se cumple AA. El gradiente completo se sigue usando donde no lleva texto.
+    El detalle está en `docs/PLAN_IDENTIDAD.md`, sección 3.1.
+
+81. **La tipografía se decide con el peso medido, no antes.** PP Object Sans no
+    está en Google Fonts, y Apps Script no sirve archivos del repositorio, así que
+    los cuatro pesos tendrían que ir en base64 dentro del HTML y suman a cada
+    carga de la aplicación. En vez de comprometer eso a ciegas, primero se mide
+    cuánto pesan los cuatro pesos convertidos y cuánto crece el HTML servido. Con
+    ese número se elige entre las tres opciones: la familia completa, un
+    subconjunto de pesos, o Archivo desde Google Fonts como respaldo con PP Object
+    Sans primero en la pila. La medición necesita `assets/fonts/`, que todavía no
+    está en el repositorio.
