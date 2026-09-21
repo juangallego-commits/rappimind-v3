@@ -247,9 +247,14 @@ test('dist/Estilos.html cruza la frontera: sin @import, con la letra incrustada'
   assert.ok(estilos.indexOf('@import') === -1,
     'quedó un @import en dist/Estilos.html, y no sobrevive a Apps Script');
 
-  const relativas = estilos.match(/url\(\s*['"]?[^'")]*\.\.\/[^'")]*['"]?\s*\)/g);
-  assert.deepStrictEqual(relativas, null,
-    'quedaron url() relativas en dist/Estilos.html: ' + (relativas || []).join(', '));
+  // Se exige que TODA url() sea un data:, no que ninguna lleve "../". Buscar el
+  // patron de la ruta relativa dejaba pasar url('logo.png') y
+  // url('assets/logo/x.png'), que en Apps Script tampoco resuelven, y ademas
+  // incrustarLetras solo sabe convertir las de tipo de letra: una imagen se
+  // colaria intacta.
+  const sinResolver = (estilos.match(/url\(\s*(?!['"]?data:)[^)]*\)/g) || []);
+  assert.deepStrictEqual(sinResolver, [],
+    'quedaron url() sin resolver en dist/Estilos.html, y en Apps Script no existe el sistema de archivos del repositorio: ' + sinResolver.join(', '));
 
   // Las cinco capas de token tienen que estar, y rappimind.css la última, que
   // es la que pisa a las de marca.

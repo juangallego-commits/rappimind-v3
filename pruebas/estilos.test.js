@@ -301,3 +301,42 @@ test('la barra de progreso es una sola fila y no se parte', () => {
   assert.ok(compacta && /display:\s*block/.test(compacta[0]),
     'la línea de "Paso n de m · Nombre" no se ve: si las etiquetas se caen, nadie sabe en qué paso está');
 });
+
+test('ORDEN nombra todos los archivos de tokens que hay en la carpeta', () => {
+  // El build concatena la lista fija de scripts/lib/hoja-completa.js y
+  // npm run contraste enumera la carpeta src/client/tokens/. Las dos listas
+  // pueden discrepar sin que nada lo diga: un archivo nuevo que nadie ponga en
+  // ORDEN se mide en la auditoría de contraste y NO se sirve, o sea que la
+  // puerta da verde sobre valores que el navegador nunca recibe.
+  const carpeta = path.join(__dirname, '..', 'src', 'client', 'tokens');
+  const enDisco = fs.readdirSync(carpeta).filter((n) => n.endsWith('.css')).sort();
+  const enOrden = ORDEN.filter((r) => r.indexOf('tokens/') === 0)
+    .map((r) => r.slice('tokens/'.length)).sort();
+
+  assert.deepStrictEqual(enOrden, enDisco,
+    'los tokens de la carpeta y los de ORDEN no son los mismos. En disco: ' +
+    enDisco.join(', ') + '. En ORDEN: ' + enOrden.join(', '));
+});
+
+test('los pesos de letra que usa la hoja están en la escala declarada', () => {
+  // La marca define cuatro pesos para PP Object Sans: 400, 500, 700 y 900. Pero
+  // el cuerpo de la aplicación va con Archivo, que es variable y cubre 100 a
+  // 900, y la especificación de estados pide 800 para los títulos de opción,
+  // las píldoras de estado y las cabeceras de tabla, y 600 para las etiquetas
+  // de la barra de progreso. Los dos se sirven de verdad.
+  //
+  // Esta prueba no prohíbe nada: solo obliga a que un peso nuevo entre a
+  // propósito y no de refilón, porque un peso que la familia no tenga cae al
+  // sintético del navegador sin que nada falle.
+  const declarados = [400, 500, 600, 700, 800, 900];
+  const usados = new Set();
+  let hallado;
+  const patron = /font-weight:\s*(\d+)/g;
+  const limpia = HOJA.replace(/\/\*[\s\S]*?\*\//g, '');
+  while ((hallado = patron.exec(limpia)) !== null) usados.add(Number(hallado[1]));
+
+  const fuera = [...usados].filter((p) => declarados.indexOf(p) === -1).sort();
+  assert.deepStrictEqual(fuera, [],
+    'pesos fuera de la escala declarada: ' + fuera.join(', ') +
+    '. Si hacen falta, agrégalos a esta lista y di por qué en docs/DECISIONES.md');
+});

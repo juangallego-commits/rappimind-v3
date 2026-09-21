@@ -183,6 +183,35 @@ const PARES = [
   { que: 'barra del paso pendiente', frente: '--rm-paso-pendiente', fondo: '#FFFFFF', min: 3,
     nota: 'es el carril vacio de la barra; lo que comunica el avance es el paso hecho y el actual, mas la linea de texto de encima' },
   { que: 'subrayado punteado del hueco', frente: '--rm-hueco-subrayado', fondo: '--rm-hueco-bg', min: 3 },
+
+  // Siete pares medían contra papel cosas que en pantalla no están sobre papel:
+  // el fondo de página es niebla. Se duplican contra el fondo que de verdad les
+  // toca, como ya se hacía con el texto. Con 3.00 y 3.01 de margen, la
+  // diferencia entre los dos fondos se come el margen entero.
+  { que: 'borde del campo vacio sobre niebla', frente: '--rm-campo-vacio', fondo: '--rm-niebla', min: 3 },
+  { que: 'borde del campo con valor sobre niebla', frente: '--rm-campo-lleno', fondo: '--rm-niebla', min: 3 },
+  { que: 'borde del campo en error sobre niebla', frente: '--rm-campo-error', fondo: '--rm-niebla', min: 3 },
+  { que: 'borde de la opcion elegida sobre niebla', frente: '--rm-opcion-sel-borde', fondo: '--rm-niebla', min: 3 },
+  { que: 'barra del paso hecho sobre niebla', frente: '--rm-paso-hecho', fondo: '--rm-niebla', min: 3 },
+
+  // La barra del paso ACTUAL no se medía. El carril pendiente sí, con nota, y el
+  // paso hecho también; justo el único con gradiente se quedó fuera.
+  { que: 'barra del paso actual, parada clara', frente: '--color-neon-orange', fondo: '--rm-niebla', min: 3,
+    nota: 'la parada clara del gradiente da por debajo de 3, pero el paso actual no se comunica solo con la barra: su etiqueta va en tinta y peso 800 y la linea de encima dice "Paso n de m" con el nombre' },
+  { que: 'barra del paso actual, parada media', frente: '--rm-neon', fondo: '--rm-niebla', min: 3 },
+
+  // El visto blanco de "Asi queda" va sobre el gradiente SIN recortar. Es un
+  // objeto grafico que comunica informacion, asi que le toca 3, y su peor caso
+  // es la parada clara, no la del 55%.
+  { que: 'visto blanco del mensaje de confirmacion', frente: '#FFFFFF', fondo: '--rm-grad-texto', colorNumeroFondo: 0, min: 3 },
+  { que: 'disco de la opcion elegida contra su anillo blanco', frente: '--rm-grad-texto', colorNumero: 0, fondo: '#FFFFFF', min: 3 },
+
+  // El borde de la opcion vencida. La nota de "WCAG exime los componentes
+  // inactivos" NO le aplica: esa opcion lleva aria-disabled y no disabled, a
+  // proposito, para que reciba foco y quien navega con teclado se entere de que
+  // existe y de que vencio.
+  { que: 'borde de la opcion vencida sobre niebla', frente: '--rm-borde-secundario', fondo: '--rm-niebla', min: 3,
+    nota: 'da por debajo de 3 pero la opcion no se identifica por su contorno: lleva titulo, nota y la razon del vencimiento en texto' },
   { que: 'borde de la pildora de vencido', frente: '--rm-estado-vencido-borde', fondo: '#FFFFFF', min: 3,
     nota: 'es una etiqueta, no un control, y su significado lo carga el texto' },
 ];
