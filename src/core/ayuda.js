@@ -204,19 +204,14 @@ var LO_QUE_LA_PIEZA_DEBE_DECIR =
  */
 var FILTRO_DE_TRAVEL = [
   {
-    id: 'pagaRappiTravel',
-    texto: '¿La paga Rappi o Rappi Travel, no un aliado?',
-    razon: 'Rappi Travel nunca es el Organizador. Si la campaña la paga Rappi Travel, la redacta Legal.',
-  },
-  {
     id: 'tycPropiosTravel',
     texto: '¿El aliado exige sus propios términos y condiciones?',
     razon: 'Si el aliado impone su documento, hay que revisarlo con Legal antes de publicarlo.',
   },
   {
     id: 'azarTravel',
-    texto: '¿Hay sorteo o concurso, o la pieza dice "gana"?',
-    razon: 'Las dinámicas con azar necesitan permiso previo de Coljuegos, y la palabra "gana" hace ver la campaña como un concurso.',
+    texto: '¿Hay sorteo o concurso?',
+    razon: 'Las dinámicas con azar necesitan permiso previo de Coljuegos.',
   },
   {
     id: 'anunciaPrecio',

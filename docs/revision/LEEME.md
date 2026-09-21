@@ -4,7 +4,7 @@ Este paquete existe para revisar el front de RappiMind pantalla por pantalla y
 caso por caso, con Claude chat, y que lo que salga se pueda aplicar sin volver a
 escribirlo a mano.
 
-Generado el 2026-09-21 desde el commit `e96e78c`, con el
+Generado el 2026-09-21 desde el commit `6b8b54a`, con el
 texto de 46 pantallas sacado de la aplicación tal como se lee.
 
 ## Por qué en tandas y no en un solo archivo
@@ -95,11 +95,12 @@ doble clic. No se lo mandes a Claude chat: el porqué está más arriba.
    hasta el final. Es el mismo para todas las tandas.
 3. Pega debajo el contenido de la tanda, por ejemplo `tanda-1-la-entrada.md`.
    Todo en el mismo mensaje.
-4. Adjunta, en ese mismo mensaje, las fotos que la propia tanda te lista. Están
-   en `docs/revision/capturas/` y son una por forma de pantalla, nunca más de
-   nueve por tanda. Claude chat lee imágenes pero no dibuja HTML, así que son lo
-   único que le deja juzgar el aire, la jerarquía y el tamaño de los botones. Si
-   no las adjuntas, la revisión igual funciona: el texto va completo en la tanda.
+4. Adjunta, en ese mismo mensaje, las fotos que la propia tanda te lista. Las
+   tomas tú de la aplicación, como dice más arriba: en el repositorio no hay
+   capturas a propósito. Son una por forma de pantalla, nunca más de nueve por
+   tanda. Claude chat lee imágenes pero no dibuja HTML, así que son lo único que
+   le deja juzgar el aire, la jerarquía y el tamaño de los botones. Si no las
+   adjuntas, la revisión igual funciona: el texto va completo en la tanda.
 5. Cuando responda, si se quedó a mitad, dile "sigue". Si se quedó sin espacio,
    pídele que continúe en otro mensaje.
 6. Copia la respuesta **entera, tal cual**, y guárdala en

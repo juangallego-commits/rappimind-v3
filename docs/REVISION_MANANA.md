@@ -96,7 +96,9 @@ escriba solo mientras respondes. Esa es la idea de toda la interfaz.
 3. **`docs/CONTENIDO_AYUDA.md`**, sobre todo el bloque de azar. Está marcado como borrador porque es contenido legal y no es mío.
 4. **`docs/PREGUNTAS_KAM.md`**: las 44 preguntas tal como las ve el comercial.
 5. **`docs/COMENTARIOS_ANNA.md`**: los once puntos, con dónde quedó cada uno.
-6. **`docs/capturas/`**: 18 capturas de la aplicación funcionando.
+   Borrado el 21 de septiembre de 2026: los once estaban resueltos.
+6. **`docs/capturas/`**: 18 capturas de la aplicación funcionando. Borradas el
+   mismo día. Se sacan de la aplicación cuando hacen falta.
 7. **`docs/DISENO.md`**: la paleta y por qué hay dos naranjas.
 8. **`docs/HALLAZGOS_SOLICITUDES.md`**: qué piden de verdad los comerciales.
 

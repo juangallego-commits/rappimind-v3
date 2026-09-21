@@ -174,17 +174,19 @@ async function recorrer() {
   revisar('el filtro de Travel deja salir a quien entró por equivocación',
     enFiltroTravel.indexOf('Esta campaña no es de Travel') !== -1);
 
-  // Diez preguntas desde el 20 de septiembre de 2026: la sexta metía dos en
-  // una y se partió. Ninguna pasa de diez palabras, y las que necesitaban
-  // ejemplos los bajaron a una línea de ayuda (puntos F6 y F8).
+  // Nueve preguntas: la sexta metía dos en una y se partió (F8, 20 de
+  // septiembre), y la de quién paga se fue el 21 porque no filtraba nada.
+  // Ninguna pasa de diez palabras, y las que necesitaban ejemplos los bajaron a
+  // una línea de ayuda (F6 y F8). El copy dice el número que hay de verdad: lo
+  // tenía escrito a mano y se quedó diciendo diez cuando ya eran nueve.
   const preguntasDeTravel = await pagina.evaluate(() =>
     [].map.call(document.querySelectorAll('.pregunta'), (q) => ({
       titulo: q.querySelector('.pregunta-titulo').textContent.trim(),
       ayuda: (q.querySelector('.pregunta-ayuda') || {}).textContent || '',
     })));
-  revisar('el filtro de Travel tiene diez preguntas',
-    preguntasDeTravel.length === 10 && enFiltroTravel.indexOf('Diez preguntas rápidas') !== -1,
-    preguntasDeTravel.length + ' preguntas');
+  revisar('el filtro de Travel tiene nueve preguntas, y el copy dice nueve',
+    preguntasDeTravel.length === 9 && enFiltroTravel.indexOf('Nueve preguntas rápidas') !== -1,
+    preguntasDeTravel.length + ' preguntas · ' + enFiltroTravel.slice(0, 120));
   revisar('la sexta quedó partida en dos',
     preguntasDeTravel.some((q) => q.titulo === '¿Las condiciones cambian según destino, producto o usuario?') &&
     preguntasDeTravel.some((q) => q.titulo === '¿Mezcla descuento y cashback en la misma campaña?'),

@@ -197,11 +197,22 @@ test('el filtro va antes de la lista, no después', () => {
 
 // --- El filtro de Travel, las tres de la misma pantalla ----------------------
 
-test('el filtro de Travel tiene diez preguntas, con la sexta partida en dos', () => {
-  // Metía dos preguntas en una ("¿cambian las condiciones... o se mezcla
-  // descuento con cashback?") y quien contestaba sí no sabía cuál había
-  // contestado. Punto F8, 20 de septiembre de 2026.
-  assert.strictEqual(FILTRO_DE_TRAVEL.length, 10);
+test('el filtro de Travel tiene nueve preguntas, con la sexta partida en dos', () => {
+  /*
+   * Metía dos preguntas en una ("¿cambian las condiciones... o se mezcla
+   * descuento con cashback?") y quien contestaba sí no sabía cuál había
+   * contestado. Punto F8, 20 de septiembre de 2026: partirla las dejó en diez.
+   *
+   * El 21 de septiembre se fue la de si la paga Rappi o Rappi Travel, que nunca
+   * filtraba nada porque ninguna de las dos fondea una campaña, y quedaron
+   * nueve. Las dos cosas pasaron en sesiones distintas y se encontraron al
+   * traer main: por eso el número cambió sin que nadie tocara la partición.
+   */
+  assert.strictEqual(FILTRO_DE_TRAVEL.length, 9);
+
+  // Y la que se fue no puede volver por la puerta de atrás.
+  const ids = FILTRO_DE_TRAVEL.map((p) => p.id);
+  assert.strictEqual(ids.indexOf('pagaRappi'), -1, 'volvió la pregunta de quién paga');
   const textos = FILTRO_DE_TRAVEL.map((p) => p.texto);
   assert.ok(textos.indexOf('¿Las condiciones cambian según destino, producto o usuario?') !== -1);
   assert.ok(textos.indexOf('¿Mezcla descuento y cashback en la misma campaña?') !== -1);
@@ -214,7 +225,7 @@ test('el filtro de Travel tiene diez preguntas, con la sexta partida en dos', ()
 });
 
 test('ninguna pregunta del filtro de Travel pasa de diez palabras', () => {
-  // Siete de las nueve pasaban. Lo que las dejó acortar fue la línea de ayuda
+  // Siete de ellas pasaban. Lo que las dejó acortar fue la línea de ayuda
   // (puntos F6 y F8): los ejemplos ya no van dentro del enunciado.
   for (const pregunta of FILTRO_DE_TRAVEL) {
     const palabras = pregunta.texto.trim().split(/\s+/).length;
@@ -236,8 +247,13 @@ test('la pantalla del filtro de Travel dibuja la ayuda, o el mecanismo no existe
     path.join(__dirname, '..', 'src', 'client', 'js', '60-flujo.js'), 'utf8');
   assert.ok(flujo.indexOf('pregunta.ayuda') !== -1,
     'la pantalla del filtro de Travel no dibuja la línea de ayuda');
-  assert.ok(flujo.indexOf('Diez preguntas rápidas') !== -1,
-    'el encabezado sigue diciendo nueve preguntas');
+  // Y el número del encabezado sale de la lista, no escrito a mano. Decía
+  // "Diez preguntas rápidas" cuando ya eran nueve, porque dos sesiones del
+  // mismo día tocaron el filtro: una partió una pregunta y la otra quitó otra.
+  assert.strictEqual(flujo.indexOf('Diez preguntas rápidas'), -1,
+    'el encabezado volvió a tener el número escrito a mano');
+  assert.ok(flujo.indexOf('numeroEnLetras(FILTRO_DE_TRAVEL.length') !== -1,
+    'el encabezado no cuenta las preguntas que hay de verdad');
 });
 
 // --- La Ayuda, ordenada por lo que el comercial viene a buscar ---------------

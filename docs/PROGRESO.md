@@ -177,7 +177,8 @@ npm run demo
 Y abrir `demo/index.html` con doble clic. Es la aplicación completa, con el motor
 real y un servidor simulado en memoria. No toca nada de producción.
 
-Las capturas están en `docs/capturas/`, con su índice.
+Las capturas de ese día se borraron el 21 de septiembre de 2026, junto con el
+resto de las capturas versionadas. Se sacan de la aplicación cuando hacen falta.
 
 ### Lo que encontré mirando la aplicación funcionando
 
@@ -1633,7 +1634,7 @@ ficha con el texto de hoy y el texto propuesto.
   Ya está al día, y con él `docs/CONTENIDO_AYUDA.md`.
 - **Las 41 preguntas propias de Rappi Travel nunca han pasado por una revisión
   de copy.** Son la tanda 5 y, de todo el paquete, es donde más hay que mirar.
-- **`docs/encargos/02-revision-interfaz.md` y `docs/REVISION_FRONT.md` quedaron
+- **`docs/encargos/02-revision-interfaz.md` quedó
   atrás.** Los reemplaza este paquete. Se dejan como historia de lo que ya se
   revisó una vez.
 
@@ -1833,6 +1834,54 @@ mira que la pregunta de las categorías traiga las ocho de la app y deje avanzar
 Y en la pregunta del NIT del Organizador, escribe 900.843.898-9: el mensaje
 tiene que decir Rappi S.A.S., no Rappi Travel.
 
+## Las cuatro decisiones que Juan cerró el 21 de septiembre
+
+### Lo que quedó
+
+**El filtro de Rappi Travel baja de nueve preguntas a ocho.**
+
+- Se fue **"¿La paga Rappi o Rappi Travel, no un aliado?"**. Rappi Travel nunca
+  fondea una campaña, así que la pregunta no filtraba nada: el Organizador
+  siempre es la marca que da origen a la dinámica. Y la regla ya la cuida
+  `validarOrganizadorNoEsRappi`, que corre en todos los flujos.
+- **"¿Hay sorteo o concurso, o la pieza dice 'gana'?"** queda en **"¿Hay sorteo
+  o concurso?"**. Una pieza que dice "gana" no es, por sí sola, un concurso, y
+  la pregunta larga mandaba a Legal campañas que la herramienta sí sabe hacer.
+
+**La cláusula de inhabilidades, solo para concursos.** Nueva, en
+`modelos/bloques/inhabilidades.md`, incluida en `modelos/carrera_compras.md`
+después de quiénes pueden participar. El texto es el que dio Juan, ajustado al
+modelo: usa "Rappi" y "el Organizador", que el documento ya define, en vez de
+"Rappi Inc." y "Organizador/Aliado Comercial", y va en viñetas porque el
+párrafo original eran once líneas seguidas. Las salidas esperadas de CC01 y CC03
+se regeneraron.
+
+**El copy de los T&C ya publicados.** Decía "Descuentos, cupones, envío gratis y
+tarifa de servicio" y la lista trae catorce, con las de Rappi Pro, la de Turbo y
+los códigos para eventos externos afuera. Ahora dice "Descuentos, cupones, envío
+gratis, Rappi Pro y más", y la nota invita a entrar a ver la lista completa.
+
+### Lo que falta, y por qué no se hizo en el mismo bloque
+
+Quedan tres de las decisiones de Juan, y las tres tocan los modelos de Rappi
+Travel:
+
+1. **El precio "desde"** deja de bloquear y pasa a ser una pregunta del
+   formulario de Travel.
+2. **El beneficio variable por destino** deja de bloquear.
+3. **El beneficio que depende de un banco o de cuotas** deja de bloquear.
+
+Las tres piden texto legal nuevo en el modelo de Travel, que es de Legal y lo
+aprueba Juan, y las tres tocan los mismos archivos que la sesión del modelo de
+millas está modificando ahora mismo en `claude/modelo-millas`. Hacerlas en
+paralelo es pedir un conflicto en `esquemas.js`, `preguntas.js` y el propio
+filtro. Van después de que entre millas.
+
+Sobre la **3**, además, hay algo que mirar antes: `metodoPago` ya existe en los
+dos tipos de Travel y el modelo ya lo imprime, pero sus opciones son "cualquier
+medio", "todo menos efectivo" y "solo RappiCard". No cubren "solo con tarjeta de
+tal banco" ni las cuotas sin interés, que es lo que de verdad pregunta el
+filtro. Las cuotas, además, meten a otra entidad responsable.
 ---
 
 ## Las decisiones del 20 de septiembre de 2026, aplicadas
@@ -1907,6 +1956,15 @@ depende de un texto legal que Juan tiene que escribir.
 ### Cómo probarlo
 
 ```
+npm test                                                  # 627 pruebas
+npm run demo
+export NODE_PATH=/opt/node22/lib/node_modules
+export PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
+node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js  # el recorrido completo pasa
+```
+
+Con los ojos: entra a Rappi Travel y cuenta las preguntas del filtro, que ahora
+son ocho. Y genera una Carrera de Compras para ver la cláusula nueva.
 npm test                                                  # 658 pruebas
 npm run demo
 ```

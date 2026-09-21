@@ -48,7 +48,7 @@ Tus campañas
 Abre tus documentos, márcalos como publicados o usa uno como base para una campaña nueva.
 
 Campaña	País	Fecha	Estado	
-Farmatodo · 20% Cashback · 1 oct 2026 Farmatodo	CO	2026-09-20	
+Farmatodo · 20% Cashback · 1 oct 2026 Farmatodo	CO	2026-09-21	
 Generado	Usar como base
 ```
 
@@ -68,9 +68,9 @@ Tus campañas
 Abre tus documentos, márcalos como publicados o usa uno como base para una campaña nueva.
 
 Campaña	País	Fecha	Estado	
-Farmatodo · 20% Cashback · 20 sep 2026 Farmatodo	CO	2026-09-20	
+Farmatodo · 20% Cashback · 21 sep 2026 Farmatodo	CO	2026-09-21	
 Publicado	Usar como baseAmpliar
-Ampliar Farmatodo · 20% Cashback · 20 sep 2026
+Ampliar Farmatodo · 20% Cashback · 21 sep 2026
 
 Esta campaña ya arrancó: solo puedes darle más, nunca menos, porque cambiaría las condiciones de quien ya compró.
 

@@ -67,11 +67,16 @@ function tarjetaDeAtajo() {
       RM.app.ir('filtroGenerales');
     },
   }, [
-    crear('span', { clase: 'opcion-titulo', texto: 'Descuentos, cupones, envío gratis y tarifa de servicio' }),
+    // El titulo nombraba cuatro cosas y la lista trae catorce: se quedaban
+    // afuera las de Rappi Pro, las de Turbo y los codigos para eventos. Un
+    // comercial con una de esas no se reconocia en la tarjeta y generaba un
+    // documento que no hacia falta. Juan pidio el 21 de septiembre de 2026 que
+    // el copy dijera que son esas y mas.
+    crear('span', { clase: 'opcion-titulo', texto: 'Descuentos, cupones, envío gratis, Rappi Pro y más' }),
     crear('span', {
       clase: 'opcion-nota',
       texto: quedan
-        ? 'Buena noticia: para estas campañas Legal ya publicó los T&C. No generas ningún documento, te damos el enlace listo para la pieza.'
+        ? 'Buena noticia: para estas campañas Legal ya publicó los T&C. Entra y mira la lista completa antes de seguir, porque son más de las que caben en este título. No generas ningún documento: te damos el enlace listo para la pieza.'
         : 'Legal tenía T&C publicados para estas campañas, pero ya vencieron y todavía no hay versión nueva. Entra para ver cuáles eran y escríbele a Legal antes de sacar la pieza.',
     }),
   ]));

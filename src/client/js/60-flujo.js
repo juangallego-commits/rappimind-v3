@@ -340,7 +340,12 @@ function pantallaFiltroTravel(raiz) {
     crear('h1', { texto: 'Antes de seguir con tu campaña de Rappi Travel' }),
     crear('p', {
       clase: 'pregunta-ayuda',
-      texto: 'Diez preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano. No es un castigo: es un caso que un abogado tiene que mirar.',
+      // El número sale de la lista, no escrito a mano. Decía "Diez preguntas
+      // rápidas" cuando ya eran nueve: dos sesiones tocaron el filtro el mismo
+      // día, una partió una pregunta y la otra quitó otra, y el copy se quedó
+      // contando la versión de nadie.
+      texto: RM.util.conMayusculaInicial(numeroEnLetras(FILTRO_DE_TRAVEL.length, true)) + ' preguntas rápidas. Si alguna es sí, ' +
+        'tu campaña necesita que Legal la redacte a mano. No es un castigo: es un caso que un abogado tiene que mirar.',
     }),
   ]);
 

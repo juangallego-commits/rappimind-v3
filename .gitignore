@@ -4,3 +4,8 @@ dist/
 *.log
 .clasprc.json
 insumos/
+
+# Las capturas se toman de la aplicación cuando hacen falta, no se guardan:
+# así son de la versión que corre ese día y no de un recorrido de hace semanas.
+# Es la misma regla que ya vale para docs/revision/, con su prueba.
+docs/capturas/
