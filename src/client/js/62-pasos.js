@@ -303,6 +303,30 @@ function avisoDe(campo) {
 }
 
 /** La calculadora de ejemplo del Cashback. */
+/**
+ * Un pedido por encima del valor donde el tope empieza a frenar.
+ *
+ * El umbral es tope / porcentaje: a partir de ahi todos los pedidos reciben el
+ * tope y nada mas. Se toma vez y media ese umbral, nunca menos del triple del
+ * pedido de ejemplo, y se redondea a la decena de mil de arriba para que se lea
+ * como un pedido de verdad. Con 20% y tope de 20.000 da 300.000, que es el
+ * ejemplo que escribio el encargo.
+ *
+ * Devuelve 0 cuando no hay tope o los numeros no dan: sin tope no hay nada que
+ * mostrar.
+ */
+function pedidoDondeSeNotaElTope(ejemplo, porcentaje, tope) {
+  var porciento = Number(porcentaje);
+  var techo = Number(tope);
+  if (!isFinite(porciento) || porciento <= 0) return 0;
+  if (!isFinite(techo) || techo <= 0) return 0;
+
+  var umbral = (techo * 100) / porciento;
+  var candidato = Math.max(ejemplo * 3, umbral * 1.5);
+  if (!isFinite(candidato)) return 0;
+  return Math.ceil(candidato / 10000) * 10000;
+}
+
 function calculadora() {
   var entrada = estado.entrada();
   if (entrada.tipo !== 'cashback' && entrada.tipo !== 'cashback_day') return null;
@@ -327,6 +351,22 @@ function calculadora() {
     lineas.push(crear('p', {
       clase: 'pregunta-ayuda',
       texto: 'El tope lo frena: sin tope habrían sido ' + simbolo + formatearMiles(bruto, separador) + '.',
+    }));
+  }
+
+  /*
+   * Y un pedido grande, donde el tope si se nota.
+   *
+   * Con 20% y tope de 20.000, el pedido de ejemplo daba justo 20.000 y la
+   * calculadora no mostraba que hacia el tope. Esta segunda linea usa un pedido
+   * por encima del valor donde el tope empieza a frenar, asi que siempre se ve.
+   * Punto F8, 20 de septiembre de 2026.
+   */
+  var grande = pedidoDondeSeNotaElTope(ejemplo, entrada.porcentaje, entrada.tope);
+  if (grande) {
+    lineas.push(crear('p', {
+      texto: 'Y uno de ' + simbolo + formatearMiles(grande, separador) +
+        ' también recibe ' + simbolo + formatearMiles(Number(entrada.tope), separador) + ', por el tope.',
     }));
   }
   if (entrada.tope && entrada.presupuesto && Number(entrada.tope) > Number(entrada.presupuesto)) {

@@ -521,6 +521,33 @@ async function recorrer() {
     clausulaDeTurbo.indexOf('dentro del botón “Turbo” de la Plataforma Rappi') !== -1,
     clausulaDeTurbo.slice(0, 200));
 
+  // --- 5a bis. La calculadora del tope ------------------------------------
+  //
+  // Usaba un solo pedido de 100.000, que con 20% da justo el tope: la pantalla
+  // decia el tope sin mostrar nunca que hace. Punto F8, 20 de septiembre 2026.
+  await pagina.goto(DEMO);
+  await pagina.waitForTimeout(800);
+  await pagina.evaluate(() => {
+    RM.estado.reiniciarFormulario(Object.assign(RM.app.valoresIniciales(), {
+      pais: 'CO', negocio: 'rappi', tipo: 'cashback', tienda: 'El Corral',
+      tiendaTurbo: 'sin_turbo', porcentaje: 20, tope: 20000, presupuesto: 50000000,
+    }), {});
+    RM.estado.estado.filtroRespondido = true;
+    RM.estado.estado.campoAbierto = 'tope';
+    const pasos = RM.flujo.pasosDelTipo(RM.estado.entrada()).map((x) => x.id);
+    RM.estado.estado.pasoActual = pasos.indexOf('beneficio');
+    RM.app.ir('pasos');
+  });
+  await pagina.waitForTimeout(500);
+  const laCalculadora = await pagina.evaluate(() => {
+    const caja = [].slice.call(document.querySelectorAll('.aviso'))
+      .filter((a) => /recibe/.test(a.textContent))[0];
+    return caja ? caja.innerText.replace(/\n+/g, ' | ') : '';
+  });
+  revisar('la calculadora muestra también un pedido donde se nota el tope',
+    laCalculadora.indexOf('Y uno de $300.000 también recibe $20.000, por el tope.') !== -1,
+    laCalculadora);
+
   // --- 5b. Las tres preguntas que dejaron de venir marcadas ----------------
   //
   // Punto F8. Una respuesta que nadie leyo queda impresa, y despues no se puede
