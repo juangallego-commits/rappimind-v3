@@ -984,3 +984,108 @@ elige entre dos frases que Legal ya escribió.
     siendo la que usa la interfaz. Es la lección de la skill de flujo: un
     mecanismo que la interfaz no llama es un mecanismo que no existe, y esa
     clase de defecto sí se caza leyendo el archivo.
+
+## Bloque 6: aplicar las decisiones del issue #2
+
+Decisiones técnicas y de producto del 20 de septiembre de 2026. Las legales y
+las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
+
+66. **La lista de secciones de la app vive una sola vez, con escape por país.**
+    `data/secciones.json` pasó de un objeto con una lista por país a una lista
+    `comun` más un mapa `paises` vacío. Juan confirmó que las secciones se
+    llaman igual en todos lados, así que ocho copias iguales serían ocho sitios
+    donde se pueden desincronizar. El escape se queda porque el día que un país
+    tenga secciones propias hay que poder decirlo, y una lista propia vacía
+    vuelve a bloquear la opción en ese país, que es el comportamiento que había.
+    La resolución (`seccionesDePais`) vive en `src/core/paises.js` para que sea
+    la misma en Node, en Apps Script y en el navegador.
+
+67. **Cuando un país deja de estar en piloto, la prueba del piloto se construye,
+    no se borra.** Ecuador y Costa Rica salieron el 20 de septiembre y ya no
+    queda ninguno en piloto. Trece pruebas daban por hecho que sí. La tentación
+    era borrarlas: el mecanismo del aviso de pruebas es de los que hay que
+    volver a usar en cuanto entre un país nuevo. Así que cada una pone un país
+    en piloto a mano, en Node con `Object.assign` y en el navegador cambiando
+    `E.configuracion.paises`. Lo mismo con el bloqueo de la opción de secciones.
+
+68. **Los casos dorados de país comparten exactamente los mismos datos de
+    campaña.** MX01, EC01, PE01, AR01, CL01, UY01 y CR01 solo se diferencian en
+    el país, la tienda, la razón social y la identificación del Organizador. Así
+    la única variable entre un documento y otro es la fila del país, y cuando
+    algo cambie la comparación dice qué línea. Hay una prueba que lo vigila: si
+    alguien le cambia un número a uno solo, la comparación pierde sentido.
+
+69. **La tabla de `docs/VALORES_POR_PAIS.md` se mide, no se escribe.**
+    `scripts/tabla-paises.js` genera el documento de cada país y mira qué valores
+    de su fila salen impresos. Una lista escrita a mano se queda atrás en cuanto
+    una cláusula empieza a usar una columna nueva. Salieron dieciocho columnas,
+    no las dieciséis que decía el documento anterior: también se imprimen el
+    símbolo de la moneda, el separador de miles y el tipo de identificación.
+
+70. **Un formato de leyenda que no se puede armar sale como "todavía no", no
+    como error.** El mecanismo ya existía (`PENDIENTES_POR_MARCADOR`) y estaba
+    vacío. Ahora lleva los tres enlaces que un país puede no tener: el de la
+    campaña, el de Turbo y el de RappiPro. Sin esto, extender las leyendas a
+    siete países habría dado dos resultados igual de malos: una leyenda con un
+    hueco donde va el enlace, o los cinco formatos caídos por culpa de tres.
+
+71. **Los países sin ruta de publicación reciben las dos leyendas que no
+    necesitan enlace.** Hoy solo Colombia tiene `ruta_promos`, así que en los
+    otros siete salen el texto de apoyo y la push, y los tres formatos que
+    empiezan por "Aplican términos y condiciones: {enlace}" dicen qué falta. Es
+    un dato de la fila del país, no código: el día que alguien lo escriba, se
+    desbloquean solos.
+
+72. **Una decisión que cambia el texto de una leyenda se anota en la prueba que
+    compara con el encargo.** `pruebas/leyendas.test.js` compara las 55 leyendas
+    letra por letra con la respuesta del encargo 03. La leyenda de push cambió
+    por decisión de Juan, así que la excepción va escrita con su razón
+    (`CAMBIADAS_POR_JUAN`) en vez de aflojar la comparación. Una leyenda cambiada
+    a escondidas es exactamente lo que esa prueba existe para evitar.
+
+73. **El ETA deja de arrastrar el complemento de Turbo en la frontera, no en la
+    leyenda.** `esDeTurbo()` devolvía `true` para el ETA y el complemento se
+    elegía; no se veía de milagro, porque las tres leyendas del ETA no llevan el
+    marcador donde se pega. Arreglarlo en la leyenda habría dejado el defecto
+    vivo para la siguiente: bastaba con que alguien le agregara ese marcador.
+
+74. **Las secciones excluidas de la redención son una sola lista, compartida por
+    el ETA y el Cashback.** Vive en `derivados_eta.js` con el nombre que ya
+    tenía, porque la columna `exclusiones_eta` existe en el Sheet y mover una
+    columna desalinea el histórico. El campo nuevo del Cashback
+    (`exclusionesRedencion`) trae su propia columna, que los esquemas crean
+    solas. El SOAT lleva `soloEn: 'CO'`: fuera de Colombia ni se ofrece ni se
+    imprime.
+
+75. **La condición del pedido pasó a una sola respuesta, y lo guardado sigue
+    sirviendo.** Era un campo de casillas y ahora es una lista. Las campañas
+    anteriores tienen un arreglo guardado en `datos_json`, así que
+    `condicionDePedido()` (en `src/core/texto.js`) lee las dos formas. Sin eso,
+    "Usar como base" sobre una campaña vieja habría recorrido una cadena letra
+    por letra. La columna del Sheet se queda donde estaba, con otro contenido.
+
+76. **El botón del modelo de acuerdo se arma en un solo sitio.** Estaba escrito
+    dos veces, en la pregunta y en el resumen, y la línea nueva de qué hacer si
+    Drive no deja entrar habría quedado en una sola. Se comparte por `RM.pasos`,
+    que es como se comparte todo entre archivos del cliente.
+
+77. **La pantalla de Legal recuerda de dónde vino.** `E.volverDeLegal` guarda
+    cuál de los tres caminos llevó hasta ahí (el filtro general, el de Travel o
+    la elección del negocio) y el botón "Cambiar mi respuesta" vuelve a esa
+    pregunta. Un botón que no supiera a dónde volver sería peor que no tenerlo,
+    así que sin ese dato el botón no se dibuja.
+
+78. **El nombre de un país se traduce en la pantalla y nunca en el documento.**
+    `nombreDePaisEnIdioma()` está aparte del diccionario de la interfaz porque no
+    es texto de producto: es la columna `nombre` de la fila del país, que sale
+    impresa dentro del T&C. Un documento de Ecuador dice "Ecuador" aunque quien
+    llenó el formulario lo leyera en portugués. Hay prueba de que la ruta de
+    publicación no se arma con el nombre traducido.
+
+79. **Cuando un caso de prueba deja de probar lo que probaba, se convierte, no
+    se borra.** EC01 existía para verificar que un país en piloto no generara.
+    Ecuador salió de piloto, así que EC01 pasó a ser el caso dorado de Ecuador y
+    la regla del piloto se mudó a las pruebas de servidor con un país puesto en
+    piloto a mano. Lo mismo con la comprobación del recorrido que abría el
+    detalle de un T&C con algo pendiente: los cupones dejaron de tener pendiente
+    y pasó a usar los de membresía, que sí lo tienen.

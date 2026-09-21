@@ -1649,3 +1649,106 @@ letra, el paquete funcionó.
 3. **Mira con lupa lo que proponga sobre texto legal.** El prompt le dice que no
    lo toque, pero va a proponer mejoras de redacción que suenan bien y que no se
    aplican.
+
+## Las decisiones del issue #2, aplicadas
+
+**20 de septiembre de 2026.** Juan contestó 40 de los 41 puntos de
+`docs/PARA_DECIDIR.md` en el issue #2 de GitHub. Esta sesión aplicó lo que se
+podía aplicar y dejó escrito, punto por punto, lo que no.
+
+### El número
+
+**31 puntos cerrados de 41.** Quedan **diez preguntas abiertas** y un bloque
+nuevo de **cinco tareas de ejecución** que ya no dependen de ninguna decisión.
+
+Las pruebas pasaron de **589 a 623**. El recorrido de navegador pasó de 57 a 70
+comprobaciones y el de portugués de 26 a 28.
+
+### Qué cambia para el comercial
+
+- **Siete países más pueden hacer cashback con redención por secciones.** La
+  opción estaba bloqueada en México, Perú, Argentina, Chile, Uruguay, Ecuador y
+  Costa Rica porque solo existía la lista de secciones de Colombia. Son las
+  mismas en todos lados, así que ahora es una sola lista.
+- **Ecuador y Costa Rica salieron de piloto.** Ya no queda ningún país en
+  pruebas: los nueve los ve cualquier comercial y sus documentos se publican.
+- **Siete países más reciben leyendas de campaña.** Antes solo Colombia. Hoy
+  reciben las dos que no necesitan enlace, y las otras tres dicen exactamente
+  qué falta para poder armarlas: la ruta con la que ese país publica sus T&C.
+  Es un dato de la fila del país, no código.
+- **La leyenda de push y SMS ya cabe.** Salía siempre en rojo porque el enlace
+  se comía 35 de los 70 caracteres del formato. Ahora sale sin enlace y la
+  pantalla dice por qué: el push lleva a la campaña dentro de la app.
+- **Dos tipos de campaña dejaron de quedarse sin leyenda:** el cashback con
+  redención por secciones y la Carrera que se gana por número de pedidos.
+- **El documento dice dónde NO valen los Créditos.** Estaba en la ayuda del
+  formulario y no en el T&C, que es donde el usuario puede leerlo.
+- **La pantalla de Legal deja volver.** Antes, marcar mal una casilla del filtro
+  era un callejón: el único camino de vuelta borraba todo lo respondido.
+- **Tres preguntas dejaron de venir con la respuesta puesta:** dónde se gastan
+  los Créditos, quiénes participan y con qué se paga. Son las tres que deciden a
+  quién se le puede negar el beneficio.
+- **Ya no se pueden marcar dos condiciones incompatibles.** "Solo por Turbo" y
+  "Solo consumo en el local" se podían marcar a la vez y el documento salía con
+  dos "únicamente" que no pueden ser ciertos los dos.
+- **Los dos cupones de descuento ya dicen para qué sirven.** Era lo que más se
+  pide y la pantalla decía que Legal no lo había explicado.
+- **En portugués, los países se leen en portugués** y el botón dice lo mismo que
+  la pantalla que abre.
+
+### Lo que no se aplicó, y por qué
+
+- **B2 y B3, Brasil.** Los cuatro T&C aprobados por Legal Brasil no están en el
+  repositorio. Se buscó en todo el árbol. Sin ellos no hay nada que comparar, y
+  la instrucción de Juan decía que en ese caso se saltaran los dos.
+- **D1, D4 y D6.** Son pantalla nueva, no reemplazo de texto, y la instrucción
+  era pararse y avisar antes de construirlas. Los textos aprobados están
+  guardados y entran el día que Juan lo diga.
+- **D3, el valor del premio.** No es tamaño: la frase del caso de varios
+  ganadores está corrompida en `docs/encargos/respuestas/01-legal.md`. La
+  reconstrucción está copiada en el punto D3 para que Juan la confirme.
+- **E2** es el único punto que Juan no contestó.
+
+### Lo que hay que mirar de cerca
+
+- **Los cinco casos dorados nuevos.** PE01, AR01, CL01, UY01 y CR01 se
+  generaron con el motor de hoy, no se compararon contra ningún documento
+  publicado. Protegen que esos textos no se muevan solos, no dicen que sean los
+  textos aprobados: es la misma advertencia que ya tenían los cuatro de Brasil.
+- **El `paraQue` del código de descuento para eventos externos** quedó igual al
+  nombre. La corrección de la pantalla 30 cambiaba esa frase, y esa frase estaba
+  escrita dos veces en el archivo: como nombre y como descripción. El ejemplo que
+  llevaba dentro no se perdió, porque pasó al beneficio.
+- **`nombre_modalidad_local` sigue vacío en los nueve países.** Mientras siga
+  así, "Solo consumo en el local" no se ofrece y la tercera frase de leyenda del
+  punto C3 no hace falta.
+
+### Cómo probarlo
+
+```
+npm test                                                        # 623 pruebas
+npm run demo
+export NODE_PATH=/opt/node22/lib/node_modules
+export PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
+node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js        # 70 revisiones
+node .claude/skills/flujo-y-ux/scripts/recorrer-en-portugues.js # 28 revisiones
+npm run front                                                   # 46 de 46 pantallas
+npm run tabla-paises                                            # docs/VALORES_POR_PAIS.md
+```
+
+Con los ojos, en la demostración: elige México y mira que la redención por
+secciones ya ofrezca las cinco casillas; llega al final de un cashback de
+Colombia y mira la leyenda de push y la que no cabe; marca "Sí" en la primera
+pregunta del filtro y pulsa "Cambiar mi respuesta".
+
+### Lo que necesito de Juan
+
+1. **Los cuatro T&C aprobados de Brasil**, para poder cerrar B2 y B3.
+2. **La frase de varios ganadores del valor del premio** (punto D3),
+   confirmada o corregida.
+3. **Cuál de las tres pantallas nuevas va primero**: D1, D4 o D6.
+4. **Correr `setup()`** sigue pendiente, y ahora hace más falta: esta sesión
+   agregó tres tandas de confirmaciones (`estados-2026-09-20`,
+   `brasil-2026-09-20` y `argentina-2026-09-20`) y una columna nueva. Sin
+   `setup()`, Ecuador y Costa Rica siguen en piloto en el Sheet de producción.
+5. **El despliegue de GitHub Actions**: avísame si lo lanzo.

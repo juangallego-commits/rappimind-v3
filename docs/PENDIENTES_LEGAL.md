@@ -845,3 +845,34 @@ La decisión 36 de la respuesta del encargo 01 se aplicó casi entera. Lo que fa
 4. **Carrera de Compras solo está habilitada en Colombia.** Los paneles de los
    otros países están construidos y probados, pero nadie los va a ver hasta que
    el tipo se habilite fuera de Colombia.
+
+---
+
+## El texto del valor del premio, roto en el archivo del encargo
+
+**Encontrado el 20 de septiembre de 2026, al aplicar las decisiones del issue
+#2.** Regla 3 de `CLAUDE.md`: se anota y se sigue.
+
+La decisión 36 (ii) de `docs/encargos/respuestas/01-legal.md` trae las dos
+frases del valor del premio de la Carrera de Compras. La del caso de **un
+ganador** está entera. La del caso de **varios ganadores** está corrompida en el
+archivo: el renderizado la interpretó como fórmula matemática, convirtió cada
+letra en un carácter distinto y perdió todos los espacios. Se ve así:
+
+```
+DESPUÉS, con varios: "Cada ganador recibirá el siguiente premio: {descripción},
+con un valor comercial unitario de {valor en letras} pesos M/Cte. (
+𝑣
+𝑎
+𝑙
+...
+```
+
+**Por eso el punto D3 no se aplicó.** No es un problema de tamaño: la pregunta
+del valor del premio es una sola pregunta con su guarda, y se construye en un
+rato. Es que la frase que hay que imprimir no está legible, y reconstruirla es
+escribir texto legal.
+
+La reconstrucción, para que Juan la confirme o la corrija, está copiada en el
+punto D3 de `docs/PARA_DECIDIR.md`. **No se aplicó nada mientras tanto**: no se
+aplica a medias, así que la frase del caso de un ganador tampoco entró.

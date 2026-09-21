@@ -1,9 +1,14 @@
 # Lo que depende de Juan
 
-Actualizado el 18 de septiembre de 2026, al cerrar la revisión general.
+Actualizado el 20 de septiembre de 2026, al aplicar las decisiones del issue #2.
 
-Este es el documento de trabajo. `docs/PENDIENTES_LEGAL.md` se queda como
-historia: ahí está cómo llegó cada cosa, aquí está lo que falta decidir.
+Este es el documento de trabajo: **lo que sigue pendiente**. Lo decidido pasó al
+bloque G con su fecha y no vuelve a aparecer como pregunta.
+`docs/PENDIENTES_LEGAL.md` se queda como historia: ahí está cómo llegó cada cosa.
+
+El 20 de septiembre se cerraron **31 de los 41 puntos**. Quedan **diez
+preguntas abiertas** y **un bloque de tareas de ejecución** que ya no dependen
+de ninguna decisión: alguien tiene que hacerlas fuera del repositorio.
 
 ## Cómo está armado
 
@@ -19,225 +24,31 @@ a alguien concreto.
 
 Los bloques van **de lo que más desbloquea a lo que menos**:
 
-- **A.** Hoy impide que alguien genere un documento, o que un país se use.
 - **B.** Ya sale impreso y nadie lo ha confirmado.
 - **C.** La pieza publicitaria.
 - **D.** Producto: abre un camino que hoy no existe.
 - **E.** Se lo tienes que pedir a otra persona.
-- **F.** Se puede vivir sin resolver.
+- **H.** Tareas de ejecución fuera del repositorio. Sin decisión pendiente.
 - **G.** Cerrado, con su fecha. No vuelve a aparecer como pregunta.
+
+El bloque A se vació el 20 de septiembre: ya no queda nada que impida generar un
+documento ni usar un país.
 
 Todo lo que un punto necesita está escrito adentro: las cláusulas van copiadas,
 las pantallas descritas. No hace falta abrir el repositorio.
 
 ---
 
-# A. Hoy impide generar, o impide que un país se use
-
-## A1. Los nombres de las secciones de la app, fuera de Colombia
-
-**Qué hay que decidir.** Cómo se llaman, dentro de la app, las secciones donde
-un usuario puede gastar sus Créditos, en México, Perú, Argentina, Chile,
-Uruguay, Ecuador y Costa Rica. En Colombia la lista que tú confirmaste es:
-Restaurantes, Turbo, Supermercados, CPGs y Turbo Restaurantes.
-
-**Por qué existe la duda.** El cashback pregunta "¿Dónde puede gastar los
-Créditos?" con tres respuestas: solo en esa tienda, en ciertas secciones de
-Rappi, o en cualquier parte. Si el comercial elige la segunda, el documento
-imprime los nombres **entre comillas**, así que tienen que ser exactamente los
-de la app de ese país. Hoy solo existe la lista de Colombia.
-
-**Lo que pasaba hasta esta revisión.** En los cinco países activos que no son
-Colombia, el comercial elegía esa opción y se quedaba delante de una pregunta
-sin una sola casilla que marcar, con un error que le pedía marcar al menos una.
-Imposible de cumplir. **Ya está tapado**: la opción se ve bloqueada y dice
-"Todavía no tenemos la lista de secciones de la app en México, y el documento
-tiene que nombrarlas igual que la app. Si tu campaña las necesita, escríbenos a
-#tyc-rappi." Las otras dos respuestas siguen disponibles.
-
-**Opciones.**
-
-- (a) Conseguir la lista de cada país y pasarla. Se desbloquea sola.
-- (b) Dejar la opción bloqueada fuera de Colombia, a propósito, hasta que
-  alguien la pida.
-
-**Qué pasa con la herramienta.** Con (a), el comercial de ese país puede hacer
-campañas con redención por secciones el mismo día en que llegue la lista: es
-pegar los nombres. Con (b), en esos países solo se pueden hacer campañas con
-redención "solo en esta tienda" o "en cualquier parte de Rappi", que es la
-mayoría de los casos. Ninguna de las dos rompe nada.
-
-**Y de paso, la lista de Colombia.** En las 1.184 solicitudes reales aparece una
-sección **Express** que no está en la lista, y no aparecen **Farmacia** ni
-**Tiendas especializadas**, que sí están. Si la app cambió de secciones, la
-lista de Colombia también hay que ponerla al día, porque esos nombres salen
-entre comillas en el documento.
-
-**Quién decide.** Tú, con un dato que tiene que salir de la app de cada país.
-Lo puede mirar cualquiera con la app instalada en ese país, o Producto.
-
----
-
-## A2. Ecuador y Costa Rica: con punto o con coma
-
-**Qué hay que decidir.** Si en Ecuador y en Costa Rica los montos de un T&C se
-escriben `20.000` o `20,000`.
-
-**Por qué existe la duda.** Es el único dato que falta para que esos dos países
-salgan de piloto. Hoy Ecuador escribe con coma y Costa Rica con punto, elegido
-por analogía y sin que nadie lo confirme. El monto sale impreso en varias
-cláusulas, por ejemplo "un tope de veinte mil (20.000) Créditos por pedido".
-
-**Opciones.**
-
-- (a) Confirmar el separador de cada uno y sacarlos de piloto.
-- (b) Dejarlos en piloto.
-
-**Qué pasa con la herramienta.** Con (a), los dos países pasan a estar
-disponibles para cualquier comercial, se les quita el aviso de "está en pruebas:
-genera y revisa, pero todavía no publiques" y sus documentos se pueden publicar.
-Es un cambio de una celda más una tanda de confirmaciones, y está el mismo día.
-Con (b), esos dos países solo los ve el equipo de pruebas y ningún comercial
-puede generar ahí.
-
-**Quién decide.** Alguien de Legal de cada país, mirando cómo escriben los
-montos sus propios T&C publicados. Contacto en Ecuador: Claudia Apolo. En Costa
-Rica no hay contacto confirmado, y ese es el bloqueo real.
-
----
-
-## A3. Brasil imprime, y le faltan datos de su propia fila
-
-**Qué hay que decidir.** Tres valores de la configuración de Brasil que hoy
-están vacíos o en español, con Brasil ya en producción desde el 18 de
-septiembre.
-
-**Por qué existe la duda.** Estos son los tres, tal como están hoy:
-
-- **`texto_derechos_datos`: vacío.** En Colombia dice "tus derechos a conocer,
-  actualizar, rectificar y suprimir tus datos personales, y a revocar la
-  autorización otorgada". Para Brasil tendría que salir de la LGPD.
-- **`pais_legal`: "a República Federativa del Brasil".** Mezcla portugués y
-  español; debería decir "do Brasil".
-- **`entidad_vigilancia`: "el PROCON y la Secretaría Nacional del Consumidor
-  (SENACON)".** Está en español, y son nombres de autoridades.
-
-**Opciones.**
-
-- (a) Pedirle a Legal BR las tres frases como se llaman de verdad.
-- (b) Traducirlas por cuenta propia.
-
-**Qué pasa con la herramienta.** Hoy ninguno de los tres sale impreso, porque el
-modelo brasileño no usa esos bloques. Con (a) quedan bien para el día en que un
-modelo de Brasil los pida, y se puede agregar la cláusula de datos personales
-que hoy Brasil no lleva. Con (b) se publicaría un T&C nombrando mal a una
-autoridad, que es exactamente lo que no se puede hacer. No se tradujo nada.
-
-**Quién decide.** Legal Brasil. Contacto: Amannda Moreira.
-
----
-
-## A4. "Dentro de los un (1) día hábil siguientes"
-
-**Qué hay que decidir.** Una frase de la Carrera de Compras, cuando el plazo
-para aceptar el premio es de un solo día hábil.
-
-**Por qué existe la duda.** La cláusula dice, textualmente:
-
-> • **Aceptación:** el ganador deberá aceptar el premio y confirmar sus datos, y
-> su dirección de entrega cuando corresponda, dentro de los **{{PLAZO}}**
-> siguientes a la notificación. Si Rappi no logra contactarlo tras intentos
-> razonables, o si no acepta el premio o no confirma sus datos dentro de ese
-> plazo, el premio podrá asignarse al siguiente participante del ranking, de
-> forma sucesiva.
-
-Con cinco días sale "dentro de los cinco (5) días hábiles siguientes", que está
-bien. Con uno sale **"dentro de los un (1) día hábil siguientes"**, que está mal
-escrito: "los" y "siguientes" están en plural y viven dentro de la cláusula, no
-en el motor. Esta revisión arregló ocho frases del mismo tipo que sí estaban
-enteras en el motor; esta es la única que queda, porque tocarla es tocar el
-texto de Legal.
-
-**Opciones.**
-
-- (a) Que la cláusula diga "dentro de {{PLAZO}} siguiente(s)" y el motor entregue
-  "un (1) día hábil siguiente" o "los cinco (5) días hábiles siguientes"
-  completos. Con más de un día, el documento sale palabra por palabra igual que
-  hoy.
-- (b) Que el plazo mínimo pase a dos días hábiles, y la frase nunca quede en
-  singular.
-- (c) Dejarla como está.
-
-**Qué pasa con la herramienta.** Con (a) no cambia nada para nadie salvo quien
-ponga un día. Con (b) se bloquea una respuesta que hoy es válida, con un mensaje
-que lo explique. Con (c) se publica esa frase mal escrita cada vez que alguien
-ponga un día, que es un plazo razonable para un concurso corto.
-
-**Quién decide.** Tú. Es una cláusula.
-
----
-
-## A5. Los KAM no pueden abrir la carpeta de Drive
-
-**Qué hay que decidir.** Quién le da acceso de lectura a los comerciales a la
-carpeta donde está el modelo de acuerdo de transferencia de datos.
-
-**Por qué existe la duda.** En el hilo, dos personas no pudieron abrirla. La
-herramienta ya les muestra el botón "Abrir el modelo de acuerdo" en Carrera de
-Compras cuando el premio es físico y lo entrega el Organizador.
-
-**Opciones.**
-
-- (a) Dar acceso de lectura a quien use la herramienta.
-- (b) Quitar el botón y decirle al comercial que lo pida por #tyc-rappi.
-
-**Qué pasa con la herramienta.** Hoy el botón lleva a una pantalla de "pide
-permiso", que es el peor final posible: el comercial hizo lo que la herramienta
-le dijo y se topó con una puerta cerrada. Con (a) el botón cumple lo que
-promete. Con (b) el comercial tiene que esperar a que alguien le conteste, que
-es justo lo que esta herramienta existe para evitar.
-
-**Quién decide.** Tú, con quien administre esa carpeta de Drive.
-
----
-
 # B. Ya sale impreso y nadie lo ha confirmado
 
-## B1. Perú, Argentina, Chile y Uruguay no tienen caso dorado
-
-**Qué hay que decidir.** Si se congelan cuatro documentos de ejemplo, uno por
-país, para que nadie pueda moverlos sin darse cuenta.
-
-**Por qué existe la duda.** Un "caso dorado" es un documento completo guardado
-letra por letra: si mañana alguien cambia algo y ese documento sale distinto,
-las pruebas se caen y dicen qué línea cambió. Hoy hay 32 casos: 26 de Colombia,
-uno de México, cuatro de Brasil y uno de Ecuador. Perú, Argentina, Chile y
-Uruguay están **activos en producción** y no tienen ninguno.
-
-**Cuánto riesgo es, medido.** El documento de cada país imprime **16 valores que
-salen de la fila de ese país**: la entidad legal, el domicilio, el nombre del
-país, la ley aplicable, la jurisdicción, la entidad de vigilancia, la autoridad
-de datos, tres enlaces, el nombre de la política de privacidad, cómo se llaman
-los días, el texto de la hora local y el texto de los derechos de datos. Son 64
-valores en total, en documentos que se publican, sin nadie que avise si alguno
-cambia. Si alguien edita la pestaña Paises del Sheet o la semilla, hoy no se
-cae ninguna prueba.
-
-**Cuánto cuesta.** Cada documento son 55 líneas. Son cuatro entradas nuevas en
-el archivo de casos y cuatro archivos de texto de 55 líneas. Generarlos y
-revisarlos línea a línea: una sesión corta. Mantenerlos no cuesta nada: solo
-avisan cuando algo cambia.
-
-**Opciones.** (a) Agregarlos. (b) No agregarlos.
-
-**Qué pasa con la herramienta.** Con (a), mover una cláusula compartida o un
-dato de esos cuatro países se cae en `npm test` antes de llegar a producción.
-Con (b), se entera quien lea el documento publicado, si lo lee.
-
-**Quién decide.** Tú. Es técnico de hacer, pero es tu llamada sobre el riesgo.
-La oferta sigue en pie desde el 18 de septiembre.
-
----
+> **Nota del 20 de septiembre de 2026.** Este punto se intentó aplicar y no se
+> pudo: **los cuatro T&C aprobados por Legal Brasil no están en el repositorio**.
+> Se buscó en `docs/`, `docs/encargos/`, `docs/referencia/`, `modelos/`, `data/`
+> y `pruebas/`. Lo que hay es `docs/MODELO_BASE_BRASIL.md`, que describe qué
+> traen, y `docs/CORRECCIONES_BRASIL.md`, que copia el antes y el después de cada
+> corrección; los documentos completos, no. Sin ellos no se puede comparar nada.
+> **Lo que falta:** que alguien suba los cuatro documentos al repositorio, o los
+> pegue en una conversación.
 
 ## B2. Los cuatro documentos de Brasil no se compararon con los aprobados
 
@@ -261,6 +72,15 @@ corre desde hoy.
 **Quién decide.** Tú, con Legal Brasil.
 
 ---
+
+---
+
+> **Nota del 20 de septiembre de 2026.** Saltado por la misma razón que el B2:
+> tu instrucción decía que si los cuatro aprobados no estaban, se saltaran los
+> dos. `docs/MODELO_BASE_BRASIL.md` dice que los cuatro arrancan a las `00:01`,
+> pero eso es el análisis, no el documento, y el límite de pedidos no lo dice.
+> **Lo que falta:** lo mismo que el B2, o que confirmes tú las dos cosas sin
+> ellos.
 
 ## B3. Brasil: la hora de inicio y cómo se escribe el límite
 
@@ -287,170 +107,16 @@ aprobados y escribe el límite al revés.
 
 ---
 
-## B4. El cashback por ETA le habla al usuario de dos maneras
-
-**Qué hay que decidir.** Si el modelo de "15 minutos o Cashback" tutea o habla
-en tercera persona.
-
-**Por qué existe la duda.** El documento está escrito en tercera persona, como
-los dos publicados de Bogotá y Barranquilla:
-
-> **4. Tipo de Usuarios Participantes.** Podrán participar todos los
-> Usuarios/Consumidores registrados en la Plataforma Rappi que durante la
-> vigencia de la Campaña realicen órdenes en las Tiendas Participantes.
-
-Pero incluye bloques compartidos con los demás modelos de Colombia, que tutean:
-
-> **8. Acreditación del Beneficio.** Los Créditos correspondientes al Beneficio
-> se acreditarán en **tu** Billetera de Créditos al día siguiente de la
-> finalización de la orden. **Podrás** verificar el estado de **tus** Créditos
-> en las secciones "Cuenta" y "Créditos"...
-
-El documento sale mezclado. Se ve entero en el caso dorado ETA01.
-
-**Opciones.**
-
-- (a) El ETA tutea como los demás, y se reescriben sus cláusulas propias.
-- (b) Los bloques compartidos se reescriben en tercera persona **solo** para
-  este modelo.
-- (c) Se queda mezclado.
-
-**Qué pasa con la herramienta.** Con (a) cambia el modelo del ETA y nada más.
-Con (b) hay que duplicar cuatro bloques compartidos (acreditación, vigencia de
-los Créditos, datos personales y ley) en una versión para el ETA, y a partir de
-ahí hay dos copias de cada uno que se pueden desincronizar. Con (c) se sigue
-publicando un documento que cambia de persona a mitad.
-
-**Quién decide.** Tú. Es redacción de cláusulas.
-
----
-
-## B5. El ETA dice "pedido" y "orden" para lo mismo
-
-**Qué hay que decidir.** Cuál de las dos palabras usa el modelo del ETA.
-
-**Por qué existe la duda.** Las definiciones del ETA hablan de "la orden" y de
-"un porcentaje o valor del pedido", en la misma cláusula. Los dos T&C publicados
-de Bogotá y Barranquilla usan "orden". El bloque compartido de acreditación, que
-el ETA incluye, habla de "cada pedido".
-
-**Opciones.** (a) "Orden" en todo el modelo del ETA. (b) "Pedido". (c) Se queda.
-
-**Qué pasa con la herramienta.** Es la misma decisión del punto B4 y conviene
-resolverla junta: si los bloques compartidos se quedan como están, la mezcla
-sigue; si se hace una versión del bloque para el ETA, se arreglan las dos cosas
-de una vez.
-
-**Quién decide.** Tú.
-
----
-
-## B6. Chile publica "las autoridades competentes"
-
-**Qué hay que decidir.** Nada hoy, y algo el 1 de diciembre de 2026.
-
-**Por qué existe la duda.** La cláusula de datos personales nombra a la
-autoridad de protección de datos del país. En Chile dice "las autoridades
-competentes", a propósito, porque la agencia que crea la Ley 21.719 todavía no
-opera. Esa frase sale impresa en cada T&C chileno que se publique.
-
-**Opciones.**
-
-- (a) El 1 de diciembre de 2026, si la ley entra en vigencia, cambiar el valor a
-  "la Agencia de Protección de Datos Personales".
-- (b) Dejar "las autoridades competentes" hasta que alguien avise.
-
-**Qué pasa con la herramienta.** Es una celda de la pestaña Paises y un valor de
-la semilla. Con (a) hay que acordarse ese día; el Gobierno está evaluando
-postergar la ley, así que la fecha puede moverse. Con (b), los T&C chilenos
-nombran a una autoridad genérica, que no es incorrecto mientras la agencia no
-exista.
-
-**Quién decide.** Tú, con Legal Chile, y hay que ponerle recordatorio.
-
----
-
-## B7. Argentina: el nombre de la autoridad de consumo
-
-**Qué hay que decidir.** Si "la Dirección Nacional de Defensa del Consumidor" es
-el nombre vigente.
-
-**Por qué existe la duda.** Esa dependencia ha cambiado de nombre varias veces.
-El valor está puesto y sale impreso en cada T&C argentino.
-
-**Opciones.** (a) Confirmarlo o corregirlo. (b) Dejarlo.
-
-**Qué pasa con la herramienta.** Una celda. Con (b), los T&C argentinos pueden
-estar mandando al usuario a una autoridad con un nombre viejo.
-
-**Quién decide.** Legal Argentina. Contacto: Milena Casella.
-
 ---
 
 # C. La pieza publicitaria
 
-## C1. El banner corto no cabe casi nunca
-
-**Qué hay que decidir.** Qué pasa cuando la leyenda legal no cabe en el formato.
-
-**Por qué existe la duda.** Medido hoy sobre los 14 casos dorados de Colombia
-que generan documento:
-
-| Formato | Límite | Cuántos se pasan | El peor |
-|---|---|---|---|
-| Texto de apoyo | 350 | 0 de 4 | cabe |
-| Letra pequeña | 620 | 0 de 13 | cabe |
-| **Banner corto** | 300 | **10 de 13** | se pasa por 279 |
-| **Valla y exterior** | 300 | **2 de 2** | se pasa por 67 |
-| **Push y SMS** | 70 | **4 de 4** | se pasa por 46 |
-
-(Sin tabla en el documento generado; esta tabla es solo para leer aquí.)
-
-La letra pequeña, que era la preocupación anterior, hoy cabe en los 13 casos,
-aunque por poco: la campaña de Farmatodo con Turbo y licores mide 609 de 620.
-
-**Opciones.**
-
-- (a) Subir el límite del banner corto y de la valla. Los 300 caracteres salen
-  de la sección 7C del encargo de leyendas, no de una regla legal.
-- (b) Marcar como recortable algo que hoy es obligatorio dentro de la leyenda.
-- (c) Aceptar que esas campañas no salen en banner chico ni en valla, y que el
-  arte remite al enlace.
-
-**Qué pasa con la herramienta.** La pantalla final ya dice por cuántos
-caracteres se pasa y cuánto de eso son enlaces. Con (a) es cambiar un número.
-Con (b) hay que decir qué frase se puede quitar, y eso es una decisión legal.
-Con (c) no cambia nada en el código: cambia lo que el comercial puede pedirle a
-diseño.
-
-**Quién decide.** Tú.
-
----
-
-## C2. Push y SMS: el enlace se come el espacio
-
-**Qué hay que decidir.** Si la leyenda de push y SMS lleva enlace.
-
-**Por qué existe la duda.** El límite del formato es 70 caracteres. En los casos
-dorados la leyenda mide entre 73 y 116, y el enlace son unos 35 de esos. Sin
-enlace cabe siempre. Tú avisaste que en push y SMS casi nunca ponen el enlace.
-
-**Opciones.**
-
-- (a) Que la leyenda de push y SMS salga sin enlace, y la pantalla lo diga.
-- (b) Que salga con enlace y quien arma la pieza decida, como hoy.
-- (c) Subir el límite de 70.
-
-**Qué pasa con la herramienta.** Con (a) la leyenda cabe siempre y desaparece un
-aviso rojo que hoy sale en todas las campañas. Con (b) queda como está: la
-pantalla dice "se pasa por 46 caracteres; los enlaces ocupan 35 de los 116". Con
-(c) hay que saber cuál es el límite real del canal.
-
-**Quién decide.** Tú. Ojo que choca con lo que decidiste el 18 de septiembre
-("el enlace para todo tiene que ser el mismo"): aquí la pregunta no es cuál
-enlace, es si va o no va.
-
----
+> **Nota del 20 de septiembre de 2026.** De las tres frases, **dos ya están
+> escritas y aplicadas** (punto C3 del bloque G): la de los Créditos por
+> secciones y la del ganador por número de pedidos. Queda **solo la tercera**, la
+> de consumo en el local, que depende del punto D2: el nombre exacto con el que
+> la app de Colombia muestra hoy esa modalidad. Mientras falte, esa opción no se
+> ofrece en el formulario, así que hoy no deja a nadie sin leyenda.
 
 ## C3. Tres frases que no existen, y por eso no hay leyenda
 
@@ -478,28 +144,10 @@ las otras.
 
 ---
 
-## C4. Las leyendas de campaña solo existen para Colombia
-
-**Qué hay que decidir.** Si se escriben leyendas de campaña para los otros ocho
-países.
-
-**Por qué existe la duda.** El catálogo tiene 55 leyendas. Las de **categoría**
-(licores, medicamentos, apuestas, Turbo...) sí existen para varios países. Las
-de **campaña**, que son la base donde se pega el complemento de categoría, solo
-existen para Colombia: la respuesta del encargo dice "no cubierto" para el
-resto.
-
-**Opciones.** (a) Pedirlas para los países que más lo necesiten. (b) Dejarlo.
-
-**Qué pasa con la herramienta.** Con (a), el comercial de ese país recibe sus
-leyendas con el documento. Con (b), en los otros ocho países la pregunta de la
-categoría del producto no aparece y la pantalla final manda a Legal del país
-para el texto de la pieza: el documento sí sale, la leyenda no.
-
-**Quién decide.** Tú, por país y por prioridad. México y Brasil son los
-candidatos obvios por volumen.
-
 ---
+
+> **Nota del 20 de septiembre de 2026.** Las tres que más cambian el diseño
+> quedaron contestadas (punto C5 del bloque G). Quedan **las otras veintiuna**.
 
 ## C5. Las 24 preguntas del encargo de leyendas
 
@@ -525,7 +173,14 @@ rompe nada, pero quedan preguntas abiertas sobre si dicen lo correcto.
 
 ---
 
+---
+
 # D. Producto: abre un camino que hoy no existe
+
+> **Nota del 20 de septiembre de 2026.** Elegiste la opción (c), con la cláusula
+> escrita y la lista repetible de tiendas. **No se construyó**: abre pantalla
+> nueva, con el patrón de la lista de tiendas del Multitienda, así que va en su
+> propia sesión. Tu texto está guardado y entra tal cual el día que lo digas.
 
 ## D1. Turbo no es una modalidad, son tiendas por zona
 
@@ -559,33 +214,27 @@ repetible, como la del Multitienda, y cambia la cláusula 5 y la de territorio.
 
 ---
 
-## D2. "Consumo en el local": la pregunta se entiende de dos maneras
-
-**Qué hay que decidir.** Qué pregunta es "solo consumo en el local".
-
-**Por qué existe la duda.** Son dos cosas distintas:
-
-- **Cómo se pide** (la lectura del encargo): si el beneficio se gana en
-  cualquier pedido, solo pidiendo por Turbo, o solo consumiendo en el local.
-- **Qué tiendas participan** (tu lectura): y anotaste que en el cashback eso ya
-  viene implícito con el nombre de la tienda.
-
-Una tienda puede participar y aun así excluir los pedidos a domicilio, así que
-no son la misma pregunta.
-
-**Opciones.** (a) Es cómo se pide. (b) Es qué tiendas participan. (c) Se quita.
-
-**Qué pasa con la herramienta.** Hoy la opción está **oculta** para todo el
-mundo, porque depende de un dato que falta: el nombre exacto con el que la app
-de Colombia muestra esa modalidad. Con (a) las condiciones pasan de casillas a
-una sola elección y hay que tener ese nombre, porque el texto lo cita entre
-comillas. Con (b) la pregunta desaparece y se resuelve con la tienda. Con (c) se
-borra y ya.
-
-**Quién decide.** Tú. Y el nombre de la modalidad lo tiene que dar Producto o
-quien mire la app.
-
 ---
+
+> **Nota del 20 de septiembre de 2026.** Decidiste que entra, con los textos de
+> la decisión 36 (ii) y con la guarda de que la pregunta solo aparece en Colombia
+> y con premio físico. **No se aplicó por un texto roto**, no por tamaño: la
+> frase del caso de **varios ganadores** está corrompida en
+> `docs/encargos/respuestas/01-legal.md`. El renderizado la convirtió en fórmula
+> matemática y perdió los espacios. La de un ganador sí está entera.
+>
+> La de un ganador, tal como está guardada:
+>
+> > El ganador recibirá el siguiente premio: {descripción}, con un valor
+> > comercial de {valor en letras} pesos M/Cte. (${valor}), IVA incluido.
+>
+> La de varios, tal como quedó rota, reconstruida quitando el formato y
+> volviendo a poner los espacios. **No la apliqué: confírmamela o corrígela.**
+>
+> > Cada ganador recibirá el siguiente premio: {descripción}, con un valor
+> > comercial unitario de {valor en letras} pesos M/Cte. (${valor}), IVA
+> > incluido. El valor comercial total de los premios de la Campaña es de {total
+> > en letras} pesos M/Cte. (${total}).
 
 ## D3. El valor del premio en la Carrera de Compras
 
@@ -611,6 +260,13 @@ es lo que hay hoy.
 
 ---
 
+---
+
+> **Nota del 20 de septiembre de 2026.** Decidiste que entra, con los textos de
+> la decisión 36 (iii) y con la última frase escrita por ti. **No se construyó**:
+> es pantalla nueva, con filas que crecen y validación del dígito de control del
+> EAN, así que va en su propia sesión. Tus textos están guardados.
+
 ## D4. Los productos participantes con nombre y código de barras
 
 **Qué hay que decidir.** Si la lista de productos de la Carrera pasa de un campo
@@ -632,29 +288,13 @@ sigue siendo texto libre, que es uno de los pocos que quedan.
 
 ---
 
-## D5. Las secciones donde los Créditos no aplican
-
-**Qué hay que decidir.** Si el documento dice expresamente dónde **no** se
-pueden gastar los Créditos.
-
-**Por qué existe la duda.** Tú confirmaste que estos Créditos casi nunca aplican
-a RappiFavor, Cajero ATM ni Rappi Travel. Hoy eso está dicho en la ayuda del
-formulario, no en el documento: el texto legal dice "cualquier sección de la
-Plataforma Rappi habilitada para el uso de Créditos".
-
-**Opciones.**
-
-- (a) Casillas nuevas (Rappi Travel, SOAT, Cajero ATM, Rappi Favor), marcadas de
-  entrada, y una frase de exclusión en la cláusula de redención.
-- (b) Dejarlo en la ayuda.
-
-**Qué pasa con la herramienta.** Con (a) el usuario se entera leyendo el T&C, y
-no cuando intenta gastar. Con (b) queda una diferencia entre lo que el documento
-promete y lo que la app deja hacer, que es un reclamo esperando a pasar.
-
-**Quién decide.** Tú.
-
 ---
+
+> **Nota del 20 de septiembre de 2026.** Decidiste que entra, con los textos de
+> la decisión 49 y la frase nueva de la pantalla final. **No se construyó**: es
+> una bifurcación entera nueva, con seis preguntas, tres salidas distintas y una
+> subpregunta de tres opciones, así que va en su propia sesión. Tus textos están
+> guardados.
 
 ## D6. Un filtro antes de la lista de T&C generales
 
@@ -678,81 +318,12 @@ publica una campaña bajo un T&C general que no la cubre, y nadie se entera.
 
 ---
 
-## D7. La marca del aliado, obligatoria en Rappi Travel
-
-**Qué hay que decidir.** Si "¿De qué marca son los productos?" pasa a ser
-obligatoria en las campañas de Rappi Travel.
-
-**Por qué existe la duda.** Hoy es opcional, y cuando se deja vacía el nombre de
-la campaña queda con la razón social adentro: "OPERADOR DE PRUEBA S.A.S. · 50%
-CASHBACK TRAVEL · 15 OCT 2026". Ese nombre va en el título del documento y, en
-la Carrera, dentro de una cláusula.
-
-**Opciones.**
-
-- (a) La marca pasa a obligatoria. El nombre nunca empieza con una razón social.
-- (b) Cuando no hay marca, el nombre empieza con "Rappi Travel".
-- (c) Se queda.
-
-**Qué pasa con la herramienta.** (a) y (b) son un cambio del formulario y de la
-regla del nombre, no un texto legal. Con (b) hay un riesgo: el título se leería
-como si Rappi Travel fuera quien hace la campaña, y eso choca con la regla 1.
-Por eso la recomendación del encargo es (a).
-
-**Quién decide.** Tú. Confírmalo y se hace.
-
----
-
-## D8. Rappi Travel: cuatro decisiones de cláusula que siguen abiertas
-
-**Qué hay que decidir.** Cuatro frases del modelo de Rappi Travel.
-
-**Por qué existe la duda.** Son cuatro puntos sueltos que vienen del modelo
-base y nadie ha cerrado:
-
-- **La base de cálculo.** Si los impuestos y las tasas de la tarifa cuentan para
-  el cashback. Hoy dice "el valor pagado con dinero real por la tarifa o la
-  reserva", sin pronunciarse.
-- **La vigencia mínima de los Créditos.** Menos de cinco días muestra un aviso y
-  no bloquea. ¿Debería bloquear?
-- **El nombre de la sección de Créditos en la app.** El documento dice "Cuenta"
-  y "Créditos". El modelo de junio decía "Promos y Créditos".
-- **Los pagos con Créditos en los descuentos.** La frase que excluye las órdenes
-  pagadas con Créditos viene de los cashback y hoy también sale en los
-  descuentos. ¿Se queda?
-
-**Qué pasa con la herramienta.** Las cuatro son cambios de una frase o de una
-validación, ninguna es pantalla nueva. Mientras no se decidan, el documento de
-Travel sale como está hoy.
-
-**Quién decide.** Tú.
-
 ---
 
 # E. Se lo tienes que pedir a otra persona
 
-## E1. Legal Brasil: un solo mensaje con cinco cosas
-
-**A quién.** Amannda Moreira, o quien ella indique.
-
-**Qué pedirle.** El mensaje está redactado en la respuesta del encargo 01,
-decisión 24. Pide confirmar cinco cosas:
-
-1. **La excepción del organizador.** Los cuatro T&C aprobados están escritos con
-   Rappi como quien concede, modifica y cancela la promoción, sin nombrar a un
-   organizador distinto. Eso choca con la regla número uno del proyecto. Tú lo
-   autorizaste como excepción el 17 de septiembre; falta que Brasil lo ratifique.
-2. **El tope del frete grátis.** Que la app cobra el excedente y no quita el
-   beneficio entero. Ya decidiste que se queda así; el texto alternativo está
-   escrito por si Brasil dice lo contrario.
-3. **Las correcciones de redacción** del anexo.
-4. **Si quieren la frase de datos personales** en el cierre.
-5. **La hora de inicio y cómo se escribe el límite de pedidos** (punto B3).
-
-**Qué pasa mientras tanto.** Brasil genera y publica desde el 18 de septiembre,
-sin aviso en pantalla. La excepción vive solo de tu autorización.
-
----
+> **Nota del 20 de septiembre de 2026.** Es el único punto del issue que quedó
+> sin contestar. Sigue como estaba.
 
 ## E2. Legal Brasil o un KAM de Brasil: leer la interfaz en portugués
 
@@ -772,202 +343,35 @@ Brasil ha leído.
 
 ---
 
-## E3. Legal Colombia: las descripciones de los dos cupones
-
-**A quién.** Legal Colombia.
-
-**Qué pedirle.** El "beneficio ofrecido" y la descripción de dos de los quince
-T&C generales: "Cupon de descuento - Valor fijo" y "Cupon de descuento - Toda la
-tienda". Llegaron vacíos en el Excel de 2026.
-
-**Qué pasa mientras tanto.** En la pantalla de los T&C publicados esos dos
-aparecen con un aviso que dice que Legal no explicó para qué sirven. Cupones es
-de lo que más se pide, así que el comercial los ve y no sabe cuál elegir. Las
-cuatro frases propuestas están escritas en la respuesta del encargo 01,
-decisión 46, y se aplican tal cual el día que Legal CO las apruebe.
-
----
-
-## E4. Squarespace: cuatro cosas que no son del repositorio
-
-**A quién.** Quien publica en Squarespace.
-
-**Qué pedirle.**
-
-1. **El enlace duplicado.** "Descuento en Productos Seleccionados" está dos
-   veces con enlaces distintos. La herramienta ya ofrece solo
-   `/colombia/2026/descuentoprodselecc`. El otro, `/colombia/descuentosenprod`,
-   sigue publicado: si dice lo mismo, un redirect 301.
-2. **Republicar los cupones de membresía Pro y Black** en la ruta de 2026. Hoy
-   su vigencia dice 2026 y su enlace apunta a `/colombia/2024/`.
-3. **El encabezado del general de cashback de 2025**, que se queda publicado:
-   "Estos Términos y Condiciones no aplican a campañas iniciadas a partir del 1
-   de enero de 2026. Cada campaña de cashback vigente tiene sus propios Términos
-   y Condiciones, publicados en su propio enlace."
-4. **Abrir los quince enlaces** y confirmar que la página existe. Están
-   verificados contra el Excel letra por letra, pero nadie les ha dado clic:
-   este entorno no puede abrir `promos.rappi.com`.
-
-**Qué pasa mientras tanto.** Un comercial puede pegar en una pieza un enlace que
-no abre.
-
----
-
-## E5. Renovar el certificado del RNT de Travel Moustache
-
-**A quién.** Tú, con quien maneje el Drive de Travel.
-
-**Qué pedirle.** Reemplazar en el Drive la copia vencida del Registro Nacional
-de Turismo por la renovada, y poner un recordatorio en febrero de 2027.
-
-**Por qué importa.** El RNT vence el **31 de marzo de 2027**. Ese día la
-herramienta deja de generar documentos de Rappi Travel, sola y sin avisar antes:
-la validación exige RNT vigente y es lo correcto, porque un T&C de agencia de
-viajes sin RNT vigente no cumple la ley 300 de 1996.
-
----
-
-## E6. El general de la Tarifa de Servicio Gratis vence el 31 de octubre
-
-**A quién.** Legal Colombia.
-
-**Qué pedirle.** Si se renueva, la versión nueva antes del 1 de noviembre de
-2026. Los otros catorce vencen el 31 de diciembre.
-
-**Qué pasa mientras tanto.** El 1 de noviembre esa tarjeta se queda a la vista,
-deshabilitada, diciendo cuándo venció y a quién escribirle. El 2 de enero pasa
-lo mismo con los otros catorce: ningún comercial de descuentos va a tener enlace
-hasta que se actualice el archivo.
-
----
-
-## E7. Dos enlaces sueltos que alguien tiene que abrir
-
-**A quién.** Cualquiera con acceso.
-
-**Qué pedirle.**
-
-1. **México:** confirmar que el enlace de los T&C de Créditos abre. La dirección
-   guardada dice `terminos-ycondiciones`, sin espacio ni guion entre las dos
-   palabras, y se ve como una errata. Sale impreso en cada T&C mexicano.
-2. **El documento madre de la Plataforma:** la versión publicada en
-   about.rappi.com todavía define los Créditos como los de la sección "Promos y
-   Créditos". Si la app ya dice "Cuenta" y "Créditos", el desactualizado es ese
-   documento, no el nuestro, y hay que avisarle a su dueño.
-
-**Qué pasa mientras tanto.** Un usuario mexicano que le dé clic al enlace de los
-Créditos puede caer en una página que no existe.
-
----
-
-## E8. Chile y Costa Rica no tienen modelo de acuerdo de transferencia de datos
-
-**A quién.** Legal de cada uno de esos dos países.
-
-**Qué pedirle.** El modelo de acuerdo que se firma con la marca cuando el premio
-lo entrega el Organizador. Los demás países sí lo tienen y la herramienta abre
-el suyo con un botón.
-
-**Qué pasa mientras tanto.** En Chile y Costa Rica el panel manda al comercial a
-Legal en vez de darle el modelo. Hoy no le pasa a nadie, porque Carrera de
-Compras solo está habilitada en Colombia: el día que se habilite en otro país,
-esos dos quedan sin camino.
-
 ---
 
 # F. Se puede vivir sin resolver
 
-## F1. Una coma
-
-El circuito de Colombia del acuerdo de datos dice, en su último paso: cambia tu
-respuesta a "Rappi, como operador logístico". La opción del formulario se llama
-"Rappi como operador logístico", sin la coma. **Opciones:** cede el texto legal,
-o cede la opción del formulario. **Con la herramienta:** hoy el comercial busca
-una opción que se llama casi igual y la encuentra igual. No se tocó el texto
-legal por una coma. **Decide:** tú.
-
----
-
-## F2. Los nombres de los países no se traducen
-
-En la interfaz en portugués la lista de países dice "Ecuador" y no "Equador",
-"Perú" y no "Peru". Salen de la columna `nombre` de la pestaña Paises, que es
-una sola por país. **Con la herramienta:** habría que tener un nombre por
-idioma, o traducirlos en la interfaz. No toca texto legal. **Decide:** tú, y es
-menor.
-
----
-
-## F3. Dos nombres con guion en la lista de T&C generales
-
-"Cupon de descuento - Valor fijo" y "Cupon de descuento - Toda la tienda" son
-los únicos textos visibles de toda la herramienta con un guion como signo de
-puntuación, que es lo que la regla 8 del proyecto no deja hacer. Están copiados
-tal cual del Excel de Legal. **Opciones:** se quedan si ese es el nombre oficial
-de la pieza; si no, "Cupón de descuento: valor fijo". Ojo que el encargo de la
-interfaz propone otra redacción para los mismos dos ("Cupón de descuento de
-valor fijo"): hay que elegir una. **Decide:** tú.
-
----
-
-## F4. Las diez correcciones de ortografía del archivo de T&C generales
-
-El archivo `data/tyc_genericos.json` es la lista de Legal transcrita como llegó,
-con sus erratas a la vista y no "arregladas". Hay diez líneas propuestas, en
-tres grupos, y se pueden aprobar por grupo:
-
-- **Solo tildes y mayúsculas:** "envio" a "envío", "suscripcion" a
-  "suscripción", "miembros rappi pro" a "miembros Rappi Pro", "Codigo" a
-  "Código", "Cupon" a "Cupón".
-- **Cambian el nombre que se ve en la lista:** los dos cupones del punto F3, más
-  "Tarifa de servicio $0 (Service Fee OFF)" a "Tarifa de servicio en $0".
-- **Reescriben las palabras de Legal:** el "beneficio" del T&C del canal de
-  venta externo y el "para qué sirve" del de precio tachado.
-
-**Con la herramienta:** es texto de pantalla, no de documento. El primer grupo no
-cambia lo que dice nada. El tercero sí. **Decide:** tú, grupo por grupo.
-
----
-
-## F5. Cosas menores de Rappi Travel
-
-Tres, juntas porque cada una es una línea:
-
-- **El ámbito habla de vuelos aunque no haya vuelos.** En una campaña solo de
-  hoteles, la frase "Aplica únicamente para vuelos con origen y destino en..."
-  sobra. Ya hay un mecanismo que la acorta cuando no hay duda ("solo vuelos" y
-  "sin vuelos"); los casos intermedios se quedan con la frase larga.
-- **El conteo por trayecto.** La opción existe en el formulario y falta
-  confirmar que alguna campaña la use de verdad.
-- **El ejemplo del tope y el descuento variable.** Los dos son textos nuevos que
-  salieron del criterio de transparencia y esperan tu visto bueno.
-
-**Decide:** tú.
-
----
-
-## F6. La quinta pregunta del filtro de Rappi Travel
-
-El encargo de la interfaz propuso acortarla, pero solo funciona si los ejemplos
-("noches o niños gratis, cupones, millas, eSIM, bonos o cuotas sin interés") se
-mudan a una línea de ayuda debajo, y ese filtro no tiene campo de ayuda.
-**Opciones:** se construye el campo de ayuda y entonces se acorta, o se deja
-larga. **Con la herramienta:** aplicarla sola habría borrado los ejemplos sin
-dejarlos en ninguna parte. Las otras siete preguntas del filtro sí se
-acortaron. **Decide:** tú.
-
----
-
-## F7. Un botón en portugués que quedó descuadrado
-
-En la pantalla final, el botón pasó de "Ver mi historial" a "Ver mis campañas"
-para que coincidiera con la pantalla que abre. En portugués sigue diciendo "Ver
-o meu histórico" y la pantalla se llama "Minhas campanhas": el mismo descuadre
-que se acaba de corregir en español. La traducción que cuadraría es "Ver as
-minhas campanhas", pero no la escribo yo. **Decide:** tú, o quien lea la
-interfaz en portugués (punto E2).
-
----
+> **Nota del 20 de septiembre de 2026.** Entraron dos de los veinticinco (punto
+> F8 del bloque G): las tres preguntas premarcadas arrancan sin respuesta
+> marcada, y la pantalla de Legal tiene "Cambiar mi respuesta". Uno más,
+> "que Turbo y consumo en el local no se puedan marcar a la vez", quedó resuelto
+> de paso por el punto D2: ya no son casillas. **Quedan veintidós**, con su
+> tamaño y el orden que propongo:
+>
+> **Pequeños, una sesión los tres juntos.** Que el contador de preguntas cuente
+> la que aparece según la respuesta. Que "Ahora dice" muestre las fechas en
+> palabras. El aviso de tiempo estimado en el ETA, que ya quedó resuelto por el
+> punto C5.
+>
+> **Medianos, uno por sesión.** Partir en dos la sexta pregunta del filtro de
+> Travel. Ordenar la pantalla de Ayuda de otra manera. Subir el atajo a los T&C
+> publicados por encima de los cuatro tipos y agregar "Mi campaña no es ninguna
+> de estas". Que la calculadora del tope muestre también un pedido grande. No
+> preguntar el negocio en países sin tipos de Travel.
+>
+> **Grandes, sesión propia cada uno.** "¿Quién puede publicar?" con el botón que
+> arma el mensaje y los diez pasos de Squarespace plegados. El campo de ayuda del
+> filtro de Travel, que es lo que hace falta para el punto F6.
+>
+> **Y los cambios de texto sueltos**, que son un rato: los de las pantallas 1, 2,
+> 7, 8, 9, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21 y 22 del encargo de la
+> interfaz. Esos no cambian comportamiento y se pueden aplicar todos de una.
 
 ## F8. Los 25 cambios de recorrido del encargo de la interfaz
 
@@ -980,6 +384,75 @@ Travel.
 
 **Con la herramienta:** son de otro tamaño y van en su propia sesión. **Decide:**
 tú, cuáles entran y en qué orden.
+
+---
+
+---
+
+# H. Tareas de ejecución, fuera del repositorio
+
+No hay nada que decidir en este bloque: ya está decidido. Son cosas que alguien
+tiene que hacer en Squarespace, en Drive o con Legal de un país, y que el
+repositorio no puede hacer solo. Cada una dice qué pasa mientras no se haga.
+
+## H1. Squarespace: cuatro cosas
+
+1. **El enlace duplicado.** `/colombia/descuentosenprod` sigue publicado y la
+   herramienta ofrece solo `/colombia/2026/descuentoprodselecc`. Si dicen lo
+   mismo, un redirect 301 del viejo al de 2026. Si no dicen lo mismo, se deja
+   quieto con aviso de vigencia. **Mientras tanto:** puede haber piezas vivas
+   apuntando a una dirección que nadie mantiene.
+2. **Republicar los cupones de membresía Pro y Black** en una ruta de 2026. Hoy
+   su vigencia dice 2026 y su enlace apunta a `/colombia/2024/`. **Mientras
+   tanto:** la herramienta lo ofrece con un aviso que dice justo eso, y el
+   comercial tiene que confirmarlo con Legal antes de publicar la pieza.
+3. **El encabezado del general de cashback de 2025**, que se queda publicado:
+   "Estos Términos y Condiciones no aplican a campañas iniciadas a partir del 1
+   de enero de 2026. Cada campaña de cashback vigente tiene sus propios Términos
+   y Condiciones, publicados en su propio enlace." **Mientras tanto:** un usuario
+   de 2026 puede invocarlo si le conviene más.
+4. **Ampliar la vigencia de "Tarifa de Servicio Gratis" hasta el 31 de diciembre
+   de 2026**, antes del 31 de octubre, que es cuando vence. **Mientras tanto:**
+   el 1 de noviembre esa tarjeta se queda a la vista, deshabilitada, diciendo
+   cuándo venció y a quién escribirle.
+
+**Ojo con el orden.** La fecha de vencimiento de la herramienta
+(`data/tyc_genericos.json`) **no se cambia hasta que la página esté
+republicada**: si se cambia antes, la herramienta entregaría como vigente un
+enlace que su propio texto dice vencido.
+
+## H2. Drive: el acceso a los modelos de acuerdo
+
+Dar acceso de lectura a los modelos de acuerdo de transferencia de datos a quien
+use la herramienta. En el hilo, dos personas no pudieron abrir la carpeta.
+
+**Mientras tanto:** el botón "Abrir el modelo de acuerdo" sigue ahí, y debajo la
+línea que le dice al comercial qué hacer si Google no lo deja entrar (punto A5,
+aplicado el 20 de septiembre).
+
+## H3. El RNT de Travel Moustache
+
+Reemplazar en el Drive la copia vencida del Registro Nacional de Turismo por la
+renovada, y poner un recordatorio en febrero de 2027.
+
+**Por qué importa:** el RNT vence el **31 de marzo de 2027**. Ese día la
+herramienta deja de generar documentos de Rappi Travel, sola y sin avisar antes,
+porque la validación exige RNT vigente y es lo correcto: un T&C de agencia de
+viajes sin RNT vigente no cumple la ley 300 de 1996.
+
+## H4. El enlace de los Créditos de México
+
+Se queda como está. La dirección guardada dice `terminos-ycondiciones`, sin
+espacio ni guion entre las dos palabras, y se ve como una errata, pero nadie ha
+confirmado que no abra. **Mientras tanto:** si alguien confirma que no abre, se
+corrige; si abre, esa es la dirección real y no hay nada que hacer.
+
+## H5. Chile y Costa Rica no tienen modelo de acuerdo de transferencia de datos
+
+Los demás países sí lo tienen y la herramienta abre el suyo con un botón.
+**Consecuencia, ya decidida:** Carrera de Compras no se habilita en Chile ni en
+Costa Rica hasta que ese modelo exista. Hoy no le pasa a nadie, porque Carrera
+solo está habilitada en Colombia.
 
 ---
 
@@ -1002,6 +475,35 @@ No vuelve a aparecer como pregunta abierta.
 | El visto bueno del abogado de cada país | No se corre ese circuito | 18 sep |
 | Seis países salen de piloto | MX, PE, AR, CL, UY y BR, activos | 18 sep |
 | El canal de Legal | Es #tyc-rappi | 18 sep |
+| **A1.** Las secciones de la app fuera de Colombia | Son las mismas en todos los países: una sola lista común. Se quita el bloqueo | 20 sep |
+| **A2.** Ecuador y Costa Rica | Salen de piloto. Ecuador con coma, Costa Rica con punto. No queda ningún país en pruebas | 20 sep |
+| **A3.** Los datos de Brasil en la hoja | Se vuelven a escribir con una confirmación nueva, sin cambiar ningún valor | 20 sep |
+| **A4.** "Dentro de los un (1) día hábil siguientes" | Pasa a "dentro de un plazo de {plazo} a partir de la notificación" | 20 sep |
+| **A5.** El acceso a la carpeta de Drive | El botón se queda, y debajo va qué hacer si Google no deja entrar | 20 sep |
+| **B1.** Los países sin caso dorado | Entran PE01, AR01, CL01, UY01 y CR01, más la tabla de los 18 valores por país | 20 sep |
+| **B4.** El ETA cambiaba de persona | Su cláusula del beneficio tutea, como el resto del documento | 20 sep |
+| **B5.** "Pedido" y "orden" en el ETA | **Se queda.** Conviven en todos los modelos: cambiarlo solo en el ETA no arregla nada | 20 sep |
+| **B6.** Chile y "las autoridades competentes" | **Se queda hoy.** La regla para el día que cambie está escrita abajo | 20 sep |
+| **B7.** La autoridad de consumo de Argentina | "la Dirección Nacional de Defensa del Consumidor y Arbitraje del Consumo, o la autoridad que haga sus veces" | 20 sep |
+| **C1.** El banner corto que no cabe | **No se sube ningún límite ni se recorta nada.** Cambia la pantalla, que ahora dice qué hacer | 20 sep |
+| **C2.** El enlace en push y SMS | La leyenda sale sin enlace, y la pantalla dice por qué | 20 sep |
+| **C3.** Dos de las tres frases que faltaban | Escritas y aplicadas: las secciones y el ganador por número de pedidos | 20 sep |
+| **C4.** Las leyendas de campaña fuera de Colombia | Las del cashback sirven en MX, PE, AR, CL, EC, UY y CR. En Perú, con el presupuesto en el anuncio | 20 sep |
+| **C5.** Tres de las 24 preguntas del encargo | Cerradas la 21, la 16 y la 6. La 6 tiene efecto: el aviso de tiempo estimado sale del ETA | 20 sep |
+| **D2.** "Consumo en el local" | Es cómo se pide. Las condiciones pasan de casillas a una sola elección | 20 sep |
+| **D5.** Las secciones donde los Créditos no aplican | Casillas marcadas de entrada, y el documento las nombra entre comillas | 20 sep |
+| **D7.** La marca del aliado en Rappi Travel | Obligatoria. El nombre de la campaña nunca empieza con una razón social | 20 sep |
+| **D8.** Las cuatro de Rappi Travel | Base de cálculo: ya resuelta por la decisión 22. Vigencia mínima: avisa y no bloquea. Sección de Créditos: se queda. Pagos con Créditos: salen del descuento, se quedan en el cashback | 20 sep |
+| **E1.** El mensaje a Legal Brasil | **No se manda.** La excepción del organizador vive de tu autorización del 17 de septiembre y la ratifican los abogados de Brasil cuando prueben la herramienta | 20 sep |
+| **E3.** Las descripciones de los dos cupones | Aplicadas las cuatro frases de la decisión 46 | 20 sep |
+| **F1.** La coma del operador logístico | La etiqueta dice "Rappi, como operador logístico", con coma | 20 sep |
+| **F2.** Los nombres de los países en portugués | Colômbia, Peru, Equador y Uruguai, solo en la pantalla | 20 sep |
+| **F3.** Los dos nombres con guion | "Cupón de descuento de valor fijo" y "Cupón de descuento en toda la tienda" | 20 sep |
+| **F4.** Las diez correcciones de ortografía | Aplicadas las diez, los tres grupos | 20 sep |
+| **F5.** Las tres menores de Rappi Travel | **Se quedan** | 20 sep |
+| **F6.** La quinta pregunta del filtro de Travel | **Se queda larga.** Acortarla necesita el campo de ayuda, que está en el F8 | 20 sep |
+| **F7.** El botón en portugués | "Ver minhas campanhas", como la pantalla que abre | 20 sep |
+| **F8.** Dos de los 25 cambios de recorrido | Las tres preguntas premarcadas arrancan sin marcar, y la pantalla de Legal deja cambiar la respuesta | 20 sep |
 
 **Riesgo aceptado, escrito para que quede constancia.** La cláusula de
 responsabilidad de Rappi Travel se queda como está. El argumento en contra:
@@ -1011,3 +513,22 @@ prestación del servicio cae en el artículo 43, numeral 1, de la Ley 1480, es
 ineficaz de pleno derecho y sirve como prueba en una investigación. La
 redacción alternativa está escrita completa en la respuesta del encargo 01,
 por si algún día se retoma.
+
+**La regla de Chile, para el día que haga falta.** `CL.autoridad_datos` pasa de
+"las autoridades competentes" a "la Agencia de Protección de Datos Personales"
+**solo si la Ley 21.719 entra en vigencia**. El Gobierno radicó el 31 de agosto
+de 2026 un proyecto para correr esa fecha al 1 de diciembre de 2027, y la
+Agencia sigue sin Consejo Directivo, así que la fecha del 1 de diciembre de 2026
+puede no llegar. El cambio se hace a mano ese día, y solo si la fecha se
+mantiene. Mientras tanto, "las autoridades competentes" no es incorrecto: la
+agencia no existe.
+
+**La excepción de Brasil, y lo que sigue en pie.** Los cuatro T&C aprobados de
+Brasil están escritos con Rappi como quien concede, modifica y cancela la
+promoción, y no nombran a un organizador distinto. Eso choca con la regla número
+uno del proyecto y vive de tu autorización explícita del 17 de septiembre de
+2026, que no se extiende a ningún otro país ni sirve de precedente. Los abogados
+de Brasil la ratifican cuando prueben la herramienta. Siguen en pie la decisión
+1 del encargo 01 (`promocao_br` sin cláusula de datos personales, y
+`BR.texto_derechos_datos` vacío a propósito) y la decisión 25 (las siete
+correcciones de redacción del anexo).
