@@ -162,7 +162,19 @@ var TEXTOS_PT = {
   'Las fechas del evento': 'As datas do evento',
   'Inicio: {inicio}. Fin: {fin}. Tienen que ser iguales a la vigencia del documento.':
     'Início: {inicio}. Fim: {fin}. Precisam ser iguais à vigência do documento.',
-  'Cómo publicarlo, paso a paso': 'Como publicar, passo a passo',
+  'Si tienes usuario de Squarespace': 'Se você tem usuário do Squarespace',
+  'Armar el mensaje para pasárselo': 'Montar a mensagem para encaminhar',
+  'Mensaje': 'Mensagem',
+  'Pégalo en el chat o en el correo. Ya lleva el documento, el título y la dirección.':
+    'Cole no chat ou no e-mail. Já vai com o documento, o título e o endereço.',
+  'Hola: ¿me ayudas a publicar estos T&C en Squarespace?':
+    'Oi: você me ajuda a publicar estes T&C no Squarespace?',
+  'Documento: {enlace}': 'Documento: {enlace}',
+  'Título del evento: {titulo}': 'Título do evento: {titulo}',
+  'Dirección del evento: {direccion}': 'Endereço do evento: {direccion}',
+  'Fechas del evento: del {inicio} al {fin}': 'Datas do evento: de {inicio} a {fin}',
+  'El título y la dirección van tal cual, sin cambiarles nada.':
+    'O título e o endereço vão exatamente assim, sem mudar nada.',
   '¿Quién puede publicar?': 'Quem pode publicar?',
   'Abrir el documento': 'Abrir o documento',
   'Cuando ya esté publicado': 'Quando já estiver publicado',

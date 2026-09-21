@@ -697,7 +697,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | Paso | Participantes |
 | Tipo de control | numero |
 | Obligatorio | no |
-| Ejemplo | 100000 |
+| Ejemplo | 30000 |
 | Avanza sola | no |
 | Llena en el documento | `TEXTO_MINIMO_COMPRA`, `TEXTO_UMBRAL` |
 
@@ -1451,7 +1451,7 @@ formulario manual.
 | Paso | Participantes |
 | Tipo de control | numero |
 | Obligatorio | no |
-| Ejemplo | 100000 |
+| Ejemplo | 30000 |
 | Avanza sola | no |
 | Llena en el documento | `TEXTO_MINIMO_COMPRA`, `TEXTO_UMBRAL` |
 
@@ -2034,7 +2034,7 @@ formulario manual.
 | Paso | Participantes |
 | Tipo de control | numero |
 | Obligatorio | no |
-| Ejemplo | 100000 |
+| Ejemplo | 30000 |
 | Avanza sola | no |
 | Llena en el documento | `TEXTO_MINIMO_COMPRA`, `TEXTO_UMBRAL` |
 
@@ -3109,7 +3109,7 @@ formulario manual.
 | Paso | Participantes |
 | Tipo de control | numero |
 | Obligatorio | no |
-| Ejemplo | 100000 |
+| Ejemplo | 30000 |
 | Avanza sola | no |
 | Llena en el documento | `TEXTO_MINIMO_COMPRA`, `TEXTO_UMBRAL` |
 
@@ -4327,7 +4327,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | Paso | Participantes |
 | Tipo de control | numero |
 | Obligatorio | no |
-| Ejemplo | 100000 |
+| Ejemplo | 30000 |
 | Avanza sola | no |
 | Llena en el documento | `TEXTO_MINIMO_COMPRA`, `TEXTO_UMBRAL` |
 
@@ -4890,7 +4890,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | Paso | Participantes |
 | Tipo de control | numero |
 | Obligatorio | no |
-| Ejemplo | 100000 |
+| Ejemplo | 30000 |
 | Avanza sola | no |
 | Llena en el documento | `TEXTO_MINIMO_COMPRA`, `TEXTO_UMBRAL` |
 

@@ -182,7 +182,7 @@ function generar(boton) {
  * unas pocas personas por pais. Si el comercial no es una de ellas, el paso de
  * publicar no es suyo y tiene que pedirlo por el canal.
  */
-function bloqueDeQuienPublica(codigoDePais, tipo) {
+function bloqueDeQuienPublica(codigoDePais, tipo, resultado) {
   var accesos = ACCESOS_SQUARESPACE[codigoDePais];
   var caja = crear('div', { clase: 'aviso' }, [crear('h3', { texto: estado.T('¿Quién puede publicar?') })]);
 
@@ -211,20 +211,83 @@ function bloqueDeQuienPublica(codigoDePais, tipo) {
     document.createTextNode(CANAL_TC.para + ' '),
     crear('a', { href: CANAL_TC.url, target: '_blank', rel: 'noopener', texto: CANAL_TC.nombre }),
   ]));
+
+  // En la Ayuda no hay resultado del que sacar el mensaje: ahi el bloque es
+  // solo la lista de quien puede publicar.
+  if (resultado) caja.appendChild(botonDelMensaje(resultado));
+  return caja;
+}
+
+/**
+ * El mensaje para quien si tiene usuario de Squarespace.
+ *
+ * Para casi todos los comerciales el camino real es pasarselo a otra persona, y
+ * hasta el 20 de septiembre de 2026 eso quedaba escrito debajo de diez pasos
+ * que no iban a seguir. El mensaje lleva las tres cosas que el que publica
+ * necesita, y ni una mas: el documento, el titulo y la direccion.
+ */
+function mensajeParaQuienPublica(resultado) {
+  var entrada = estado.entrada();
+  var pais = flujo.paisElegido();
+  var lineas = [
+    estado.T('Hola: ¿me ayudas a publicar estos T&C en Squarespace?'),
+    '',
+  ];
+
+  if (resultado.linkDoc) {
+    lineas.push(estado.T('Documento: {enlace}').replace('{enlace}', resultado.linkDoc));
+  }
+  lineas.push(estado.T('Título del evento: {titulo}').replace('{titulo}', resultado.nombreCampana || ''));
+  lineas.push(estado.T('Dirección del evento: {direccion}').replace('{direccion}', resultado.direccionSugerida || ''));
+  if (entrada.fechaInicio && entrada.fechaFin) {
+    lineas.push(estado.T('Fechas del evento: del {inicio} al {fin}')
+      .replace('{inicio}', formatearFechaDelPais(entrada.fechaInicio, pais))
+      .replace('{fin}', formatearFechaDelPais(entrada.fechaFin, pais)));
+  }
+  lineas.push('');
+  lineas.push(estado.T('El título y la dirección van tal cual, sin cambiarles nada.'));
+  return lineas.join('\n');
+}
+
+/** El boton que arma ese mensaje y lo deja listo para copiar. */
+function botonDelMensaje(resultado) {
+  var caja = crear('div', {});
+  var boton = crear('button', {
+    clase: 'boton boton-secundario', type: 'button',
+    texto: estado.T('Armar el mensaje para pasárselo'),
+    onclick: function () {
+      RM.util.vaciar(caja);
+      caja.appendChild(RM.util.paraCopiar(
+        estado.T('Mensaje'),
+        mensajeParaQuienPublica(resultado),
+        estado.T('Pégalo en el chat o en el correo. Ya lleva el documento, el título y la dirección.')
+      ));
+    },
+  });
+  caja.appendChild(boton);
   return caja;
 }
 
 /**
  * Todo lo que el comercial necesita para publicar: que pegar, donde y quien
  * puede hacerlo. Se usa igual en la demostracion y en produccion.
+ *
+ * El orden importa y cambio el 20 de septiembre de 2026 (punto F8). Antes
+ * arrancaba con los diez pasos de Squarespace y la lista de quien puede
+ * publicar quedaba debajo de todos ellos; para casi todos los comerciales el
+ * camino real es pasarselo a otra persona, asi que eso va primero y los diez
+ * pasos quedan plegados para quien si tiene usuario.
  */
 function bloqueDePublicacion(resultado) {
   var contenido = crear('div', {});
+  var entrada = estado.entrada();
+
+  contenido.appendChild(bloqueDeQuienPublica(resultado.pais || entrada.pais, entrada.tipo, resultado));
+
   // Lo que hay que pegar en Squarespace, listo para copiar. El titulo y la
   // direccion salen de las respuestas: escribirlos a mano es como el titulo
   // termino diciendo 99% cuando la clausula decia 50%.
   contenido.appendChild(crear('h2', { texto: estado.T('Lo que vas a pegar en Squarespace') }));
-  var entrada = estado.entrada();
 
   contenido.appendChild(RM.util.paraCopiar(
     estado.T('Título del evento'),
@@ -251,7 +314,6 @@ function bloqueDePublicacion(resultado) {
     ]));
   }
 
-  contenido.appendChild(crear('h2', { texto: estado.T('Cómo publicarlo, paso a paso') }));
   var pasos = crear('ol', { clase: 'pasos-publicar' });
   for (var i = 0; i < PASOS_SQUARESPACE.length; i++) {
     pasos.appendChild(crear('li', {}, [
@@ -259,8 +321,10 @@ function bloqueDePublicacion(resultado) {
       crear('p', { clase: 'pregunta-ayuda', texto: 'Deberías ver: ' + PASOS_SQUARESPACE[i].ve }),
     ]));
   }
-  contenido.appendChild(pasos);
-  contenido.appendChild(bloqueDeQuienPublica(resultado.pais || entrada.pais, entrada.tipo));
+  contenido.appendChild(crear('details', { clase: 'por-que' }, [
+    crear('summary', { texto: estado.T('Si tienes usuario de Squarespace') }),
+    pasos,
+  ]));
 
   return contenido;
 }

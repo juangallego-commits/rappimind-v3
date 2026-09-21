@@ -671,6 +671,47 @@ async function recorrer() {
     conLeyendas.indexOf('Esta leyenda no cabe en este formato. Usa letra pequeña o un formato más grande; en exterior, agrega el código QR al mismo enlace.') !== -1,
     conLeyendas.replace(/\n+/g, ' | ').slice(-600));
 
+  // Lo que además tiene que llevar el arte: el icono +18 es una imagen y el
+  // titular lo escribe el disenador, asi que la herramienta los dice (C5).
+  revisar('la pantalla final dice lo que el arte tiene que llevar',
+    conLeyendas.indexOf('Además, en el arte') !== -1 &&
+    conLeyendas.indexOf('ícono +18') !== -1 &&
+    conLeyendas.indexOf('no es awareness') !== -1,
+    conLeyendas.replace(/\n+/g, ' | ').slice(-600));
+
+  // --- 6a bis. Quien puede publicar va primero -----------------------------
+  //
+  // Para casi todos el camino real es pasarselo a otra persona, y eso estaba
+  // debajo de diez pasos de Squarespace que no iban a seguir. Punto F8, 20 de
+  // septiembre de 2026.
+  const dondeQuien = conLeyendas.indexOf('¿Quién puede publicar?');
+  const dondePegar = conLeyendas.indexOf('Lo que vas a pegar en Squarespace');
+  revisar('"¿Quién puede publicar?" va antes de lo de Squarespace',
+    dondeQuien !== -1 && dondePegar !== -1 && dondeQuien < dondePegar,
+    'quién: ' + dondeQuien + ' · pegar: ' + dondePegar);
+
+  const plegados = await pagina.evaluate(() =>
+    [].map.call(document.querySelectorAll('details summary'), (s) => s.textContent.trim()));
+  revisar('los diez pasos de Squarespace quedan plegados',
+    plegados.indexOf('Si tienes usuario de Squarespace') !== -1, plegados.join(' | '));
+
+  const mensajeArmado = await pagina.evaluate(() => {
+    const boton = [].slice.call(document.querySelectorAll('button'))
+      .filter((b) => /Armar el mensaje/.test(b.textContent))[0];
+    if (!boton) return '';
+    boton.click();
+    return new Promise((listo) => setTimeout(() => {
+      const caja = [].slice.call(document.querySelectorAll('.copiable-valor'))
+        .filter((c) => /Squarespace/.test(c.textContent))[0];
+      listo(caja ? caja.textContent : '');
+    }, 300));
+  });
+  revisar('el botón arma el mensaje con el título y la dirección',
+    mensajeArmado.indexOf('Título del evento:') !== -1 &&
+    mensajeArmado.indexOf('Dirección del evento:') !== -1 &&
+    mensajeArmado.indexOf('El Corral') !== -1,
+    mensajeArmado.replace(/\n+/g, ' | ').slice(0, 300));
+
   // --- 6b. El acuerdo de transferencia de datos ----------------------------
   //
   // Solo sale en Carrera de Compras, con premio fisico que entrega el

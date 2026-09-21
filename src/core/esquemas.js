@@ -121,7 +121,7 @@ var CAMPOS_COMUNES = [
   },
   {
     id: 'declaracion',
-    etiqueta: 'Confirmo que la información es veraz y corresponde a la campaña aprobada',
+    etiqueta: 'Confirmo que estos datos son ciertos y son los de mi campaña',
     tipo: 'casilla',
     paso: 'confirmacion',
     obligatorio: true,

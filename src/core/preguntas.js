@@ -531,7 +531,9 @@ var PREGUNTAS = {
     pregunta: '¿Hay que gastar un mínimo para participar?',
     ayuda: 'Por ejemplo: 30.000. Si no hay mínimo, déjalo vacío.',
     porQue: 'Si lo exiges, tiene que quedar escrito. Si no aparece en el documento, no lo puedes aplicar después.',
-    ejemplo: '100000',
+    // El mismo numero que nombra la ayuda: el campo decia 100.000 y la linea de
+    // arriba 30.000, y el comercial leia dos ejemplos distintos de lo mismo.
+    ejemplo: '30000',
     moneda: true,
     opcional: true,
     placeholders: ['TEXTO_MINIMO_COMPRA', 'TEXTO_UMBRAL'],
