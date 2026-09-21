@@ -821,11 +821,16 @@ button { font-size: 15px; cursor: pointer; }
 .pregunta-ayuda { color: var(--gris-lapiz); font-size: 14px; margin: 0 0 var(--e3); }
 
 /* Marca de pregunta opcional, al lado del titulo. */
+/* El fondo pasa de niebla a papel: con la identidad nueva el fondo de pagina
+   ya es niebla, y un chip niebla sobre niebla desaparece. La caja alta es solo
+   visual; el texto sigue diciendo "opcional" para quien lo lee en voz alta. */
 .marca-opcional {
   display: inline-block; vertical-align: middle; margin-left: var(--e2);
-  padding: 2px 8px; border: 1px solid var(--borde); border-radius: 999px;
-  font-family: var(--cuerpo); font-weight: 700; font-size: 12px;
-  letter-spacing: 0.02em; color: var(--gris-lapiz); background: var(--niebla);
+  padding: 3px 10px; border: 1.5px solid var(--rm-borde-secundario);
+  border-radius: var(--r-pildora);
+  font-family: var(--titulos); font-weight: 800; font-size: 11px;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--gris-lapiz); background: var(--papel);
 }
 
 /* Un dato listo para copiar: el titulo y la direccion de Squarespace. */
@@ -1127,7 +1132,7 @@ input[disabled], select[disabled] {
 .ficha-encabezado button { margin-left: auto; }
 .ficha dl { display: grid; grid-template-columns: max-content 1fr; gap: var(--e2) var(--e5); margin: 0; }
 .ficha dt { color: var(--gris-lapiz); font-size: 14px; }
-.ficha dd { margin: 0; font-size: 14px; }
+.ficha dd { margin: 0; font-size: 14px; font-weight: 700; }
 
 /* La vineta lleva el neon y el texto se queda en tinta. Con toda la lista en
    rojo la pantalla del resumen quedaba en alarma cuando lo que dice es
@@ -1146,7 +1151,10 @@ input[disabled], select[disabled] {
 
 .tabla { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--papel); }
 .tabla th, .tabla td { text-align: left; padding: var(--e3); border-bottom: 1px solid var(--borde); }
-.tabla th { font-family: var(--titulos); font-weight: 700; font-size: 13px; color: var(--gris-lapiz); }
+.tabla th {
+  font-family: var(--titulos); font-weight: 800; font-size: 11.5px;
+  letter-spacing: 0.05em; text-transform: uppercase; color: var(--gris-lapiz);
+}
 .tabla tr:last-child td { border-bottom: 0; }
 .envoltorio-tabla { border: 1px solid var(--borde); border-radius: var(--r-panel); overflow: auto; }
 
@@ -1184,19 +1192,24 @@ input[disabled], select[disabled] {
 
 .cortina {
   position: fixed; inset: 0; background: var(--cortina);
-  z-index: 40; opacity: 0; pointer-events: none; transition: opacity var(--t-hoja);
+  z-index: 40; opacity: 0; pointer-events: none; transition: opacity var(--t-rapido);
 }
 .cortina.abierta { opacity: 1; pointer-events: auto; }
 
+/* Donde vive la promesa del producto en un telefono. La sombra va hacia
+   ARRIBA: es lo unico que la separa del contenido cuando la cortina todavia es
+   translucida. */
 .hoja-deslizable {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 45;
   background: var(--papel);
   border-radius: var(--r-hoja) var(--r-hoja) 0 0;
+  box-shadow: 0 -8px 32px rgba(10, 10, 10, 0.13);
   max-height: 86vh; display: flex; flex-direction: column;
-  transform: translateY(100%); transition: transform var(--t-hoja);
+  transform: translateY(100%);
+  transition: transform var(--t-hoja) var(--rm-ease-entrada);
 }
 .hoja-deslizable.abierta { transform: translateY(0); }
-.asa { width: 36px; height: 4px; border-radius: 2px; background: var(--borde); margin: var(--e3) auto; flex: none; }
+.asa { width: 36px; height: 4px; border-radius: var(--r-pildora); background: var(--rm-estado-vencido-borde); margin: var(--e3) auto; flex: none; }
 
 /* --- Selector de idioma de la interfaz ------------------------------------
  *
@@ -1228,7 +1241,7 @@ input[disabled], select[disabled] {
   content: counter(paso); position: absolute; left: 0; top: 0;
   width: 24px; height: 24px; border-radius: 50%;
   background: var(--beige); color: var(--neon-texto);
-  font-family: var(--titulos); font-weight: 700; font-size: 13px;
+  font-family: var(--titulos); font-weight: 800; font-size: 13px;
   display: flex; align-items: center; justify-content: center;
 }
 
@@ -1268,12 +1281,16 @@ input[disabled], select[disabled] {
 
   .selector-idioma { bottom: 76px; }
 
+  /* Abre la hoja del documento. Va en tinta y no en gradiente a proposito: el
+     gradiente es del boton que hace avanzar la campana, y si los dos lo
+     llevaran competirian. Aqui el que manda es "Siguiente". */
   .boton-flotante {
     display: flex; align-items: center; justify-content: center; gap: var(--e2);
     position: fixed; left: var(--e4); right: var(--e4); bottom: var(--e4); z-index: 35;
-    padding: 14px; border-radius: var(--r-control); border: 0;
+    padding: 14px; border-radius: var(--r-pildora); border: 0;
     background: var(--tinta); color: var(--papel);
-    font-family: var(--titulos); font-weight: 700; font-size: 15px;
+    font-family: var(--titulos); font-weight: 800; font-size: 15px;
+    box-shadow: var(--sombra-flotante);
   }
   .hoja { max-height: none; border: 0; box-shadow: none; border-radius: 0; padding: var(--e4) var(--e5) var(--e6); }
   .ficha dl { grid-template-columns: 1fr; gap: var(--e1); }
