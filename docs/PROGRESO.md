@@ -1832,3 +1832,114 @@ Con los ojos, en la demostración: entra a Rappi Travel, elige Cashback Travel y
 mira que la pregunta de las categorías traiga las ocho de la app y deje avanzar.
 Y en la pregunta del NIT del Organizador, escribe 900.843.898-9: el mensaje
 tiene que decir Rappi S.A.S., no Rappi Travel.
+
+---
+
+## Las decisiones del 20 de septiembre de 2026, aplicadas
+
+Las respuestas a los diez puntos que quedaban en `docs/PARA_DECIDIR.md`, más los
+dos puntos nuevos que Juan agregó y el orden de construcción que dejó escrito.
+
+### El número
+
+De los diez puntos abiertos quedan **nueve cerrados y uno bloqueado**. El orden
+de construcción de diez pasos entra **completo**, salvo el paso 6 (D1), que
+depende de un texto legal que Juan tiene que escribir.
+
+### Qué cambia para el comercial
+
+- **Ya no se hacen campañas sobre medicamentos, fitoterapéuticos, cigarrillos,
+  tabaco calentado, vapeadores ni otros productos con nicotina, en Colombia.**
+  La advertencia sale arriba de la lista de tipos, la categoría de la pieza tiene
+  una sola opción que no deja seguir y lo dice con el canal para preguntar, y el
+  T&C lo deja escrito en las exclusiones del Cashback, del Multitienda y de la
+  Carrera.
+- **El Cashback pregunta en cuál de las dos tiendas de la marca se gana**: la
+  normal, la de Turbo, las dos, o ninguna porque no tiene tienda en Turbo. De ahí
+  sale una frase de la cláusula de tienda participante, la frase de la pieza y,
+  si es solo Turbo, el nombre de la campaña ("El Corral Turbo"). En el
+  Multitienda se pregunta una vez por marca.
+- **"Solo consumo en el local" desapareció.** En Rappi no existe esa modalidad.
+- **Antes de dar el enlace de un T&C general hay seis preguntas de sí o no.** Si
+  la campaña no cabe en el general, el comercial se entera antes de publicar.
+- **El atajo a los T&C publicados va por encima de los cuatro tipos**, y debajo
+  de ellos está "Mi campaña no es ninguna de estas", que lleva a Legal con el
+  motivo escrito.
+- **La pantalla final arranca por quién puede publicar**, con un botón que arma
+  el mensaje para esa persona; los diez pasos de Squarespace quedan plegados.
+- **La Carrera declara el valor comercial del premio** cuando el premio es físico
+  y el país es Colombia, y sus productos específicos entran con nombre y código
+  de barras EAN, validado con su dígito de control.
+- **La calculadora del tope muestra un pedido donde el tope se nota.**
+- **El filtro de Travel son diez preguntas**, ninguna de más de diez palabras.
+- **El contador de preguntas ya no promete de menos.**
+- **En los países sin Rappi Travel no se pregunta el negocio.**
+- **La Ayuda abre por la pregunta que más se hace**, la de descuentos y cupones.
+- **En Brasil**, la campaña arranca a las 00:01 y los pedidos y los porcentajes
+  salen con la cifra primero: "1 (um) pedido", "10% (dez por cento)". Y el
+  formulario en portugués lleva las correcciones que aprobó Juan.
+
+### Lo que no se aplicó, y por qué
+
+- **D1, las tiendas del cashback por ETA.** Juan eligió la opción (c), que el
+  T&C liste las tiendas una por una. El texto de la cláusula 5 y el de la
+  cláusula de Territorio para esa opción **no están en el repositorio**: se buscó
+  en `docs/`, `docs/encargos/`, `modelos/` y `data/`. La decisión 33 del encargo
+  01 solo propuso una lista cerrada de dos modalidades, que Juan descartó.
+  Redactar esa cláusula es una decisión legal, y la regla 3 de `CLAUDE.md` dice
+  que el texto legal es de Legal. **Lo que hace falta** está escrito en
+  `docs/PARA_DECIDIR.md`, con la pregunta concreta.
+
+### Lo que hay que mirar de cerca
+
+- **Los textos de pantalla que propuse yo.** El enunciado y la ayuda del valor
+  del premio, el mensaje que arma el botón de "¿Quién puede publicar?", las
+  razones de las dos mitades de la sexta pregunta del filtro de Travel y los
+  textos de la pantalla del filtro de los T&C generales. La decisión traía los
+  textos del documento, no los de la pantalla.
+- **Las siete leyendas que salieron del catálogo** siguen en `modelos/leyendas/`
+  con su texto tal cual vino de Legal, marcadas `se_elige_en: no_se_ofrece`. Qué
+  haría falta para reabrirlas está en `docs/PENDIENTES_LEGAL.md`.
+- **Las campañas guardadas antes del cambio.** Una con "Solo pedidos por Turbo"
+  abre en "Solo en la tienda de Turbo" y una con "En cualquier pedido" abre sin
+  respuesta, como pidió Juan. Vale la pena abrir una del historial y mirarlo.
+
+### Cómo probarlo
+
+```
+npm test                                                  # 658 pruebas
+npm run demo
+```
+
+Con los ojos, en la demostración:
+
+1. **Colombia, Cashback.** Mira la advertencia de medicamentos arriba de los
+   tipos, responde "Solo en la tienda de Turbo" en la pregunta nueva y comprueba
+   que el documento de al lado trae la frase del botón "Turbo" y que el nombre
+   de la campaña dice "Turbo".
+2. **El atajo de descuentos**, que ahora está por encima de los tipos: entra y
+   contesta "sí" a la primera pregunta, que te devuelve a los tipos; vuelve a
+   entrar y contesta "sí" a la de eventos especiales, que te lleva a Legal; y
+   vuelve otra vez y contesta que no a las seis, para llegar a la lista.
+3. **Carrera de Compras con productos específicos**: agrega dos productos con
+   su EAN y cámbiale un dígito a uno, para ver el mensaje.
+4. **La categoría de la pieza en Colombia**: elige la opción de medicamentos y
+   nicotina y comprueba que no deja seguir.
+5. **La Ayuda**, que ahora abre por la pregunta de descuentos y cupones.
+
+Y sin navegador:
+
+```
+npm run previsualizar CB01   # la cláusula de la tienda de Turbo
+npm run previsualizar CC04   # los productos con su EAN
+npm run previsualizar CC03   # el valor comercial del premio
+npm run previsualizar BR01   # "1 (um) pedido" y "10% (dez por cento)"
+```
+
+### Lo que necesito de Juan
+
+1. **El texto de la cláusula 5 y del Territorio para D1** (la única que bloquea
+   algo). La pregunta concreta está en `docs/PARA_DECIDIR.md`.
+2. **Los textos de pantalla que propuse yo**, listados arriba.
+3. **La lectura de los abogados de Brasil** del formulario en portugués, que es
+   lo que quedó pendiente del punto E2.

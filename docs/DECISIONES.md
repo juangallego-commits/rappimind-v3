@@ -1089,3 +1089,84 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
     piloto a mano. Lo mismo con la comprobación del recorrido que abría el
     detalle de un T&C con algo pendiente: los cupones dejaron de tener pendiente
     y pasó a usar los de membresía, que sí lo tienen.
+
+## Bloque 7: aplicar las decisiones del 20 de septiembre de 2026
+
+80. **Una pregunta puede traer su propio valor por defecto según el tipo, y la
+    interfaz lo aplica al elegir el tipo.** Los por defecto se fijaban una sola
+    vez, al arrancar el formulario, cuando todavía no hay tipo: por eso Brasil no
+    podía arrancar a las 00:01. Ahora `variantes[tipo].porDefecto` existe y
+    `aplicarValoresDelTipo()` lo aplica, solo donde el tipo cambia algo respecto
+    del general y solo si el comercial no lo ha respondido. El mecanismo se probó
+    con una prueba que mira que la interfaz lo llame, porque un mecanismo que la
+    interfaz no llama es un mecanismo que no existe.
+
+81. **La llave del idioma que decide el orden de la cifra se llama
+    `ordenDeLaCifra`.** Se llamaba `formatoMonto` y mandaba solo sobre los
+    montos; desde el punto B3 manda también sobre los pedidos y los porcentajes,
+    así que el nombre decía menos de lo que hacía.
+
+82. **`tiendaDelCashback()` lee lo nuevo y lo guardado.** La pregunta de en cuál
+    de sus tiendas se gana el cashback reemplazó a la de la condición del pedido,
+    y las campañas anteriores guardaron esa otra respuesta. Una sola función lee
+    las dos formas, la nueva y las dos viejas (texto y lista), así que "Usar como
+    base" sobre una campaña de antes sigue funcionando. Vive en `texto.js`, con
+    su par, y sirve igual para una campaña entera y para una fila de la lista de
+    tiendas del Multitienda, porque las dos guardan la respuesta con el mismo
+    nombre.
+
+83. **Una leyenda que ya no se ofrece no se borra: cambia su `se_elige_en`.** Las
+    siete de medicamentos y nicotina salieron del catálogo con
+    `se_elige_en: no_se_ofrece`, un valor nuevo de `FORMAS_DE_ELEGIR`. El texto
+    se queda tal cual vino de Legal, con una nota de por qué no se ofrece, y
+    reabrirlas el día que haga falta es cambiar una línea. Borrar el archivo
+    habría perdido el texto aprobado, y la regla 4 de `CLAUDE.md` lo prohíbe.
+
+84. **Las reglas del arte que la herramienta no puede imprimir, las dice.** El
+    ícono +18 es una imagen y el titular lo escribe el diseñador: ninguno cabe en
+    una leyenda. `reglasDelArte()` devuelve las tres que aplican a la campaña y la
+    pantalla final las muestra debajo de las leyendas, en vez de dejarlas en un
+    documento que nadie abre.
+
+85. **El EAN se valida donde se validan los demás números con dígito de
+    control.** `validarEan()` vive en `identificaciones.js`, aunque un código de
+    barras no sea un identificador tributario: es la misma clase de comprobación
+    y el mismo defecto que evita, que alguien escriba un número parecido y nadie
+    se entere. El algoritmo es el de GS1 y sirve para los cuatro largos.
+
+86. **El contador de preguntas cuenta mirando lo que abriría cada respuesta.**
+    Para cada pregunta sin responder que tiene opciones se calcula cuántas
+    preguntas nuevas del mismo paso abriría cada respuesta posible, y se suma la
+    menor. Con la vigencia las dos respuestas abren una, así que suma una pase lo
+    que pase; donde solo una respuesta abre otra, suma cero y el contador se
+    queda corto, que es preferible a prometer de menos.
+
+87. **El negocio no se pregunta donde no hay nada que elegir, y queda
+    respondido.** En un país sin tipos de Rappi Travel, `camposDeArranque()` no
+    dibuja esa pregunta y `alResponder` del país fija `negocio: 'rappi'` como
+    respondido. Sin lo segundo, la pregunta desaparecería y el formulario se
+    quedaría esperando una respuesta que nadie le puede dar. Quien de verdad
+    tenga una campaña de viajes en ese país sale por "Mi campaña no es ninguna de
+    estas".
+
+88. **El filtro de los T&C generales guarda sus respuestas en el estado.**
+    `E.filtroDeGenerales` sobrevive al viaje a la pantalla de Legal, así que
+    "Cambiar mi respuesta" vuelve al filtro con lo marcado y el comercial corrige
+    una sola casilla en vez de empezar de nuevo. Es la misma razón por la que
+    existe `E.volverDeLegal`.
+
+89. **La lista de T&C generales señala cuáles sirven, sin esconder los demás.**
+    Cuando el filtro ya sabe cuál es el que sirve (Pro, usuarios nuevos en Turbo
+    o el código de eventos externos), esos van primero y una línea dice por qué.
+    Esconder los otros haría creer que la herramienta no los tiene, que es el
+    mismo criterio de la opción bloqueada con su razón.
+
+90. **La columna del Sheet que guarda las tiendas leía nombres de campo que no
+    existen.** `tiendasLegibles()` leía `tienda`, `organizadorRazonSocial` e
+    `organizadorId`, que son los del Cashback de una tienda; en una fila de la
+    lista del Multitienda los campos se llaman `marca`, `razonSocial` e `id`. El
+    resultado era " · · " por cada tienda, sin lanzar ningún error. La prueba que
+    lo cuidaba confirmaba la misma equivocación, porque estaba escrita con los
+    mismos nombres inventados. Ahora la prueba compara contra
+    `ESQUEMAS.cashback_day.camposPorTienda` y revisa que ninguna línea salga
+    vacía.

@@ -1,14 +1,19 @@
 # Lo que depende de Juan
 
-Actualizado el 20 de septiembre de 2026, al aplicar las decisiones del issue #2.
+Actualizado el 21 de septiembre de 2026, al aplicar las decisiones del 20 de
+septiembre.
 
 Este es el documento de trabajo: **lo que sigue pendiente**. Lo decidido pasó al
 bloque G con su fecha y no vuelve a aparecer como pregunta.
 `docs/PENDIENTES_LEGAL.md` se queda como historia: ahí está cómo llegó cada cosa.
 
-El 20 de septiembre se cerraron **31 de los 41 puntos**. Quedan **diez
-preguntas abiertas** y **un bloque de tareas de ejecución** que ya no dependen
-de ninguna decisión: alguien tiene que hacerlas fuera del repositorio.
+El 20 de septiembre se cerraron **31 de los 41 puntos**, y el 21 los **diez que
+quedaban**. De los diez, nueve se aplicaron enteros y **uno quedó bloqueado por
+un texto que falta**: D1, la cláusula de las tiendas del cashback por ETA.
+
+Queda entonces **una sola pregunta abierta** y **un bloque de tareas de
+ejecución** que ya no dependen de ninguna decisión: alguien tiene que hacerlas
+fuera del repositorio.
 
 ## Cómo está armado
 
@@ -22,370 +27,69 @@ Cada punto dice cuatro cosas, siempre en el mismo orden:
 Y al final de cada punto, **quién decide**: tú solo, o tú después de preguntarle
 a alguien concreto.
 
-Los bloques van **de lo que más desbloquea a lo que menos**:
+Los bloques que quedan:
 
-- **B.** Ya sale impreso y nadie lo ha confirmado.
-- **C.** La pieza publicitaria.
 - **D.** Producto: abre un camino que hoy no existe.
-- **E.** Se lo tienes que pedir a otra persona.
 - **H.** Tareas de ejecución fuera del repositorio. Sin decisión pendiente.
 - **G.** Cerrado, con su fecha. No vuelve a aparecer como pregunta.
 
-El bloque A se vació el 20 de septiembre: ya no queda nada que impida generar un
-documento ni usar un país.
+Los bloques A, B, C, E y F se vaciaron: ya no queda nada que impida generar un
+documento, usar un país, entregar una leyenda o recorrer una pantalla.
 
 Todo lo que un punto necesita está escrito adentro: las cláusulas van copiadas,
 las pantallas descritas. No hace falta abrir el repositorio.
 
 ---
 
-# B. Ya sale impreso y nadie lo ha confirmado
-
-> **Nota del 20 de septiembre de 2026.** Este punto se intentó aplicar y no se
-> pudo: **los cuatro T&C aprobados por Legal Brasil no están en el repositorio**.
-> Se buscó en `docs/`, `docs/encargos/`, `docs/referencia/`, `modelos/`, `data/`
-> y `pruebas/`. Lo que hay es `docs/MODELO_BASE_BRASIL.md`, que describe qué
-> traen, y `docs/CORRECCIONES_BRASIL.md`, que copia el antes y el después de cada
-> corrección; los documentos completos, no. Sin ellos no se puede comparar nada.
-> **Lo que falta:** que alguien suba los cuatro documentos al repositorio, o los
-> pegue en una conversación.
-
-## B2. Los cuatro documentos de Brasil no se compararon con los aprobados
-
-**Qué hay que decidir.** Si alguien compara, línea por línea, lo que la
-herramienta genera para Brasil contra los cuatro T&C que mandó Legal Brasil
-(Desconto % OFF, Frete Grátis, Taxa de serviço mínimo de compra, Taxa de serviço
-e entrega grátis).
-
-**Por qué existe la duda.** Los cuatro casos dorados de Brasil guardan lo que el
-motor produce **hoy**. Protegen ese texto de moverse solo. No dicen que sea el
-texto aprobado: nadie ha puesto los dos al lado.
-
-**Opciones.** (a) Comparar y corregir lo que no cuadre. (b) Darlos por buenos.
-
-**Qué pasa con la herramienta.** Con (a), si algo no cuadra se corrige antes de
-que un KAM publique. Con (b), Brasil sigue generando y publicando con un texto
-que se armó a partir de los cuatro documentos pero que nadie verificó contra
-ellos. Brasil ya está en producción desde el 18 de septiembre, así que esto
-corre desde hoy.
-
-**Quién decide.** Tú, con Legal Brasil.
-
----
-
----
-
-> **Nota del 20 de septiembre de 2026.** Saltado por la misma razón que el B2:
-> tu instrucción decía que si los cuatro aprobados no estaban, se saltaran los
-> dos. `docs/MODELO_BASE_BRASIL.md` dice que los cuatro arrancan a las `00:01`,
-> pero eso es el análisis, no el documento, y el límite de pedidos no lo dice.
-> **Lo que falta:** lo mismo que el B2, o que confirmes tú las dos cosas sin
-> ellos.
-
-## B3. Brasil: la hora de inicio y cómo se escribe el límite
-
-**Qué hay que decidir.** Dos detalles del documento brasileño.
-
-**Por qué existe la duda.**
-
-- **La hora.** El formulario deja 00:00 por defecto en todos los países. Los
-  cuatro T&C aprobados de Brasil arrancan a las **00:01**. Hoy sale impreso lo
-  que el KAM deje, y lo que deja es 00:00.
-- **El límite de pedidos.** El motor imprime "um (1) pedido". La ayuda en
-  portugués cita el documento aprobado como "1 (um) pedido". Una de las dos está
-  mal, y en Brasil los montos van con la cifra primero ("R$300,00 (trezentos
-  reais)"), lo que sugiere que la forma aprobada es "1 (um)".
-
-**Opciones.** (a) Confirmar las dos y ajustar. (b) Dejarlo.
-
-**Qué pasa con la herramienta.** Con (a), el valor por defecto de Brasil pasa a
-00:01 y el motor escribe el límite como Legal BR diga: dos cambios chicos. Con
-(b), cada T&C brasileño que se publique arranca una hora distinta de la de los
-aprobados y escribe el límite al revés.
-
-**Quién decide.** Legal Brasil. Va en el mismo mensaje del punto E1.
-
----
-
----
-
-# C. La pieza publicitaria
-
-> **Nota del 20 de septiembre de 2026.** De las tres frases, **dos ya están
-> escritas y aplicadas** (punto C3 del bloque G): la de los Créditos por
-> secciones y la del ganador por número de pedidos. Queda **solo la tercera**, la
-> de consumo en el local, que depende del punto D2: el nombre exacto con el que
-> la app de Colombia muestra hoy esa modalidad. Mientras falte, esa opción no se
-> ofrece en el formulario, así que hoy no deja a nadie sin leyenda.
-
-## C3. Tres frases que no existen, y por eso no hay leyenda
-
-**Qué hay que decidir.** Tres frases cortas para la pieza publicitaria.
-
-**Por qué existe la duda.** Cuando la campaña cae en uno de estos tres casos, la
-herramienta no entrega leyenda y dice qué falta, en vez de inventar la frase:
-
-1. **Los Créditos solo sirven en ciertas secciones.** Cómo se dice eso en una
-   pieza, en pocas palabras.
-2. **La campaña es solo para consumo en el local.** Falta el nombre con el que
-   la app muestra hoy esa modalidad en Colombia (`nombre_modalidad_local` está
-   vacío). Es el mismo dato del punto D2.
-3. **En la Carrera gana quien haga más pedidos.** Cómo se dice el criterio del
-   ganador en una pieza.
-
-**Opciones.** (a) Escribir las tres frases. (b) Dejar esas campañas sin leyenda.
-
-**Qué pasa con la herramienta.** Con (a), esas campañas entregan sus cinco
-leyendas como las demás. Con (b), el comercial de esas campañas sigue pidiéndole
-a Legal el texto del arte, que es justo lo que el encargo de leyendas quitó para
-las otras.
-
-**Quién decide.** Tú, porque son frases legales.
-
----
-
----
-
-> **Nota del 20 de septiembre de 2026.** Las tres que más cambian el diseño
-> quedaron contestadas (punto C5 del bloque G). Quedan **las otras veintiuna**.
-
-## C5. Las 24 preguntas del encargo de leyendas
-
-**Qué hay que decidir.** Contestar las 24 preguntas de la lista 2 de la
-respuesta del encargo 03, o al menos las tres que la propia respuesta marca como
-las que más cambian el diseño.
-
-**Por qué existe la duda.** Las tres son:
-
-- **La 21:** dónde se redimen los Créditos del cashback por ETA. La pieza y el
-  T&C dicen cosas distintas hoy.
-- **La 16:** el enlace corto. Quedó cerrado el 18 de septiembre (no hay enlace
-  corto), pero la pregunta arrastra cómo se arma el enlace de cada campaña.
-- **La 6:** el aviso de tiempo estimado en el ETA.
-
-**Opciones.** (a) Contestarlas. (b) Dejarlas.
-
-**Qué pasa con la herramienta.** Con (a) se puede terminar de afinar lo que sale
-en las piezas. Con (b) las leyendas de Colombia siguen saliendo como hoy: no se
-rompe nada, pero quedan preguntas abiertas sobre si dicen lo correcto.
-
-**Quién decide.** Tú.
-
----
-
----
-
 # D. Producto: abre un camino que hoy no existe
-
-> **Nota del 20 de septiembre de 2026.** Elegiste la opción (c), con la cláusula
-> escrita y la lista repetible de tiendas. **No se construyó**: abre pantalla
-> nueva, con el patrón de la lista de tiendas del Multitienda, así que va en su
-> propia sesión. Tu texto está guardado y entra tal cual el día que lo digas.
 
 ## D1. Turbo no es una modalidad, son tiendas por zona
 
-**Qué hay que decidir.** Qué nombra el T&C del cashback por ETA: la ciudad, la
-zona, o las tiendas una por una.
+> **Nota del 21 de septiembre de 2026.** El 20 elegiste la opción (c), que el
+> T&C liste las tiendas una por una. **No se pudo construir, y no por tamaño:**
+> el texto de la cláusula 5 y el de la cláusula de Territorio para esa opción no
+> están en ninguna parte del repositorio. Se buscó en `docs/`,
+> `docs/encargos/`, `modelos/` y `data/`. La decisión 33 del encargo 01 solo
+> propuso una lista cerrada de dos modalidades ("Turbo Restaurantes" y "Turbo"),
+> que es justo lo que corregiste. Escribir esa cláusula es una decisión legal, y
+> la regla 3 de `CLAUDE.md` dice que el texto legal es de Legal.
 
-**Por qué existe la duda.** Hoy la modalidad está fija en "Turbo Restaurantes" y
-la cláusula dice:
+**Qué hay que decidir.** El texto de las dos cláusulas con la lista de tiendas.
+
+**Por qué existe la duda.** Hoy la cláusula 5 dice:
 
 > **5. Tiendas Participantes.** Participarán todas las tiendas virtuales bajo la
 > modalidad "Turbo Restaurantes" al interior de la Plataforma Rappi que se
 > encuentren habilitadas en la ciudad de Bogotá durante la vigencia de la
-> Campaña.
+> Campaña. El listado de Tiendas Participantes será el que se encuentre visible
+> y disponible para el Usuario/Consumidor dentro del botón "Turbo" de la
+> Plataforma Rappi al momento de realizar la orden, el cual podrá variar en
+> función de la operación y disponibilidad de cada Aliado Comercial.
 
-Tú corregiste que en la práctica son las tiendas Turbo de cada zona, con nombre
-propio: Turbo Calleja, Turbo Chico, Turbo Laureles. Eso no es una lista cerrada
-de dos opciones.
+Con una lista de tiendas con nombre propio (Turbo Calleja, Turbo Chico, Turbo
+Laureles), **la segunda frase contradice a la primera**: una dice que participan
+estas tres y la otra que participan las que la app muestre en ese momento. Dos
+frases que dicen cosas distintas sobre quién participa es exactamente lo que un
+usuario lee a su favor.
 
-**Opciones.**
+**Las opciones.**
 
-- (a) El T&C nombra la ciudad, como los dos publicados. Se queda igual.
-- (b) El T&C nombra la zona, y el formulario pregunta cuál.
-- (c) El T&C lista las tiendas una por una, como el Cashback Multitienda.
+- (a) **La lista manda y la segunda frase se va.** La cláusula nombra las
+  tiendas y no dice nada más. Es lo más claro y lo más rígido: si la campaña
+  suma una tienda a mitad de camino, el documento se queda corto.
+- (b) **La lista manda y la segunda frase se queda, hablando solo de
+  disponibilidad.** Algo como "La disponibilidad de cada Tienda Participante
+  puede variar en función de la operación de cada Aliado Comercial". Dice que
+  una tienda puede no estar disponible, sin dejar abierto quién participa. **Es
+  la que propongo**, pero el texto exacto lo escribes tú.
+- (c) **Otra redacción tuya.**
 
-**Qué pasa con la herramienta.** Con (a) no se toca nada. Con (b) entra una
-pregunta nueva de texto libre y cambia la cláusula 5. Con (c) entra una lista
-repetible, como la del Multitienda, y cambia la cláusula 5 y la de territorio.
-(b) y (c) son pantalla nueva, no un reemplazo de texto.
+**Qué pasa con la herramienta.** Cualquiera de las tres se aplica igual: entra
+una lista repetible de tiendas, como la del Multitienda, y cambian la cláusula 5
+y la de Territorio. Lo único que falta es el texto. Mientras tanto el cashback
+por ETA sigue nombrando la ciudad, como los dos T&C publicados.
 
-**Quién decide.** Tú, y conviene saber cómo se anuncia la campaña de verdad.
-
----
-
----
-
-> **Nota del 20 de septiembre de 2026.** Decidiste que entra, con los textos de
-> la decisión 36 (ii) y con la guarda de que la pregunta solo aparece en Colombia
-> y con premio físico. **No se aplicó por un texto roto**, no por tamaño: la
-> frase del caso de **varios ganadores** está corrompida en
-> `docs/encargos/respuestas/01-legal.md`. El renderizado la convirtió en fórmula
-> matemática y perdió los espacios. La de un ganador sí está entera.
->
-> La de un ganador, tal como está guardada:
->
-> > El ganador recibirá el siguiente premio: {descripción}, con un valor
-> > comercial de {valor en letras} pesos M/Cte. (${valor}), IVA incluido.
->
-> La de varios, tal como quedó rota, reconstruida quitando el formato y
-> volviendo a poner los espacios. **No la apliqué: confírmamela o corrígela.**
->
-> > Cada ganador recibirá el siguiente premio: {descripción}, con un valor
-> > comercial unitario de {valor en letras} pesos M/Cte. (${valor}), IVA
-> > incluido. El valor comercial total de los premios de la Campaña es de {total
-> > en letras} pesos M/Cte. (${total}).
-
-## D3. El valor del premio en la Carrera de Compras
-
-**Qué hay que decidir.** Si entra una pregunta por el valor del premio.
-
-**Por qué existe la duda.** La respuesta del encargo trae la pregunta y las dos
-frases nuevas de la cláusula de premio, listas. Pero los textos dicen "pesos
-M/Cte." y "IVA", que son de Colombia.
-
-**Opciones.**
-
-- (a) Se construye solo para Colombia, y Carrera se queda en Colombia.
-- (b) Se escriben las frases con el nombre de la moneda y el impuesto de cada
-  país, y sirve para todos.
-- (c) No se construye.
-
-**Qué pasa con la herramienta.** Hoy Carrera de Compras solo está habilitada en
-Colombia, así que (a) no rompe nada hoy y rompería el día que se habilite en
-otro país. (b) cuesta más y aguanta. (c) deja el premio sin valor declarado, que
-es lo que hay hoy.
-
-**Quién decide.** Tú.
-
----
-
----
-
-> **Nota del 20 de septiembre de 2026.** Decidiste que entra, con los textos de
-> la decisión 36 (iii) y con la última frase escrita por ti. **No se construyó**:
-> es pantalla nueva, con filas que crecen y validación del dígito de control del
-> EAN, así que va en su propia sesión. Tus textos están guardados.
-
-## D4. Los productos participantes con nombre y código de barras
-
-**Qué hay que decidir.** Si la lista de productos de la Carrera pasa de un campo
-de texto libre a filas con nombre y EAN.
-
-**Por qué existe la duda.** Hoy el comercial escribe los productos en un campo
-libre. La propuesta es una tabla con nombre y código de barras, con validación
-del dígito de control, que cambia también la cláusula de productos
-participantes.
-
-**Opciones.** (a) Construirlo. (b) Dejarlo.
-
-**Qué pasa con la herramienta.** Con (a) el documento nombra los productos sin
-ambigüedad y el comercial no puede escribir cualquier cosa, pero es una pantalla
-nueva con validación, del tamaño de la lista de tiendas del Multitienda. Con (b)
-sigue siendo texto libre, que es uno de los pocos que quedan.
-
-**Quién decide.** Tú.
-
----
-
----
-
-> **Nota del 20 de septiembre de 2026.** Decidiste que entra, con los textos de
-> la decisión 49 y la frase nueva de la pantalla final. **No se construyó**: es
-> una bifurcación entera nueva, con seis preguntas, tres salidas distintas y una
-> subpregunta de tres opciones, así que va en su propia sesión. Tus textos están
-> guardados.
-
-## D6. Un filtro antes de la lista de T&C generales
-
-**Qué hay que decidir.** Si antes de darle el enlace de un T&C general se le
-hacen seis preguntas de sí o no al comercial.
-
-**Por qué existe la duda.** Hoy el comercial que va a hacer un descuento entra a
-la lista de los 15 T&C publicados y copia el enlace. Nadie revisa si su campaña
-de verdad cabe en ese documento. Las seis preguntas y sus textos ya están
-escritos en la respuesta del encargo.
-
-**Opciones.** (a) Construirlo. (b) Dejarlo.
-
-**Qué pasa con la herramienta.** Con (a) el comercial cuya campaña no cabe en el
-general se entera antes de publicar, y la pantalla final agrega la frase "Tu
-pieza debe decir siempre: el mínimo de compra, si lo hay; el máximo de descuento
-o de cashback; y a qué usuarios aplica, si no es para todos." Con (b), alguien
-publica una campaña bajo un T&C general que no la cubre, y nadie se entera.
-
-**Quién decide.** Tú.
-
----
-
----
-
-# E. Se lo tienes que pedir a otra persona
-
-> **Nota del 20 de septiembre de 2026.** Es el único punto del issue que quedó
-> sin contestar. Sigue como estaba.
-
-## E2. Legal Brasil o un KAM de Brasil: leer la interfaz en portugués
-
-**A quién.** Amannda Moreira y un KAM de Brasil.
-
-**Qué pedirle.** Que lean los textos del formulario en portugués, en este orden:
-las cuatro opciones de "O que o usuário ganha?", la ayuda del tope del frete
-grátis, la del mínimo de compra y los mensajes de error.
-
-**Por qué importa.** La traducción de la interfaz la escribí yo y es de
-producto, no de Legal: ninguna cláusula se tradujo, el documento sigue saliendo
-de los modelos. Pero una ayuda mal traducida induce una respuesta equivocada, y
-esa respuesta sí sale impresa.
-
-**Qué pasa mientras tanto.** Los KAM de Brasil usan un formulario que nadie de
-Brasil ha leído.
-
----
-
----
-
-# F. Se puede vivir sin resolver
-
-> **Nota del 20 de septiembre de 2026.** Entraron dos de los veinticinco (punto
-> F8 del bloque G): las tres preguntas premarcadas arrancan sin respuesta
-> marcada, y la pantalla de Legal tiene "Cambiar mi respuesta". Uno más,
-> "que Turbo y consumo en el local no se puedan marcar a la vez", quedó resuelto
-> de paso por el punto D2: ya no son casillas. **Quedan veintidós**, con su
-> tamaño y el orden que propongo:
->
-> **Pequeños, una sesión los tres juntos.** Que el contador de preguntas cuente
-> la que aparece según la respuesta. Que "Ahora dice" muestre las fechas en
-> palabras. El aviso de tiempo estimado en el ETA, que ya quedó resuelto por el
-> punto C5.
->
-> **Medianos, uno por sesión.** Partir en dos la sexta pregunta del filtro de
-> Travel. Ordenar la pantalla de Ayuda de otra manera. Subir el atajo a los T&C
-> publicados por encima de los cuatro tipos y agregar "Mi campaña no es ninguna
-> de estas". Que la calculadora del tope muestre también un pedido grande. No
-> preguntar el negocio en países sin tipos de Travel.
->
-> **Grandes, sesión propia cada uno.** "¿Quién puede publicar?" con el botón que
-> arma el mensaje y los diez pasos de Squarespace plegados. El campo de ayuda del
-> filtro de Travel, que es lo que hace falta para el punto F6.
->
-> **Y los cambios de texto sueltos**, que son un rato: los de las pantallas 1, 2,
-> 7, 8, 9, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21 y 22 del encargo de la
-> interfaz. Esos no cambian comportamiento y se pueden aplicar todos de una.
-
-## F8. Los 25 cambios de recorrido del encargo de la interfaz
-
-No son reemplazos de texto: son comportamiento. Ordenar la Ayuda de otra manera,
-que Turbo y consumo en el local no se puedan marcar a la vez, que el contador de
-preguntas cuente bien, un botón de "Cambiar mi respuesta" en la pantalla de
-Legal, que las tres preguntas premarcadas arranquen sin marcar, que "Ahora dice"
-muestre las fechas en palabras, partir en dos la sexta pregunta del filtro de
-Travel.
-
-**Con la herramienta:** son de otro tamaño y van en su propia sesión. **Decide:**
-tú, cuáles entran y en qué orden.
-
----
+**Quién decide.** Tú, porque es texto legal.
 
 ---
 
@@ -456,6 +160,9 @@ solo está habilitada en Colombia.
 
 ---
 
+
+---
+
 # G. Cerrado
 
 No vuelve a aparecer como pregunta abierta.
@@ -504,6 +211,18 @@ No vuelve a aparecer como pregunta abierta.
 | **F6.** La quinta pregunta del filtro de Travel | **Se queda larga.** Acortarla necesita el campo de ayuda, que está en el F8 | 20 sep |
 | **F7.** El botón en portugués | "Ver minhas campanhas", como la pantalla que abre | 20 sep |
 | **F8.** Dos de los 25 cambios de recorrido | Las tres preguntas premarcadas arrancan sin marcar, y la pantalla de Legal deja cambiar la respuesta | 20 sep |
+| **B2.** Los cuatro documentos de Brasil | Comparados contra BR01 a BR04. La única diferencia de fondo era el orden de la cifra y las letras, que corrigió B3 | 21 sep |
+| **B3.** Brasil: la hora y el límite | La campaña arranca a las 00:01, y los pedidos y los porcentajes van con la cifra primero: "1 (um) pedido", "10% (dez por cento)" | 21 sep |
+| **C3.** "Solo consumo en el local" | **Se borra.** En Rappi no existe esa modalidad. Sale del formulario, del modelo, de la leyenda, de las pruebas y de la fila del país | 21 sep |
+| **C5.** Las veintiuna que quedaban | Siete cambian algo y catorce se cierran como hoy se imprimen. Las de medicamentos y nicotina se resolvieron con la regla nueva de Colombia | 21 sep |
+| **D3.** El valor del premio en la Carrera | Entra, con los dos textos de la decisión 36 (ii). Solo en Colombia y solo con premio físico | 21 sep |
+| **D4.** Los productos con nombre y EAN | Entra. Filas con nombre y código de barras, validado con su dígito de control | 21 sep |
+| **D6.** El filtro antes de los T&C generales | Entra. Seis preguntas de sí o no, con tres salidas, y los tres requisitos de la pieza en la pantalla del enlace | 21 sep |
+| **E2.** La interfaz de Brasil | Aplicadas las correcciones que aprobó Juan. **Queda pendiente** la lectura de los abogados de Brasil en la prueba | 21 sep |
+| **F6.** La quinta pregunta del filtro de Travel | **Se acorta.** El campo de ayuda que hacía falta entró con F8 | 21 sep |
+| **F8.** Los cambios de recorrido que quedaban | "¿Quién puede publicar?" con su botón, el atajo por encima de los tipos, la calculadora del tope, el filtro de Travel partido en diez, el contador, el negocio en países sin Travel y el orden de la Ayuda | 21 sep |
+| **Nuevo.** Medicamentos, fitoterapéuticos y nicotina | No se hacen esas campañas en Colombia. Advertencia, opción bloqueada y exclusión en el T&C | 21 sep |
+| **Nuevo.** En cuál de sus tiendas se gana el cashback | Cuatro respuestas, con su frase en el T&C, en la leyenda y en el nombre de la campaña. Una por marca en el Multitienda | 21 sep |
 
 **Riesgo aceptado, escrito para que quede constancia.** La cláusula de
 responsabilidad de Rappi Travel se queda como está. El argumento en contra:
