@@ -553,7 +553,6 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | Paso | Créditos |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
-| Valor por defecto | tienda |
 | Avanza sola | sí |
 | Llena en el documento | `TEXTO_LUGAR_REDENCION` |
 
@@ -586,6 +585,26 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 - `vacio`: Marca al menos una sección.
 
+### ¿En qué secciones NO se pueden redimir los Créditos?
+
+> Vienen marcadas las de siempre. Desmarca una solo si esa campaña sí la permite.
+
+**Por qué te preguntamos esto.** El documento tiene que decir dónde no vale el saldo. Una sección que no esté excluida aquí queda prometida, y después no se puede cerrar: el usuario reclama con el T&C en la mano.
+
+| | |
+|---|---|
+| Campo interno | `exclusionesRedencion` |
+| Paso | Créditos |
+| Tipo de control | casillas |
+| Obligatorio | no |
+| Valor por defecto | travel,soat,atm,favor |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_LUGAR_REDENCION` |
+
+**Mensajes de validación:**
+
+- `vacio`: Marca las secciones excluidas, o sigue sin marcar ninguna.
+
 ## Paso: Participantes
 
 ### ¿Quiénes pueden participar?
@@ -600,7 +619,6 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | Paso | Participantes |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
-| Valor por defecto | todos |
 | Avanza sola | sí |
 | Llena en el documento | `TEXTO_SEGMENTO` |
 
@@ -648,7 +666,6 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | Paso | Participantes |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
-| Valor por defecto | todos |
 | Avanza sola | sí |
 | Llena en el documento | `TEXTO_METODO_PAGO` |
 
@@ -1370,7 +1387,6 @@ formulario manual.
 | Paso | Participantes |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
-| Valor por defecto | todos |
 | Avanza sola | sí |
 | Llena en el documento | `TEXTO_SEGMENTO` |
 
@@ -1418,7 +1434,6 @@ formulario manual.
 | Paso | Participantes |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
-| Valor por defecto | todos |
 | Avanza sola | sí |
 | Llena en el documento | `TEXTO_METODO_PAGO` |
 
@@ -1652,19 +1667,23 @@ formulario manual.
 
 ### ¿De qué marca son los productos?
 
-> Como la ve el usuario en la app. Por ejemplo: JetSMART. Si participan todas, déjalo vacío.
+> Como la ve el usuario en la app. Por ejemplo: JetSMART.
 
-**Por qué te preguntamos esto.** El documento dice de qué marca son los productos que participan. Si lo dejas vacío, participan todos los de las categorías que elijas.
+**Por qué te preguntamos esto.** El documento dice de qué marca son los productos que participan, y el nombre de la campaña empieza por ella.
 
 | | |
 |---|---|
 | Campo interno | `marcaAliado` |
 | Paso | Organizador |
 | Tipo de control | texto |
-| Obligatorio | no |
+| Obligatorio | sí, cuando se ve |
 | Ejemplo | JetSMART |
 | Avanza sola | no |
 | Llena en el documento | `TEXTO_PRODUCTOS_TRAVEL` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe la marca. Sin ella, el nombre de la campaña quedaría con la razón social.
 
 ## Paso: Productos
 
@@ -2425,7 +2444,6 @@ No tiene pregunta propia: se responde dentro de **maxOrdenes**.
 | Paso | Créditos |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
-| Valor por defecto | tienda |
 | Avanza sola | sí |
 | Llena en el documento | `TEXTO_LUGAR_REDENCION` |
 
@@ -2472,7 +2490,6 @@ No tiene pregunta propia: se responde dentro de **maxOrdenes**.
 | Paso | Participantes |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
-| Valor por defecto | todos |
 | Avanza sola | sí |
 | Llena en el documento | `TEXTO_SEGMENTO` |
 
@@ -2499,7 +2516,6 @@ No tiene pregunta propia: se responde dentro de **maxOrdenes**.
 | Paso | Participantes |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
-| Valor por defecto | todos |
 | Avanza sola | sí |
 | Llena en el documento | `TEXTO_METODO_PAGO` |
 
@@ -2726,19 +2742,23 @@ formulario manual.
 
 ### ¿De qué marca son los productos?
 
-> Como la ve el usuario en la app. Por ejemplo: JetSMART. Si participan todas, déjalo vacío.
+> Como la ve el usuario en la app. Por ejemplo: JetSMART.
 
-**Por qué te preguntamos esto.** El documento dice de qué marca son los productos que participan. Si lo dejas vacío, participan todos los de las categorías que elijas.
+**Por qué te preguntamos esto.** El documento dice de qué marca son los productos que participan, y el nombre de la campaña empieza por ella.
 
 | | |
 |---|---|
 | Campo interno | `marcaAliado` |
 | Paso | Organizador |
 | Tipo de control | texto |
-| Obligatorio | no |
+| Obligatorio | sí, cuando se ve |
 | Ejemplo | JetSMART |
 | Avanza sola | no |
 | Llena en el documento | `TEXTO_PRODUCTOS_TRAVEL` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe la marca. Sin ella, el nombre de la campaña quedaría con la razón social.
 
 ## Paso: Productos
 
@@ -3427,7 +3447,6 @@ No tiene pregunta propia: se responde dentro de **unidades**.
 | Paso | Participantes |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
-| Valor por defecto | todos |
 | Avanza sola | sí |
 | Llena en el documento | `TEXTO_SEGMENTO` |
 
@@ -3454,7 +3473,6 @@ No tiene pregunta propia: se responde dentro de **unidades**.
 | Paso | Participantes |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
-| Valor por defecto | todos |
 | Avanza sola | sí |
 | Llena en el documento | `TEXTO_METODO_PAGO` |
 
@@ -3993,7 +4011,6 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | Paso | Participantes |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
-| Valor por defecto | todos |
 | Avanza sola | sí |
 | Llena en el documento | `TEXTO_METODO_PAGO` |
 
@@ -4765,7 +4782,6 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | Paso | Créditos |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
-| Valor por defecto | tienda |
 | Avanza sola | sí |
 | Llena en el documento | `TEXTO_LUGAR_REDENCION` |
 
@@ -4797,6 +4813,26 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 **Mensajes de validación:**
 
 - `vacio`: Marca al menos una sección.
+
+### ¿En qué secciones NO se pueden redimir los Créditos?
+
+> Vienen marcadas las de siempre. Desmarca una solo si esa campaña sí la permite.
+
+**Por qué te preguntamos esto.** El documento tiene que decir dónde no vale el saldo. Una sección que no esté excluida aquí queda prometida, y después no se puede cerrar: el usuario reclama con el T&C en la mano.
+
+| | |
+|---|---|
+| Campo interno | `exclusionesRedencion` |
+| Paso | Créditos |
+| Tipo de control | casillas |
+| Obligatorio | no |
+| Valor por defecto | travel,soat,atm,favor |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_LUGAR_REDENCION` |
+
+**Mensajes de validación:**
+
+- `vacio`: Marca las secciones excluidas, o sigue sin marcar ninguna.
 
 ## Paso: Tiendas
 
@@ -4844,7 +4880,6 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | Paso | Participantes |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
-| Valor por defecto | todos |
 | Avanza sola | sí |
 | Llena en el documento | `TEXTO_SEGMENTO` |
 
@@ -4892,7 +4927,6 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 | Paso | Participantes |
 | Tipo de control | lista |
 | Obligatorio | sí, cuando se ve |
-| Valor por defecto | todos |
 | Avanza sola | sí |
 | Llena en el documento | `TEXTO_METODO_PAGO` |
 

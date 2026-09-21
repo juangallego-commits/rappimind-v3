@@ -19,6 +19,7 @@
     "front": "node scripts/front.js",
     "revision": "node scripts/revision.js",
     "ayuda": "node scripts/ayuda.js",
-    "docs": "npm run preguntas && npm run ayuda"
+    "tabla-paises": "node scripts/tabla-paises.js",
+    "docs": "npm run preguntas && npm run ayuda && npm run tabla-paises"
   }
 }

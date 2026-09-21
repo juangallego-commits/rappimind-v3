@@ -34,10 +34,45 @@ function salidaEsperada(caso) {
   return normalizarParaComparar(leerTexto(rutaDesdeRaiz('pruebas', 'salidas_esperadas', caso.id + '.txt')));
 }
 
-test('hay treinta y dos casos, veinte que generan y doce que fallan', () => {
-  assert.strictEqual(casos.length, 32);
-  assert.strictEqual(generan.length, 20);
+test('hay treinta y siete casos, veinticinco que generan y doce que fallan', () => {
+  assert.strictEqual(casos.length, 37);
+  assert.strictEqual(generan.length, 25);
   assert.strictEqual(fallan.length, 12);
+
+  /*
+   * Un documento por cada país activo, con los mismos datos de campaña.
+   *
+   * Cada documento imprime dieciocho valores que salen de la fila de su país:
+   * la entidad legal, el domicilio, el nombre del país, la ley aplicable, la
+   * jurisdicción, la entidad de vigilancia, la autoridad de datos, tres
+   * enlaces, el nombre de la política de privacidad, el nombre y el símbolo de
+   * la moneda, el separador de miles, cómo se llaman los días, el texto de la
+   * hora local, el texto de los derechos de datos y el tipo de identificación
+   * del Organizador. Son más de ciento veinte valores publicándose.
+   *
+   * Hasta el 20 de septiembre de 2026 solo México y Ecuador tenían documento
+   * guardado: si alguien editaba la pestaña Paises o la semilla de Perú,
+   * Argentina, Chile, Uruguay o Costa Rica, no se caía ninguna prueba y se
+   * enteraba quien leyera el documento publicado, si lo leía. Punto B1.
+   *
+   * Los datos de campaña son idénticos en los siete a propósito: así la única
+   * diferencia entre un documento y otro es la fila del país, y la comparación
+   * dice qué línea cambió.
+   */
+  const unoPorPais = ['MX01', 'EC01', 'PE01', 'AR01', 'CL01', 'UY01', 'CR01'];
+  for (const id of unoPorPais) {
+    assert.strictEqual(casos.filter((caso) => caso.id === id).length, 1, 'falta el caso ' + id);
+  }
+  const campanas = unoPorPais.map((id) => {
+    const entrada = Object.assign({}, casos.filter((caso) => caso.id === id)[0].entrada);
+    // Lo único que cambia es el país y lo que el país obliga a cambiar.
+    for (const propia of ['pais', 'nombreCampana', 'tienda', 'organizadorRazonSocial', 'organizadorId']) {
+      delete entrada[propia];
+    }
+    return JSON.stringify(entrada);
+  });
+  assert.strictEqual(new Set(campanas).size, 1,
+    'los siete documentos de país ya no comparten los mismos datos de campaña');
 
   // CC03 es el único caso con premio físico entregado por el Organizador, que
   // es la única combinación en la que el documento autoriza transferir los
@@ -182,4 +217,38 @@ test('la cláusula de datos nombra los datos, la finalidad y la supresión', () 
   // La finalidad y la supresión, que la cláusula cuarta del acuerdo exige.
   assert.ok(texto.indexOf('solo podrá usar esos datos para') !== -1, texto);
   assert.ok(texto.indexOf('suprimirlos una vez cumplida esa finalidad') !== -1, texto);
+});
+
+/**
+ * La tabla de lo que cada país imprime.
+ *
+ * Juan la pidió junto con los casos dorados (punto B1): poder leer de un
+ * vistazo los valores de todos los países, uno al lado del otro. Si se queda
+ * atrás, engaña al que la lee, así que la prueba la vuelve a armar y compara.
+ * Se pone al día con `npm run tabla-paises`.
+ */
+test('docs/VALORES_POR_PAIS.md está al día', () => {
+  const { execFileSync } = require('node:child_process');
+  const guardada = leerTexto(rutaDesdeRaiz('docs', 'VALORES_POR_PAIS.md'));
+
+  execFileSync(process.execPath, [rutaDesdeRaiz('scripts', 'tabla-paises.js')], { stdio: 'pipe' });
+  const recien = leerTexto(rutaDesdeRaiz('docs', 'VALORES_POR_PAIS.md'));
+
+  assert.strictEqual(normalizarParaComparar(guardada), normalizarParaComparar(recien),
+    'la tabla cambió: corre "npm run tabla-paises" y revisa el resultado');
+});
+
+test('la tabla trae todos los países con documento y todas las columnas que se imprimen', () => {
+  const tabla = leerTexto(rutaDesdeRaiz('docs', 'VALORES_POR_PAIS.md'));
+
+  // Los ocho que generan documento de cashback. Brasil no usa ese modelo.
+  for (const nombre of ['Colombia', 'México', 'Perú', 'Argentina', 'Chile', 'Ecuador', 'Uruguay', 'Costa Rica']) {
+    assert.ok(tabla.indexOf('**' + nombre + '.**') !== -1, 'falta ' + nombre + ' en la tabla');
+  }
+
+  // Y las columnas que más duele tener mal: las que nombran a una autoridad.
+  for (const columna of ['entidad_legal', 'ley_aplicable', 'jurisdiccion', 'entidad_vigilancia',
+    'autoridad_datos', 'texto_derechos_datos', 'separador_miles', 'termino_dias']) {
+    assert.ok(tabla.indexOf('## ' + columna) !== -1, 'falta la columna ' + columna);
+  }
 });
