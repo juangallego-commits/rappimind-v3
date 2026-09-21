@@ -10,7 +10,7 @@
     
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>RappiMind v3 · demostración</title>
+    <title>RappiMind</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!--
@@ -345,7 +345,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, .marca { font-family: var(--display); font-weight: 900; }
+h1, h2 { font-family: var(--display); font-weight: 900; }
 h3, button, .opcion-titulo { font-family: var(--titulos); font-weight: 700; }
 
 h1 { font-size: 34px; line-height: 1.05; margin: 0 0 var(--e4); letter-spacing: -0.04em; }
@@ -367,21 +367,33 @@ a { color: var(--neon-texto); }
 }
 
 .marca {
-  position: relative;
-  display: inline-block;
-  font-size: 17px;
+  display: inline-flex; align-items: center; gap: 9px;
+  flex: none;
+}
+.marca-logotipo {
+  display: block; flex: none;
+  width: 56px; height: 24px;
+  background: url(data:image/png;base64,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) center/contain no-repeat;
+}
+.marca-divisor {
+  display: block; flex: none;
+  width: 1px; height: 21px;
+  background: var(--rm-borde-secundario);
+}
+.marca-mind {
+  position: relative; display: block;
+  font-family: var(--display); font-weight: 900;
+  font-size: 21.5px; line-height: 1; letter-spacing: -0.045em;
   color: var(--tinta);
-  letter-spacing: -0.01em;
   padding-top: 6px;
 }
+
 .marca .corona {
   position: absolute;
-  width: 14px; height: 9px;
-  top: -2px; left: 40px;
+  width: 14px; height: 8px;
+  top: -1px; left: 2px;
   color: var(--neon);
 }
-
-.marca em { font-style: normal; font-family: var(--titulos); color: var(--gris-lapiz); font-weight: 500; }
 
 .barra-superior {
   display: flex; align-items: center; gap: var(--e4);
@@ -927,6 +939,20 @@ input[disabled], select[disabled] {
   font-size: 19px; color: var(--gris-lapiz);
 }
 
+.pie {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  margin: 0; padding: var(--e5) var(--e4) var(--e6);
+  border-top: 1px solid var(--borde);
+  font-size: 13px; font-weight: 500; color: var(--gris-lapiz);
+}
+.pie-corazon {
+  flex: none;
+  color: var(--neon);
+
+  fill: currentColor;
+  stroke: none;
+}
+
 @media (max-width: 900px) {
 
   .pagina { padding: var(--e5) var(--e4) 136px; }
@@ -949,8 +975,12 @@ input[disabled], select[disabled] {
   }
 
   .barra-superior { padding: var(--e2) var(--e4); gap: var(--e3); }
-  .marca { font-size: 15px; white-space: nowrap; flex: none; }
-  .marca .corona { width: 11px; left: 36px; }
+
+  .marca { gap: 7px; }
+  .marca-logotipo { width: 44px; height: 19px; }
+  .marca-divisor { height: 17px; }
+  .marca-mind { font-size: 17px; padding-top: 0; }
+  .marca .corona { display: none; }
 
   .barra-superior nav {
     flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;
@@ -967,6 +997,8 @@ input[disabled], select[disabled] {
   .pagina-angosta:has(.pasos-publicar):not(:has(> .pasos-publicar)) > h1:has(+ .pregunta-ayuda) + .pregunta-ayuda {
     padding: var(--e3) var(--e4) var(--e5); font-size: 16px;
   }
+
+  .pie { padding-bottom: var(--e5); font-size: 12px; }
 
   .selector-idioma { bottom: 76px; }
 
@@ -12258,6 +12290,13 @@ var IDIOMAS_DE_INTERFAZ = [
 ];
 
 var TEXTOS_PT = {
+  // El pie de pagina, que sale en todas las pantallas. Va partido en dos
+  // claves porque entre las dos va el corazon, que es un SVG y no texto: una
+  // sola cadena con el corazon dentro obligaria a meter un dibujo en el
+  // diccionario, y ademas la clave tiene que ser identica al literal que el
+  // codigo le pasa a T().
+  'Hecho con amor': 'Feito com amor',
+  'por el equipo Legal': 'pelo time do Jurídico',
   /* --- Navegacion y marco ------------------------------------------------ */
   'Generar': 'Gerar',
   'Mis campañas': 'Minhas campanhas',
@@ -13949,6 +13988,10 @@ var TRAZOS = {
   documento: 'M5 2h7l3 3v13H5zM12 2v3h3',
   alerta: 'M10 3 18 17H2zM10 8v4M10 14.5v.5',
   descargar: 'M10 3v10M6 10l4 4 4-4M3 17h14',
+  // El del pie de pagina. Es un trazo de un solo camino, como los demas, y
+  // NO un emoji: un emoji se dibuja distinto en cada sistema y no se puede
+  // pintar con el gradiente de la marca.
+  corazon: 'M10 16.5 3.4 9.9a3.9 3.9 0 0 1 5.5-5.5l1.1 1.1 1.1-1.1a3.9 3.9 0 1 1 5.5 5.5z',
 };
 
 function icono(nombre, tamano) {
@@ -19212,12 +19255,54 @@ function barraSuperior() {
   }
 
   return crear('header', { clase: 'barra-superior' }, [
-    crear('span', { clase: 'marca' }, [
-      RM.util.corona(),
-      document.createTextNode('RappiMind '),
-      crear('em', { texto: 'v3' }),
+    /*
+     * El lockup. Se recompone aqui en vez de servirse como una imagen entera:
+     * la corona ya existia, "Mind" es texto en la letra de marca y el divisor
+     * es un borde. La unica imagen es el logotipo de Rappi, que entra por la
+     * hoja de estilos como fondo, incrustado en base64.
+     *
+     * Va con role="img" y su nombre completo. Sin eso, un lector de pantalla
+     * leeria las piezas sueltas ("Rappi", "Mind") o, peor, nada: el logotipo
+     * es un fondo de CSS y el resto son adornos. Por eso los hijos van todos
+     * escondidos del arbol de accesibilidad.
+     *
+     * Sin la firma "By Legal", que es lo que manda el manual del lockup para
+     * la barra superior: aqui el contexto ya es de Legal. La firma vive en el
+     * pie de pagina.
+     */
+    crear('span', { clase: 'marca', role: 'img', 'aria-label': 'RappiMind' }, [
+      crear('span', { clase: 'marca-logotipo', 'aria-hidden': 'true' }),
+      crear('span', { clase: 'marca-divisor', 'aria-hidden': 'true' }),
+      crear('span', { clase: 'marca-mind', 'aria-hidden': 'true' }, [
+        RM.util.corona(),
+        document.createTextNode('Mind'),
+      ]),
     ]),
     nav,
+  ]);
+}
+
+/**
+ * El pie de pagina, que sale en todas las pantallas.
+ *
+ * Va aqui y no dentro de cada pantalla porque pintarTodo() es el unico sitio
+ * por el que pasan las catorce. Ojo con las dos que NO pasan por ahi: la de
+ * carga y la de error las monta arrancar() a mano, y ahi no hay pie a
+ * proposito, porque en esas dos la aplicacion todavia no existe.
+ *
+ * El texto va partido en dos porque entre las dos mitades va el corazon, que
+ * es un trazo y no un caracter. Cada mitad pasa por T() por separado: la
+ * prueba de portugues exige que la clave del diccionario sea identica al
+ * literal que el codigo le pasa, asi que una sola cadena con el dibujo dentro
+ * no se podria traducir.
+ */
+function pieDePagina() {
+  var corazon = RM.util.icono('corazon', 15);
+  corazon.setAttribute('class', 'pie-corazon');
+  return crear('footer', { clase: 'pie' }, [
+    crear('span', { texto: estado.T('Hecho con amor') }),
+    corazon,
+    crear('span', { texto: estado.T('por el equipo Legal') }),
   ]);
 }
 
@@ -19364,6 +19449,7 @@ function pintarTodo() {
   var pintar = PANTALLAS[E.pantalla] || PANTALLAS.inicio;
   pintar(raiz);
 
+  raiz.appendChild(pieDePagina());
   raiz.appendChild(selectorDeIdioma());
 }
 

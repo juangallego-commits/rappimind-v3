@@ -55,12 +55,54 @@ function barraSuperior() {
   }
 
   return crear('header', { clase: 'barra-superior' }, [
-    crear('span', { clase: 'marca' }, [
-      RM.util.corona(),
-      document.createTextNode('RappiMind '),
-      crear('em', { texto: 'v3' }),
+    /*
+     * El lockup. Se recompone aqui en vez de servirse como una imagen entera:
+     * la corona ya existia, "Mind" es texto en la letra de marca y el divisor
+     * es un borde. La unica imagen es el logotipo de Rappi, que entra por la
+     * hoja de estilos como fondo, incrustado en base64.
+     *
+     * Va con role="img" y su nombre completo. Sin eso, un lector de pantalla
+     * leeria las piezas sueltas ("Rappi", "Mind") o, peor, nada: el logotipo
+     * es un fondo de CSS y el resto son adornos. Por eso los hijos van todos
+     * escondidos del arbol de accesibilidad.
+     *
+     * Sin la firma "By Legal", que es lo que manda el manual del lockup para
+     * la barra superior: aqui el contexto ya es de Legal. La firma vive en el
+     * pie de pagina.
+     */
+    crear('span', { clase: 'marca', role: 'img', 'aria-label': 'RappiMind' }, [
+      crear('span', { clase: 'marca-logotipo', 'aria-hidden': 'true' }),
+      crear('span', { clase: 'marca-divisor', 'aria-hidden': 'true' }),
+      crear('span', { clase: 'marca-mind', 'aria-hidden': 'true' }, [
+        RM.util.corona(),
+        document.createTextNode('Mind'),
+      ]),
     ]),
     nav,
+  ]);
+}
+
+/**
+ * El pie de pagina, que sale en todas las pantallas.
+ *
+ * Va aqui y no dentro de cada pantalla porque pintarTodo() es el unico sitio
+ * por el que pasan las catorce. Ojo con las dos que NO pasan por ahi: la de
+ * carga y la de error las monta arrancar() a mano, y ahi no hay pie a
+ * proposito, porque en esas dos la aplicacion todavia no existe.
+ *
+ * El texto va partido en dos porque entre las dos mitades va el corazon, que
+ * es un trazo y no un caracter. Cada mitad pasa por T() por separado: la
+ * prueba de portugues exige que la clave del diccionario sea identica al
+ * literal que el codigo le pasa, asi que una sola cadena con el dibujo dentro
+ * no se podria traducir.
+ */
+function pieDePagina() {
+  var corazon = RM.util.icono('corazon', 15);
+  corazon.setAttribute('class', 'pie-corazon');
+  return crear('footer', { clase: 'pie' }, [
+    crear('span', { texto: estado.T('Hecho con amor') }),
+    corazon,
+    crear('span', { texto: estado.T('por el equipo Legal') }),
   ]);
 }
 
@@ -207,6 +249,7 @@ function pintarTodo() {
   var pintar = PANTALLAS[E.pantalla] || PANTALLAS.inicio;
   pintar(raiz);
 
+  raiz.appendChild(pieDePagina());
   raiz.appendChild(selectorDeIdioma());
 }
 

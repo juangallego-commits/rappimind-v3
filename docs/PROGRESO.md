@@ -2219,7 +2219,7 @@ Fonts. La decisión la tomó Juan con la medición delante: los cuatro pesos cos
 un 42,9% más en cada carga, y uno solo cuesta un 10,4%. La primera visita pesa
 menos que antes del cambio.
 
-**El contraste pasó de 9 pares por debajo a cero**, con 41 pares medidos. Entre
+**El contraste pasó de 9 pares por debajo a cero**, con 52 pares medidos. Entre
 ellos, dos que no existían y que dejaron pasar defectos reales: el blanco sobre el
 gradiente sin recortar y la superficie de un control contra el fondo de página.
 
@@ -2268,10 +2268,12 @@ leer, que no existía.
 ## La vara
 
 El encargo pide que al final el diff de `textos.json` salga vacío. **No sale
-vacío, y no se está escondiendo.** Salen 15 pantallas idénticas de 31, y 16 con
-diferencias registradas una a una; quince de esas dieciséis son la línea "Paso n
-de m", que la especificación manda hacer visible cuando las etiquetas de la barra
-se caen.
+vacío, y no se está escondiendo.** Al cerrar el bloque 9 salían 15 pantallas
+idénticas de 31, y 16 con diferencias registradas una a una; quince de esas
+dieciséis eran la línea "Paso n de m", que la especificación manda hacer visible
+cuando las etiquetas de la barra se caen. Después entraron el lockup y el pie de
+página, que tocan las 31, así que hoy no queda ninguna idéntica y las 31 tienen su
+diferencia escrita.
 
 La vara pasó a comprobar algo más útil que "el diff está vacío": que las únicas
 diferencias contra la foto del antes sean exactamente las aceptadas. Cualquier
@@ -2281,6 +2283,63 @@ Y desde la ronda 4 compara también la vara ancha de 48 pantallas, que la fase 0
 guardó y que hasta entonces nadie había comparado. Cubre lo que la de 31 no
 alcanza: Travel, los T&C generales, el país en piloto, la ampliación, la
 administración y las tres vistas de celular.
+
+---
+
+# Bloque 9b · El lockup, el pie de página y el "v3"
+
+Lo pidió Juan al ver las capturas del bloque 9, en dos puntos. Está hecho.
+
+## Qué va a ver
+
+**La marca de la barra superior es ahora el lockup completo:** el logotipo de
+Rappi, un divisor fino y "Mind" en Heavy con la corona encima. Antes decía
+"RappiMind" en texto con un `v3` pequeño al lado.
+
+**Abajo de todas las pantallas** sale "Hecho con amor ♥ por el equipo Legal",
+centrado, sobre una línea fina. En portugués, "Feito com amor ♥ pelo time do
+Jurídico".
+
+**Se fue el "v3"** de la barra, del título de la pestaña y del título que pone
+Apps Script.
+
+## Lo único que necesito decirte, Juan
+
+**El "v3" se queda en un sitio, y a propósito: `src/server/Config.js`.** Ahí está
+escrito que el Google Sheet se llama `RappiMind v3 · Base` y la carpeta de Drive
+`RappiMind v3`. Esos dos nombres no son una etiqueta: son con lo que el código
+encuentra la hoja y la carpeta que ya existen, con tus campañas dentro. Si les
+quito el "v3", `setup` no las encuentra, crea unas nuevas vacías, y el historial se
+queda en las viejas sin que nada avise.
+
+Nadie los ve desde la aplicación. Solo salen si abres Drive. Si algún día quieres
+renombrarlos, se puede, pero es renombrar la hoja en Drive **y** el archivo, en ese
+orden, y eso sí es una operación sobre producción.
+
+## Cómo comprobarlo
+
+Lo de siempre, y todo está verde:
+
+```
+npm test                 681 pruebas
+npm run contraste        53 pares, todos llegan
+npm run demo && node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js
+node .claude/skills/flujo-y-ux/scripts/recorrer-en-portugues.js
+npm run front            48 pantallas en docs/FRONT_ACTUAL.html
+```
+
+La vara de las 31 pantallas pasa: lo único que entra en cada una es el pie, y en
+la barra "RappiMind v3" sale y entra "Mind". La vara ancha de 48 dice lo mismo.
+
+## Lo que cuesta
+
+El logotipo suma **5,56 KiB en base64**, que sobre la página comprimida es
+**+2,13%**. La alternativa evidente, el PNG que ya estaba en el repositorio,
+costaba +10,10%. Está medido paso a paso en `docs/diseno/MEDICION_LOGOTIPO.md`.
+
+El pie y el corazón no suman nada medible: son texto y un trazo SVG.
+
+Decisiones 119 a 122.
 
 ---
 

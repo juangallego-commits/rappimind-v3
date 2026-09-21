@@ -180,6 +180,12 @@ const PARES = [
 
   // --- Objetos graficos que comunican estado ------------------------------
   { que: 'barra del paso hecho', frente: '--rm-paso-hecho', fondo: '#FFFFFF', min: 3 },
+  // El corazon del pie de pagina. Va aria-hidden y lo que dice ya esta escrito
+  // al lado ("hecho con amor"), asi que WCAG no le exige minimo ninguno: es
+  // decorativo. Se mide igual, con el minimo de objeto grafico, porque llega
+  // (3.50:1) y asi nadie tiene que discutir si era decorativo o no.
+  { que: 'corazon del pie sobre niebla', frente: '--rm-neon', fondo: '--rm-niebla', min: 3,
+    nota: 'es decorativo y va aria-hidden, pero llega al minimo de objeto grafico de todas formas' },
   { que: 'barra del paso pendiente', frente: '--rm-paso-pendiente', fondo: '#FFFFFF', min: 3,
     nota: 'es el carril vacio de la barra; lo que comunica el avance es el paso hecho y el actual, mas la linea de texto de encima' },
   { que: 'subrayado punteado del hueco', frente: '--rm-hueco-subrayado', fondo: '--rm-hueco-bg', min: 3 },

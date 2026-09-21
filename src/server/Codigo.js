@@ -11,7 +11,7 @@
 function doGet() {
   return HtmlService.createTemplateFromFile('Index')
     .evaluate()
-    .setTitle('RappiMind v3')
+    .setTitle('RappiMind')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
