@@ -377,6 +377,112 @@
       }
     },
     {
+      "id": "CC04",
+      "descripcion": "Carrera CO con productos específicos, con su nombre y su código de barras EAN",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "CO",
+        "alcance": "Nacional",
+        "ciudades": "",
+        "segmento": "todos",
+        "metodoPago": "todos",
+        "declaracion": true,
+        "tipo": "carrera_compras",
+        "nombreCampana": "Carrera de Compras Bimbo Bicicleta",
+        "tienda": "Carulla",
+        "fechaInicio": "2026-09-20",
+        "horaInicio": "00:00",
+        "fechaFin": "2026-09-30",
+        "horaFin": "23:59",
+        "organizadorRazonSocial": "Organizador de Prueba Tres S.A.S.",
+        "organizadorId": "900555666-1",
+        "productos": "especificos",
+        "criterioGanador": "mayor_valor",
+        "numeroGanadores": 1,
+        "desempate": "primero",
+        "tipoPremio": "fisico",
+        "descripcionPremio": "Una bicicleta de montaña rodado 29",
+        "entregaPor": "organizador",
+        "medioNotificacion": "correo",
+        "fechaNotificacion": "2026-10-05",
+        "plazoConfirmacion": 5,
+        "compraMinima": 30000,
+        "negocio": "rappi",
+        "valorPremio": 1200000,
+        "productosDetalle": [
+          {
+            "nombre": "Galletas Lunaria clásicas",
+            "ean": "7702001008285"
+          },
+          {
+            "nombre": "Galletas Lunaria de chocolate",
+            "ean": "7501031311309"
+          }
+        ]
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "identificados con su nombre y su código de barras EAN",
+          "• Galletas Lunaria clásicas (EAN 7702001008285)",
+          "• Galletas Lunaria de chocolate (EAN 7501031311309)",
+          "Solo suman al acumulado las unidades cuyo código EAN coincida con alguno de los anteriores."
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          ".."
+        ]
+      }
+    },
+    {
+      "id": "CC05",
+      "descripcion": "Carrera CO con un EAN mal copiado: el dígito de control no cuadra, así que no genera",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "CO",
+        "alcance": "Nacional",
+        "ciudades": "",
+        "segmento": "todos",
+        "metodoPago": "todos",
+        "declaracion": true,
+        "tipo": "carrera_compras",
+        "nombreCampana": "Carrera de Compras Bimbo Bicicleta",
+        "tienda": "Carulla",
+        "fechaInicio": "2026-09-20",
+        "horaInicio": "00:00",
+        "fechaFin": "2026-09-30",
+        "horaFin": "23:59",
+        "organizadorRazonSocial": "Organizador de Prueba Tres S.A.S.",
+        "organizadorId": "900555666-1",
+        "productos": "especificos",
+        "criterioGanador": "mayor_valor",
+        "numeroGanadores": 1,
+        "desempate": "primero",
+        "tipoPremio": "fisico",
+        "descripcionPremio": "Una bicicleta de montaña rodado 29",
+        "entregaPor": "organizador",
+        "medioNotificacion": "correo",
+        "fechaNotificacion": "2026-10-05",
+        "plazoConfirmacion": 5,
+        "compraMinima": 30000,
+        "negocio": "rappi",
+        "valorPremio": 1200000,
+        "productosDetalle": [
+          {
+            "nombre": "Galletas Lunaria clásicas",
+            "ean": "7702001008286"
+          }
+        ]
+      },
+      "esperado": {
+        "resultado": "falla",
+        "errores": [
+          "productosDetalle"
+        ]
+      }
+    },
+    {
       "id": "CD01",
       "descripcion": "Cashback Day CO con 3 tiendas (caso real de Restaurantes)",
       "fecha_referencia": "2026-09-16",

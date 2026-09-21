@@ -1072,25 +1072,28 @@ formulario manual.
 
 - `vacio`: Escribe el nombre de la marca.
 
-### ¿Cuáles productos?
+### ¿Cuáles productos participan?
 
-> Sepáralos con comas, como aparecen en la app.
+> Uno por fila: el nombre como sale en la app y su EAN, el número del código de barras.
 
-**Por qué te preguntamos esto.** La lista sale escrita tal cual en el documento. Si falta uno, las compras de ese producto no cuentan.
+**Por qué te preguntamos esto.** El EAN identifica el producto sin discusión. Si dos productos se llaman parecido, el EAN decide qué compra suma.
 
 | | |
 |---|---|
-| Campo interno | `productosLista` |
+| Campo interno | `productosDetalle` |
 | Paso | Concurso |
-| Tipo de control | texto |
+| Tipo de control | repetible |
 | Obligatorio | sí, cuando se ve |
-| Ejemplo | Galletas Lunaria clásicas, Galletas Lunaria de chocolate |
 | Avanza sola | no |
 | Llena en el documento | `TEXTO_PRODUCTOS` |
 
 **Mensajes de validación:**
 
-- `vacio`: Escribe los productos que participan, separados por comas.
+- `minimo`: Agrega al menos un producto participante.
+- `maximo`: No puedes agregar más de 60 productos.
+- `largo`: El EAN tiene 8, 12, 13 o 14 números. Revisa que esté completo.
+- `control`: Ese EAN no existe: el último número no cuadra. Cópialo otra vez del empaque o del catálogo.
+- `repetido`: Ese EAN ya está en la lista.
 
 ### ¿Cómo se define el ganador?
 

@@ -1,6 +1,6 @@
 {
   "generado": "2026-09-21",
-  "commit": "65e329f",
+  "commit": "9287483",
   "rama": "claude/dazzling-bell-w5o6pf",
   "partes": [
     {
@@ -477,8 +477,21 @@
       "texto": "RappiMind v3\nGenerar\nMis campañas\nAyuda\nAdministración\nCampaña\nCuándo\nBeneficio\nCréditos\nTiendas\nParticipantes\nPieza\nLas tiendas participantes\n¿Qué tiendas participan?\n\nMínimo dos. Cada una entra con su razón social, su NIT y su presupuesto.\n\nTienda 1: Farmatodo\nQuitar\n\nMarca. Como aparece en la app.\n\nRazón social. Como aparece en el RUT.\n\nNIT. Con dígito de verificación.\n\nCobertura nacional\n\nCiudades. Separadas por comas, o marca cobertura nacional.\n\nPresupuesto. De esta tienda, no el total.\n\n$\n\n¿En cuál de sus tiendas? La normal, la de Turbo, o las dos.\n\nElige una\nSolo en la tienda normal\nSolo en la tienda de Turbo\nEn las dos\nNo tiene tienda en Turbo\n\nDinos en cuál de sus tiendas se gana el cashback.\n\nTienda 2: Cruz Verde\nQuitar\n\nMarca. Como aparece en la app.\n\nRazón social. Como aparece en el RUT.\n\nNIT. Con dígito de verificación.\n\nCobertura nacional\n\nCiudades. Separadas por comas, o marca cobertura nacional.\n\nPresupuesto. De esta tienda, no el total.\n\n$\n\n¿En cuál de sus tiendas? La normal, la de Turbo, o las dos.\n\nElige una\nSolo en la tienda normal\nSolo en la tienda de Turbo\nEn las dos\nNo tiene tienda en Turbo\n\nDinos en cuál de sus tiendas se gana el cashback.\n\nTienda 3: La Rebaja\nQuitar\n\nMarca. Como aparece en la app.\n\nRazón social. Como aparece en el RUT.\n\nNIT. Con dígito de verificación.\n\nCobertura nacional\n\nCiudades. Separadas por comas, o marca cobertura nacional.\n\nPresupuesto. De esta tienda, no el total.\n\n$\n\n¿En cuál de sus tiendas? La normal, la de Turbo, o las dos.\n\nElige una\nSolo en la tienda normal\nSolo en la tienda de Turbo\nEn las dos\nNo tiene tienda en Turbo\n\nDinos en cuál de sus tiendas se gana el cashback.\n\nAgregar tienda\nPegar varias tiendas desde Excel\n\nCopia las filas de tu hoja de cálculo con las columnas en este orden: marca, razón social, NIT, ciudades (o la palabra Nacional) y presupuesto.\n\nAgregar estas tiendas\n¿Por qué te preguntamos esto?\n\nEn un Cashback Multitienda cada tienda organiza su propio beneficio y responde por él. Por eso cada una necesita sus propios datos.\n\nAtrás\nSiguiente\nTu T&C\nFaltan 2 datos\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nCerrar\nES\nBR"
     },
     {
-      "id": "carrera",
+      "id": "carrera-productos",
       "numero": 36,
+      "titulo": "Formulario, los productos de la Carrera",
+      "parte": "Los otros caminos",
+      "pantalla": "pasos",
+      "ventana": "escritorio",
+      "idioma": "es",
+      "queHace": "Cuando participan productos específicos, cada uno entra con su nombre y su código de barras EAN. El EAN se revisa entero, con su dígito de control, y el documento nombra los productos uno por uno.",
+      "nota": "",
+      "valeFoto": true,
+      "texto": "RappiMind v3\nGenerar\nMis campañas\nAyuda\nAdministración\nCampaña\nOrganizador\nCuándo\nConcurso\nPremio\nParticipantes\nPieza\nEl concurso\n¿Cuáles productos participan?\n\nUno por fila: el nombre como sale en la app y su EAN, el número del código de barras.\n\nProducto 1: Galletas Lunaria clásicas\nQuitar\n\nNombre. Como sale en la app.\n\nEAN. El número del código de barras.\n\nProducto 2: Galletas Lunaria de chocolate\nQuitar\n\nNombre. Como sale en la app.\n\nEAN. El número del código de barras.\n\nAgregar producto\nPegar desde una hoja de cálculo\n\nUna fila por producto: el nombre y el EAN, separados por tabulación.\n\nAgregar los pegados\n¿Por qué te preguntamos esto?\n\nEl EAN identifica el producto sin discusión. Si dos productos se llaman parecido, el EAN decide qué compra suma.\n\nQuedan 3 preguntas en este paso.\n\nAtrás\nSiguiente\nTu T&C\nFaltan 15 datos\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nAquí va la vista previa del documento, que se llena mientras el comercial responde. Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). En las demás se marca así para no repetir el mismo T&C treinta veces: el texto legal vive en modelos/.\n\nCerrar\nES\nBR"
+    },
+    {
+      "id": "carrera",
+      "numero": 37,
       "titulo": "Formulario, Carrera de Compras con una opción bloqueada",
       "parte": "Los otros caminos",
       "pantalla": "pasos",
@@ -491,7 +504,7 @@
     },
     {
       "id": "error",
-      "numero": 37,
+      "numero": 38,
       "titulo": "Formulario, un error en vivo",
       "parte": "Los otros caminos",
       "pantalla": "pasos",
@@ -504,7 +517,7 @@
     },
     {
       "id": "acuerdo-datos",
-      "numero": 38,
+      "numero": 39,
       "titulo": "Formulario, el acuerdo de transferencia de datos",
       "parte": "Los otros caminos",
       "pantalla": "pasos",
@@ -517,7 +530,7 @@
     },
     {
       "id": "ampliar",
-      "numero": 39,
+      "numero": 40,
       "titulo": "Mis campañas, ampliar una publicada",
       "parte": "Los otros caminos",
       "pantalla": "historial",
@@ -530,7 +543,7 @@
     },
     {
       "id": "admin",
-      "numero": 40,
+      "numero": 41,
       "titulo": "Administración",
       "parte": "Los otros caminos",
       "pantalla": "admin",
@@ -543,7 +556,7 @@
     },
     {
       "id": "pt-inicio",
-      "numero": 41,
+      "numero": 42,
       "titulo": "Inicio, interfaz en portugués",
       "parte": "La interfaz en portugués",
       "pantalla": "inicio",
@@ -556,7 +569,7 @@
     },
     {
       "id": "pt-filtro",
-      "numero": 42,
+      "numero": 43,
       "titulo": "Filtro de entrada, interfaz en portugués",
       "parte": "La interfaz en portugués",
       "pantalla": "filtro",
@@ -569,7 +582,7 @@
     },
     {
       "id": "pt-negocio",
-      "numero": 43,
+      "numero": 44,
       "titulo": "Formulario en portugués, el negocio",
       "parte": "La interfaz en portugués",
       "pantalla": "pasos",
@@ -582,7 +595,7 @@
     },
     {
       "id": "pt-tipos",
-      "numero": 44,
+      "numero": 45,
       "titulo": "Formulario en portugués, el tipo de campaña",
       "parte": "La interfaz en portugués",
       "pantalla": "pasos",
@@ -595,7 +608,7 @@
     },
     {
       "id": "celular-inicio",
-      "numero": 45,
+      "numero": 46,
       "titulo": "Inicio en celular",
       "parte": "En celular",
       "pantalla": "inicio",
@@ -608,7 +621,7 @@
     },
     {
       "id": "celular-pregunta",
-      "numero": 46,
+      "numero": 47,
       "titulo": "Una pregunta en celular",
       "parte": "En celular",
       "pantalla": "pasos",
@@ -621,7 +634,7 @@
     },
     {
       "id": "celular-hoja",
-      "numero": 47,
+      "numero": 48,
       "titulo": "El documento en la hoja deslizable",
       "parte": "En celular",
       "pantalla": "pasos",

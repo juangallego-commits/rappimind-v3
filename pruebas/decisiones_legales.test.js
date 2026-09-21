@@ -446,3 +446,77 @@ test('la pregunta del valor sale solo en Colombia y solo con premio físico', ()
   assert.deepStrictEqual(revision.errores.map((e) => e.campo), ['valorPremio']);
   assert.strictEqual(revision.errores[0].mensaje, PREGUNTAS.valorPremio.errores.vacio);
 });
+
+// --- D4: los productos con nombre y código de barras -------------------------
+
+test('el EAN se revisa entero, con su dígito de control', () => {
+  // Un número mal copiado del empaque salía impreso y nadie se enteraba. Punto
+  // D4, 20 de septiembre de 2026.
+  const { validarEan } = require('../src/core/identificaciones.js');
+
+  // Los cuatro largos que acepta GS1.
+  for (const bueno of ['96385074', '012345678905', '7702001008285', '00012345678905']) {
+    assert.strictEqual(validarEan(bueno).valido, true, bueno);
+  }
+  assert.strictEqual(validarEan('7702001008285').formateado, '7702001008285');
+
+  // El dígito de control que no cuadra, y los largos que no existen.
+  assert.strictEqual(validarEan('7702001008286').valido, false);
+  assert.ok(validarEan('7702001008286').mensaje.indexOf('el último número no cuadra') !== -1);
+  assert.ok(validarEan('1234567').mensaje.indexOf('8, 12, 13 o 14 números') !== -1);
+  assert.strictEqual(validarEan('').valido, false);
+
+  // Y los separadores del empaque no estorban.
+  assert.strictEqual(validarEan('770 2001 008285').valido, true);
+});
+
+test('la lista de productos no deja generar con un EAN malo ni repetido', () => {
+  const { validarProductos } = require('../src/core/validaciones.js');
+  const { esquemaDe } = require('../src/core/esquemas.js');
+  const esquema = esquemaDe('carrera_compras');
+  const campos = (productosDetalle) => validarProductos(
+    { productos: 'especificos', productosDetalle: productosDetalle }, esquema
+  ).map((e) => e.mensaje);
+
+  assert.deepStrictEqual(campos([{ nombre: 'Galletas', ean: '7702001008285' }]), []);
+  assert.deepStrictEqual(campos([]), ['Agrega al menos 1 producto participante.']);
+  assert.deepStrictEqual(campos([{ nombre: '', ean: '7702001008285' }]), ['Producto 1: falta el nombre.']);
+  assert.ok(campos([{ nombre: 'X', ean: '7702001008286' }])[0].indexOf('el último número no cuadra') !== -1);
+  assert.ok(campos([
+    { nombre: 'X', ean: '7702001008285' },
+    { nombre: 'Y', ean: '7702001008285' },
+  ])[0].indexOf('ese EAN ya está en la lista') !== -1);
+
+  // Con los productos de una marca o todos los de la tienda no se pregunta, así
+  // que tampoco se exige.
+  assert.deepStrictEqual(validarProductos({ productos: 'marca' }, esquema), []);
+});
+
+test('el documento nombra cada producto con su EAN, en viñetas', () => {
+  const { calcularDerivados } = require('../src/core/derivados.js');
+  const { leerJson, rutaDesdeRaiz } = require('../scripts/lib/archivos');
+  const CO = leerJson(rutaDesdeRaiz('data', 'paises.json')).paises.filter((p) => p.codigo === 'CO')[0];
+
+  const texto = calcularDerivados({
+    tipo: 'carrera_compras', productos: 'especificos',
+    productosDetalle: [
+      { nombre: 'Galletas Lunaria clásicas', ean: '7702001008285' },
+      { nombre: 'Galletas Lunaria de chocolate', ean: '7501031311309' },
+    ],
+  }, CO).TEXTO_PRODUCTOS;
+
+  assert.deepStrictEqual(texto.split('\n'), [
+    'Participan en el concurso únicamente los siguientes productos de la Tienda Participante, ' +
+    'identificados con su nombre y su código de barras EAN (en adelante, los “Productos Participantes”):',
+    '• Galletas Lunaria clásicas (EAN 7702001008285)',
+    '• Galletas Lunaria de chocolate (EAN 7501031311309)',
+    'Solo suman al acumulado las unidades cuyo código EAN coincida con alguno de los anteriores.',
+  ]);
+
+  // Un producto a medias deja hueco entero, que el motor anuncia, en vez de una
+  // lista con una línea sin nombre o sin EAN.
+  assert.strictEqual(calcularDerivados({
+    tipo: 'carrera_compras', productos: 'especificos',
+    productosDetalle: [{ nombre: 'Galletas', ean: '' }],
+  }, CO).TEXTO_PRODUCTOS, '');
+});

@@ -523,6 +523,9 @@ function pantallaPasos(raiz) {
       if (campoAbierto.id === 'tiendas') {
         bloque = RM.tiendas.dibujar(function () { RM.app.dibujar(); });
       }
+      if (campoAbierto.id === 'productosDetalle') {
+        bloque = RM.productos.dibujar(function () { RM.app.dibujar(); });
+      }
       columna.appendChild(bloque);
     }
 

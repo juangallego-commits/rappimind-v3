@@ -25,6 +25,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 
   var moduloIdentificaciones = require('./identificaciones.js');
   var validarIdentificacion = moduloIdentificaciones.validarIdentificacion;
+  var validarEan = moduloIdentificaciones.validarEan;
 
   var separarPorComas = moduloFechas.separarPorComas;
   var travelDisponible = require('./paises.js').travelDisponible;
@@ -762,6 +763,57 @@ function validarNegocio(entrada, esquema) {
 }
 
 /**
+ * Los productos participantes de la Carrera, con su nombre y su EAN.
+ *
+ * Eran un campo de texto libre y dos productos que se llaman parecido dejaban
+ * el documento sin decir cual suma al concurso. Punto D4, 20 de septiembre de
+ * 2026. El EAN se revisa entero, con su digito de control: un numero mal
+ * copiado del empaque sale impreso y nadie se entera.
+ */
+function validarProductos(entrada, esquema) {
+  if (entrada.productos !== 'especificos') return [];
+
+  var errores = [];
+  var productos = entrada.productosDetalle || [];
+  var definicion = null;
+  for (var i = 0; i < esquema.campos.length; i++) {
+    if (esquema.campos[i].id === 'productosDetalle') definicion = esquema.campos[i];
+  }
+  var minimo = definicion && definicion.minimo !== undefined ? definicion.minimo : 1;
+  var maximo = definicion && definicion.maximo !== undefined ? definicion.maximo : 60;
+
+  if (productos.length < minimo) {
+    return [error('productosDetalle', 'Agrega al menos ' + minimo +
+      (minimo === 1 ? ' producto participante.' : ' productos participantes.'))];
+  }
+  if (productos.length > maximo) {
+    return [error('productosDetalle', 'No puedes agregar más de ' + maximo + ' productos.')];
+  }
+
+  var vistos = {};
+  for (var p = 0; p < productos.length; p++) {
+    var producto = productos[p] || {};
+    var fila = p + 1;
+
+    if (estaVacio(producto.nombre)) {
+      errores.push(error('productosDetalle', 'Producto ' + fila + ': falta el nombre.'));
+    }
+
+    var revision = validarEan(producto.ean);
+    if (!revision.valido) {
+      errores.push(error('productosDetalle', 'Producto ' + fila + ': ' + revision.mensaje));
+      continue;
+    }
+    // El mismo EAN dos veces es el mismo producto contado dos veces.
+    if (vistos[revision.formateado]) {
+      errores.push(error('productosDetalle', 'Producto ' + fila + ': ese EAN ya está en la lista.'));
+    }
+    vistos[revision.formateado] = true;
+  }
+  return errores;
+}
+
+/**
  * La categoria de la pieza que no deja hacer la campana.
  *
  * En Colombia no se hacen campanas de cashback, descuento ni concursos sobre
@@ -830,6 +882,7 @@ function validarSolicitud(entrada, pais, contexto) {
   }
   if (entrada.tipo === 'carrera_compras') {
     errores = errores.concat(validarCarrera(entrada, esquema.id, idioma));
+    errores = errores.concat(validarProductos(entrada, esquema));
   }
   if (entrada.tipo === 'cashback_day') {
     errores = errores.concat(validarTiendas(entrada, pais, esquema));
@@ -871,5 +924,6 @@ if (typeof module !== 'undefined') {
     fechaFinDeLaCampana: fechaFinDeLaCampana,
     validarEta: validarEta,
     validarCategoriaDeLaPieza: validarCategoriaDeLaPieza,
+    validarProductos: validarProductos,
   };
 }

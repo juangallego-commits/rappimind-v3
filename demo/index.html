@@ -1733,17 +1733,36 @@ function valorLegible(campo, valor, tipo) {
   return String(valor);
 }
 
-/** Las tiendas de un Cashback Multitienda, una por linea. */
+/**
+ * Las tiendas de un Cashback Multitienda, una por linea.
+ *
+ * Los nombres de los campos son los de CAMPOS_POR_TIENDA. Estuvieron escritos
+ * con los del Cashback de una tienda (tienda, organizadorRazonSocial,
+ * organizadorId), que en una fila de esta lista no existen, asi que la columna
+ * del Sheet guardaba " ·  · " por cada tienda: la auditoria se quedaba sin el
+ * dato y nadie se enteraba, porque no lanzaba ningun error.
+ */
 function tiendasLegibles(tiendas) {
   var lista = tiendas || [];
   var lineas = [];
   for (var i = 0; i < lista.length; i++) {
     var t = lista[i] || {};
-    var partes = [t.tienda || '', t.organizadorRazonSocial || '', t.organizadorId || ''];
-    if (t.porcentaje) partes.push(t.porcentaje + '%');
-    if (t.tope) partes.push('tope ' + t.tope);
+    var partes = [t.marca || '', t.razonSocial || '', t.id || ''];
+    partes.push(t.nacional ? 'cobertura nacional' : (t.ciudades || ''));
     if (t.presupuesto) partes.push('presupuesto ' + t.presupuesto);
+    if (t.tiendaTurbo) partes.push(t.tiendaTurbo);
     lineas.push(partes.join(' · '));
+  }
+  return lineas.join('\n');
+}
+
+/** Los productos participantes de la Carrera, uno por linea. */
+function productosLegibles(productos) {
+  var lista = productos || [];
+  var lineas = [];
+  for (var i = 0; i < lista.length; i++) {
+    var producto = lista[i] || {};
+    lineas.push(String(producto.nombre || '') + ' · EAN ' + String(producto.ean || ''));
   }
   return lineas.join('\n');
 }
@@ -1772,6 +1791,9 @@ function respuestasParaElSheet(entrada) {
   if (esquema.camposPorTienda) {
     fila[PREFIJO_RESPUESTA + 'tiendas'] = tiendasLegibles(datos.tiendas);
   }
+  if (esquema.camposPorProducto) {
+    fila[PREFIJO_RESPUESTA + 'productosDetalle'] = productosLegibles(datos.productosDetalle);
+  }
   return fila;
 }
 
@@ -1781,6 +1803,7 @@ if (typeof module !== 'undefined') {
     columnasDeRespuestas: columnasDeRespuestas,
     valorLegible: valorLegible,
     tiendasLegibles: tiendasLegibles,
+    productosLegibles: productosLegibles,
     respuestasParaElSheet: respuestasParaElSheet,
   };
 }
@@ -2617,10 +2640,28 @@ function textoProductos(entrada) {
     );
   }
   if (entrada.productos === 'especificos') {
-    return (
-      'Participan en el concurso únicamente los siguientes productos de la Tienda Participante ' +
-      '(en adelante, los “Productos Participantes”): ' + (entrada.productosLista || '') + '.'
-    );
+    /*
+     * Con nombre y codigo de barras desde el 20 de septiembre de 2026 (D4).
+     * Antes era un campo de texto libre y dos productos que se llaman parecido
+     * dejaban el documento sin decir cual suma al concurso.
+     *
+     * Va en vinnetas, no en tabla: el sitio donde se publica no muestra tablas.
+     */
+    var productos = entrada.productosDetalle || [];
+    if (productos.length === 0) return '';
+
+    var lineas = ['Participan en el concurso únicamente los siguientes productos de la Tienda Participante, ' +
+      'identificados con su nombre y su código de barras EAN (en adelante, los “Productos Participantes”):'];
+    for (var i = 0; i < productos.length; i++) {
+      var nombre = String((productos[i] || {}).nombre || '').trim();
+      var ean = String((productos[i] || {}).ean || '').replace(/\D/g, '');
+      // Un producto a medias deja la vinneta rota: mejor un hueco entero, que
+      // el motor anuncia, que una lista con una linea sin nombre o sin EAN.
+      if (!nombre || !ean) return '';
+      lineas.push('• ' + nombre + ' (EAN ' + ean + ')');
+    }
+    lineas.push('Solo suman al acumulado las unidades cuyo código EAN coincida con alguno de los anteriores.');
+    return lineas.join('\n');
   }
   return '';
 }
@@ -5034,9 +5075,20 @@ var CAMPOS_CARRERA = [
     obligatorio: function (entrada) { return entrada.productos === 'marca'; },
   },
   {
-    id: 'productosLista',
-    etiqueta: 'Productos (separados por comas)',
-    tipo: 'texto',
+    /*
+     * Los productos, con nombre y codigo de barras.
+     *
+     * Era un campo de texto libre ("Productos separados por comas") y es uno de
+     * los pocos que quedaban. Dos productos que se llaman parecido dejaban el
+     * documento sin decir cual suma al concurso; el EAN lo decide sin
+     * discusion. Decision 36 (iii) del encargo 01, que Juan cerro el 20 de
+     * septiembre de 2026 (punto D4).
+     */
+    id: 'productosDetalle',
+    etiqueta: 'Productos participantes',
+    tipo: 'repetible',
+    minimo: 1,
+    maximo: 60,
     paso: 'concurso',
     visible: function (entrada) { return entrada.productos === 'especificos'; },
     obligatorio: function (entrada) { return entrada.productos === 'especificos'; },
@@ -5203,6 +5255,12 @@ var CAMPOS_POR_TIENDA = [
   // La misma pregunta del Cashback de una tienda, una vez por marca: en el
   // Multitienda cada una puede tener su propia respuesta.
   { id: 'tiendaTurbo', etiqueta: 'En cuál de sus tiendas', tipo: 'lista', obligatorio: true, opciones: OPCIONES_TIENDA_TURBO },
+];
+
+/** Campos de cada fila de la lista de productos de la Carrera. */
+var CAMPOS_POR_PRODUCTO = [
+  { id: 'nombre', etiqueta: 'Nombre', tipo: 'texto', obligatorio: true },
+  { id: 'ean', etiqueta: 'EAN', tipo: 'ean', obligatorio: true },
 ];
 
 /** Inserta un campo justo despues de otro, por identificador. */
@@ -5900,6 +5958,7 @@ var ESQUEMAS = {
     descripcion: 'Un concurso con premio: durante unas fechas gana quien más compre en la tienda. No hay azar, gana por lo que compró.',
     modelo: 'carrera_compras',
     campos: unir(CAMPOS_COMUNES, CAMPOS_TIENDA_Y_ORGANIZADOR, CAMPOS_CARRERA),
+    camposPorProducto: CAMPOS_POR_PRODUCTO,
     filtroDeEntrada: [
       '¿Hay azar (sorteo, rifa, raspa y gana)?',
       '¿Hay premios distintos por puesto o tabla de puntos?',
@@ -6608,8 +6667,49 @@ function validarIdentificacion(codigoPais, valor) {
   return validador(valor);
 }
 
+// --- El codigo de barras de un producto ------------------------------------
+
+/**
+ * EAN: 8, 12, 13 o 14 numeros, con digito de control correcto.
+ *
+ * Vive aqui, con los demas numeros que llevan digito de verificacion, aunque no
+ * sea un identificador tributario: es la misma clase de comprobacion y el mismo
+ * defecto que evita, que alguien escriba un numero parecido y nadie se entere.
+ *
+ * El algoritmo es el mismo de GS1 para las cuatro longitudes: se suman los
+ * digitos alternando pesos 3 y 1 desde la derecha, sin contar el ultimo, y el
+ * de control es lo que falta para la decena.
+ */
+var LARGOS_DE_EAN = [8, 12, 13, 14];
+
+function digitoDeEan(cuerpo) {
+  var suma = 0;
+  for (var i = 0; i < cuerpo.length; i++) {
+    // Desde la derecha: el primero pesa 3, el siguiente 1, y asi.
+    var peso = (cuerpo.length - 1 - i) % 2 === 0 ? 3 : 1;
+    suma += Number(cuerpo.charAt(i)) * peso;
+  }
+  return (10 - (suma % 10)) % 10;
+}
+
+function validarEan(valor) {
+  var digitos = soloDigitos(valor);
+  if (!String(valor || '').trim()) return resultado(false, 'Falta el EAN de este producto.');
+  if (LARGOS_DE_EAN.indexOf(digitos.length) === -1) {
+    return resultado(false, 'El EAN tiene 8, 12, 13 o 14 números. Revisa que esté completo.');
+  }
+
+  var cuerpo = digitos.slice(0, digitos.length - 1);
+  var control = Number(digitos.charAt(digitos.length - 1));
+  if (digitoDeEan(cuerpo) !== control) {
+    return resultado(false, 'Ese EAN no existe: el último número no cuadra. Cópialo otra vez del empaque o del catálogo.');
+  }
+  return resultado(true, '', digitos);
+}
+
 if (typeof module !== 'undefined') {
   module.exports = {
+    validarEan: validarEan,
     validarIdentificacion: validarIdentificacion,
     validarNit: validarNit,
     validarRfc: validarRfc,
@@ -10080,14 +10180,30 @@ var PREGUNTAS = {
     errores: { vacio: 'Escribe el nombre de la marca.' },
   }),
 
-  productosLista: p({
+  /*
+   * Los productos participantes, con su codigo de barras.
+   *
+   * Era un campo de texto libre y dos productos que se llaman parecido dejaban
+   * el documento sin decir cual suma al concurso. Los textos son los de la
+   * decision 36 (iii) del encargo 01, tal cual (punto D4).
+   */
+  productosDetalle: p({
     paso: 'concurso',
-    pregunta: '¿Cuáles productos?',
-    ayuda: 'Sepáralos con comas, como aparecen en la app.',
-    porQue: 'La lista sale escrita tal cual en el documento. Si falta uno, las compras de ese producto no cuentan.',
-    ejemplo: 'Galletas Lunaria clásicas, Galletas Lunaria de chocolate',
+    pregunta: '¿Cuáles productos participan?',
+    ayuda: 'Uno por fila: el nombre como sale en la app y su EAN, el número del código de barras.',
+    porQue: 'El EAN identifica el producto sin discusión. Si dos productos se llaman parecido, el EAN decide qué compra suma.',
     placeholders: ['TEXTO_PRODUCTOS'],
-    errores: { vacio: 'Escribe los productos que participan, separados por comas.' },
+    errores: {
+      minimo: 'Agrega al menos un producto participante.',
+      maximo: 'No puedes agregar más de 60 productos.',
+      largo: 'El EAN tiene 8, 12, 13 o 14 números. Revisa que esté completo.',
+      control: 'Ese EAN no existe: el último número no cuadra. Cópialo otra vez del empaque o del catálogo.',
+      repetido: 'Ese EAN ya está en la lista.',
+    },
+    camposPorProducto: {
+      nombre: { pregunta: 'Nombre', ayuda: 'Como sale en la app.', ejemplo: 'Galletas Lunaria clásicas' },
+      ean: { pregunta: 'EAN', ayuda: 'El número del código de barras.', ejemplo: '7702001008285' },
+    },
   }),
 
   criterioGanador: p({
@@ -11659,6 +11775,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 
   var moduloIdentificaciones = require('./identificaciones.js');
   var validarIdentificacion = moduloIdentificaciones.validarIdentificacion;
+  var validarEan = moduloIdentificaciones.validarEan;
 
   var separarPorComas = moduloFechas.separarPorComas;
   var travelDisponible = require('./paises.js').travelDisponible;
@@ -12396,6 +12513,57 @@ function validarNegocio(entrada, esquema) {
 }
 
 /**
+ * Los productos participantes de la Carrera, con su nombre y su EAN.
+ *
+ * Eran un campo de texto libre y dos productos que se llaman parecido dejaban
+ * el documento sin decir cual suma al concurso. Punto D4, 20 de septiembre de
+ * 2026. El EAN se revisa entero, con su digito de control: un numero mal
+ * copiado del empaque sale impreso y nadie se entera.
+ */
+function validarProductos(entrada, esquema) {
+  if (entrada.productos !== 'especificos') return [];
+
+  var errores = [];
+  var productos = entrada.productosDetalle || [];
+  var definicion = null;
+  for (var i = 0; i < esquema.campos.length; i++) {
+    if (esquema.campos[i].id === 'productosDetalle') definicion = esquema.campos[i];
+  }
+  var minimo = definicion && definicion.minimo !== undefined ? definicion.minimo : 1;
+  var maximo = definicion && definicion.maximo !== undefined ? definicion.maximo : 60;
+
+  if (productos.length < minimo) {
+    return [error('productosDetalle', 'Agrega al menos ' + minimo +
+      (minimo === 1 ? ' producto participante.' : ' productos participantes.'))];
+  }
+  if (productos.length > maximo) {
+    return [error('productosDetalle', 'No puedes agregar más de ' + maximo + ' productos.')];
+  }
+
+  var vistos = {};
+  for (var p = 0; p < productos.length; p++) {
+    var producto = productos[p] || {};
+    var fila = p + 1;
+
+    if (estaVacio(producto.nombre)) {
+      errores.push(error('productosDetalle', 'Producto ' + fila + ': falta el nombre.'));
+    }
+
+    var revision = validarEan(producto.ean);
+    if (!revision.valido) {
+      errores.push(error('productosDetalle', 'Producto ' + fila + ': ' + revision.mensaje));
+      continue;
+    }
+    // El mismo EAN dos veces es el mismo producto contado dos veces.
+    if (vistos[revision.formateado]) {
+      errores.push(error('productosDetalle', 'Producto ' + fila + ': ese EAN ya está en la lista.'));
+    }
+    vistos[revision.formateado] = true;
+  }
+  return errores;
+}
+
+/**
  * La categoria de la pieza que no deja hacer la campana.
  *
  * En Colombia no se hacen campanas de cashback, descuento ni concursos sobre
@@ -12464,6 +12632,7 @@ function validarSolicitud(entrada, pais, contexto) {
   }
   if (entrada.tipo === 'carrera_compras') {
     errores = errores.concat(validarCarrera(entrada, esquema.id, idioma));
+    errores = errores.concat(validarProductos(entrada, esquema));
   }
   if (entrada.tipo === 'cashback_day') {
     errores = errores.concat(validarTiendas(entrada, pais, esquema));
@@ -12505,6 +12674,7 @@ if (typeof module !== 'undefined') {
     fechaFinDeLaCampana: fechaFinDeLaCampana,
     validarEta: validarEta,
     validarCategoriaDeLaPieza: validarCategoriaDeLaPieza,
+    validarProductos: validarProductos,
   };
 }
 
@@ -14706,6 +14876,9 @@ function pantallaPasos(raiz) {
       if (campoAbierto.id === 'tiendas') {
         bloque = RM.tiendas.dibujar(function () { RM.app.dibujar(); });
       }
+      if (campoAbierto.id === 'productosDetalle') {
+        bloque = RM.productos.dibujar(function () { RM.app.dibujar(); });
+      }
       columna.appendChild(bloque);
     }
 
@@ -16036,6 +16209,204 @@ function dibujar(alCambiar) {
 }
 
 RM.tiendas = { dibujar: dibujar, revisarTienda: revisarTienda, COLUMNAS: COLUMNAS };
+
+})();
+// --- src/client/js/65-productos.js ---
+(function () {
+'use strict';
+
+/**
+ * La lista de productos participantes de la Carrera de Compras.
+ *
+ * Era un campo de texto libre ("Productos separados por comas") y es uno de los
+ * pocos que quedaban. Dos productos que se llaman parecido dejaban el documento
+ * sin decir cual suma al concurso: el EAN lo decide sin discusion. Juan lo
+ * cerro el 20 de septiembre de 2026 (punto D4).
+ *
+ * Mismo patron que la lista de tiendas del Multitienda, con dos diferencias:
+ * cada fila tiene dos campos en vez de seis, y el EAN se revisa entero, con su
+ * digito de control, para que un numero mal copiado del empaque no salga
+ * impreso.
+ */
+
+var RM = window.RM;
+var crear = RM.util.crear;
+var estado = RM.estado;
+
+function productos() {
+  if (!estado.entrada().productosDetalle) estado.fijar('productosDetalle', []);
+  return estado.entrada().productosDetalle;
+}
+
+function productoVacio() {
+  return { nombre: '', ean: '' };
+}
+
+/** Revisa una fila y devuelve los problemas, campo por campo. */
+function revisarProducto(producto, indice, todos) {
+  var problemas = {};
+  var textos = estado.pregunta('productosDetalle');
+
+  if (!producto.nombre) problemas.nombre = 'Falta el nombre de este producto.';
+
+  if (!producto.ean) {
+    problemas.ean = 'Falta el EAN de este producto.';
+    return problemas;
+  }
+
+  var revision = validarEan(producto.ean);
+  if (!revision.valido) {
+    problemas.ean = revision.mensaje;
+    return problemas;
+  }
+
+  // El mismo EAN dos veces es el mismo producto contado dos veces.
+  for (var i = 0; i < todos.length; i++) {
+    if (i === indice || !todos[i].ean) continue;
+    var otro = validarEan(todos[i].ean);
+    if (otro.valido && otro.formateado === revision.formateado) {
+      problemas.ean = textos.errores.repetido;
+      break;
+    }
+  }
+  return problemas;
+}
+
+function filaDeProducto(producto, indice, alCambiar) {
+  var textos = estado.pregunta('productosDetalle').camposPorProducto;
+  var problemas = revisarProducto(producto, indice, productos());
+
+  var fila = crear('div', { clase: 'ficha-seccion', 'data-producto': String(indice) }, [
+    crear('div', { clase: 'ficha-encabezado' }, [
+      crear('h3', { texto: 'Producto ' + (indice + 1) + (producto.nombre ? ': ' + producto.nombre : '') }),
+      crear('button', {
+        clase: 'boton-texto', type: 'button', texto: estado.T('Quitar'),
+        onclick: function () {
+          var lista = productos().slice();
+          lista.splice(indice, 1);
+          estado.fijar('productosDetalle', lista);
+          alCambiar();
+        },
+      }),
+    ]),
+  ]);
+
+  function campoTexto(llave) {
+    var control = crear('input', {
+      type: 'text',
+      value: producto[llave] || '',
+      placeholder: textos[llave].ejemplo || '',
+      'aria-label': textos[llave].pregunta + ' del producto ' + (indice + 1),
+    });
+    control.addEventListener('input', function () {
+      var lista = productos().slice();
+      lista[indice][llave] = control.value;
+      estado.fijar('productosDetalle', lista);
+      RM.flujo.refrescarDocumento();
+    });
+    control.addEventListener('blur', alCambiar);
+
+    return crear('label', { clase: 'campo' }, [
+      crear('p', { clase: 'pregunta-ayuda', texto: textos[llave].pregunta + '. ' + textos[llave].ayuda }),
+      crear('div', { clase: 'campo-caja' }, [control]),
+      problemas[llave] ? crear('p', { clase: 'mensaje-error', texto: problemas[llave] }) : null,
+    ]);
+  }
+
+  fila.appendChild(campoTexto('nombre'));
+  fila.appendChild(campoTexto('ean'));
+  return fila;
+}
+
+/** Pegar desde Excel: una fila por producto, nombre y EAN. */
+function bloqueDePegar(alCambiar) {
+  var area = crear('textarea', {
+    rows: '4',
+    placeholder: 'Galletas Lunaria clásicas\t7702001008285',
+    'aria-label': 'Pegar productos desde una hoja de cálculo',
+  });
+  var resultado = crear('div', {});
+
+  function procesar() {
+    var lineas = area.value.split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
+    if (lineas.length === 0) return;
+
+    var nuevos = [];
+    var rechazadas = [];
+    for (var i = 0; i < lineas.length; i++) {
+      var celdas = lineas[i].split(/\t|;/).map(function (c) { return c.trim(); });
+      if (celdas.length === 1) celdas = lineas[i].split(/\s{2,}/).map(function (c) { return c.trim(); });
+      if (celdas.length < 2) { rechazadas.push('Fila ' + (i + 1) + ': necesita el nombre y el EAN.'); continue; }
+      var producto = productoVacio();
+      producto.nombre = celdas[0] || '';
+      producto.ean = celdas[1] || '';
+      nuevos.push(producto);
+    }
+
+    var lista = productos().slice().filter(function (p) { return p.nombre || p.ean; });
+    estado.fijar('productosDetalle', lista.concat(nuevos));
+    area.value = '';
+
+    RM.util.vaciar(resultado);
+    resultado.appendChild(crear('p', {
+      clase: 'mensaje-ok',
+      texto: nuevos.length + (nuevos.length === 1 ? ' producto agregado.' : ' productos agregados.') +
+        ' Revisa que cada uno haya quedado bien.',
+    }));
+    for (var r = 0; r < rechazadas.length; r++) {
+      resultado.appendChild(crear('p', { clase: 'mensaje-error', texto: rechazadas[r] }));
+    }
+    alCambiar();
+  }
+
+  return crear('details', { clase: 'por-que' }, [
+    crear('summary', { texto: estado.T('Pegar desde una hoja de cálculo') }),
+    crear('p', { clase: 'pregunta-ayuda', texto: 'Una fila por producto: el nombre y el EAN, separados por tabulación.' }),
+    area,
+    crear('div', { clase: 'fila-botones' }, [
+      crear('button', { clase: 'boton boton-secundario', type: 'button', texto: estado.T('Agregar los pegados'), onclick: procesar }),
+    ]),
+    resultado,
+  ]);
+}
+
+function dibujar(alCambiar) {
+  var pregunta = estado.pregunta('productosDetalle');
+  var lista = productos();
+
+  var bloque = crear('div', { clase: 'pregunta' }, [
+    crear('h2', { clase: 'pregunta-titulo', texto: pregunta.pregunta }),
+    crear('p', { clase: 'pregunta-ayuda', texto: pregunta.ayuda }),
+  ]);
+
+  if (lista.length === 0) {
+    bloque.appendChild(crear('p', { clase: 'pregunta-ayuda', texto: 'Todavía no has agregado ningún producto.' }));
+  }
+  for (var i = 0; i < lista.length; i++) {
+    bloque.appendChild(filaDeProducto(lista[i], i, alCambiar));
+  }
+
+  bloque.appendChild(crear('div', { clase: 'fila-botones' }, [
+    crear('button', {
+      clase: 'boton boton-secundario', type: 'button', texto: estado.T('Agregar producto'),
+      onclick: function () {
+        estado.fijar('productosDetalle', productos().concat([productoVacio()]));
+        alCambiar();
+      },
+    }),
+  ]));
+  bloque.appendChild(bloqueDePegar(alCambiar));
+
+  bloque.appendChild(crear('details', { clase: 'por-que' }, [
+    crear('summary', { texto: estado.T('¿Por qué te preguntamos esto?') }),
+    crear('p', { texto: pregunta.porQue }),
+  ]));
+  return bloque;
+}
+
+RM.productos = {
+  dibujar: dibujar,
+};
 
 })();
 // --- src/client/js/66-resumen.js ---

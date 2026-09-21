@@ -34,10 +34,10 @@ function salidaEsperada(caso) {
   return normalizarParaComparar(leerTexto(rutaDesdeRaiz('pruebas', 'salidas_esperadas', caso.id + '.txt')));
 }
 
-test('hay treinta y siete casos, veinticinco que generan y doce que fallan', () => {
-  assert.strictEqual(casos.length, 37);
-  assert.strictEqual(generan.length, 25);
-  assert.strictEqual(fallan.length, 12);
+test('hay treinta y nueve casos, veintiséis que generan y trece que fallan', () => {
+  assert.strictEqual(casos.length, 39);
+  assert.strictEqual(generan.length, 26);
+  assert.strictEqual(fallan.length, 13);
 
   /*
    * Un documento por cada país activo, con los mismos datos de campaña.

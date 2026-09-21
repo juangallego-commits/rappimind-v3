@@ -274,8 +274,49 @@ function validarIdentificacion(codigoPais, valor) {
   return validador(valor);
 }
 
+// --- El codigo de barras de un producto ------------------------------------
+
+/**
+ * EAN: 8, 12, 13 o 14 numeros, con digito de control correcto.
+ *
+ * Vive aqui, con los demas numeros que llevan digito de verificacion, aunque no
+ * sea un identificador tributario: es la misma clase de comprobacion y el mismo
+ * defecto que evita, que alguien escriba un numero parecido y nadie se entere.
+ *
+ * El algoritmo es el mismo de GS1 para las cuatro longitudes: se suman los
+ * digitos alternando pesos 3 y 1 desde la derecha, sin contar el ultimo, y el
+ * de control es lo que falta para la decena.
+ */
+var LARGOS_DE_EAN = [8, 12, 13, 14];
+
+function digitoDeEan(cuerpo) {
+  var suma = 0;
+  for (var i = 0; i < cuerpo.length; i++) {
+    // Desde la derecha: el primero pesa 3, el siguiente 1, y asi.
+    var peso = (cuerpo.length - 1 - i) % 2 === 0 ? 3 : 1;
+    suma += Number(cuerpo.charAt(i)) * peso;
+  }
+  return (10 - (suma % 10)) % 10;
+}
+
+function validarEan(valor) {
+  var digitos = soloDigitos(valor);
+  if (!String(valor || '').trim()) return resultado(false, 'Falta el EAN de este producto.');
+  if (LARGOS_DE_EAN.indexOf(digitos.length) === -1) {
+    return resultado(false, 'El EAN tiene 8, 12, 13 o 14 números. Revisa que esté completo.');
+  }
+
+  var cuerpo = digitos.slice(0, digitos.length - 1);
+  var control = Number(digitos.charAt(digitos.length - 1));
+  if (digitoDeEan(cuerpo) !== control) {
+    return resultado(false, 'Ese EAN no existe: el último número no cuadra. Cópialo otra vez del empaque o del catálogo.');
+  }
+  return resultado(true, '', digitos);
+}
+
 if (typeof module !== 'undefined') {
   module.exports = {
+    validarEan: validarEan,
     validarIdentificacion: validarIdentificacion,
     validarNit: validarNit,
     validarRfc: validarRfc,

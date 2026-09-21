@@ -335,10 +335,28 @@ function textoProductos(entrada) {
     );
   }
   if (entrada.productos === 'especificos') {
-    return (
-      'Participan en el concurso únicamente los siguientes productos de la Tienda Participante ' +
-      '(en adelante, los “Productos Participantes”): ' + (entrada.productosLista || '') + '.'
-    );
+    /*
+     * Con nombre y codigo de barras desde el 20 de septiembre de 2026 (D4).
+     * Antes era un campo de texto libre y dos productos que se llaman parecido
+     * dejaban el documento sin decir cual suma al concurso.
+     *
+     * Va en vinnetas, no en tabla: el sitio donde se publica no muestra tablas.
+     */
+    var productos = entrada.productosDetalle || [];
+    if (productos.length === 0) return '';
+
+    var lineas = ['Participan en el concurso únicamente los siguientes productos de la Tienda Participante, ' +
+      'identificados con su nombre y su código de barras EAN (en adelante, los “Productos Participantes”):'];
+    for (var i = 0; i < productos.length; i++) {
+      var nombre = String((productos[i] || {}).nombre || '').trim();
+      var ean = String((productos[i] || {}).ean || '').replace(/\D/g, '');
+      // Un producto a medias deja la vinneta rota: mejor un hueco entero, que
+      // el motor anuncia, que una lista con una linea sin nombre o sin EAN.
+      if (!nombre || !ean) return '';
+      lineas.push('• ' + nombre + ' (EAN ' + ean + ')');
+    }
+    lineas.push('Solo suman al acumulado las unidades cuyo código EAN coincida con alguno de los anteriores.');
+    return lineas.join('\n');
   }
   return '';
 }

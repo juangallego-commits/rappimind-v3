@@ -104,17 +104,36 @@ function valorLegible(campo, valor, tipo) {
   return String(valor);
 }
 
-/** Las tiendas de un Cashback Multitienda, una por linea. */
+/**
+ * Las tiendas de un Cashback Multitienda, una por linea.
+ *
+ * Los nombres de los campos son los de CAMPOS_POR_TIENDA. Estuvieron escritos
+ * con los del Cashback de una tienda (tienda, organizadorRazonSocial,
+ * organizadorId), que en una fila de esta lista no existen, asi que la columna
+ * del Sheet guardaba " ·  · " por cada tienda: la auditoria se quedaba sin el
+ * dato y nadie se enteraba, porque no lanzaba ningun error.
+ */
 function tiendasLegibles(tiendas) {
   var lista = tiendas || [];
   var lineas = [];
   for (var i = 0; i < lista.length; i++) {
     var t = lista[i] || {};
-    var partes = [t.tienda || '', t.organizadorRazonSocial || '', t.organizadorId || ''];
-    if (t.porcentaje) partes.push(t.porcentaje + '%');
-    if (t.tope) partes.push('tope ' + t.tope);
+    var partes = [t.marca || '', t.razonSocial || '', t.id || ''];
+    partes.push(t.nacional ? 'cobertura nacional' : (t.ciudades || ''));
     if (t.presupuesto) partes.push('presupuesto ' + t.presupuesto);
+    if (t.tiendaTurbo) partes.push(t.tiendaTurbo);
     lineas.push(partes.join(' · '));
+  }
+  return lineas.join('\n');
+}
+
+/** Los productos participantes de la Carrera, uno por linea. */
+function productosLegibles(productos) {
+  var lista = productos || [];
+  var lineas = [];
+  for (var i = 0; i < lista.length; i++) {
+    var producto = lista[i] || {};
+    lineas.push(String(producto.nombre || '') + ' · EAN ' + String(producto.ean || ''));
   }
   return lineas.join('\n');
 }
@@ -143,6 +162,9 @@ function respuestasParaElSheet(entrada) {
   if (esquema.camposPorTienda) {
     fila[PREFIJO_RESPUESTA + 'tiendas'] = tiendasLegibles(datos.tiendas);
   }
+  if (esquema.camposPorProducto) {
+    fila[PREFIJO_RESPUESTA + 'productosDetalle'] = productosLegibles(datos.productosDetalle);
+  }
   return fila;
 }
 
@@ -152,6 +174,7 @@ if (typeof module !== 'undefined') {
     columnasDeRespuestas: columnasDeRespuestas,
     valorLegible: valorLegible,
     tiendasLegibles: tiendasLegibles,
+    productosLegibles: productosLegibles,
     respuestasParaElSheet: respuestasParaElSheet,
   };
 }

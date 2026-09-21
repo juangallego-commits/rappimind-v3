@@ -627,6 +627,29 @@ async function recorrer(rutaDeLaDemo, fichas, marcas) {
     await capturar('cashback-day', { porQue: true });
   });
 
+  // Los productos con nombre y EAN, que es una lista que crece como la de
+  // tiendas. Va en su propia captura porque no se llega a ella avanzando: hay
+  // que elegir antes "Productos específicos".
+  await tramo('los productos de la Carrera', ['carrera-productos'], async () => {
+    await paginaNueva('escritorio', 'es');
+    await saltarA('pasos', {
+      pais: 'CO', negocio: 'rappi', tipo: 'carrera_compras', tienda: 'Carulla',
+      alcance: 'Nacional', productos: 'especificos',
+      productosDetalle: [
+        { nombre: 'Galletas Lunaria clásicas', ean: '7702001008285' },
+        { nombre: 'Galletas Lunaria de chocolate', ean: '7501031311309' },
+      ],
+    });
+    await pagina.evaluate(() => {
+      RM.estado.estado.campoAbierto = 'productosDetalle';
+      const pasos = RM.flujo.pasosDelTipo(RM.estado.entrada()).map((p) => p.id);
+      RM.estado.estado.pasoActual = pasos.indexOf('concurso');
+      RM.app.dibujar();
+    });
+    await pagina.waitForTimeout(520);
+    await capturar('carrera-productos', { porQue: true });
+  });
+
   await tramo('Carrera de Compras', ['carrera'], async () => {
     await paginaNueva('escritorio', 'es');
     await clic('Empezar');

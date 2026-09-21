@@ -69,14 +69,50 @@ test('las respuestas de varias opciones van en una sola celda', () => {
 });
 
 test('las tiendas del Cashback Multitienda van una por línea', () => {
+  /*
+   * Con los nombres de campo de verdad, que son los de CAMPOS_POR_TIENDA.
+   * Esta prueba usaba los del Cashback de una tienda (tienda,
+   * organizadorRazonSocial, organizadorId), que en una fila de esta lista no
+   * existen: confirmaba la misma equivocación que tenía el código, así que la
+   * columna del Sheet guardaba " ·  · " por cada tienda y nadie se enteraba.
+   */
+  const { ESQUEMAS } = require('../src/core/esquemas.js');
   const texto = tiendasLegibles([
-    { tienda: 'Beer Station', organizadorRazonSocial: 'Beer S.A.S.', organizadorId: '900111222-1', porcentaje: 99, tope: 15000, presupuesto: 3000000 },
-    { tienda: 'EVOK', organizadorRazonSocial: 'Evok S.A.S.', organizadorId: '900333444-0', porcentaje: 50, tope: 10000, presupuesto: 2000000 },
+    { marca: 'Beer Station', razonSocial: 'Beer S.A.S.', id: '900.111.222-1', ciudades: 'Bogotá', presupuesto: 3000000, tiendaTurbo: 'normal' },
+    { marca: 'EVOK', razonSocial: 'Evok S.A.S.', id: '830.111.222-6', nacional: true, presupuesto: 2000000, tiendaTurbo: 'sin_turbo' },
   ]);
   const lineas = texto.split('\n');
   assert.strictEqual(lineas.length, 2);
   assert.ok(lineas[0].indexOf('Beer Station') === 0, lineas[0]);
-  assert.ok(lineas[0].indexOf('99%') !== -1, lineas[0]);
+  assert.ok(lineas[0].indexOf('900.111.222-1') !== -1, lineas[0]);
+  assert.ok(lineas[1].indexOf('cobertura nacional') !== -1, lineas[1]);
+
+  // Y ninguna línea puede quedar sin datos: es como se vio el defecto.
+  for (const linea of lineas) {
+    assert.ok(linea.replace(/[·\s]/g, '').length > 0, 'una tienda salió vacía: "' + linea + '"');
+  }
+
+  // Los nombres que lee esta función son los que el esquema define de verdad.
+  const delEsquema = ESQUEMAS.cashback_day.camposPorTienda.map((c) => c.id);
+  const fuente = require('node:fs').readFileSync(
+    require('node:path').join(__dirname, '..', 'src', 'core', 'auditoria.js'), 'utf8');
+  const cuerpo = fuente.slice(fuente.indexOf('function tiendasLegibles'), fuente.indexOf('function productosLegibles'));
+  for (const llave of ['marca', 'razonSocial', 'id', 'presupuesto']) {
+    assert.ok(delEsquema.indexOf(llave) !== -1, llave + ' ya no existe en el esquema');
+    assert.ok(cuerpo.indexOf('t.' + llave) !== -1, 'la auditoría no lee t.' + llave);
+  }
+});
+
+test('los productos de la Carrera van uno por línea, con su EAN', () => {
+  const { productosLegibles } = require('../src/core/auditoria.js');
+  const texto = productosLegibles([
+    { nombre: 'Galletas Lunaria clásicas', ean: '7702001008285' },
+    { nombre: 'Galletas Lunaria de chocolate', ean: '7501031311309' },
+  ]);
+  assert.deepStrictEqual(texto.split('\n'), [
+    'Galletas Lunaria clásicas · EAN 7702001008285',
+    'Galletas Lunaria de chocolate · EAN 7501031311309',
+  ]);
 });
 
 test('solo se llenan las preguntas que se le hicieron al comercial', () => {

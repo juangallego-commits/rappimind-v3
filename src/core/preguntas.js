@@ -1344,14 +1344,30 @@ var PREGUNTAS = {
     errores: { vacio: 'Escribe el nombre de la marca.' },
   }),
 
-  productosLista: p({
+  /*
+   * Los productos participantes, con su codigo de barras.
+   *
+   * Era un campo de texto libre y dos productos que se llaman parecido dejaban
+   * el documento sin decir cual suma al concurso. Los textos son los de la
+   * decision 36 (iii) del encargo 01, tal cual (punto D4).
+   */
+  productosDetalle: p({
     paso: 'concurso',
-    pregunta: '¿Cuáles productos?',
-    ayuda: 'Sepáralos con comas, como aparecen en la app.',
-    porQue: 'La lista sale escrita tal cual en el documento. Si falta uno, las compras de ese producto no cuentan.',
-    ejemplo: 'Galletas Lunaria clásicas, Galletas Lunaria de chocolate',
+    pregunta: '¿Cuáles productos participan?',
+    ayuda: 'Uno por fila: el nombre como sale en la app y su EAN, el número del código de barras.',
+    porQue: 'El EAN identifica el producto sin discusión. Si dos productos se llaman parecido, el EAN decide qué compra suma.',
     placeholders: ['TEXTO_PRODUCTOS'],
-    errores: { vacio: 'Escribe los productos que participan, separados por comas.' },
+    errores: {
+      minimo: 'Agrega al menos un producto participante.',
+      maximo: 'No puedes agregar más de 60 productos.',
+      largo: 'El EAN tiene 8, 12, 13 o 14 números. Revisa que esté completo.',
+      control: 'Ese EAN no existe: el último número no cuadra. Cópialo otra vez del empaque o del catálogo.',
+      repetido: 'Ese EAN ya está en la lista.',
+    },
+    camposPorProducto: {
+      nombre: { pregunta: 'Nombre', ayuda: 'Como sale en la app.', ejemplo: 'Galletas Lunaria clásicas' },
+      ean: { pregunta: 'EAN', ayuda: 'El número del código de barras.', ejemplo: '7702001008285' },
+    },
   }),
 
   criterioGanador: p({

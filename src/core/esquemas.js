@@ -300,9 +300,20 @@ var CAMPOS_CARRERA = [
     obligatorio: function (entrada) { return entrada.productos === 'marca'; },
   },
   {
-    id: 'productosLista',
-    etiqueta: 'Productos (separados por comas)',
-    tipo: 'texto',
+    /*
+     * Los productos, con nombre y codigo de barras.
+     *
+     * Era un campo de texto libre ("Productos separados por comas") y es uno de
+     * los pocos que quedaban. Dos productos que se llaman parecido dejaban el
+     * documento sin decir cual suma al concurso; el EAN lo decide sin
+     * discusion. Decision 36 (iii) del encargo 01, que Juan cerro el 20 de
+     * septiembre de 2026 (punto D4).
+     */
+    id: 'productosDetalle',
+    etiqueta: 'Productos participantes',
+    tipo: 'repetible',
+    minimo: 1,
+    maximo: 60,
     paso: 'concurso',
     visible: function (entrada) { return entrada.productos === 'especificos'; },
     obligatorio: function (entrada) { return entrada.productos === 'especificos'; },
@@ -469,6 +480,12 @@ var CAMPOS_POR_TIENDA = [
   // La misma pregunta del Cashback de una tienda, una vez por marca: en el
   // Multitienda cada una puede tener su propia respuesta.
   { id: 'tiendaTurbo', etiqueta: 'En cuál de sus tiendas', tipo: 'lista', obligatorio: true, opciones: OPCIONES_TIENDA_TURBO },
+];
+
+/** Campos de cada fila de la lista de productos de la Carrera. */
+var CAMPOS_POR_PRODUCTO = [
+  { id: 'nombre', etiqueta: 'Nombre', tipo: 'texto', obligatorio: true },
+  { id: 'ean', etiqueta: 'EAN', tipo: 'ean', obligatorio: true },
 ];
 
 /** Inserta un campo justo despues de otro, por identificador. */
@@ -1166,6 +1183,7 @@ var ESQUEMAS = {
     descripcion: 'Un concurso con premio: durante unas fechas gana quien más compre en la tienda. No hay azar, gana por lo que compró.',
     modelo: 'carrera_compras',
     campos: unir(CAMPOS_COMUNES, CAMPOS_TIENDA_Y_ORGANIZADOR, CAMPOS_CARRERA),
+    camposPorProducto: CAMPOS_POR_PRODUCTO,
     filtroDeEntrada: [
       '¿Hay azar (sorteo, rifa, raspa y gana)?',
       '¿Hay premios distintos por puesto o tabla de puntos?',

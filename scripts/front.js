@@ -223,6 +223,10 @@ const PARTES = [
         nota: 'Las tres tiendas del marco se pegaron desde el desplegable "Pegar varias tiendas desde Excel", que es como llega una lista de verdad.',
       },
       {
+        id: 'carrera-productos', valeFoto: true, titulo: 'Formulario, los productos de la Carrera', pantalla: 'pasos',
+        queHace: 'Cuando participan productos específicos, cada uno entra con su nombre y su código de barras EAN. El EAN se revisa entero, con su dígito de control, y el documento nombra los productos uno por uno.',
+      },
+      {
         id: 'carrera', valeFoto: true, titulo: 'Formulario, Carrera de Compras con una opción bloqueada', pantalla: 'pasos',
         queHace: 'En una Carrera de Compras el desempate no puede ser el mismo criterio con el que se elige al ganador. La opción se queda a la vista, bloqueada y con su razón: entender por qué no puede es parte de la respuesta.',
       },
