@@ -210,14 +210,26 @@ var FILTRO_DE_TRAVEL = [
     razon: 'Los anuncios de tarifas tienen reglas especiales de información y ya generaron una sanción a Rappi Travel.',
   },
   {
+    // Medía 25 palabras y sus ejemplos eran la mitad. Desde el 20 de septiembre
+    // de 2026 las preguntas del filtro aceptan una línea de ayuda, así que el
+    // enunciado se queda corto y los ejemplos van debajo (puntos F6 y F8).
     id: 'beneficioDeTercero',
-    texto: '¿El beneficio es distinto a Créditos o a un descuento en el precio? Por ejemplo: noches o niños gratis, cupones, millas, eSIM, bonos o cuotas sin interés.',
+    texto: '¿El beneficio es otra cosa que Créditos o descuento?',
+    ayuda: 'Por ejemplo: noches o niños gratis, cupones, millas, eSIM, bonos o cuotas sin interés.',
     razon: 'Ese beneficio lo presta un tercero con sus propias condiciones, así que necesita otro documento.',
   },
   {
+    // Eran dos preguntas en una, y quien contestaba sí no sabía cuál de las dos
+    // había contestado. Partida el 20 de septiembre de 2026 (punto F8).
     id: 'beneficioVariable',
-    texto: '¿El porcentaje, el tope o la compra mínima cambian según el destino, el producto o el tipo de usuario, o se mezcla descuento con cashback?',
-    razon: 'Este documento usa un solo beneficio para toda la campaña. Con varios, las cláusulas se contradicen.',
+    texto: '¿Las condiciones cambian según destino, producto o usuario?',
+    ayuda: 'El porcentaje, el tope o la compra mínima.',
+    razon: 'Este documento usa un solo beneficio para toda la campaña. Con condiciones distintas por destino, producto o usuario, las cláusulas se contradicen.',
+  },
+  {
+    id: 'mezclaDescuentoYCashback',
+    texto: '¿Mezcla descuento y cashback en la misma campaña?',
+    razon: 'Cada uno tiene su propio modelo y sus propias cláusulas: en un mismo documento se contradicen.',
   },
   {
     id: 'dependeDeBanco',
@@ -331,7 +343,7 @@ var PREGUNTAS_FRECUENTES = [
   },
   {
     pregunta: 'Mi campaña es de Rappi Travel. ¿Sirve esta herramienta?',
-    respuesta: 'Sí. Después de elegir el país, la primera pregunta es si la campaña es de Rappi o de Rappi Travel. Travel tiene su propia entidad legal, sus propios tipos (Cashback Travel y Descuento Travel) y un filtro de nueve preguntas antes de empezar, porque hay casos de viajes que sí tiene que redactar Legal.',
+    respuesta: 'Sí. Después de elegir el país, la primera pregunta es si la campaña es de Rappi o de Rappi Travel. Travel tiene su propia entidad legal, sus propios tipos (Cashback Travel y Descuento Travel) y un filtro de diez preguntas antes de empezar, porque hay casos de viajes que sí tiene que redactar Legal.',
   },
   {
     pregunta: '¿Dónde quedan guardados los documentos?',

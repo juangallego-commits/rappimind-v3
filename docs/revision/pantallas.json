@@ -1,6 +1,6 @@
 {
   "generado": "2026-09-21",
-  "commit": "8ce6b05",
+  "commit": "65e329f",
   "rama": "claude/dazzling-bell-w5o6pf",
   "partes": [
     {
@@ -396,7 +396,7 @@
       "queHace": "Solo lo ve quien eligió Rappi Travel. Responde nueve preguntas antes de poder elegir el tipo. Tiene una salida propia para quien entró por equivocación.",
       "nota": "",
       "valeFoto": true,
-      "texto": "RappiMind v3\nGenerar\nMis campañas\nAyuda\nAdministración\nAntes de seguir con tu campaña de Rappi Travel\n\nNueve preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano. No es un castigo: es un caso que un abogado tiene que mirar.\n\n¿La paga Rappi o Rappi Travel, no un aliado?\nNo\nSí\n¿El aliado exige sus propios términos y condiciones?\nNo\nSí\n¿Hay sorteo o concurso, o la pieza dice \"gana\"?\nNo\nSí\n¿La pieza anuncia un precio \"desde\" o una tarifa?\nNo\nSí\n¿El beneficio es distinto a Créditos o a un descuento en el precio? Por ejemplo: noches o niños gratis, cupones, millas, eSIM, bonos o cuotas sin interés.\nNo\nSí\n¿El porcentaje, el tope o la compra mínima cambian según el destino, el producto o el tipo de usuario, o se mezcla descuento con cashback?\nNo\nSí\n¿El beneficio depende de un banco o de cuotas?\nNo\nSí\n¿El producto es un seguro, no una asistencia al viajero?\nNo\nSí\n¿Es solo para empleados o no tiene fecha de fin?\nNo\nSí\nEsta campaña no es de Travel\nES\nBR"
+      "texto": "RappiMind v3\nGenerar\nMis campañas\nAyuda\nAdministración\nAntes de seguir con tu campaña de Rappi Travel\n\nDiez preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano. No es un castigo: es un caso que un abogado tiene que mirar.\n\n¿La paga Rappi o Rappi Travel, no un aliado?\nNo\nSí\n¿El aliado exige sus propios términos y condiciones?\nNo\nSí\n¿Hay sorteo o concurso, o la pieza dice \"gana\"?\nNo\nSí\n¿La pieza anuncia un precio \"desde\" o una tarifa?\nNo\nSí\n¿El beneficio es otra cosa que Créditos o descuento?\n\nPor ejemplo: noches o niños gratis, cupones, millas, eSIM, bonos o cuotas sin interés.\n\nNo\nSí\n¿Las condiciones cambian según destino, producto o usuario?\n\nEl porcentaje, el tope o la compra mínima.\n\nNo\nSí\n¿Mezcla descuento y cashback en la misma campaña?\nNo\nSí\n¿El beneficio depende de un banco o de cuotas?\nNo\nSí\n¿El producto es un seguro, no una asistencia al viajero?\nNo\nSí\n¿Es solo para empleados o no tiene fecha de fin?\nNo\nSí\nEsta campaña no es de Travel\nES\nBR"
     },
     {
       "id": "tipos-travel",

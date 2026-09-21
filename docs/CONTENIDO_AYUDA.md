@@ -159,7 +159,7 @@ Porque Rappi es la plataforma que conecta, no quien vende ni quien fondea. El or
 
 **Mi campaña es de Rappi Travel. ¿Sirve esta herramienta?**
 
-Sí. Después de elegir el país, la primera pregunta es si la campaña es de Rappi o de Rappi Travel. Travel tiene su propia entidad legal, sus propios tipos (Cashback Travel y Descuento Travel) y un filtro de nueve preguntas antes de empezar, porque hay casos de viajes que sí tiene que redactar Legal.
+Sí. Después de elegir el país, la primera pregunta es si la campaña es de Rappi o de Rappi Travel. Travel tiene su propia entidad legal, sus propios tipos (Cashback Travel y Descuento Travel) y un filtro de diez preguntas antes de empezar, porque hay casos de viajes que sí tiene que redactar Legal.
 
 **¿Dónde quedan guardados los documentos?**
 

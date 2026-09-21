@@ -1181,7 +1181,7 @@ var ESQUEMAS = {
     modelo: 'cashback_travel',
     campos: unir(CAMPOS_TRAVEL_COMUNES, CAMPOS_CASHBACK_TRAVEL),
     // El filtro de Travel reemplaza al general: ver docs/MODELO_BASE_TRAVEL.md,
-    // seccion 11. Vive en FILTRO_DE_TRAVEL, no aqui, porque son nueve preguntas
+    // seccion 11. Vive en FILTRO_DE_TRAVEL, no aqui, porque son diez preguntas
     // con su razon y las comparten los dos tipos.
     filtroDeEntrada: [],
     esDeTravel: true,

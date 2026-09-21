@@ -240,6 +240,9 @@ function pantallaFiltro(raiz) {
     (function (pregunta) {
       var bloque = crear('div', { clase: 'pregunta' }, [
         crear('h2', { clase: 'pregunta-titulo', texto: estado.T(pregunta.texto) }),
+        // La ayuda es lo que deja acortar el enunciado: los ejemplos que antes
+        // iban dentro de la pregunta ahora van debajo (puntos F6 y F8).
+        pregunta.ayuda ? crear('p', { clase: 'pregunta-ayuda', texto: estado.T(pregunta.ayuda) }) : null,
       ]);
       var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': estado.T(pregunta.texto) });
       [['no', 'No', false], ['si', 'Sí', true]].forEach(function (par) {
@@ -272,7 +275,7 @@ function pantallaFiltro(raiz) {
  * El filtro de Rappi Travel.
  *
  * Se muestra despues de elegir uno de los dos tipos de Travel, no antes: las
- * nueve preguntas solo tienen sentido sabiendo que la campana es de viajes.
+ * diez preguntas solo tienen sentido sabiendo que la campana es de viajes.
  * Reemplaza, para Travel, las preguntas generales de fondeo y de T&C propios.
  */
 function pantallaFiltroTravel(raiz) {
@@ -280,7 +283,7 @@ function pantallaFiltroTravel(raiz) {
     crear('h1', { texto: 'Antes de seguir con tu campaña de Rappi Travel' }),
     crear('p', {
       clase: 'pregunta-ayuda',
-      texto: 'Nueve preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano. No es un castigo: es un caso que un abogado tiene que mirar.',
+      texto: 'Diez preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano. No es un castigo: es un caso que un abogado tiene que mirar.',
     }),
   ]);
 
@@ -313,6 +316,9 @@ function pantallaFiltroTravel(raiz) {
     (function (pregunta) {
       var bloque = crear('div', { clase: 'pregunta' }, [
         crear('h2', { clase: 'pregunta-titulo', texto: estado.T(pregunta.texto) }),
+        // La ayuda es lo que deja acortar el enunciado: los ejemplos que antes
+        // iban dentro de la pregunta ahora van debajo (puntos F6 y F8).
+        pregunta.ayuda ? crear('p', { clase: 'pregunta-ayuda', texto: estado.T(pregunta.ayuda) }) : null,
       ]);
       var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': estado.T(pregunta.texto) });
       [['No', false], ['Sí', true]].forEach(function (par) {

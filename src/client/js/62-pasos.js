@@ -895,7 +895,7 @@ function alResponder(campoId, valor, campos, indice) {
       }
     }
 
-    // Rappi Travel tiene su propio filtro de nueve preguntas. Va aqui, apenas
+    // Rappi Travel tiene su propio filtro de diez preguntas. Va aqui, apenas
     // se sabe que la campana es de viajes, para no hacerle llenar media
     // campana a alguien que va a terminar en Legal.
     if (valor === 'travel' && !E.filtroDeTravelRespondido) {

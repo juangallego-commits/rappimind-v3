@@ -174,6 +174,29 @@ async function recorrer() {
   revisar('el filtro de Travel deja salir a quien entró por equivocación',
     enFiltroTravel.indexOf('Esta campaña no es de Travel') !== -1);
 
+  // Diez preguntas desde el 20 de septiembre de 2026: la sexta metía dos en
+  // una y se partió. Ninguna pasa de diez palabras, y las que necesitaban
+  // ejemplos los bajaron a una línea de ayuda (puntos F6 y F8).
+  const preguntasDeTravel = await pagina.evaluate(() =>
+    [].map.call(document.querySelectorAll('.pregunta'), (q) => ({
+      titulo: q.querySelector('.pregunta-titulo').textContent.trim(),
+      ayuda: (q.querySelector('.pregunta-ayuda') || {}).textContent || '',
+    })));
+  revisar('el filtro de Travel tiene diez preguntas',
+    preguntasDeTravel.length === 10 && enFiltroTravel.indexOf('Diez preguntas rápidas') !== -1,
+    preguntasDeTravel.length + ' preguntas');
+  revisar('la sexta quedó partida en dos',
+    preguntasDeTravel.some((q) => q.titulo === '¿Las condiciones cambian según destino, producto o usuario?') &&
+    preguntasDeTravel.some((q) => q.titulo === '¿Mezcla descuento y cashback en la misma campaña?'),
+    preguntasDeTravel.map((q) => q.titulo).join(' | '));
+  revisar('la quinta se acortó y sus ejemplos bajaron a la ayuda',
+    preguntasDeTravel.some((q) => q.titulo === '¿El beneficio es otra cosa que Créditos o descuento?' &&
+      q.ayuda.indexOf('noches o niños gratis') !== -1),
+    preguntasDeTravel.map((q) => q.titulo + ' >> ' + q.ayuda).join(' | '));
+  const largas = preguntasDeTravel
+    .filter((q) => q.titulo.split(/\s+/).length > 10).map((q) => q.titulo);
+  revisar('ninguna pregunta del filtro pasa de diez palabras', largas.length === 0, largas.join(' | '));
+
   await decirQueNoATodo();
   const tiposDeTravel = await texto();
   revisar('pasar el filtro de Travel deja elegir un tipo de Travel',

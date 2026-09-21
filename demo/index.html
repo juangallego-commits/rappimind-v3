@@ -1998,14 +1998,26 @@ var FILTRO_DE_TRAVEL = [
     razon: 'Los anuncios de tarifas tienen reglas especiales de información y ya generaron una sanción a Rappi Travel.',
   },
   {
+    // Medía 25 palabras y sus ejemplos eran la mitad. Desde el 20 de septiembre
+    // de 2026 las preguntas del filtro aceptan una línea de ayuda, así que el
+    // enunciado se queda corto y los ejemplos van debajo (puntos F6 y F8).
     id: 'beneficioDeTercero',
-    texto: '¿El beneficio es distinto a Créditos o a un descuento en el precio? Por ejemplo: noches o niños gratis, cupones, millas, eSIM, bonos o cuotas sin interés.',
+    texto: '¿El beneficio es otra cosa que Créditos o descuento?',
+    ayuda: 'Por ejemplo: noches o niños gratis, cupones, millas, eSIM, bonos o cuotas sin interés.',
     razon: 'Ese beneficio lo presta un tercero con sus propias condiciones, así que necesita otro documento.',
   },
   {
+    // Eran dos preguntas en una, y quien contestaba sí no sabía cuál de las dos
+    // había contestado. Partida el 20 de septiembre de 2026 (punto F8).
     id: 'beneficioVariable',
-    texto: '¿El porcentaje, el tope o la compra mínima cambian según el destino, el producto o el tipo de usuario, o se mezcla descuento con cashback?',
-    razon: 'Este documento usa un solo beneficio para toda la campaña. Con varios, las cláusulas se contradicen.',
+    texto: '¿Las condiciones cambian según destino, producto o usuario?',
+    ayuda: 'El porcentaje, el tope o la compra mínima.',
+    razon: 'Este documento usa un solo beneficio para toda la campaña. Con condiciones distintas por destino, producto o usuario, las cláusulas se contradicen.',
+  },
+  {
+    id: 'mezclaDescuentoYCashback',
+    texto: '¿Mezcla descuento y cashback en la misma campaña?',
+    razon: 'Cada uno tiene su propio modelo y sus propias cláusulas: en un mismo documento se contradicen.',
   },
   {
     id: 'dependeDeBanco',
@@ -2119,7 +2131,7 @@ var PREGUNTAS_FRECUENTES = [
   },
   {
     pregunta: 'Mi campaña es de Rappi Travel. ¿Sirve esta herramienta?',
-    respuesta: 'Sí. Después de elegir el país, la primera pregunta es si la campaña es de Rappi o de Rappi Travel. Travel tiene su propia entidad legal, sus propios tipos (Cashback Travel y Descuento Travel) y un filtro de nueve preguntas antes de empezar, porque hay casos de viajes que sí tiene que redactar Legal.',
+    respuesta: 'Sí. Después de elegir el país, la primera pregunta es si la campaña es de Rappi o de Rappi Travel. Travel tiene su propia entidad legal, sus propios tipos (Cashback Travel y Descuento Travel) y un filtro de diez preguntas antes de empezar, porque hay casos de viajes que sí tiene que redactar Legal.',
   },
   {
     pregunta: '¿Dónde quedan guardados los documentos?',
@@ -5903,7 +5915,7 @@ var ESQUEMAS = {
     modelo: 'cashback_travel',
     campos: unir(CAMPOS_TRAVEL_COMUNES, CAMPOS_CASHBACK_TRAVEL),
     // El filtro de Travel reemplaza al general: ver docs/MODELO_BASE_TRAVEL.md,
-    // seccion 11. Vive en FILTRO_DE_TRAVEL, no aqui, porque son nueve preguntas
+    // seccion 11. Vive en FILTRO_DE_TRAVEL, no aqui, porque son diez preguntas
     // con su razon y las comparten los dos tipos.
     filtroDeEntrada: [],
     esDeTravel: true,
@@ -13965,6 +13977,9 @@ function pantallaFiltro(raiz) {
     (function (pregunta) {
       var bloque = crear('div', { clase: 'pregunta' }, [
         crear('h2', { clase: 'pregunta-titulo', texto: estado.T(pregunta.texto) }),
+        // La ayuda es lo que deja acortar el enunciado: los ejemplos que antes
+        // iban dentro de la pregunta ahora van debajo (puntos F6 y F8).
+        pregunta.ayuda ? crear('p', { clase: 'pregunta-ayuda', texto: estado.T(pregunta.ayuda) }) : null,
       ]);
       var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': estado.T(pregunta.texto) });
       [['no', 'No', false], ['si', 'Sí', true]].forEach(function (par) {
@@ -13997,7 +14012,7 @@ function pantallaFiltro(raiz) {
  * El filtro de Rappi Travel.
  *
  * Se muestra despues de elegir uno de los dos tipos de Travel, no antes: las
- * nueve preguntas solo tienen sentido sabiendo que la campana es de viajes.
+ * diez preguntas solo tienen sentido sabiendo que la campana es de viajes.
  * Reemplaza, para Travel, las preguntas generales de fondeo y de T&C propios.
  */
 function pantallaFiltroTravel(raiz) {
@@ -14005,7 +14020,7 @@ function pantallaFiltroTravel(raiz) {
     crear('h1', { texto: 'Antes de seguir con tu campaña de Rappi Travel' }),
     crear('p', {
       clase: 'pregunta-ayuda',
-      texto: 'Nueve preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano. No es un castigo: es un caso que un abogado tiene que mirar.',
+      texto: 'Diez preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano. No es un castigo: es un caso que un abogado tiene que mirar.',
     }),
   ]);
 
@@ -14038,6 +14053,9 @@ function pantallaFiltroTravel(raiz) {
     (function (pregunta) {
       var bloque = crear('div', { clase: 'pregunta' }, [
         crear('h2', { clase: 'pregunta-titulo', texto: estado.T(pregunta.texto) }),
+        // La ayuda es lo que deja acortar el enunciado: los ejemplos que antes
+        // iban dentro de la pregunta ahora van debajo (puntos F6 y F8).
+        pregunta.ayuda ? crear('p', { clase: 'pregunta-ayuda', texto: estado.T(pregunta.ayuda) }) : null,
       ]);
       var grupo = crear('div', { clase: 'opciones', role: 'radiogroup', 'aria-label': estado.T(pregunta.texto) });
       [['No', false], ['Sí', true]].forEach(function (par) {
@@ -15060,7 +15078,7 @@ function alResponder(campoId, valor, campos, indice) {
       }
     }
 
-    // Rappi Travel tiene su propio filtro de nueve preguntas. Va aqui, apenas
+    // Rappi Travel tiene su propio filtro de diez preguntas. Va aqui, apenas
     // se sabe que la campana es de viajes, para no hacerle llenar media
     // campana a alguien que va a terminar en Legal.
     if (valor === 'travel' && !E.filtroDeTravelRespondido) {

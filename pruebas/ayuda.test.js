@@ -7,7 +7,7 @@ const assert = require('node:assert');
 
 const {
   AVISO_AZAR, CONTACTOS, PASOS_SQUARESPACE, SI_ALGO_SALE_MAL, PREGUNTAS_FRECUENTES,
-  FILTRO_DE_GENERALES, LO_QUE_LA_PIEZA_DEBE_DECIR,
+  FILTRO_DE_GENERALES, LO_QUE_LA_PIEZA_DEBE_DECIR, FILTRO_DE_TRAVEL,
 } = require('../src/core/ayuda.js');
 
 test('el aviso de azar está marcado como borrador para revisión', () => {
@@ -193,4 +193,49 @@ test('el filtro va antes de la lista, no después', () => {
   assert.ok(atajo.indexOf("RM.app.ir('filtroGenerales')") !== -1,
     'el atajo sigue llevando directo a la lista de enlaces');
   assert.strictEqual(atajo.indexOf("RM.app.ir('tycGenericos')"), -1);
+});
+
+// --- El filtro de Travel, las tres de la misma pantalla ----------------------
+
+test('el filtro de Travel tiene diez preguntas, con la sexta partida en dos', () => {
+  // Metía dos preguntas en una ("¿cambian las condiciones... o se mezcla
+  // descuento con cashback?") y quien contestaba sí no sabía cuál había
+  // contestado. Punto F8, 20 de septiembre de 2026.
+  assert.strictEqual(FILTRO_DE_TRAVEL.length, 10);
+  const textos = FILTRO_DE_TRAVEL.map((p) => p.texto);
+  assert.ok(textos.indexOf('¿Las condiciones cambian según destino, producto o usuario?') !== -1);
+  assert.ok(textos.indexOf('¿Mezcla descuento y cashback en la misma campaña?') !== -1);
+
+  // Y cada mitad dice su propia razón: mandar a Legal sin razón concreta no le
+  // sirve a nadie.
+  for (const pregunta of FILTRO_DE_TRAVEL) {
+    assert.ok(pregunta.razon && pregunta.razon.length > 20, pregunta.id + ': sin razón');
+  }
+});
+
+test('ninguna pregunta del filtro de Travel pasa de diez palabras', () => {
+  // Siete de las nueve pasaban. Lo que las dejó acortar fue la línea de ayuda
+  // (puntos F6 y F8): los ejemplos ya no van dentro del enunciado.
+  for (const pregunta of FILTRO_DE_TRAVEL) {
+    const palabras = pregunta.texto.trim().split(/\s+/).length;
+    assert.ok(palabras <= 10, pregunta.id + ' tiene ' + palabras + ' palabras: ' + pregunta.texto);
+  }
+
+  const quinta = FILTRO_DE_TRAVEL.filter((p) => p.id === 'beneficioDeTercero')[0];
+  assert.strictEqual(quinta.texto, '¿El beneficio es otra cosa que Créditos o descuento?');
+  assert.strictEqual(quinta.ayuda,
+    'Por ejemplo: noches o niños gratis, cupones, millas, eSIM, bonos o cuotas sin interés.');
+});
+
+test('la pantalla del filtro de Travel dibuja la ayuda, o el mecanismo no existe', () => {
+  // Un mecanismo que la interfaz no llama es un mecanismo que no existe: ya
+  // pasó una vez con las variantes de las preguntas.
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const flujo = fs.readFileSync(
+    path.join(__dirname, '..', 'src', 'client', 'js', '60-flujo.js'), 'utf8');
+  assert.ok(flujo.indexOf('pregunta.ayuda') !== -1,
+    'la pantalla del filtro de Travel no dibuja la línea de ayuda');
+  assert.ok(flujo.indexOf('Diez preguntas rápidas') !== -1,
+    'el encabezado sigue diciendo nueve preguntas');
 });
