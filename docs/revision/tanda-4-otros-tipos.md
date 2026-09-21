@@ -16,14 +16,17 @@ Cashback Multitienda, Carrera de Compras y 15 minutos o Cashback. Comparten casi
 Van 3 pantallas, con su texto tal como se lee en la aplicación.
 
 
-**Para adjuntar en el mismo mensaje** (Claude chat lee imágenes, y es lo único
-que le deja juzgar el aire, la jerarquía y el tamaño de los botones). Están en
-`docs/revision/capturas/`:
+**Las pantallas que vale la pena fotografiar en esta tanda.** Claude chat lee
+imágenes pero no dibuja HTML, así que una foto es lo único que le deja juzgar
+el aire, la jerarquía y el tamaño de los botones. Las tomas tú, de la
+aplicación, y las adjuntas en el mismo mensaje:
 
-- `34-cashback-day.png` · pantalla 34, Formulario, Cashback Multitienda y su lista de tiendas
-- `35-carrera.png` · pantalla 35, Formulario, Carrera de Compras con una opción bloqueada
+- Pantalla 34, Formulario, Cashback Multitienda y su lista de tiendas
+- Pantalla 35, Formulario, Carrera de Compras con una opción bloqueada
 
-Si no las adjuntas, la revisión igual funciona: el texto va completo aquí.
+Las demás pantallas de esta tanda son la misma forma con otro texto, y el texto
+ya va completo abajo. Si no adjuntas ninguna foto, la revisión igual funciona:
+pierdes lo visual, no el copy.
 
 ---
 

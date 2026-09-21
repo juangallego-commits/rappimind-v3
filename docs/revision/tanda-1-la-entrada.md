@@ -18,19 +18,22 @@ Las primeras cinco pantallas deciden si el comercial se queda o le escribe a Leg
 Van 11 pantallas, con su texto tal como se lee en la aplicación.
 
 
-**Para adjuntar en el mismo mensaje** (Claude chat lee imágenes, y es lo único
-que le deja juzgar el aire, la jerarquía y el tamaño de los botones). Están en
-`docs/revision/capturas/`:
+**Las pantallas que vale la pena fotografiar en esta tanda.** Claude chat lee
+imágenes pero no dibuja HTML, así que una foto es lo único que le deja juzgar
+el aire, la jerarquía y el tamaño de los botones. Las tomas tú, de la
+aplicación, y las adjuntas en el mismo mensaje:
 
-- `01-inicio.png` · pantalla 1, Inicio
-- `02-filtro.png` · pantalla 2, Filtro de entrada
-- `03-pais.png` · pantalla 3, Formulario, el país
-- `05-tipos.png` · pantalla 5, Formulario, el tipo de campaña de Rappi
-- `28-legal.png` · pantalla 28, Legal
-- `31-tyc-generales.png` · pantalla 31, Los T&C que Legal ya publicó, la lista
-- `29-filtro-travel.png` · pantalla 29, Filtro de Rappi Travel
+- Pantalla 1, Inicio
+- Pantalla 2, Filtro de entrada
+- Pantalla 3, Formulario, el país
+- Pantalla 5, Formulario, el tipo de campaña de Rappi
+- Pantalla 28, Legal
+- Pantalla 31, Los T&C que Legal ya publicó, la lista
+- Pantalla 29, Filtro de Rappi Travel
 
-Si no las adjuntas, la revisión igual funciona: el texto va completo aquí.
+Las demás pantallas de esta tanda son la misma forma con otro texto, y el texto
+ya va completo abajo. Si no adjuntas ninguna foto, la revisión igual funciona:
+pierdes lo visual, no el copy.
 
 ---
 

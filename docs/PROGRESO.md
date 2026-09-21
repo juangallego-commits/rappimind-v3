@@ -1592,14 +1592,26 @@ pueda aplicar sin volver a escribirlo a mano.
   romper (empezando por que Rappi nunca es el organizador y que el texto legal
   no se revisa), los nueve criterios de cada pantalla y el formato exacto de
   respuesta.
-- **Siete tandas**, de 16 a 28 KB cada una: la entrada, el Cashback, el cierre,
-  los otros tipos de Rappi, Rappi Travel, Brasil y el portugués, y el celular
-  con los errores.
-- **`capturas/`**: 21 fotos, una por forma de pantalla. Claude chat lee
-  imágenes y no dibuja HTML, así que son lo único que le deja juzgar el aire,
-  la jerarquía y el tamaño de los botones.
+- **Siete tandas**, de 14 a 29 KB cada una: la entrada, el Cashback, el cierre,
+  los otros tipos de Rappi, Rappi Travel, Brasil y el portugués, y los
+  alrededores (Mis campañas, la Ayuda, Administración y los errores).
 - **`pantallas.json`**: el texto de las 46 pantallas sacado del navegador, del
   que se arman las tandas.
+
+**Las fotos las toma Juan**, de la aplicación, cuando va a hacer la tanda. Cada
+tanda le dice al principio qué pantallas suyas vale la pena fotografiar, y son
+21 en total. El recorrido las tomaba solo y dejaba 5,5 MB en el repositorio;
+Juan lo cambió el 21 de septiembre, y así además son de la versión que corre ese
+día y no de un recorrido viejo. Hay una prueba que avisa si vuelve a aparecer
+`docs/revision/capturas/`.
+
+**El celular quedó fuera**, por decisión de Juan del 21 de septiembre: no es por
+donde los comerciales usan la herramienta, y sus tres pantallas se llevaban el
+sitio de Administración, Mis campañas y la Ayuda, que sí importan y nunca se
+habían mirado con ojos de producto. No se borró nada: las pantallas siguen en
+`docs/FRONT_ACTUAL.html`, y la exclusión está escrita con su motivo en
+`FUERA_DE_REVISION`, con una prueba que obliga a que toda pantalla esté en una
+tanda o ahí.
 
 ### Por qué en tandas y no el archivo único
 
@@ -1628,10 +1640,10 @@ ficha con el texto de hoy y el texto propuesto.
 ### Cómo probarlo
 
 ```
-npm test                                                  # 589 pruebas
+npm test                                                  # 590 pruebas
 export NODE_PATH=/opt/node22/lib/node_modules
 export PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
-npm run front        # recorre, deja el HTML, pantallas.json y las 21 fotos
+npm run front        # recorre, deja el HTML y pantallas.json
 npm run revision     # arma las siete tandas, sin navegador, al instante
 ```
 

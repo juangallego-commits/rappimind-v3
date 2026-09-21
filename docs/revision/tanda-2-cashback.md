@@ -19,16 +19,19 @@ El tipo de campaña de cuatro de cada cinco solicitudes. Diecisiete preguntas se
 Van 18 pantallas, con su texto tal como se lee en la aplicación.
 
 
-**Para adjuntar en el mismo mensaje** (Claude chat lee imágenes, y es lo único
-que le deja juzgar el aire, la jerarquía y el tamaño de los botones). Están en
-`docs/revision/capturas/`:
+**Las pantallas que vale la pena fotografiar en esta tanda.** Claude chat lee
+imágenes pero no dibuja HTML, así que una foto es lo único que le deja juzgar
+el aire, la jerarquía y el tamaño de los botones. Las tomas tú, de la
+aplicación, y las adjuntas en el mismo mensaje:
 
-- `09-identificacion.png` · pantalla 9, Formulario, la identificación del organizador
-- `36-error.png` · pantalla 36, Formulario, un error en vivo
-- `11-porcentaje.png` · pantalla 11, Formulario, el porcentaje
-- `14-veces.png` · pantalla 14, Formulario, cuántas veces puede ganar
+- Pantalla 9, Formulario, la identificación del organizador
+- Pantalla 36, Formulario, un error en vivo
+- Pantalla 11, Formulario, el porcentaje
+- Pantalla 14, Formulario, cuántas veces puede ganar
 
-Si no las adjuntas, la revisión igual funciona: el texto va completo aquí.
+Las demás pantallas de esta tanda son la misma forma con otro texto, y el texto
+ya va completo abajo. Si no adjuntas ninguna foto, la revisión igual funciona:
+pierdes lo visual, no el copy.
 
 ---
 

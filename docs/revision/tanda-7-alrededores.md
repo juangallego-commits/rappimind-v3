@@ -1,145 +1,337 @@
-# Tanda 7 de 7 · El celular, los errores y los límites
+# Tanda 7 de 7 · Mis campañas, la Ayuda, Administración y lo que se lee cuando algo falla
 
 > **Antes de pegar esto, pega `PROMPT.md`.** Ahí va quién revisa, qué es
 > RappiMind, qué no se puede tocar y en qué formato tiene que venir la
 > respuesta. Sin eso, la revisión vuelve en prosa y no se puede aplicar.
 
-Lo que se rompe. Las tres pantallas en celular, todos los mensajes de validación del formulario juntos, y lo que el comercial lee cuando Google falla a mitad de una generación.
+Todo lo que no es el formulario. El historial de sus campañas y la ampliación de una que está en curso, la pantalla de Ayuda entera, la de Administración, y los mensajes que salen cuando algo se equivoca o cuando Google falla. Son las pantallas menos miradas del producto, y a las que el comercial llega justo cuando algo no le está saliendo.
 
 ## Lo que hay que mirar en esta tanda
 
-- En celular: ¿se entiende que el documento está detrás del botón flotante?
-- Los mensajes de validación, leídos de corrido: ¿hablan todos igual? ¿Alguno culpa al comercial?
-- Los mensajes de falla: ¿dicen si se perdió lo respondido y qué hacer ahora?
-- Si algún mensaje usa una palabra técnica que el comercial no conoce.
+- Mis campañas: ¿se distingue de un vistazo un borrador de una campaña ya publicada? ¿Se entiende qué hacen "Usar como base" y "Ampliar", y en qué se diferencian?
+- Mis campañas con veinte campañas encima: ¿se encuentra la de uno? Nadie ha mirado esta pantalla con más de dos.
+- Ampliar: es cambiarle la fecha a un documento ya publicado. ¿Entiende el comercial que el T&C se vuelve a generar y se vuelve a publicar?
+- La Ayuda, línea por línea: ¿responde lo que el comercial se va a preguntar, y en el orden en que se lo va a preguntar? ¿Sobra algo? ¿Falta lo de "ya publiqué y me equivoqué"?
+- Administración: la usa Legal, no el comercial. ¿Se entiende qué hace cada cosa y cuál es peligrosa? Nadie la ha mirado nunca con ojos de producto.
+- Los mensajes de validación, leídos de corrido: ¿hablan todos igual? ¿Alguno culpa al comercial? ¿Alguno dice que está mal sin decir cómo se arregla?
+- Los mensajes de falla: ¿dicen si se perdió lo que ya había respondido, y qué hacer ahora?
 
-Van 3 pantallas, con su texto tal como se lee en la aplicación.
+Van 4 pantallas, con su texto tal como se lee en la aplicación.
 
 
-**Para adjuntar en el mismo mensaje** (Claude chat lee imágenes, y es lo único
-que le deja juzgar el aire, la jerarquía y el tamaño de los botones). Están en
-`docs/revision/capturas/`:
+**Las pantallas que vale la pena fotografiar en esta tanda.** Claude chat lee
+imágenes pero no dibuja HTML, así que una foto es lo único que le deja juzgar
+el aire, la jerarquía y el tamaño de los botones. Las tomas tú, de la
+aplicación, y las adjuntas en el mismo mensaje:
 
-- `45-celular-pregunta.png` · pantalla 45, Una pregunta en celular
-- `46-celular-hoja.png` · pantalla 46, El documento en la hoja deslizable
+- Pantalla 26, Mis campañas
+- Pantalla 27, Ayuda
+- Pantalla 39, Administración
 
-Si no las adjuntas, la revisión igual funciona: el texto va completo aquí.
+Las demás pantallas de esta tanda son la misma forma con otro texto, y el texto
+ya va completo abajo. Si no adjuntas ninguna foto, la revisión igual funciona:
+pierdes lo visual, no el copy.
 
 ---
 
-## Pantalla 44 · Inicio en celular
+## Pantalla 26 · Mis campañas
 
-*`inicio` · celular 390 × 844 · interfaz en español*
+*`historial` · escritorio 1440 × 1000 · interfaz en español*
 
-**Qué hace el comercial aquí.** La portada en celular. La barra de arriba se desliza de lado y el selector de idioma sube para no taparle nada.
+**Qué hace el comercial aquí.** Busca sus campañas anteriores, abre otra vez un documento, marca una campaña como publicada o arranca una nueva copiando los datos de otra con "Usar como base".
 
 **Lo que dice la pantalla, palabra por palabra:**
 
 ```
-Genera los Términos y Condiciones de tu campaña
+Tus campañas
 
-Sin escribirle a Legal y sin redactar una sola cláusula. Toma menos de cinco minutos.
+Abre tus documentos, márcalos como publicados o usa uno como base para una campaña nueva.
 
-Cuéntanos de tu campaña
-
-Te hacemos preguntas simples, una por una. Ninguna te pide escribir texto legal.
-
-Revisa cómo va quedando
-
-El documento se va escribiendo mientras respondes. Lo que ves es lo que sale.
-
-Publica los T&C
-
-Te llega por correo en un par de minutos, con los pasos para publicarlo o a quién pasárselo.
-
-Empezar
+Campaña	País	Fecha	Estado	
+Farmatodo · 20% Cashback · 1 oct 2026 Farmatodo	CO	2026-09-20	
+Generado	Usar como base
 ```
 
 ---
 
-## Pantalla 45 · Una pregunta en celular
+## Pantalla 38 · Mis campañas, ampliar una publicada
 
-*`pasos` · celular 390 × 844 · interfaz en español*
+*`historial` · escritorio 1440 × 1000 · interfaz en español*
 
-**Qué hace el comercial aquí.** Una pregunta del formulario en celular. La barra de progreso se vuelve "Paso 2 de 7" y el documento se va a un botón fijo abajo.
+**Qué hace el comercial aquí.** Una campaña publicada y en curso se puede ampliar: la vigencia solo se mueve hacia adelante y los números solo suben, porque bajarlos cambiaría las condiciones de quien ya compró.
 
 **Lo que dice la pantalla, palabra por palabra:**
 
 ```
-Paso 4 de 7 · Beneficio
+Tus campañas
 
-El beneficio
-¿Qué porcentaje del pedido se devuelve en Créditos?
-Cambiar
+Abre tus documentos, márcalos como publicados o usa uno como base para una campaña nueva.
 
-20%
+Campaña	País	Fecha	Estado	
+Farmatodo · 20% Cashback · 20 sep 2026 Farmatodo	CO	2026-09-20	
+Publicado	Usar como baseAmpliar
+Ampliar Farmatodo · 20% Cashback · 20 sep 2026
 
-¿Cuál es el máximo de Créditos por pedido?
+Esta campaña ya arrancó: solo puedes darle más, nunca menos, porque cambiaría las condiciones de quien ya compró.
 
-Aunque el pedido sea grande, no recibe más de esto. Lo más usado es 25.000.
+Nueva fecha de fin
 
-$
-¿Por qué te preguntamos esto?
+Ahora dice: 2026-12-31
 
-Sin tope, un pedido enorme se lleva el presupuesto entero. Con tope, un cashback alto sigue siendo viable.
+Nuevo presupuesto
 
-Con estos datos, un pedido de $100.000 recibe $20.000 en Créditos.
+Ahora dice: 5000000
 
-Quedan 3 preguntas en este paso.
+Llena solo lo que quieras ampliar y deja el resto vacío.
 
-Atrás
-Siguiente
-Ver cómo va mi T&C
-
-[columna derecha: aquí se ve el documento llenándose mientras responde]
+Ampliar la campaña
 ```
-
-**Lo que aquí no se ve** (sale al equivocarse, o si hubiera elegido otra cosa):
-
-- Dentro del campo, en gris: «25000»
-- Si lo deja en blanco: «Escribe el máximo de Créditos que recibe una persona por pedido.»
-- Si escribe cero: «El tope tiene que ser mayor que cero.»
-- Si el número supera el presupuesto: «El tope por pedido es mayor que el presupuesto total. Con eso, el primer pedido se lleva toda la campaña. Revisa los dos números.»
 
 ---
 
-## Pantalla 46 · El documento en la hoja deslizable
+## Pantalla 27 · Ayuda
 
-*`pasos` · celular 390 × 844 · interfaz en español*
+*`ayuda` · escritorio 1440 × 1000 · interfaz en español*
 
-**Qué hace el comercial aquí.** Toca "Ver cómo va mi T&C" y el documento sube en una hoja deslizable, con la cortina detrás y el botón de cerrar abajo.
-
-**Para leer la pantalla.** La hoja lleva el mismo documento de la columna de escritorio, así que aquí va marcado. Lo que importa de esta pantalla es la hoja, no el texto.
+**Qué hace el comercial aquí.** Consulta qué dinámicas sirven y cuáles no, cómo se publica en Squarespace, quién publica en cada país, qué hacer si algo sale mal, a quién escribirle y las preguntas frecuentes.
 
 **Lo que dice la pantalla, palabra por palabra:**
 
 ```
-Paso 4 de 7 · Beneficio
+Antes de lanzar: ¿tu dinámica tiene azar?
 
-El beneficio
-¿Qué porcentaje del pedido se devuelve en Créditos?
-Cambiar
+Si tienes cualquier duda de si tu dinámica tiene azar o suerte, confírmalo con el equipo legal de tu país ANTES de lanzarla. No la lances y después preguntes.
 
-20%
+Si algo de esta página no coincide con lo que ves en la herramienta, avísanos por el canal.
 
-¿Cuál es el máximo de Créditos por pedido?
+En Colombia y en varios países de la región, los sorteos y las rifas son juegos de suerte y azar y necesitan permiso previo de la autoridad.
 
-Aunque el pedido sea grande, no recibe más de esto. Lo más usado es 25.000.
+Lanzar una campaña con azar sin ese permiso es una infracción, y la responsabilidad recae sobre quien la organiza y sobre Rappi como medio de difusión.
 
-$
-¿Por qué te preguntamos esto?
+Esta herramienta solo genera documentos para dinámicas SIN azar. Si tu campaña tiene azar, el documento lo tiene que redactar Legal.
 
-Sin tope, un pedido enorme se lleva el presupuesto entero. Con tope, un cashback alto sigue siendo viable.
+Sirven para esta herramienta
+Cashback: quien compra recibe un porcentaje de vuelta en Créditos. Todos los que cumplen reciben el beneficio.
+Carrera de Compras: gana quien más compre durante la vigencia. El resultado depende del esfuerzo del participante, no de la suerte.
+Cashback Multitienda: varias tiendas hacen cashback dentro de la misma jornada, cada una con su propio porcentaje, su tope y su presupuesto.
+15 minutos o Cashback: Rappi promete un tiempo de entrega en el botón Turbo y, si la orden llega tarde, devuelve en Créditos parte de lo que el usuario pagó.
+Cashback Travel y Descuento Travel: las dos formas de campaña de vuelos, hoteles, autos y paquetes.
+No sirven: las redacta Legal
+Sorteo entre todos los participantes, aunque sea "entre quienes compren".
+Rifa con boletas o números.
+Raspa y gana, ruleta, cofres o cajas sorpresa.
+Premio al cliente número N del día, o al pedido número N.
+Cualquier mecánica donde dos personas que hacen exactamente lo mismo pueden terminar con resultados distintos.
+Consúltalo igual
+Premios distintos por puesto en un ranking, o tabla de puntos: consúltalo.
+El premio es una boleta, una experiencia o algo atado a un evento con fecha: consúltalo.
+Hay un jurado que decide, o un criterio de "el más creativo": consúltalo.
+Participan varias tiendas en un mismo concurso: consúltalo.
 
-Con estos datos, un pedido de $100.000 recibe $20.000 en Créditos.
+La prueba más simple: si dos personas hacen exactamente lo mismo y una puede ganar y la otra no, hay azar. Consulta antes de lanzar.
 
-Quedan 3 preguntas en este paso.
+Publicar en Squarespace
 
-Atrás
-Siguiente
-Ver cómo va mi T&C
+Cuando generes una campaña, al final te damos el título y la dirección ya armados, listos para copiar. Esto es el paso a paso.
 
-[columna derecha: aquí se ve el documento llenándose mientras responde]
+Abre el documento y léelo completo. Es el texto que vas a publicar, tal cual, sin editarlo.
+
+Deberías ver: El documento con el nombre de tu campaña en el título.
+
+Entra a Squarespace, a la lista de páginas, y abre la página del país de tu campaña.
+
+Deberías ver: El menú de la izquierda con un país por línea: Brasil, Argentina, Chile, Colombia y los demás.
+
+Dentro del país, dale al signo de más para crear un evento nuevo.
+
+Deberías ver: El calendario del mes y, a la izquierda, la lista de los T&C que ya existen.
+
+Copia el título que te dio RappiMind y pégalo en el título del evento. No lo cambies ni le agregues nada.
+
+Deberías ver: El título arriba, donde dice "Escribe un título para el evento".
+
+Pon la fecha de inicio y la de fin del evento iguales a la vigencia del documento. Si no coinciden, el evento se cae del calendario antes o después de que termine la campaña.
+
+Deberías ver: Las dos fechas debajo del título.
+
+Selecciona todo el documento, cópialo y pégalo en el cuerpo del evento. Revisa que las cláusulas numeradas y las viñetas se vean bien.
+
+Deberías ver: El texto completo, con todas sus cláusulas numeradas.
+
+Entra a la pestaña Opciones y reemplaza la dirección del evento por la que te dio RappiMind. La parte del país no se toca: Squarespace la pone sola.
+
+Deberías ver: El campo "URL del evento", con el país a la izquierda y el resto editable.
+
+Dale a Guardar y publicar. Guardar solo deja la página en borrador y el enlace no abre.
+
+Deberías ver: El evento en el calendario, sin la etiqueta de borrador.
+
+Abre el enlace en el navegador para confirmar que carga, y cópialo.
+
+Deberías ver: Tu documento publicado, en una dirección que empieza por https://promos.rappi.com/
+
+Vuelve a RappiMind, pega el enlace abajo y marca la campaña como publicada.
+
+Deberías ver: Tu campaña en verde en el historial, con su enlace guardado.
+
+¿Quién puede publicar?
+
+No todo el mundo tiene usuario de Squarespace: la cuenta la tienen unas pocas personas por país. Si no eres una de ellas, pásales el documento, el título y la dirección que te dio RappiMind, o pídelo en #tyc-rappi.
+
+Colombia
+
+Cashback y descuentos
+
+Camilo Patiño · ivan.patino@rappi.com
+Valery Medina · ext-v.reina@rappi.com
+
+Concursos
+
+Para concursos todavía no hay una persona asignada. Pídelo en #tyc-rappi.
+
+Los demás países
+
+Todavía no tenemos la lista. Pide la publicación en #tyc-rappi.
+
+¿No tienes usuario de Squarespace? Pide que te publiquen la página en #tyc-rappi
+
+Si algo sale mal
+El enlace no abre o da error 404.
+La página quedó en borrador. Vuelve a Squarespace y dale Publicar, no solo Guardar.
+El texto se ve corrido o sin viñetas.
+Pégalo otra vez usando Pegar sin formato y deja que Squarespace le aplique el estilo de la página.
+El enlace no empieza por promos.rappi.com.
+Creaste la página en otro sitio. Tiene que estar dentro de promos.rappi.com para que RappiMind la acepte.
+No tengo usuario de Squarespace.
+Es normal: la cuenta la tienen unas pocas personas por país. Pide la publicación en #tyc-rappi y pasa el documento y la dirección que te dio RappiMind.
+La dirección que puse quedó distinta a la que me dio la herramienta.
+Vuelve a Opciones, corrígela y publica otra vez. Si ya la publicaste con otra dirección, pega en RappiMind el enlace real, no el que te propusimos.
+Me equivoqué en un dato y ya generé el documento.
+No edites el documento a mano. Genera uno nuevo con los datos corregidos y publica ese. El anterior queda en tu historial sin publicar.
+Canal de ayuda
+
+Si te trabaste con algo de la herramienta, escríbenos en el canal de ayuda. Ahí respondemos dudas de uso, no consultas legales.
+
+A quién buscar
+Juan Camilo Gallego
+
+Dudas legales de fondo, campañas que no encajan en ningún tipo, y aprobación de textos nuevos.
+
+Escríbele en #tyc-rappi.
+
+Anna Habermann
+
+Cómo plantear la campaña con el aliado y qué se puede prometer en las piezas de marketing.
+
+Escríbele en #tyc-rappi.
+
+Paula Barahona
+
+Revisión de campañas de un país distinto a Colombia y coordinación con los equipos locales.
+
+Escríbele en #tyc-rappi.
+
+Preguntas frecuentes
+Me equivoqué en un dato y ya generé el documento. ¿Qué hago?
+¿Puedo participar yo en la campaña?
+¿Qué pasa si se acaba el presupuesto antes de la fecha de fin?
+¿Cuánto tarda en llegarme el documento?
+¿Alguien de Legal revisa mi documento antes?
+Ya publiqué y necesito cambiar las fechas. ¿Puedo?
+El NIT del aliado no pasa la validación.
+¿Puedo poner varias tiendas en una misma campaña?
+¿Qué es un Maker y en qué cambia las cosas?
+¿Por qué Rappi no puede ser el organizador?
+Mi campaña es de Rappi Travel. ¿Sirve esta herramienta?
+¿Dónde quedan guardados los documentos?
+Mi campaña es un descuento o un cupón y no la veo en la lista de tipos.
+```
+
+---
+
+## Pantalla 39 · Administración
+
+*`admin` · escritorio 1440 × 1000 · interfaz en español*
+
+**Qué hace el comercial aquí.** No es del recorrido del comercial: la ve quien tiene rol de administrador. Países y su estado, el equipo y las solicitudes, con su descarga.
+
+**Lo que dice la pantalla, palabra por palabra:**
+
+```
+Países
+
+Activo lo ve cualquiera. Piloto lo ven pruebas, legal y administración. Bloqueado no lo ve nadie.
+
+País	Tipos habilitados	Estado
+CO · Colombia	cashback, carrera_compras, cashback_day, cashback_eta, cashback_travel, descuento_travel	
+activo
+piloto
+bloqueado
+
+MX · México	cashback	
+activo
+piloto
+bloqueado
+
+PE · Perú	cashback	
+activo
+piloto
+bloqueado
+
+AR · Argentina	cashback	
+activo
+piloto
+bloqueado
+
+CL · Chile	cashback	
+activo
+piloto
+bloqueado
+
+EC · Ecuador	cashback	
+activo
+piloto
+bloqueado
+
+UY · Uruguay	cashback	
+activo
+piloto
+bloqueado
+
+CR · Costa Rica	cashback	
+activo
+piloto
+bloqueado
+
+BR · Brasil	promocao_br	
+activo
+piloto
+bloqueado
+Equipo
+Correo	Nombre	Rol	País	Activo
+demostracion@rappi.com	Demostración	admin	CO	Sí
+Agregar o actualizar
+comercial
+pruebas
+legal
+admin
+Guardar
+
+Agregar muchos de una vez
+
+Pega los correos separados por comas o uno por línea. Quien ya esté en el equipo se deja como está, así que esto nunca le baja el rol a nadie. Con rol legal, la persona ve los países en piloto.
+
+comercial
+pruebas
+legal
+admin
+Agregar a todos
+Solicitudes
+Exportar a CSV
+
+0 solicitudes
+
+Id	Campaña	Quién	País	Tipo	Estado
 ```
 
 ---

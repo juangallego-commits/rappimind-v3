@@ -158,11 +158,10 @@ function congelar(opciones) {
  * El recorrido completo.
  *
  * fichas: las fichas de pantalla de scripts/front.js.
- * carpetaDeCapturas: donde dejar el PNG de las fichas marcadas con `foto`.
- * Devuelve { capturas: { id: html }, textos: { id: texto }, fotos: { id: archivo },
- * fallas: [{ id, motivo }], erroresDeJs: [] }.
+ * Devuelve { capturas: { id: html }, textos: { id: texto }, fallas: [{ id, motivo }],
+ * erroresDeJs: [] }.
  */
-async function recorrer(rutaDeLaDemo, fichas, marcas, carpetaDeCapturas) {
+async function recorrer(rutaDeLaDemo, fichas, marcas) {
   const disponible = buscarNavegador();
   if (disponible.falta) throw new Error(disponible.falta);
   if (!fs.existsSync(rutaDeLaDemo)) throw new Error('Falta demo/index.html. Corre `npm run demo` primero.');
@@ -174,7 +173,6 @@ async function recorrer(rutaDeLaDemo, fichas, marcas, carpetaDeCapturas) {
   for (const ficha of fichas) porId[ficha.id] = ficha;
   const capturas = {};
   const textos = {};
-  const fotos = {};
   const fallas = [];
   const erroresDeJs = [];
   let pagina = null;
@@ -230,21 +228,8 @@ async function recorrer(rutaDeLaDemo, fichas, marcas, carpetaDeCapturas) {
     }
     capturas[id] = html;
     textos[id] = congelada.texto;
-
-    // La foto, solo para las pantallas que la piden. Una por forma de pantalla
-    // y no una por pregunta: cuarenta y seis fotos del mismo formulario pesan
-    // diez megas en el repositorio y no enseñan nada que no enseñe una.
-    let foto = '';
-    if (ficha.foto && carpetaDeCapturas) {
-      const archivo = path.join(carpetaDeCapturas,
-        String(ficha.numero).padStart(2, '0') + '-' + ficha.id + '.png');
-      await pagina.screenshot({ path: archivo, fullPage: true });
-      fotos[id] = path.basename(archivo);
-      foto = ' + foto';
-    }
-
     console.log('ok    ' + ficha.numero + ' ' + ficha.titulo +
-      ' (' + Math.round(html.length / 1024) + ' KB' + foto + ')');
+      ' (' + Math.round(html.length / 1024) + ' KB)');
   }
 
   /** Clic en el primer boton o enlace cuyo texto empieza por la etiqueta. */
@@ -743,7 +728,7 @@ async function recorrer(rutaDeLaDemo, fichas, marcas, carpetaDeCapturas) {
 
   await navegador.close();
 
-  return { capturas: capturas, textos: textos, fotos: fotos, fallas: fallas, erroresDeJs: erroresDeJs };
+  return { capturas: capturas, textos: textos, fallas: fallas, erroresDeJs: erroresDeJs };
 }
 
 module.exports = { recorrer, DOC_DE_EJEMPLO };

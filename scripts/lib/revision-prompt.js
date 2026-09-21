@@ -250,27 +250,35 @@ function leeme(datos) {
     lineas.push('| `' + archivo.nombre + '` | Tanda ' + archivo.numero + ': ' +
       archivo.tanda.titulo + ' |');
   }
-  lineas.push('| `capturas/` | Las ' + datos.fotos + ' fotos que se adjuntan |');
   lineas.push('| `respuestas/` | Donde va lo que responda Claude chat |');
   lineas.push('| `pantallas.json` | El texto de las pantallas, del que se arman las tandas. No se lee a mano |');
   lineas.push('');
-  lineas.push('**Las fotos** están en `docs/revision/capturas/` y llevan delante el número de');
-  lineas.push('la pantalla, así que se ordenan solas. Cada tanda te dice cuáles adjuntar, pero');
-  lineas.push('si prefieres verlo de un golpe, este es el reparto:');
+
+  lineas.push('## Las fotos las tomas tú');
   lineas.push('');
-  lineas.push('| Tanda | Fotos que le tocan |');
+  lineas.push('En el repositorio no hay capturas, a propósito. Las tomas tú de la aplicación');
+  lineas.push('cuando vayas a hacer la tanda, y así son de la versión que está corriendo ese');
+  lineas.push('día y no de un recorrido de hace tres semanas.');
+  lineas.push('');
+  lineas.push('Cada tanda te dice, al principio, qué pantallas suyas vale la pena fotografiar.');
+  lineas.push('Son ' + datos.fotos + ' en total, repartidas así:');
+  lineas.push('');
+  lineas.push('| Tanda | Qué fotografiar |');
   lineas.push('|---|---|');
   for (const archivo of datos.tandas) {
     const suyas = (archivo.nombresDeFotos || []);
     lineas.push('| ' + archivo.numero + ' | ' +
-      (suyas.length ? suyas.map((nombre) => '`' + nombre + '`').join(', ') : 'ninguna, esta tanda es de preguntas sin pantalla propia') +
-      ' |');
+      (suyas.length ? suyas.join('; ')
+        : (archivo.pantallas ? 'ninguna hace falta: son formas de pantalla que ya salen en otra tanda'
+          : 'nada: esta tanda es de preguntas, no de pantallas')) + ' |');
   }
   lineas.push('');
-  lineas.push('**Para bajarlas desde GitHub**, abre la foto y dale al botón de descargar');
-  lineas.push('(arriba a la derecha, el de la flecha hacia abajo). Bajarlas una por una es');
-  lineas.push('lento: si vas a hacer varias tandas, conviene bajar el repositorio entero una');
-  lineas.push('vez, con el botón verde **Code** y luego **Download ZIP**.');
+  lineas.push('No son todas las pantallas de cada tanda, y no hacen falta: las demás son la');
+  lineas.push('misma forma con otro texto, y el texto va completo dentro de la tanda. Con una');
+  lineas.push('por forma de pantalla, Claude chat entiende cómo se ve el producto.');
+  lineas.push('');
+  lineas.push('Si no adjuntas ninguna, la revisión igual funciona. Pierdes lo visual, que es');
+  lineas.push('el aire, la jerarquía y el tamaño de los botones, no el copy, que es el grueso.');
   lineas.push('');
   lineas.push('**Y `docs/FRONT_ACTUAL.html`**, que no está en esta carpeta sino un nivel');
   lineas.push('arriba, en `docs/`. Ese es el front entero en un archivo, para verlo tú con');

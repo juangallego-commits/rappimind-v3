@@ -42,17 +42,6 @@ const SALIDA = rutaDesdeRaiz('docs', 'FRONT_ACTUAL.html');
  */
 const SALIDA_PANTALLAS = rutaDesdeRaiz('docs', 'revision', 'pantallas.json');
 
-/**
- * Las fotos de las pantallas marcadas con `foto` en su ficha.
- *
- * Una por forma de pantalla, no una por pregunta: diecisiete fotos del mismo
- * formulario con otra pregunta abierta pesan diez megas y no enseñan nada que
- * no enseñe una. Se adjuntan en Claude chat, que lee imagenes y no renderiza
- * HTML: es lo unico que le deja juzgar la jerarquia, el aire y el tamaño de los
- * botones. El texto ya va completo en el cuadernillo.
- */
-const SALIDA_CAPTURAS = rutaDesdeRaiz('docs', 'revision', 'capturas');
-
 const MARCA_VISTA_PREVIA =
   'Aquí va la vista previa del documento, que se llena mientras el comercial responde. ' +
   'Sale completa en tres pantallas (la del país, la del porcentaje y el resumen ya completo). ' +
@@ -78,15 +67,15 @@ const PARTES = [
       'octubre de 2026. Los datos son inventados.',
     pantallas: [
       {
-        id: 'inicio', foto: true, titulo: 'Inicio', pantalla: 'inicio',
+        id: 'inicio', valeFoto: true, titulo: 'Inicio', pantalla: 'inicio',
         queHace: 'Es la primera pantalla. El comercial lee la promesa de la herramienta en tres pasos y decide si arranca una campaña nueva o retoma el borrador que dejó a medias. El botón de seguir el borrador solo aparece si hay algo guardado.',
       },
       {
-        id: 'filtro', foto: true, titulo: 'Filtro de entrada', pantalla: 'filtro',
+        id: 'filtro', valeFoto: true, titulo: 'Filtro de entrada', pantalla: 'filtro',
         queHace: 'Responde dos preguntas generales. Si contesta que sí a cualquiera, la herramienta lo manda a la pantalla de Legal y no sigue. Si contesta que no a las dos, entra al formulario.',
       },
       {
-        id: 'pais', foto: true, titulo: 'Formulario, el país', pantalla: 'pasos', vistaPreviaCompleta: true,
+        id: 'pais', valeFoto: true, titulo: 'Formulario, el país', pantalla: 'pasos', vistaPreviaCompleta: true,
         queHace: 'Primera pregunta del formulario. Elige el país de la campaña. Colombia viene marcada, pero la pregunta se muestra igual y él la tiene que confirmar. Los países en piloto lo dicen en la opción.',
         nota: 'Aquí la vista previa va completa: es el documento todavía vacío, con los huecos grises que dicen qué falta.',
       },
@@ -95,7 +84,7 @@ const PARTES = [
         queHace: 'Dice si la campaña es de Rappi o de Rappi Travel. Es la bifurcación grande del recorrido: elegir Travel lo lleva a otro filtro y a otros tipos de campaña.',
       },
       {
-        id: 'tipos', foto: true, titulo: 'Formulario, el tipo de campaña de Rappi', pantalla: 'pasos',
+        id: 'tipos', valeFoto: true, titulo: 'Formulario, el tipo de campaña de Rappi', pantalla: 'pasos',
         queHace: 'Elige el tipo de campaña entre tarjetas con nombre y descripción. Los tipos de Travel no aparecen en esta lista.',
         nota: 'Debajo de los tipos, separado por una línea, está el atajo a los T&C que Legal ya publicó.',
       },
@@ -112,7 +101,7 @@ const PARTES = [
         queHace: 'Escribe la razón social de la empresa que paga el beneficio. Es el Organizador, y nunca es Rappi.',
       },
       {
-        id: 'identificacion', foto: true, titulo: 'Formulario, la identificación del organizador', pantalla: 'pasos',
+        id: 'identificacion', valeFoto: true, titulo: 'Formulario, la identificación del organizador', pantalla: 'pasos',
         queHace: 'Escribe el NIT del organizador. El sistema lo valida y lo muestra formateado como va a quedar en el documento.',
       },
       {
@@ -120,7 +109,7 @@ const PARTES = [
         queHace: 'Elige el día de inicio de la campaña. Al responderlo, la herramienta propone el mismo día como día de fin.',
       },
       {
-        id: 'porcentaje', foto: true, titulo: 'Formulario, el porcentaje', pantalla: 'pasos', vistaPreviaCompleta: true,
+        id: 'porcentaje', valeFoto: true, titulo: 'Formulario, el porcentaje', pantalla: 'pasos', vistaPreviaCompleta: true,
         queHace: 'Escribe el porcentaje que la tienda devuelve en Créditos. Es la promesa central de la campaña.',
         nota: 'Aquí la vista previa va completa: el documento a medio llenar, con lo respondido escrito y lo que falta en gris. En la aplicación, la frase que acaba de cambiar se resalta en naranja un segundo y se apaga sola.',
       },
@@ -133,7 +122,7 @@ const PARTES = [
         queHace: 'Escribe la plata total de la campaña. Cuando se agota, la campaña termina sola y el documento lo dice.',
       },
       {
-        id: 'veces', foto: true, titulo: 'Formulario, cuántas veces puede ganar', pantalla: 'pasos',
+        id: 'veces', valeFoto: true, titulo: 'Formulario, cuántas veces puede ganar', pantalla: 'pasos',
         queHace: 'Elige si el beneficio se puede repetir por persona. Si elige varias veces, aparece un campo extra para decir cuántas.',
       },
       {
@@ -170,7 +159,7 @@ const PARTES = [
         nota: 'Las opciones no están escritas en ningún esquema: salen del catálogo de modelos/leyendas/, así que cada país ofrece solo las categorías para las que Legal tiene una leyenda aprobada. Colombia ofrece diez; México, cinco; Uruguay, Costa Rica y Brasil, ninguna, y ahí la pregunta no aparece.',
       },
       {
-        id: 'resumen', foto: true, titulo: 'Resumen, con algo pendiente', pantalla: 'resumen',
+        id: 'resumen', valeFoto: true, titulo: 'Resumen, con algo pendiente', pantalla: 'resumen',
         queHace: 'Revisa todo lo que respondió, agrupado por paso, y puede editar cualquier grupo. Mientras falte algo, el botón de generar está deshabilitado y la lista "Te falta" dice qué es, en palabras.',
       },
       {
@@ -179,16 +168,16 @@ const PARTES = [
         nota: 'Aquí la vista previa va completa: es el documento entero, tal como va a salir. Cero llaves, cero corchetes, cero huecos.',
       },
       {
-        id: 'listo', foto: true, titulo: 'Listo', pantalla: 'listo',
+        id: 'listo', valeFoto: true, titulo: 'Listo', pantalla: 'listo',
         queHace: 'Es la pantalla donde el comercial deja la herramienta y se va a publicar. Recibe el documento, el título y la dirección listos para copiar, el paso a paso de Squarespace y la lista de quién puede publicar en su país.',
         nota: 'Esta es la versión de producción de la pantalla, no la de la demostración: el enlace del Doc es de ejemplo, lo demás es literal.',
       },
       {
-        id: 'historial', foto: true, titulo: 'Mis campañas', pantalla: 'historial',
+        id: 'historial', valeFoto: true, titulo: 'Mis campañas', pantalla: 'historial',
         queHace: 'Busca sus campañas anteriores, abre otra vez un documento, marca una campaña como publicada o arranca una nueva copiando los datos de otra con "Usar como base".',
       },
       {
-        id: 'ayuda', foto: true, titulo: 'Ayuda', pantalla: 'ayuda',
+        id: 'ayuda', valeFoto: true, titulo: 'Ayuda', pantalla: 'ayuda',
         queHace: 'Consulta qué dinámicas sirven y cuáles no, cómo se publica en Squarespace, quién publica en cada país, qué hacer si algo sale mal, a quién escribirle y las preguntas frecuentes.',
       },
     ],
@@ -201,11 +190,11 @@ const PARTES = [
       'una campaña publicada y la pantalla de administración.',
     pantallas: [
       {
-        id: 'legal', foto: true, titulo: 'Legal', pantalla: 'legal',
+        id: 'legal', valeFoto: true, titulo: 'Legal', pantalla: 'legal',
         queHace: 'Es a donde llega cuando su caso lo tiene que redactar un abogado. Lee el motivo concreto y va al formulario de Legal.',
       },
       {
-        id: 'filtro-travel', foto: true, titulo: 'Filtro de Rappi Travel', pantalla: 'filtroTravel',
+        id: 'filtro-travel', valeFoto: true, titulo: 'Filtro de Rappi Travel', pantalla: 'filtroTravel',
         queHace: 'Solo lo ve quien eligió Rappi Travel. Responde nueve preguntas antes de poder elegir el tipo. Tiene una salida propia para quien entró por equivocación.',
       },
       {
@@ -213,7 +202,7 @@ const PARTES = [
         queHace: 'Después de pasar el filtro vuelve al formulario, con la pregunta del tipo abierta y solo los tipos de Travel.',
       },
       {
-        id: 'tyc-generales', foto: true, titulo: 'Los T&C que Legal ya publicó, la lista', pantalla: 'pasos',
+        id: 'tyc-generales', valeFoto: true, titulo: 'Los T&C que Legal ya publicó, la lista', pantalla: 'pasos',
         queHace: 'Entra por el atajo de debajo de los tipos. Si su campaña es un descuento o un cupón corriente, no tiene que generar nada: ya hay un T&C publicado y solo necesita el enlace.',
       },
       {
@@ -225,16 +214,16 @@ const PARTES = [
         queHace: 'Elige México, que está en piloto. El aviso de no publicar todavía lo acompaña en el formulario, en el resumen y en la pantalla final.',
       },
       {
-        id: 'cashback-day', foto: true, titulo: 'Formulario, Cashback Multitienda y su lista de tiendas', pantalla: 'pasos',
+        id: 'cashback-day', valeFoto: true, titulo: 'Formulario, Cashback Multitienda y su lista de tiendas', pantalla: 'pasos',
         queHace: 'En un Cashback Multitienda el beneficio es de varias tiendas dentro de la misma jornada, y cada una organiza lo suyo con su porcentaje, su tope y su presupuesto. La herramienta le pide la lista y le deja pegarla desde Excel.',
         nota: 'Las tres tiendas del marco se pegaron desde el desplegable "Pegar varias tiendas desde Excel", que es como llega una lista de verdad.',
       },
       {
-        id: 'carrera', foto: true, titulo: 'Formulario, Carrera de Compras con una opción bloqueada', pantalla: 'pasos',
+        id: 'carrera', valeFoto: true, titulo: 'Formulario, Carrera de Compras con una opción bloqueada', pantalla: 'pasos',
         queHace: 'En una Carrera de Compras el desempate no puede ser el mismo criterio con el que se elige al ganador. La opción se queda a la vista, bloqueada y con su razón: entender por qué no puede es parte de la respuesta.',
       },
       {
-        id: 'error', foto: true, titulo: 'Formulario, un error en vivo', pantalla: 'pasos',
+        id: 'error', valeFoto: true, titulo: 'Formulario, un error en vivo', pantalla: 'pasos',
         queHace: 'Escribe un NIT que no existe. El error sale debajo del campo mientras escribe, sin redibujar la pantalla y sin regañarlo antes de tiempo.',
       },
       {
@@ -247,7 +236,7 @@ const PARTES = [
         queHace: 'Una campaña publicada y en curso se puede ampliar: la vigencia solo se mueve hacia adelante y los números solo suben, porque bajarlos cambiaría las condiciones de quien ya compró.',
       },
       {
-        id: 'admin', foto: true, titulo: 'Administración', pantalla: 'admin',
+        id: 'admin', valeFoto: true, titulo: 'Administración', pantalla: 'admin',
         queHace: 'No es del recorrido del comercial: la ve quien tiene rol de administrador. Países y su estado, el equipo y las solicitudes, con su descarga.',
       },
     ],
@@ -271,7 +260,7 @@ const PARTES = [
         queHace: 'El formulario con la interfaz en portugués y Brasil como país, que está en piloto.',
       },
       {
-        id: 'pt-tipos', foto: true, titulo: 'Formulario en portugués, el tipo de campaña', pantalla: 'pasos', idioma: 'pt',
+        id: 'pt-tipos', valeFoto: true, titulo: 'Formulario en portugués, el tipo de campaña', pantalla: 'pasos', idioma: 'pt',
         queHace: 'Los tipos disponibles en Brasil, con la interfaz en portugués.',
       },
     ],
@@ -287,11 +276,11 @@ const PARTES = [
         queHace: 'La portada en celular. La barra de arriba se desliza de lado y el selector de idioma sube para no taparle nada.',
       },
       {
-        id: 'celular-pregunta', foto: true, titulo: 'Una pregunta en celular', pantalla: 'pasos', ventana: 'celular',
+        id: 'celular-pregunta', valeFoto: true, titulo: 'Una pregunta en celular', pantalla: 'pasos', ventana: 'celular',
         queHace: 'Una pregunta del formulario en celular. La barra de progreso se vuelve "Paso 2 de 7" y el documento se va a un botón fijo abajo.',
       },
       {
-        id: 'celular-hoja', foto: true, titulo: 'El documento en la hoja deslizable', pantalla: 'pasos', ventana: 'celular',
+        id: 'celular-hoja', valeFoto: true, titulo: 'El documento en la hoja deslizable', pantalla: 'pasos', ventana: 'celular',
         queHace: 'Toca "Ver cómo va mi T&C" y el documento sube en una hoja deslizable, con la cortina detrás y el botón de cerrar abajo.',
         nota: 'La hoja lleva el mismo documento de la columna de escritorio, así que aquí va marcado. Lo que importa de esta pantalla es la hoja, no el texto.',
       },
@@ -360,11 +349,10 @@ async function main() {
 
   console.log('\nRecorriendo la demostración para ' + fichas.length + ' pantallas...\n');
   const { recorrer } = require('./lib/front-recorrido');
-  asegurarCarpeta(SALIDA_CAPTURAS);
   const recorrido = await recorrer(path.join(RAIZ, 'demo', 'index.html'), fichas, {
     vistaPrevia: MARCA_VISTA_PREVIA,
     documento: MARCA_DOCUMENTO,
-  }, SALIDA_CAPTURAS);
+  });
 
   const { armar, ARCHIVOS_DEL_FRONT } = require('./lib/front-documento');
   const lineas = {};
@@ -404,7 +392,7 @@ async function main() {
         idioma: ficha.idioma,
         queHace: ficha.queHace,
         nota: ficha.nota || '',
-        foto: recorrido.fotos[ficha.id] || '',
+        valeFoto: !!ficha.valeFoto,
         texto: recorrido.textos[ficha.id],
       })),
   }, null, 2) + '\n');
@@ -414,8 +402,6 @@ async function main() {
     hechas + ' de ' + fichas.length + ' pantallas, un solo archivo y sin JavaScript.');
   console.log('docs/revision/pantallas.json generado: el texto de las ' + hechas +
     ' pantallas, para `npm run revision`.');
-  console.log('docs/revision/capturas/: ' + Object.keys(recorrido.fotos).length +
-    ' fotos, una por forma de pantalla, para adjuntar en Claude chat.');
   if (recorrido.fallas.length) {
     console.log('\nNo se pudieron alcanzar:');
     for (const falla of recorrido.fallas) console.log('  ' + falla.id + ': ' + falla.motivo);
@@ -428,7 +414,7 @@ async function main() {
 }
 
 module.exports = {
-  PARTES, fichasDePantalla, SALIDA, SALIDA_PANTALLAS, SALIDA_CAPTURAS, main,
+  PARTES, fichasDePantalla, SALIDA, SALIDA_PANTALLAS, main,
   MARCA_VISTA_PREVIA, MARCA_DOCUMENTO, versionDelRepositorio,
 };
 

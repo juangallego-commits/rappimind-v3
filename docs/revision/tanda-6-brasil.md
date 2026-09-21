@@ -17,13 +17,16 @@ El único país con su propio modelo y su propio idioma. La interfaz se traduce 
 Van 4 pantallas, con su texto tal como se lee en la aplicación.
 
 
-**Para adjuntar en el mismo mensaje** (Claude chat lee imágenes, y es lo único
-que le deja juzgar el aire, la jerarquía y el tamaño de los botones). Están en
-`docs/revision/capturas/`:
+**Las pantallas que vale la pena fotografiar en esta tanda.** Claude chat lee
+imágenes pero no dibuja HTML, así que una foto es lo único que le deja juzgar
+el aire, la jerarquía y el tamaño de los botones. Las tomas tú, de la
+aplicación, y las adjuntas en el mismo mensaje:
 
-- `43-pt-tipos.png` · pantalla 43, Formulario en portugués, el tipo de campaña
+- Pantalla 43, Formulario en portugués, el tipo de campaña (con la interfaz en portugués)
 
-Si no las adjuntas, la revisión igual funciona: el texto va completo aquí.
+Las demás pantallas de esta tanda son la misma forma con otro texto, y el texto
+ya va completo abajo. Si no adjuntas ninguna foto, la revisión igual funciona:
+pierdes lo visual, no el copy.
 
 ---
 
