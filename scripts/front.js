@@ -264,10 +264,6 @@ const PARTES = [
         queHace: 'Las dos preguntas generales con la interfaz en portugués.',
       },
       {
-        id: 'pt-negocio', titulo: 'Formulario en portugués, el negocio', pantalla: 'pasos', idioma: 'pt',
-        queHace: 'El formulario con la interfaz en portugués y Brasil como país, que está en piloto.',
-      },
-      {
         id: 'pt-tipos', valeFoto: true, titulo: 'Formulario en portugués, el tipo de campaña', pantalla: 'pasos', idioma: 'pt',
         queHace: 'Los tipos disponibles en Brasil, con la interfaz en portugués.',
       },

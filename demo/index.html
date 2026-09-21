@@ -1836,6 +1836,9 @@ var AVISO_AZAR = {
     'Cashback Multitienda: varias tiendas hacen cashback dentro de la misma jornada, cada una con su propio porcentaje, su tope y su presupuesto.',
     '15 minutos o Cashback: Rappi promete un tiempo de entrega en el botón Turbo y, si la orden llega tarde, devuelve en Créditos parte de lo que el usuario pagó.',
     'Cashback Travel y Descuento Travel: las dos formas de campaña de vuelos, hoteles, autos y paquetes.',
+    // No genera documento, pero sí se resuelve aquí: el comercial entra, pasa
+    // el filtro y se lleva el enlace que va en la pieza (encargo 02).
+    'Descuentos, cupones, envío gratis y tarifa de servicio: ya tienen T&C publicados y no generas nada.',
   ],
   noValidas: [
     'Sorteo entre todos los participantes, aunque sea "entre quienes compren".',
@@ -1892,6 +1895,17 @@ var ACCESOS_SQUARESPACE = {
 };
 
 /** El canal donde se centraliza todo lo de T&C. */
+/*
+ * La linea de "si algo no coincide, avisanos".
+ *
+ * Vivia dentro del aviso de azar, que es lo primero y lo mas serio de la
+ * pantalla: una nota sobre la herramienta colgada de una advertencia legal se
+ * lee como si la advertencia fuera la que estuviera a medias. Va al canal de
+ * ayuda, que es donde se pide. Punto F8, 20 de septiembre de 2026.
+ */
+var SI_ALGO_NO_COINCIDE =
+  'Si algo de esta página no coincide con lo que ves en la herramienta, avísanos por el canal.';
+
 var CANAL_TC = {
   nombre: '#tyc-rappi',
   url: 'https://rappiplus.slack.com/archives/C0C29SK54HL',
@@ -2108,7 +2122,9 @@ var SI_ALGO_SALE_MAL = [
   { problema: 'El enlace no empieza por promos.rappi.com.', solucion: 'Creaste la página en otro sitio. Tiene que estar dentro de promos.rappi.com para que RappiMind la acepte.' },
   { problema: 'No tengo usuario de Squarespace.', solucion: 'Es normal: la cuenta la tienen unas pocas personas por país. Pide la publicación en #tyc-rappi y pasa el documento y la dirección que te dio RappiMind.' },
   { problema: 'La dirección que puse quedó distinta a la que me dio la herramienta.', solucion: 'Vuelve a Opciones, corrígela y publica otra vez. Si ya la publicaste con otra dirección, pega en RappiMind el enlace real, no el que te propusimos.' },
-  { problema: 'Me equivoqué en un dato y ya generé el documento.', solucion: 'No edites el documento a mano. Genera uno nuevo con los datos corregidos y publica ese. El anterior queda en tu historial sin publicar.' },
+  // "Me equivoque en un dato" estaba aqui y en Preguntas frecuentes, con la
+  // misma respuesta escrita dos veces. Se queda alla, que es donde el comercial
+  // la busca. Punto F8, 20 de septiembre de 2026.
 ];
 
 var PREGUNTAS_FRECUENTES = [
@@ -2169,6 +2185,7 @@ var PREGUNTAS_FRECUENTES = [
 if (typeof module !== 'undefined') {
   module.exports = {
     AVISO_AZAR: AVISO_AZAR,
+    SI_ALGO_NO_COINCIDE: SI_ALGO_NO_COINCIDE,
     CONTACTOS: CONTACTOS,
     FILTRO_DE_TRAVEL: FILTRO_DE_TRAVEL,
     FILTRO_DE_GENERALES: FILTRO_DE_GENERALES,
@@ -13950,6 +13967,63 @@ function camposDelPaso(entrada, pasoId) {
   return campos;
 }
 
+/**
+ * Cuantas preguntas quedan en este paso, contando las que van a aparecer.
+ *
+ * El contador miraba solo lo visible ahora mismo, asi que en el paso de los
+ * Creditos decia "Queda 1 pregunta en este paso" y despues salian dos: al
+ * responder "hasta cuando puede usar los Creditos" aparece la fecha o el numero
+ * de dias, segun lo que conteste. Juan lo cerro el 20 de septiembre de 2026
+ * (punto F8).
+ *
+ * Para cada pregunta que todavia no ha respondido y que tiene opciones, se mira
+ * cuantas preguntas nuevas de este mismo paso abre cada respuesta posible y se
+ * suma la MENOR. Con la vigencia las dos respuestas abren una, asi que suma una
+ * pase lo que pase; con una pregunta donde solo una respuesta abre otra, suma
+ * cero y el contador se queda corto, que es preferible a prometer de menos.
+ */
+function faltanEnElPaso(campos, indiceAbierto, pasoId) {
+  var entrada = estado.entrada();
+  var faltan = campos.length - indiceAbierto - 1;
+  var yaContados = {};
+  for (var c = 0; c < campos.length; c++) yaContados[campos[c].id] = true;
+
+  for (var i = indiceAbierto; i < campos.length; i++) {
+    var campo = campos[i];
+    var pregunta = estado.pregunta(campo.id);
+    var opciones = (pregunta && pregunta.opciones) || campo.opciones;
+    if (!opciones || opciones.length === 0) continue;
+    if (i !== indiceAbierto && tieneRespuesta(campo.id)) continue;
+
+    var minimo = null;
+    for (var o = 0; o < opciones.length; o++) {
+      var abre = cuantasAbre(entrada, campo.id, opciones[o].valor, pasoId, yaContados);
+      minimo = minimo === null ? abre : Math.min(minimo, abre);
+    }
+    if (minimo) faltan += minimo;
+  }
+  return faltan;
+}
+
+/** Las preguntas nuevas de este paso que aparecerian con esa respuesta. */
+function cuantasAbre(entrada, campoId, valor, pasoId, yaContados) {
+  var supuesto = {};
+  for (var llave in entrada) {
+    if (Object.prototype.hasOwnProperty.call(entrada, llave)) supuesto[llave] = entrada[llave];
+  }
+  supuesto[campoId] = valor;
+
+  var visibles = camposVisibles(supuesto.tipo, supuesto);
+  var nuevas = 0;
+  for (var i = 0; i < visibles.length; i++) {
+    if (visibles[i].paso !== pasoId) continue;
+    if (yaContados[visibles[i].id]) continue;
+    var pregunta = preguntaDe(visibles[i].id);
+    if (pregunta && pregunta.pregunta) nuevas += 1;
+  }
+  return nuevas;
+}
+
 function tieneRespuesta(campoId) {
   // Un valor por defecto no basta: la pregunta se muestra igual, preseleccionada.
   if (!E.respondidas[campoId]) return false;
@@ -14339,6 +14413,7 @@ RM.flujo = {
   opcionDeVeces: opcionDeVeces,
   fijarVeces: fijarVeces,
   erroresPorCampo: erroresPorCampo,
+  faltanEnElPaso: faltanEnElPaso,
   paisElegido: paisElegido,
   modeloDelTipo: modeloDelTipo,
   refrescarDocumento: refrescarDocumento,
@@ -14792,11 +14867,25 @@ function columnaDocumento() {
  * saltaba la del negocio.
  */
 function camposDeArranque() {
-  return [
-    { id: 'pais', tipo: 'lista', paso: 'campana', etiqueta: 'País' },
-    { id: 'negocio', tipo: 'lista', paso: 'campana', etiqueta: 'Negocio', opciones: preguntaDe('negocio').opciones },
-    { id: 'tipo', tipo: 'tarjetas', paso: 'campana', etiqueta: 'Tipo' },
-  ];
+  var campos = [{ id: 'pais', tipo: 'lista', paso: 'campana', etiqueta: 'País' }];
+
+  /*
+   * El negocio solo se pregunta donde hay algo que elegir.
+   *
+   * En un pais sin tipos de Travel, elegir Rappi Travel lleva siempre a Legal:
+   * es un camino que arranca y muere una pregunta despues. Donde no existe, la
+   * pregunta no se hace y el negocio queda respondido en Rappi. Juan lo cerro
+   * el 20 de septiembre de 2026 (punto F8).
+   *
+   * Lo pone respondido quien decide no preguntarlo, en alResponder del pais:
+   * aqui solo se decide si se dibuja.
+   */
+  if (hayTravelEnElPais()) {
+    campos.push({ id: 'negocio', tipo: 'lista', paso: 'campana', etiqueta: 'Negocio', opciones: preguntaDe('negocio').opciones });
+  }
+
+  campos.push({ id: 'tipo', tipo: 'tarjetas', paso: 'campana', etiqueta: 'Tipo' });
+  return campos;
 }
 
 function pantallaPasos(raiz) {
@@ -14889,8 +14978,9 @@ function pantallaPasos(raiz) {
 
   }
 
-  // Cuántas faltan en este paso.
-  var faltan = campos.length - indiceAbierto - 1;
+  // Cuántas faltan en este paso, contando las que van a aparecer según lo que
+  // responda: decía "Queda 1 pregunta" y después salían dos.
+  var faltan = flujo.faltanEnElPaso(campos, indiceAbierto, pasos[E.pasoActual].id);
   if (faltan > 0) {
     columna.appendChild(crear('p', {
       clase: 'pregunta-ayuda',
@@ -15230,7 +15320,16 @@ function alResponder(campoId, valor, campos, indice) {
     var preguntaElFin = tieneCampo(esquemaDe(estado.entrada().tipo), 'fechaFin');
     if (!estado.entrada().fechaFin || !preguntaElFin) estado.fijar('fechaFin', valor);
   }
-  if (campoId === 'pais') estado.fijar('tipo', null);
+  if (campoId === 'pais') {
+    estado.fijar('tipo', null);
+    // En un país sin tipos de Travel el negocio no se pregunta, así que queda
+    // respondido en Rappi: sin esto, la pregunta desaparece y el formulario se
+    // queda esperando una respuesta que nadie le puede dar.
+    if (!hayTravelEnElPais()) {
+      estado.fijar('negocio', 'rappi');
+      E.respondidas.negocio = true;
+    }
+  }
 
   // Cambiar de negocio invalida el tipo elegido: los tipos de Rappi no son los
   // de Rappi Travel.
@@ -17349,35 +17448,35 @@ function nombreDelPais(codigo) {
   return codigo;
 }
 
+/**
+ * La pantalla de Ayuda.
+ *
+ * El orden lo cambio Juan el 20 de septiembre de 2026 (punto F8), y sale de lo
+ * que el comercial viene a buscar de verdad. Antes abria con el aviso de azar,
+ * que es lo mas serio pero lo menos consultado: quien entra aqui suele venir de
+ * una campana de descuento que no encuentra en la lista de tipos, o de no saber
+ * como publicar.
+ *
+ * Queda asi: primero los descuentos y cupones, despues como publicar y quien
+ * puede hacerlo, y despues el azar y las demas preguntas.
+ */
 function pantallaAyuda(raiz) {
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
     crear('h1', { texto: estado.T('Ayuda') }),
   ]);
 
-  // 1. El aviso de azar, primero y destacado.
-  var aviso = crear('div', { clase: 'aviso aviso-serio' }, [
-    crear('h3', { texto: AVISO_AZAR.titulo }),
-    crear('p', { texto: AVISO_AZAR.entrada }),
-  ]);
-  if (AVISO_AZAR.borrador) {
-    aviso.appendChild(crear('p', {
-      clase: 'pregunta-ayuda',
-      texto: 'Si algo de esta página no coincide con lo que ves en la herramienta, avísanos por el canal.',
-    }));
+  // 1. Lo que mas se pregunta: la campana que no esta en la lista de tipos,
+  // porque su T&C ya existe y no hay que generar nada.
+  var descuentos = null;
+  for (var q = 0; q < PREGUNTAS_FRECUENTES.length; q++) {
+    if (PREGUNTAS_FRECUENTES[q].pregunta.indexOf('descuento o un cupón') !== -1) {
+      descuentos = PREGUNTAS_FRECUENTES[q];
+    }
   }
-  contenido.appendChild(aviso);
-
-  for (var i = 0; i < AVISO_AZAR.porQue.length; i++) {
-    contenido.appendChild(crear('p', { texto: AVISO_AZAR.porQue[i] }));
+  if (descuentos) {
+    contenido.appendChild(crear('h2', { texto: descuentos.pregunta }));
+    contenido.appendChild(crear('p', { texto: descuentos.respuesta }));
   }
-
-  contenido.appendChild(crear('h3', { texto: 'Sirven para esta herramienta' }));
-  contenido.appendChild(listaSimple(AVISO_AZAR.validas));
-  contenido.appendChild(crear('h3', { texto: 'No sirven: las redacta Legal' }));
-  contenido.appendChild(listaSimple(AVISO_AZAR.noValidas));
-  contenido.appendChild(crear('h3', { texto: 'Consúltalo igual' }));
-  contenido.appendChild(listaSimple(AVISO_AZAR.frontera));
-  contenido.appendChild(crear('div', { clase: 'aviso' }, [crear('p', { texto: AVISO_AZAR.regla })]));
 
   // 2. Guía de Squarespace. Es la misma lista que la pantalla final, para que
   // las dos digan exactamente lo mismo.
@@ -17396,13 +17495,33 @@ function pantallaAyuda(raiz) {
   }
   contenido.appendChild(pasos);
 
-  contenido.appendChild(crear('h3', { texto: estado.T('¿Quién puede publicar?') }));
+  contenido.appendChild(crear('h2', { texto: estado.T('¿Quién puede publicar?') }));
   contenido.appendChild(crear('p', {
     texto: 'No todo el mundo tiene usuario de Squarespace: la cuenta la tienen unas pocas personas por país. Si no eres una de ellas, pásales el documento, el título y la dirección que te dio RappiMind, o pídelo en #tyc-rappi.',
   }));
   contenido.appendChild(fichaDeAccesos());
 
-  contenido.appendChild(crear('h3', { texto: 'Si algo sale mal' }));
+  // 3. El aviso de azar y qué campañas sirven aquí.
+  var aviso = crear('div', { clase: 'aviso aviso-serio' }, [
+    crear('h3', { texto: AVISO_AZAR.titulo }),
+    crear('p', { texto: AVISO_AZAR.entrada }),
+  ]);
+  contenido.appendChild(aviso);
+
+  for (var i = 0; i < AVISO_AZAR.porQue.length; i++) {
+    contenido.appendChild(crear('p', { texto: AVISO_AZAR.porQue[i] }));
+  }
+
+  contenido.appendChild(crear('h3', { texto: 'Sirven para esta herramienta' }));
+  contenido.appendChild(listaSimple(AVISO_AZAR.validas));
+  contenido.appendChild(crear('h3', { texto: 'No sirven: las redacta Legal' }));
+  contenido.appendChild(listaSimple(AVISO_AZAR.noValidas));
+  contenido.appendChild(crear('h3', { texto: 'Consúltalo igual' }));
+  contenido.appendChild(listaSimple(AVISO_AZAR.frontera));
+  contenido.appendChild(crear('div', { clase: 'aviso' }, [crear('p', { texto: AVISO_AZAR.regla })]));
+
+  // 4. Si algo sale mal.
+  contenido.appendChild(crear('h2', { texto: 'Si algo sale mal' }));
   var problemas = crear('dl', {});
   for (var p = 0; p < SI_ALGO_SALE_MAL.length; p++) {
     problemas.appendChild(crear('dt', { texto: SI_ALGO_SALE_MAL[p].problema }));
@@ -17410,7 +17529,8 @@ function pantallaAyuda(raiz) {
   }
   contenido.appendChild(crear('div', { clase: 'ficha' }, [crear('div', { clase: 'ficha-seccion' }, [problemas])]));
 
-  // 3. Canal de ayuda.
+  // 5. Canal de ayuda. Aquí, y no colgada del aviso de azar, va la línea de
+  // qué hacer si esta página no coincide con la herramienta.
   contenido.appendChild(crear('h2', { texto: 'Canal de ayuda' }));
   if (E.configuracion.urlCanalAyuda) {
     contenido.appendChild(crear('p', {}, [
@@ -17421,8 +17541,11 @@ function pantallaAyuda(raiz) {
   } else {
     contenido.appendChild(crear('p', { clase: 'pregunta-ayuda', texto: 'Falta configurar el canal de ayuda en las propiedades del script (CANAL_AYUDA_URL).' }));
   }
+  if (AVISO_AZAR.borrador) {
+    contenido.appendChild(crear('p', { clase: 'pregunta-ayuda', texto: SI_ALGO_NO_COINCIDE }));
+  }
 
-  // 4. Contactos.
+  // 6. Contactos.
   contenido.appendChild(crear('h2', { texto: 'A quién buscar' }));
   var contactos = crear('div', { clase: 'ficha' });
   for (var c = 0; c < CONTACTOS.length; c++) {
@@ -17439,9 +17562,10 @@ function pantallaAyuda(raiz) {
   }
   contenido.appendChild(contactos);
 
-  // 5. Preguntas frecuentes.
+  // 7. Las demás preguntas frecuentes. La de descuentos ya salió arriba.
   contenido.appendChild(crear('h2', { texto: 'Preguntas frecuentes' }));
   for (var f = 0; f < PREGUNTAS_FRECUENTES.length; f++) {
+    if (PREGUNTAS_FRECUENTES[f] === descuentos) continue;
     contenido.appendChild(crear('details', { clase: 'por-que' }, [
       crear('summary', { texto: PREGUNTAS_FRECUENTES[f].pregunta }),
       crear('p', { texto: PREGUNTAS_FRECUENTES[f].respuesta }),

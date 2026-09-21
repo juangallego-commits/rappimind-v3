@@ -78,7 +78,6 @@ const CAMPOS_DE_LA_PANTALLA = {
   'acuerdo-datos': ['acuerdoDatos'],
   'pais-en-pruebas': ['pais'],
   'tipos-travel': ['tipo'],
-  'pt-negocio': ['negocio'],
   'pt-tipos': ['tipo'],
   'celular-pregunta': ['tope'],
 };
@@ -210,7 +209,7 @@ const TANDAS = [
       'Las preguntas propias de la Promoção Brasil.',
       'El botón de idioma: ¿se entiende que cambia la interfaz y no el documento?',
     ],
-    pantallas: ['pt-inicio', 'pt-filtro', 'pt-negocio', 'pt-tipos'],
+    pantallas: ['pt-inicio', 'pt-filtro', 'pt-tipos'],
     preguntasDe: ['promocao_br'],
     salvoLasDe: ['cashback'],
     diccionarioPt: true,

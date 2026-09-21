@@ -299,8 +299,9 @@ async function recorrer() {
     avisoDePruebas.slice(0, 200));
 
   // Y sigue ahi una pregunta despues: al elegir el pais el asistente avanza
-  // solo, asi que colgarlo de esa pregunta era no mostrarlo nunca.
-  await clic('Rappi');
+  // solo, asi que colgarlo de esa pregunta era no mostrarlo nunca. Ecuador no
+  // tiene tipos de Travel, asi que la pregunta siguiente es la del tipo.
+  await clic('Cashback');
   const avisoQueSigue = await pagina.evaluate(() => {
     const a = document.querySelector('.columna-preguntas .aviso');
     return a ? a.innerText : '';
@@ -403,7 +404,6 @@ async function recorrer() {
   await desdeElInicio();
   await decirQueNoATodo();
   await clic('México');
-  await clic('Rappi');
   await pagina.waitForTimeout(400);
   const sinAvisoEnMexico = await texto();
   revisar('y no sale en los países donde esa regla no existe',
@@ -416,7 +416,6 @@ async function recorrer() {
   await desdeElInicio();
   await decirQueNoATodo();
   await clic('México');
-  await clic('Rappi');
   await clic('Cashback');
   const pasosDeMexico = await pagina.evaluate(function () {
     return RM.flujo.pasosDelTipo(RM.estado.entrada()).map(function (p) { return p.id; });
@@ -429,7 +428,6 @@ async function recorrer() {
   await desdeElInicio();
   await decirQueNoATodo();
   await clic('Uruguay');
-  await clic('Rappi');
   await clic('Cashback');
   const pasosDeUruguay = await pagina.evaluate(function () {
     return RM.flujo.pasosDelTipo(RM.estado.entrada()).map(function (p) { return p.id; });
@@ -437,17 +435,97 @@ async function recorrer() {
   revisar('en un país sin categorías que ofrecer no se pregunta la categoría',
     pasosDeUruguay.indexOf('pieza') === -1, pasosDeUruguay.join(' > '));
 
-  // --- 4. Los caminos que terminan en Legal --------------------------------
+  // --- 3e. El negocio solo se pregunta donde hay algo que elegir -----------
+  //
+  // En un pais sin tipos de Travel, elegir Rappi Travel llevaba siempre a
+  // Legal: un camino que arranca y muere una pregunta despues. Desde el 20 de
+  // septiembre de 2026 (punto F8) ahi no se pregunta, y el negocio queda
+  // respondido en Rappi.
   await desdeElInicio();
   await decirQueNoATodo();
   await clic('México');
-  await clic('Rappi Travel');
+  await pagina.waitForTimeout(400);
+  const enMexicoSinNegocio = await pagina.evaluate(() => ({
+    texto: document.body.innerText,
+    negocio: RM.estado.entrada().negocio,
+    respondido: !!RM.estado.estado.respondidas.negocio,
+  }));
+  revisar('en un país sin Travel no se pregunta el negocio',
+    enMexicoSinNegocio.texto.indexOf('¿La campaña es de Rappi o de Rappi Travel?') === -1 &&
+    enMexicoSinNegocio.negocio === 'rappi' && enMexicoSinNegocio.respondido,
+    JSON.stringify({ negocio: enMexicoSinNegocio.negocio, respondido: enMexicoSinNegocio.respondido }));
+  revisar('y en su lugar se ven los tipos, con la salida de quien no se reconoce',
+    enMexicoSinNegocio.texto.indexOf('¿Qué tipo de campaña vas a hacer?') !== -1 &&
+    enMexicoSinNegocio.texto.indexOf('Mi campaña no es ninguna de estas') !== -1,
+    enMexicoSinNegocio.texto.replace(/\n+/g, ' | ').slice(0, 300));
+
+  // Y en Colombia, que sí tiene Travel, la pregunta sigue estando.
+  await desdeElInicio();
+  await decirQueNoATodo();
+  await clic('Colombia');
+  await pagina.waitForTimeout(400);
+  revisar('en un país con Travel el negocio se sigue preguntando',
+    (await texto()).indexOf('¿La campaña es de Rappi o de Rappi Travel?') !== -1);
+
+  // --- 3f. El contador cuenta la pregunta que va a aparecer ----------------
+  //
+  // Decia "Queda 1 pregunta en este paso" y despues salian dos: al responder
+  // hasta cuando puede usar los Creditos aparece la fecha o el numero de dias.
+  // Punto F8, 20 de septiembre de 2026.
+  await pagina.goto(DEMO);
+  await pagina.waitForTimeout(800);
+  await pagina.evaluate(() => {
+    RM.estado.reiniciarFormulario(Object.assign(RM.app.valoresIniciales(), {
+      pais: 'CO', negocio: 'rappi', tipo: 'cashback', tienda: 'El Corral',
+      tiendaTurbo: 'sin_turbo', porcentaje: 20, tope: 20000, presupuesto: 5000000,
+      maxPedidos: 1, carga: 'inmediata',
+    }), {});
+    RM.estado.estado.filtroRespondido = true;
+    RM.estado.estado.respondidas = { carga: true };
+    RM.estado.estado.campoAbierto = 'vigencia';
+    const pasos = RM.flujo.pasosDelTipo(RM.estado.entrada()).map((x) => x.id);
+    RM.estado.estado.pasoActual = pasos.indexOf('creditos');
+    RM.app.ir('pasos');
+  });
   await pagina.waitForTimeout(500);
-  const sinTravel = await texto();
-  revisar('Travel en un país sin Travel va a Legal, no a un callejón',
-    sinTravel.indexOf('Esta campaña la redacta Legal') !== -1 &&
-    sinTravel.indexOf('todavía no está habilitado en México') !== -1,
-    sinTravel.replace(/\n+/g, ' | ').slice(0, 300));
+  const contadorDe = () => pagina.evaluate(() => {
+    const p = [].slice.call(document.querySelectorAll('.columna-preguntas .pregunta-ayuda'))
+      .filter((x) => /pregunta/.test(x.textContent)).pop();
+    return p ? p.textContent.trim() : '';
+  });
+  const antesDeResponder = await contadorDe();
+  await pagina.evaluate(() => {
+    [].slice.call(document.querySelectorAll('.opcion'))
+      .filter((b) => /Hasta una fecha/.test(b.textContent))[0].click();
+  });
+  await pagina.waitForTimeout(500);
+  const despuesDeResponder = await contadorDe();
+  revisar('el contador cuenta la pregunta que aparece según la respuesta',
+    antesDeResponder === 'Quedan 2 preguntas en este paso.' &&
+    despuesDeResponder === 'Queda 1 pregunta en este paso.',
+    'antes: "' + antesDeResponder + '" · después: "' + despuesDeResponder + '"');
+
+  // --- 3g. La Ayuda, ordenada por lo que se viene a buscar -----------------
+  await pagina.goto(DEMO);
+  await pagina.waitForTimeout(800);
+  await pagina.evaluate(() => RM.app.ir('ayuda'));
+  await pagina.waitForTimeout(500);
+  const laAyuda = await pagina.evaluate(() => ({
+    titulos: [].map.call(document.querySelectorAll('.pagina h2'), (h) => h.textContent.trim()),
+    texto: document.body.innerText,
+  }));
+  revisar('la Ayuda abre por la pregunta de descuentos y cupones',
+    /descuento o un cupón/.test(laAyuda.titulos[0] || ''), laAyuda.titulos.join(' | '));
+  revisar('y después van Publicar en Squarespace y Quién puede publicar',
+    laAyuda.titulos[1] === 'Publicar en Squarespace' && laAyuda.titulos[2] === '¿Quién puede publicar?',
+    laAyuda.titulos.join(' | '));
+  revisar('"Me equivoqué en un dato" no se repite',
+    (laAyuda.texto.match(/Me equivoqué en un dato/g) || []).length === 1,
+    String((laAyuda.texto.match(/Me equivoqué en un dato/g) || []).length));
+  revisar('los descuentos entran en lo que sirve para esta herramienta',
+    laAyuda.texto.indexOf('ya tienen T&C publicados y no generas nada') !== -1);
+
+  // --- 4. Los caminos que terminan en Legal --------------------------------
 
   // Y un pais activo no lleva el aviso de pruebas ni en el formulario.
   await desdeElInicio();

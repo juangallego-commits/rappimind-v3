@@ -43,6 +43,63 @@ function camposDelPaso(entrada, pasoId) {
   return campos;
 }
 
+/**
+ * Cuantas preguntas quedan en este paso, contando las que van a aparecer.
+ *
+ * El contador miraba solo lo visible ahora mismo, asi que en el paso de los
+ * Creditos decia "Queda 1 pregunta en este paso" y despues salian dos: al
+ * responder "hasta cuando puede usar los Creditos" aparece la fecha o el numero
+ * de dias, segun lo que conteste. Juan lo cerro el 20 de septiembre de 2026
+ * (punto F8).
+ *
+ * Para cada pregunta que todavia no ha respondido y que tiene opciones, se mira
+ * cuantas preguntas nuevas de este mismo paso abre cada respuesta posible y se
+ * suma la MENOR. Con la vigencia las dos respuestas abren una, asi que suma una
+ * pase lo que pase; con una pregunta donde solo una respuesta abre otra, suma
+ * cero y el contador se queda corto, que es preferible a prometer de menos.
+ */
+function faltanEnElPaso(campos, indiceAbierto, pasoId) {
+  var entrada = estado.entrada();
+  var faltan = campos.length - indiceAbierto - 1;
+  var yaContados = {};
+  for (var c = 0; c < campos.length; c++) yaContados[campos[c].id] = true;
+
+  for (var i = indiceAbierto; i < campos.length; i++) {
+    var campo = campos[i];
+    var pregunta = estado.pregunta(campo.id);
+    var opciones = (pregunta && pregunta.opciones) || campo.opciones;
+    if (!opciones || opciones.length === 0) continue;
+    if (i !== indiceAbierto && tieneRespuesta(campo.id)) continue;
+
+    var minimo = null;
+    for (var o = 0; o < opciones.length; o++) {
+      var abre = cuantasAbre(entrada, campo.id, opciones[o].valor, pasoId, yaContados);
+      minimo = minimo === null ? abre : Math.min(minimo, abre);
+    }
+    if (minimo) faltan += minimo;
+  }
+  return faltan;
+}
+
+/** Las preguntas nuevas de este paso que aparecerian con esa respuesta. */
+function cuantasAbre(entrada, campoId, valor, pasoId, yaContados) {
+  var supuesto = {};
+  for (var llave in entrada) {
+    if (Object.prototype.hasOwnProperty.call(entrada, llave)) supuesto[llave] = entrada[llave];
+  }
+  supuesto[campoId] = valor;
+
+  var visibles = camposVisibles(supuesto.tipo, supuesto);
+  var nuevas = 0;
+  for (var i = 0; i < visibles.length; i++) {
+    if (visibles[i].paso !== pasoId) continue;
+    if (yaContados[visibles[i].id]) continue;
+    var pregunta = preguntaDe(visibles[i].id);
+    if (pregunta && pregunta.pregunta) nuevas += 1;
+  }
+  return nuevas;
+}
+
 function tieneRespuesta(campoId) {
   // Un valor por defecto no basta: la pregunta se muestra igual, preseleccionada.
   if (!E.respondidas[campoId]) return false;
@@ -432,6 +489,7 @@ RM.flujo = {
   opcionDeVeces: opcionDeVeces,
   fijarVeces: fijarVeces,
   erroresPorCampo: erroresPorCampo,
+  faltanEnElPaso: faltanEnElPaso,
   paisElegido: paisElegido,
   modeloDelTipo: modeloDelTipo,
   refrescarDocumento: refrescarDocumento,

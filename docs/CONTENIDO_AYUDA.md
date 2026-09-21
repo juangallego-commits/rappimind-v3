@@ -25,6 +25,7 @@ Esta herramienta solo genera documentos para dinámicas SIN azar. Si tu campaña
 - Cashback Multitienda: varias tiendas hacen cashback dentro de la misma jornada, cada una con su propio porcentaje, su tope y su presupuesto.
 - 15 minutos o Cashback: Rappi promete un tiempo de entrega en el botón Turbo y, si la orden llega tarde, devuelve en Créditos parte de lo que el usuario pagó.
 - Cashback Travel y Descuento Travel: las dos formas de campaña de vuelos, hoteles, autos y paquetes.
+- Descuentos, cupones, envío gratis y tarifa de servicio: ya tienen T&C publicados y no generas nada.
 
 ### No sirven: las redacta Legal
 
@@ -96,7 +97,6 @@ Las capturas van donde dicen los marcadores. Todavía no existen.
 | El enlace no empieza por promos.rappi.com. | Creaste la página en otro sitio. Tiene que estar dentro de promos.rappi.com para que RappiMind la acepte. |
 | No tengo usuario de Squarespace. | Es normal: la cuenta la tienen unas pocas personas por país. Pide la publicación en #tyc-rappi y pasa el documento y la dirección que te dio RappiMind. |
 | La dirección que puse quedó distinta a la que me dio la herramienta. | Vuelve a Opciones, corrígela y publica otra vez. Si ya la publicaste con otra dirección, pega en RappiMind el enlace real, no el que te propusimos. |
-| Me equivoqué en un dato y ya generé el documento. | No edites el documento a mano. Genera uno nuevo con los datos corregidos y publica ese. El anterior queda en tu historial sin publicar. |
 
 ## 3. Contactos
 

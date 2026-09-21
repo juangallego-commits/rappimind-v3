@@ -25,6 +25,9 @@ var AVISO_AZAR = {
     'Cashback Multitienda: varias tiendas hacen cashback dentro de la misma jornada, cada una con su propio porcentaje, su tope y su presupuesto.',
     '15 minutos o Cashback: Rappi promete un tiempo de entrega en el botón Turbo y, si la orden llega tarde, devuelve en Créditos parte de lo que el usuario pagó.',
     'Cashback Travel y Descuento Travel: las dos formas de campaña de vuelos, hoteles, autos y paquetes.',
+    // No genera documento, pero sí se resuelve aquí: el comercial entra, pasa
+    // el filtro y se lleva el enlace que va en la pieza (encargo 02).
+    'Descuentos, cupones, envío gratis y tarifa de servicio: ya tienen T&C publicados y no generas nada.',
   ],
   noValidas: [
     'Sorteo entre todos los participantes, aunque sea "entre quienes compren".',
@@ -81,6 +84,17 @@ var ACCESOS_SQUARESPACE = {
 };
 
 /** El canal donde se centraliza todo lo de T&C. */
+/*
+ * La linea de "si algo no coincide, avisanos".
+ *
+ * Vivia dentro del aviso de azar, que es lo primero y lo mas serio de la
+ * pantalla: una nota sobre la herramienta colgada de una advertencia legal se
+ * lee como si la advertencia fuera la que estuviera a medias. Va al canal de
+ * ayuda, que es donde se pide. Punto F8, 20 de septiembre de 2026.
+ */
+var SI_ALGO_NO_COINCIDE =
+  'Si algo de esta página no coincide con lo que ves en la herramienta, avísanos por el canal.';
+
 var CANAL_TC = {
   nombre: '#tyc-rappi',
   url: 'https://rappiplus.slack.com/archives/C0C29SK54HL',
@@ -297,7 +311,9 @@ var SI_ALGO_SALE_MAL = [
   { problema: 'El enlace no empieza por promos.rappi.com.', solucion: 'Creaste la página en otro sitio. Tiene que estar dentro de promos.rappi.com para que RappiMind la acepte.' },
   { problema: 'No tengo usuario de Squarespace.', solucion: 'Es normal: la cuenta la tienen unas pocas personas por país. Pide la publicación en #tyc-rappi y pasa el documento y la dirección que te dio RappiMind.' },
   { problema: 'La dirección que puse quedó distinta a la que me dio la herramienta.', solucion: 'Vuelve a Opciones, corrígela y publica otra vez. Si ya la publicaste con otra dirección, pega en RappiMind el enlace real, no el que te propusimos.' },
-  { problema: 'Me equivoqué en un dato y ya generé el documento.', solucion: 'No edites el documento a mano. Genera uno nuevo con los datos corregidos y publica ese. El anterior queda en tu historial sin publicar.' },
+  // "Me equivoque en un dato" estaba aqui y en Preguntas frecuentes, con la
+  // misma respuesta escrita dos veces. Se queda alla, que es donde el comercial
+  // la busca. Punto F8, 20 de septiembre de 2026.
 ];
 
 var PREGUNTAS_FRECUENTES = [
@@ -358,6 +374,7 @@ var PREGUNTAS_FRECUENTES = [
 if (typeof module !== 'undefined') {
   module.exports = {
     AVISO_AZAR: AVISO_AZAR,
+    SI_ALGO_NO_COINCIDE: SI_ALGO_NO_COINCIDE,
     CONTACTOS: CONTACTOS,
     FILTRO_DE_TRAVEL: FILTRO_DE_TRAVEL,
     FILTRO_DE_GENERALES: FILTRO_DE_GENERALES,

@@ -74,11 +74,12 @@ const paisPt=await txt();
 ok('la pregunta del país en portugués', paisPt.indexOf('Em qual país a campanha acontece?')!==-1, paisPt.replace(/\n+/g,' | ').slice(0,250));
 
 await clic('Brasil'); await p.waitForTimeout(400);
-const negocioPt=await txt();
-ok('la pregunta del negocio en portugués', negocioPt.indexOf('A campanha é da Rappi ou da Rappi Travel?')!==-1, negocioPt.replace(/\n+/g,' | ').slice(0,250));
-
-await clic('Rappi'); await p.waitForTimeout(400);
 const tipoPt=await txt();
+// Brasil no tiene tipos de Rappi Travel, asi que desde el 20 de septiembre de
+// 2026 (punto F8) no se le pregunta el negocio: se va derecho a los tipos.
+ok('en Brasil no se pregunta el negocio, porque no hay Travel',
+  tipoPt.indexOf('A campanha é da Rappi ou da Rappi Travel?')===-1,
+  tipoPt.replace(/\n+/g,' | ').slice(0,250));
 ok('la pregunta del tipo en portugués', tipoPt.indexOf('Que tipo de campanha você vai fazer?')!==-1, tipoPt.replace(/\n+/g,' | ').slice(0,300));
 
 await clic('Promoção Brasil'); await p.waitForTimeout(400);

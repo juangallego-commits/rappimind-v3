@@ -594,8 +594,9 @@ async function recorrer(rutaDeLaDemo, fichas, marcas) {
     await decirQueNoATodo();
     // Ecuador, porque Mexico salio de piloto el 18 de septiembre. Quedan
     // Ecuador y Costa Rica, que siguen sin decir como escriben los miles.
+    // Ecuador no tiene tipos de Travel, asi que no se le pregunta el negocio:
+    // la pregunta siguiente es la del tipo (punto F8).
     await elegirOpcion('Ecuador');
-    await elegirOpcion('Rappi');
     await pagina.waitForTimeout(400);
     await capturar('pais-en-pruebas');
   });
@@ -724,18 +725,16 @@ async function recorrer(rutaDeLaDemo, fichas, marcas) {
   });
 
   // --- 9. La interfaz en portugues --------------------------------------------
-  await tramo('la interfaz en portugués', ['pt-inicio', 'pt-filtro', 'pt-negocio', 'pt-tipos'], async () => {
+  await tramo('la interfaz en portugués', ['pt-inicio', 'pt-filtro', 'pt-tipos'], async () => {
     await paginaNueva('escritorio', 'pt');
     await capturar('pt-inicio');
 
     await clic('Começar');
     await capturar('pt-filtro');
 
+    // Brasil tampoco tiene tipos de Travel: del pais se pasa derecho al tipo.
     await decirQueNoATodo();
     await elegirOpcion('Brasil');
-    await capturar('pt-negocio', { porQue: true });
-
-    await elegirOpcion('Rappi');
     await capturar('pt-tipos', { porQue: true });
   });
 

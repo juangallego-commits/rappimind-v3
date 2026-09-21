@@ -7,7 +7,7 @@ const assert = require('node:assert');
 
 const {
   AVISO_AZAR, CONTACTOS, PASOS_SQUARESPACE, SI_ALGO_SALE_MAL, PREGUNTAS_FRECUENTES,
-  FILTRO_DE_GENERALES, LO_QUE_LA_PIEZA_DEBE_DECIR, FILTRO_DE_TRAVEL,
+  FILTRO_DE_GENERALES, LO_QUE_LA_PIEZA_DEBE_DECIR, FILTRO_DE_TRAVEL, SI_ALGO_NO_COINCIDE,
 } = require('../src/core/ayuda.js');
 
 test('el aviso de azar está marcado como borrador para revisión', () => {
@@ -238,4 +238,56 @@ test('la pantalla del filtro de Travel dibuja la ayuda, o el mecanismo no existe
     'la pantalla del filtro de Travel no dibuja la línea de ayuda');
   assert.ok(flujo.indexOf('Diez preguntas rápidas') !== -1,
     'el encabezado sigue diciendo nueve preguntas');
+});
+
+// --- La Ayuda, ordenada por lo que el comercial viene a buscar ---------------
+
+test('la Ayuda abre por la pregunta de descuentos y cupones', () => {
+  /*
+   * Abría con el aviso de azar, que es lo más serio pero lo menos consultado:
+   * quien entra aquí suele venir de una campaña de descuento que no encuentra
+   * en la lista de tipos. Punto F8, 20 de septiembre de 2026.
+   */
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const pantalla = fs.readFileSync(
+    path.join(__dirname, '..', 'src', 'client', 'js', '68-pantallas.js'), 'utf8');
+  const ayuda = pantalla.slice(pantalla.indexOf('function pantallaAyuda'), pantalla.indexOf('// --- Administración'));
+
+  const orden = ['descuento o un cupón', 'Publicar en Squarespace', '¿Quién puede publicar?',
+    'AVISO_AZAR.titulo', 'Si algo sale mal', 'Canal de ayuda'];
+  let desde = 0;
+  for (const marca of orden) {
+    const donde = ayuda.indexOf(marca, desde);
+    assert.ok(donde !== -1, 'la Ayuda ya no muestra "' + marca + '"');
+    desde = donde;
+  }
+});
+
+test('"Me equivoqué en un dato" está una sola vez', () => {
+  // Estaba en Si algo sale mal y en Preguntas frecuentes, con la misma
+  // respuesta escrita dos veces. Se queda en las preguntas frecuentes.
+  const enProblemas = SI_ALGO_SALE_MAL.filter((x) => /Me equivoqué en un dato/.test(x.problema));
+  const enPreguntas = PREGUNTAS_FRECUENTES.filter((x) => /Me equivoqué en un dato/.test(x.pregunta));
+  assert.strictEqual(enProblemas.length, 0);
+  assert.strictEqual(enPreguntas.length, 1);
+});
+
+test('la línea de "si algo no coincide" salió del aviso de azar', () => {
+  // Una nota sobre la herramienta colgada de una advertencia legal se lee como
+  // si la advertencia fuera la que está a medias. Va al canal de ayuda.
+  assert.ok(SI_ALGO_NO_COINCIDE.indexOf('no coincide con lo que ves en la herramienta') !== -1);
+
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const pantalla = fs.readFileSync(
+    path.join(__dirname, '..', 'src', 'client', 'js', '68-pantallas.js'), 'utf8');
+  const ayuda = pantalla.slice(pantalla.indexOf('function pantallaAyuda'), pantalla.indexOf('// --- Administración'));
+  assert.ok(ayuda.indexOf('Canal de ayuda') < ayuda.indexOf('SI_ALGO_NO_COINCIDE'),
+    'la línea sigue colgada de algo que no es el canal de ayuda');
+});
+
+test('los descuentos y cupones están entre lo que sirve para esta herramienta', () => {
+  assert.ok(AVISO_AZAR.validas.some((v) => /ya tienen T&C publicados y no generas nada/.test(v)),
+    AVISO_AZAR.validas.join(' | '));
 });

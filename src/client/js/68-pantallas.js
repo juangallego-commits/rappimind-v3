@@ -297,35 +297,35 @@ function nombreDelPais(codigo) {
   return codigo;
 }
 
+/**
+ * La pantalla de Ayuda.
+ *
+ * El orden lo cambio Juan el 20 de septiembre de 2026 (punto F8), y sale de lo
+ * que el comercial viene a buscar de verdad. Antes abria con el aviso de azar,
+ * que es lo mas serio pero lo menos consultado: quien entra aqui suele venir de
+ * una campana de descuento que no encuentra en la lista de tipos, o de no saber
+ * como publicar.
+ *
+ * Queda asi: primero los descuentos y cupones, despues como publicar y quien
+ * puede hacerlo, y despues el azar y las demas preguntas.
+ */
 function pantallaAyuda(raiz) {
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
     crear('h1', { texto: estado.T('Ayuda') }),
   ]);
 
-  // 1. El aviso de azar, primero y destacado.
-  var aviso = crear('div', { clase: 'aviso aviso-serio' }, [
-    crear('h3', { texto: AVISO_AZAR.titulo }),
-    crear('p', { texto: AVISO_AZAR.entrada }),
-  ]);
-  if (AVISO_AZAR.borrador) {
-    aviso.appendChild(crear('p', {
-      clase: 'pregunta-ayuda',
-      texto: 'Si algo de esta página no coincide con lo que ves en la herramienta, avísanos por el canal.',
-    }));
+  // 1. Lo que mas se pregunta: la campana que no esta en la lista de tipos,
+  // porque su T&C ya existe y no hay que generar nada.
+  var descuentos = null;
+  for (var q = 0; q < PREGUNTAS_FRECUENTES.length; q++) {
+    if (PREGUNTAS_FRECUENTES[q].pregunta.indexOf('descuento o un cupón') !== -1) {
+      descuentos = PREGUNTAS_FRECUENTES[q];
+    }
   }
-  contenido.appendChild(aviso);
-
-  for (var i = 0; i < AVISO_AZAR.porQue.length; i++) {
-    contenido.appendChild(crear('p', { texto: AVISO_AZAR.porQue[i] }));
+  if (descuentos) {
+    contenido.appendChild(crear('h2', { texto: descuentos.pregunta }));
+    contenido.appendChild(crear('p', { texto: descuentos.respuesta }));
   }
-
-  contenido.appendChild(crear('h3', { texto: 'Sirven para esta herramienta' }));
-  contenido.appendChild(listaSimple(AVISO_AZAR.validas));
-  contenido.appendChild(crear('h3', { texto: 'No sirven: las redacta Legal' }));
-  contenido.appendChild(listaSimple(AVISO_AZAR.noValidas));
-  contenido.appendChild(crear('h3', { texto: 'Consúltalo igual' }));
-  contenido.appendChild(listaSimple(AVISO_AZAR.frontera));
-  contenido.appendChild(crear('div', { clase: 'aviso' }, [crear('p', { texto: AVISO_AZAR.regla })]));
 
   // 2. Guía de Squarespace. Es la misma lista que la pantalla final, para que
   // las dos digan exactamente lo mismo.
@@ -344,13 +344,33 @@ function pantallaAyuda(raiz) {
   }
   contenido.appendChild(pasos);
 
-  contenido.appendChild(crear('h3', { texto: estado.T('¿Quién puede publicar?') }));
+  contenido.appendChild(crear('h2', { texto: estado.T('¿Quién puede publicar?') }));
   contenido.appendChild(crear('p', {
     texto: 'No todo el mundo tiene usuario de Squarespace: la cuenta la tienen unas pocas personas por país. Si no eres una de ellas, pásales el documento, el título y la dirección que te dio RappiMind, o pídelo en #tyc-rappi.',
   }));
   contenido.appendChild(fichaDeAccesos());
 
-  contenido.appendChild(crear('h3', { texto: 'Si algo sale mal' }));
+  // 3. El aviso de azar y qué campañas sirven aquí.
+  var aviso = crear('div', { clase: 'aviso aviso-serio' }, [
+    crear('h3', { texto: AVISO_AZAR.titulo }),
+    crear('p', { texto: AVISO_AZAR.entrada }),
+  ]);
+  contenido.appendChild(aviso);
+
+  for (var i = 0; i < AVISO_AZAR.porQue.length; i++) {
+    contenido.appendChild(crear('p', { texto: AVISO_AZAR.porQue[i] }));
+  }
+
+  contenido.appendChild(crear('h3', { texto: 'Sirven para esta herramienta' }));
+  contenido.appendChild(listaSimple(AVISO_AZAR.validas));
+  contenido.appendChild(crear('h3', { texto: 'No sirven: las redacta Legal' }));
+  contenido.appendChild(listaSimple(AVISO_AZAR.noValidas));
+  contenido.appendChild(crear('h3', { texto: 'Consúltalo igual' }));
+  contenido.appendChild(listaSimple(AVISO_AZAR.frontera));
+  contenido.appendChild(crear('div', { clase: 'aviso' }, [crear('p', { texto: AVISO_AZAR.regla })]));
+
+  // 4. Si algo sale mal.
+  contenido.appendChild(crear('h2', { texto: 'Si algo sale mal' }));
   var problemas = crear('dl', {});
   for (var p = 0; p < SI_ALGO_SALE_MAL.length; p++) {
     problemas.appendChild(crear('dt', { texto: SI_ALGO_SALE_MAL[p].problema }));
@@ -358,7 +378,8 @@ function pantallaAyuda(raiz) {
   }
   contenido.appendChild(crear('div', { clase: 'ficha' }, [crear('div', { clase: 'ficha-seccion' }, [problemas])]));
 
-  // 3. Canal de ayuda.
+  // 5. Canal de ayuda. Aquí, y no colgada del aviso de azar, va la línea de
+  // qué hacer si esta página no coincide con la herramienta.
   contenido.appendChild(crear('h2', { texto: 'Canal de ayuda' }));
   if (E.configuracion.urlCanalAyuda) {
     contenido.appendChild(crear('p', {}, [
@@ -369,8 +390,11 @@ function pantallaAyuda(raiz) {
   } else {
     contenido.appendChild(crear('p', { clase: 'pregunta-ayuda', texto: 'Falta configurar el canal de ayuda en las propiedades del script (CANAL_AYUDA_URL).' }));
   }
+  if (AVISO_AZAR.borrador) {
+    contenido.appendChild(crear('p', { clase: 'pregunta-ayuda', texto: SI_ALGO_NO_COINCIDE }));
+  }
 
-  // 4. Contactos.
+  // 6. Contactos.
   contenido.appendChild(crear('h2', { texto: 'A quién buscar' }));
   var contactos = crear('div', { clase: 'ficha' });
   for (var c = 0; c < CONTACTOS.length; c++) {
@@ -387,9 +411,10 @@ function pantallaAyuda(raiz) {
   }
   contenido.appendChild(contactos);
 
-  // 5. Preguntas frecuentes.
+  // 7. Las demás preguntas frecuentes. La de descuentos ya salió arriba.
   contenido.appendChild(crear('h2', { texto: 'Preguntas frecuentes' }));
   for (var f = 0; f < PREGUNTAS_FRECUENTES.length; f++) {
+    if (PREGUNTAS_FRECUENTES[f] === descuentos) continue;
     contenido.appendChild(crear('details', { clase: 'por-que' }, [
       crear('summary', { texto: PREGUNTAS_FRECUENTES[f].pregunta }),
       crear('p', { texto: PREGUNTAS_FRECUENTES[f].respuesta }),

@@ -439,11 +439,25 @@ function columnaDocumento() {
  * saltaba la del negocio.
  */
 function camposDeArranque() {
-  return [
-    { id: 'pais', tipo: 'lista', paso: 'campana', etiqueta: 'País' },
-    { id: 'negocio', tipo: 'lista', paso: 'campana', etiqueta: 'Negocio', opciones: preguntaDe('negocio').opciones },
-    { id: 'tipo', tipo: 'tarjetas', paso: 'campana', etiqueta: 'Tipo' },
-  ];
+  var campos = [{ id: 'pais', tipo: 'lista', paso: 'campana', etiqueta: 'País' }];
+
+  /*
+   * El negocio solo se pregunta donde hay algo que elegir.
+   *
+   * En un pais sin tipos de Travel, elegir Rappi Travel lleva siempre a Legal:
+   * es un camino que arranca y muere una pregunta despues. Donde no existe, la
+   * pregunta no se hace y el negocio queda respondido en Rappi. Juan lo cerro
+   * el 20 de septiembre de 2026 (punto F8).
+   *
+   * Lo pone respondido quien decide no preguntarlo, en alResponder del pais:
+   * aqui solo se decide si se dibuja.
+   */
+  if (hayTravelEnElPais()) {
+    campos.push({ id: 'negocio', tipo: 'lista', paso: 'campana', etiqueta: 'Negocio', opciones: preguntaDe('negocio').opciones });
+  }
+
+  campos.push({ id: 'tipo', tipo: 'tarjetas', paso: 'campana', etiqueta: 'Tipo' });
+  return campos;
 }
 
 function pantallaPasos(raiz) {
@@ -536,8 +550,9 @@ function pantallaPasos(raiz) {
 
   }
 
-  // Cuántas faltan en este paso.
-  var faltan = campos.length - indiceAbierto - 1;
+  // Cuántas faltan en este paso, contando las que van a aparecer según lo que
+  // responda: decía "Queda 1 pregunta" y después salían dos.
+  var faltan = flujo.faltanEnElPaso(campos, indiceAbierto, pasos[E.pasoActual].id);
   if (faltan > 0) {
     columna.appendChild(crear('p', {
       clase: 'pregunta-ayuda',
@@ -877,7 +892,16 @@ function alResponder(campoId, valor, campos, indice) {
     var preguntaElFin = tieneCampo(esquemaDe(estado.entrada().tipo), 'fechaFin');
     if (!estado.entrada().fechaFin || !preguntaElFin) estado.fijar('fechaFin', valor);
   }
-  if (campoId === 'pais') estado.fijar('tipo', null);
+  if (campoId === 'pais') {
+    estado.fijar('tipo', null);
+    // En un país sin tipos de Travel el negocio no se pregunta, así que queda
+    // respondido en Rappi: sin esto, la pregunta desaparece y el formulario se
+    // queda esperando una respuesta que nadie le puede dar.
+    if (!hayTravelEnElPais()) {
+      estado.fijar('negocio', 'rappi');
+      E.respondidas.negocio = true;
+    }
+  }
 
   // Cambiar de negocio invalida el tipo elegido: los tipos de Rappi no son los
   // de Rappi Travel.
