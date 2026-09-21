@@ -1436,3 +1436,35 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      volvió por ellos. Los tres titulares se quedaron en 28, 21 y 17px, que son
      exactamente los valores del sistema anterior. La identidad llegó a 3 de las
      48 pantallas hasta que el auditor de FIDELIDAD midió los 48 titulares.
+
+116. **El lockup lleva el gradiente de marca, y esa es una excepción medida, no
+     un descuido.** La píldora "By Legal" va con letra blanca de 13px sobre el
+     gradiente completo, que es entre 2.58:1 y 3.79:1. Es exactamente el defecto
+     que la auditoría de la ronda 3 encontró en la píldora "Publicado" del
+     historial, y que se arregló creando `--rm-grad-texto`.
+
+     Aquí no aplica, y la diferencia importa: **WCAG 1.4.3 exime expresamente el
+     texto que es parte de un logotipo o de un nombre de marca.** La píldora es
+     parte del lockup, o sea de la marca. La píldora del historial no: es un
+     estado de la interfaz, y por eso sí le toca el mínimo.
+
+     Queda escrito porque sin esta nota el próximo que corra la auditoría de
+     contraste lo va a marcar como defecto, y "porque es un logo" no se deduce
+     de mirar el CSS. La regla práctica: si el gradiente lleva texto encima y
+     ese texto NO es la marca, va `--rm-grad-texto`.
+
+117. **La barra superior lleva el lockup SIN la firma.** Lo dice el propio
+     manual del lockup que entregó Claude Design: "sin firma: la barra superior
+     de la herramienta; ahí el contexto ya es de Legal y la firma solo agrega
+     ruido". Coincide con lo que hacía falta por espacio, y evita que la misma
+     firma salga dos veces en la misma pantalla, porque el pie de página ya dice
+     "por el equipo Legal".
+
+118. **El logotipo va a 24px de alto en la barra, y no a 19.** El manual fija que
+     la corona se cae por debajo de 20px de "Mind", y "Mind" mide el 89% del alto
+     del logotipo: a 19px de logotipo, "Mind" quedaría en 17px y habría que
+     quitar la corona. A 24px, "Mind" queda en 21.5px y la corona se queda. La
+     barra no crece porque el alto lo fijaba el relleno, no el contenido.
+
+     En celular sí se cae la corona, que es el escalón "15px sin corona" del
+     manual, porque ahí la barra es más baja y el logotipo no llega a 22px.
