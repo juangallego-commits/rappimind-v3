@@ -2103,6 +2103,386 @@
           "bajo la modalidad"
         ]
       }
+    },
+    {
+      "id": "DC01",
+      "descripcion": "Descuento MX: 30% en una tienda de Ciudad de México y Guadalajara, con tope y presupuesto",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "MX",
+        "negocio": "rappi",
+        "tipo": "descuento",
+        "tienda": "Farmacias del Sol",
+        "tiendaTurbo": "normal",
+        "alcance": "Ciudades",
+        "ciudades": "Ciudad de México, Guadalajara",
+        "organizadorRazonSocial": "Comercializadora del Sol, S.A. de C.V.",
+        "organizadorId": "PRU200101AB5",
+        "fechaInicio": "2026-10-01",
+        "horaInicio": "00:00",
+        "fechaFin": "2026-10-15",
+        "horaFin": "23:59",
+        "formaDelDescuento": "porcentaje",
+        "porcentaje": 30,
+        "tope": 200,
+        "productos": "todos",
+        "maxPedidos": 2,
+        "sinLimite": false,
+        "agotamiento": "presupuesto",
+        "presupuesto": 500000,
+        "segmento": "todos",
+        "metodoPago": "sin_efectivo",
+        "compraMinima": 250,
+        "declaracion": true
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "un descuento del treinta por ciento (30%) sobre el precio de los Productos Participantes",
+          "El Beneficio se calcula exclusivamente sobre el precio de los Productos Participantes",
+          "RFC PRU200101AB5",
+          "las ciudades de Ciudad de México y Guadalajara, en los Estados Unidos Mexicanos",
+          "el Beneficio máximo por cada pedido es de doscientos pesos MXN ($200).",
+          "un presupuesto total de quinientos mil pesos MXN ($500,000)",
+          "hasta agotar el presupuesto disponible, lo que ocurra primero",
+          "hora de la Ciudad de México",
+          "la Procuraduría Federal del Consumidor (PROFECO)"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          "..",
+          "()"
+        ]
+      }
+    },
+    {
+      "id": "DC02",
+      "descripcion": "Descuento AR: envío gratis con tope, solo los productos de una marca, hasta agotar unidades",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "AR",
+        "negocio": "rappi",
+        "tipo": "descuento",
+        "tienda": "Almacén Norte",
+        "tiendaTurbo": "sin_turbo",
+        "alcance": "Nacional",
+        "ciudades": "",
+        "organizadorRazonSocial": "Distribuidora Norte S.A.",
+        "organizadorId": "30712345671",
+        "fechaInicio": "2026-10-05",
+        "horaInicio": "09:00",
+        "fechaFin": "2026-10-05",
+        "horaFin": "23:59",
+        "formaDelDescuento": "envio",
+        "tope": 3000,
+        "productos": "marca",
+        "makerMarca": "Yerba Buena",
+        "maxPedidos": null,
+        "sinLimite": true,
+        "agotamiento": "unidades",
+        "unidadesDisponibles": 1000,
+        "segmento": "nuevos",
+        "metodoPago": "todos",
+        "declaracion": true
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "El Beneficio consiste en la exoneración del costo de envío del pedido.",
+          "El Beneficio cubre únicamente el costo de envío del pedido",
+          "los productos de la marca Yerba Buena",
+          "el valor que exceda ese monto lo asume el Usuario/Consumidor",
+          "tres mil pesos ARS ($3.000)",
+          "la Campaña cuenta con mil (1.000) pedidos con Beneficio",
+          "hasta agotar las unidades disponibles, lo que ocurra primero",
+          "CUIT 30-71234567-1",
+          "el territorio nacional de la República Argentina"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          "..",
+          "()"
+        ]
+      }
+    },
+    {
+      "id": "CU01",
+      "descripcion": "Cupón CL: código, monto fijo de descuento y una sola unidad disponible",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "CL",
+        "negocio": "rappi",
+        "tipo": "cupon",
+        "tienda": "Sushi Roll",
+        "tiendaTurbo": "ambas",
+        "alcance": "Ciudades",
+        "ciudades": "Santiago",
+        "organizadorRazonSocial": "Alimentos Roll SpA",
+        "organizadorId": "76123456-0",
+        "fechaInicio": "2026-10-01",
+        "horaInicio": "00:00",
+        "fechaFin": "2026-10-31",
+        "horaFin": "23:59",
+        "formaDelDescuento": "monto",
+        "montoDescuento": 4000,
+        "productos": "todos",
+        "activacionCupon": "codigo",
+        "codigoCupon": "SUSHI4K",
+        "maxPedidos": 1,
+        "sinLimite": false,
+        "agotamiento": "unidades",
+        "unidadesDisponibles": 1,
+        "segmento": "pro",
+        "metodoPago": "rappicard",
+        "compraMinima": 15000,
+        "declaracion": true
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "un descuento de cuatro mil pesos CLP ($4.000) sobre el precio de los Productos Participantes",
+          "debes ingresar el código SUSHI4K en la sección “Cupones” de la Plataforma Rappi",
+          "El Beneficio es personal e intransferible",
+          "la Campaña cuenta con un (1) pedido con Beneficio. Una vez agotado",
+          "RUT 76.123.456-0",
+          "la ciudad de Santiago, en la República de Chile",
+          "el Servicio Nacional del Consumidor (SERNAC)"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          "..",
+          "()"
+        ]
+      }
+    },
+    {
+      "id": "CU02",
+      "descripcion": "Cupón PE: se toma en la sección Cupones, tarifa de servicio gratis y lista de productos con EAN",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "PE",
+        "negocio": "rappi",
+        "tipo": "cupon",
+        "tienda": "Bodega Central",
+        "tiendaTurbo": "turbo",
+        "alcance": "Nacional",
+        "ciudades": "",
+        "organizadorRazonSocial": "Bodega Central S.A.C.",
+        "organizadorId": "20512345671",
+        "fechaInicio": "2026-11-02",
+        "horaInicio": "00:00",
+        "fechaFin": "2026-11-30",
+        "horaFin": "23:59",
+        "formaDelDescuento": "tarifa_servicio",
+        "productos": "especificos",
+        "productosDetalle": [
+          {
+            "nombre": "Galletas Lunaria clásicas",
+            "ean": "7702001008285"
+          },
+          {
+            "nombre": "Galletas Lunaria integrales",
+            "ean": "96385074"
+          }
+        ],
+        "activacionCupon": "seccion",
+        "maxPedidos": null,
+        "sinLimite": true,
+        "agotamiento": "fecha",
+        "segmento": "todos",
+        "metodoPago": "todos",
+        "declaracion": true
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "El Beneficio consiste en la exoneración de la tarifa de servicio del pedido.",
+          "debes activar el cupón de la Campaña en la sección “Cupones” de la Plataforma Rappi",
+          "Galletas Lunaria clásicas (EAN 7702001008285)",
+          "Galletas Lunaria integrales (EAN 96385074)",
+          "RUC 20512345671",
+          "La Campaña no establece un número máximo de pedidos con Beneficio",
+          "INDECOPI"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          "..",
+          "()"
+        ]
+      }
+    },
+    {
+      "id": "CC06",
+      "descripcion": "Carrera de Compras MX: tres ganadores, premio físico con su valor comercial y IVA",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "MX",
+        "negocio": "rappi",
+        "tipo": "carrera_compras",
+        "tienda": "Super Aurora",
+        "alcance": "Nacional",
+        "ciudades": "",
+        "organizadorRazonSocial": "Grupo Aurora, S.A. de C.V.",
+        "organizadorId": "PRU200101AB5",
+        "fechaInicio": "2026-10-01",
+        "horaInicio": "00:00",
+        "fechaFin": "2026-10-31",
+        "horaFin": "23:59",
+        "productos": "todos",
+        "criterioGanador": "mayor_valor",
+        "numeroGanadores": 3,
+        "desempate": "primero",
+        "tipoPremio": "fisico",
+        "descripcionPremio": "Una bicicleta de montaña rodado 29",
+        "valorPremio": 15000,
+        "entregaPor": "organizador",
+        "acuerdoDatos": "firmado",
+        "medioNotificacion": "correo",
+        "fechaNotificacion": "2026-11-10",
+        "plazoConfirmacion": 5,
+        "segmento": "todos",
+        "metodoPago": "todos",
+        "compraMinima": 300,
+        "declaracion": true
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "Sus familiares hasta el segundo grado por consanguinidad, afinidad o civil.",
+          "con un valor comercial unitario de quince mil pesos MXN ($15,000), IVA incluido",
+          "El valor comercial total de los premios de la Campaña es de cuarenta y cinco mil pesos MXN ($45,000).",
+          "RFC PRU200101AB5",
+          "Resultarán ganadores los tres (3) participantes",
+          "en ningún caso por sorteo, rifa, azar",
+          "persona física y tener al menos dieciocho (18) años"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          "..",
+          "()"
+        ]
+      }
+    },
+    {
+      "id": "BR05",
+      "descripcion": "Cupom BR: frete grátis con tope, activado con un código, mínimo de compra y dos medios de pago",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "BR",
+        "negocio": "rappi",
+        "tipo": "cupom_br",
+        "tienda": "Petz",
+        "fechaInicio": "2026-10-01",
+        "horaInicio": "00:01",
+        "fechaFin": "2026-10-31",
+        "horaFin": "23:59",
+        "beneficioBr": "frete_gratis",
+        "tope": 20,
+        "codigoCupon": "PETZFRETE",
+        "compraMinima": 60,
+        "maxPedidos": 1,
+        "sinLimite": false,
+        "metodosPagoBr": [
+          "visa",
+          "mastercard"
+        ],
+        "declaracion": true
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "os usuários que aplicarem o cupom PETZFRETE em suas compras",
+          "o Usuário deve inserir o cupom PETZFRETE na plataforma Rappi antes de finalizar o pedido",
+          "O cupom é pessoal e intransferível e não pode ser trocado por dinheiro",
+          "R$20,00 (vinte reais)",
+          "R$60,00 (sessenta reais)",
+          "o limite de 1 (um) pedido por usuário",
+          "Cartão de crédito Visa e Cartão de crédito Mastercard"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          "..",
+          "()"
+        ]
+      }
+    },
+    {
+      "id": "CU03",
+      "descripcion": "Cupón CL con el código escrito con un espacio: en la app ese cupón no existe",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "CL",
+        "negocio": "rappi",
+        "tipo": "cupon",
+        "tienda": "Sushi Roll",
+        "tiendaTurbo": "ambas",
+        "alcance": "Ciudades",
+        "ciudades": "Santiago",
+        "organizadorRazonSocial": "Alimentos Roll SpA",
+        "organizadorId": "76123456-0",
+        "fechaInicio": "2026-10-01",
+        "horaInicio": "00:00",
+        "fechaFin": "2026-10-31",
+        "horaFin": "23:59",
+        "formaDelDescuento": "monto",
+        "montoDescuento": 4000,
+        "productos": "todos",
+        "activacionCupon": "codigo",
+        "codigoCupon": "SUSHI 4K",
+        "maxPedidos": 1,
+        "sinLimite": false,
+        "agotamiento": "fecha",
+        "segmento": "todos",
+        "metodoPago": "todos",
+        "declaracion": true
+      },
+      "esperado": {
+        "resultado": "falla",
+        "errores": [
+          "codigoCupon"
+        ]
+      }
+    },
+    {
+      "id": "DC03",
+      "descripcion": "Descuento en Brasil: el modelo está en español y Brasil publica en portugués",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "BR",
+        "negocio": "rappi",
+        "tipo": "descuento",
+        "tienda": "Petz",
+        "tiendaTurbo": "normal",
+        "alcance": "Nacional",
+        "ciudades": "",
+        "organizadorRazonSocial": "Petz Comércio Ltda.",
+        "organizadorId": "12345678000195",
+        "fechaInicio": "2026-10-01",
+        "horaInicio": "00:00",
+        "fechaFin": "2026-10-31",
+        "horaFin": "23:59",
+        "formaDelDescuento": "porcentaje",
+        "porcentaje": 10,
+        "productos": "todos",
+        "maxPedidos": 1,
+        "sinLimite": false,
+        "agotamiento": "fecha",
+        "segmento": "todos",
+        "metodoPago": "todos",
+        "declaracion": true
+      },
+      "esperado": {
+        "resultado": "falla",
+        "errores": [
+          "tipo"
+        ]
+      }
     }
   ]
 }

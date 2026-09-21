@@ -1028,6 +1028,9 @@ var MODELOS = {
     "cashback_day": "3.0",
     "cashback_eta": "3.0",
     "cashback_travel": "1.0",
+    "cupom_br": "1.0",
+    "cupon": "1.0",
+    "descuento": "1.0",
     "descuento_travel": "1.0",
     "promocao_br": "3.0"
   },
@@ -1037,6 +1040,9 @@ var MODELOS = {
     "cashback_day": "%% Modelo: Cashback Day (varias tiendas) · versión 3.0 · base: decisiones de Legal CO (julio 2026) · revisar en punto de control A\n# TÉRMINOS Y CONDICIONES\n## {{NOMBRE_CAMPANA_MAYUS}}\n§ Organizadores y rol de Rappi. La presente campaña promocional (en adelante, la “Campaña”) es organizada por cada una de las tiendas que se relacionan a continuación (en adelante, individualmente, la “Tienda Participante” y, en conjunto, las “Tiendas Participantes”), cada una respecto del beneficio ofrecido en su propia tienda y con cargo a su propio presupuesto, y cada una es la única responsable de dicho beneficio frente a los Usuarios/Consumidores:\n[[#TIENDAS]]\n• **{{TIENDA_MARCA}}**: {{TIENDA_RAZON_SOCIAL}}, identificada con {{TIENDA_ID}}.\n[[/TIENDAS]]\n**{{ENTIDAD_LEGAL}}** (en adelante, “Rappi”) actúa únicamente como plataforma de contacto e intermediación tecnológica y como medio de difusión de la Campaña; Rappi no es organizadora de la Campaña ni responsable del beneficio ofrecido por cada Tienda Participante.\nLos términos con mayúscula inicial que no se definan en este documento tendrán el significado que les asignan los Términos y Condiciones de Uso de la Plataforma Rappi.\n§ Cobertura. La Campaña es válida en {{PAIS_LEGAL}}, exclusivamente en las ciudades o la cobertura indicadas para cada Tienda Participante en la cláusula “Existencias por Tienda Participante” (en adelante, el “Territorio”), y dentro de las zonas de cobertura de cada tienda en la Plataforma Rappi. La disponibilidad puede variar según tu ubicación.\n§ Vigencia. La Campaña estará vigente desde las **{{HORA_INICIO}}** del **{{FECHA_INICIO}}** hasta las **{{HORA_FIN}}** del **{{FECHA_FIN}}** ({{TEXTO_HORA_LOCAL}}), o hasta agotar las existencias de cada Tienda Participante, lo que ocurra primero. La disponibilidad del beneficio en cada Tienda Participante depende de que esta se encuentre activa en la Plataforma Rappi dentro de dicho horario. Los pedidos realizados fuera de la vigencia no darán lugar al beneficio de la Campaña.\n[[INCLUIR:usuarios_beneficio]]\n§ Tiendas participantes. La Campaña aplica exclusivamente para pedidos de productos del catálogo de las siguientes Tiendas Participantes, realizados a través de la Plataforma Rappi:\n[[#TIENDAS]]\n• {{TIENDA_MARCA}}{{TIENDA_TURBO}}\n[[/TIENDAS]]\n§ Mecánica y beneficio. Para obtener el beneficio de la Campaña (en adelante, el “Beneficio”) debes:\n• Realizar un pedido en una Tienda Participante a través de la Plataforma Rappi durante la vigencia de la Campaña.\n• Recibir el pedido de manera exitosa, sin que haya sido cancelado.\n• Realizar el pago del pedido con un medio de pago válido para la Campaña.\n{{TEXTO_METODO_PAGO}}\n[[?TEXTO_MINIMO_COMPRA]]{{TEXTO_MINIMO_COMPRA}}[[/?]]\nEl Beneficio consiste en el **{{PORCENTAJE}}** del valor de tu pedido, acreditado como Créditos en tu Billetera de Créditos, sin que puedas recibir más de **{{TOPE}}** por pedido. El valor sobre el cual se calcula el Beneficio corresponde exclusivamente al precio de los productos adquiridos, sin incluir el costo de envío, la tarifa de servicio ni las propinas.\n§ Existencias por Tienda Participante. Cada Tienda Participante cuenta con el siguiente presupuesto para la Campaña (en adelante, las “Existencias”). Una vez agotadas las Existencias de una Tienda Participante, la Campaña finalizará automáticamente respecto de esa tienda, aunque no haya terminado su vigencia:\n[[#TIENDAS]]\n• **{{TIENDA_MARCA}}** ({{TIENDA_CIUDADES}}): {{TIENDA_PRESUPUESTO}}\n[[/TIENDAS]]\n§ Topes y límites.\n• **Tope por pedido:** el Beneficio máximo por cada pedido es de **{{TOPE}}**.\n• **Máximo de pedidos:** {{TEXTO_LIMITE_PEDIDOS}}\n[[INCLUIR:acreditacion]]\n[[INCLUIR:naturaleza_creditos]]\n[[INCLUIR:vigencia_creditos]]\n[[INCLUIR:exclusiones_beneficio]]\n[[INCLUIR:publicidad]]\n[[INCLUIR:atencion]]\n[[INCLUIR:modificaciones]]\n[[INCLUIR:fraude]]\n[[INCLUIR:tyc_plataforma]]\n[[INCLUIR:responsabilidad]]\n[[INCLUIR:responsabilidad_rappi_beneficio]]\n[[INCLUIR:datos]]\n[[INCLUIR:ley]]\n",
     "cashback_eta": "%% Modelo: Cashback por incumplimiento del ETA (Turbo) · versión 3.0\n%% Base: los T&C publicados de Bogotá (16/09/2026) y Barranquilla (1/09/2026).\n%% Los dos son el mismo documento con la ciudad, la fecha, las horas y el\n%% presupuesto cambiados. Las mejoras aplicadas están en docs/MEJORAS_ETA.md.\n%% OJO: en este modelo no hay aliado que fondee. Es una promesa de servicio de\n%% Rappi sobre su propio tiempo de entrega. Ver docs/PENDIENTES_LEGAL.md.\n# TÉRMINOS Y CONDICIONES\n## {{NOMBRE_CAMPANA_MAYUS}}\nPor medio del presente documento **{{ENTIDAD_LEGAL}}**, identificada con **{{ID_FISCAL}}** y domiciliada en {{DOMICILIO_LEGAL}} (en adelante, “Rappi”), da a conocer los términos y condiciones de la campaña denominada “{{NOMBRE_CAMPANA}}” (en adelante la “Campaña”). La participación en la Campaña implica conocimiento y aceptación total, expresa y vinculante de estos Términos y Condiciones por parte del Usuario/Consumidor.\n[[INCLUIR:eta_definiciones]]\n§ Territorio. La Campaña será válida únicamente para las órdenes realizadas dentro de las zonas de cobertura de las Tiendas Participantes en la Plataforma Rappi, en {{TEXTO_CIUDAD_ETA}}, dentro de {{PAIS_LEGAL}}.\n§ Vigencia y presupuesto. La Campaña será válida desde las **{{HORA_INICIO}}** hasta las **{{HORA_FIN}}** del **{{FECHA_INICIO}}** ({{TEXTO_HORA_LOCAL}}) y/o hasta agotar existencias, lo que primero ocurra. Para efectos de la Campaña se ha establecido un valor total máximo de **{{PRESUPUESTO}}** a ser entregados como Cashback a los Usuarios/Consumidores que participen en la Campaña (las “Existencias”). El agotamiento del presupuesto con anterioridad a la hora de finalización implicará la terminación automática de la Campaña.\n§ Tipo de Usuarios Participantes. Podrán participar todos los Usuarios/Consumidores registrados en la Plataforma Rappi que durante la vigencia de la Campaña realicen órdenes en las Tiendas Participantes, con independencia de que cuenten o no con suscripción activa.\n§ Tiendas Participantes. {{TEXTO_TIENDAS_ETA}}\n§ Productos Participantes. Participarán todos los productos que hacen parte del catálogo de las Tiendas Participantes al interior del botón “Turbo” de la Plataforma Rappi.\n§ Beneficio y dinámica de la Campaña. Si durante la vigencia de la Campaña realizas una orden en las Tiendas Participantes y su entrega supera {{TEXTO_ETA}}, contados desde la aceptación de la orden por parte del Aliado Comercial hasta la entrega efectiva por parte del repartidor independiente, recibirás en Créditos el **{{PORCENTAJE}}** del valor de los Productos Participantes. Rappi se obliga a cumplir con el ETA exhibido dentro de la Plataforma Rappi. No habrá lugar al Beneficio cuando el retraso se deba a causas que te sean imputables, como una dirección de entrega incorrecta o incompleta, la modificación de la orden o de la dirección después de realizada, o la falta de disponibilidad para recibirla, ni cuando obedezca a fuerza mayor o caso fortuito.\nEl Cashback será calculado única y exclusivamente sobre el valor efectivamente pagado por los productos adquiridos en la orden, sin que en ningún caso se incluyan para dicho cálculo los costos de envío, la tarifa de servicio, las propinas voluntarias, ni los descuentos u otras promociones aplicadas. El monto máximo del Cashback que se otorgará por orden es de **{{TOPE}}**.\n[[INCLUIR:acreditacion]]\n[[INCLUIR:vigencia_creditos]]\n[[INCLUIR:eta_condiciones]]\n§ Medio de pago. {{TEXTO_METODO_PAGO}}\n§ Modificaciones e interpretación. Rappi se reserva el derecho de modificar, suspender o cancelar la Campaña en cualquier momento y sin previo aviso, en caso de detectarse fraude, abuso del sistema, caso fortuito o fuerza mayor. Rappi podrá cancelar cualquier orden que no aplique para el Beneficio sin previo aviso.\n[[INCLUIR:eta_intermediacion]]\n[[INCLUIR:naturaleza_creditos]]\n[[INCLUIR:datos]]\n[[INCLUIR:ley]]\n",
     "cashback_travel": "%% Modelo: Cashback Travel · versión 1.0 · base: docs/MODELO_BASE_TRAVEL.md, sección 6 · pendiente de revisión de Juan (docs/PENDIENTES_LEGAL.md)\n# TÉRMINOS Y CONDICIONES\n## {{NOMBRE_CAMPANA_MAYUS}}\n[[INCLUIR:travel_organizador]]\n[[INCLUIR:travel_sistemas]]\n[[INCLUIR:travel_cobertura]]\n§ Vigencia. La Campaña estará vigente desde las **{{HORA_INICIO}}** del **{{FECHA_INICIO}}** hasta las **{{HORA_FIN}}** del **{{FECHA_FIN}}** ({{TEXTO_HORA_LOCAL}})[[?TEXTO_AGOTAMIENTO_VIGENCIA_TRAVEL]], o hasta agotar {{TEXTO_AGOTAMIENTO_VIGENCIA_TRAVEL}}, lo que ocurra primero[[/?]]. Las órdenes realizadas fuera de la vigencia no darán lugar al beneficio de la Campaña.\n[[INCLUIR:travel_usuarios]]\n[[INCLUIR:travel_productos]]\n[[INCLUIR:travel_condiciones]]\n§ Mecánica y Beneficio. Para obtener el beneficio de la Campaña (en adelante, el “Beneficio”) debes:\n• Comprar uno o varios Productos Participantes a través de los Sistemas Rappi Travel durante la vigencia de la Campaña.\n• Obtener la confirmación de tu reserva por parte del Proveedor, sin que haya sido cancelada.\n• Pagar la orden con un medio de pago válido para la Campaña.\n{{TEXTO_METODO_PAGO_TRAVEL}}\nEl Beneficio consiste en {{TEXTO_BENEFICIO_TRAVEL}}, acreditado como Créditos en tu Billetera de Créditos de la Plataforma Rappi.[[?TEXTO_BASE_CALCULO_TRAVEL]] {{TEXTO_BASE_CALCULO_TRAVEL}}[[/?]][[?TEXTO_EJEMPLO_TOPE_TRAVEL]] {{TEXTO_EJEMPLO_TOPE_TRAVEL}}[[/?]]\n§ Topes y límites.\n[[?TOPE_TRAVEL]]• **Tope por orden:** el Beneficio máximo por cada orden es de **{{TOPE_TRAVEL}}**.\n[[/?]]• **Máximo de órdenes por usuario:** {{TEXTO_LIMITE_ORDENES_TRAVEL}}\n• **Límite de la Campaña:** {{TEXTO_LIMITE_CAMPANA_TRAVEL}}\n[[?TEXTO_CONTEO_IDA_REGRESO_TRAVEL]]• **Compras de ida y regreso:** {{TEXTO_CONTEO_IDA_REGRESO_TRAVEL}}\n[[/?]]§ Confirmación de la reserva. Debido a la naturaleza de los inventarios turísticos, el Beneficio está sujeto a la confirmación de la reserva por parte del Proveedor. Si por fallas en la conexión con el Proveedor la orden es rechazada y el servicio no se emite, no se otorgará el Beneficio.\n§ Acreditación del Beneficio. Los Créditos correspondientes al Beneficio se acreditarán en tu Billetera de Créditos **{{TEXTO_CARGA_TRAVEL}}**. Podrás verificar el estado de tus Créditos en las secciones “Cuenta” y “Créditos” de la Plataforma Rappi. {{TEXTO_VERIFICACION_TRAVEL}}\n§ Naturaleza de los Créditos. El Beneficio consiste en Créditos que Rappi Travel otorga y acredita en tu Billetera de Créditos de la Plataforma Rappi. Al participar, reconoces y aceptas que:\n• Los Créditos son intangibles que te permiten adquirir los productos y servicios indicados en la cláusula de vigencia y redención.\n• Los Créditos no constituyen dinero en efectivo, valores ni instrumentos financieros, y no pueden convertirse en dinero ni reembolsarse.\n• Los Créditos no son transferibles a terceros ni a otras cuentas de la Plataforma Rappi.\n• Los Créditos no son acumulables con otros cupones o promociones, salvo que se indique expresamente lo contrario.\n• Los Créditos otorgados en virtud de la Campaña se rigen por los presentes Términos y Condiciones.\n[[?TEXTO_CREDITOS_FUERA_DE_TRAVEL]]{{TEXTO_CREDITOS_FUERA_DE_TRAVEL}}\n[[/?]]§ Vigencia y redención de los Créditos. Los Créditos acreditados en virtud de la Campaña **{{TEXTO_VIGENCIA_CREDITOS}}**. {{TEXTO_REDENCION_TRAVEL}} Una vez vencidos, los Créditos no podrán ser recuperados, reactivados ni compensados. Eres responsable de redimir tus Créditos dentro del plazo indicado.\n§ Cancelaciones, modificaciones y reembolsos. Para proteger la integridad de la Campaña, se establecen de forma estricta las siguientes reglas en caso de modificaciones o cancelaciones de la reserva:\n• **Pérdida del Beneficio:** en caso de cancelación o reembolso de la reserva, o de modificación hecha por el Usuario/Consumidor, este no recibirá los Créditos promocionales. Si el Proveedor modifica la reserva y el Usuario/Consumidor la acepta sin reembolso, conservará el Beneficio.\n• **Reversión de Créditos:** si al momento de la cancelación los Créditos ya hubieren sido acreditados en la cuenta del usuario en la Plataforma Rappi, estos serán eliminados y revocados automáticamente por el sistema.\n• **Cruce de cuentas (deducción de reembolsos):** si el Usuario/Consumidor hubiere utilizado total o parcialmente los Créditos otorgados como Beneficio y posteriormente la orden original es objeto de cancelación o reembolso, el valor en dinero equivalente a los Créditos efectivamente utilizados será descontado de plano del monto total a reembolsar por concepto de la reserva. El usuario autoriza expresamente a Rappi Travel a realizar dicha deducción de su reembolso.\n• **Reembolso parcial:** si la orden se reembolsa parcialmente, el Beneficio se recalculará sobre el valor final pagado.\n• **Plazo:** estas reglas aplican a las cancelaciones, modificaciones y reembolsos que ocurran antes de la prestación del servicio. Una vez prestado el servicio (realizado el vuelo, la estadía, el alquiler o la actividad), el Beneficio queda en firme y no se revertirá, salvo en casos de fraude comprobado.\n§ Exclusiones y restricciones. El Beneficio no aplica para:\n• Órdenes canceladas, reembolsadas o no confirmadas, en los términos de las cláusulas anteriores.\n• Órdenes pagadas con medios de pago diferentes a los aplicables para la Campaña, en efectivo o, total o parcialmente, con Créditos.\n• Órdenes realizadas fuera de la vigencia de la Campaña.\n• Productos que no sean Productos Participantes, aunque se compren en la misma orden.\nEl Beneficio obtenido en virtud de la presente Campaña no es acumulable con otras promociones.\nEn los casos en que el Usuario/Consumidor realice el pago con su tarjeta RappiCard, para asegurar la correcta y automática acreditación del Beneficio, la tarjeta deberá estar registrada de forma nativa dentro de la sección de métodos de pago de la Plataforma Rappi. Aquellas transacciones realizadas con RappiCard a través de billeteras digitales de terceros (tales como Apple Pay o Google Pay) o en las que la tarjeta sea ingresada manualmente como una tarjeta de crédito externa podrían presentar demoras en la validación del Beneficio o requerir una gestión adicional por parte del usuario ante el equipo de soporte, sin que esto implique el incumplimiento de los presentes términos por parte de Rappi Travel.\n[[INCLUIR:travel_beneficio_por_producto]]\n[[INCLUIR:travel_precio_anunciado]]\n[[INCLUIR:travel_publicidad]]\n[[INCLUIR:travel_atencion]]\n[[INCLUIR:travel_modificaciones]]\n§ Fraude, abuso y descalificación. Rappi Travel se reserva el derecho de descalificarte de la Campaña, de rechazar o cancelar órdenes y de bloquear temporal o definitivamente tu cuenta si, a juicio razonable de Rappi Travel:\n• Utilizas la Campaña de manera fraudulenta, incluido el uso de cuentas múltiples, datos falsos o la manipulación del sistema o del historial de compras.\n• Intentas alterar, manipular o interferir con el funcionamiento de los Sistemas Rappi Travel o de la Campaña.\n• Incumples los Términos y Condiciones de los Sistemas Rappi Travel o de la Plataforma Rappi.\nEn caso de descalificación, Rappi Travel podrá revocar los Créditos acreditados en virtud de la Campaña que aún no hayan sido redimidos. Los Créditos ya redimidos no serán objeto de recuperación, salvo en casos de fraude comprobado conforme a la legislación aplicable. Rappi Travel te informará la razón de la descalificación a través de los canales de comunicación de la Plataforma Rappi.\n[[INCLUIR:travel_otros_tyc]]\n[[INCLUIR:travel_responsabilidad]]\n[[INCLUIR:travel_datos]]\n[[INCLUIR:travel_ley]]\n[[?TEXTO_NOTAS_DE_MODIFICACION]]{{TEXTO_NOTAS_DE_MODIFICACION}}[[/?]]\n",
+    "cupom_br": "%% Modelo: Brasil · Cupom (código promocional) · versión 1.0\n%% Es modelos/promocao_br.md, que sale de los cuatro T&C aprobados por Legal BR\n%% (septiembre de 2026), con dos viñetas más: la del código y la de que el cupom\n%% es personal. Las CONDIÇÕES GERAIS aprobadas ya cuentan con que haya un código\n%% cuando dicen \"cancelar o código\", así que el documento no estaba preparado\n%% para el cupom solo en el articulado de arriba.\n%% Ver docs/MODELO_BASE_BRASIL.md para el mapa y docs/CORRECCIONES_BRASIL.md\n%% para cada corrección aplicada al modelo del que este sale.\n%% EXCEPCIÓN de la regla 1 de CLAUDE.md, la misma que autorizó Juan para Brasil:\n%% el documento está escrito con Rappi como quien concede y cancela la promoción.\n# TERMOS E CONDIÇÕES\n## {{NOMBRE_CAMPANA_MAYUS}}\nPor meio desta oferta, divulgamos os Termos e Condições da campanha “{{NOMBRE_CAMPANA}}”, na qual os usuários que aplicarem o cupom **{{CODIGO_CUPON}}** em suas compras[[?TEXTO_MINIMO_APERTURA]]{{TEXTO_MINIMO_APERTURA}}[[/?]] nas lojas do Parceiro **{{PARCEIRO}}**, na plataforma Rappi, em período específico, {{TEXTO_BENEFICIO_APERTURA}}.\n“Usuário” para fins deste T&C significa a pessoa física inscrita na plataforma Rappi.\n§ REGRAS PRINCIPAIS DA PROMOÇÃO\n• Esta campanha aplica-se apenas aos usuários cadastrados na plataforma Rappi que efetuarem a compra no período de **{{FECHA_INICIO}}** às **{{HORA_INICIO}}** até **{{FECHA_FIN}}** às **{{HORA_FIN}}**;\n• Para receber o benefício, o Usuário deve inserir o cupom **{{CODIGO_CUPON}}** na plataforma Rappi antes de finalizar o pedido;\n• {{TEXTO_BENEFICIO_REGRA}};\n[[?TEXTO_TOPE_BENEFICIO]]• {{TEXTO_TOPE_BENEFICIO}};[[/?]]\n• {{TEXTO_LIMITE_PEDIDOS}};\n• O cupom é pessoal e intransferível e não pode ser trocado por dinheiro;\n• Promoção válida nas áreas de cobertura do aplicativo em todo o território brasileiro, onde houver lojas parceiras credenciadas e com estoque dos produtos;\n• {{TEXTO_METODO_PAGO}};\n• É esclarecido que esta campanha não se aplica a pedidos parcialmente ou totalmente cancelados;\n• Promoção sujeita a disponibilidade de estoque;\n• Promoção não cumulativa com outras promoções.\n[[INCLUIR:br_condicoes_gerais]]\n[[INCLUIR:br_plataforma]]\n",
+    "cupon": "%% Modelo: Cupón en tienda aliada · versión 1.0 · septiembre de 2026\n%% Es modelos/descuento.md más una cláusula: la de cómo se activa el cupón. La\n%% diferencia de negocio entre los dos es esa y solo esa. El descuento se aplica\n%% solo; el cupón lo activa el Usuario/Consumidor, con un código o desde la\n%% sección “Cupones”, y por eso hace falta decir cuántos hay y qué pasa cuando\n%% se agotan.\n%% Armado, no redactado: todo lo demás viene de modelos/descuento.md, que a su\n%% vez sale de modelos/cashback.md y de modelos/descuento_travel.md.\n%% Habilitado fuera de Colombia. Cada abogado de país lo revisa en las pruebas\n%% internas: ver docs/PENDIENTES_LEGAL.md.\n# TÉRMINOS Y CONDICIONES\n## {{NOMBRE_CAMPANA_MAYUS}}\n[[INCLUIR:organizador]]\n[[INCLUIR:cobertura_tienda]]\n§ Vigencia. La Campaña estará vigente desde las **{{HORA_INICIO}}** del **{{FECHA_INICIO}}** hasta las **{{HORA_FIN}}** del **{{FECHA_FIN}}** ({{TEXTO_HORA_LOCAL}})[[?TEXTO_AGOTAMIENTO]], o hasta agotar {{TEXTO_AGOTAMIENTO}}, lo que ocurra primero[[/?]]. Los pedidos realizados fuera de la vigencia no darán lugar al beneficio de la Campaña.\n[[INCLUIR:usuarios_beneficio]]\n§ Tienda y productos participantes. {{TEXTO_PRODUCTOS_DESCUENTO}}[[?TEXTO_TIENDA_TURBO]] {{TEXTO_TIENDA_TURBO}}[[/?]]\n§ Mecánica y beneficio. Para obtener el beneficio de la Campaña (en adelante, el “Beneficio”) debes:\n• Realizar un pedido de Productos Participantes en la Tienda Participante a través de la Plataforma Rappi durante la vigencia de la Campaña.\n• Activar el cupón de la Campaña antes de confirmar el pedido, en los términos de la cláusula siguiente.\n• Recibir el pedido de manera exitosa, sin que haya sido cancelado.\n• Realizar el pago del pedido con un medio de pago válido para la Campaña.\n{{TEXTO_METODO_PAGO}}\n[[?TEXTO_MINIMO_COMPRA]]{{TEXTO_MINIMO_COMPRA}}[[/?]]\nEl Beneficio consiste en {{TEXTO_BENEFICIO_DESCUENTO}}. {{TEXTO_BASE_DESCUENTO}}\n[[INCLUIR:cupon_codigo]]\n§ Cómo se ve el Beneficio. Una vez activado el cupón, el Beneficio se aplica directamente sobre el valor del pedido dentro de la Plataforma Rappi, y el valor final ya rebajado se muestra antes de que pagues. El Beneficio no se entrega en dinero en efectivo ni como Créditos en tu Billetera de Créditos. Un pedido confirmado sin el cupón activado no da derecho al Beneficio ni a su reintegro posterior.\n§ Topes y límites.\n[[?TEXTO_TOPE_DESCUENTO]]• **Tope por pedido:** {{TEXTO_TOPE_DESCUENTO}}\n[[/?]]• **Máximo de pedidos:** {{TEXTO_LIMITE_PEDIDOS}}\n[[?TEXTO_LIMITE_CAMPANA]]• **Límite de la Campaña:** {{TEXTO_LIMITE_CAMPANA}}\n[[/?]]§ Cancelaciones, devoluciones y reembolsos. Si el pedido se cancela o los productos se devuelven, el reembolso se hará sobre el valor efectivamente pagado, es decir, con el Beneficio ya aplicado, y el cupón no se repondrá para un pedido posterior. Si el pedido se entrega de manera parcial, el Beneficio se recalculará sobre el valor final de los productos efectivamente entregados.\n[[INCLUIR:exclusiones_descuento]]\n[[INCLUIR:publicidad]]\n[[INCLUIR:atencion]]\n[[INCLUIR:modificaciones]]\n[[INCLUIR:fraude_descuento]]\n[[INCLUIR:tyc_plataforma]]\n[[INCLUIR:responsabilidad]]\n[[INCLUIR:responsabilidad_rappi_descuento]]\n[[INCLUIR:datos]]\n[[INCLUIR:ley]]\n",
+    "descuento": "%% Modelo: Descuento en tienda aliada · versión 1.0 · septiembre de 2026\n%% Armado, no redactado. La estructura y las cláusulas comunes son las de\n%% modelos/cashback.md, aprobado por Legal CO; la forma de decir un descuento\n%% sobre el precio es la de modelos/descuento_travel.md (\"el descuento se aplica\n%% directamente en el precio y el valor final con descuento se muestra antes de\n%% que pagues\") y la de los cuatro T&C aprobados de Brasil, que son el mismo\n%% caso de negocio en portugués.\n%% Lo que cambia frente al Cashback: no hay Créditos, así que no van las\n%% cláusulas de acreditación, naturaleza, vigencia y redención; y el Beneficio\n%% puede ser el envío o la tarifa de servicio, así que la base de cálculo se\n%% dice en la mecánica y no en las exclusiones.\n%% Habilitado fuera de Colombia. Cada abogado de país lo revisa en las pruebas\n%% internas: ver docs/PENDIENTES_LEGAL.md.\n# TÉRMINOS Y CONDICIONES\n## {{NOMBRE_CAMPANA_MAYUS}}\n[[INCLUIR:organizador]]\n[[INCLUIR:cobertura_tienda]]\n§ Vigencia. La Campaña estará vigente desde las **{{HORA_INICIO}}** del **{{FECHA_INICIO}}** hasta las **{{HORA_FIN}}** del **{{FECHA_FIN}}** ({{TEXTO_HORA_LOCAL}})[[?TEXTO_AGOTAMIENTO]], o hasta agotar {{TEXTO_AGOTAMIENTO}}, lo que ocurra primero[[/?]]. Los pedidos realizados fuera de la vigencia no darán lugar al beneficio de la Campaña.\n[[INCLUIR:usuarios_beneficio]]\n§ Tienda y productos participantes. {{TEXTO_PRODUCTOS_DESCUENTO}}[[?TEXTO_TIENDA_TURBO]] {{TEXTO_TIENDA_TURBO}}[[/?]]\n§ Mecánica y beneficio. Para obtener el beneficio de la Campaña (en adelante, el “Beneficio”) debes:\n• Realizar un pedido de Productos Participantes en la Tienda Participante a través de la Plataforma Rappi durante la vigencia de la Campaña.\n• Recibir el pedido de manera exitosa, sin que haya sido cancelado.\n• Realizar el pago del pedido con un medio de pago válido para la Campaña.\n{{TEXTO_METODO_PAGO}}\n[[?TEXTO_MINIMO_COMPRA]]{{TEXTO_MINIMO_COMPRA}}[[/?]]\nEl Beneficio consiste en {{TEXTO_BENEFICIO_DESCUENTO}}. {{TEXTO_BASE_DESCUENTO}}\n§ Cómo se ve el Beneficio. El Beneficio se aplica directamente sobre el valor del pedido dentro de la Plataforma Rappi, y el valor final ya rebajado se muestra antes de que pagues. El Beneficio no se entrega en dinero en efectivo ni como Créditos en tu Billetera de Créditos.\n§ Topes y límites.\n[[?TEXTO_TOPE_DESCUENTO]]• **Tope por pedido:** {{TEXTO_TOPE_DESCUENTO}}\n[[/?]]• **Máximo de pedidos:** {{TEXTO_LIMITE_PEDIDOS}}\n[[?TEXTO_LIMITE_CAMPANA]]• **Límite de la Campaña:** {{TEXTO_LIMITE_CAMPANA}}\n[[/?]]§ Cancelaciones, devoluciones y reembolsos. Si el pedido se cancela o los productos se devuelven, el reembolso se hará sobre el valor efectivamente pagado, es decir, con el Beneficio ya aplicado, y el Beneficio no se repondrá para un pedido posterior. Si el pedido se entrega de manera parcial, el Beneficio se recalculará sobre el valor final de los productos efectivamente entregados.\n[[INCLUIR:exclusiones_descuento]]\n[[INCLUIR:publicidad]]\n[[INCLUIR:atencion]]\n[[INCLUIR:modificaciones]]\n[[INCLUIR:fraude_descuento]]\n[[INCLUIR:tyc_plataforma]]\n[[INCLUIR:responsabilidad]]\n[[INCLUIR:responsabilidad_rappi_descuento]]\n[[INCLUIR:datos]]\n[[INCLUIR:ley]]\n",
     "descuento_travel": "%% Modelo: Descuento Travel · versión 1.0 · base: docs/MODELO_BASE_TRAVEL.md, sección 7 · pendiente de revisión de Juan (docs/PENDIENTES_LEGAL.md)\n# TÉRMINOS Y CONDICIONES\n## {{NOMBRE_CAMPANA_MAYUS}}\n[[INCLUIR:travel_organizador]]\n[[INCLUIR:travel_sistemas]]\n[[INCLUIR:travel_cobertura]]\n§ Vigencia. La Campaña estará vigente desde las **{{HORA_INICIO}}** del **{{FECHA_INICIO}}** hasta las **{{HORA_FIN}}** del **{{FECHA_FIN}}** ({{TEXTO_HORA_LOCAL}})[[?TEXTO_AGOTAMIENTO_VIGENCIA_TRAVEL]], o hasta agotar {{TEXTO_AGOTAMIENTO_VIGENCIA_TRAVEL}}, lo que ocurra primero[[/?]]. Las órdenes realizadas fuera de la vigencia no darán lugar al beneficio de la Campaña.\n[[INCLUIR:travel_usuarios]]\n[[INCLUIR:travel_productos]]\n[[INCLUIR:travel_condiciones]]\n§ Mecánica y Beneficio. Para obtener el beneficio de la Campaña (en adelante, el “Beneficio”) debes comprar uno o varios Productos Participantes a través de los Sistemas Rappi Travel durante la vigencia de la Campaña y pagar la orden con un medio de pago válido para la Campaña.\n{{TEXTO_METODO_PAGO_TRAVEL}}\nEl Beneficio consiste en {{TEXTO_DESCUENTO_TRAVEL}} sobre el valor de la tarifa de los Productos Participantes[[?TEXTO_SEGUN_PRODUCTO_TRAVEL]]{{TEXTO_SEGUN_PRODUCTO_TRAVEL}}[[/?]]. El descuento se aplica directamente en el precio y el valor final con descuento se muestra antes de que pagues.[[?TEXTO_MAXIMO_DISPONIBLE_TRAVEL]] {{TEXTO_MAXIMO_DISPONIBLE_TRAVEL}}[[/?]][[?TEXTO_ASISTENCIA_TRAVEL]] {{TEXTO_ASISTENCIA_TRAVEL}}[[/?]]\n§ Cómo identificar el descuento. El descuento estará identificado en {{TEXTO_VISIBILIDAD_TRAVEL}}, y el porcentaje exacto de cada Producto Participante se mostrará antes de que pagues.\n§ Límites.\n• **Máximo de órdenes por usuario:** {{TEXTO_LIMITE_ORDENES_TRAVEL}}\n[[?TEXTO_LIMITE_CAMPANA_TRAVEL]]• **Unidades disponibles:** {{TEXTO_LIMITE_CAMPANA_TRAVEL}}\n[[/?]]§ Cambios, cancelaciones y reembolsos. Los cambios, cancelaciones y reembolsos de las órdenes con descuento se rigen por las condiciones del Proveedor y de la tarifa adquirida, que se informan antes de pagar. En caso de reembolso, se tendrá en cuenta el valor efectivamente pagado con el descuento. Si modificas la reserva, el descuento se mantendrá solo si el nuevo producto también es un Producto Participante y la modificación se hace dentro de la vigencia de la Campaña.\n§ Exclusiones y restricciones. El Beneficio no aplica para:\n• Órdenes pagadas con medios de pago diferentes a los aplicables para la Campaña o en efectivo.\n• Órdenes realizadas fuera de la vigencia de la Campaña.\n• Productos que no sean Productos Participantes, aunque se compren en la misma orden.\nEl Beneficio obtenido en virtud de la presente Campaña no es acumulable con otras promociones.\n[[INCLUIR:travel_beneficio_por_producto]]\n[[INCLUIR:travel_precio_anunciado]]\n[[INCLUIR:travel_publicidad]]\n[[INCLUIR:travel_atencion]]\n[[INCLUIR:travel_modificaciones]]\n§ Fraude, abuso y descalificación. Rappi Travel se reserva el derecho de descalificarte de la Campaña, de rechazar o cancelar órdenes y de bloquear temporal o definitivamente tu cuenta si, a juicio razonable de Rappi Travel:\n• Utilizas la Campaña de manera fraudulenta, incluido el uso de cuentas múltiples, datos falsos o la manipulación del sistema o del historial de compras.\n• Intentas alterar, manipular o interferir con el funcionamiento de los Sistemas Rappi Travel o de la Campaña.\n• Incumples los Términos y Condiciones de los Sistemas Rappi Travel o de la Plataforma Rappi.\nRappi Travel te informará la razón de la descalificación a través de los canales de comunicación de la Plataforma Rappi.\n[[INCLUIR:travel_otros_tyc]]\n[[INCLUIR:travel_responsabilidad]]\n[[INCLUIR:travel_datos]]\n[[INCLUIR:travel_ley]]\n[[?TEXTO_NOTAS_DE_MODIFICACION]]{{TEXTO_NOTAS_DE_MODIFICACION}}[[/?]]\n",
     "promocao_br": "%% Modelo: Brasil · Promoção (desconto, frete grátis, taxa de serviço) · versión 3.0\n%% Base: los cuatro T&C aprobados por Legal BR (septiembre 2026). Ver\n%% docs/MODELO_BASE_BRASIL.md para el mapa y docs/CORRECCIONES_BRASIL.md para\n%% cada corrección aplicada, con su antes y su después.\n%% EXCEPCIÓN de la regla 1 de CLAUDE.md, autorizada por Juan: en Brasil el\n%% documento está escrito con Rappi como quien concede y cancela la promoción.\n# TERMOS E CONDIÇÕES\n## {{NOMBRE_CAMPANA_MAYUS}}\nPor meio desta oferta, divulgamos os Termos e Condições da campanha “{{NOMBRE_CAMPANA}}”, na qual os usuários que realizarem compras[[?TEXTO_MINIMO_APERTURA]]{{TEXTO_MINIMO_APERTURA}}[[/?]] nas lojas do Parceiro **{{PARCEIRO}}**, na plataforma Rappi, em período específico, {{TEXTO_BENEFICIO_APERTURA}}.\n“Usuário” para fins deste T&C significa a pessoa física inscrita na plataforma Rappi.\n§ REGRAS PRINCIPAIS DA PROMOÇÃO\n• Esta campanha aplica-se apenas aos usuários cadastrados na plataforma Rappi que efetuarem a compra no período de **{{FECHA_INICIO}}** às **{{HORA_INICIO}}** até **{{FECHA_FIN}}** às **{{HORA_FIN}}**;\n• {{TEXTO_BENEFICIO_REGRA}};\n[[?TEXTO_TOPE_BENEFICIO]]• {{TEXTO_TOPE_BENEFICIO}};[[/?]]\n• {{TEXTO_LIMITE_PEDIDOS}};\n• Promoção válida nas áreas de cobertura do aplicativo em todo o território brasileiro, onde houver lojas parceiras credenciadas e com estoque dos produtos;\n• {{TEXTO_METODO_PAGO}};\n• É esclarecido que esta campanha não se aplica a pedidos parcialmente ou totalmente cancelados;\n• Promoção sujeita a disponibilidade de estoque;\n• Promoção não cumulativa com outras promoções.\n[[INCLUIR:br_condicoes_gerais]]\n[[INCLUIR:br_plataforma]]\n"
   },
@@ -1046,13 +1052,16 @@ var MODELOS = {
     "br_condicoes_gerais": "%% Bloque: Brasil · CONDIÇÕES GERAIS DA PROMOÇÃO · base: los cuatro T&C aprobados por Legal BR (septiembre 2026)\n%% Idénticas en los cuatro documentos. Las correcciones aplicadas están listadas\n%% una por una en docs/CORRECCIONES_BRASIL.md, con su antes y su después.\n§ CONDIÇÕES GERAIS DA PROMOÇÃO\nPromoção válida até a data e hora estipuladas ou enquanto durarem os estoques. Reservamo-nos o direito de cancelar qualquer transação que, devido às suas características, viole as condições de elegibilidade a esta promoção.\nEsta promoção é pessoal e intransferível, será aplicada apenas aos usuários que aplicarem a promoção.\nO Rappi se reserva o direito de encerrar esta promoção a qualquer momento em caso de fraude ou desvio do benefício para terceiros.\nO usuário reconhece e aceita que o fornecedor direto dos produtos é o Parceiro Comercial (estabelecimento), uma vez que este é o único que exibe, oferece, promove e comercializa produtos para os usuários/consumidores através da Plataforma.\nO Usuário reconhece e aceita que as informações fornecidas e registradas na plataforma virtual Rappi são verdadeiras e confiáveis, assumindo total responsabilidade por sua falsidade. As informações fornecidas terão o caráter de uma declaração juramentada, os Usuários têm total responsabilidade pela autenticidade e veracidade das mesmas, não sendo o Rappi responsável, caso o Usuário incorra na omissão e/ou erro no momento do carregamento dos dados solicitados ao Usuário para obter os benefícios da Promoção.\nO Rappi se reserva o direito de cancelar a promoção, cancelar o código e bloquear a conta do Usuário a qualquer momento, se for determinado que estão ocorrendo fraude ou ação ilícita para obtenção do benefício.\nO Rappi se reserva o direito de modificar as condições ou cancelar esta promoção a qualquer momento e a seu critério livre.\nO Rappi não permitirá que o Usuário acesse a promoção quando for verificado que as contas referidas são fictícias ou falsas, ou seja, que não constituem uma pessoa física identificável por meio de um documento de identidade emitido pela autoridade competente.\nO Rappi se reserva o direito de, a seu exclusivo critério, modificar, alterar ou atualizar estes Termos e Condições a qualquer momento. As modificações serão comunicadas no aplicativo RAPPI e entrarão em vigor imediatamente a partir do momento de sua publicação.\nO Rappi não comercializa produtos, pois é apenas uma plataforma tecnológica de intermediação entre terceiros que exibe serviços e produtos aos usuários/consumidores que os adquirem.\n",
     "br_plataforma": "%% Bloque: Brasil · cierre con los enlaces de plataforma y privacidad\n%% El texto aprobado nombraba los dos documentos sin ninguna dirección. Juan pidió\n%% meter los enlaces locales de Brasil el 17 de septiembre de 2026.\n§ Termos aplicáveis. Consulte nossos Termos de Uso e Condições da Plataforma Rappi, disponíveis em: {{URL_TC_PLATAFORMA}}, e o Aviso de Privacidade de Dados, disponível em: {{URL_PRIVACIDAD}}.\n",
     "cobertura_tienda": "%% Bloque compartido: cobertura_tienda · versión 3.0\n§ Cobertura. La Campaña es válida exclusivamente en **{{TEXTO_TERRITORIO}}** (en adelante, el “Territorio”), dentro de las zonas de cobertura de **{{TIENDA}}** (en adelante, la “Tienda Participante”) en la Plataforma Rappi. La disponibilidad puede variar según tu ubicación y los horarios de operación de los Aliados Comerciales.\n",
+    "cupon_codigo": "%% Bloque: cómo se activa el cupón · versión 1.0\n%% Texto nuevo. Es lo único que el Cupón tiene y el Descuento no: el Beneficio no\n%% se aplica solo, el Usuario/Consumidor lo activa. Anotado en\n%% docs/PENDIENTES_LEGAL.md para que lo revise el abogado de cada país.\n%% El cierre solo nombra las unidades o el presupuesto cuando la campaña los\n%% tiene: una que termina por fecha decía \"mientras queden unidades\" sin que\n%% hubiera ninguna, y esa frase, publicada, deja discutir cuándo se acabó.\n§ Cómo se activa el Beneficio. {{TEXTO_ACTIVACION_CUPON}} El Beneficio es personal e intransferible, no es canjeable por dinero en efectivo ni por otros bienes o servicios, y solo puede utilizarse durante la vigencia de la Campaña[[?TEXTO_MIENTRAS_QUEDE]] {{TEXTO_MIENTRAS_QUEDE}}[[/?]].\n",
     "datos": "%% Bloque compartido: datos · versión 3.0\n§ Tratamiento de datos personales. Los datos personales de los participantes serán tratados por **{{ENTIDAD_LEGAL}}** con la finalidad exclusiva de gestionar la participación en la Campaña, verificar el cumplimiento de los requisitos, acreditar el beneficio o gestionar el premio e informar los resultados. Dicho tratamiento se rige por la legislación aplicable y por {{POLITICA_PRIVACIDAD}}, disponible en: {{URL_PRIVACIDAD}}, previamente aceptada por el Usuario/Consumidor. Podrás ejercer en cualquier momento {{TEXTO_DERECHOS_DATOS}}, a través de los canales dispuestos para tal fin en dicho documento, así como acudir ante {{AUTORIDAD_DATOS}}.\n",
     "eta_condiciones": "%% Bloque: cashback por ETA · condiciones y restricciones\n%% Las viñetas que en los dos documentos publicados son fijas. Las que dependen\n%% de una respuesta del comercial van en el modelo, no aquí.\n§ Condiciones y restricciones.\n• Campaña válida únicamente para órdenes realizadas a través de las Tiendas Participantes[[?TEXTO_MODALIDAD_CONDICIONES]]{{TEXTO_MODALIDAD_CONDICIONES}}[[/?]].\n• {{TEXTO_LIMITE_ORDENES}}\n• El Beneficio no es acumulable con otras promociones, campañas, cupones o beneficios vigentes en la Plataforma Rappi.\n• La Campaña no requiere el ingreso de código promocional alguno; el Beneficio se aplicará automáticamente cuando se cumplan las condiciones aquí previstas.\n• Los horarios de participación están sujetos a la operación de las Tiendas Participantes.\n• En caso de cancelación, devolución o anulación de la orden, Rappi podrá descontar o revocar los Créditos otorgados. El Usuario/Consumidor Participante no tendrá derecho al Beneficio en cancelaciones totales o parciales.\n• Los Créditos no son transferibles, acumulables ni redimibles en dinero. No constituyen un medio de pago, y su finalidad no es recibir dinero en efectivo.\n",
     "eta_definiciones": "%% Bloque: cashback por ETA · definiciones · base: los T&C publicados de Bogotá (16/09/2026) y Barranquilla (1/09/2026)\n§ Definiciones. Para efectos de la presente Campaña, los términos que se indican a continuación tendrán el significado que se les atribuye:\n• **Aliado Comercial:** persona natural o jurídica que exhibe, ofrece y comercializa productos a través de la Plataforma Rappi.\n• **Cashback:** beneficio otorgado al Usuario/Consumidor consistente en un reembolso realizado en Créditos de la Plataforma Rappi equivalentes a un porcentaje o valor del pedido.\n• **Créditos:** puntos equivalentes a la moneda local, propios de la Plataforma Rappi. Se aclara que los Créditos no son transferibles, acumulables ni canjeables por dinero en efectivo.\n• **ETA (Estimated Time of Arrival):** tiempo estimado de entrega informado al Usuario/Consumidor al momento de realizar la orden, fijado para esta Campaña en {{TEXTO_ETA}}.\n",
     "eta_intermediacion": "%% Bloque: cashback por ETA · intermediación y seguridad vial\n§ Declaración de intermediación. Rappi actúa únicamente como plataforma de intermediación tecnológica, que facilita la compra de productos ofrecidos por las Tiendas Participantes, quienes son los únicos responsables de la calidad, disponibilidad y cumplimiento de los productos adquiridos. En virtud de lo anterior el Usuario/Consumidor reconoce y acepta que el oferente directo de los productos es el Aliado Comercial, y que Rappi actúa únicamente como plataforma de intermediación tecnológica, por lo que no comercializa productos ni garantiza su disponibilidad. Los presentes términos se sujetan a los Términos y Condiciones del Botón Turbo, disponibles en: {{URL_TC_TURBO}}, y a los Términos y Condiciones de Uso de la Plataforma Rappi, disponibles en: {{URL_TC_PLATAFORMA}}.\n§ Seguridad vial. Rappi no promueve que los repartidores independientes excedan los límites de velocidad ni que infrinjan las normas de tránsito. La velocidad de entrega depende de la gestión de la Tienda Participante y de las condiciones de la vía.\n",
     "exclusiones_beneficio": "%% Bloque compartido: exclusiones_beneficio · versión 3.0\n%% La frase de medicamentos y nicotina solo sale en Colombia (20 de septiembre de 2026).\n§ Exclusiones y restricciones. El Beneficio no aplica para:\n• Pedidos cancelados, devueltos o que no se completen exitosamente por cualquier causa.\n• Pedidos pagados con medios de pago diferentes a los aplicables para la Campaña.\n• Pedidos realizados fuera de la vigencia de la Campaña.\n• Propinas, costos de envío, tarifas de servicio e impuestos.\n[[?TEXTO_EXCLUSION_SALUD]]{{TEXTO_EXCLUSION_SALUD}}[[/?]]\nLa Campaña no es acumulable con otros cupones, descuentos o promociones vigentes en la Plataforma Rappi, salvo que Rappi indique expresamente lo contrario en la comunicación de la Campaña.\n",
+    "exclusiones_descuento": "%% Bloque compartido: exclusiones del Descuento y del Cupón · versión 1.0\n%% Armado, no redactado: las tres primeras viñetas y el cierre son los de\n%% modelos/bloques/exclusiones_beneficio.md, aprobado por Legal CO; la viñeta de\n%% los productos que no participan es la de modelos/descuento_travel.md.\n%% No lleva la viñeta de propinas, envío y tarifa de servicio de aquel bloque,\n%% porque aquí el Beneficio puede ser justamente el envío o la tarifa. Dónde se\n%% calcula el Beneficio lo dice la cláusula de mecánica, una vez y sin\n%% contradecirse.\n§ Exclusiones y restricciones. El Beneficio no aplica para:\n• Pedidos cancelados, devueltos o que no se completen exitosamente por cualquier causa.\n• Pedidos pagados con medios de pago diferentes a los aplicables para la Campaña.\n• Pedidos realizados fuera de la vigencia de la Campaña.\n• Productos que no sean Productos Participantes, aunque se compren en el mismo pedido.\n[[?TEXTO_EXCLUSION_SALUD]]{{TEXTO_EXCLUSION_SALUD}}[[/?]]\nLa Campaña no es acumulable con otros cupones, descuentos o promociones vigentes en la Plataforma Rappi, salvo que Rappi indique expresamente lo contrario en la comunicación de la Campaña.\n",
     "fraude": "%% Bloque compartido: fraude · versión 3.0\n§ Fraude, abuso y descalificación. Rappi se reserva el derecho de descalificarte de la Campaña y de bloquear temporal o definitivamente tu cuenta si, a juicio razonable de Rappi:\n• Utilizas la Campaña de manera fraudulenta, incluido el uso de cuentas múltiples, datos falsos o la manipulación del sistema o del historial de compras.\n• Intentas alterar, manipular o interferir con el funcionamiento de la Plataforma Rappi o de la Campaña.\n• Incumples los Términos y Condiciones de Uso de la Plataforma Rappi.\nEn caso de descalificación, Rappi podrá revocar los Créditos acreditados o el premio asignado en virtud de la Campaña que aún no hayan sido redimidos o entregados. Los Créditos ya redimidos y los premios ya entregados no serán objeto de recuperación, salvo en casos de fraude comprobado conforme a la legislación aplicable. Rappi te informará la razón de la descalificación a través de los canales de comunicación de la Plataforma Rappi.\n",
-    "inhabilidades": "%% Bloque compartido: inhabilidades para participar en un concurso · versión 1.0 · texto de Juan Camilo Gallego, 21 de septiembre de 2026 · solo para modalidades con premio y ganador\n§ Quiénes no pueden participar. Queda expresamente prohibida la participación y la entrega de premios a:\n• Los empleados, directivos, contratistas y colaboradores de Rappi y del Organizador, incluidas sus filiales, subsidiarias, sucursales, agencias de publicidad y demás proveedores logísticos o de ejecución de la Campaña.\n• Sus cónyuges y compañeros o compañeras permanentes.\n• Sus familiares hasta el segundo grado de consanguinidad, segundo de afinidad y primero civil.\nSi al verificar la elegibilidad se identifica que un posible ganador se encuentra en alguno de estos casos, será descalificado de manera automática e inmediata y perderá todo derecho sobre el premio. En ese evento se seleccionará a un nuevo ganador que cumpla la totalidad de los requisitos de elegibilidad.\n",
+    "fraude_descuento": "%% Bloque compartido: fraude, abuso y descalificación sin Créditos · versión 1.0\n%% Las tres viñetas son palabra por palabra las de modelos/bloques/fraude.md,\n%% aprobado por Legal CO. Cambia solo el párrafo final: en el Descuento y en el\n%% Cupón no hay Créditos acreditados ni premio entregado que revocar, así que\n%% aquel párrafo prometía deshacer algo que aquí no existe.\n§ Fraude, abuso y descalificación. Rappi se reserva el derecho de descalificarte de la Campaña y de bloquear temporal o definitivamente tu cuenta si, a juicio razonable de Rappi:\n• Utilizas la Campaña de manera fraudulenta, incluido el uso de cuentas múltiples, datos falsos o la manipulación del sistema o del historial de compras.\n• Intentas alterar, manipular o interferir con el funcionamiento de la Plataforma Rappi o de la Campaña.\n• Incumples los Términos y Condiciones de Uso de la Plataforma Rappi.\nEn caso de descalificación, Rappi podrá cancelar los pedidos en los que el Beneficio se haya aplicado de manera irregular y dejar de aplicarlo en los pedidos posteriores. Rappi te informará la razón de la descalificación a través de los canales de comunicación de la Plataforma Rappi.\n",
+    "inhabilidades": "%% Bloque compartido: inhabilidades para participar en un concurso · versión 1.1 · texto de Juan Camilo Gallego, 21 de septiembre de 2026 · solo para modalidades con premio y ganador\n%% v1.1 (21 de septiembre de 2026): el grado de parentesco sale de la fila del\n%% país. \"Segundo de afinidad y primero civil\" es la forma del Código Civil\n%% colombiano; el parentesco civil por adopción no se nombra igual en México ni\n%% en el Cono Sur, y el concurso ya no corre solo en Colombia. Colombia conserva\n%% palabra por palabra el texto que aprobó Juan.\n§ Quiénes no pueden participar. Queda expresamente prohibida la participación y la entrega de premios a:\n• Los empleados, directivos, contratistas y colaboradores de Rappi y del Organizador, incluidas sus filiales, subsidiarias, sucursales, agencias de publicidad y demás proveedores logísticos o de ejecución de la Campaña.\n• Sus cónyuges y compañeros o compañeras permanentes.\n• Sus familiares {{TEXTO_PARENTESCO}}.\nSi al verificar la elegibilidad se identifica que un posible ganador se encuentra en alguno de estos casos, será descalificado de manera automática e inmediata y perderá todo derecho sobre el premio. En ese evento se seleccionará a un nuevo ganador que cumpla la totalidad de los requisitos de elegibilidad.\n",
     "ley": "%% Bloque compartido: ley · versión 3.0\n§ Ley aplicable y jurisdicción. Los presentes Términos y Condiciones se rigen e interpretan de conformidad con {{LEY_APLICABLE}}. Cualquier controversia que surja con ocasión de la Campaña o de los presentes Términos y Condiciones se someterá a {{JURISDICCION}}, sin perjuicio de las acciones, derechos y mecanismos de protección que la ley reconoce a los consumidores ante {{ENTIDAD_VIGILANCIA}}.\n",
     "modificaciones": "%% Bloque compartido: modificaciones · versión 3.0\n§ Modificaciones. Rappi podrá modificar los presentes Términos y Condiciones siempre que se cumplan las siguientes condiciones:\n• Las modificaciones se publicarán en el mismo medio en que se publicaron los Términos y Condiciones originales.\n• Las modificaciones no afectarán los beneficios ya acreditados ni los premios ya asignados con anterioridad a la modificación.\n• Las modificaciones que resulten menos favorables para ti regirán a partir del día siguiente a su publicación y no tendrán efecto retroactivo.\nSi las modificaciones implican un cambio sustancial en las condiciones de la Campaña, como la reducción del beneficio o del premio, la modificación de los comercios o productos participantes o la anticipación de la fecha de finalización, Rappi hará esfuerzos razonables para informarte a través de los canales disponibles en la Plataforma Rappi.\n",
     "naturaleza_creditos": "%% Bloque compartido: naturaleza_creditos · versión 3.0\n§ Naturaleza del Beneficio. El Beneficio consiste en Créditos acreditados en tu Billetera de Créditos de la Plataforma Rappi. Al participar, reconoces y aceptas que:\n• Los Créditos son intangibles que te permiten adquirir productos y/o servicios exhibidos por los Aliados Comerciales a través de la Plataforma Rappi.\n• Los Créditos no constituyen dinero en efectivo, valores ni instrumentos financieros, y no pueden convertirse en dinero.\n• Los Créditos no son transferibles a terceros ni a otras cuentas de la Plataforma Rappi.\n• Los Créditos no son acumulables con otros cupones o promociones, salvo que Rappi indique expresamente lo contrario.\n• El funcionamiento de los Créditos se rige por los Términos y Condiciones de Funcionamiento de los Créditos de la Plataforma Rappi, disponibles en: {{URL_TC_CREDITOS}}.\n",
@@ -1060,6 +1069,7 @@ var MODELOS = {
     "publicidad": "%% Bloque compartido: publicidad · versión 3.0\n§ Publicidad y prevalencia. Las condiciones específicas de la Campaña son las establecidas en los presentes Términos y Condiciones. En caso de discrepancia entre la información contenida en piezas publicitarias, comunicaciones comerciales o cualquier otro medio de difusión y los presentes Términos y Condiciones, se aplicará la condición más favorable para ti. Rappi se compromete a que la publicidad de la Campaña sea veraz, verificable y no te induzca a error.\n",
     "responsabilidad": "%% Bloque compartido: responsabilidad · versión 3.0\n§ Limitación de responsabilidad. Rappi no será responsable por:\n• La calidad, idoneidad, seguridad o disponibilidad de los productos y/o servicios comercializados por los Aliados Comerciales a través de la Plataforma Rappi, cuya garantía corresponde exclusivamente al Aliado Comercial.\n• Las fallas técnicas, interrupciones o limitaciones en la disponibilidad de la Plataforma Rappi ajenas a su control razonable.\n• Los retrasos en la entrega de los pedidos atribuibles a los Repartidores Independientes o a causas externas.\nLos productos exhibidos en la Plataforma Rappi son ofrecidos y comercializados directamente por los Aliados Comerciales. Rappi no es el vendedor, productor ni expendedor de dichos productos, y la factura de los productos será emitida por el Aliado Comercial correspondiente. La disponibilidad de los Aliados Comerciales depende de sus horarios de operación, cobertura y condiciones propias.\n",
     "responsabilidad_rappi_beneficio": "%% Bloque compartido: responsabilidad_rappi_beneficio · versión 3.0\n§ Responsabilidades de Rappi. Rappi es responsable de: (i) la correcta acreditación de los Créditos en tu Billetera de Créditos conforme a las condiciones de la Campaña; (ii) la publicación veraz y completa de los presentes Términos y Condiciones; y (iii) la atención oportuna de tus peticiones, quejas y reclamos relacionados con la Campaña.\n",
+    "responsabilidad_rappi_descuento": "%% Bloque compartido: responsabilidades de Rappi cuando el Beneficio es un descuento · versión 1.0\n%% Es modelos/bloques/responsabilidad_rappi_beneficio.md, aprobado por Legal CO,\n%% con el punto (i) cambiado: aquí no se acredita nada en la Billetera, se rebaja\n%% el precio antes de pagar.\n§ Responsabilidades de Rappi. Rappi es responsable de: (i) la correcta aplicación del Beneficio sobre el valor del pedido conforme a las condiciones de la Campaña; (ii) la publicación veraz y completa de los presentes Términos y Condiciones; y (iii) la atención oportuna de tus peticiones, quejas y reclamos relacionados con la Campaña.\n",
     "travel_atencion": "%% Bloque de Rappi Travel: atención al usuario · versión 1.0 · base: docs/MODELO_BASE_TRAVEL.md, cláusula 17 (AJUSTADO)\n§ Atención al usuario. Para cualquier consulta, petición, queja o reclamo relacionado con la Campaña, puedes comunicarte con Rappi Travel a través de los siguientes canales:\n• El Centro de Ayuda de la Plataforma Rappi.\n• Los canales de atención de Rappi Travel disponibles en **{{URL_SITIO_TRAVEL}}**.\n",
     "travel_beneficio_por_producto": "%% Bloque compartido: beneficio que cambia segun el producto · versión 1.0 · 21 de septiembre de 2026 · base: las dos piezas de hoteles de docs/piezas_publicadas/\n[[?TEXTO_BENEFICIO_POR_PRODUCTO]]§ Beneficio por Producto Participante. El Beneficio varía según el Producto Participante seleccionado y está sujeto a disponibilidad. Participan únicamente los siguientes, con el Beneficio que se indica para cada uno:\n{{TEXTO_BENEFICIO_POR_PRODUCTO}}\nEl Beneficio aplicable a cada orden será el que corresponda al Producto Participante seleccionado, conforme a la lista anterior. Los Productos Participantes no incluidos en ella no dan lugar a Beneficio alguno. La aplicación del Beneficio está sujeta a la disponibilidad, a las fechas y a las políticas de reserva, modificación y cancelación de cada Proveedor; en caso de discrepancia entre la lista anterior y la política del Proveedor, prevalecerá esta última.[[/?]]\n",
     "travel_cobertura": "%% Bloque de Rappi Travel: cobertura · versión 1.0 · base: docs/MODELO_BASE_TRAVEL.md, cláusula 3 (AJUSTADO)\n§ Cobertura. Esta Campaña es válida exclusivamente para las órdenes realizadas a través de los Sistemas Rappi Travel en {{TEXTO_TERRITORIO}} (en adelante, el “Territorio”). La disponibilidad puede variar según tu ubicación y la oferta de los proveedores y operadores turísticos.\n",
@@ -1182,10 +1192,14 @@ var PAISES_SEMILLA = [
     "politica_privacidad": "la Política de Tratamiento de Datos Personales",
     "edad_minima": "dieciocho (18) años",
     "tipo_id_organizador": "NIT",
+    "ejemplo_id_fiscal": "900.111.222-1",
+    "donde_id_fiscal": "el RUT de la DIAN",
     "moneda_simbolo": "$",
     "separador_miles": ".",
     "termino_dias": "días calendario",
     "texto_persona": "persona natural",
+    "impuesto_indirecto": "IVA",
+    "texto_parentesco": "hasta el segundo grado de consanguinidad, segundo de afinidad y primero civil",
     "texto_hora_local": "hora local de la República de Colombia",
     "texto_derechos_datos": "tus derechos a conocer, actualizar, rectificar y suprimir tus datos personales, y a revocar la autorización otorgada",
     "por_confirmar_en_pruebas": [],
@@ -1211,7 +1225,10 @@ var PAISES_SEMILLA = [
     "estado": "activo",
     "idioma": "es",
     "modelos": [
-      "cashback"
+      "cashback",
+      "descuento",
+      "cupon",
+      "carrera_compras"
     ],
     "entidad_legal": "Tecnologías Rappi, S.A.P.I. de C.V.",
     "id_fiscal": "RFC TRA150604TW1",
@@ -1228,10 +1245,14 @@ var PAISES_SEMILLA = [
     "politica_privacidad": "el Aviso de privacidad",
     "edad_minima": "dieciocho (18) años",
     "tipo_id_organizador": "RFC",
+    "ejemplo_id_fiscal": "PRU200101AB5",
+    "donde_id_fiscal": "la constancia de situación fiscal del SAT",
     "moneda_simbolo": "$",
     "separador_miles": ",",
     "termino_dias": "días naturales",
     "texto_persona": "persona física",
+    "impuesto_indirecto": "IVA",
+    "texto_parentesco": "hasta el segundo grado por consanguinidad, afinidad o civil",
     "texto_hora_local": "hora de la Ciudad de México",
     "texto_derechos_datos": "tus derechos de acceso, rectificación, cancelación y oposición (derechos ARCO) y el de revocar tu consentimiento",
     "por_confirmar_en_pruebas": [],
@@ -1246,7 +1267,10 @@ var PAISES_SEMILLA = [
     "estado": "activo",
     "idioma": "es",
     "modelos": [
-      "cashback"
+      "cashback",
+      "descuento",
+      "cupon",
+      "carrera_compras"
     ],
     "entidad_legal": "Rappi S.A.C.",
     "id_fiscal": "RUC 20602985971",
@@ -1263,10 +1287,14 @@ var PAISES_SEMILLA = [
     "politica_privacidad": "la Política de Privacidad de Rappi y Tratamiento de Datos Personales",
     "edad_minima": "dieciocho (18) años",
     "tipo_id_organizador": "RUC",
+    "ejemplo_id_fiscal": "20512345671",
+    "donde_id_fiscal": "la ficha RUC de la SUNAT",
     "moneda_simbolo": "S/ ",
     "separador_miles": ",",
     "termino_dias": "días calendario",
     "texto_persona": "persona natural",
+    "impuesto_indirecto": "IGV",
+    "texto_parentesco": "hasta el segundo grado de consanguinidad y segundo de afinidad",
     "texto_hora_local": "hora local de la República del Perú",
     "texto_derechos_datos": "tus derechos de acceso, actualización, inclusión, rectificación, supresión y oposición sobre tus datos personales, y el de revocar tu consentimiento",
     "por_confirmar_en_pruebas": [],
@@ -1281,7 +1309,10 @@ var PAISES_SEMILLA = [
     "estado": "activo",
     "idioma": "es",
     "modelos": [
-      "cashback"
+      "cashback",
+      "descuento",
+      "cupon",
+      "carrera_compras"
     ],
     "entidad_legal": "RAPPI ARG S.A.S.",
     "id_fiscal": "CUIT 30-71580389-1",
@@ -1298,10 +1329,14 @@ var PAISES_SEMILLA = [
     "politica_privacidad": "la Política de Privacidad de Rappi",
     "edad_minima": "dieciocho (18) años",
     "tipo_id_organizador": "CUIT",
+    "ejemplo_id_fiscal": "30-71234567-1",
+    "donde_id_fiscal": "la constancia de inscripción de ARCA",
     "moneda_simbolo": "$",
     "separador_miles": ".",
     "termino_dias": "días corridos",
     "texto_persona": "persona humana",
+    "impuesto_indirecto": "IVA",
+    "texto_parentesco": "hasta el segundo grado de parentesco por consanguinidad o afinidad",
     "texto_hora_local": "hora local de la República Argentina",
     "texto_derechos_datos": "tus derechos de acceso, rectificación, actualización y supresión de tus datos personales",
     "por_confirmar_en_pruebas": [],
@@ -1316,7 +1351,10 @@ var PAISES_SEMILLA = [
     "estado": "activo",
     "idioma": "es",
     "modelos": [
-      "cashback"
+      "cashback",
+      "descuento",
+      "cupon",
+      "carrera_compras"
     ],
     "entidad_legal": "Rappi Chile SpA",
     "id_fiscal": "RUT 76.837.223-3",
@@ -1333,10 +1371,14 @@ var PAISES_SEMILLA = [
     "politica_privacidad": "la Política de Privacidad",
     "edad_minima": "dieciocho (18) años",
     "tipo_id_organizador": "RUT",
+    "ejemplo_id_fiscal": "76.123.456-0",
+    "donde_id_fiscal": "la carpeta tributaria del SII",
     "moneda_simbolo": "$",
     "separador_miles": ".",
     "termino_dias": "días corridos",
     "texto_persona": "persona natural",
+    "impuesto_indirecto": "IVA",
+    "texto_parentesco": "hasta el segundo grado de consanguinidad y de afinidad",
     "texto_hora_local": "hora de Santiago de Chile",
     "texto_derechos_datos": "tus derechos de acceso, rectificación, supresión y bloqueo de tus datos personales, y los demás que te reconozca la legislación vigente",
     "por_confirmar_en_pruebas": [],
@@ -1351,7 +1393,10 @@ var PAISES_SEMILLA = [
     "estado": "activo",
     "idioma": "es",
     "modelos": [
-      "cashback"
+      "cashback",
+      "descuento",
+      "cupon",
+      "carrera_compras"
     ],
     "entidad_legal": "RAPPIEC S.A.S.",
     "id_fiscal": "RUC 1793010105001",
@@ -1368,10 +1413,14 @@ var PAISES_SEMILLA = [
     "politica_privacidad": "la Política de privacidad de Rappi y Tratamiento de datos personales",
     "edad_minima": "dieciocho (18) años",
     "tipo_id_organizador": "RUC",
+    "ejemplo_id_fiscal": "1791234561001",
+    "donde_id_fiscal": "el certificado del RUC del SRI",
     "moneda_simbolo": "$",
     "separador_miles": ",",
     "termino_dias": "días calendario",
     "texto_persona": "persona natural",
+    "impuesto_indirecto": "IVA",
+    "texto_parentesco": "hasta el segundo grado de consanguinidad y segundo de afinidad",
     "texto_hora_local": "hora del Ecuador continental",
     "texto_derechos_datos": "tus derechos de acceso, rectificación y actualización, eliminación, oposición, portabilidad y suspensión del tratamiento de tus datos personales",
     "por_confirmar_en_pruebas": [],
@@ -1386,7 +1435,10 @@ var PAISES_SEMILLA = [
     "estado": "activo",
     "idioma": "es",
     "modelos": [
-      "cashback"
+      "cashback",
+      "descuento",
+      "cupon",
+      "carrera_compras"
     ],
     "entidad_legal": "Brisanier S.A.",
     "id_fiscal": "RUT 218175850017",
@@ -1403,10 +1455,14 @@ var PAISES_SEMILLA = [
     "politica_privacidad": "el Aviso de privacidad",
     "edad_minima": "dieciocho (18) años",
     "tipo_id_organizador": "RUT",
+    "ejemplo_id_fiscal": "212345670015",
+    "donde_id_fiscal": "la constancia de inscripción de la DGI",
     "moneda_simbolo": "$",
     "separador_miles": ".",
     "termino_dias": "días corridos",
     "texto_persona": "persona física",
+    "impuesto_indirecto": "IVA",
+    "texto_parentesco": "hasta el segundo grado de consanguinidad y de afinidad",
     "texto_hora_local": "hora local de la República Oriental del Uruguay",
     "texto_derechos_datos": "tus derechos de acceso, rectificación, actualización, inclusión y supresión de tus datos personales",
     "por_confirmar_en_pruebas": [],
@@ -1421,7 +1477,10 @@ var PAISES_SEMILLA = [
     "estado": "activo",
     "idioma": "es",
     "modelos": [
-      "cashback"
+      "cashback",
+      "descuento",
+      "cupon",
+      "carrera_compras"
     ],
     "entidad_legal": "RAPPI PURA VIDA, S.A.",
     "id_fiscal": "cédula jurídica 3-101-768820",
@@ -1438,10 +1497,14 @@ var PAISES_SEMILLA = [
     "politica_privacidad": "la Política de Privacidad de Rappi",
     "edad_minima": "dieciocho (18) años",
     "tipo_id_organizador": "cédula jurídica",
+    "ejemplo_id_fiscal": "3-101-123450",
+    "donde_id_fiscal": "la personería jurídica del Registro Nacional",
     "moneda_simbolo": "₡",
     "separador_miles": ".",
     "termino_dias": "días naturales",
     "texto_persona": "persona física",
+    "impuesto_indirecto": "IVA",
+    "texto_parentesco": "hasta el segundo grado de consanguinidad y de afinidad",
     "texto_hora_local": "hora local de la República de Costa Rica",
     "texto_derechos_datos": "tus derechos de acceso, rectificación y supresión de tus datos personales, y el de revocar tu consentimiento",
     "por_confirmar_en_pruebas": [],
@@ -1456,7 +1519,8 @@ var PAISES_SEMILLA = [
     "estado": "activo",
     "idioma": "pt",
     "modelos": [
-      "promocao_br"
+      "promocao_br",
+      "cupom_br"
     ],
     "entidad_legal": "RAPPI BRASIL INTERMEDIAÇÃO DE NEGÓCIOS LTDA",
     "id_fiscal": "CNPJ 26.900.161/0001-25",
@@ -1473,10 +1537,14 @@ var PAISES_SEMILLA = [
     "politica_privacidad": "o Aviso de Privacidade e Políticas de uso das Informação utilizadas pela Rappi",
     "edad_minima": "dezoito (18) anos",
     "tipo_id_organizador": "CNPJ",
+    "ejemplo_id_fiscal": "12.345.678/0001-95",
+    "donde_id_fiscal": "el comprobante de inscripción de la Receita Federal",
     "moneda_simbolo": "R$",
     "separador_miles": ".",
     "termino_dias": "dias corridos",
     "texto_persona": "pessoa física",
+    "impuesto_indirecto": "ICMS",
+    "texto_parentesco": "",
     "texto_hora_local": "horário de Brasília",
     "texto_derechos_datos": "",
     "por_confirmar_en_pruebas": [],
@@ -1486,7 +1554,7 @@ var PAISES_SEMILLA = [
     "url_acuerdo_datos": ""
   }
 ];
-var PAISES_VERSION = "2026-09-20";
+var PAISES_VERSION = "2026-09-21";
 var CONFIRMACIONES_LEGALES = [
   {
     "id": "encargo-01-2026-09-18",
@@ -1563,6 +1631,48 @@ var CONFIRMACIONES_LEGALES = [
     "nota": "La autoridad de consumo de Argentina. La dependencia firma con ese nombre sus disposiciones de 2026 y la salvaguarda final la cubre si la vuelven a renombrar, que ya paso varias veces. Juan lo decidio el 20 de septiembre.",
     "campos": [
       "AR.entidad_vigilancia"
+    ]
+  },
+  {
+    "id": "descuentos-cupones-concursos-2026-09-21",
+    "nota": "Descuento, Cupon y Carrera de Compras quedan habilitados en los ocho paises que no son Colombia, y Cupom en Brasil. La tanda escribe los cuatro datos nuevos que esos modelos necesitan (el ejemplo y la procedencia del identificador tributario, el nombre del impuesto indirecto y el grado de parentesco de la clausula de inhabilidades) pisando lo que hubiera, porque son columnas nuevas y lo que la hoja tenga escrito ahi lo puso esta misma tanda. La columna modelos no entra: ponerPaisesAlDia ya suma los que trae la semilla sin quitar ninguno.",
+    "campos": [
+      "CO.ejemplo_id_fiscal",
+      "CO.donde_id_fiscal",
+      "CO.impuesto_indirecto",
+      "CO.texto_parentesco",
+      "MX.ejemplo_id_fiscal",
+      "MX.donde_id_fiscal",
+      "MX.impuesto_indirecto",
+      "MX.texto_parentesco",
+      "PE.ejemplo_id_fiscal",
+      "PE.donde_id_fiscal",
+      "PE.impuesto_indirecto",
+      "PE.texto_parentesco",
+      "AR.ejemplo_id_fiscal",
+      "AR.donde_id_fiscal",
+      "AR.impuesto_indirecto",
+      "AR.texto_parentesco",
+      "CL.ejemplo_id_fiscal",
+      "CL.donde_id_fiscal",
+      "CL.impuesto_indirecto",
+      "CL.texto_parentesco",
+      "EC.ejemplo_id_fiscal",
+      "EC.donde_id_fiscal",
+      "EC.impuesto_indirecto",
+      "EC.texto_parentesco",
+      "UY.ejemplo_id_fiscal",
+      "UY.donde_id_fiscal",
+      "UY.impuesto_indirecto",
+      "UY.texto_parentesco",
+      "CR.ejemplo_id_fiscal",
+      "CR.donde_id_fiscal",
+      "CR.impuesto_indirecto",
+      "CR.texto_parentesco",
+      "BR.ejemplo_id_fiscal",
+      "BR.donde_id_fiscal",
+      "BR.impuesto_indirecto",
+      "BR.texto_parentesco"
     ]
   }
 ];
@@ -2292,9 +2402,11 @@ var AVISO_AZAR = {
     'Cashback Multitienda: varias tiendas hacen cashback dentro de la misma jornada, cada una con su propio porcentaje, su tope y su presupuesto.',
     '15 minutos o Cashback: Rappi promete un tiempo de entrega en el botón Turbo y, si la orden llega tarde, devuelve en Créditos parte de lo que el usuario pagó.',
     'Cashback Travel y Descuento Travel: las dos formas de campaña de vuelos, hoteles, autos y paquetes.',
+    'Descuento: la tienda baja el precio, o regala el envío o la tarifa de servicio. Todos los que compran lo reciben.',
+    'Cupón: lo mismo, pero el usuario lo activa con un código o desde la sección “Cupones”. Quien lo activa lo recibe.',
     // No genera documento, pero sí se resuelve aquí: el comercial entra, pasa
     // el filtro y se lleva el enlace que va en la pieza (encargo 02).
-    'Descuentos, cupones, envío gratis y tarifa de servicio: ya tienen T&C publicados y no generas nada.',
+    'En Colombia, los descuentos, los cupones, el envío gratis y la tarifa de servicio ya tienen T&C publicados y no generas nada.',
   ],
   noValidas: [
     'Sorteo entre todos los participantes, aunque sea "entre quienes compren".',
@@ -2591,8 +2703,8 @@ var PREGUNTAS_FRECUENTES = [
     respuesta: 'Si es para alargarla o subir el presupuesto, sí: en Mis campañas, botón Ampliar. Para acortarla o bajar algo, habla con Legal, porque afecta a quien ya participó.',
   },
   {
-    pregunta: 'El NIT del aliado no pasa la validación.',
-    respuesta: 'Casi siempre es el dígito de verificación, el número después del guion. Pídele el RUT a tu contacto y cópialo de ahí. Si el RUT dice un número y la validación lo rechaza, avísanos en el canal de ayuda: es una falla de la herramienta.',
+    pregunta: 'La identificación del aliado no pasa la validación.',
+    respuesta: 'El número que te pedimos cambia según el país: NIT en Colombia, RFC en México, RUC en Perú y Ecuador, CUIT en Argentina, RUT en Chile y Uruguay, cédula jurídica en Costa Rica y CNPJ en Brasil. La pregunta te dice cuál es y dónde buscarlo. Casi siempre falla el dígito de verificación: pídele el documento tributario a tu contacto y cópialo de ahí. Si el documento dice un número y la validación lo rechaza, avísanos en el canal de ayuda: es una falla de la herramienta.',
   },
   {
     pregunta: '¿Puedo poner varias tiendas en una misma campaña?',
@@ -2600,7 +2712,7 @@ var PREGUNTAS_FRECUENTES = [
   },
   {
     pregunta: '¿Qué es un Maker y en qué cambia las cosas?',
-    respuesta: 'Es la marca que fabrica el producto, distinta de la tienda que lo vende. Si el Maker pone la plata, el Maker es el Organizador y va su razón social y su NIT, no los de la tienda.',
+    respuesta: 'Es la marca que fabrica el producto, distinta de la tienda que lo vende. Si el Maker pone la plata, el Maker es el Organizador y van su razón social y su identificación tributaria, no las de la tienda.',
   },
   {
     pregunta: '¿Por qué Rappi no puede ser el organizador?',
@@ -2615,8 +2727,16 @@ var PREGUNTAS_FRECUENTES = [
     respuesta: 'En una carpeta de Drive por país, nunca en una carpeta general. Tú quedas como lector del documento y el enlace te llega por correo.',
   },
   {
-    pregunta: 'Mi campaña es un descuento o un cupón y no la veo en la lista de tipos.',
-    respuesta: 'Buena noticia: para esas campañas no hay que generar nada. En Colombia, Legal ya publicó los T&C generales de los descuentos, los cupones, el envío gratis y la tarifa de servicio gratis. Debajo de la lista de tipos de campaña hay una opción que te lleva a ellos, y ahí copias el enlace que va en la pieza.',
+    pregunta: 'Mi campaña es un descuento o un cupón. ¿Qué hago?',
+    respuesta: 'Depende del país. En Colombia no hay que generar nada: Legal ya publicó los T&C generales de los descuentos, los cupones, el envío gratis y la tarifa de servicio gratis, y debajo de la lista de tipos de campaña hay una opción que te lleva a ellos para copiar el enlace que va en la pieza. En los demás países sí generas tu documento, con los tipos Descuento y Cupón.',
+  },
+  {
+    pregunta: '¿En qué se diferencian el Descuento y el Cupón?',
+    respuesta: 'En una sola cosa: quién hace algo. El Descuento se aplica solo, en el precio que el usuario ve antes de pagar. El Cupón hay que activarlo: el usuario escribe un código o lo toma en la sección “Cupones” de la app, y si no lo activa no recibe el beneficio. Si tu campaña tiene código, es Cupón.',
+  },
+  {
+    pregunta: 'Quiero hacer una Carrera de Compras en Brasil y no me aparece.',
+    respuesta: 'En Brasil un concurso con premio necesita autorización previa de la Secretaria de Prêmios e Apostas antes de lanzarse, así que esa campaña no se puede generar sola: escríbele a Legal con tiempo, porque el trámite no es inmediato. En los demás países sí la generas aquí, porque la Carrera se gana por lo que cada persona compró y no por suerte.',
   },
 ];
 
@@ -2794,6 +2914,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var esquemaDe = moduloEsquemas2.esquemaDe;
 
   var calcularDerivadosTravel = require('./derivados_travel.js').calcularDerivadosTravel;
+  var calcularDerivadosDescuento = require('./derivados_descuento.js').calcularDerivadosDescuento;
   var calcularDerivadosBr = require('./derivados_br.js').calcularDerivadosBr;
   var moduloEta = require('./derivados_eta.js');
   var calcularDerivadosEta = moduloEta.calcularDerivadosEta;
@@ -2952,6 +3073,10 @@ var VALORES_DEL_PAIS = {
   EDAD_MINIMA: 'edad_minima',
   TEXTO_PERSONA: 'texto_persona',
   TEXTO_HORA_LOCAL: 'texto_hora_local',
+  // El grado de parentesco de la clausula de inhabilidades. Sale de la fila
+  // porque el Codigo Civil de cada pais lo nombra distinto, y desde el 21 de
+  // septiembre de 2026 el concurso ya no corre solo en Colombia.
+  TEXTO_PARENTESCO: 'texto_parentesco',
 };
 
 // --- Ayudas ----------------------------------------------------------------
@@ -3125,10 +3250,13 @@ function textoProductos(entrada) {
  * La frase del premio fisico, con su valor comercial cuando el pais lo pide.
  *
  * Los dos textos con valor son los de la decision 36 (ii) del encargo 01, que
- * Juan confirmo el 20 de septiembre de 2026 (punto D3). Dicen "pesos M/Cte." y
- * "IVA incluido", que son de Colombia, asi que solo salen alli: la pregunta del
- * valor tampoco se hace en otro pais. En los demas la frase queda como estaba,
- * y cada pais escribe la suya el dia que la Carrera se habilite alla.
+ * Juan confirmo el 20 de septiembre de 2026 (punto D3). Decian "pesos M/Cte." y
+ * "IVA incluido", que son de Colombia, y por eso la frase salia solo alli.
+ *
+ * Desde el 21 de septiembre de 2026 sale en todos los paises: la moneda ya venia
+ * de la fila del pais y el impuesto tambien viene de ahi (IVA, IGV, ICMS). Un
+ * pais sin impuesto escrito imprime la frase sin esa coletilla, entera y sin
+ * comas sueltas, en vez de anunciar un impuesto que nadie confirmo.
  *
  * Con varios ganadores el total es el valor de un premio por el numero de
  * ganadores: es lo que el documento tiene que declarar, y calcularlo aqui evita
@@ -3138,19 +3266,21 @@ function fraseDelPremioFisico(entrada, pais, ganadores) {
   var quien = ganadores > 1 ? 'Cada ganador' : 'El ganador';
   var descripcion = entrada.descripcionPremio;
 
-  if (String(pais.codigo || '').toUpperCase() !== 'CO' || !tieneValor(entrada.valorPremio)) {
+  if (!tieneValor(entrada.valorPremio)) {
     return quien + ' recibirá el siguiente premio: ' + descripcion + '.';
   }
 
+  var impuesto = String(pais.impuesto_indirecto || '').trim();
+  var conImpuesto = impuesto ? ', ' + impuesto + ' incluido' : '';
   var unitario = montoConMoneda(entrada.valorPremio, pais);
   if (ganadores > 1) {
     var total = montoConMoneda(Number(entrada.valorPremio) * ganadores, pais);
     return 'Cada ganador recibirá el siguiente premio: ' + descripcion +
-      ', con un valor comercial unitario de ' + unitario + ', IVA incluido. ' +
+      ', con un valor comercial unitario de ' + unitario + conImpuesto + '. ' +
       'El valor comercial total de los premios de la Campaña es de ' + total + '.';
   }
   return 'El ganador recibirá el siguiente premio: ' + descripcion +
-    ', con un valor comercial de ' + unitario + ', IVA incluido.';
+    ', con un valor comercial de ' + unitario + conImpuesto + '.';
 }
 
 /** Derivados propios de la Carrera de Compras. */
@@ -3334,6 +3464,18 @@ function calcularDerivadosEnElIdiomaDelPais(entrada, pais) {
     }
   }
 
+  // El Descuento y el Cupon no dan Creditos: rebajan el precio o quitan un
+  // cargo del pedido. Mismo patron que Travel: encima, sin tocar nada del
+  // Cashback, que es el que Legal CO tiene aprobado.
+  if (esquemaActual && esquemaActual.esDeDescuento) {
+    var deDescuento = calcularDerivadosDescuento(entrada, pais);
+    for (var llaveDescuento in deDescuento) {
+      if (Object.prototype.hasOwnProperty.call(deDescuento, llaveDescuento)) {
+        valores[llaveDescuento] = deDescuento[llaveDescuento];
+      }
+    }
+  }
+
   // Brasil tiene su propio modelo y sus propios textos, en portugues y con su
   // excepcion sobre el organizador. Mismo patron que Travel: encima, sin tocar
   // nada de delivery.
@@ -3389,6 +3531,10 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 
   var listaY = require('./fechas.js').listaY;
   var tieneValor = require('./texto.js').tieneValor;
+  // El codigo del Cupom se normaliza una sola vez, en el modulo del Cupon:
+  // "jumbo 30" y "JUMBO30" son el mismo cupom en la aplicacion y tienen que
+  // salir iguales en el documento, aqui y en espanol.
+  var codigoDeCupon = require('./derivados_descuento.js').codigoDeCupon;
 }
 
 /** Las cuatro formas del beneficio, tal como las nombran los documentos. */
@@ -3521,6 +3667,9 @@ function textoMetodoPagoBr(entrada) {
 function calcularDerivadosBr(entrada, pais) {
   return {
     PARCEIRO: String(entrada.tienda || '').trim(),
+    // Solo lo usa cupom_br. En promocao_br no hay codigo, el modelo no lo pide
+    // y un valor de mas no imprime nada.
+    CODIGO_CUPON: codigoDeCupon(entrada),
     TEXTO_MINIMO_APERTURA: textoMinimoAperturaBr(entrada, pais),
     TEXTO_BENEFICIO_APERTURA: textoBeneficioAperturaBr(entrada),
     TEXTO_BENEFICIO_REGRA: textoBeneficioRegraBr(entrada, pais),
@@ -3536,6 +3685,298 @@ if (typeof module !== 'undefined') {
     METODOS_DE_PAGO_BR: METODOS_DE_PAGO_BR,
     formaDeBeneficioBr: formaDeBeneficioBr,
     calcularDerivadosBr: calcularDerivadosBr,
+  };
+}
+
+// --- src/core/derivados_descuento.js ---
+'use strict';
+
+/**
+ * Los textos del Descuento y del Cupon.
+ *
+ * Vive aparte de derivados.js por la misma razon que Travel y Brasil: son dos
+ * modelos nuevos, habilitados fuera de Colombia, y una campana de Mexico no
+ * puede mover una frase que Legal CO ya tiene aprobada para el Cashback.
+ *
+ * Los dos tipos comparten casi todo. Lo unico que el Cupon tiene y el Descuento
+ * no es la clausula de activacion: el descuento se aplica solo, el cupon lo
+ * activa el Usuario/Consumidor.
+ *
+ * Marca ORACION: devuelve oracion completa (mayuscula inicial y punto final).
+ * Marca FRAGMENTO: se inserta dentro de otra frase (sin mayuscula ni punto).
+ */
+
+/* En Node las dependencias se cargan con require; en Apps Script ya son globales. */
+if (typeof module !== 'undefined' && typeof require === 'function') {
+  var moduloNumerosDescuento = require('./numeros.js');
+  var montoConMoneda = moduloNumerosDescuento.montoConMoneda;
+  var porcentajeEnLetras = moduloNumerosDescuento.porcentajeEnLetras;
+  var letrasYCifra = moduloNumerosDescuento.letrasYCifra;
+  var formatearMiles = moduloNumerosDescuento.formatearMiles;
+
+  var tieneValor = require('./texto.js').tieneValor;
+}
+
+/**
+ * Las cinco formas que puede tomar el beneficio.
+ *
+ * Las dos primeras rebajan el precio de los productos; las tres ultimas quitan
+ * un cargo del pedido. La distincion no es de forma: decide sobre que se
+ * calcula el beneficio, y por eso cada una trae su propia frase de base de
+ * calculo. Un documento que diga "sin incluir el costo de envio" en una campana
+ * cuyo beneficio es justamente el envio se contradice solo.
+ *
+ * Las tres ultimas son las mismas que Legal Brasil tiene aprobadas en los
+ * cuatro T&C de septiembre de 2026 (frete gratis, taxa de servico, las dos
+ * juntas). Aqui van en espanol porque es el mismo caso de negocio.
+ */
+var FORMAS_DEL_DESCUENTO = [
+  { valor: 'porcentaje', llevaPorcentaje: true, llevaTope: true },
+  // Con monto fijo el tope ya es el monto, y la tarifa de servicio no lleva
+  // tope en ninguno de los documentos aprobados. El envio si: es el caso que
+  // Legal Brasil ya tiene escrito ("o frete gratis esta limitado a R$20,00").
+  { valor: 'monto', llevaMonto: true, llevaTope: false },
+  { valor: 'envio', llevaTope: true, esDeCargo: true },
+  { valor: 'tarifa_servicio', llevaTope: false },
+  { valor: 'envio_y_tarifa', llevaTope: true, esDeCargo: true },
+];
+
+function formaDelDescuento(valor) {
+  for (var i = 0; i < FORMAS_DEL_DESCUENTO.length; i++) {
+    if (FORMAS_DEL_DESCUENTO[i].valor === valor) return FORMAS_DEL_DESCUENTO[i];
+  }
+  return null;
+}
+
+/** Si esta forma del beneficio admite un tope por pedido. */
+function admiteTopeDeDescuento(entrada) {
+  var forma = formaDelDescuento(entrada.formaDelDescuento);
+  return !!forma && !!forma.llevaTope;
+}
+
+/*
+ * La base de calculo, una por forma del beneficio.
+ *
+ * Sale de la clausula de mecanica de modelos/cashback.md ("El valor sobre el
+ * cual se calcula el Beneficio corresponde exclusivamente al precio de los
+ * productos adquiridos, sin incluir el costo de envio, la tarifa de servicio ni
+ * las propinas"), dicha para cada una de las cinco formas.
+ */
+var TEXTO_BASE_POR_FORMA = {
+  porcentaje: 'El Beneficio se calcula exclusivamente sobre el precio de los Productos Participantes, sin incluir el costo de envío, la tarifa de servicio ni las propinas.',
+  monto: 'El Beneficio se calcula exclusivamente sobre el precio de los Productos Participantes, sin incluir el costo de envío, la tarifa de servicio ni las propinas.',
+  envio: 'El Beneficio cubre únicamente el costo de envío del pedido; el precio de los productos, la tarifa de servicio y las propinas se pagan íntegramente.',
+  tarifa_servicio: 'El Beneficio cubre únicamente la tarifa de servicio del pedido; el precio de los productos, el costo de envío y las propinas se pagan íntegramente.',
+  envio_y_tarifa: 'El Beneficio cubre únicamente el costo de envío y la tarifa de servicio del pedido; el precio de los productos y las propinas se pagan íntegramente.',
+};
+
+/** FRAGMENTO: en que consiste el Beneficio. Cierra la frase "El Beneficio consiste en ...". */
+function textoBeneficioDescuento(entrada, pais) {
+  var forma = formaDelDescuento(entrada.formaDelDescuento);
+  if (!forma) return '';
+
+  if (forma.valor === 'porcentaje') {
+    if (!tieneValor(entrada.porcentaje)) return '';
+    return 'un descuento del **' + porcentajeEnLetras(entrada.porcentaje) +
+      '** sobre el precio de los Productos Participantes';
+  }
+  if (forma.valor === 'monto') {
+    if (!tieneValor(entrada.montoDescuento)) return '';
+    return 'un descuento de **' + montoConMoneda(entrada.montoDescuento, pais) +
+      '** sobre el precio de los Productos Participantes';
+  }
+  if (forma.valor === 'envio') return 'la exoneración del costo de envío del pedido';
+  if (forma.valor === 'tarifa_servicio') return 'la exoneración de la tarifa de servicio del pedido';
+  return 'la exoneración del costo de envío y de la tarifa de servicio del pedido';
+}
+
+/** ORACION: sobre que se calcula el Beneficio. */
+function textoBaseDescuento(entrada) {
+  return TEXTO_BASE_POR_FORMA[entrada.formaDelDescuento] || '';
+}
+
+/**
+ * ORACION: que productos participan.
+ *
+ * Mismo reparto que en la Carrera de Compras (todos, los de una marca o una
+ * lista con codigo de barras), porque el problema es el mismo: si el documento
+ * no dice cuales son los Productos Participantes, el usuario reclama el
+ * descuento sobre cualquier cosa del catalogo.
+ */
+function textoProductosDescuento(entrada) {
+  if (entrada.productos === 'todos') {
+    return 'La Campaña aplica para todos los productos del catálogo de la Tienda Participante en la Plataforma Rappi (en adelante, los “Productos Participantes”).';
+  }
+  if (entrada.productos === 'marca') {
+    var marca = String(entrada.makerMarca || '').trim();
+    if (!marca) return '';
+    return 'La Campaña aplica únicamente para los productos de la marca ' + marca +
+      ' disponibles en la Tienda Participante a través de la Plataforma Rappi (en adelante, los “Productos Participantes”).';
+  }
+  if (entrada.productos !== 'especificos') return '';
+
+  /*
+   * Con nombre y codigo de barras, igual que en la Carrera. Va en vinnetas y no
+   * en tabla: el sitio donde se publica no muestra tablas (regla 5).
+   */
+  var productos = entrada.productosDetalle || [];
+  if (productos.length === 0) return '';
+
+  var lineas = ['La Campaña aplica únicamente para los siguientes productos de la Tienda Participante, ' +
+    'identificados con su nombre y su código de barras EAN (en adelante, los “Productos Participantes”):'];
+  for (var i = 0; i < productos.length; i++) {
+    var nombre = String((productos[i] || {}).nombre || '').trim();
+    var ean = String((productos[i] || {}).ean || '').replace(/\D/g, '');
+    // Un producto a medias deja la vinneta rota: mejor un hueco entero, que el
+    // motor anuncia, que una lista con una linea sin nombre o sin EAN.
+    if (!nombre || !ean) return '';
+    lineas.push('• ' + nombre + ' (EAN ' + ean + ')');
+  }
+  lineas.push('Solo dan derecho al Beneficio las unidades cuyo código EAN coincida con alguno de los anteriores.');
+  return lineas.join('\n');
+}
+
+/**
+ * ORACION, opcional: el tope por pedido, dentro de su vinneta.
+ *
+ * Cuando el Beneficio es un cargo del pedido (el envio, o el envio y la tarifa)
+ * la frase dice ademas quien paga lo que pase del tope. Sin eso, un usuario con
+ * un envio de mas que el tope podria entender que la campana se lo cubre entero
+ * o que no le cubre nada. Es la misma aclaracion del documento aprobado de
+ * Frete Gratis de Brasil, en espanol.
+ */
+function textoTopeDescuento(entrada, pais) {
+  var forma = formaDelDescuento(entrada.formaDelDescuento);
+  if (!forma || !forma.llevaTope || !tieneValor(entrada.tope)) return '';
+
+  var frase = 'el Beneficio máximo por cada pedido es de **' + montoConMoneda(entrada.tope, pais) + '**';
+  if (forma.esDeCargo) {
+    return frase + '; el valor que exceda ese monto lo asume el Usuario/Consumidor.';
+  }
+  return frase + '.';
+}
+
+/**
+ * "mil (1.000)": las letras y la cifra, con el separador de miles del pais.
+ *
+ * letrasYCifra() escribe la cifra sin separador, que es lo correcto para un
+ * numero pequeno ("un (1) pedido", "veintiun (21) participantes"). Aqui las
+ * unidades de una campana llegan a cinco cifras, y "(25000)" al lado de un
+ * "$25.000" del mismo documento se lee como un descuido.
+ */
+function unidadesEnLetras(cantidad, pais) {
+  var letras = letrasYCifra(cantidad);
+  return letras.replace(/\((\d+)\)$/, function (todo, cifra) {
+    return '(' + formatearMiles(cifra, pais.separador_miles) + ')';
+  });
+}
+
+/** FRAGMENTO, opcional: que se agota antes de la fecha de fin. */
+function textoAgotamiento(entrada) {
+  if (entrada.agotamiento === 'presupuesto') return 'el presupuesto disponible';
+  if (entrada.agotamiento === 'unidades') return 'las unidades disponibles';
+  return '';
+}
+
+/** ORACION, opcional: el limite de la Campana, dentro de su vinneta. */
+function textoLimiteCampana(entrada, pais) {
+  if (entrada.agotamiento === 'presupuesto') {
+    if (!tieneValor(entrada.presupuesto)) return '';
+    return 'la Campaña tiene un presupuesto total de **' + montoConMoneda(entrada.presupuesto, pais) +
+      '**. Una vez agotado, la Campaña finalizará automáticamente, aunque no haya terminado su vigencia.';
+  }
+  if (entrada.agotamiento === 'unidades') {
+    var unidades = Math.trunc(Number(entrada.unidadesDisponibles));
+    if (!isFinite(unidades) || unidades < 1) return '';
+    // "un (1) pedidos con Beneficio" se lee como un descuido en un documento
+    // que se publica; con uno solo la frase va entera en singular.
+    var sustantivo = unidades === 1 ? 'pedido con Beneficio' : 'pedidos con Beneficio';
+    var verbo = unidades === 1 ? 'Una vez agotado' : 'Una vez agotados';
+    return 'la Campaña cuenta con **' + unidadesEnLetras(unidades, pais) + '** ' + sustantivo +
+      '. ' + verbo + ', la Campaña finalizará automáticamente, aunque no haya terminado su vigencia.';
+  }
+  return '';
+}
+
+/**
+ * ORACION: como se activa el cupon.
+ *
+ * Dos formas reales: un codigo que el usuario escribe, y el cupon que toma
+ * desde la seccion "Cupones" de la aplicacion. La diferencia importa porque el
+ * documento tiene que decir exactamente que hay que hacer: un usuario que no
+ * activo el cupon no recibe el Beneficio y reclama con el T&C en la mano.
+ */
+function textoActivacionCupon(entrada) {
+  if (entrada.activacionCupon === 'codigo') {
+    var codigo = codigoDeCupon(entrada);
+    if (!codigo) return '';
+    return 'Para acceder al Beneficio debes ingresar el código **' + codigo +
+      '** en la sección “Cupones” de la Plataforma Rappi antes de confirmar el pedido.';
+  }
+  if (entrada.activacionCupon === 'seccion') {
+    return 'Para acceder al Beneficio debes activar el cupón de la Campaña en la sección “Cupones” ' +
+      'de la Plataforma Rappi antes de confirmar el pedido.';
+  }
+  return '';
+}
+
+/**
+ * FRAGMENTO, opcional: hasta cuando dura el cupon, aparte de la fecha.
+ *
+ * Solo cuando la campana tiene con que acabarse antes. Sin esto, un cupon que
+ * termina en la fecha de fin decia "mientras queden unidades disponibles" sin
+ * que hubiera ninguna unidad declarada en el documento, y esa frase publicada
+ * deja discutir cuando se acabo la campana.
+ */
+function textoMientrasQuede(entrada) {
+  if (entrada.agotamiento === 'unidades') return 'y mientras queden unidades disponibles';
+  if (entrada.agotamiento === 'presupuesto') return 'y mientras haya presupuesto disponible';
+  return '';
+}
+
+/**
+ * El codigo del cupon, en mayusculas y sin espacios.
+ *
+ * Va impreso, asi que se normaliza aqui y no en la pantalla: un codigo escrito
+ * "jumbo 30" y otro "JUMBO30" son el mismo en la aplicacion y tienen que salir
+ * iguales en el documento.
+ */
+function codigoDeCupon(entrada) {
+  return String(entrada.codigoCupon || '').trim().toUpperCase().replace(/\s+/g, '');
+}
+
+/** Todos los valores del Descuento y del Cupon. Se agregan encima de los comunes. */
+function calcularDerivadosDescuento(entrada, pais) {
+  var valores = {
+    TEXTO_PRODUCTOS_DESCUENTO: textoProductosDescuento(entrada),
+    TEXTO_BENEFICIO_DESCUENTO: textoBeneficioDescuento(entrada, pais),
+    TEXTO_BASE_DESCUENTO: textoBaseDescuento(entrada),
+    TEXTO_TOPE_DESCUENTO: textoTopeDescuento(entrada, pais),
+    TEXTO_AGOTAMIENTO: textoAgotamiento(entrada),
+    TEXTO_LIMITE_CAMPANA: textoLimiteCampana(entrada, pais),
+  };
+
+  if (entrada.tipo === 'cupon') {
+    valores.TEXTO_ACTIVACION_CUPON = textoActivacionCupon(entrada);
+    valores.TEXTO_MIENTRAS_QUEDE = textoMientrasQuede(entrada);
+    valores.CODIGO_CUPON = codigoDeCupon(entrada);
+  }
+  return valores;
+}
+
+if (typeof module !== 'undefined') {
+  module.exports = {
+    FORMAS_DEL_DESCUENTO: FORMAS_DEL_DESCUENTO,
+    formaDelDescuento: formaDelDescuento,
+    admiteTopeDeDescuento: admiteTopeDeDescuento,
+    textoProductosDescuento: textoProductosDescuento,
+    textoBeneficioDescuento: textoBeneficioDescuento,
+    textoLimiteCampana: textoLimiteCampana,
+    unidadesEnLetras: unidadesEnLetras,
+    textoActivacionCupon: textoActivacionCupon,
+    textoMientrasQuede: textoMientrasQuede,
+    codigoDeCupon: codigoDeCupon,
+    calcularDerivadosDescuento: calcularDerivadosDescuento,
   };
 }
 
@@ -5865,10 +6306,259 @@ var CAMPOS_CARRERA = [
   { id: 'plazoConfirmacion', etiqueta: 'Plazo para confirmar', tipo: 'numero', minimo: 1, maximo: 30, porDefecto: 5, paso: 'premio', obligatorio: true },
 ];
 
-/** Solo Colombia y solo con premio fisico: ver el campo valorPremio. */
+/**
+ * Solo con premio fisico: ver el campo valorPremio.
+ *
+ * Hasta el 21 de septiembre de 2026 era ademas solo en Colombia, porque la frase
+ * del documento decia "pesos M/Cte." y "IVA incluido". Los dos salen hoy de la
+ * fila del pais (moneda_nombre e impuesto_indirecto), asi que la razon de
+ * limitarlo se fue con ellos, y declarar el valor comercial del premio es lo que
+ * piden las autoridades de consumo de los paises donde el concurso acaba de
+ * habilitarse.
+ */
 function pideValorDelPremio(entrada) {
-  return String(entrada.pais || '').toUpperCase() === 'CO' && entrada.tipoPremio === 'fisico';
+  return entrada.tipoPremio === 'fisico';
 }
+
+/* --- Descuento y Cupon ----------------------------------------------------
+ *
+ * Dos tipos que comparten el mismo formulario menos dos preguntas. El descuento
+ * se aplica solo sobre el precio; el cupon lo activa el Usuario/Consumidor, con
+ * un codigo o desde la seccion "Cupones" de la aplicacion.
+ *
+ * Ninguno de los dos da Creditos, asi que no llevan el paso de Creditos entero:
+ * ni carga, ni vigencia, ni redencion. A cambio traen la forma del beneficio,
+ * que decide sobre que se calcula, y como termina la campana.
+ *
+ * Habilitados fuera de Colombia el 21 de septiembre de 2026.
+ */
+
+/*
+ * Las cinco formas del beneficio.
+ *
+ * Las dos primeras bajan el precio; las tres ultimas quitan un cargo del pedido.
+ * Son las mismas cuatro que Legal Brasil tiene aprobadas, mas el monto fijo, que
+ * en delivery es la forma mas pedida despues del porcentaje.
+ */
+var OPCIONES_FORMA_DESCUENTO = [
+  { valor: 'porcentaje', etiqueta: 'Un porcentaje de descuento' },
+  { valor: 'monto', etiqueta: 'Un monto fijo de descuento' },
+  { valor: 'envio', etiqueta: 'Envío gratis' },
+  { valor: 'tarifa_servicio', etiqueta: 'Tarifa de servicio gratis' },
+  { valor: 'envio_y_tarifa', etiqueta: 'Envío y tarifa de servicio gratis' },
+];
+
+function pideElPorcentajeDelDescuento(entrada) {
+  return entrada.formaDelDescuento === 'porcentaje';
+}
+
+function pideElMontoDelDescuento(entrada) {
+  return entrada.formaDelDescuento === 'monto';
+}
+
+/*
+ * El tope solo se pregunta donde puede haber uno.
+ *
+ * Con monto fijo el tope ya es el monto, y la tarifa de servicio no lleva tope
+ * en ninguno de los documentos aprobados. Donde si cabe es en el porcentaje y en
+ * el envio, que es justo el caso que Legal Brasil ya tiene escrito ("o frete
+ * gratis esta limitado a R$20,00").
+ */
+function pideElTopeDelDescuento(entrada) {
+  return entrada.formaDelDescuento === 'porcentaje' ||
+    entrada.formaDelDescuento === 'envio' ||
+    entrada.formaDelDescuento === 'envio_y_tarifa';
+}
+
+function pideElPresupuestoDelDescuento(entrada) {
+  return entrada.agotamiento === 'presupuesto';
+}
+
+function pideLasUnidadesDelDescuento(entrada) {
+  return entrada.agotamiento === 'unidades';
+}
+
+function pideElCodigoDelCupon(entrada) {
+  return entrada.activacionCupon === 'codigo';
+}
+
+function esDeUnaMarca(entrada) {
+  return entrada.productos === 'marca';
+}
+
+function sonProductosEspecificos(entrada) {
+  return entrada.productos === 'especificos';
+}
+
+/** Sobre que productos aplica el Beneficio. Mismo reparto que en la Carrera. */
+var CAMPOS_PRODUCTOS_DEL_DESCUENTO = [
+  {
+    id: 'productos',
+    etiqueta: 'Productos que participan',
+    tipo: 'lista',
+    paso: 'beneficio',
+    obligatorio: true,
+    opciones: [
+      { valor: 'todos', etiqueta: 'Todos los de la tienda' },
+      { valor: 'marca', etiqueta: 'Los de una marca' },
+      { valor: 'especificos', etiqueta: 'Productos específicos' },
+    ],
+  },
+  {
+    id: 'makerMarca',
+    etiqueta: 'Marca',
+    tipo: 'texto',
+    paso: 'beneficio',
+    visible: esDeUnaMarca,
+    obligatorio: esDeUnaMarca,
+  },
+  {
+    id: 'productosDetalle',
+    etiqueta: 'Productos participantes',
+    tipo: 'repetible',
+    minimo: 1,
+    maximo: 60,
+    paso: 'beneficio',
+    visible: sonProductosEspecificos,
+    obligatorio: sonProductosEspecificos,
+  },
+];
+
+/** Como termina la campana: por fecha, por presupuesto o por unidades. */
+var CAMPOS_AGOTAMIENTO = [
+  {
+    id: 'agotamiento',
+    etiqueta: '¿Cómo termina la campaña?',
+    tipo: 'lista',
+    paso: 'beneficio',
+    obligatorio: true,
+    opciones: [
+      { valor: 'fecha', etiqueta: 'Cuando llegue la fecha de fin' },
+      { valor: 'presupuesto', etiqueta: 'Cuando se agote el presupuesto' },
+      { valor: 'unidades', etiqueta: 'Cuando se agoten las unidades' },
+    ],
+  },
+  {
+    id: 'presupuesto',
+    etiqueta: 'Presupuesto total',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: pideElPresupuestoDelDescuento,
+    obligatorio: pideElPresupuestoDelDescuento,
+  },
+  {
+    id: 'unidadesDisponibles',
+    etiqueta: 'Unidades disponibles',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: pideLasUnidadesDelDescuento,
+    obligatorio: pideLasUnidadesDelDescuento,
+  },
+];
+
+/** En qué consiste el beneficio: la forma, su número y su tope. */
+var CAMPOS_BENEFICIO_DESCUENTO = [
+  {
+    id: 'formaDelDescuento',
+    etiqueta: 'Forma del beneficio',
+    tipo: 'lista',
+    paso: 'beneficio',
+    obligatorio: true,
+    opciones: OPCIONES_FORMA_DESCUENTO,
+  },
+  {
+    id: 'porcentaje',
+    etiqueta: 'Porcentaje de descuento',
+    tipo: 'numero',
+    minimo: 1,
+    maximo: 100,
+    paso: 'beneficio',
+    visible: pideElPorcentajeDelDescuento,
+    obligatorio: pideElPorcentajeDelDescuento,
+  },
+  {
+    id: 'montoDescuento',
+    etiqueta: 'Monto del descuento',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: pideElMontoDelDescuento,
+    obligatorio: pideElMontoDelDescuento,
+  },
+  // Opcional: hay campanas de porcentaje sin techo, y el documento lo dice sin
+  // la vinneta. Obligarlo haria inventar un numero.
+  {
+    id: 'tope',
+    etiqueta: 'Tope por pedido',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: pideElTopeDelDescuento,
+    obligatorio: false,
+  },
+];
+
+/** Cuántas veces puede ganar la misma persona. */
+var CAMPOS_VECES_DESCUENTO = [
+  {
+    id: 'maxPedidos',
+    etiqueta: 'Máximo de pedidos con beneficio',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: sinLimiteNoLoPide,
+    obligatorio: sinLimiteNoLoPide,
+  },
+  { id: 'sinLimite', etiqueta: 'Sin límite de pedidos', tipo: 'casilla', paso: 'beneficio', obligatorio: false },
+];
+
+/*
+ * El orden del paso del beneficio: en qué consiste, sobre qué productos, cuántas
+ * veces y cómo termina. El Cupón mete sus dos preguntas entre los productos y
+ * las veces, porque "cómo se activa" es parte de la mecánica y no un límite.
+ */
+var CAMPOS_DESCUENTO = unir(
+  CAMPOS_BENEFICIO_DESCUENTO,
+  CAMPOS_PRODUCTOS_DEL_DESCUENTO,
+  CAMPOS_VECES_DESCUENTO,
+  CAMPOS_AGOTAMIENTO
+);
+
+/** Las dos preguntas que el Cupon tiene y el Descuento no. */
+var CAMPOS_CUPON = [
+  {
+    id: 'activacionCupon',
+    etiqueta: '¿Cómo se activa el cupón?',
+    tipo: 'lista',
+    paso: 'beneficio',
+    obligatorio: true,
+    opciones: [
+      { valor: 'codigo', etiqueta: 'Con un código que el usuario escribe' },
+      { valor: 'seccion', etiqueta: 'Desde la sección Cupones de la app' },
+    ],
+  },
+  {
+    id: 'codigoCupon',
+    etiqueta: 'Código del cupón',
+    tipo: 'codigo',
+    maximo: 24,
+    paso: 'beneficio',
+    visible: pideElCodigoDelCupon,
+    obligatorio: pideElCodigoDelCupon,
+  },
+];
+
+/** El codigo del Cupom de Brasil, que va impreso dos veces en el documento. */
+var CAMPO_CODIGO_CUPOM_BR = {
+  id: 'codigoCupon',
+  etiqueta: 'Código del cupón',
+  tipo: 'codigo',
+  maximo: 24,
+  paso: 'beneficio',
+  obligatorio: true,
+};
 
 var CAMPOS_CASHBACK_DAY = [
   { id: 'tiendas', etiqueta: 'Tiendas participantes', tipo: 'repetible', minimo: 2, maximo: 60, paso: 'tiendas', obligatorio: true },
@@ -6728,6 +7418,43 @@ var ESQUEMAS = {
       '¿Participan varias tiendas?',
     ],
   },
+  descuento: {
+    id: 'descuento',
+    nombre: 'Descuento',
+    descripcion: 'La tienda baja el precio de sus productos, o regala el envío o la tarifa de servicio. El usuario ve el precio ya rebajado antes de pagar y no recibe Créditos.',
+    modelo: 'descuento',
+    campos: insertarDespuesDe(
+      unir(CAMPOS_COMUNES, CAMPOS_TIENDA_Y_ORGANIZADOR, CAMPOS_DESCUENTO),
+      'tienda',
+      CAMPO_TIENDA_TURBO
+    ),
+    camposPorProducto: CAMPOS_POR_PRODUCTO,
+    // El beneficio no son Creditos: se calcula distinto y se imprime distinto.
+    esDeDescuento: true,
+    filtroDeEntrada: [
+      '¿La tienda o la marca exige sus propios T&C?',
+    ],
+  },
+  cupon: {
+    id: 'cupon',
+    nombre: 'Cupón',
+    descripcion: 'Lo mismo que el Descuento, pero el usuario tiene que activarlo: escribe un código o toma el cupón en la sección “Cupones”. Sirve cuando el beneficio es para unos pocos y no para todo el que compre.',
+    modelo: 'cupon',
+    campos: insertarDespuesDe(
+      unir(
+        CAMPOS_COMUNES, CAMPOS_TIENDA_Y_ORGANIZADOR,
+        CAMPOS_BENEFICIO_DESCUENTO, CAMPOS_PRODUCTOS_DEL_DESCUENTO,
+        CAMPOS_CUPON, CAMPOS_VECES_DESCUENTO, CAMPOS_AGOTAMIENTO
+      ),
+      'tienda',
+      CAMPO_TIENDA_TURBO
+    ),
+    camposPorProducto: CAMPOS_POR_PRODUCTO,
+    esDeDescuento: true,
+    filtroDeEntrada: [
+      '¿La tienda o la marca exige sus propios T&C?',
+    ],
+  },
   cashback_travel: {
     id: 'cashback_travel',
     nombre: 'Cashback Travel',
@@ -6770,6 +7497,18 @@ var ESQUEMAS = {
     // El documento va en portugues. Si la fila del pais no lo dice, no se
     // genera: sin esto salia un T&C en portugues con las fechas y los montos
     // en espanol, sin ningun error.
+    idioma: 'pt',
+  },
+  cupom_br: {
+    id: 'cupom_br',
+    nombre: 'Cupom Brasil',
+    descripcion: 'La Promoção de Brasil con un código: el usuario escribe el cupom antes de cerrar el pedido y recibe el descuento, el envío gratis o la tarifa de servicio gratis. Solo para Brasil.',
+    modelo: 'cupom_br',
+    campos: insertarDespuesDe(CAMPOS_BRASIL, 'beneficioBr', CAMPO_CODIGO_CUPOM_BR),
+    filtroDeEntrada: [],
+    esDeBrasil: true,
+    // Igual que promocao_br: el documento va en portugues, y si la fila del
+    // pais no lo dice, no se genera.
     idioma: 'pt',
   },
   cashback_day: {
@@ -6827,6 +7566,8 @@ if (typeof module !== 'undefined') {
     OPCIONES_ALCANCE_TURBO: OPCIONES_ALCANCE_TURBO,
     CAMPOS_BRASIL: CAMPOS_BRASIL,
     CAMPOS_CASHBACK_ETA: CAMPOS_CASHBACK_ETA,
+    OPCIONES_FORMA_DESCUENTO: OPCIONES_FORMA_DESCUENTO,
+    CAMPOS_POR_PRODUCTO: CAMPOS_POR_PRODUCTO,
     categoriasDe: categoriasDe,
     hayAereasDeTravel: hayAereasDeTravel,
     hayAlojamientoDeTravel: hayAlojamientoDeTravel,
@@ -8665,13 +9406,32 @@ function tramoDeBeneficio(entrada, esquema) {
   }
 
   // Brasil: el titulo dice el beneficio como lo nombran los documentos
-  // aprobados ("10% OFF", "Frete gratis"), no el nombre del tipo.
-  if (esquema.id === 'promocao_br') {
-    if (entrada.beneficioBr === 'desconto') return conPorcentaje ? porcentaje + '% OFF' : 'Desconto';
-    if (entrada.beneficioBr === 'frete_gratis') return 'Frete grátis';
-    if (entrada.beneficioBr === 'taxa_servico') return 'Taxa de serviço grátis';
-    if (entrada.beneficioBr === 'taxa_e_frete') return 'Taxa de serviço e frete grátis';
+  // aprobados ("10% OFF", "Frete gratis"), no el nombre del tipo. El Cupom lo
+  // dice ademas delante, porque el usuario tiene que hacer algo para recibirlo.
+  if (esquema.esDeBrasil) {
+    var conCupom = esquema.id === 'cupom_br' ? 'Cupom ' : '';
+    if (entrada.beneficioBr === 'desconto') return conPorcentaje ? conCupom + porcentaje + '% OFF' : conCupom + 'Desconto';
+    if (entrada.beneficioBr === 'frete_gratis') return conCupom + 'Frete grátis';
+    if (entrada.beneficioBr === 'taxa_servico') return conCupom + 'Taxa de serviço grátis';
+    if (entrada.beneficioBr === 'taxa_e_frete') return conCupom + 'Taxa de serviço e frete grátis';
     return '';
+  }
+
+  /*
+   * El Descuento y el Cupon.
+   *
+   * El titulo dice el porcentaje solo cuando la campana tiene uno, por la misma
+   * razon que el Cashback: sale del mismo dato que alimenta la clausula, asi que
+   * nunca puede prometer algo distinto. Con monto fijo no lo dice, porque un
+   * numero suelto al lado del nombre se lee como porcentaje.
+   */
+  if (esquema.esDeDescuento) {
+    var etiqueta = esquema.nombre;
+    if (entrada.formaDelDescuento === 'porcentaje') return conPorcentaje ? porcentaje + '% ' + etiqueta : etiqueta;
+    if (entrada.formaDelDescuento === 'envio') return etiqueta + ' de envío gratis';
+    if (entrada.formaDelDescuento === 'tarifa_servicio') return etiqueta + ' de tarifa de servicio gratis';
+    if (entrada.formaDelDescuento === 'envio_y_tarifa') return etiqueta + ' de envío y tarifa de servicio gratis';
+    return etiqueta;
   }
 
   if (esquema.id === 'cashback') {
@@ -9028,10 +9788,23 @@ function montoConMoneda(n, pais) {
   var idioma = textosDelIdioma();
   var cifra = pais.moneda_simbolo + formatearMiles(n, pais.separador_miles) + (idioma.decimalesDelMonto || '');
 
+  /*
+   * "tres millones DE pesos", no "tres millones pesos".
+   *
+   * La regla es la misma que cantidadCreditos ya aplicaba para los Creditos, y
+   * aqui faltaba. Solo se nota con un monto de millones redondos, que es por lo
+   * que estuvo tanto tiempo sin verse: el unico monto grande de los casos
+   * dorados era 1.200.000, que no termina en "millon" y no necesita el "de".
+   * Salio al habilitar el Descuento, donde un presupuesto de 3.000.000 es un
+   * numero de todos los dias. Anotado en docs/PENDIENTES_LEGAL.md.
+   */
+  var letras = numeroEnLetras(n);
+  var moneda = (idioma.terminacionDeMillon.test(letras) ? idioma.deAntesDelSustantivo + ' ' : '') + pais.moneda_nombre;
+
   if (idioma.ordenDeLaCifra === 'cifra_primero') {
-    return cifra + ' (' + numeroEnLetras(n) + ' ' + pais.moneda_nombre + ')';
+    return cifra + ' (' + letras + ' ' + moneda + ')';
   }
-  return numeroEnLetras(n) + ' ' + pais.moneda_nombre + ' (' + cifra + ')';
+  return letras + ' ' + moneda + ' (' + cifra + ')';
 }
 
 /**
@@ -9874,7 +10647,7 @@ var PREGUNTAS = {
   organizadorRazonSocial: p({
     paso: 'organizador',
     pregunta: '¿Qué empresa paga el beneficio?',
-    ayuda: 'Tal como sale en su RUT, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.',
+    ayuda: 'Tal como sale en {DONDE_ID_FISCAL}, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.',
     porQue: 'El Organizador responde por la campaña frente al usuario y frente a la autoridad. Rappi solo pone la plataforma, así que el nombre tiene que ser exacto.',
     ejemplo: 'Alimentos del Norte S.A.S.',
     placeholders: ['ORGANIZADOR'],
@@ -9883,16 +10656,26 @@ var PREGUNTAS = {
     },
   }),
 
+  /*
+   * La identificacion tributaria del Organizador.
+   *
+   * Los marcadores los rellena conDatosDelPais() con la fila del pais elegido.
+   * Hasta el 21 de septiembre de 2026 esta pregunta decia "NIT" y ponia de
+   * ejemplo un NIT colombiano en los nueve paises: un KAM de Mexico leia que le
+   * pedian un numero que en Mexico no existe, y el unico sitio donde la
+   * herramienta sabia la respuesta correcta era el mensaje de error, que solo
+   * aparecia despues de equivocarse.
+   */
   organizadorId: p({
     paso: 'organizador',
-    pregunta: '¿Cuál es el NIT de esa empresa?',
-    ayuda: 'Con dígito de verificación, tal como sale en el RUT: 900.111.222-1.',
+    pregunta: '¿Cuál es el número de {ID_FISCAL} de esa empresa?',
+    ayuda: 'Escríbelo completo, tal como sale en {DONDE_ID_FISCAL}: {EJEMPLO_ID_FISCAL}.',
     porQue: 'El documento identifica al Organizador con su número tributario. Un número mal escrito deja el documento sin un responsable identificable.',
-    ejemplo: '900.111.222-1',
+    ejemplo: '{EJEMPLO_ID_FISCAL}',
     placeholders: ['ID_ORGANIZADOR'],
     errores: {
-      vacio: 'Escribe el NIT de la empresa organizadora, con el dígito de verificación.',
-      formato: 'Ese número no cuadra. Revisa el dígito de verificación, que es el que va después del guion.',
+      vacio: 'Escribe el número de {ID_FISCAL} de la empresa organizadora, completo.',
+      formato: 'Ese número no cuadra. Revísalo en {DONDE_ID_FISCAL} y escríbelo otra vez.',
     },
     confirmacion: 'válido',
   }),
@@ -9995,6 +10778,18 @@ var PREGUNTAS = {
         porQue: 'Es el descuento que ve el usuario en el precio. Si cambia según el producto, este es el máximo y el documento lo dice junto con el mínimo.',
         placeholders: ['TEXTO_DESCUENTO_TRAVEL'],
       },
+      descuento: {
+        pregunta: '¿Qué porcentaje de descuento das?',
+        ayuda: 'Solo el número. Con 30, un producto de 100 queda en 70.',
+        porQue: 'Es la promesa central de la campaña. Una vez publicado, el usuario puede exigir exactamente ese descuento.',
+        placeholders: ['TEXTO_BENEFICIO_DESCUENTO'],
+      },
+      cupon: {
+        pregunta: '¿Qué porcentaje de descuento da el cupón?',
+        ayuda: 'Solo el número. Con 30, un producto de 100 queda en 70.',
+        porQue: 'Es la promesa central de la campaña. Una vez publicado, quien active el cupón puede exigir exactamente ese descuento.',
+        placeholders: ['TEXTO_BENEFICIO_DESCUENTO'],
+      },
     },
   }),
 
@@ -10039,11 +10834,47 @@ var PREGUNTAS = {
         porQue: 'Sin tope, una sola reserva grande se lleva el presupuesto entero. El documento trae además un ejemplo con el valor desde el cual se recibe el tope.',
         placeholders: ['TEXTO_BENEFICIO_TRAVEL'],
       },
+      // Opcional aqui, y obligatorio en el Cashback: hay campanas de descuento
+      // sin techo, y una pregunta que parece obligatoria hace inventar numeros.
+      descuento: {
+        pregunta: '¿Hay un tope por pedido?',
+        ayuda: 'Lo máximo que la campaña cubre en un pedido, en {MONEDA}. Si no hay tope, déjalo vacío.',
+        porQue: 'Sin tope, un pedido grande se lleva buena parte del presupuesto. Si lo pones, el documento lo dice y solo así lo puedes aplicar.',
+        opcional: true,
+        placeholders: ['TEXTO_TOPE_DESCUENTO'],
+        errores: {
+          vacio: 'Escribe el tope por pedido, o déjalo vacío si la campaña no tiene.',
+          cero: 'El tope tiene que ser mayor que cero.',
+          mayorQuePresupuesto: 'El tope por pedido es mayor que el presupuesto total. Con eso, el primer pedido se lleva toda la campaña. Revisa los dos números.',
+        },
+      },
+      cupon: {
+        pregunta: '¿Hay un tope por pedido?',
+        ayuda: 'Lo máximo que el cupón cubre en un pedido, en {MONEDA}. Si no hay tope, déjalo vacío.',
+        porQue: 'Sin tope, un pedido grande se lleva buena parte del presupuesto. Si lo pones, el documento lo dice y solo así lo puedes aplicar.',
+        opcional: true,
+        placeholders: ['TEXTO_TOPE_DESCUENTO'],
+        errores: {
+          vacio: 'Escribe el tope por pedido, o déjalo vacío si la campaña no tiene.',
+          cero: 'El tope tiene que ser mayor que cero.',
+          mayorQuePresupuesto: 'El tope por pedido es mayor que el presupuesto total. Con eso, el primer pedido se lleva toda la campaña. Revisa los dos números.',
+        },
+      },
     },
   }),
 
   presupuesto: p({
     variantes: {
+      descuento: {
+        ayuda: 'Cuando se agote, la campaña termina sola aunque no llegue la fecha de fin.',
+        porQue: 'El documento dice que la campaña termina al agotarse el presupuesto. Es lo que te protege si el consumo se dispara.',
+        placeholders: ['TEXTO_LIMITE_CAMPANA', 'TEXTO_AGOTAMIENTO'],
+      },
+      cupon: {
+        ayuda: 'Cuando se agote, la campaña termina sola aunque no llegue la fecha de fin.',
+        porQue: 'El documento dice que la campaña termina al agotarse el presupuesto. Es lo que te protege si el consumo se dispara.',
+        placeholders: ['TEXTO_LIMITE_CAMPANA', 'TEXTO_AGOTAMIENTO'],
+      },
       cashback_eta: {
         pregunta: '¿Cuántos Créditos hay para toda la campaña?',
         ayuda: 'Un número entero de Créditos. Cuando se agota, la campaña termina sola aunque no se haya cumplido la hora.',
@@ -10171,6 +11002,30 @@ var PREGUNTAS = {
    * marcada de entrada se publicaria sin que nadie la mire.
    */
   tiendaTurbo: p({
+    variantes: {
+      // Las notas también: decían "no da el cashback" en una campaña que no da
+      // cashback ninguno. Es la trampa de heredar media variante.
+      descuento: {
+        pregunta: '¿En cuál de sus tiendas aplica el descuento?',
+        opciones: [
+          { valor: 'normal', etiqueta: 'Solo en la tienda normal', nota: 'Un pedido en su tienda de Turbo no lleva descuento.' },
+          { valor: 'turbo', etiqueta: 'Solo en la tienda de Turbo', nota: 'Un pedido en su tienda normal no lleva descuento.' },
+          { valor: 'ambas', etiqueta: 'En las dos', nota: 'Vale en cualquiera de las dos tiendas de la marca.' },
+          { valor: 'sin_turbo', etiqueta: 'No tiene tienda en Turbo', nota: 'Si no sabes, búscala en el botón Turbo de la app.' },
+        ],
+        errores: { vacio: 'Dinos en cuál de sus tiendas aplica el descuento.' },
+      },
+      cupon: {
+        pregunta: '¿En cuál de sus tiendas aplica el cupón?',
+        opciones: [
+          { valor: 'normal', etiqueta: 'Solo en la tienda normal', nota: 'El cupón no se aplica en su tienda de Turbo.' },
+          { valor: 'turbo', etiqueta: 'Solo en la tienda de Turbo', nota: 'El cupón no se aplica en su tienda normal.' },
+          { valor: 'ambas', etiqueta: 'En las dos', nota: 'Vale en cualquiera de las dos tiendas de la marca.' },
+          { valor: 'sin_turbo', etiqueta: 'No tiene tienda en Turbo', nota: 'Si no sabes, búscala en el botón Turbo de la app.' },
+        ],
+        errores: { vacio: 'Dinos en cuál de sus tiendas aplica el cupón.' },
+      },
+    },
     paso: 'campana',
     pregunta: '¿En cuál de sus tiendas se gana el cashback?',
     ayuda: 'Muchas marcas tienen dos tiendas en la app: la normal y la de Turbo.',
@@ -10184,6 +11039,110 @@ var PREGUNTAS = {
     ],
     placeholders: ['TEXTO_TIENDA_TURBO'],
     errores: { vacio: 'Dinos en cuál de sus tiendas se gana el cashback.' },
+  }),
+
+  // --- El Descuento y el Cupón --------------------------------------------
+
+  formaDelDescuento: p({
+    paso: 'beneficio',
+    pregunta: '¿Qué forma tiene el beneficio?',
+    ayuda: 'Un descuento sobre el precio, o el envío o la tarifa de servicio gratis.',
+    porQue: 'De aquí sale la cláusula que dice en qué consiste el Beneficio y sobre qué valor se calcula. Un documento que diga que no cubre el envío, en una campaña cuyo beneficio es justamente el envío, se contradice solo.',
+    avanzaSola: true,
+    opciones: [
+      { valor: 'porcentaje', etiqueta: 'Un porcentaje de descuento', nota: 'Lo más usado. Por ejemplo, 30% menos en el precio.' },
+      { valor: 'monto', etiqueta: 'Un monto fijo de descuento', nota: 'Se le resta siempre la misma cantidad al precio.' },
+      { valor: 'envio', etiqueta: 'Envío gratis', nota: 'La campaña cubre el costo de envío del pedido.' },
+      { valor: 'tarifa_servicio', etiqueta: 'Tarifa de servicio gratis', nota: 'La campaña cubre la tarifa de servicio del pedido.' },
+      { valor: 'envio_y_tarifa', etiqueta: 'Envío y tarifa de servicio gratis', nota: 'La campaña cubre los dos cargos del pedido.' },
+    ],
+    placeholders: ['TEXTO_BENEFICIO_DESCUENTO', 'TEXTO_BASE_DESCUENTO'],
+    errores: { vacio: 'Dinos qué forma tiene el beneficio de la campaña.' },
+  }),
+
+  montoDescuento: p({
+    paso: 'beneficio',
+    pregunta: '¿De cuánto es el descuento?',
+    ayuda: 'El valor en {MONEDA} que se le resta al precio del pedido.',
+    porQue: 'Es la promesa central de la campaña. El documento lo escribe en letras y en cifra, y una vez publicado el usuario lo puede exigir.',
+    ejemplo: '10000',
+    moneda: true,
+    placeholders: ['TEXTO_BENEFICIO_DESCUENTO'],
+    errores: {
+      vacio: 'Escribe de cuánto es el descuento que se resta del precio.',
+      cero: 'El descuento tiene que ser mayor que cero.',
+    },
+  }),
+
+  agotamiento: p({
+    paso: 'beneficio',
+    pregunta: '¿Cómo termina la campaña?',
+    ayuda: 'Además de la fecha de fin, puede terminar antes por presupuesto o por unidades.',
+    porQue: 'El documento dice qué agota la campaña antes de tiempo. Si no lo dice, no la puedes cortar aunque se te acabe la plata.',
+    avanzaSola: true,
+    porDefecto: 'fecha',
+    opciones: [
+      { valor: 'fecha', etiqueta: 'Cuando llegue la fecha de fin', nota: 'Sin tope de plata ni de unidades. Lo más simple.' },
+      { valor: 'presupuesto', etiqueta: 'Cuando se agote el presupuesto', nota: 'Termina sola al gastarse la plata de la campaña.' },
+      { valor: 'unidades', etiqueta: 'Cuando se agoten las unidades', nota: 'Termina sola al llegar a cierto número de pedidos.' },
+    ],
+    placeholders: ['TEXTO_AGOTAMIENTO', 'TEXTO_LIMITE_CAMPANA'],
+    errores: { vacio: 'Dinos cómo termina la campaña.' },
+  }),
+
+  unidadesDisponibles: p({
+    paso: 'beneficio',
+    pregunta: '¿Cuántas unidades hay disponibles?',
+    ayuda: 'Cuántos pedidos en total pueden recibir el beneficio. Por ejemplo: 500.',
+    porQue: 'Cuando se agoten, la campaña termina sola. El documento tiene que decir cuántas hay, porque quien llegue tarde tiene derecho a saber por qué no alcanzó.',
+    ejemplo: '500',
+    placeholders: ['TEXTO_LIMITE_CAMPANA', 'TEXTO_AGOTAMIENTO'],
+    errores: {
+      vacio: 'Escribe cuántas unidades tiene la campaña en total.',
+      rango: 'Tiene que haber al menos una unidad disponible.',
+    },
+  }),
+
+  activacionCupon: p({
+    paso: 'beneficio',
+    pregunta: '¿Cómo activa el usuario el cupón?',
+    ayuda: 'Con un código que escribe, o tomándolo en la sección Cupones de la app.',
+    porQue: 'El documento dice exactamente qué tiene que hacer el usuario para recibir el beneficio. Quien no lo haga no lo recibe, y eso solo se le puede oponer si está escrito.',
+    avanzaSola: true,
+    opciones: [
+      { valor: 'codigo', etiqueta: 'Con un código que el usuario escribe', nota: 'Tú nos das el código y el documento lo imprime.' },
+      { valor: 'seccion', etiqueta: 'Desde la sección Cupones de la app', nota: 'El cupón aparece en la app y el usuario lo toma.' },
+    ],
+    placeholders: ['TEXTO_ACTIVACION_CUPON'],
+    errores: { vacio: 'Dinos cómo activa el usuario el cupón.' },
+  }),
+
+  /*
+   * El codigo del cupon.
+   *
+   * Es texto libre, y la regla 6 de CLAUDE.md los limita. Este entra porque no
+   * es texto legal: es un dato de la campana, como el nombre de la tienda o una
+   * ciudad. Sale impreso tal cual, asi que se normaliza (mayusculas, sin
+   * espacios) y solo admite letras, numeros y guiones.
+   */
+  codigoCupon: p({
+    variantes: {
+      cupom_br: {
+        porQue: 'O código sai impresso duas vezes no documento. Se não coincidir letra por letra com o do aplicativo, o usuário reclama um cupom que não funciona.',
+        placeholders: ['CODIGO_CUPON'],
+      },
+    },
+    paso: 'beneficio',
+    pregunta: '¿Cuál es el código del cupón?',
+    ayuda: 'Como lo va a escribir el usuario, sin espacios. Por ejemplo: RAPPI30.',
+    porQue: 'El código va impreso en el documento. Si no coincide letra por letra con el de la app, el usuario reclama un cupón que no le funciona.',
+    ejemplo: 'RAPPI30',
+    placeholders: ['TEXTO_ACTIVACION_CUPON'],
+    errores: {
+      vacio: 'Escribe el código del cupón, tal como lo va a escribir el usuario.',
+      formato: 'El código solo puede llevar letras, números y guiones, sin espacios.',
+      largo: 'El código no puede pasar de 24 caracteres.',
+    },
   }),
 
   // --- Los Créditos -------------------------------------------------------
@@ -11003,6 +11962,24 @@ var PREGUNTAS = {
   // --- El concurso (Carrera de Compras) -----------------------------------
 
   productos: p({
+    variantes: {
+      descuento: {
+        paso: 'beneficio',
+        pregunta: '¿Sobre qué productos aplica el descuento?',
+        ayuda: 'Si el descuento lo paga una marca, suelen participar solo sus productos.',
+        porQue: 'Define en qué productos se rebaja el precio. Si no queda claro, el usuario puede exigir el descuento en todo el catálogo.',
+        placeholders: ['TEXTO_PRODUCTOS_DESCUENTO'],
+        errores: { vacio: 'Dinos sobre qué productos aplica el descuento.' },
+      },
+      cupon: {
+        paso: 'beneficio',
+        pregunta: '¿Sobre qué productos aplica el cupón?',
+        ayuda: 'Si el cupón lo paga una marca, suelen participar solo sus productos.',
+        porQue: 'Define en qué productos se rebaja el precio. Si no queda claro, el usuario puede exigir el descuento en todo el catálogo.',
+        placeholders: ['TEXTO_PRODUCTOS_DESCUENTO'],
+        errores: { vacio: 'Dinos sobre qué productos aplica el cupón.' },
+      },
+    },
     paso: 'concurso',
     pregunta: '¿Qué productos participan?',
     ayuda: 'Si el concurso lo paga una marca, suelen participar solo sus productos.',
@@ -11018,6 +11995,18 @@ var PREGUNTAS = {
   }),
 
   makerMarca: p({
+    variantes: {
+      descuento: {
+        paso: 'beneficio',
+        porQue: 'El documento nombra la marca, así que el usuario sabe exactamente en qué productos se le rebaja el precio.',
+        placeholders: ['TEXTO_PRODUCTOS_DESCUENTO'],
+      },
+      cupon: {
+        paso: 'beneficio',
+        porQue: 'El documento nombra la marca, así que el usuario sabe exactamente en qué productos se le rebaja el precio.',
+        placeholders: ['TEXTO_PRODUCTOS_DESCUENTO'],
+      },
+    },
     paso: 'concurso',
     pregunta: '¿De qué marca?',
     ayuda: 'El nombre comercial de la marca. Por ejemplo: Galletas Lunaria.',
@@ -11076,6 +12065,18 @@ var PREGUNTAS = {
   }),
 
   productosDetalle: p({
+    variantes: {
+      descuento: {
+        paso: 'beneficio',
+        porQue: 'El EAN identifica el producto sin discusión. Si dos productos se llaman parecido, el EAN decide en cuál se rebaja el precio.',
+        placeholders: ['TEXTO_PRODUCTOS_DESCUENTO'],
+      },
+      cupon: {
+        paso: 'beneficio',
+        porQue: 'El EAN identifica el producto sin discusión. Si dos productos se llaman parecido, el EAN decide en cuál se rebaja el precio.',
+        placeholders: ['TEXTO_PRODUCTOS_DESCUENTO'],
+      },
+    },
     paso: 'concurso',
     pregunta: '¿Cuáles productos participan?',
     ayuda: 'Uno por fila: el nombre como sale en la app y su EAN, el número del código de barras.',
@@ -11311,7 +12312,7 @@ var PREGUNTAS = {
   tiendas: p({
     paso: 'tiendas',
     pregunta: '¿Qué tiendas participan?',
-    ayuda: 'Mínimo dos. Cada una entra con su razón social, su NIT y su presupuesto.',
+    ayuda: 'Mínimo dos. Cada una entra con su razón social, su {ID_FISCAL} y su presupuesto.',
     porQue: 'En un Cashback Multitienda cada tienda organiza su propio beneficio y responde por él. Por eso cada una necesita sus propios datos.',
     placeholders: ['TIENDA_MARCA', 'TIENDA_RAZON_SOCIAL', 'TIENDA_ID', 'TIENDA_CIUDADES', 'TIENDA_PRESUPUESTO'],
     errores: {
@@ -11321,8 +12322,8 @@ var PREGUNTAS = {
     },
     camposPorTienda: {
       marca: { pregunta: 'Marca', ayuda: 'Como aparece en la app.', ejemplo: 'Beer Station' },
-      razonSocial: { pregunta: 'Razón social', ayuda: 'Como aparece en el RUT.', ejemplo: 'Cervecerías del Sur S.A.S.' },
-      id: { pregunta: 'NIT', ayuda: 'Con dígito de verificación.', ejemplo: '900.777.888-2' },
+      razonSocial: { pregunta: 'Razón social', ayuda: 'Como aparece en {DONDE_ID_FISCAL}.', ejemplo: 'Cervecerías del Sur S.A.S.' },
+      id: { pregunta: '{ID_FISCAL}', ayuda: 'Completo, tal como sale en {DONDE_ID_FISCAL}.', ejemplo: '{EJEMPLO_ID_FISCAL}' },
       ciudades: { pregunta: 'Ciudades', ayuda: 'Separadas por comas, o marca cobertura nacional.', ejemplo: 'Bogotá, Medellín' },
       nacional: { pregunta: 'Cobertura nacional', ayuda: 'Marca esto y no necesitas escribir ciudades.' },
       presupuesto: { pregunta: 'Presupuesto', ayuda: 'De esta tienda, no el total.', ejemplo: '5000000' },
@@ -11401,7 +12402,7 @@ var NOMBRE_DEL_HUECO = {
   FECHA_FIN: 'el día de fin',
   HORA_FIN: 'la hora de fin',
   ORGANIZADOR: 'la empresa que paga',
-  ID_ORGANIZADOR: 'el NIT de esa empresa',
+  ID_ORGANIZADOR: 'la identificación tributaria de esa empresa',
   TEXTO_SEGMENTO: 'quiénes participan',
   TEXTO_METODO_PAGO: 'con qué puede pagar',
   TEXTO_MINIMO_COMPRA: 'la compra mínima',
@@ -11428,9 +12429,113 @@ var NOMBRE_DEL_HUECO = {
   TEXTO_UMBRAL: 'la compra mínima',
   TIENDA_MARCA: 'la marca de la tienda',
   TIENDA_RAZON_SOCIAL: 'la razón social',
-  TIENDA_ID: 'el NIT',
+  TIENDA_ID: 'la identificación de la tienda',
   TIENDA_CIUDADES: 'las ciudades',
   TIENDA_PRESUPUESTO: 'el presupuesto',
+  TEXTO_PARENTESCO: 'el grado de parentesco que no puede participar',
+  TEXTO_PRODUCTOS_DESCUENTO: 'sobre qué productos aplica',
+  TEXTO_BENEFICIO_DESCUENTO: 'en qué consiste el beneficio',
+  TEXTO_BASE_DESCUENTO: 'sobre qué valor se calcula el beneficio',
+  TEXTO_TOPE_DESCUENTO: 'el tope por pedido',
+  TEXTO_AGOTAMIENTO: 'qué agota la campaña antes de la fecha',
+  TEXTO_LIMITE_CAMPANA: 'el límite total de la campaña',
+  TEXTO_ACTIVACION_CUPON: 'cómo se activa el cupón',
+  TEXTO_MIENTRAS_QUEDE: 'qué otra cosa acaba la campaña además de la fecha',
+  CODIGO_CUPON: 'el código del cupón',
+};
+
+/**
+ * Los datos de la fila del pais que se escriben dentro de una pregunta.
+ *
+ * Existe porque la pregunta del identificador del Organizador decia "NIT" en
+ * los nueve paises, con un ejemplo colombiano. El nombre, el ejemplo y donde se
+ * busca ese numero ya viven en la pestana Paises, que es de Legal: la pregunta
+ * los pide por su marcador y los rellena conDatosDelPais().
+ */
+var DATOS_DEL_PAIS_EN_LA_PREGUNTA = {
+  '{ID_FISCAL}': 'tipo_id_organizador',
+  '{EJEMPLO_ID_FISCAL}': 'ejemplo_id_fiscal',
+  '{DONDE_ID_FISCAL}': 'donde_id_fiscal',
+  '{MONEDA}': 'moneda_nombre',
+};
+
+/** Los textos de una pregunta donde puede haber un marcador de pais. */
+var TEXTOS_CON_MARCADOR = ['pregunta', 'ayuda', 'porQue', 'ejemplo', 'confirmacion', 'aviso'];
+
+function conDatosDelPaisEnElTexto(texto, pais) {
+  var salida = String(texto);
+  for (var marcador in DATOS_DEL_PAIS_EN_LA_PREGUNTA) {
+    if (!Object.prototype.hasOwnProperty.call(DATOS_DEL_PAIS_EN_LA_PREGUNTA, marcador)) continue;
+    if (salida.indexOf(marcador) === -1) continue;
+    var valor = pais[DATOS_DEL_PAIS_EN_LA_PREGUNTA[marcador]];
+    // Un pais al que todavia no le han escrito el dato deja el marcador crudo
+    // en pantalla, que es feo pero visible. Borrarlo dejaria la frase sin
+    // sujeto y nadie se enteraria de que falta un dato en la pestana Paises.
+    if (valor === null || valor === undefined || !String(valor).trim()) continue;
+    salida = salida.split(marcador).join(String(valor).trim());
+  }
+  return salida;
+}
+
+function copiaDePregunta(pregunta) {
+  var copia = {};
+  for (var llave in pregunta) {
+    if (Object.prototype.hasOwnProperty.call(pregunta, llave)) copia[llave] = pregunta[llave];
+  }
+  return copia;
+}
+
+/**
+ * La pregunta con los datos del pais ya puestos.
+ *
+ * No toca el objeto original: PREGUNTAS es compartido y una campana de Mexico
+ * dejaria "RFC" escrito para la siguiente de Colombia. Tambien entra en las
+ * subpreguntas de las listas repetibles (las tiendas del Multitienda y los
+ * productos), que son las otras que nombran el identificador.
+ */
+function conDatosDelPais(pregunta, pais) {
+  if (!pregunta || !pais) return pregunta;
+
+  var mezclada = copiaDePregunta(pregunta);
+
+  for (var t = 0; t < TEXTOS_CON_MARCADOR.length; t++) {
+    var llave = TEXTOS_CON_MARCADOR[t];
+    if (typeof mezclada[llave] === 'string') mezclada[llave] = conDatosDelPaisEnElTexto(mezclada[llave], pais);
+  }
+
+  if (mezclada.errores) {
+    var errores = {};
+    for (var e in mezclada.errores) {
+      if (!Object.prototype.hasOwnProperty.call(mezclada.errores, e)) continue;
+      errores[e] = conDatosDelPaisEnElTexto(mezclada.errores[e], pais);
+    }
+    mezclada.errores = errores;
+  }
+
+  var subListas = ['camposPorTienda', 'camposPorProducto'];
+  for (var l = 0; l < subListas.length; l++) {
+    var nombre = subListas[l];
+    if (!mezclada[nombre]) continue;
+    var sub = {};
+    for (var campo in mezclada[nombre]) {
+      if (!Object.prototype.hasOwnProperty.call(mezclada[nombre], campo)) continue;
+      sub[campo] = conDatosDelPais(mezclada[nombre][campo], pais);
+    }
+    mezclada[nombre] = sub;
+  }
+
+  return mezclada;
+}
+
+/**
+ * Tipos que leen las variantes de otro.
+ *
+ * El Cupom de Brasil es la Promocao con un codigo: comparte sus trece variantes
+ * de texto, que ya estan escritas y revisadas. Copiarlas era garantizar que el
+ * dia que alguien corrija una de las dos, la otra se quede vieja.
+ */
+var VARIANTES_HEREDADAS = {
+  cupom_br: 'promocao_br',
 };
 
 /**
@@ -11445,7 +12550,10 @@ function preguntaDe(campo, tipo) {
   if (!Object.prototype.hasOwnProperty.call(PREGUNTAS, campo)) return null;
   var pregunta = PREGUNTAS[campo];
 
-  var variante = pregunta.variantes && tipo ? pregunta.variantes[tipo] : null;
+  var variante = null;
+  if (pregunta.variantes && tipo) {
+    variante = pregunta.variantes[tipo] || pregunta.variantes[VARIANTES_HEREDADAS[tipo]] || null;
+  }
   if (!variante) return pregunta;
 
   var mezclada = {};
@@ -11479,6 +12587,9 @@ if (typeof module !== 'undefined') {
     NOMBRE_DEL_HUECO: NOMBRE_DEL_HUECO,
     CIUDADES_SUGERIDAS: CIUDADES_SUGERIDAS,
     preguntaDe: preguntaDe,
+    conDatosDelPais: conDatosDelPais,
+    DATOS_DEL_PAIS_EN_LA_PREGUNTA: DATOS_DEL_PAIS_EN_LA_PREGUNTA,
+    VARIANTES_HEREDADAS: VARIANTES_HEREDADAS,
     nombreDelHueco: nombreDelHueco,
     pasoDe: pasoDe,
   };
@@ -11510,6 +12621,15 @@ if (typeof module !== 'undefined') {
  * que la lea alguien que hable portugues antes de que la usen los KAM de Brasil.
  * Anotado en docs/PENDIENTES_LEGAL.md.
  */
+
+/*
+ * VARIANTES_HEREDADAS vive en preguntas.js. En Apps Script y en el navegador ya
+ * es global (los archivos de src/core comparten ambito y preguntas.js va antes);
+ * en Node hay que pedirlo.
+ */
+if (typeof module !== 'undefined' && typeof require === 'function' && typeof VARIANTES_HEREDADAS === 'undefined') {
+  var VARIANTES_HEREDADAS = require('./preguntas.js').VARIANTES_HEREDADAS;
+}
 
 var PREGUNTAS_PT = {
   pais: {
@@ -11560,6 +12680,17 @@ var PREGUNTAS_PT = {
         ejemplo: 'Petz',
         errores: { vacio: 'Escreva o parceiro em que a campanha vale.' },
       },
+    },
+  },
+
+  codigoCupon: {
+    pregunta: 'Qual é o código do cupom?',
+    ayuda: 'Como o usuário vai digitar, sem espaços. Por exemplo: RAPPI30.',
+    porQue: 'O código sai impresso duas vezes no documento. Se não coincidir letra por letra com o do aplicativo, o usuário reclama um cupom que não funciona.',
+    errores: {
+      vacio: 'Escreva o código do cupom, como o usuário vai digitar.',
+      formato: 'O código só pode ter letras, números e hífens, sem espaços.',
+      largo: 'O código não pode passar de 24 caracteres.',
     },
   },
 
@@ -11749,7 +12880,10 @@ function copiaPlana(objeto) {
  * llave, para que la variante solo tenga que escribir lo que cambia.
  */
 function traduccionPara(base, tipo) {
-  var variante = base.variantes && tipo ? base.variantes[tipo] : null;
+  // Igual que preguntaDe(): el Cupom de Brasil lee las variantes de la
+  // Promocao, que son las mismas trece ya traducidas y revisadas.
+  var heredadas = typeof VARIANTES_HEREDADAS !== 'undefined' ? VARIANTES_HEREDADAS : {};
+  var variante = base.variantes && tipo ? (base.variantes[tipo] || base.variantes[heredadas[tipo]] || null) : null;
   var mezclada = copiaPlana(base);
   delete mezclada.variantes;
   if (!variante) return mezclada;
@@ -12794,6 +13928,23 @@ function validarFormatos(entrada, esquema, idioma) {
     } else if (campo.tipo === 'texto' && campo.maximo !== undefined && String(valor).length > campo.maximo) {
       errores.push(error(campo.id, mensajeDe(campo.id, esquema.id, 'largo', idioma,
         campo.etiqueta + ' no puede pasar de ' + campo.maximo + ' caracteres.')));
+    } else if (campo.tipo === 'codigo') {
+      /*
+       * El codigo de un cupon va impreso tal cual y el usuario lo teclea.
+       *
+       * Se valida sobre lo que el comercial escribio, no sobre la version
+       * normalizada: si escribe "RAPPI 30" tiene que ver el error, porque en la
+       * aplicacion ese cupon no existe. Aceptarlo en silencio y publicar
+       * "RAPPI30" seria publicar un codigo que el comercial nunca aprobo.
+       */
+      var codigo = String(valor).trim();
+      if (campo.maximo !== undefined && codigo.length > campo.maximo) {
+        errores.push(error(campo.id, mensajeDe(campo.id, esquema.id, 'largo', idioma,
+          campo.etiqueta + ' no puede pasar de ' + campo.maximo + ' caracteres.')));
+      } else if (!/^[A-Za-z0-9-]+$/.test(codigo)) {
+        errores.push(error(campo.id, mensajeDe(campo.id, esquema.id, 'formato', idioma,
+          campo.etiqueta + ' solo puede llevar letras, números y guiones, sin espacios.')));
+      }
     }
   }
   return errores;
@@ -13001,6 +14152,26 @@ function validarCreditos(entrada, esquema, idioma) {
       errores.push(error('fechaFinRedencion', mensajeDe('fechaFinRedencion', tipo, 'orden', idioma,
         'La fecha límite de redención debe ser posterior al fin de la campaña.')));
     }
+  }
+  return errores;
+}
+
+/**
+ * Cruces del Descuento y del Cupon.
+ *
+ * El mismo riesgo del Cashback y por la misma razon: con un tope mayor que el
+ * presupuesto, el primer pedido se lleva la campana entera. Aqui el tope es
+ * opcional y el presupuesto solo existe cuando la campana termina por
+ * presupuesto, asi que el cruce solo se hace cuando estan los dos.
+ */
+function validarDescuento(entrada, tipo, idioma) {
+  var errores = [];
+  var tope = Number(entrada.tope);
+  var presupuesto = Number(entrada.presupuesto);
+
+  if (tope > 0 && presupuesto > 0 && tope > presupuesto) {
+    errores.push(error('tope', mensajeDe('tope', tipo, 'mayorQuePresupuesto', idioma,
+      'El tope por pedido no puede ser mayor que el presupuesto total.')));
   }
   return errores;
 }
@@ -13585,6 +14756,13 @@ function validarSolicitud(entrada, pais, contexto) {
     errores = errores.concat(validarCarrera(entrada, esquema.id, idioma));
     errores = errores.concat(validarProductos(entrada, esquema));
   }
+  if (esquema.esDeDescuento) {
+    errores = errores.concat(validarDescuento(entrada, esquema.id, idioma));
+    // La lista de productos con su EAN es la misma de la Carrera, y se revisa
+    // igual: sin esto un EAN repetido o con el digito de control malo se
+    // publicaba dentro de la clausula de Productos Participantes.
+    errores = errores.concat(validarProductos(entrada, esquema));
+  }
   if (entrada.tipo === 'cashback_day') {
     errores = errores.concat(validarTiendas(entrada, pais, esquema));
   }
@@ -13624,6 +14802,7 @@ if (typeof module !== 'undefined') {
     validarIdiomaDelPais: validarIdiomaDelPais,
     fechaFinDeLaCampana: fechaFinDeLaCampana,
     validarEta: validarEta,
+    validarDescuento: validarDescuento,
     validarCategoriaDeLaPieza: validarCategoriaDeLaPieza,
     validarProductos: validarProductos,
     validarTiendasEta: validarTiendasEta,
@@ -14283,12 +15462,24 @@ function pregunta(campoId) {
   // El tipo va dos veces a proposito: la variante en espanol y la variante en
   // el otro idioma se eligen por separado. Sin el segundo, la interfaz en
   // portugues preguntaba "em reais" para un tope en pesos.
-  return preguntaEnIdioma(preguntaDe(campoId, entrada().tipo), campoId, idiomaInterfaz(), entrada().tipo);
+  var texto = preguntaEnIdioma(preguntaDe(campoId, entrada().tipo), campoId, idiomaInterfaz(), entrada().tipo);
+  // Y al final los datos del pais, despues de elegir idioma y variante, para
+  // que "{ID_FISCAL}" se convierta en RFC o en RUT tambien cuando la interfaz
+  // esta en portugues. Sin esto la pregunta del Organizador decia "NIT" en los
+  // nueve paises.
+  return conDatosDelPais(texto, paisDeLaEntrada());
+}
+
+/** La fila del pais elegido, o null mientras todavia no hay pais. */
+function paisDeLaEntrada() {
+  if (!estado.configuracion || !estado.configuracion.paises) return null;
+  return paisPorCodigo(estado.configuracion.paises, entrada().pais);
 }
 
 RM.estado = {
   estado: estado,
   pregunta: pregunta,
+  paisDeLaEntrada: paisDeLaEntrada,
   T: T,
   nombreDePais: nombreDePais,
   idiomaInterfaz: idiomaInterfaz,
@@ -17006,11 +18197,24 @@ function tiendaVacia() {
   return { marca: '', razonSocial: '', id: '', ciudades: '', nacional: false, presupuesto: null, tiendaTurbo: '' };
 }
 
+/*
+ * Los textos de las columnas de la lista, con el idioma y el pais ya puestos.
+ *
+ * estado.pregunta() y no preguntaDe(): la columna del identificador se llama
+ * "{ID_FISCAL}" hasta que alguien le pone encima la fila del pais, y llamar a
+ * preguntaDe() aqui dejaba el marcador crudo en la cabecera de la tabla. Es la
+ * misma trampa de la skill de flujo: un mecanismo que la interfaz no llama es un
+ * mecanismo que no existe.
+ */
+function textosDeLaTienda() {
+  return estado.pregunta('tiendas').camposPorTienda;
+}
+
 /** Revisa una fila y devuelve los problemas, campo por campo. */
 function revisarTienda(tienda, indice, todas) {
   var pais = RM.flujo.paisElegido();
   var problemas = {};
-  var textos = preguntaDe('tiendas').camposPorTienda;
+  var textos = textosDeLaTienda();
 
   if (!tienda.marca) problemas.marca = 'Falta ' + textos.marca.pregunta.toLowerCase() + '.';
   if (!tienda.razonSocial) problemas.razonSocial = 'Falta la razón social.';
@@ -17019,7 +18223,7 @@ function revisarTienda(tienda, indice, todas) {
   if (!tienda.tiendaTurbo) problemas.tiendaTurbo = 'Dinos en cuál de sus tiendas se gana el cashback.';
 
   if (!tienda.id) {
-    problemas.id = 'Falta el NIT de esta tienda.';
+    problemas.id = 'Falta ' + textos.id.pregunta.toLowerCase() + ' de esta tienda.';
   } else if (pais) {
     var revision = validarIdentificacion(pais.codigo, tienda.id);
     if (!revision.valido) {
@@ -17029,7 +18233,7 @@ function revisarTienda(tienda, indice, todas) {
         if (i === indice || !todas[i].id) continue;
         var otra = validarIdentificacion(pais.codigo, todas[i].id);
         if (otra.valido && otra.formateado === revision.formateado) {
-          problemas.id = preguntaDe('tiendas').errores.repetida;
+          problemas.id = estado.pregunta('tiendas').errores.repetida;
           break;
         }
       }
@@ -17039,7 +18243,7 @@ function revisarTienda(tienda, indice, todas) {
 }
 
 function filaDeTienda(tienda, indice, alCambiar) {
-  var textos = preguntaDe('tiendas').camposPorTienda;
+  var textos = textosDeLaTienda();
   var pais = RM.flujo.paisElegido();
   var problemas = revisarTienda(tienda, indice, tiendas());
 
@@ -17215,7 +18419,9 @@ function bloqueDePegar(alCambiar) {
 }
 
 function dibujar(alCambiar) {
-  var pregunta = preguntaDe('tiendas');
+  // estado.pregunta() por lo mismo que textosDeLaTienda(): la ayuda nombra el
+  // identificador tributario del pais, y con preguntaDe() salia "{ID_FISCAL}".
+  var pregunta = estado.pregunta('tiendas');
   var lista = tiendas();
 
   var bloque = crear('div', { clase: 'pregunta', 'data-campo': 'tiendas' }, [

@@ -25,7 +25,9 @@ Esta herramienta solo genera documentos para dinámicas SIN azar. Si tu campaña
 - Cashback Multitienda: varias tiendas hacen cashback dentro de la misma jornada, cada una con su propio porcentaje, su tope y su presupuesto.
 - 15 minutos o Cashback: Rappi promete un tiempo de entrega en el botón Turbo y, si la orden llega tarde, devuelve en Créditos parte de lo que el usuario pagó.
 - Cashback Travel y Descuento Travel: las dos formas de campaña de vuelos, hoteles, autos y paquetes.
-- Descuentos, cupones, envío gratis y tarifa de servicio: ya tienen T&C publicados y no generas nada.
+- Descuento: la tienda baja el precio, o regala el envío o la tarifa de servicio. Todos los que compran lo reciben.
+- Cupón: lo mismo, pero el usuario lo activa con un código o desde la sección “Cupones”. Quien lo activa lo recibe.
+- En Colombia, los descuentos, los cupones, el envío gratis y la tarifa de servicio ya tienen T&C publicados y no generas nada.
 
 ### No sirven: las redacta Legal
 
@@ -141,9 +143,9 @@ No, y por eso importa que los datos estén bien. El texto legal ya está aprobad
 
 Si es para alargarla o subir el presupuesto, sí: en Mis campañas, botón Ampliar. Para acortarla o bajar algo, habla con Legal, porque afecta a quien ya participó.
 
-**El NIT del aliado no pasa la validación.**
+**La identificación del aliado no pasa la validación.**
 
-Casi siempre es el dígito de verificación, el número después del guion. Pídele el RUT a tu contacto y cópialo de ahí. Si el RUT dice un número y la validación lo rechaza, avísanos en el canal de ayuda: es una falla de la herramienta.
+El número que te pedimos cambia según el país: NIT en Colombia, RFC en México, RUC en Perú y Ecuador, CUIT en Argentina, RUT en Chile y Uruguay, cédula jurídica en Costa Rica y CNPJ en Brasil. La pregunta te dice cuál es y dónde buscarlo. Casi siempre falla el dígito de verificación: pídele el documento tributario a tu contacto y cópialo de ahí. Si el documento dice un número y la validación lo rechaza, avísanos en el canal de ayuda: es una falla de la herramienta.
 
 **¿Puedo poner varias tiendas en una misma campaña?**
 
@@ -151,7 +153,7 @@ Sí, con el tipo Cashback Multitienda. Cada tienda entra con su razón social, s
 
 **¿Qué es un Maker y en qué cambia las cosas?**
 
-Es la marca que fabrica el producto, distinta de la tienda que lo vende. Si el Maker pone la plata, el Maker es el Organizador y va su razón social y su NIT, no los de la tienda.
+Es la marca que fabrica el producto, distinta de la tienda que lo vende. Si el Maker pone la plata, el Maker es el Organizador y van su razón social y su identificación tributaria, no las de la tienda.
 
 **¿Por qué Rappi no puede ser el organizador?**
 
@@ -165,6 +167,14 @@ Sí. Después de elegir el país, la primera pregunta es si la campaña es de Ra
 
 En una carpeta de Drive por país, nunca en una carpeta general. Tú quedas como lector del documento y el enlace te llega por correo.
 
-**Mi campaña es un descuento o un cupón y no la veo en la lista de tipos.**
+**Mi campaña es un descuento o un cupón. ¿Qué hago?**
 
-Buena noticia: para esas campañas no hay que generar nada. En Colombia, Legal ya publicó los T&C generales de los descuentos, los cupones, el envío gratis y la tarifa de servicio gratis. Debajo de la lista de tipos de campaña hay una opción que te lleva a ellos, y ahí copias el enlace que va en la pieza.
+Depende del país. En Colombia no hay que generar nada: Legal ya publicó los T&C generales de los descuentos, los cupones, el envío gratis y la tarifa de servicio gratis, y debajo de la lista de tipos de campaña hay una opción que te lleva a ellos para copiar el enlace que va en la pieza. En los demás países sí generas tu documento, con los tipos Descuento y Cupón.
+
+**¿En qué se diferencian el Descuento y el Cupón?**
+
+En una sola cosa: quién hace algo. El Descuento se aplica solo, en el precio que el usuario ve antes de pagar. El Cupón hay que activarlo: el usuario escribe un código o lo toma en la sección “Cupones” de la app, y si no lo activa no recibe el beneficio. Si tu campaña tiene código, es Cupón.
+
+**Quiero hacer una Carrera de Compras en Brasil y no me aparece.**
+
+En Brasil un concurso con premio necesita autorización previa de la Secretaria de Prêmios e Apostas antes de lanzarse, así que esa campaña no se puede generar sola: escríbele a Legal con tiempo, porque el trámite no es inmediato. En los demás países sí la generas aquí, porque la Carrera se gana por lo que cada persona compró y no por suerte.

@@ -51,6 +51,9 @@ function valorDePrueba(campo, codigoPais, tipoActual) {
     if (campo.id === 'presupuesto') return 12000000;
     if (campo.id === 'creditosPremio') return 500000;
     if (campo.id === 'compraMinima') return 20000;
+    if (campo.id === 'montoDescuento') return 10000;
+    if (campo.id === 'unidadesDisponibles') return 500;
+    if (campo.id === 'valorPremio') return 800000;
     return Math.max(campo.minimo || 1, 4);
   }
   // El cashback por ETA no declara el valor por defecto de las horas, y con
@@ -71,6 +74,8 @@ function valorDePrueba(campo, codigoPais, tipoActual) {
   }
   if (campo.tipo === 'casilla') return true;
   if (campo.tipo === 'identificacion') return IDENTIFICACIONES[codigoPais];
+  // El codigo de un cupon: letras y numeros, sin espacios, como lo teclea el usuario.
+  if (campo.tipo === 'codigo') return 'RAPPI30';
   if (campo.tipo === 'texto') return campo.id === 'ciudades' ? 'Bogotá' : 'Texto de prueba';
   if (campo.tipo === 'casillas') {
     if (campo.id === 'exclusionesRedencion') {

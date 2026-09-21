@@ -197,10 +197,23 @@ function montoConMoneda(n, pais) {
   var idioma = textosDelIdioma();
   var cifra = pais.moneda_simbolo + formatearMiles(n, pais.separador_miles) + (idioma.decimalesDelMonto || '');
 
+  /*
+   * "tres millones DE pesos", no "tres millones pesos".
+   *
+   * La regla es la misma que cantidadCreditos ya aplicaba para los Creditos, y
+   * aqui faltaba. Solo se nota con un monto de millones redondos, que es por lo
+   * que estuvo tanto tiempo sin verse: el unico monto grande de los casos
+   * dorados era 1.200.000, que no termina en "millon" y no necesita el "de".
+   * Salio al habilitar el Descuento, donde un presupuesto de 3.000.000 es un
+   * numero de todos los dias. Anotado en docs/PENDIENTES_LEGAL.md.
+   */
+  var letras = numeroEnLetras(n);
+  var moneda = (idioma.terminacionDeMillon.test(letras) ? idioma.deAntesDelSustantivo + ' ' : '') + pais.moneda_nombre;
+
   if (idioma.ordenDeLaCifra === 'cifra_primero') {
-    return cifra + ' (' + numeroEnLetras(n) + ' ' + pais.moneda_nombre + ')';
+    return cifra + ' (' + letras + ' ' + moneda + ')';
   }
-  return numeroEnLetras(n) + ' ' + pais.moneda_nombre + ' (' + cifra + ')';
+  return letras + ' ' + moneda + ' (' + cifra + ')';
 }
 
 /**

@@ -246,12 +246,18 @@ test('en Brasil la campaña arranca a las 00:01, y solo en Brasil', () => {
   // septiembre de 2026 la ayuda lo contaba y el formulario dejaba 00:00, así
   // que cada documento brasileño salía con una hora distinta de la de los
   // aprobados. Punto B3.
-  assert.strictEqual(preguntaDe('horaInicio', 'promocao_br').porDefecto, '00:01');
+  //
+  // Vale para los dos tipos brasileños, no solo para la Promoção: el Cupom
+  // hereda sus variantes, y si alguien rompiera esa herencia el Cupom empezaría
+  // a las 00:00 sin que nada más cambiara.
+  const brasilenos = Object.keys(ESQUEMAS).filter((tipoId) => ESQUEMAS[tipoId].esDeBrasil);
+  assert.deepStrictEqual(brasilenos.sort(), ['cupom_br', 'promocao_br']);
+
   for (const tipoId of Object.keys(ESQUEMAS)) {
-    if (tipoId === 'promocao_br') continue;
+    const esperada = ESQUEMAS[tipoId].esDeBrasil ? '00:01' : '00:00';
     assert.strictEqual(
-      preguntaDe('horaInicio', tipoId).porDefecto, '00:00',
-      tipoId + ': la hora de Brasil se coló en otro tipo de campaña'
+      preguntaDe('horaInicio', tipoId).porDefecto, esperada,
+      tipoId + ': la hora de inicio por defecto no es la que le toca'
     );
   }
 });
