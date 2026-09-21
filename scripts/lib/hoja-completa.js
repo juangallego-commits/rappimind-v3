@@ -88,20 +88,48 @@ function incrustarLetras(css, desde) {
 }
 
 /**
+ * Quita los comentarios de CSS.
+ *
+ * Los comentarios de esta hoja son largos a proposito: cuentan que se rompio de
+ * verdad en cada sitio. Pero Apps Script arma el HTML con doGet en cada
+ * peticion y no lo cachea, asi que cada byte de comentario se descarga en cada
+ * carga de la aplicacion, y son 24 KB. En la calle, con mala senal, eso son
+ * segundos de "Cargando RappiMind".
+ *
+ * Se quitan SOLO en dist/. Las pruebas y docs/FRONT_ACTUAL.html siguen leyendo
+ * la hoja entera, con sus comentarios, que es donde hacen falta.
+ */
+function quitarComentarios(css) {
+  return css
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/[ \t]+$/gm, '')
+    .replace(/\n{3,}/g, '\n\n');
+}
+
+/**
  * Devuelve la hoja entera, ya concatenada.
  *
  * Con `incrustarFuentes` en true, las url() de letras se sustituyen por el
- * base64 del archivo. Eso es lo que hace falta para Apps Script; para las
- * pruebas y para docs/FRONT_ACTUAL.html no, porque ahi solo interesa el texto
- * de las reglas y el base64 pesaria treinta veces mas que el resto.
+ * base64 del archivo. Hace falta en los dos sitios que se MIRAN: dist/, porque
+ * Apps Script no sirve archivos del repositorio, y docs/FRONT_ACTUAL.html,
+ * porque su url() relativa resuelve fuera de docs/ y la letra de marca no
+ * cargaba en ninguna de las 48 pantallas. Las pruebas no lo necesitan: ahi solo
+ * interesa el texto de las reglas.
+ *
+ * Con `sinComentarios` en true se quitan los comentarios. Solo lo usa dist/.
  */
 function hojaCompleta(opciones) {
   const incrustarFuentes = Boolean(opciones && opciones.incrustarFuentes);
+  const sinComentarios = Boolean(opciones && opciones.sinComentarios);
   const partes = [];
 
   for (const relativa of ORDEN) {
     const ruta = rutaDesdeRaiz('src', 'client', relativa);
     let css = leerTexto(ruta);
+    // Los comentarios se quitan ANTES de incrustar: el base64 de una letra no
+    // puede contener "*/", porque el asterisco no esta en su alfabeto, pero el
+    // orden correcto es quitar texto y despues meter datos, no al reves.
+    if (sinComentarios) css = quitarComentarios(css);
     if (incrustarFuentes) css = incrustarLetras(css, path.dirname(ruta));
     partes.push('/* ' + path.posix.join('src/client', relativa) + ' */\n' + css.trim());
   }
@@ -109,4 +137,4 @@ function hojaCompleta(opciones) {
   return partes.join('\n\n') + '\n';
 }
 
-module.exports = { hojaCompleta, incrustarLetras, ORDEN };
+module.exports = { hojaCompleta, incrustarLetras, quitarComentarios, ORDEN };

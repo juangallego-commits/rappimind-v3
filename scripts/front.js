@@ -377,7 +377,13 @@ async function main() {
     fichas: fichas,
     capturas: recorrido.capturas,
     fallas: recorrido.fallas,
-    estilos: hojaCompleta(),
+    // Con la letra incrustada. El comentario de hoja-completa.js decía que aquí
+    // solo interesa el texto de las reglas, y eso dejó de ser cierto el día que
+    // este documento pasó a ser la prueba visual de un cambio de tipografía: sin
+    // incrustar, la url() relativa del @font-face resuelve fuera de docs/ y la
+    // letra de marca no se ve en ninguna de las 48 pantallas. Cuesta 28 KB en un
+    // archivo que solo se abre en local.
+    estilos: hojaCompleta({ incrustarFuentes: true }),
     plantilla: leerTexto(rutaDesdeRaiz('src', 'client', 'Index.html')),
     lineas: lineas,
   });

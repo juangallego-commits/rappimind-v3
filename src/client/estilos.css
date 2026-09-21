@@ -298,9 +298,13 @@ button { font-size: 15px; cursor: pointer; }
 
 /* Sin opacity: bajarla arrastraria el texto por debajo del contraste minimo.
    Fondo plano, letra apagada, y el borde se va con el fondo. */
+/* El fondo de pagina TAMBIEN es niebla, asi que un deshabilitado en niebla sin
+   borde no se lee como boton: desaparece y queda una etiqueta gris suelta al
+   lado de "Atras", que si es una pildora con borde. Superficie de papel y
+   borde visible: sigue apagado, pero se ve que es un boton que espera algo. */
 .boton[disabled] {
-  background: var(--niebla); color: var(--texto-off);
-  cursor: not-allowed; border-color: transparent;
+  background: var(--papel); color: var(--texto-off);
+  cursor: not-allowed; border-color: var(--rm-borde-secundario);
 }
 
 .boton-secundario {
@@ -374,7 +378,12 @@ button { font-size: 15px; cursor: pointer; }
      font-size:0, para que el boton conserve su nombre accesible y su tamano
      de blanco: quien navega con teclado sigue pudiendo volver a un paso. */
   text-indent: -9999px; overflow: hidden; white-space: nowrap;
-  height: var(--paso-alto);
+  /* El alto lo pone el relleno, no una altura fija. Con height: var(--paso-alto)
+     la barra se veia bien pero el BLANCO DE CLIC medida 4px: el boton seguia
+     teniendo nombre accesible y seguia siendo alcanzable con el tabulador, pero
+     acertarle con el raton era imposible. La barra puede verse de 4px sin que
+     el blanco mida 4px. */
+  height: auto; padding-bottom: 20px;
 }
 .progreso button::before {
   content: ''; display: block; height: var(--paso-alto); text-indent: 0;
@@ -389,19 +398,19 @@ button { font-size: 15px; cursor: pointer; }
 
 /* Con siete pasos o mas, caidas pase lo que pase. */
 @container barra (min-width: 188px) {
-  .progreso:not(:has(li:nth-child(3))) button { text-indent: 0; height: auto; }
+  .progreso:not(:has(li:nth-child(3))) button { text-indent: 0; padding-bottom: 0; }
 }
 @container barra (min-width: 288px) {
-  .progreso:not(:has(li:nth-child(4))) button { text-indent: 0; height: auto; }
+  .progreso:not(:has(li:nth-child(4))) button { text-indent: 0; padding-bottom: 0; }
 }
 @container barra (min-width: 388px) {
-  .progreso:not(:has(li:nth-child(5))) button { text-indent: 0; height: auto; }
+  .progreso:not(:has(li:nth-child(5))) button { text-indent: 0; padding-bottom: 0; }
 }
 @container barra (min-width: 488px) {
-  .progreso:not(:has(li:nth-child(6))) button { text-indent: 0; height: auto; }
+  .progreso:not(:has(li:nth-child(6))) button { text-indent: 0; padding-bottom: 0; }
 }
 @container barra (min-width: 588px) {
-  .progreso:not(:has(li:nth-child(7))) button { text-indent: 0; height: auto; }
+  .progreso:not(:has(li:nth-child(7))) button { text-indent: 0; padding-bottom: 0; }
 }
 
 
@@ -518,7 +527,17 @@ input[disabled], select[disabled] {
   position: absolute; left: var(--e3); color: var(--gris-lapiz); font-size: 17px; pointer-events: none;
 }
 
-.campo-error input, .campo-error select {
+/*
+ * El error se escribe con la MISMA forma negada que el campo con valor, y no
+ * con un selector mas corto. Con `.campo-error input` a secas la regla del
+ * campo lleno gana por especificidad (0,3,1 contra 0,1,1), asi que un campo
+ * lleno y mal validado, que es el unico caso que de verdad ocurre, salia con
+ * borde tinta igual que uno bien lleno: se quedaba solo el grosor y el color
+ * del error no llegaba nunca.
+ */
+.campo-error input:not([type='date']):not([type='time']),
+.campo-error input[type='date'], .campo-error input[type='time'],
+.campo-error select, .campo-error textarea {
   border-color: var(--campo-error); border-width: 2px;
 }
 .mensaje-error { color: var(--neon-texto); font-size: 13.5px; font-weight: 700; margin: var(--e2) 0 0; display: flex; gap: var(--e2); }
@@ -887,7 +906,10 @@ input[disabled], select[disabled] {
   margin: 0 0 var(--e6);
   padding: var(--e5) var(--e7) var(--e7);
   border-radius: 0 0 var(--r-hoja) var(--r-hoja);
-  font-size: 19px; color: var(--gris-lapiz); max-width: 46ch;
+  /* Sin max-width: el tope de medida iba en la SUPERFICIE, no en el texto, asi
+     que la mitad de abajo del panel salia 156px mas estrecha que la de arriba
+     y el panel se veia partido en dos rectangulos con un escalon a la derecha. */
+  font-size: 19px; color: var(--gris-lapiz);
 }
 
 /* --- Celular ------------------------------------------------------------ */
@@ -917,9 +939,14 @@ input[disabled], select[disabled] {
   .barra-superior { padding: var(--e2) var(--e4); gap: var(--e3); }
   .marca { font-size: 15px; white-space: nowrap; flex: none; }
   .marca .corona { width: 11px; left: 36px; }
+  /* El carril se declara con overflow-x: auto y el navegador sube el otro eje a
+     auto tambien, asi que recorta arriba y abajo. La caja media exactamente lo
+     que el boton, o sea cero holgura, y el anillo de foco (3px mas 2px de
+     separacion) se perdia entero: computaba bien y no se veia. Cinco pixeles de
+     holgura, restados del relleno de la barra para que no crezca. */
   .barra-superior nav {
     flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    scrollbar-width: none; padding: 5px 0; margin: -5px 0;
   }
   .barra-superior nav::-webkit-scrollbar { display: none; }
   .enlace-nav { white-space: nowrap; padding: var(--e2); font-size: 13px; }

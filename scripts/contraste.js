@@ -120,7 +120,7 @@ const PARES = [
   // --- Texto blanco sobre el gradiente: se mide en sus tres paradas -------
   // Decision 80: el boton primario lleva texto grande, asi que le toca 3.
   { que: 'blanco sobre el gradiente al 0%', frente: '#FFFFFF', fondo: '--color-neon-orange', min: 3,
-    nota: 'la decision 98 recorta el gradiente del boton al 17%, asi que esta parada no lleva texto' },
+    nota: 'el BOTON PRIMARIO recorta el gradiente al 17%, asi que esa parada no lleva SU texto. Lo que lleve texto sobre el gradiente sin recortar va con --rm-grad-texto y se mide aparte' },
   { que: 'blanco sobre el gradiente al 55%', frente: '#FFFFFF', fondo: '--color-neon-red', min: 3 },
   { que: 'blanco sobre el gradiente al 100%', frente: '#FFFFFF', fondo: '--color-neon-pink', min: 3 },
 
@@ -142,6 +142,27 @@ const PARES = [
   // recorte hacia el naranja, esta linea se pone en rojo.
   { que: 'blanco sobre el arranque del gradiente del boton', frente: '#FFFFFF', fondo: '--rm-grad-boton', min: 3 },
   { que: 'blanco sobre el neon hundido', frente: '#FFFFFF', fondo: '--rm-neon-presionado', min: 4.5 },
+
+  // Los tres sitios que ponen blanco sobre el gradiente SIN recortar. La nota
+  // de arriba hablaba en general y por eso ninguno se media: la pildora de
+  // Publicado llevaba letra blanca de 13px sobre el gradiente de marca, donde
+  // el blanco no llega a 4.5 en ningun punto del tramo.
+  { que: 'blanco sobre el gradiente de texto, parada clara', frente: '#FFFFFF', fondo: '--rm-grad-texto', colorNumeroFondo: 0, min: 4.5 },
+  { que: 'blanco sobre el gradiente de texto, parada media', frente: '#FFFFFF', fondo: '--rm-grad-texto', colorNumeroFondo: 1, min: 4.5 },
+  { que: 'blanco sobre el gradiente de texto, parada final', frente: '#FFFFFF', fondo: '--rm-grad-texto', colorNumeroFondo: 2, min: 4.5 },
+  { que: 'pildora de Publicado', frente: '--rm-estado-publicado-fg', fondo: '--rm-grad-texto', colorNumeroFondo: 0, min: 4.5 },
+
+  // El enlace de acento dentro del panel informativo. Se media --rm-neon-texto
+  // sobre papel y sobre niebla, pero nunca sobre el celeste, y ahi es donde
+  // caia: daba 4.31:1.
+  { que: 'enlace de acento sobre el panel informativo', frente: '--rm-neon-texto', fondo: '--rm-aviso-info-bg', min: 4.5 },
+  { que: 'enlace de acento sobre el panel serio', frente: '--rm-neon-texto', fondo: '--rm-aviso-serio-bg', min: 4.5 },
+
+  // La superficie del control deshabilitado contra el fondo de pagina. No se
+  // medía, y por eso el boton primario deshabilitado llego a quedar en niebla
+  // sobre niebla: 1.00:1 exactos, o sea invisible como boton.
+  { que: 'superficie del boton deshabilitado sobre el fondo de pagina', frente: '--rm-papel', fondo: '--rm-niebla', min: 1.05,
+    nota: 'no es un minimo de WCAG: es que la superficie no puede ser el mismo color que la pagina, o el control deja de leerse como control' },
   { que: 'borde del control deshabilitado', frente: '--rm-campo-off-borde', fondo: '--rm-niebla', min: 3,
     nota: 'WCAG exime los componentes inactivos' },
 
@@ -186,7 +207,10 @@ function medir() {
   console.log('Fuente de los valores: src/client/tokens/\n');
 
   for (const par of PARES) {
-    const fondo = aColor(soloElColor(resolver(par.fondo, tokens)));
+    // colorNumeroFondo hace falta para los gradientes: un gradiente no es un
+    // color, son varios, y el que importa es el peor de sus paradas. Sin esto
+    // se medía siempre la primera y las otras pasaban sin mirar.
+    const fondo = aColor(soloElColor(resolver(par.fondo, tokens), par.colorNumeroFondo));
     const frente = componer(aColor(soloElColor(resolver(par.frente, tokens), par.colorNumero)), fondo);
     const r = razon(frente, fondo);
     const llega = r >= par.min;

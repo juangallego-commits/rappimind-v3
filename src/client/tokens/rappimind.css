@@ -58,9 +58,21 @@
      encima, donde el mínimo es 3:1 y lo pasa. El de texto es el mismo neón al
      85% de brillo, para lo que sí lleva texto, donde el mínimo es 4.5:1. */
   --rm-neon: #FF2526;
-  --rm-neon-texto: #D91F20;        /* 5.04:1 sobre papel, 4.53:1 sobre niebla */
+  --rm-neon-texto: #D41D1E;        /* 5.26 papel · 4.82 niebla · 4.70 beige · 4.50 celeste */
   --rm-grad: linear-gradient(135deg, #FF7A4D 0%, #FF2526 55%, #FF4583 100%);
   --rm-grad-hover: linear-gradient(135deg, #E8623A 0%, #D91F20 55%, #E03A72 100%);
+
+  /* El gradiente PARA SUPERFICIES QUE LLEVAN TEXTO ENCIMA.
+     El gradiente de marca no sirve para eso: su máximo con blanco es 3.79:1 y
+     su punto más claro 2.58:1, así que una letra normal encima no llega a 4.5
+     en NINGÚN punto. El botón primario lo resuelve recortando el tramo y
+     subiendo el texto a 19px en peso 700 (decisión 98), pero eso solo vale
+     donde el texto puede crecer. La píldora de Publicado va a 13px dentro de
+     una tabla y no puede.
+     Este es el mismo gradiente con las tres paradas hundidas hasta que el
+     blanco pasa 4.5:1 en TODO el tramo: el peor punto da 4.62:1. Conserva la
+     señal, que es que Publicado sea el único estado con gradiente. */
+  --rm-grad-texto: linear-gradient(135deg, #B95838 0%, #E42122 55%, #D2396C 100%);
 
   /* El gradiente del botón primario, recortado al 17% del tramo. Decisión 98.
      El blanco no llega a 4.5:1 en NINGÚN punto del gradiente completo: el
@@ -108,7 +120,7 @@
 
   /* === ESTADOS DE CAMPAÑA ===
      Ordenados por peso visual, no por matiz. El verde sale: no es de marca. */
-  --rm-estado-publicado-bg: var(--rm-grad);
+  --rm-estado-publicado-bg: var(--rm-grad-texto);
   --rm-estado-publicado-fg: #FFFFFF;
   --rm-estado-generado-bg: #FFF0DD;
   --rm-estado-generado-fg: #0A0A0A;
