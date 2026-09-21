@@ -356,7 +356,7 @@ A la izquierda, el texto en español que dibuja la interfaz. A la derecha, lo qu
 | Abrir el documento | Abrir o documento |
 | Cuando ya esté publicado | Quando já estiver publicado |
 | Hacer otra campaña | Fazer outra campanha |
-| Ver mis campañas | Ver o meu histórico |
+| Ver mis campañas | Ver minhas campanhas |
 | Te llega por correo en un par de minutos, con los pasos para publicarlo o a quién pasárselo. | Você recebe por e-mail em poucos minutos, com o passo a passo para publicar ou para saber a quem enviar. |
 |  está en pruebas: genera y revisa, pero todavía no publiques. Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie. |  está em testes: gere e revise, mas ainda não publique. Os dados jurídicos deste país foram propostos pela ferramenta e ninguém os confirmou. |
 |  está en pruebas: no publiques este documento todavía |  está em testes: não publique este documento ainda |

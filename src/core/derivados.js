@@ -41,6 +41,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
   var moduloTextoDerivados = require('./texto.js');
   var tieneValor = moduloTextoDerivados.tieneValor;
+  var condicionDePedido = moduloTextoDerivados.condicionDePedido;
   var terminoDeDias = moduloTextoDerivados.terminoDeDias;
 }
 
@@ -426,13 +427,8 @@ function calcularDerivadosEnElIdiomaDelPais(entrada, pais) {
 
   valores.TEXTO_LIMITE_PEDIDOS = textoLimitePedidos(entrada);
 
-  var condiciones = entrada.condiciones || [];
-  var frases = [];
-  for (var i = 0; i < condiciones.length; i++) {
-    var frase = TEXTO_CONDICION_POR_OPCION[condiciones[i]];
-    if (frase) frases.push(frase);
-  }
-  valores.TEXTO_CONDICIONES = frases.join(' ');
+  // Una sola condicion, no dos. Ver condicionDePedido() en texto.js.
+  valores.TEXTO_CONDICIONES = TEXTO_CONDICION_POR_OPCION[condicionDePedido(entrada)] || '';
 
   if (tieneValor(entrada.porcentaje)) valores.PORCENTAJE = porcentajeEnLetras(entrada.porcentaje);
   if (tieneValor(entrada.tope)) valores.TOPE = cantidadCreditos(entrada.tope, pais);

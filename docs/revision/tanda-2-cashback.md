@@ -77,7 +77,7 @@ Queda 1 pregunta en este paso.
 Atrás
 Siguiente
 Tu T&C
-Faltan 10 datos
+Faltan 13 datos
 
 [columna derecha: aquí se ve el documento llenándose mientras responde]
 ```
@@ -143,7 +143,7 @@ La cobertura define dónde puede reclamar el usuario. Si el documento dice más 
 Atrás
 Siguiente
 Tu T&C
-Faltan 9 datos
+Faltan 12 datos
 
 [columna derecha: aquí se ve el documento llenándose mientras responde]
 ```
@@ -192,7 +192,7 @@ Queda 1 pregunta en este paso.
 Atrás
 Siguiente
 Tu T&C
-Faltan 9 datos
+Faltan 12 datos
 
 [columna derecha: aquí se ve el documento llenándose mientras responde]
 ```
@@ -241,7 +241,7 @@ El documento identifica al Organizador con su número tributario. Un número mal
 Atrás
 Siguiente
 Tu T&C
-Faltan 7 datos
+Faltan 10 datos
 
 [columna derecha: aquí se ve el documento llenándose mientras responde]
 ```
@@ -287,7 +287,7 @@ El NIT tiene 9 dígitos más el de verificación, por ejemplo 900.111.222-1.
 Atrás
 Siguiente
 Tu T&C
-Faltan 8 datos
+Faltan 11 datos
 
 [columna derecha: aquí se ve el documento llenándose mientras responde]
 ```
@@ -331,7 +331,7 @@ Quedan 3 preguntas en este paso.
 Atrás
 Siguiente
 Tu T&C
-Faltan 7 datos
+Faltan 10 datos
 
 [columna derecha: aquí se ve el documento llenándose mientras responde]
 ```
@@ -391,7 +391,7 @@ Quedan 4 preguntas en este paso.
 Atrás
 Siguiente
 Tu T&C
-Faltan 4 datos
+Faltan 7 datos
 
 TÉRMINOS Y CONDICIONES
 
@@ -447,7 +447,7 @@ Quedan 3 preguntas en este paso.
 Atrás
 Siguiente
 Tu T&C
-Faltan 3 datos
+Faltan 6 datos
 
 [columna derecha: aquí se ve el documento llenándose mientras responde]
 ```
@@ -504,7 +504,7 @@ Quedan 2 preguntas en este paso.
 Atrás
 Siguiente
 Tu T&C
-Faltan 2 datos
+Faltan 5 datos
 
 [columna derecha: aquí se ve el documento llenándose mientras responde]
 ```
@@ -570,7 +570,7 @@ Queda 1 pregunta en este paso.
 Atrás
 Siguiente
 Tu T&C
-Falta 1 dato
+Faltan 4 datos
 
 [columna derecha: aquí se ve el documento llenándose mientras responde]
 ```
@@ -625,12 +625,12 @@ Una sola vez
 
 ¿El beneficio aplica solo en cierto tipo de pedido?Opcional
 
-Si aplica en cualquier pedido, no marques nada.
+Si la marca no puso ninguna condición, deja la primera opción.
 
-Solo si el pedido se hace por Turbo
+En cualquier pedido
+Domicilio, Turbo o cualquier forma de pedir.
+Solo pedidos por Turbo
 Un pedido por el resto de la app no da el beneficio.
-Solo si consume en el local
-Pide por la app y come en el local. Un domicilio no da el beneficio.
 ¿Por qué te preguntamos esto?
 
 Esta pregunta es sobre el pedido con el que el usuario se gana el beneficio, no sobre dónde gasta después los Créditos: eso se pregunta más adelante. Si la restricción no queda escrita, el usuario puede reclamar el beneficio en cualquier pedido.
@@ -638,10 +638,15 @@ Esta pregunta es sobre el pedido con el que el usuario se gana el beneficio, no 
 Atrás
 Siguiente
 Tu T&C
-Falta 1 dato
+Faltan 4 datos
 
 [columna derecha: aquí se ve el documento llenándose mientras responde]
 ```
+
+**Lo que aquí no se ve** (sale al equivocarse, o si hubiera elegido otra cosa):
+
+- Viene marcada de entrada con: **cualquiera**
+- Si lo deja en blanco: «Dinos en qué pedidos se gana el beneficio.»
 
 ---
 
@@ -683,7 +688,7 @@ Quedan 2 preguntas en este paso.
 Atrás
 Siguiente
 Tu T&C
-Falta 1 dato
+Faltan 4 datos
 
 [columna derecha: aquí se ve el documento llenándose mientras responde]
 ```
@@ -740,7 +745,7 @@ Queda 1 pregunta en este paso.
 Atrás
 Siguiente
 Tu T&C
-Falta 1 dato
+Faltan 4 datos
 
 [columna derecha: aquí se ve el documento llenándose mientras responde]
 ```
@@ -804,8 +809,6 @@ En ciertas secciones de Rappi
 Tú eliges cuáles.
 En cualquier parte de Rappi
 Donde sea que se acepten Créditos.
-Así queda en tu T&C:
-Los Créditos podrán redimirse únicamente en la Tienda Participante donde se originó el Beneficio, dentro del Territorio.
 ¿Por qué te preguntamos esto?
 
 Define dónde vale el saldo. Lo normal es que se gaste en la misma tienda donde el usuario se ganó el beneficio. En todo caso, estos Créditos casi nunca aplican a RappiFavor, Cajero ATM ni Rappi Travel.
@@ -813,14 +816,13 @@ Define dónde vale el saldo. Lo normal es que se gaste en la misma tienda donde 
 Atrás
 Siguiente
 Tu T&C
-Completo
+Faltan 3 datos
 
 [columna derecha: aquí se ve el documento llenándose mientras responde]
 ```
 
 **Lo que aquí no se ve** (sale al equivocarse, o si hubiera elegido otra cosa):
 
-- Viene marcada de entrada con: **tienda**
 - Si lo deja en blanco: «Dinos dónde puede gastar los Créditos.»
 
 ---
@@ -854,8 +856,6 @@ Solo usuarios nuevos
 Su primer pedido en Rappi.
 Usuarios que no compran hace rato
 Tú dices desde cuándo.
-Así queda en tu T&C:
-Pueden participar todos los Usuarios/Consumidores de la Plataforma Rappi que sean mayores de edad.
 ¿Por qué te preguntamos esto?
 
 Limita quién puede reclamar el beneficio. Si el documento dice "todos", no puedes excluir a nadie después.
@@ -865,7 +865,7 @@ Quedan 2 preguntas en este paso.
 Atrás
 Siguiente
 Tu T&C
-Completo
+Faltan 2 datos
 
 [columna derecha: aquí se ve el documento llenándose mientras responde]
 ```
@@ -874,7 +874,6 @@ Completo
 
 
 *En «¿Quiénes pueden participar?»:*
-- Viene marcada de entrada con: **todos**
 - Si lo deja en blanco: «Dinos quiénes pueden participar.»
 
 *En «¿Cuántos días sin comprar?»:*
@@ -916,8 +915,6 @@ Con todo menos efectivo
 Tarjetas y billeteras sí, efectivo no.
 Solo con RappiCard
 Únicamente la tarjeta de Rappi.
-Así queda en tu T&C:
-Campaña válida para pedidos pagados con cualquiera de los medios de pago habilitados en la Plataforma Rappi. Los pedidos pagados total o parcialmente con Créditos no son válidos para la Campaña.
 ¿Por qué te preguntamos esto?
 
 Restringir el medio de pago cambia quién puede participar. Los pedidos pagados con Créditos nunca dan beneficio.
@@ -927,14 +924,13 @@ Queda 1 pregunta en este paso.
 Atrás
 Siguiente
 Tu T&C
-Completo
+Falta 1 dato
 
 [columna derecha: aquí se ve el documento llenándose mientras responde]
 ```
 
 **Lo que aquí no se ve** (sale al equivocarse, o si hubiera elegido otra cosa):
 
-- Viene marcada de entrada con: **todos**
 - Si lo deja en blanco: «Dinos con qué puede pagar el usuario.»
 
 ---

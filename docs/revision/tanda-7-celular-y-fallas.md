@@ -182,6 +182,7 @@ Cada uno sale debajo del campo, en rojo, mientras el comercial escribe. Leídos 
 | ¿Cuántas veces puede recibir el beneficio una persona? | la cuenta no cuadra con lo que respondió antes | Escribe cuántos pedidos con beneficio puede hacer una persona. |
 | ¿Cuántas veces puede recibir el beneficio una persona? | el número se sale del rango | Tiene que ser al menos un pedido. |
 | ¿Hay que gastar un mínimo para participar? | escribe cero | Si no quieres exigir un mínimo, deja el campo vacío. |
+| ¿El beneficio aplica solo en cierto tipo de pedido? | lo deja en blanco | Dinos en qué pedidos se gana el beneficio. |
 | ¿Cuándo le llegan los Créditos al usuario? | lo deja en blanco | Dinos cuándo le llegan los Créditos al usuario. |
 | ¿Qué día les cargas los Créditos? | lo deja en blanco | Elige el día de la carga. |
 | ¿Qué día les cargas los Créditos? | la fecha queda antes de la que debía | La carga no puede ser antes de que arranque la campaña. |
@@ -193,7 +194,9 @@ Cada uno sale debajo del campo, en rojo, mientras el comercial escribe. Leídos 
 | ¿Dónde puede gastar los Créditos? | lo deja en blanco | Dinos dónde puede gastar los Créditos. |
 | ¿Qué categoría tiene el producto de la pieza? | lo deja en blanco | Elige una categoría, o Ninguna si el producto no es de ninguna de esas. |
 | ¿Cuál es el registro sanitario? | lo deja en blanco | Escribe el registro sanitario del producto. |
+| ¿En qué secciones NO se pueden redimir los Créditos? | lo deja en blanco | Marca las secciones excluidas, o sigue sin marcar ninguna. |
 | ¿En qué secciones? | lo deja en blanco | Marca al menos una sección. |
+| ¿De qué marca son los productos? | lo deja en blanco | Escribe la marca. Sin ella, el nombre de la campaña quedaría con la razón social. |
 | ¿Qué categorías de Travel participan? | lo deja en blanco | Marca al menos una categoría. |
 | ¿Los viajes son nacionales o internacionales? | lo deja en blanco | Dinos si los viajes son nacionales, internacionales o los dos. |
 | ¿Qué hoteles participan? | lo deja en blanco | Dinos qué hoteles participan. |

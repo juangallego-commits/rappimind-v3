@@ -83,7 +83,7 @@ $5.000.000
 ¿Cuántas veces puede recibir el beneficio una persona?
 Una sola vez
 ¿El beneficio aplica solo en cierto tipo de pedido?
-Solo si el pedido se hace por Turbo
+Solo pedidos por Turbo
 Créditos
 Cambiar
 ¿Cuándo le llegan los Créditos al usuario?
@@ -178,7 +178,7 @@ $5.000.000
 ¿Cuántas veces puede recibir el beneficio una persona?
 Una sola vez
 ¿El beneficio aplica solo en cierto tipo de pedido?
-Solo si el pedido se hace por Turbo
+Solo pedidos por Turbo
 Créditos
 Cambiar
 ¿Cuándo le llegan los Créditos al usuario?
@@ -235,7 +235,7 @@ FARMATODO · 20% CASHBACK · 1 OCT 2026
 ```
 Tu T&C está listo
 
-Te mandamos el documento por correo. Solicitud RM-20260918-0001.
+Te mandamos el documento por correo. Solicitud RM-20260920-0001.
 
 Abrir el documento
 Lo que vas a pegar en Squarespace
@@ -326,7 +326,7 @@ Aplican términos y condiciones: https://promos.rappi.com/colombia/farmatodo-20-
 
 Se pasa por 25 caracteres. Los enlaces ocupan 142 de los 645.
 
-No hay nada más que se pueda quitar: todo lo que queda es obligatorio. Usa un formato más grande o escríbele a Legal antes de mandar a diseñar.
+Esta leyenda no cabe en este formato. Usa letra pequeña o un formato más grande; en exterior, agrega el código QR al mismo enlace.
 
 Banner corto
 Copiar
@@ -336,7 +336,7 @@ Aplican términos y condiciones: https://promos.rappi.com/colombia/farmatodo-20-
 
 Se pasa por 434 caracteres. Los enlaces ocupan 142 de los 734.
 
-No hay nada más que se pueda quitar: todo lo que queda es obligatorio. Usa un formato más grande o escríbele a Legal antes de mandar a diseñar.
+Esta leyenda no cabe en este formato. Usa letra pequeña o un formato más grande; en exterior, agrega el código QR al mismo enlace.
 
 Valla, exterior e impresos
 Copiar
@@ -346,17 +346,15 @@ Aplican términos y condiciones: https://promos.rappi.com/colombia/farmatodo-20-
 
 Se pasa por 434 caracteres. Los enlaces ocupan 142 de los 734.
 
-No hay nada más que se pueda quitar: todo lo que queda es obligatorio. Usa un formato más grande o escríbele a Legal antes de mandar a diseñar.
+Esta leyenda no cabe en este formato. Usa letra pequeña o un formato más grande; en exterior, agrega el código QR al mismo enlace.
 
 Push y SMS
 Copiar
-Máx. $20.000 en Créditos. Compra mínima $30.000. Aplican TyC https://promos.rappi.com/colombia/farmatodo-20-cashback-1-oct-2026
+Máx. $20.000 en Créditos. Compra mínima $30.000. Aplican TyC
 
-127 de 70 caracteres.
+60 de 70 caracteres.
 
-Se pasa por 57 caracteres. Los enlaces ocupan 66 de los 127.
-
-No hay nada más que se pueda quitar: todo lo que queda es obligatorio. Usa un formato más grande o escríbele a Legal antes de mandar a diseñar.
+El push o el SMS tiene que llevar al usuario a la campaña dentro de la app, donde está el enlace a los T&C.
 
 Cuando ya esté publicado
 
@@ -383,7 +381,7 @@ Tus campañas
 Abre tus documentos, márcalos como publicados o usa uno como base para una campaña nueva.
 
 Campaña	País	Fecha	Estado	
-Farmatodo · 20% Cashback · 1 oct 2026 Farmatodo	CO	2026-09-18	
+Farmatodo · 20% Cashback · 1 oct 2026 Farmatodo	CO	2026-09-20	
 Generado	Usar como base
 ```
 
@@ -403,9 +401,9 @@ Tus campañas
 Abre tus documentos, márcalos como publicados o usa uno como base para una campaña nueva.
 
 Campaña	País	Fecha	Estado	
-Farmatodo · 20% Cashback · 18 sep 2026 Farmatodo	CO	2026-09-18	
+Farmatodo · 20% Cashback · 20 sep 2026 Farmatodo	CO	2026-09-20	
 Publicado	Usar como baseAmpliar
-Ampliar Farmatodo · 20% Cashback · 18 sep 2026
+Ampliar Farmatodo · 20% Cashback · 20 sep 2026
 
 Esta campaña ya arrancó: solo puedes darle más, nunca menos, porque cambiaría las condiciones de quien ya compró.
 

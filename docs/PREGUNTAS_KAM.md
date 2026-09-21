@@ -410,7 +410,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ### ¿El beneficio aplica solo en cierto tipo de pedido?
 
-> Si aplica en cualquier pedido, no marques nada.
+> Si la marca no puso ninguna condición, deja la primera opción.
 
 **Por qué te preguntamos esto.** Esta pregunta es sobre el pedido con el que el usuario se gana el beneficio, no sobre dónde gasta después los Créditos: eso se pregunta más adelante. Si la restricción no queda escrita, el usuario puede reclamar el beneficio en cualquier pedido.
 
@@ -418,15 +418,21 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 |---|---|
 | Campo interno | `condiciones` |
 | Paso | Beneficio |
-| Tipo de control | casillas |
+| Tipo de control | lista |
 | Obligatorio | no |
-| Avanza sola | no |
+| Valor por defecto | cualquiera |
+| Avanza sola | sí |
 | Llena en el documento | `TEXTO_CONDICIONES` |
 
-**Opciones** (casillas, se pueden marcar varias):
+**Opciones** (botones grandes, una sola):
 
-- **Solo si el pedido se hace por Turbo**: Un pedido por el resto de la app no da el beneficio.
-- **Solo si consume en el local**: Pide por la app y come en el local. Un domicilio no da el beneficio.
+- **En cualquier pedido**: Domicilio, Turbo o cualquier forma de pedir.
+- **Solo pedidos por Turbo**: Un pedido por el resto de la app no da el beneficio.
+- **Solo consumo en el local**: Pide por la app y come en el local. Un domicilio no da el beneficio.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos en qué pedidos se gana el beneficio.
 
 ## Paso: Créditos
 
@@ -4639,7 +4645,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ### ¿El beneficio aplica solo en cierto tipo de pedido?
 
-> Si aplica en cualquier pedido, no marques nada.
+> Si la marca no puso ninguna condición, deja la primera opción.
 
 **Por qué te preguntamos esto.** Esta pregunta es sobre el pedido con el que el usuario se gana el beneficio, no sobre dónde gasta después los Créditos: eso se pregunta más adelante. Si la restricción no queda escrita, el usuario puede reclamar el beneficio en cualquier pedido.
 
@@ -4647,15 +4653,21 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 |---|---|
 | Campo interno | `condiciones` |
 | Paso | Beneficio |
-| Tipo de control | casillas |
+| Tipo de control | lista |
 | Obligatorio | no |
-| Avanza sola | no |
+| Valor por defecto | cualquiera |
+| Avanza sola | sí |
 | Llena en el documento | `TEXTO_CONDICIONES` |
 
-**Opciones** (casillas, se pueden marcar varias):
+**Opciones** (botones grandes, una sola):
 
-- **Solo si el pedido se hace por Turbo**: Un pedido por el resto de la app no da el beneficio.
-- **Solo si consume en el local**: Pide por la app y come en el local. Un domicilio no da el beneficio.
+- **En cualquier pedido**: Domicilio, Turbo o cualquier forma de pedir.
+- **Solo pedidos por Turbo**: Un pedido por el resto de la app no da el beneficio.
+- **Solo consumo en el local**: Pide por la app y come en el local. Un domicilio no da el beneficio.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos en qué pedidos se gana el beneficio.
 
 ## Paso: Créditos
 

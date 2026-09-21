@@ -262,13 +262,18 @@ var CAMPOS_CREDITOS = [
     visible: function (entrada) { return entrada.redencion === 'general'; },
   },
   {
+    // Una sola eleccion desde el 20 de septiembre de 2026 (punto D2): marcar
+    // Turbo y consumo en el local a la vez sacaba un documento con dos
+    // "unicamente" incompatibles. Sigue sin ser obligatoria, porque la primera
+    // opcion es la respuesta de casi todas las campanas.
     id: 'condiciones',
-    etiqueta: 'Condiciones adicionales',
-    tipo: 'casillas',
+    etiqueta: 'En qué pedidos aplica',
+    tipo: 'lista',
     paso: 'beneficio',
     obligatorio: false,
     opciones: [
-      { valor: 'turbo', etiqueta: 'Solo Turbo' },
+      { valor: 'cualquiera', etiqueta: 'En cualquier pedido' },
+      { valor: 'turbo', etiqueta: 'Solo pedidos por Turbo' },
       { valor: 'consumo_local', etiqueta: 'Solo consumo en el local' },
     ],
   },

@@ -521,19 +521,37 @@ var PREGUNTAS = {
     },
   }),
 
+  /*
+   * En que pedidos se gana el beneficio.
+   *
+   * Eran dos casillas y se podian marcar las dos, y entonces el documento salia
+   * con dos "unicamente" que no pueden ser ciertos a la vez: uno decia que solo
+   * por Turbo y el otro que solo consumiendo en el local. Quien pidio a
+   * domicilio podia leer las dos a su favor. Juan lo convirtio en una sola
+   * eleccion el 20 de septiembre de 2026 (punto D2).
+   *
+   * "Solo consumo en el local" no se ofrece mientras el pais no diga con que
+   * nombre muestra la app esa modalidad, porque el texto la cita entre comillas.
+   * Hoy no lo dice ninguno.
+   */
   condiciones: p({
     paso: 'beneficio',
     pregunta: '¿El beneficio aplica solo en cierto tipo de pedido?',
-    ayuda: 'Si aplica en cualquier pedido, no marques nada.',
+    ayuda: 'Si la marca no puso ninguna condición, deja la primera opción.',
     porQue: 'Esta pregunta es sobre el pedido con el que el usuario se gana el beneficio, no sobre dónde gasta después los Créditos: eso se pregunta más adelante. Si la restricción no queda escrita, el usuario puede reclamar el beneficio en cualquier pedido.',
+    avanzaSola: true,
+    // Casi ninguna campana pone condicion, asi que "En cualquier pedido" viene
+    // marcada, como pasa con "Ninguna" en la categoria del producto. Marcada no
+    // es respondida: la pregunta se muestra igual y alguien tiene que verla.
     opcional: true,
-    multiple: true,
+    porDefecto: 'cualquiera',
     opciones: [
-      { valor: 'turbo', etiqueta: 'Solo si el pedido se hace por Turbo', nota: 'Un pedido por el resto de la app no da el beneficio.' },
-      { valor: 'consumo_local', etiqueta: 'Solo si consume en el local', nota: 'Pide por la app y come en el local. Un domicilio no da el beneficio.' },
+      { valor: 'cualquiera', etiqueta: 'En cualquier pedido', nota: 'Domicilio, Turbo o cualquier forma de pedir.' },
+      { valor: 'turbo', etiqueta: 'Solo pedidos por Turbo', nota: 'Un pedido por el resto de la app no da el beneficio.' },
+      { valor: 'consumo_local', etiqueta: 'Solo consumo en el local', nota: 'Pide por la app y come en el local. Un domicilio no da el beneficio.' },
     ],
     placeholders: ['TEXTO_CONDICIONES'],
-    errores: {},
+    errores: { vacio: 'Dinos en qué pedidos se gana el beneficio.' },
   }),
 
   // --- Los Créditos -------------------------------------------------------

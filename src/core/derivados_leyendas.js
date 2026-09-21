@@ -30,7 +30,9 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var listaY = moduloFechasLey.listaY;
   var separarPorComas = moduloFechasLey.separarPorComas;
 
-  var tieneValor = require('./texto.js').tieneValor;
+  var moduloTextoLey = require('./texto.js');
+  var tieneValor = moduloTextoLey.tieneValor;
+  var condicionDePedido = moduloTextoLey.condicionDePedido;
   var direccionDeCampana = require('./nombres.js').direccionDeCampana;
   var SECCIONES_EXCLUIBLES_ETA = require('./derivados_eta.js').SECCIONES_EXCLUIBLES_ETA;
   var categoriaPideRegistro = require('./leyendas.js').categoriaPideRegistro;
@@ -276,15 +278,11 @@ function textoPagoCorto(entrada) {
  * data/paises.json. Sin nombre no hay frase, y sin frase no se entrega.
  */
 function textoCondicionesCorto(entrada, pais) {
-  var condiciones = entrada.condiciones || [];
-  for (var i = 0; i < condiciones.length; i++) {
-    if (condiciones[i] === 'turbo') return 'Válido solo en pedidos por Turbo.';
-  }
-  for (var c = 0; c < condiciones.length; c++) {
-    if (condiciones[c] === 'consumo_local') {
-      if (!tieneValor(pais.nombre_modalidad_local)) return '';
-      return 'Válido solo en pedidos por “' + pais.nombre_modalidad_local + '”.';
-    }
+  var condicion = condicionDePedido(entrada);
+  if (condicion === 'turbo') return 'Válido solo en pedidos por Turbo.';
+  if (condicion === 'consumo_local') {
+    if (!tieneValor(pais.nombre_modalidad_local)) return '';
+    return 'Válido solo en pedidos por “' + pais.nombre_modalidad_local + '”.';
   }
   return '';
 }
@@ -306,11 +304,7 @@ function esDeTurbo(entrada) {
    * escrito en su propio cuerpo, asi que no se pierde nada al no pegarlo.
    */
   if (entrada.tipo === 'cashback_eta') return false;
-  var condiciones = entrada.condiciones || [];
-  for (var i = 0; i < condiciones.length; i++) {
-    if (condiciones[i] === 'turbo') return true;
-  }
-  return false;
+  return condicionDePedido(entrada) === 'turbo';
 }
 
 // --- Cashback Multitienda --------------------------------------------------
@@ -501,11 +495,8 @@ var PENDIENTES_POR_MARCADOR = {
 function faltantesParaLaLeyenda(entrada, pais) {
   var faltantes = [];
 
-  var condiciones = entrada.condiciones || [];
-  for (var i = 0; i < condiciones.length; i++) {
-    if (condiciones[i] === 'consumo_local' && !tieneValor(pais.nombre_modalidad_local)) {
-      faltantes.push('cómo se llama dentro de la app la modalidad de consumo en el local');
-    }
+  if (condicionDePedido(entrada) === 'consumo_local' && !tieneValor(pais.nombre_modalidad_local)) {
+    faltantes.push('cómo se llama dentro de la app la modalidad de consumo en el local');
   }
 
   if (entrada.segmento === 'pro' && !tieneValor(pais.url_tc_pro)) {

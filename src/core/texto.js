@@ -107,9 +107,31 @@ function tieneRetornoDeCarro(texto) {
   return String(texto === null || texto === undefined ? '' : texto).indexOf('\r') !== -1;
 }
 
+/**
+ * En que pedidos se gana el beneficio, como una sola respuesta.
+ *
+ * Hasta el 20 de septiembre de 2026 esto eran dos casillas que se podian marcar
+ * a la vez, y el documento salia con dos "unicamente" que no pueden ser ciertos
+ * los dos: uno decia que solo por Turbo y el otro que solo consumiendo en el
+ * local. Juan lo convirtio en una sola eleccion (punto D2).
+ *
+ * Las campanas guardadas antes de ese dia tienen una lista, asi que esto lee las
+ * dos formas. Sin esto, "Usar como base" sobre una campana vieja recorreria una
+ * cadena letra por letra.
+ */
+function condicionDePedido(entrada) {
+  var valor = (entrada || {}).condiciones;
+  if (Object.prototype.toString.call(valor) === '[object Array]') {
+    return valor.length > 0 ? String(valor[0]) : 'cualquiera';
+  }
+  var texto = String(valor === null || valor === undefined ? '' : valor).trim();
+  return texto || 'cualquiera';
+}
+
 if (typeof module !== 'undefined') {
   module.exports = {
     tieneValor: tieneValor,
+    condicionDePedido: condicionDePedido,
     normalizarTexto: normalizarTexto,
     lineasDe: lineasDe,
     recortarFinalDeLinea: recortarFinalDeLinea,

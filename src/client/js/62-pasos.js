@@ -134,6 +134,21 @@ function opcionesDeLosDatos(campo) {
     return nombres.map(function (nombre) { return { valor: nombre, etiqueta: nombre, nota: 'Sección de la app.' }; });
   }
 
+  /*
+   * "Solo consumo en el local" solo se ofrece donde se puede escribir.
+   *
+   * El texto del modelo cita entre comillas el nombre con el que la app muestra
+   * esa modalidad, y ese dato no lo tiene ningun pais todavia
+   * (nombre_modalidad_local). Mientras falte, la opcion no se ofrece: elegirla
+   * dejaria la campana sin leyenda y con una frase que no nombra nada que el
+   * usuario pueda reconocer. Punto D2.
+   */
+  if (campo.id === 'condiciones') {
+    var deCondiciones = estado.pregunta('condiciones').opciones;
+    if (pais && tieneValor(pais.nombre_modalidad_local)) return deCondiciones;
+    return deCondiciones.filter(function (opcion) { return opcion.valor !== 'consumo_local'; });
+  }
+
   // Las secciones donde los Creditos no aplican. El SOAT es colombiano, asi que
   // fuera de Colombia ni se ofrece ni se imprime: ofrecerlo seria dejar marcar
   // una exclusion que el documento no va a decir.

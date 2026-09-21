@@ -494,7 +494,7 @@ async function recorrer(rutaDeLaDemo, fichas, marcas, carpetaDeCapturas) {
     { texto: '20000' }, { siguiente: true }, { captura: 'presupuesto', porQue: true },
     { texto: '5000000' }, { siguiente: true }, { captura: 'veces', porQue: true },
     { opcion: 'Una sola vez' }, { captura: 'condiciones', porQue: true },
-    { casilla: 'Solo si el pedido se hace por Turbo' }, { siguiente: true }, { captura: 'carga', porQue: true },
+    { opcion: 'Solo pedidos por Turbo' }, { captura: 'carga', porQue: true },
     { opcion: 'Al día siguiente del pedido' }, { captura: 'vigencia', porQue: true },
     { opcion: 'Hasta una fecha' }, { fecha: '2026-12-31' }, { siguiente: true }, { captura: 'redencion', porQue: true },
     { opcion: 'Solo en esta tienda' }, { captura: 'segmento', porQue: true },

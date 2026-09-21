@@ -115,11 +115,11 @@ Disponible.
 Chile
 Disponible.
 Ecuador
-En piloto: solo para el equipo de pruebas.
+Disponible.
 Uruguay
 Disponible.
 Costa Rica
-En piloto: solo para el equipo de pruebas.
+Disponible.
 Brasil
 Disponible.
 ¿Por qué te preguntamos esto?
@@ -258,9 +258,6 @@ Sin empezar
 ```
 Campaña
 Tu campaña
-
-Ecuador está en pruebas: genera y revisa, pero todavía no publiques. Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.
-
 ¿En qué país corre la campaña?
 Cambiar
 
@@ -308,6 +305,7 @@ Las dinámicas con azar necesitan permiso previo de la autoridad. Legal tiene qu
 No es un problema ni una negativa: es un caso que necesita que un abogado lo mire. Llena el formulario y el equipo legal te responde.
 
 Ir al formulario de Legal
+Cambiar mi respuesta
 Volver al inicio
 ```
 
@@ -344,10 +342,10 @@ Esta es la legal "comodín" de ADQUISICIÓN para Turbo. Úsala cuando la campañ
 Del 1 de enero de 2026 al 31 de diciembre de 2026.
 Envío Gratis
 Costo de envío $0
-Respaldo legal para eliminar el costo de envio (cobro de domicilio) al usuario. (ej. "Envío Gratis por compras superiores a $X"). El descuento se refleja automáticamente en el check out.
+Respaldo legal para eliminar el costo de envío (cobro de domicilio) al usuario. (ej. "Envío Gratis por compras superiores a $X"). El descuento aparece automáticamente al pagar.
 Del 1 de enero de 2026 al 31 de diciembre de 2026.
 Tarifa de Servicio Gratis
-Tarifa de servicio $0 (Service Fee OFF)
+Tarifa de servicio en $0
 Respaldo legal para no cobrar la tarifa de servicio. Ojo: No incluye el envío, solo la tarifa de servicio. Úsalo cuando se quiera eliminar esta barrera de costo adicional para el usuario.
 Del 1 de febrero de 2026 al 31 de octubre de 2026.
 Descuento en Productos Seleccionados Rappi Pro
@@ -356,29 +354,31 @@ Respaldo legal para descuentos exclusivos de la membresía. Úsalo cuando se qui
 Del 1 de enero de 2026 al 31 de diciembre de 2026.
 Descuento en Toda la Tienda Rappi Pro
 % OFF en todo el menú para suscriptores (Exclusivo Pro)
-Respaldo legal para descuentos generales en el menú exclusivos para miembros rappi pro. Úsalo para negociaciones donde se quiera premiar la fidelidad del usuario Pro. El descuento aplica a todo el catálogo de la tienda participante, pero solo es visible y aplicable para usuarios con la membresía activa.
+Respaldo legal para descuentos generales en el menú exclusivos para miembros Rappi Pro. Úsalo para negociaciones donde se quiera premiar la fidelidad del usuario Pro. El descuento aplica a todo el catálogo de la tienda participante, pero solo es visible y aplicable para usuarios con la membresía activa.
 Del 1 de enero de 2026 al 31 de diciembre de 2026.
 Descuento en Valor Rappi Pro
 Descuento de monto fijo exclusivo para suscriptores ($ OFF)
-Respaldo legal para descuentos de dinero fijo exclusivos para miembros rappi pro. Similar al "Descuento en Valor" normal, pero el beneficio de restar un monto exacto (ej. "$10.000 OFF") solo aplica y es visible para usuarios Rappi Pro.
+Respaldo legal para descuentos de dinero fijo exclusivos para miembros Rappi Pro. Similar al "Descuento en Valor" normal, pero el beneficio de restar un monto exacto (ej. "$10.000 OFF") solo aplica y es visible para usuarios Rappi Pro.
 Del 1 de enero de 2026 al 31 de diciembre de 2026.
 Descuento en la Membresía Rappi Pro
-Descuento en el valor de la suscripción (Fee de Membresía OFF)
-Respaldo legal para vender la membresía Rappi Pro más barata. Úsalo exclusivamente cuando la oferta sea sobre el precio de la suscripcion. No sirve para descuentos en comida o productos.
+Descuento en el valor de la suscripción
+Respaldo legal para vender la membresía Rappi Pro más barata. Úsalo exclusivamente cuando la oferta sea sobre el precio de la suscripción. No sirve para descuentos en comida o productos.
 Del 1 de enero de 2026 al 31 de diciembre de 2026.
 Cupones de Descuento para Membresía Rappi Pro y Black
 Descuento en la suscripción vía Código (Cupón)
 Respaldo legal para códigos promocionales que rebajan el precio de la membresía. Úsalo para estrategias donde entregas un código alfanumérico que el usuario debe redimir manualmente para pagar menos por su plan Rappi Pro.
 El enlace apunta a la versión de 2024 aunque la vigencia dice 2026. Confírmalo con Legal antes de publicar la pieza.
 Del 1 de enero de 2026 al 31 de diciembre de 2026.
-Cupon de descuento - Valor fijo
-La lista de Legal no dice para qué sirve este T&C. Confírmalo con Legal antes de publicar la pieza.
+Cupón de descuento de valor fijo
+Descuento de un monto fijo de dinero sobre el pedido al redimir un cupón o código (el valor dependerá de lo que indique la pieza publicitaria).
+Respaldo legal para cupones o códigos que descuentan un valor fijo del pedido (ej. "$10.000 OFF con el código X"). Úsalo cuando el usuario debe ingresar o activar el cupón para ver la rebaja; el valor, la compra mínima y la vigencia van en la pieza.
 Del 1 de enero de 2026 al 31 de diciembre de 2026.
-Cupon de descuento - Toda la tienda
-La lista de Legal no dice para qué sirve este T&C. Confírmalo con Legal antes de publicar la pieza.
+Cupón de descuento en toda la tienda
+Porcentaje de descuento sobre el valor total del pedido al redimir un cupón o código (el porcentaje y el tope dependerán de lo que indique la pieza publicitaria).
+Respaldo legal para cupones o códigos que dan un porcentaje de descuento sobre el valor total del pedido (ej. "20% OFF en toda la tienda con el código X"). Úsalo cuando el descuento no es automático y el usuario debe ingresar o activar el cupón; el porcentaje, el tope y la compra mínima van en la pieza.
 Del 1 de enero de 2026 al 31 de diciembre de 2026.
-Codigo de descuento para eventos externos (ej. codigo de 20% para boletas al vino al parque)
-Descuento en producto o servicio que ofrece un externo por medio de un canal de venta independiente
+Código de descuento para eventos externos
+Un externo da el descuento en su propio canal de venta. Por ejemplo: un código del 20% para las boletas de un evento.
 Del 1 de enero de 2026 al 31 de diciembre de 2026.
 
 Si tu campaña es un cashback, una carrera de compras o un concurso, no es ninguno de estos: vuelve a los tipos y la herramienta te arma el documento.

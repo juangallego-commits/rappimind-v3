@@ -432,6 +432,41 @@ async function recorrer() {
     deVueltaAlFiltro.indexOf('Esta campaña la redacta Legal') === -1,
     deVueltaAlFiltro.replace(/\n+/g, ' | ').slice(0, 300));
 
+  // --- 5a. "En que pedidos se gana el beneficio" -------------------------
+  //
+  // Punto D2, 20 de septiembre de 2026. Eran dos casillas que se podian marcar
+  // a la vez, y el documento salia con dos "unicamente" incompatibles. Ahora es
+  // una sola eleccion, y la tercera opcion no se ofrece mientras ningun pais
+  // diga con que nombre muestra la app esa modalidad.
+  await pagina.goto(DEMO);
+  await pagina.waitForTimeout(800);
+  await pagina.evaluate(() => {
+    RM.estado.reiniciarFormulario(Object.assign(RM.app.valoresIniciales(),
+      { pais: 'CO', negocio: 'rappi', tipo: 'cashback' }), {});
+    RM.estado.estado.filtroRespondido = true;
+    RM.estado.estado.campoAbierto = 'condiciones';
+    const pasos = RM.flujo.pasosDelTipo(RM.estado.entrada()).map((x) => x.id);
+    RM.estado.estado.pasoActual = pasos.indexOf('beneficio');
+    RM.app.ir('pasos');
+  });
+  await pagina.waitForTimeout(600);
+  const condiciones = await pagina.evaluate(() => {
+    const bloque = [].slice.call(document.querySelectorAll('.pregunta'))
+      .filter((q) => /tipo de pedido/i.test(q.textContent)).pop();
+    if (!bloque) return null;
+    return {
+      casillas: bloque.querySelectorAll('.casillas').length,
+      opciones: [].map.call(bloque.querySelectorAll('.opcion'),
+        (o) => o.querySelector('.opcion-titulo').textContent.trim()),
+    };
+  });
+  revisar('la condición del pedido es una sola elección, no casillas',
+    !!condiciones && condiciones.casillas === 0, JSON.stringify(condiciones));
+  revisar('y ofrece las dos que se pueden cumplir hoy, no la tercera',
+    !!condiciones &&
+    condiciones.opciones.join(' | ') === 'En cualquier pedido | Solo pedidos por Turbo',
+    JSON.stringify(condiciones));
+
   // --- 5b. Las tres preguntas que dejaron de venir marcadas ----------------
   //
   // Punto F8. Una respuesta que nadie leyo queda impresa, y despues no se puede

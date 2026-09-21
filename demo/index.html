@@ -2228,6 +2228,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
   var moduloTextoDerivados = require('./texto.js');
   var tieneValor = moduloTextoDerivados.tieneValor;
+  var condicionDePedido = moduloTextoDerivados.condicionDePedido;
   var terminoDeDias = moduloTextoDerivados.terminoDeDias;
 }
 
@@ -2613,13 +2614,8 @@ function calcularDerivadosEnElIdiomaDelPais(entrada, pais) {
 
   valores.TEXTO_LIMITE_PEDIDOS = textoLimitePedidos(entrada);
 
-  var condiciones = entrada.condiciones || [];
-  var frases = [];
-  for (var i = 0; i < condiciones.length; i++) {
-    var frase = TEXTO_CONDICION_POR_OPCION[condiciones[i]];
-    if (frase) frases.push(frase);
-  }
-  valores.TEXTO_CONDICIONES = frases.join(' ');
+  // Una sola condicion, no dos. Ver condicionDePedido() en texto.js.
+  valores.TEXTO_CONDICIONES = TEXTO_CONDICION_POR_OPCION[condicionDePedido(entrada)] || '';
 
   if (tieneValor(entrada.porcentaje)) valores.PORCENTAJE = porcentajeEnLetras(entrada.porcentaje);
   if (tieneValor(entrada.tope)) valores.TOPE = cantidadCreditos(entrada.tope, pais);
@@ -3069,7 +3065,9 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var listaY = moduloFechasLey.listaY;
   var separarPorComas = moduloFechasLey.separarPorComas;
 
-  var tieneValor = require('./texto.js').tieneValor;
+  var moduloTextoLey = require('./texto.js');
+  var tieneValor = moduloTextoLey.tieneValor;
+  var condicionDePedido = moduloTextoLey.condicionDePedido;
   var direccionDeCampana = require('./nombres.js').direccionDeCampana;
   var SECCIONES_EXCLUIBLES_ETA = require('./derivados_eta.js').SECCIONES_EXCLUIBLES_ETA;
   var categoriaPideRegistro = require('./leyendas.js').categoriaPideRegistro;
@@ -3315,15 +3313,11 @@ function textoPagoCorto(entrada) {
  * data/paises.json. Sin nombre no hay frase, y sin frase no se entrega.
  */
 function textoCondicionesCorto(entrada, pais) {
-  var condiciones = entrada.condiciones || [];
-  for (var i = 0; i < condiciones.length; i++) {
-    if (condiciones[i] === 'turbo') return 'Válido solo en pedidos por Turbo.';
-  }
-  for (var c = 0; c < condiciones.length; c++) {
-    if (condiciones[c] === 'consumo_local') {
-      if (!tieneValor(pais.nombre_modalidad_local)) return '';
-      return 'Válido solo en pedidos por “' + pais.nombre_modalidad_local + '”.';
-    }
+  var condicion = condicionDePedido(entrada);
+  if (condicion === 'turbo') return 'Válido solo en pedidos por Turbo.';
+  if (condicion === 'consumo_local') {
+    if (!tieneValor(pais.nombre_modalidad_local)) return '';
+    return 'Válido solo en pedidos por “' + pais.nombre_modalidad_local + '”.';
   }
   return '';
 }
@@ -3345,11 +3339,7 @@ function esDeTurbo(entrada) {
    * escrito en su propio cuerpo, asi que no se pierde nada al no pegarlo.
    */
   if (entrada.tipo === 'cashback_eta') return false;
-  var condiciones = entrada.condiciones || [];
-  for (var i = 0; i < condiciones.length; i++) {
-    if (condiciones[i] === 'turbo') return true;
-  }
-  return false;
+  return condicionDePedido(entrada) === 'turbo';
 }
 
 // --- Cashback Multitienda --------------------------------------------------
@@ -3540,11 +3530,8 @@ var PENDIENTES_POR_MARCADOR = {
 function faltantesParaLaLeyenda(entrada, pais) {
   var faltantes = [];
 
-  var condiciones = entrada.condiciones || [];
-  for (var i = 0; i < condiciones.length; i++) {
-    if (condiciones[i] === 'consumo_local' && !tieneValor(pais.nombre_modalidad_local)) {
-      faltantes.push('cómo se llama dentro de la app la modalidad de consumo en el local');
-    }
+  if (condicionDePedido(entrada) === 'consumo_local' && !tieneValor(pais.nombre_modalidad_local)) {
+    faltantes.push('cómo se llama dentro de la app la modalidad de consumo en el local');
   }
 
   if (entrada.segmento === 'pro' && !tieneValor(pais.url_tc_pro)) {
@@ -4766,13 +4753,18 @@ var CAMPOS_CREDITOS = [
     visible: function (entrada) { return entrada.redencion === 'general'; },
   },
   {
+    // Una sola eleccion desde el 20 de septiembre de 2026 (punto D2): marcar
+    // Turbo y consumo en el local a la vez sacaba un documento con dos
+    // "unicamente" incompatibles. Sigue sin ser obligatoria, porque la primera
+    // opcion es la respuesta de casi todas las campanas.
     id: 'condiciones',
-    etiqueta: 'Condiciones adicionales',
-    tipo: 'casillas',
+    etiqueta: 'En qué pedidos aplica',
+    tipo: 'lista',
     paso: 'beneficio',
     obligatorio: false,
     opciones: [
-      { valor: 'turbo', etiqueta: 'Solo Turbo' },
+      { valor: 'cualquiera', etiqueta: 'En cualquier pedido' },
+      { valor: 'turbo', etiqueta: 'Solo pedidos por Turbo' },
       { valor: 'consumo_local', etiqueta: 'Solo consumo en el local' },
     ],
   },
@@ -8910,19 +8902,37 @@ var PREGUNTAS = {
     },
   }),
 
+  /*
+   * En que pedidos se gana el beneficio.
+   *
+   * Eran dos casillas y se podian marcar las dos, y entonces el documento salia
+   * con dos "unicamente" que no pueden ser ciertos a la vez: uno decia que solo
+   * por Turbo y el otro que solo consumiendo en el local. Quien pidio a
+   * domicilio podia leer las dos a su favor. Juan lo convirtio en una sola
+   * eleccion el 20 de septiembre de 2026 (punto D2).
+   *
+   * "Solo consumo en el local" no se ofrece mientras el pais no diga con que
+   * nombre muestra la app esa modalidad, porque el texto la cita entre comillas.
+   * Hoy no lo dice ninguno.
+   */
   condiciones: p({
     paso: 'beneficio',
     pregunta: '¿El beneficio aplica solo en cierto tipo de pedido?',
-    ayuda: 'Si aplica en cualquier pedido, no marques nada.',
+    ayuda: 'Si la marca no puso ninguna condición, deja la primera opción.',
     porQue: 'Esta pregunta es sobre el pedido con el que el usuario se gana el beneficio, no sobre dónde gasta después los Créditos: eso se pregunta más adelante. Si la restricción no queda escrita, el usuario puede reclamar el beneficio en cualquier pedido.',
+    avanzaSola: true,
+    // Casi ninguna campana pone condicion, asi que "En cualquier pedido" viene
+    // marcada, como pasa con "Ninguna" en la categoria del producto. Marcada no
+    // es respondida: la pregunta se muestra igual y alguien tiene que verla.
     opcional: true,
-    multiple: true,
+    porDefecto: 'cualquiera',
     opciones: [
-      { valor: 'turbo', etiqueta: 'Solo si el pedido se hace por Turbo', nota: 'Un pedido por el resto de la app no da el beneficio.' },
-      { valor: 'consumo_local', etiqueta: 'Solo si consume en el local', nota: 'Pide por la app y come en el local. Un domicilio no da el beneficio.' },
+      { valor: 'cualquiera', etiqueta: 'En cualquier pedido', nota: 'Domicilio, Turbo o cualquier forma de pedir.' },
+      { valor: 'turbo', etiqueta: 'Solo pedidos por Turbo', nota: 'Un pedido por el resto de la app no da el beneficio.' },
+      { valor: 'consumo_local', etiqueta: 'Solo consumo en el local', nota: 'Pide por la app y come en el local. Un domicilio no da el beneficio.' },
     ],
     placeholders: ['TEXTO_CONDICIONES'],
-    errores: {},
+    errores: { vacio: 'Dinos en qué pedidos se gana el beneficio.' },
   }),
 
   // --- Los Créditos -------------------------------------------------------
@@ -10767,9 +10777,31 @@ function tieneRetornoDeCarro(texto) {
   return String(texto === null || texto === undefined ? '' : texto).indexOf('\r') !== -1;
 }
 
+/**
+ * En que pedidos se gana el beneficio, como una sola respuesta.
+ *
+ * Hasta el 20 de septiembre de 2026 esto eran dos casillas que se podian marcar
+ * a la vez, y el documento salia con dos "unicamente" que no pueden ser ciertos
+ * los dos: uno decia que solo por Turbo y el otro que solo consumiendo en el
+ * local. Juan lo convirtio en una sola eleccion (punto D2).
+ *
+ * Las campanas guardadas antes de ese dia tienen una lista, asi que esto lee las
+ * dos formas. Sin esto, "Usar como base" sobre una campana vieja recorreria una
+ * cadena letra por letra.
+ */
+function condicionDePedido(entrada) {
+  var valor = (entrada || {}).condiciones;
+  if (Object.prototype.toString.call(valor) === '[object Array]') {
+    return valor.length > 0 ? String(valor[0]) : 'cualquiera';
+  }
+  var texto = String(valor === null || valor === undefined ? '' : valor).trim();
+  return texto || 'cualquiera';
+}
+
 if (typeof module !== 'undefined') {
   module.exports = {
     tieneValor: tieneValor,
+    condicionDePedido: condicionDePedido,
     normalizarTexto: normalizarTexto,
     lineasDe: lineasDe,
     recortarFinalDeLinea: recortarFinalDeLinea,
@@ -13756,6 +13788,21 @@ function opcionesDeLosDatos(campo) {
   if (campo.id === 'secciones') {
     var nombres = pais ? seccionesDePais(pais.codigo, E.configuracion.secciones) : [];
     return nombres.map(function (nombre) { return { valor: nombre, etiqueta: nombre, nota: 'Sección de la app.' }; });
+  }
+
+  /*
+   * "Solo consumo en el local" solo se ofrece donde se puede escribir.
+   *
+   * El texto del modelo cita entre comillas el nombre con el que la app muestra
+   * esa modalidad, y ese dato no lo tiene ningun pais todavia
+   * (nombre_modalidad_local). Mientras falte, la opcion no se ofrece: elegirla
+   * dejaria la campana sin leyenda y con una frase que no nombra nada que el
+   * usuario pueda reconocer. Punto D2.
+   */
+  if (campo.id === 'condiciones') {
+    var deCondiciones = estado.pregunta('condiciones').opciones;
+    if (pais && tieneValor(pais.nombre_modalidad_local)) return deCondiciones;
+    return deCondiciones.filter(function (opcion) { return opcion.valor !== 'consumo_local'; });
   }
 
   // Las secciones donde los Creditos no aplican. El SOAT es colombiano, asi que

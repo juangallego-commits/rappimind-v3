@@ -288,3 +288,64 @@ test('las tres preguntas que decidían a quién excluir arrancan sin marcar', ()
     assert.strictEqual(campo.obligatorio, true, campoId + ' dejó de ser obligatorio');
   }
 });
+
+// --- D2: en qué pedidos se gana el beneficio ---------------------------------
+
+test('las condiciones del pedido son una sola elección, no dos casillas', () => {
+  /*
+   * Punto D2. Se podían marcar Turbo y consumo en el local a la vez, y el
+   * documento salía con dos "únicamente" que no pueden ser ciertos los dos:
+   * uno decía que solo por Turbo y el otro que solo consumiendo en el local.
+   * Quien pidió a domicilio podía leer las dos a su favor.
+   */
+  const { ESQUEMAS } = require('../src/core/esquemas.js');
+  const { PREGUNTAS } = require('../src/core/preguntas.js');
+
+  const campo = ESQUEMAS.cashback.campos.filter((c) => c.id === 'condiciones')[0];
+  assert.strictEqual(campo.tipo, 'lista', 'volvieron a ser casillas');
+  assert.strictEqual(PREGUNTAS.condiciones.multiple, undefined, 'la pregunta volvió a admitir varias');
+  assert.deepStrictEqual(PREGUNTAS.condiciones.opciones.map((o) => o.etiqueta),
+    ['En cualquier pedido', 'Solo pedidos por Turbo', 'Solo consumo en el local']);
+});
+
+test('el documento imprime una sola condición, y ninguna con "En cualquier pedido"', () => {
+  const { calcularDerivados } = require('../src/core/derivados.js');
+  const { leerJson, rutaDesdeRaiz } = require('../scripts/lib/archivos');
+  const CO = leerJson(rutaDesdeRaiz('data', 'paises.json')).paises.filter((p) => p.codigo === 'CO')[0];
+  const con = (condiciones) => calcularDerivados({ tipo: 'cashback', condiciones: condiciones }, CO).TEXTO_CONDICIONES;
+
+  assert.strictEqual(con('cualquiera'), '');
+  assert.strictEqual(con('turbo'),
+    'El Beneficio aplica únicamente para pedidos realizados a través de Turbo.');
+
+  // Y una campaña guardada antes del 20 de septiembre de 2026 trae una lista.
+  // "Usar como base" sobre una de esas tiene que seguir funcionando.
+  assert.strictEqual(con(['turbo']), con('turbo'));
+  assert.strictEqual(con([]), '');
+  assert.strictEqual(con(undefined), '');
+
+  // El caso que ya no puede pasar: las dos a la vez. De una lista vieja con las
+  // dos se lee la primera, no se imprimen las dos frases incompatibles.
+  const dosALaVez = con(['turbo', 'consumo_local']);
+  assert.strictEqual(dosALaVez, con('turbo'));
+  assert.strictEqual((dosALaVez.match(/únicamente/g) || []).length, 1,
+    'volvieron los dos "únicamente" en la misma cláusula: ' + dosALaVez);
+});
+
+test('"Solo consumo en el local" no se ofrece mientras ningún país diga cómo se llama', () => {
+  // El modelo cita ese nombre entre comillas, y hoy nombre_modalidad_local está
+  // vacío en los nueve países. Ofrecer la opción sería un camino que arranca y
+  // muere: la campaña se quedaría además sin ninguna de sus cinco leyendas.
+  const { leerJson, rutaDesdeRaiz } = require('../scripts/lib/archivos');
+  const paises = leerJson(rutaDesdeRaiz('data', 'paises.json')).paises;
+  const conNombre = paises.filter((p) => String(p.nombre_modalidad_local || '').trim() !== '');
+  assert.deepStrictEqual(conNombre.map((p) => p.codigo), [],
+    'un país ya tiene nombre_modalidad_local: quita este recordatorio y revisa la opción');
+
+  const fuente = require('node:fs').readFileSync(
+    require('node:path').join(__dirname, '..', 'src', 'client', 'js', '62-pasos.js'), 'utf8');
+  assert.ok(fuente.indexOf("campo.id === 'condiciones'") !== -1,
+    'la interfaz ya no filtra las opciones de la condición del pedido');
+  assert.ok(fuente.indexOf('nombre_modalidad_local') !== -1,
+    'la interfaz ya no mira si el país tiene el nombre de la modalidad');
+});

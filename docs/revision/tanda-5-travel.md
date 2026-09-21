@@ -24,19 +24,23 @@ Las otras 19 preguntas de este tipo son las mismas del Cashback y ya van en la t
 
 #### ¿De qué marca son los productos?
 
-> Como la ve el usuario en la app. Por ejemplo: JetSMART. Si participan todas, déjalo vacío.
+> Como la ve el usuario en la app. Por ejemplo: JetSMART.
 
-**Por qué te preguntamos esto.** El documento dice de qué marca son los productos que participan. Si lo dejas vacío, participan todos los de las categorías que elijas.
+**Por qué te preguntamos esto.** El documento dice de qué marca son los productos que participan, y el nombre de la campaña empieza por ella.
 
 | | |
 |---|---|
 | Campo interno | `marcaAliado` |
 | Paso | Organizador |
 | Tipo de control | texto |
-| Obligatorio | no |
+| Obligatorio | sí, cuando se ve |
 | Ejemplo | JetSMART |
 | Avanza sola | no |
 | Llena en el documento | `TEXTO_PRODUCTOS_TRAVEL` |
+
+**Mensajes de validación:**
+
+- Si lo deja en blanco: Escribe la marca. Sin ella, el nombre de la campaña quedaría con la razón social.
 
 ### Paso: Productos
 

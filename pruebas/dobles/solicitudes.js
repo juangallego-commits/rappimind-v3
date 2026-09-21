@@ -73,6 +73,10 @@ function valorDePrueba(campo, codigoPais, tipoActual) {
   if (campo.tipo === 'identificacion') return IDENTIFICACIONES[codigoPais];
   if (campo.tipo === 'texto') return campo.id === 'ciudades' ? 'Bogotá' : 'Texto de prueba';
   if (campo.tipo === 'casillas') {
+    if (campo.id === 'condiciones') {
+      // Sin nombre_modalidad_local no se ofrece "Solo consumo en el local".
+      return 'cualquiera';
+    }
     if (campo.id === 'exclusionesRedencion') {
       return seccionesExcluiblesDe(codigoPais).map((s) => s.valor);
     }

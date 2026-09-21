@@ -380,8 +380,9 @@ async function capturarTodo() {
     await elegirOpcion('Una sola vez');
     await capturar(15, { porQue: true });
 
-    await marcarCasilla('Solo si el pedido se hace por Turbo');
-    await siguiente();
+    // Desde el 20 de septiembre de 2026 (punto D2) es una sola eleccion y
+    // avanza sola: ya no hace falta pulsar Siguiente.
+    await elegirOpcion('Solo pedidos por Turbo');
     await capturar(16, { porQue: true });
 
     await elegirOpcion('Al día siguiente del pedido');

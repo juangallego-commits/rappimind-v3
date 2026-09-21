@@ -55,17 +55,17 @@ test('el valor que se guarda es el que se lee, no el código interno', () => {
 });
 
 test('las respuestas de varias opciones van en una sola celda', () => {
+  // Con un campo de casillas de verdad: las secciones donde los Créditos no se
+  // pueden redimir. Antes se probaba con las condiciones del pedido, que
+  // dejaron de ser casillas el 20 de septiembre de 2026 (punto D2).
   const campo = {
-    id: 'condiciones', tipo: 'casillas',
+    id: 'exclusionesRedencion', tipo: 'casillas',
     opciones: [
-      { valor: 'turbo', etiqueta: 'Solo si el pedido se hace por Turbo' },
-      { valor: 'consumo_local', etiqueta: 'Solo si consume en el local' },
+      { valor: 'travel', etiqueta: 'Rappi Travel' },
+      { valor: 'atm', etiqueta: 'Cajero ATM' },
     ],
   };
-  assert.strictEqual(
-    valorLegible(campo, ['turbo', 'consumo_local']),
-    'Solo si el pedido se hace por Turbo, Solo si consume en el local'
-  );
+  assert.strictEqual(valorLegible(campo, ['travel', 'atm']), 'Rappi Travel, Cajero ATM');
 });
 
 test('las tiendas del Cashback Multitienda van una por línea', () => {

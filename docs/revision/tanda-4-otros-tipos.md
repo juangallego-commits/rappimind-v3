@@ -111,7 +111,7 @@ En un Cashback Multitienda cada tienda organiza su propio beneficio y responde p
 Atrás
 Siguiente
 Tu T&C
-Completo
+Faltan 2 datos
 
 [columna derecha: aquí se ve el documento llenándose mientras responde]
 ```
@@ -179,7 +179,7 @@ Sin regla de desempate, un empate se resuelve al azar, y el azar convierte el co
 Atrás
 Siguiente
 Tu T&C
-Faltan 5 datos
+Faltan 7 datos
 
 [columna derecha: aquí se ve el documento llenándose mientras responde]
 ```
@@ -234,6 +234,9 @@ Cuando entregue el premio, la marca borra los datos y le manda a Rappi el certif
 Si la marca no está en verde o la Orden no está aceptada, ni Producto ni Data te pueden entregar los datos.
 Si no alcanzan a firmar antes de la entrega, cambia tu respuesta a "Rappi, como operador logístico": la marca le entrega los premios a Rappi y Rappi se los lleva al ganador.
 Abrir el modelo de acuerdo
+
+Si no puedes abrirlo, pide el acceso desde la misma pantalla de Google y avísanos en #tyc-rappi.
+
 ¿Por qué te preguntamos esto?
 
 Rappi responde por los datos de sus usuarios. Enviarlos a una marca sin acuerdo firmado nos expone ante la autoridad de datos personales.
@@ -254,7 +257,7 @@ Completo
 
 Varias tiendas hacen cashback dentro de una misma jornada comercial. Cada tienda pone su porcentaje, su tope y su presupuesto, y cada una organiza lo suyo.
 
-Las otras 27 preguntas de este tipo son las mismas del Cashback y ya van en la tanda 2.
+Las otras 28 preguntas de este tipo son las mismas del Cashback y ya van en la tanda 2.
 
 ### Paso: Tiendas
 

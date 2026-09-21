@@ -4,7 +4,7 @@ Este paquete existe para revisar el front de RappiMind pantalla por pantalla y
 caso por caso, con Claude chat, y que lo que salga se pueda aplicar sin volver a
 escribirlo a mano.
 
-Generado el 2026-09-18 desde el commit `5b0f4af`, con el
+Generado el 2026-09-21 desde el commit `15c48ac`, con el
 texto de 46 pantallas sacado de la aplicación tal como se lee.
 
 ## Por qué en tandas y no en un solo archivo
