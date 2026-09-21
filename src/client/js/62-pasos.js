@@ -736,10 +736,44 @@ function seguirDespuesDeUnaTarjeta() {
   RM.app.dibujar();
 }
 
+/**
+ * Los valores por defecto que trae el tipo de campana recien elegido.
+ *
+ * Casi todos los por defecto son iguales en todos los tipos y se fijan al
+ * arrancar el formulario (valoresIniciales, en 70-app.js), cuando todavia no
+ * hay tipo. Brasil es la excepcion: los cuatro T&C aprobados arrancan a las
+ * 00:01 y no a medianoche, asi que `horaInicio` trae un por defecto propio en
+ * su variante `promocao_br`. Sin esta funcion la variante existiria y nadie la
+ * veria, que es justo el defecto que ya paso una vez con el texto de las
+ * preguntas.
+ *
+ * Solo toca dos cosas: lo que el tipo cambia respecto del por defecto general,
+ * y solo si el comercial no lo ha respondido todavia. Preseleccionar no es
+ * responder, pero pisarle una respuesta suya si seria un error.
+ */
+function aplicarValoresDelTipo(tipo) {
+  if (!tipo) return;
+  var visibles = camposVisibles(tipo, estado.entrada());
+  for (var i = 0; i < visibles.length; i++) {
+    var campoId = visibles[i].id;
+    if (E.respondidas[campoId]) continue;
+
+    var delTipo = estado.pregunta(campoId);
+    if (!delTipo || delTipo.porDefecto === undefined) continue;
+
+    var generica = PREGUNTAS[campoId];
+    if (generica && delTipo.porDefecto === generica.porDefecto) continue;
+
+    estado.fijar(campoId, delTipo.porDefecto);
+  }
+}
+
 function alResponder(campoId, valor, campos, indice) {
   estado.fijar(campoId, valor);
   E.errores[campoId] = true;
   E.respondidas[campoId] = true;
+
+  if (campoId === 'tipo') aplicarValoresDelTipo(valor);
 
   // Al elegir el día de inicio se propone el mismo día de fin: tres de cada
   // cuatro campañas de cashback duran un solo día. Y si el tipo no pregunta la

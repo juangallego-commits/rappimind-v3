@@ -4,6 +4,35 @@ Juan autorizó el 17 de septiembre de 2026 corregir el texto brasileño donde
 hubiera oportunidad de mejora. Esto es la lista completa de lo que cambió, para
 que nada quede corregido a escondidas.
 
+## La comparación contra los aprobados, cerrada el 20 de septiembre de 2026
+
+Los cuatro T&C aprobados están en el Drive, a nombre de Natasha Santos, creados
+el 9 de septiembre de 2026:
+
+| Documento | Id de Drive |
+|---|---|
+| Legal BR - T&C - Desconto % OFF.docx | `1ybOj_zCmVsNTYcCYpZAobPlzcUsTFbKs` |
+| Legal BR - T&C - Frete Grátis.docx | `10DjITxDpi-p-h0hkVtj1i5Mk8xoFCmnB` |
+| Legal BR - T&C - Taxa de serviço minimo de compra.docx | `1IKHOemOKDQS_FneriLsdEUz7XLCYcQpV` |
+| Legal BR - T&C - Taxa de serviço e entrega grátis.docx | `1qbuiIzLHNddVy9uys4NbsvIBJEBIm7Po` |
+
+El 20 de septiembre se compararon línea por línea contra lo que la herramienta
+genera hoy, que son los casos dorados BR01 a BR04. **La única diferencia de
+fondo era el orden de la cifra y las letras**, y se corrigió en el punto B3: en
+Brasil los pedidos y los porcentajes salen ahora con la cifra primero, como ya
+salían los montos ("1 (um) pedido", "10% (dez por cento)"). Con eso, el punto B2
+queda cerrado.
+
+Lo demás se queda como está, y Juan lo decidió ese día:
+
+- **Los enlaces del cierre** apuntan a `legal.rappi.com.co`; los aprobados usan
+  `legal.rappi.com`. Las dos direcciones abren.
+- **La "e" antes del último medio de pago**, que es la conjunción portuguesa de
+  una lista.
+- **En Frete Grátis, la viñeta del tope va antes que la del límite** de pedidos.
+- **Tres arreglos de gramática** que no estaban en la decisión 25 y ahora quedan
+  escritos abajo, en A5, A6 y A7.
+
 **El criterio que usé.** Corregí errores verificables: erratas, palabras que no
 encajan, frases sin verbo, concordancias rotas, ambigüedades que cambian el
 sentido y diferencias de forma entre los cuatro documentos. **No toqué criterio
@@ -61,6 +90,39 @@ primera, dice lo mismo y sí es una oración.
 
 "do dados" es un singular con un plural, y "pelos Usuário" al revés. Además los
 datos se le solicitan **al** usuario, no son solicitados **por** él.
+
+### A5. "reservar ao direito" en la cláusula de cancelación
+
+- **Antes:** "O Rappi se reserva **ao** direito de cancelar a promoção, cancelar
+  o código e bloquear a conta do Usuário..."
+- **Después:** "O Rappi se reserva **o** direito de cancelar a promoção..."
+
+En portugués se reserva **o** direito, no **ao** direito: el verbo no rige esa
+preposición. El arreglo estaba aplicado desde el 17 de septiembre y no había
+quedado escrito. Se anota el 20 de septiembre de 2026, al cerrar el punto B2.
+
+### A6. La misma preposición, y además el pronombre suelto
+
+- **Antes:** "O Rappi **reserva-se ao** direito de, a seu exclusivo critério,
+  modificar, alterar ou atualizar estes Termos e Condições..."
+- **Después:** "O Rappi **se reserva o** direito de, a seu exclusivo critério,
+  modificar, alterar ou atualizar estes Termos e Condições..."
+
+Dos cosas. La preposición, igual que en A5. Y la colocación del pronombre: los
+otros cuatro párrafos del mismo documento dicen "se reserva", y este decía
+"reserva-se". Queda como los demás. Se anota el 20 de septiembre de 2026.
+
+### A7. Una concordancia con dos sujetos
+
+Está en `Taxa de serviço e entrega grátis`, que es el único de los cuatro donde
+el beneficio son dos cosas.
+
+- **Antes:** "a taxa de serviço e frete grátis **serão válidos**"
+- **Después:** "a taxa de serviço e **o** frete grátis **serão válidos**"
+
+El verbo va en plural porque son dos sujetos, pero el segundo se había quedado
+sin artículo y la frase se leía como si fueran uno solo. Se anota el 20 de
+septiembre de 2026.
 
 ---
 
@@ -143,9 +205,12 @@ devuelven en un minuto.
    para Brasil en `data/paises.json`. Las dos son válidas en derecho brasileño.
    Que el mismo documento use las dos sí es raro, pero elegir cuál es de Legal.
 
-3. **"São Paulo/SP"** al final. Aparece en uno solo de los cuatro y no lo puse en
-   el modelo, porque no sé si es la sede que debe constar siempre o quedó de un
-   documento anterior. Dime y lo agrego.
+3. **"São Paulo/SP"** al final. Está en **los cuatro** documentos aprobados, no
+   en uno solo como decía esta página hasta el 20 de septiembre de 2026. Aun así
+   **el modelo no lo imprime**, porque sigue sin saberse si es la sede que debe
+   constar siempre o el pie de un documento anterior, y eso lo dice Legal
+   Brasil, no yo. Queda anotado en `docs/PENDIENTES_LEGAL.md` para la prueba de
+   los abogados de Brasil.
 
 4. **Rappi como quien concede y cancela la promoción.** Ya está resuelto: lo
    autorizaste como excepción explícita y quedó escrito en `CLAUDE.md` y en
@@ -155,13 +220,22 @@ devuelven en un minuto.
 
 ## E. Los enlaces que pediste
 
-El texto aprobado nombraba los dos documentos sin ninguna dirección:
+Los cuatro documentos aprobados **sí traen enlaces** en el cierre, a
+`legal.rappi.com/brazil/`. Esta página decía hasta el 20 de septiembre de 2026
+que los nombraban sin ninguna dirección, y era un error de lectura.
+
+Lo que cambió fue la forma de citarlos:
 
 - **Antes:** "Consulte nossos Termos de Uso e Condições da Plataforma Rappi e
   Aviso de Privacidade de Dados."
 - **Después:** "Consulte nossos Termos de Uso e Condições da Plataforma Rappi,
   disponíveis em: `<enlace>`, e o Aviso de Privacidade de Dados, disponível em:
   `<enlace>`."
+
+Los enlaces de la herramienta apuntan a `legal.rappi.com.co/brazil/` y los de los
+aprobados a `legal.rappi.com/brazil/`. **Las dos direcciones abren**, y Juan
+decidió el 20 de septiembre de 2026 dejar la de `.com.co`, que es la que usa el
+resto del sistema.
 
 Los dos enlaces salen de la fila de Brasil del Sheet, así que se cambian ahí sin
 tocar código:

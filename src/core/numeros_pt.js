@@ -125,16 +125,28 @@ function enFemeninoPt(texto) {
   return t;
 }
 
-/** "duzentos e cinquenta (250)". Quien llama agrega el sustantivo. */
+/**
+ * "1 (um)", "250 (duzentos e cinquenta)". Quien llama agrega el sustantivo.
+ *
+ * La cifra primero y las letras entre parentesis, igual que los montos. Los
+ * cuatro T&C aprobados de Brasil dicen "ha o limite de 1 (um) pedido por
+ * usuario", y el motor escribia "um (1) pedido", al reves. Juan lo cerro el 20
+ * de septiembre de 2026 (punto B3). En espanol sigue siendo "un (1) pedido", y
+ * por eso esto vive aqui y no en numeros.js.
+ *
+ * Un numero que no se puede escribir devuelve hueco, no "NaN ()".
+ */
 function letrasYCifraPt(n) {
   var entero = Math.trunc(Number(n));
-  return numeroEnLetrasPt(entero) + ' (' + entero + ')';
+  var letras = numeroEnLetrasPt(entero);
+  return letras ? entero + ' (' + letras + ')' : '';
 }
 
-/** "duzentas e cinquenta (250)", para un sustantivo femenino. */
+/** "250 (duzentas e cinquenta)", para un sustantivo femenino. */
 function letrasYCifraFemeninoPt(n) {
   var entero = Math.trunc(Number(n));
-  return enFemeninoPt(numeroEnLetrasPt(entero)) + ' (' + entero + ')';
+  var letras = enFemeninoPt(numeroEnLetrasPt(entero));
+  return letras ? entero + ' (' + letras + ')' : '';
 }
 
 if (typeof module !== 'undefined') {

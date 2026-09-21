@@ -305,6 +305,17 @@ var PREGUNTAS = {
     porDefecto: '00:00',
     placeholders: ['HORA_INICIO'],
     errores: { vacio: 'Elige la hora de inicio.' },
+    variantes: {
+      // Los cuatro T&C aprobados de Brasil arrancan a las 00:01, no a
+      // medianoche. Hasta el 20 de septiembre de 2026 la ayuda lo contaba y el
+      // formulario dejaba 00:00, asi que cada documento brasileno salia
+      // arrancando una hora distinta de la de los aprobados. Juan lo cerro ese
+      // dia (punto B3). Solo Brasil: los demas paises siguen en 00:00.
+      promocao_br: {
+        ayuda: 'Por defecto arranca a las 00:01, como los cuatro documentos aprobados.',
+        porDefecto: '00:01',
+      },
+    },
   }),
 
   fechaFin: p({
@@ -399,10 +410,12 @@ var PREGUNTAS = {
 
       promocao_br: {
         pregunta: '¿Cuál es el tope del beneficio, en reales?',
-        ayuda: 'Lo máximo que la campaña cubre en un pedido. Si lo dejas en blanco, el documento no lleva tope.',
+        ayuda: 'Lo máximo que la campaña cubre en un pedido. Los documentos aprobados siempre lo traen.',
         porQue: 'Sin tope escrito, la campaña no tiene techo y el presupuesto se puede ir en pocos pedidos.',
-        // En Brasil el tope no es obligatorio, y lo opcional se ve opcional.
-        opcional: true,
+        // Solo se pregunta en Desconto % OFF y Frete gratis, que son las dos
+        // formas que llevan tope, y ahi es obligatorio: los dos documentos
+        // aprobados lo traen siempre. Juan lo cerro el 20 de septiembre de 2026
+        // (punto E2). La taxa de servico no lo pregunta, asi que no lo exige.
         placeholders: ['TEXTO_TOPE_BENEFICIO'],
       },
       cashback_travel: {
@@ -454,9 +467,16 @@ var PREGUNTAS = {
       },
 
       promocao_br: {
-        pregunta: '¿Cuántos pedidos puede hacer la misma persona?',
-        ayuda: 'Los documentos aprobados usan uno, dos, o sin límite.',
-        porQue: 'El documento lo escribe en letras y en cifra: "o limite de 1 (um) pedido por usuário".',
+        pregunta: '¿En cuántos pedidos puede usar la promoción la misma persona?',
+        ayuda: 'Los documentos aprobados usan uno, dos o sin límite.',
+        porQue: 'El documento lo escribe en cifra y en letras: "o limite de 1 (um) pedido por usuário".',
+        // En Brasil no hay presupuesto que frene la promocion: la frena la
+        // vigencia.
+        opciones: [
+          { valor: 'una', etiqueta: 'Una sola vez', nota: 'Lo más común. El segundo pedido ya no da beneficio.' },
+          { valor: 'varias', etiqueta: 'Varias veces', nota: 'Tú dices cuántas.' },
+          { valor: 'sin_limite', etiqueta: 'Sin límite', nota: 'Vale mientras dure la promoción.' },
+        ],
       },
 
       // Decision 20: aqui el limite se cuenta por cada tienda, no por campana.

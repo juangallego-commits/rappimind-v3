@@ -75,13 +75,15 @@ test('los números en letras siguen las reglas del portugués', () => {
     assert.strictEqual(numeroEnLetras(15000000), 'quinze milhões');
     assert.strictEqual(numeroEnLetras(1200000), 'um milhão e duzentos mil');
 
-    // En portugués no hay apócope: es "um", nunca "un".
-    assert.strictEqual(letrasYCifra(1), 'um (1)');
-    assert.strictEqual(letrasYCifra(21), 'vinte e um (21)');
+    // La cifra primero y las letras entre paréntesis, como los montos y como
+    // escriben el límite los cuatro T&C aprobados de Brasil (punto B3, 20 de
+    // septiembre de 2026). Y en portugués no hay apócope: es "um", nunca "un".
+    assert.strictEqual(letrasYCifra(1), '1 (um)');
+    assert.strictEqual(letrasYCifra(21), '21 (vinte e um)');
     // Y el femenino concuerda en el uno, el dos y las centenas.
-    assert.strictEqual(letrasYCifraFemenino(1), 'uma (1)');
-    assert.strictEqual(letrasYCifraFemenino(2), 'duas (2)');
-    assert.strictEqual(letrasYCifraFemenino(250), 'duzentas e cinquenta (250)');
+    assert.strictEqual(letrasYCifraFemenino(1), '1 (uma)');
+    assert.strictEqual(letrasYCifraFemenino(2), '2 (duas)');
+    assert.strictEqual(letrasYCifraFemenino(250), '250 (duzentas e cinquenta)');
   });
 });
 
@@ -90,8 +92,8 @@ test('el porcentaje y el monto usan las palabras del país', () => {
   assert.strictEqual(porcentajeEnLetras(100), 'cien por ciento (100%)');
 
   conElIdiomaDe(BRASIL, () => {
-    assert.strictEqual(porcentajeEnLetras(50), 'cinquenta por cento (50%)');
-    assert.strictEqual(porcentajeEnLetras(100), 'cem por cento (100%)');
+    assert.strictEqual(porcentajeEnLetras(50), '50% (cinquenta por cento)');
+    assert.strictEqual(porcentajeEnLetras(100), '100% (cem por cento)');
     // La cifra primero y las letras entre paréntesis, como en los T&C aprobados.
     assert.strictEqual(montoConMoneda(50000, BRASIL), 'R$50.000,00 (cinquenta mil reais)');
     assert.strictEqual(montoConMoneda(300, BRASIL), 'R$300,00 (trezentos reais)');

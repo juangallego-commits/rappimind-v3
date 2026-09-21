@@ -10,6 +10,8 @@
 
 const test = require('node:test');
 const assert = require('node:assert');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const { PREGUNTAS, PASOS, GLOSARIO, NOMBRE_DEL_HUECO, nombreDelHueco, preguntaDe } = require("../src/core/preguntas.js");
 const { ESQUEMAS } = require('../src/core/esquemas.js');
@@ -237,6 +239,34 @@ test('las horas por defecto son las que pidió Juan', () => {
   assert.strictEqual(PREGUNTAS.horaInicio.porDefecto, '00:00');
   assert.strictEqual(PREGUNTAS.horaFin.porDefecto, '23:59');
   assert.strictEqual(PREGUNTAS.plazoConfirmacion.porDefecto, 5);
+});
+
+test('en Brasil la campaña arranca a las 00:01, y solo en Brasil', () => {
+  // Los cuatro T&C aprobados de Brasil arrancan a las 00:01. Hasta el 20 de
+  // septiembre de 2026 la ayuda lo contaba y el formulario dejaba 00:00, así
+  // que cada documento brasileño salía con una hora distinta de la de los
+  // aprobados. Punto B3.
+  assert.strictEqual(preguntaDe('horaInicio', 'promocao_br').porDefecto, '00:01');
+  for (const tipoId of Object.keys(ESQUEMAS)) {
+    if (tipoId === 'promocao_br') continue;
+    assert.strictEqual(
+      preguntaDe('horaInicio', tipoId).porDefecto, '00:00',
+      tipoId + ': la hora de Brasil se coló en otro tipo de campaña'
+    );
+  }
+});
+
+test('la interfaz aplica el valor por defecto del tipo, no solo el general', () => {
+  // El mecanismo de variantes ya existió una vez sin que nadie lo llamara: las
+  // variantes de texto estaban probadas en Node y la pantalla seguía mostrando
+  // el texto genérico. Esta prueba mira que el cliente sí lo use.
+  const pasos = fs.readFileSync(
+    path.join(__dirname, '..', 'src', 'client', 'js', '62-pasos.js'), 'utf8'
+  );
+  assert.ok(
+    /if \(campoId === 'tipo'\) aplicarValoresDelTipo\(valor\);/.test(pasos),
+    'al elegir el tipo nadie aplica sus valores por defecto'
+  );
 });
 
 test('ningún texto visible usa guiones como puntuación', () => {

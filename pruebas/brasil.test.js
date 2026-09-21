@@ -48,7 +48,7 @@ const TAXA_E_FRETE = { tienda: 'Ri Happy', beneficioBr: 'taxa_e_frete', sinLimit
 test('el desconto sale completo y en portugués', () => {
   const texto = documento(DESCONTO);
 
-  assert.ok(texto.indexOf('receberão até dez por cento (10%) de desconto no pedido') !== -1, texto);
+  assert.ok(texto.indexOf('receberão até 10% (dez por cento) de desconto no pedido') !== -1, texto);
   assert.ok(texto.indexOf('limitado ao valor de R$60,00 (sessenta reais)') !== -1, texto);
   assert.ok(texto.indexOf('com valor acima de R$300,00 (trezentos reais)') !== -1, texto);
   // El período, con los meses en portugués y la hora con cero inicial.
@@ -80,8 +80,9 @@ test('sin mínimo de compra la frase de apertura cierra bien igual', () => {
 });
 
 test('el límite de pedidos concuerda en singular y en plural', () => {
-  assert.ok(documento(DESCONTO).indexOf('o limite de um (1) pedido por usuário') !== -1);
-  assert.ok(documento(FRETE).indexOf('o limite de dois (2) pedidos por usuário') !== -1);
+  // La cifra primero, como lo escriben los cuatro aprobados (punto B3).
+  assert.ok(documento(DESCONTO).indexOf('o limite de 1 (um) pedido por usuário') !== -1);
+  assert.ok(documento(FRETE).indexOf('o limite de 2 (dois) pedidos por usuário') !== -1);
 });
 
 test('los medios de pago salen con la conjunción portuguesa', () => {
@@ -142,6 +143,23 @@ test('Brasil no acepta un porcentaje, un tope o un máximo de pedidos absurdos',
   assert.deepStrictEqual(camposConError({ tope: 0 }), ['tope']);
   assert.deepStrictEqual(camposConError({ maxPedidos: 0 }), ['maxPedidos']);
   assert.deepStrictEqual(camposConError({ compraMinima: 0 }), ['compraMinima']);
+});
+
+test('el tope es obligatorio donde el beneficio lo lleva, y no se pide donde no', () => {
+  // Los dos documentos aprobados que llevan tope lo traen siempre, así que
+  // dejarlo vacío publicaba una campaña sin techo. Punto E2, 20 de septiembre
+  // de 2026. La taxa de serviço no lo lleva, así que ni se pregunta.
+  const contexto = { fechaReferencia: '2026-09-17', usuarioEnEquipo: true };
+  function camposConError(extra) {
+    return validarSolicitud(campana(extra), BR, contexto).errores.map((e) => e.campo).sort();
+  }
+  const sinTope = (base) => { const copia = Object.assign({}, base); delete copia.tope; return copia; };
+
+  assert.deepStrictEqual(camposConError(sinTope(DESCONTO)), ['tope']);
+  assert.deepStrictEqual(camposConError(sinTope(FRETE)), ['tope']);
+  // Estas dos formas no preguntan el tope: sin él tienen que seguir generando.
+  assert.deepStrictEqual(camposConError(TAXA), []);
+  assert.deepStrictEqual(camposConError(TAXA_E_FRETE), []);
 });
 
 test('Brasil no genera si la fila del país no dice que el documento va en portugués', () => {

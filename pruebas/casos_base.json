@@ -1660,10 +1660,10 @@
       "esperado": {
         "resultado": "genera",
         "contiene": [
-          "receberão até dez por cento (10%) de desconto no pedido",
+          "receberão até 10% (dez por cento) de desconto no pedido",
           "limitado ao valor de R$60,00 (sessenta reais)",
           "com valor acima de R$300,00 (trezentos reais)",
-          "há o limite de um (1) pedido por usuário"
+          "há o limite de 1 (um) pedido por usuário"
         ],
         "no_contiene": [
           "{{",
@@ -1707,7 +1707,7 @@
         "contiene": [
           "frete grátis",
           "R$20,00 (vinte reais)",
-          "há o limite de dois (2) pedidos por usuário"
+          "há o limite de 2 (dois) pedidos por usuário"
         ],
         "no_contiene": [
           "{{",

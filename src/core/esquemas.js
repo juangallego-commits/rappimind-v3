@@ -981,9 +981,13 @@ var CAMPOS_BRASIL = [
     tipo: 'numero',
     minimo: 1,
     paso: 'beneficio',
-    // La taxa de servico no lleva tope en ninguno de los documentos aprobados.
+    // La taxa de servico no lleva tope en ninguno de los documentos aprobados,
+    // asi que ni se pregunta. Donde si se pregunta (Desconto % OFF y Frete
+    // gratis) es obligatorio: los dos documentos aprobados lo traen siempre, y
+    // dejarlo vacio publicaba una campana sin techo. Punto E2, 20 de septiembre
+    // de 2026.
     visible: llevaTopeBr,
-    obligatorio: false,
+    obligatorio: llevaTopeBr,
   },
   { id: 'compraMinima', etiqueta: 'Mínimo de compra', tipo: 'numero', minimo: 1, paso: 'participantes', obligatorio: false },
   // Obligatorio salvo con "Sin limite": con "Varias veces" y sin numero, el

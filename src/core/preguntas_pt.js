@@ -107,11 +107,9 @@ var PREGUNTAS_PT = {
     errores: { vacio: 'Escolha a hora de início.' },
     variantes: {
       promocao_br: {
-        // El formulario preselecciona 00:00, como en todos los paises. Los cuatro
-        // T&C aprobados de Brasil arrancan a las 00:01, y si Legal Brasil exige
-        // esa hora hay que cambiar el valor por defecto, no solo la ayuda. Esta
-        // anotado en docs/PENDIENTES_LEGAL.md.
-        ayuda: 'Deixamos 00:00 por padrão. Os quatro documentos aprovados começam às 00:01: altere se o Jurídico do Brasil exigir esse horário.',
+        // El formulario arranca en 00:01 desde el punto B3 (20 de septiembre de
+        // 2026), asi que la ayuda ya no tiene que explicar una diferencia.
+        ayuda: 'Os documentos aprovados começam às 00:01.',
       },
     },
   },
@@ -140,7 +138,7 @@ var PREGUNTAS_PT = {
 
   beneficioBr: {
     pregunta: 'O que o usuário ganha?',
-    ayuda: 'As quatro formas que o Jurídico do Brasil tem aprovadas. Cada uma muda uma única frase do documento.',
+    ayuda: 'As quatro formas aprovadas pelo Jurídico do Brasil. Cada uma muda a abertura e a regra do benefício.',
     porQue: 'Daqui saem o parágrafo de abertura e a regra que descreve o benefício. É a única coisa que diferencia os quatro modelos aprovados entre si.',
     opciones: {
       desconto: { etiqueta: 'Desconto % OFF', nota: 'Uma porcentagem de desconto no pedido, com teto em reais.' },
@@ -163,7 +161,7 @@ var PREGUNTAS_PT = {
       promocao_br: {
         pregunta: 'Qual é a porcentagem de desconto?',
         ayuda: 'Só o número. O documento escreve "até X%", ou seja, é o desconto máximo.',
-        porQue: 'Sai escrito por extenso e em número dentro do documento, como o modelo aprovado exige.',
+        porQue: 'Sai escrito em número e por extenso dentro do documento, como o modelo aprovado exige.',
         errores: {
           vacio: 'Escreva a porcentagem de desconto, sem o sinal de porcentagem.',
           rango: 'A porcentagem vai de 1 a 100.',
@@ -184,7 +182,7 @@ var PREGUNTAS_PT = {
     variantes: {
       promocao_br: {
         pregunta: 'Qual é o teto do benefício, em reais?',
-        ayuda: 'O máximo que a campanha cobre em um pedido. Se deixar em branco, o documento sai sem teto.',
+        ayuda: 'O máximo que a campanha cobre em um pedido. Os documentos aprovados sempre trazem esse teto.',
         porQue: 'Sem um teto escrito, a campanha não tem limite e o orçamento pode ir embora em poucos pedidos.',
         errores: {
           vacio: 'Escreva o teto do benefício, em reais.',
@@ -224,9 +222,14 @@ var PREGUNTAS_PT = {
     },
     variantes: {
       promocao_br: {
-        pregunta: 'Quantos pedidos a mesma pessoa pode fazer?',
-        ayuda: 'Os documentos aprovados usam um, dois, ou sem limite.',
-        porQue: 'O documento escreve por extenso e em número: "o limite de 1 (um) pedido por usuário".',
+        pregunta: 'Em quantos pedidos a mesma pessoa pode usar a promoção?',
+        ayuda: 'Os documentos aprovados usam um, dois ou sem limite.',
+        porQue: 'O documento escreve em número e por extenso: "o limite de 1 (um) pedido por usuário".',
+        // En Brasil no hay presupuesto que frene la promocion: lo unico que la
+        // frena es la vigencia.
+        opciones: {
+          sin_limite: { etiqueta: 'Sem limite', nota: 'Vale enquanto durar a promoção.' },
+        },
       },
     },
   },
@@ -238,7 +241,7 @@ var PREGUNTAS_PT = {
     opciones: {
       dinheiro: { etiqueta: 'Dinheiro', nota: 'Pagamento em espécie.' },
       paypal: { etiqueta: 'Paypal', nota: 'A conta PayPal do usuário.' },
-      rappipay: { etiqueta: 'RappiPay', nota: 'O meio de pagamento da própria Rappi.' },
+      rappipay: { etiqueta: 'RappiPay', nota: 'O meio de pagamento do próprio Rappi.' },
       visa: { etiqueta: 'Cartão de crédito Visa', nota: 'Cartão de crédito Visa.' },
       mastercard: { etiqueta: 'Cartão de crédito Mastercard', nota: 'Cartão de crédito Mastercard.' },
       voucher_refeicao: { etiqueta: 'Voucher Refeição', nota: 'Vale-refeição.' },

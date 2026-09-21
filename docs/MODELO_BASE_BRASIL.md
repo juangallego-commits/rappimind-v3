@@ -28,7 +28,7 @@ Es bastante menos trabajo que los cinco de Colombia.
 | Definición | "Usuário" para fines deste T&C, fija en los cuatro |
 | REGRAS PRINCIPAIS | Nueve viñetas, de las que cuatro cambian |
 | CONDIÇÕES GERAIS | Trece párrafos, idénticos en los cuatro |
-| Cierre | "Consulte nossos Termos de Uso..." y, en uno solo, "São Paulo/SP" |
+| Cierre | "Consulte nossos Termos de Uso...", con sus dos enlaces a `legal.rappi.com/brazil/`, y "São Paulo/SP" en los cuatro |
 
 ## Las cuatro formas del beneficio
 
@@ -54,7 +54,9 @@ Todo esto sale de los cuatro documentos, ningún dato es inventado:
 - **El mínimo de compra en reales**, opcional: la campaña de taxa de serviço e
   frete grátis no lo tiene.
 - **Fecha y hora de inicio y de fin.** Los cuatro arrancan a las `00:01` y
-  terminan a las `23:59`, escritas así, con cero inicial y dos puntos.
+  terminan a las `23:59`, escritas así, con cero inicial y dos puntos. Desde el
+  20 de septiembre de 2026 el formulario de Brasil arranca en `00:01` por
+  defecto (punto B3).
 - **El límite de pedidos por usuario**: un número, o "não há limite", que es
   como lo dice el documento de taxa de serviço e frete grátis.
 - **Los medios de pago**: una lista que cambia entre documentos. Aparecen
@@ -62,6 +64,18 @@ Todo esto sale de los cuatro documentos, ningún dato es inventado:
   Mastercard y Voucher Refeição. En uno de los cuatro no está Dinheiro.
 - **La cobertura**: los cuatro dicen todo el territorio brasileño. No hay
   ninguno por ciudades.
+
+## La comparación contra lo que sale hoy
+
+Se hizo el 20 de septiembre de 2026, línea por línea, contra los casos dorados
+BR01 a BR04. La única diferencia de fondo era el orden de la cifra y las letras,
+y se corrigió ese día (punto B3). Lo demás, y los dos datos de esta página que
+estaban mal leídos, están en `docs/CORRECCIONES_BRASIL.md`.
+
+Dos cosas siguen esperando a los abogados de Brasil, que las miran cuando
+prueben la herramienta: el "São Paulo/SP" del cierre, que está en los cuatro
+aprobados y el modelo no imprime, y la lectura de los textos del formulario en
+portugués (punto E2).
 
 ## Lo que ya quedó listo del lado técnico
 

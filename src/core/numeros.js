@@ -197,7 +197,7 @@ function montoConMoneda(n, pais) {
   var idioma = textosDelIdioma();
   var cifra = pais.moneda_simbolo + formatearMiles(n, pais.separador_miles) + (idioma.decimalesDelMonto || '');
 
-  if (idioma.formatoMonto === 'cifra_primero') {
+  if (idioma.ordenDeLaCifra === 'cifra_primero') {
     return cifra + ' (' + numeroEnLetras(n) + ' ' + pais.moneda_nombre + ')';
   }
   return numeroEnLetras(n) + ' ' + pais.moneda_nombre + ' (' + cifra + ')';
@@ -206,12 +206,20 @@ function montoConMoneda(n, pais) {
 /**
  * Porcentaje: "cincuenta por ciento (50%)", "cien por ciento (100%)".
  * No hay apocope ante "por ciento": "veintiuno por ciento (21%)".
+ *
+ * En portugues va al reves, "10% (dez por cento)", porque asi lo escriben los
+ * cuatro T&C aprobados de Brasil. Juan lo cerro el 20 de septiembre de 2026
+ * (punto B3), despues de compararlos con lo que salia impreso.
  */
 function porcentajeEnLetras(p) {
+  var idioma = textosDelIdioma();
   var entero = Math.trunc(Number(p));
   var esPt = idiomaActivo() === 'pt';
-  var letras = entero === 100 ? (esPt ? 'cem' : 'cien') : numeroEnLetras(entero);
-  return letras + ' ' + textosDelIdioma().porCiento + ' (' + entero + '%)';
+  var letras = (entero === 100 ? (esPt ? 'cem' : 'cien') : numeroEnLetras(entero)) + ' ' + idioma.porCiento;
+  var cifra = entero + '%';
+
+  if (idioma.ordenDeLaCifra === 'cifra_primero') return cifra + ' (' + letras + ')';
+  return letras + ' (' + cifra + ')';
 }
 
 if (typeof module !== 'undefined') {

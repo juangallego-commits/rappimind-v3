@@ -193,13 +193,17 @@ Cinco cosas que hay que decidir antes de armar el modelo:
    contexto es el valor del envío, pero leído solo puede entenderse como el
    valor del pedido, que diría lo contrario de lo que la campaña quiere.
 
-4. **El cierre no lleva enlaces.** Dice "Consulte nossos Termos de Uso e
-   Condições da Plataforma Rappi e Aviso de Privacidade de Dados", sin ninguna
-   dirección. En Colombia esos dos van con su enlace. ¿Se agregan los de Brasil,
-   o el documento brasileño va sin ellos a propósito?
+4. ~~**El cierre no lleva enlaces.**~~ **Resuelto el 20 de septiembre de 2026
+   (punto B2).** Era un error de lectura: los cuatro aprobados **sí** traen sus
+   dos enlaces, a `legal.rappi.com/brazil/`. La herramienta usa los de
+   `legal.rappi.com.co/brazil/` y Juan decidió dejarlos así, porque las dos
+   direcciones abren y `.com.co` es la que usa el resto del sistema.
 
-5. **"São Paulo/SP"** aparece al final de uno solo de los cuatro. ¿Va siempre,
-   nunca, o depende?
+5. **"São Paulo/SP" al final.** Está en **los cuatro** documentos aprobados, no
+   en uno solo como decía esta página hasta el 20 de septiembre de 2026. El
+   modelo sigue sin imprimirlo, porque nadie ha dicho si es la sede que debe
+   constar siempre o el pie de un documento anterior. **Lo miran los abogados de
+   Brasil cuando prueben la herramienta.**
 
 Y un dato que falta en `data/paises.json`: Brasil tiene vacío
 `texto_derechos_datos`, que es la frase que enumera los derechos del titular
@@ -414,21 +418,17 @@ que un comercial pegue uno en una pieza.
 
 Salieron al revisar lo construido la noche anterior. Ninguno cambia texto legal.
 
-1. **Brasil, la hora de inicio.** El formulario preselecciona 00:00 en todos los
-   países. Los cuatro T&C aprobados de Brasil arrancan a las 00:01. La ayuda en
-   portugués lo dice ahora con todas las letras ("Deixamos 00:00 por padrão. Os
-   quatro documentos aprovados começam às 00:01"), pero si Legal Brasil exige
-   00:01, hay que cambiar el valor por defecto para Brasil, no solo la ayuda.
-2. **Brasil, "um (1) pedido" o "1 (um) pedido".** La ayuda cita el documento como
-   "o limite de 1 (um) pedido por usuário" (cifra primero, como los montos
-   brasileños) y el motor imprime "um (1) pedido". Los cuatro aprobados no están en
-   el repositorio: hace falta que Legal Brasil diga cuál es la forma aprobada, y se
-   corrige la que esté mal.
-3. **Brasil, los cuatro casos dorados.** `pruebas/salidas_esperadas/BR01.txt` a
-   `BR04.txt` son el documento que el motor produce hoy para Desconto, Frete
-   Grátis, Taxa de serviço y Taxa e frete. Protegen el texto de que se mueva sin
-   querer; no dicen que sea el aprobado. Conviene compararlos con los cuatro T&C
-   que mandó Legal Brasil.
+1. ~~**Brasil, la hora de inicio.**~~ **Resuelto el 20 de septiembre de 2026
+   (punto B3).** El formulario de Brasil arranca en 00:01, como los cuatro
+   aprobados. Los demás países siguen en 00:00.
+2. ~~**Brasil, "um (1) pedido" o "1 (um) pedido".**~~ **Resuelto el 20 de
+   septiembre de 2026 (punto B3).** La forma aprobada es la cifra primero, como
+   los montos: "1 (um) pedido", "10% (dez por cento)". El motor imprimía "um (1)
+   pedido" y se corrigió.
+3. ~~**Brasil, los cuatro casos dorados.**~~ **Resuelto el 20 de septiembre de
+   2026 (punto B2).** Se compararon línea por línea contra los cuatro aprobados
+   del Drive. La única diferencia de fondo era el orden de la cifra y las letras,
+   y la corrigió el punto B3. El detalle está en `docs/CORRECCIONES_BRASIL.md`.
 4. **Brasil, montos de un real y con centavos.** El motor escribiría "R$1,00 (um
    reais)" para un tope de 1, y trunca los centavos sin avisar ("R$20,50" sale
    como "R$20,00"). Desde la pantalla no se puede escribir ninguno de los dos (el
