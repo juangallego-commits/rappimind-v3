@@ -250,7 +250,7 @@ test('dist/Estilos.html cruza la frontera: sin @import, con la letra incrustada'
   // Se exige que TODA url() sea un data:, no que ninguna lleve "../". Buscar el
   // patron de la ruta relativa dejaba pasar url('logo.png') y
   // url('assets/logo/x.png'), que en Apps Script tampoco resuelven, y ademas
-  // incrustarLetras solo sabe convertir las de tipo de letra: una imagen se
+  // incrustarArchivos solo convierte las extensiones que conoce: una imagen de
   // colaria intacta.
   const sinResolver = (estilos.match(/url\(\s*(?!['"]?data:)[^)]*\)/g) || []);
   assert.deepStrictEqual(sinResolver, [],
@@ -269,4 +269,11 @@ test('dist/Estilos.html cruza la frontera: sin @import, con la letra incrustada'
 
   assert.ok(/@font-face\s*\{[^}]*url\(data:font\/woff2;base64,/.test(estilos),
     'la letra de marca no viajó en base64: en Apps Script no se vería');
+
+  // Y el logotipo de Rappi, por lo mismo. Va aparte de la comprobación de
+  // arriba porque la de arriba pasaría igual si la regla de .marca-logotipo
+  // desapareciera entera: ahí no quedaría ninguna url() sin resolver, y el
+  // lockup saldría sin logotipo. Esto exige que esté.
+  assert.ok(/\.marca-logotipo\s*\{[^}]*url\(data:image\/png;base64,/.test(estilos),
+    'el logotipo de Rappi no viajó en base64 dentro de .marca-logotipo: o se cayó la regla, o quedó apuntando a una ruta del repositorio, que en Apps Script no existe');
 });

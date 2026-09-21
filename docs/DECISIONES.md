@@ -1365,7 +1365,10 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      resuelto en la fase 6: es el aviso serio, que es panel beige con regla de
      gradiente arriba.
 
-110. **El lockup no entra en esta ronda, y no es por el peso.** La marca de la
+110. **El lockup no entra en esta ronda, y no es por el peso.**
+     *(Superada por la 119: el lockup entró el 21 de septiembre, por pedido de
+     Juan, y la ruta elegida no fue el SVG sino tres piezas sueltas. Se deja
+     escrita porque la medición de abajo sigue valiendo.)* La marca de la
      barra superior es texto en el DOM (`RappiMind` más un `em` con `v3`, más la
      corona en SVG), así que cambiarla por la imagen del lockup es tocar
      `src/client/js/70-app.js`, que la ronda prohíbe. Además el SVG del lockup
@@ -1436,3 +1439,98 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      volvió por ellos. Los tres titulares se quedaron en 28, 21 y 17px, que son
      exactamente los valores del sistema anterior. La identidad llegó a 3 de las
      48 pantallas hasta que el auditor de FIDELIDAD midió los 48 titulares.
+
+116. **El lockup lleva el gradiente de marca, y esa es una excepción medida, no
+     un descuido.** La píldora "By Legal" va con letra blanca de 13px sobre el
+     gradiente completo, que es entre 2.58:1 y 3.79:1. Es exactamente el defecto
+     que la auditoría de la ronda 3 encontró en la píldora "Publicado" del
+     historial, y que se arregló creando `--rm-grad-texto`.
+
+     Aquí no aplica, y la diferencia importa: **WCAG 1.4.3 exime expresamente el
+     texto que es parte de un logotipo o de un nombre de marca.** La píldora es
+     parte del lockup, o sea de la marca. La píldora del historial no: es un
+     estado de la interfaz, y por eso sí le toca el mínimo.
+
+     Queda escrito porque sin esta nota el próximo que corra la auditoría de
+     contraste lo va a marcar como defecto, y "porque es un logo" no se deduce
+     de mirar el CSS. La regla práctica: si el gradiente lleva texto encima y
+     ese texto NO es la marca, va `--rm-grad-texto`.
+
+117. **La barra superior lleva el lockup SIN la firma.** Lo dice el propio
+     manual del lockup que entregó Claude Design: "sin firma: la barra superior
+     de la herramienta; ahí el contexto ya es de Legal y la firma solo agrega
+     ruido". Coincide con lo que hacía falta por espacio, y evita que la misma
+     firma salga dos veces en la misma pantalla, porque el pie de página ya dice
+     "por el equipo Legal".
+
+118. **El logotipo va a 24px de alto en la barra, y no a 19.** El manual fija que
+     la corona se cae por debajo de 20px de "Mind", y "Mind" mide el 89% del alto
+     del logotipo: a 19px de logotipo, "Mind" quedaría en 17px y habría que
+     quitar la corona. A 24px, "Mind" queda en 21.5px y la corona se queda. La
+     barra no crece porque el alto lo fijaba el relleno, no el contenido.
+
+     En celular sí se cae la corona, que es el escalón "15px sin corona" del
+     manual, porque ahí la barra es más baja y el logotipo no llega a 22px.
+
+119. **El lockup entra como tres piezas sueltas, no como una imagen ni como un
+     SVG.** La decisión 110 lo había descartado por dos razones, y las dos se
+     resolvieron por separado en vez de a la vez:
+
+     El logotipo de Rappi es escritura y no se puede componer con letra, así que
+     sí o sí es una imagen. Pero solo él: un PNG de paleta de 224 x 96 que cuesta
+     5,56 KiB en base64, medido en `docs/diseno/MEDICION_LOGOTIPO.md`. "Mind" no
+     necesita imagen, porque PP Object Sans Heavy ya se sirve, y como texto hereda
+     el color y escala con la letra. La corona ya existía en SVG.
+
+     El SVG completo del lockup habría costado 12,5 KiB y arrastra los dos
+     problemas que decía la 110: el logotipo entra por ruta relativa y "Mind" y
+     "By Legal" van como `<text>`, con el segundo saliendo en Heavy porque de la
+     familia solo se sirve esa cara. Partirlo en tres los elimina los dos.
+
+     El logotipo va como `background-image` y no como `<img>`. No es cosmética:
+     `scripts/lib/hoja-completa.js` incrusta en base64 las `url()` de la hoja, no
+     los `src` del HTML. Un `<img src="assets/logo/...">` apuntaría a una ruta del
+     repositorio que del lado de Apps Script no existe, y el logotipo
+     desaparecería sin que nada fallara. Frontera 2 de la skill
+     `frontera-apps-script`, con su modo de falla de siempre.
+
+     Por lo mismo, `TIPOS_QUE_SE_INCRUSTAN` pasó a aceptar `.png` y `.svg` además
+     de las letras, e `incrustarLetras` se llama ahora `incrustarArchivos`.
+
+120. **El pie de página dice quién está detrás, y va en todas las pantallas.**
+     "Hecho con amor ♥ por el equipo Legal". Lo pidió Juan.
+
+     No ayuda a generar un T&C, y por eso conviene dejar escrito para qué está:
+     esta herramienta existe para que el comercial no le escriba a Legal, y el
+     riesgo de lograrlo es que Legal se vuelva invisible justo con la gente a la
+     que más le sirve que no lo sea. El pie firma el trabajo sin meterse en el
+     camino.
+
+     Va partido en **dos claves de diccionario**, "Hecho con amor" y "por el
+     equipo Legal", porque entre las dos va el corazón, que es un SVG. Una sola
+     cadena obligaría a meter un dibujo dentro de `textos_interfaz.js`. Y las
+     claves son el literal en español, carácter por carácter, que es como
+     funciona ese diccionario: en portugués sale "Feito com amor ♥ pelo time do
+     Jurídico".
+
+121. **El corazón va relleno, y es la única excepción a cómo se dibujan los
+     iconos.** `icono()` dibuja los ocho con `fill: none` y
+     `stroke: currentColor`, que es lo correcto para un icono de interfaz. Este no
+     lo es: es el corazón de "hecho con amor", y a 15px con una línea de 1.8 se
+     lee como un contorno, no como un corazón. Se rellena desde `.pie-corazon` en
+     la hoja y no dentro de `icono()`, para no volver sólidos a los otros siete.
+
+     Y sigue siendo un SVG, no un emoji, por la razón de siempre: un emoji se
+     dibuja distinto en cada sistema operativo y no toma el color de la marca.
+
+122. **Se quita "v3" de lo que el comercial ve, y NO de lo que toca producción.**
+     Lo pidió Juan junto con el lockup. Cambian el `<title>` de `Index.html`, el
+     `setTitle` de `doGet` y la marca de la barra superior.
+
+     **`src/server/Config.js` no se toca.** `NOMBRE_DE_LA_BASE` es
+     `'RappiMind v3 · Base'` y `NOMBRE_DE_LA_CARPETA` es `'RappiMind v3'`: son los
+     nombres con los que el código encuentra el Google Sheet y la carpeta de Drive
+     que existen hoy, con las campañas ya guardadas dentro. Quitarles el "v3"
+     haría que `setup` no los encontrara y creara unos nuevos, vacíos, y el
+     historial quedaría en los viejos sin que nada avisara. El nombre interno es
+     un identificador, no una etiqueta.

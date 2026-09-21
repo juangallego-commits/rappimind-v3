@@ -38,6 +38,13 @@ var IDIOMAS_DE_INTERFAZ = [
 ];
 
 var TEXTOS_PT = {
+  // El pie de pagina, que sale en todas las pantallas. Va partido en dos
+  // claves porque entre las dos va el corazon, que es un SVG y no texto: una
+  // sola cadena con el corazon dentro obligaria a meter un dibujo en el
+  // diccionario, y ademas la clave tiene que ser identica al literal que el
+  // codigo le pasa a T().
+  'Hecho con amor': 'Feito com amor',
+  'por el equipo Legal': 'pelo time do Jurídico',
   /* --- Navegacion y marco ------------------------------------------------ */
   'Generar': 'Gerar',
   'Mis campañas': 'Minhas campanhas',

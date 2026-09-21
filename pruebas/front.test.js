@@ -127,6 +127,30 @@ test('el archivo no lleva JavaScript y trae todas las pantallas', () => {
     'alguna pantalla no se alcanzó en el último recorrido: vuelve a correr `npm run front`');
 });
 
+test('el pie de página sale en las 48 pantallas, y en portugués donde toca', () => {
+  const html = fs.readFileSync(SALIDA, 'utf8');
+  const fichas = fichasDePantalla();
+
+  // Juan lo pidió así: "abajo de TODAS las pantallas". Y es fácil de perder sin
+  // que nada falle, porque una pantalla nueva que se pinte por otro camino
+  // simplemente sale sin pie, igual de bonita.
+  const pies = (html.match(/class="pie"/g) || []).length;
+  assert.strictEqual(pies, fichas.length,
+    'hay ' + pies + ' pies para ' + fichas.length + ' pantallas: alguna se está pintando sin él');
+
+  // Y las dos mitades del texto, cada una en su idioma. Las claves del
+  // diccionario son el literal en español carácter por carácter, así que si
+  // alguien retoca el texto de una y no la otra, el portugués cae al español
+  // sin avisar y esta cuenta lo dice.
+  const enEspanol = (html.match(/Hecho con amor/g) || []).length;
+  const enPortugues = (html.match(/Feito com amor/g) || []).length;
+  assert.strictEqual(enEspanol + enPortugues, fichas.length,
+    'el texto del pie no cuadra: ' + enEspanol + ' en español y ' + enPortugues + ' en portugués para ' + fichas.length + ' pantallas');
+  assert.ok(enPortugues > 0, 'ninguna pantalla trae el pie en portugués, y hay tres en portugués');
+  assert.ok(html.indexOf('pelo time do Jurídico') !== -1,
+    'falta la segunda mitad del pie en portugués: quedó la primera traducida y la otra no');
+});
+
 test('el aviso de la demostración no se cuela, y la hoja de estilos va completa', () => {
   const html = fs.readFileSync(SALIDA, 'utf8');
   // La portada explica que el aviso se quitó, así que la frase existe ahí. Lo

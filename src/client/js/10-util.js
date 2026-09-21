@@ -102,6 +102,10 @@ var TRAZOS = {
   documento: 'M5 2h7l3 3v13H5zM12 2v3h3',
   alerta: 'M10 3 18 17H2zM10 8v4M10 14.5v.5',
   descargar: 'M10 3v10M6 10l4 4 4-4M3 17h14',
+  // El del pie de pagina. Es un trazo de un solo camino, como los demas, y
+  // NO un emoji: un emoji se dibuja distinto en cada sistema y no se puede
+  // pintar con el gradiente de la marca.
+  corazon: 'M10 16.5 3.4 9.9a3.9 3.9 0 0 1 5.5-5.5l1.1 1.1 1.1-1.1a3.9 3.9 0 1 1 5.5 5.5z',
 };
 
 function icono(nombre, tamano) {

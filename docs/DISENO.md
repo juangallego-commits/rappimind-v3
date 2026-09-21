@@ -211,9 +211,45 @@ la llevara puesta. No es un logo aparte ni un adorno centrado: es parte de la
 palabra, y por eso no se vuelve cursi. En pantallas muy pequeñas no se quita: se
 reduce.
 
-El lockup de la marca todavía no entra, y no es por el peso: la marca de la barra
-superior es texto en el DOM, y el SVG del lockup no es autosuficiente. Está en la
-decisión 110.
+## El lockup
+
+La barra superior lleva el lockup completo: el logotipo de Rappi, un divisor fino y
+la palabra "Mind" en Heavy con la corona encima. Tres piezas, una al lado de la otra,
+y no una sola imagen, porque cada una tiene un problema distinto.
+
+El **logotipo de Rappi** es un logotipo de escritura y no se puede componer con
+letra, así que es la única pieza que obliga a una imagen: un PNG de paleta de
+224 x 96 que pesa 5,56 KiB en base64 (`docs/diseno/MEDICION_LOGOTIPO.md`). Entra
+como `background-image`, no como `<img>`, porque el build incrusta en base64 las
+`url()` de la hoja de estilos y no los `src` del HTML.
+
+"**Mind**" es texto de verdad, en PP Object Sans Heavy, que es la única cara de la
+familia que se sirve. Siendo texto hereda el color, escala con la letra y no cuesta
+un solo byte de más.
+
+La **corona** va encima, y es la misma de siempre.
+
+El lockup va **sin la firma "By Legal"** en la barra: el manual lo pide así, y además
+el pie de página ya dice "por el equipo Legal". Decisión 117.
+
+El alto del logotipo es **24px, no 19**: por debajo de 20px de "Mind" la corona se
+cae, y "Mind" mide el 89% del alto del logotipo. Decisión 118. En celular el
+logotipo baja a 19px y la corona sí se quita, que es el escalón "15px sin corona"
+del manual.
+
+## El pie de página
+
+"Hecho con amor ♥ por el equipo Legal", en todas las pantallas, centrado, sobre una
+línea fina.
+
+Es la única pieza de la interfaz que no ayuda a generar un T&C, y está a propósito:
+esta herramienta existe para que el comercial no le escriba a Legal, y el riesgo de
+eso es que Legal se vuelva invisible. El pie dice quién está detrás sin meterse en
+el camino.
+
+El corazón es un SVG de la misma familia que los demás iconos, **relleno y no de
+trazo**, y nunca un emoji: un emoji se dibuja distinto en cada sistema y no toma el
+color de la marca.
 
 ## Cómo se comprueba que un cambio no rompió nada
 

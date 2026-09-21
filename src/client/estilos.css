@@ -1,5 +1,5 @@
 /*
- * RappiMind v3. El sistema completo está en docs/DISENO.md.
+ * RappiMind. El sistema completo está en docs/DISENO.md.
  *
  * Una sola superficie elevada en toda la aplicación: la hoja del documento.
  * Todo lo demás se separa con líneas de un pixel.
@@ -111,7 +111,7 @@ body {
  * accesibilidad de docs/PARA_EL_DISENO.md, así que la letra de marca aparece
  * en las 48 pantallas sin que haga falta incrustar ningún peso más.
  */
-h1, h2, .marca { font-family: var(--display); font-weight: 900; }
+h1, h2 { font-family: var(--display); font-weight: 900; }
 h3, button, .opcion-titulo { font-family: var(--titulos); font-weight: 700; }
 /*
  * LA ESCALA DE TITULAR, que es el gesto mas visible de esta identidad: titular
@@ -151,25 +151,62 @@ a { color: var(--neon-texto); }
 
 /* --- Marca y corona ----------------------------------------------------- */
 
+/*
+ * EL LOCKUP.
+ *
+ * Se recompone en el DOM en vez de servirse como una imagen entera, porque casi
+ * todo lo que lleva ya existe: la corona es el mismo path que la aplicacion ya
+ * dibujaba, "Mind" es texto en PP Object Sans Heavy, que ya viaja incrustado, y
+ * el divisor es un borde. Lo UNICO que obliga a una imagen es el logotipo de
+ * Rappi, que es un logotipo de escritura y no se puede componer con letra.
+ *
+ * Esa imagen viaja en base64 dentro de la hoja, porque Apps Script no sirve
+ * archivos del repositorio. Va recortada a 224 por 96, que es lo que hace falta
+ * de verdad a doble densidad: cuesta 5,6 KB en base64 contra los 36 KB del
+ * archivo de 220 que habia, y sobre la pagina comprimida eso es un 2,1% en vez
+ * de un 10,1%. Se comprobo en el navegador que a 19 y a 38 pixeles de alto es
+ * indistinguible del original.
+ *
+ * Las medidas salen del manual del lockup, tomando el alto del logotipo como
+ * referencia: los huecos son 14px a cada lado del divisor y "Mind" mide el 89%
+ * del alto del logotipo. AQUI VA A 24px Y NO A 19 a proposito: el manual dice
+ * que la corona se cae por debajo de 20px de "Mind", y a 19px de logotipo
+ * "Mind" quedaria en 17. Ver la decision 118.
+ *
+ * La barra superior lleva el lockup SIN la firma "By Legal". Tambien lo dice el
+ * manual: ahi el contexto ya es de Legal y la firma solo agrega ruido. La firma
+ * vive en el pie de pagina.
+ */
 .marca {
-  position: relative;
-  display: inline-block;
-  font-size: 17px;
+  display: inline-flex; align-items: center; gap: 9px;
+  flex: none;
+}
+.marca-logotipo {
+  display: block; flex: none;
+  width: 56px; height: 24px;
+  background: url('assets/logo/rappi-logo-web-224.png') center/contain no-repeat;
+}
+.marca-divisor {
+  display: block; flex: none;
+  width: 1px; height: 21px;
+  background: var(--rm-borde-secundario);
+}
+.marca-mind {
+  position: relative; display: block;
+  font-family: var(--display); font-weight: 900;
+  font-size: 21.5px; line-height: 1; letter-spacing: -0.045em;
   color: var(--tinta);
-  letter-spacing: -0.01em;
   padding-top: 6px;
 }
+/* La corona va sobre la M de "Mind", no sobre la palabra entera: antes estaba
+   anclada a la anchura de "RappiMind" con un left fijo de 40px y, al cambiar la
+   palabra, se habria quedado flotando en el vacio. */
 .marca .corona {
   position: absolute;
-  width: 14px; height: 9px;
-  top: -2px; left: 40px;
+  width: 14px; height: 8px;
+  top: -1px; left: 2px;
   color: var(--neon);
 }
-/* El "v3" que va detras de RappiMind, en la barra de arriba. Declara su
- * familia a proposito: si no, hereda de .marca la de display, de la que solo
- * hay cara de peso 900, y en peso 500 saldria en Heavy igual que el nombre,
- * con lo que la distincion entre el nombre y la version se perderia. */
-.marca em { font-style: normal; font-family: var(--titulos); color: var(--gris-lapiz); font-weight: 500; }
 
 /* --- Estructura --------------------------------------------------------- */
 
@@ -1057,6 +1094,34 @@ input[disabled], select[disabled] {
   font-size: 19px; color: var(--gris-lapiz);
 }
 
+/* --- Pie de pagina -------------------------------------------------------
+ *
+ * Sale en todas las pantallas que pasan por pintarTodo(), o sea todas menos la
+ * de carga y la de error, que se montan aparte.
+ *
+ * El corazon va en el neon plano y no en gradiente: pintarlo con el gradiente
+ * habria obligado a una mascara o a un segundo SVG, y a 15 pixeles el degradado
+ * no se distingue. Va escondido del arbol de accesibilidad, porque la frase se
+ * lee entera sin el.
+ */
+.pie {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  margin: 0; padding: var(--e5) var(--e4) var(--e6);
+  border-top: 1px solid var(--borde);
+  font-size: 13px; font-weight: 500; color: var(--gris-lapiz);
+}
+.pie-corazon {
+  flex: none;
+  color: var(--neon);
+  /* icono() dibuja todos los iconos con fill:none y stroke:currentColor, que
+     es lo que quiere un icono de interfaz. Este no es un icono de interfaz:
+     es el corazon de "hecho con amor", y un corazon hueco de linea de 1.8 a
+     15px se lee como un contorno, no como un corazon. Se rellena aqui y no en
+     icono() para no volver solidos los otros siete. */
+  fill: currentColor;
+  stroke: none;
+}
+
 /* --- Celular ------------------------------------------------------------ */
 
 @media (max-width: 900px) {
@@ -1086,8 +1151,13 @@ input[disabled], select[disabled] {
   }
 
   .barra-superior { padding: var(--e2) var(--e4); gap: var(--e3); }
-  .marca { font-size: 15px; white-space: nowrap; flex: none; }
-  .marca .corona { width: 11px; left: 36px; }
+  /* El escalon "sin corona" del manual: aqui el logotipo no llega a los 22px
+     que la corona necesita para no verse apretada. */
+  .marca { gap: 7px; }
+  .marca-logotipo { width: 44px; height: 19px; }
+  .marca-divisor { height: 17px; }
+  .marca-mind { font-size: 17px; padding-top: 0; }
+  .marca .corona { display: none; }
   /* El carril se declara con overflow-x: auto y el navegador sube el otro eje a
      auto tambien, asi que recorta arriba y abajo. La caja media exactamente lo
      que el boton, o sea cero holgura, y el anillo de foco (3px mas 2px de
@@ -1110,6 +1180,11 @@ input[disabled], select[disabled] {
   .pagina-angosta:has(.pasos-publicar):not(:has(> .pasos-publicar)) > h1:has(+ .pregunta-ayuda) + .pregunta-ayuda {
     padding: var(--e3) var(--e4) var(--e5); font-size: 16px;
   }
+
+  /* El boton flotante va fijo abajo y el selector de idioma encima, asi que el
+     pie necesita quedar por encima de los dos o se lee a medias. El relleno de
+     abajo de .pagina ya reserva ese espacio; el pie se cuelga de ahi. */
+  .pie { padding-bottom: var(--e5); font-size: 12px; }
 
   .selector-idioma { bottom: 76px; }
 
