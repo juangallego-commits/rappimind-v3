@@ -65,6 +65,7 @@ const SERVIDOR_SIMULADO = `
         paises: paisesDisponibles(paises, true),
         tipos: catalogo(),
         secciones: SECCIONES,
+        categoriasTravel: CATEGORIAS_TRAVEL,
         versionesDeModelo: MODELOS.versiones,
         urlFormularioLegal: 'https://forms.gle/ejemplo-de-la-demostracion',
         urlCanalAyuda: 'https://rappi.slack.com/ejemplo-de-la-demostracion',

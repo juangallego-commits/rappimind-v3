@@ -65,6 +65,16 @@ function estadoInicial() {
     paises: filasPlanas(paisesDisponibles(paises, quien.enEquipo)),
     tipos: catalogoDeTipos(),
     secciones: typeof SECCIONES !== 'undefined' ? SECCIONES : {},
+    // Las categorias de Rappi Travel salen del catalogo, no del esquema,
+    // porque cambian por pais y tienen que coincidir letra por letra con los
+    // nombres de la app: en el documento van entre comillas.
+    //
+    // Sin esta linea la pregunta "¿Que categorias de Travel participan?" se
+    // dibujaba con cero casillas y el comercial no podia avanzar: el campo es
+    // obligatorio y no habia nada que marcar. Rappi Travel entero quedaba
+    // muerto ahi. Lo vio Juan el 21 de septiembre de 2026, probando el
+    // formulario.
+    categoriasTravel: typeof CATEGORIAS_TRAVEL !== 'undefined' ? CATEGORIAS_TRAVEL : {},
     versionesDeModelo: MODELOS.versiones,
     urlFormularioLegal: leerPropiedad(PROPIEDADES.URL_FORMULARIO_LEGAL),
     urlCanalAyuda: leerPropiedad(PROPIEDADES.CANAL_AYUDA_URL),

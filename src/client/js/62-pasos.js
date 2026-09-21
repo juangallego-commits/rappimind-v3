@@ -122,9 +122,10 @@ function opcionesDeshabilitadas(campo) {
 /**
  * Las opciones de un campo que no las trae escritas, sino que salen de los datos.
  *
- * Son dos: las secciones de la app, que vienen del Sheet, y la categoria del
- * producto, que sale del catalogo de leyendas. Las dos cambian segun el pais, y
- * por eso no pueden estar escritas en el esquema.
+ * Son las secciones de la app, que vienen del Sheet; las categorias de Rappi
+ * Travel, que vienen del catalogo; y la categoria del producto, que sale del
+ * catalogo de leyendas. Todas cambian segun el pais, y por eso no pueden estar
+ * escritas en el esquema.
  */
 function opcionesDeLosDatos(campo) {
   var pais = flujo.paisElegido();
@@ -132,6 +133,16 @@ function opcionesDeLosDatos(campo) {
   if (campo.id === 'secciones') {
     var nombres = pais ? seccionesDePais(pais.codigo, E.configuracion.secciones) : [];
     return nombres.map(function (nombre) { return { valor: nombre, etiqueta: nombre, nota: 'Sección de la app.' }; });
+  }
+
+  if (campo.id === 'categorias') {
+    // Los nombres salen del catalogo y van entre comillas en el documento, asi
+    // que se muestran tal cual: no se les cambia mayuscula ni se traducen.
+    var catalogo = E.configuracion.categoriasTravel || {};
+    var delPaisTravel = (pais && catalogo[pais.codigo]) || [];
+    return delPaisTravel.map(function (nombre) {
+      return { valor: nombre, etiqueta: nombre, nota: '' };
+    });
   }
 
   /*

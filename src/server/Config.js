@@ -35,6 +35,10 @@ var PESTANAS = {
     'travel_entidad', 'travel_id_fiscal', 'travel_rnt', 'travel_rnt_vence',
     'travel_url_sitio', 'travel_url_tc', 'travel_politica_privacidad',
     'travel_url_privacidad', 'travel_entidad_vigilancia',
+    // Moustache Beams opera Turbo. Todavia no manda campanas, pero su NIT
+    // tiene que estar mapeado: ninguna entidad de Rappi puede ser Organizador,
+    // y para rechazarla hay que saber cual es.
+    'turbo_entidad', 'turbo_id_fiscal',
     // Datos que solo usan las leyendas de piezas publicitarias. La ruta del
     // pais es la carpeta de Squarespace donde se publican los T&C, y con ella
     // la herramienta arma la direccion de la campana antes de que exista.
