@@ -12,7 +12,7 @@
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&amp;family=Poppins:wght@500;600&amp;display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400..900&amp;display=swap" rel="stylesheet" />
 <style>
 /* La hoja de estilos de la app, acotada a .rm-pantalla. NO ES LA FUENTE: la
  * fuente literal es src/client/estilos.css y va completa en el anexo A. */
@@ -451,12 +451,27 @@
   --borde-control: var(--rm-borde-control);
   --borde-opcion: var(--rm-borde-opcion);
 
+  --campo-vacio: var(--rm-campo-vacio);
+  --campo-lleno: var(--rm-campo-lleno);
+  --campo-error: var(--rm-campo-error);
+  --campo-off-bg: var(--rm-campo-off-bg);
+  --campo-off-borde: var(--rm-campo-off-borde);
+  --marcador: var(--rm-placeholder);
+
   /* Se va en la fase 6, cuando el historial deje de distinguir Publicado por
      el matiz y pase a distinguirlo por peso visual. El verde no es de marca. */
   --verde-confirma: #0b7a52;
 
-  --titulos: 'Poppins', system-ui, -apple-system, sans-serif;   /* fase 2 */
-  --cuerpo: 'Lato', system-ui, -apple-system, sans-serif;       /* fase 2 */
+  /* Tres familias, y son dos de verdad. --display es PP Object Sans, de la que
+     se sirve UNA sola cara, la de peso 900, así que solo vale donde el peso es
+     900: si se usara en otro peso el navegador resolvería con la única cara que
+     hay y saldría Heavy sin avisar. --titulos y --cuerpo son Archivo, variable
+     de 400 a 900, y siguen separadas porque la hoja las llama por nombre en 275
+     sitios y porque el día que la marca traiga una segunda familia real entra
+     por aquí sin tocar nada más. */
+  --display: var(--rm-display);
+  --titulos: var(--rm-texto-familia);
+  --cuerpo: var(--rm-texto-familia);
 
   --e1: 4px; --e2: 8px; --e3: 12px; --e4: 16px;
   --e5: 24px; --e6: 32px; --e7: 48px; --e8: 64px;
@@ -487,14 +502,25 @@
   color: var(--tinta);
   font-family: var(--cuerpo);
   font-size: 16px;
+  font-weight: 500;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
 
-.rm-pantalla h1, .rm-pantalla h2, .rm-pantalla h3, .rm-pantalla .marca, .rm-pantalla button, .rm-pantalla .opcion-titulo { font-family: var(--titulos); font-weight: 600; }
-.rm-pantalla h1 { font-size: 28px; line-height: 1.2; margin: 0 0 var(--e3); letter-spacing: -0.015em; }
-.rm-pantalla h2 { font-size: 21px; line-height: 1.3; margin: 0 0 var(--e2); letter-spacing: -0.01em; }
-.rm-pantalla h3 { font-size: 17px; line-height: 1.35; margin: 0 0 var(--e2); }
+/*
+ * Los titulares llevan la letra de marca y van SIEMPRE en peso 900: es la
+ * única cara de PP Object Sans que se sirve. Lo vigila la prueba
+ * `una familia de display solo se usa en peso 900`.
+ *
+ * Hay un h1 por pantalla dentro de #app, que es parte del contrato de
+ * accesibilidad de docs/PARA_EL_DISENO.md, así que la letra de marca aparece
+ * en las 48 pantallas sin que haga falta incrustar ningún peso más.
+ */
+.rm-pantalla h1, .rm-pantalla h2, .rm-pantalla .marca { font-family: var(--display); font-weight: 900; }
+.rm-pantalla h3, .rm-pantalla button, .rm-pantalla .opcion-titulo { font-family: var(--titulos); font-weight: 700; }
+.rm-pantalla h1 { font-size: 28px; line-height: 1.15; margin: 0 0 var(--e3); letter-spacing: -0.025em; }
+.rm-pantalla h2 { font-size: 21px; line-height: 1.25; margin: 0 0 var(--e2); letter-spacing: -0.02em; }
+.rm-pantalla h3 { font-size: 17px; line-height: 1.35; margin: 0 0 var(--e2); letter-spacing: -0.01em; }
 .rm-pantalla p { margin: 0 0 var(--e3); }
 .rm-pantalla a { color: var(--neon-texto); }
 
@@ -526,7 +552,11 @@
   top: -2px; left: 40px;
   color: var(--neon);
 }
-.rm-pantalla .marca em { font-style: normal; color: var(--gris-lapiz); font-weight: 500; }
+/* El "by Legal" va en la letra de cuerpo y no en la de marca: hereda de
+ * .marca la familia de display, de la que solo hay cara de peso 900, asi
+ * que en peso 500 saldria en Heavy igual que el resto del logotipo y la
+ * distincion se perderia. */
+.rm-pantalla .marca em { font-style: normal; font-family: var(--titulos); color: var(--gris-lapiz); font-weight: 500; }
 
 /* --- Estructura --------------------------------------------------------- */
 
@@ -540,7 +570,7 @@
 .rm-pantalla .barra-superior nav { margin-left: auto; display: flex; gap: var(--e1); flex-wrap: wrap; }
 
 .rm-pantalla .enlace-nav {
-  font-family: var(--titulos); font-weight: 600; font-size: 14px;
+  font-family: var(--titulos); font-weight: 700; font-size: 14px;
   color: var(--gris-lapiz); background: none; border: 0;
   padding: var(--e2) var(--e3); border-radius: var(--r-control); cursor: pointer;
 }
@@ -584,28 +614,54 @@
 
 .rm-pantalla button { font-size: 15px; cursor: pointer; }
 
+/*
+ * El boton primario, y aqui aterriza la decision 98.
+ *
+ * El brand book manda blanco sobre el gradiente neon, y el encargo manda 4.5:1
+ * de contraste. Las dos reglas no pueden cumplirse a la vez: medido con WCAG
+ * 2.1, el blanco sobre el gradiente completo da entre 2.58:1 y 3.79:1, y ese
+ * 3.79 es el MAXIMO de todo el tramo. No es que falte afinar un tono; el minimo
+ * de texto normal no se alcanza en ningun punto.
+ *
+ * La salida es el umbral de texto grande, que WCAG baja a 3:1 desde 18.66px en
+ * negrita. Por eso el texto va a 19px en peso 700, y por eso el gradiente
+ * arranca en el 17% del tramo, que es donde el blanco cruza ese 3:1. Los dos
+ * numeros van juntos: bajar el tamano o correr el recorte hacia el naranja
+ * rompe la cuenta. El par `blanco sobre el arranque del gradiente del boton`
+ * de npm run contraste lo vigila, y da 3:1 exactos.
+ *
+ * El gradiente completo se sigue usando donde no lleva texto encima.
+ */
 .rm-pantalla .boton {
   display: inline-flex; align-items: center; justify-content: center; gap: var(--e2);
   padding: 13px var(--e5);
-  border-radius: var(--r-control);
+  border-radius: var(--r-pildora);
   border: 1px solid transparent;
-  background: var(--neon-texto);
+  background: var(--gradiente-boton);
   color: var(--papel);
-  transition: background var(--t-rapido);
+  font-size: 19px; font-weight: 700; line-height: 1.2;
+  transition: background var(--t-rapido), box-shadow var(--t-rapido);
 }
-.rm-pantalla .boton:hover { background: var(--neon-presionado); }
+.rm-pantalla .boton:hover { background: var(--gradiente-hover); }
 .rm-pantalla .boton:active { background: var(--neon-presionado); }
+
+/* Sin opacity: bajarla arrastraria el texto por debajo del contraste minimo.
+   Fondo plano, letra apagada, y el borde se va con el fondo. */
 .rm-pantalla .boton[disabled] {
   background: var(--niebla); color: var(--texto-off);
-  cursor: not-allowed; border-color: var(--borde);
+  cursor: not-allowed; border-color: transparent;
 }
 
 .rm-pantalla .boton-secundario {
   background: transparent; color: var(--tinta);
   border-color: var(--borde-control);
+  font-size: 15px; font-weight: 700;
 }
-.rm-pantalla .boton-secundario:hover { background: var(--niebla); }
-.rm-pantalla .boton-secundario[disabled] { color: var(--texto-off); background: transparent; }
+.rm-pantalla .boton-secundario:hover { background: var(--niebla); border-color: var(--tinta); }
+.rm-pantalla .boton-secundario:active { background: var(--niebla); }
+.rm-pantalla .boton-secundario[disabled] {
+  color: var(--texto-off); background: transparent; border-color: var(--borde);
+}
 
 .rm-pantalla .boton-texto {
   background: none; border: 0; padding: var(--e1) 0;
@@ -643,7 +699,7 @@
 .rm-pantalla .pregunta:first-child { padding-top: 0; }
 .rm-pantalla .pregunta:last-child { border-bottom: 0; }
 
-.rm-pantalla .pregunta-titulo { font-family: var(--titulos); font-weight: 600; font-size: 21px; line-height: 1.3; margin: 0 0 var(--e2); }
+.rm-pantalla .pregunta-titulo { font-family: var(--titulos); font-weight: 700; font-size: 21px; line-height: 1.3; margin: 0 0 var(--e2); }
 .rm-pantalla .pregunta-ayuda { color: var(--gris-lapiz); font-size: 14px; margin: 0 0 var(--e3); }
 
 /* Marca de pregunta opcional, al lado del titulo. */
@@ -664,7 +720,7 @@
   gap: var(--e3); margin-bottom: var(--e2);
 }
 .rm-pantalla .copiable-etiqueta {
-  font-family: var(--titulos); font-weight: 600; font-size: 13px;
+  font-family: var(--titulos); font-weight: 700; font-size: 13px;
   letter-spacing: 0.02em; color: var(--gris-lapiz);
 }
 .rm-pantalla .copiable-valor {
@@ -674,7 +730,9 @@
   padding: var(--e2) var(--e3); word-break: break-word;
 }
 .rm-pantalla .copiable .pregunta-ayuda { margin: var(--e2) 0 0; }
-.rm-pantalla .boton-chico { padding: 4px 12px; font-size: 13px; min-height: 0; }
+/* Se usa sobre .boton-secundario, en la tarjeta del dato copiable. Anula el
+   tamano del primario a proposito: ahi no hay texto sobre gradiente. */
+.rm-pantalla .boton-chico { padding: 4px 12px; font-size: 13px; font-weight: 700; min-height: 0; }
 
 .rm-pantalla .por-que { margin: var(--e2) 0 0; }
 .rm-pantalla .por-que summary {
@@ -694,23 +752,55 @@
 
 .rm-pantalla input[type='text'], .rm-pantalla input[type='number'], .rm-pantalla input[type='date'], .rm-pantalla input[type='time'], .rm-pantalla input[type='search'], .rm-pantalla select, .rm-pantalla textarea {
   width: 100%;
-  font-family: var(--cuerpo); font-size: 16px; color: var(--tinta);
+  font-family: var(--cuerpo); font-size: 17px; font-weight: 500; color: var(--tinta);
   background: var(--papel);
-  border: 1px solid var(--borde-control);
-  border-radius: var(--r-control);
+  border: 1.5px solid var(--campo-vacio);
+  border-radius: var(--r-panel);
   padding: 12px var(--e3);
+  transition: border-color var(--t-rapido);
 }
-.rm-pantalla input:hover, .rm-pantalla select:hover, .rm-pantalla textarea:hover { border-color: var(--gris-lapiz); }
-.rm-pantalla input:focus, .rm-pantalla select:focus, .rm-pantalla textarea:focus { border-color: var(--neon); }
-.rm-pantalla input[disabled], .rm-pantalla select[disabled] { background: var(--niebla); color: var(--texto-off); cursor: not-allowed; }
+.rm-pantalla ::placeholder { color: var(--marcador); opacity: 1; }
+
+/*
+ * El campo CON VALOR lleva borde tinta, no neon. Es el unico punto donde la
+ * especificacion pisa al prototipo, y con razon: alli el campo lleno y el
+ * campo en error compartian el borde neon y no se distinguian. Si "lleno" y
+ * "mal" son del mismo color, el color deja de decir nada. El neon queda
+ * reservado para el error.
+ *
+ * No hace falta que el JavaScript marque nada. Se comprobo en Chromium que
+ * placeholder="" (vacio, que es lo que pone src/client/js/50-campos.js cuando
+ * la pregunta no trae ejemplo) sigue contando como marcador mostrado mientras
+ * el campo este vacio: 36 de las 100 preguntas traen ejemplo y las otras 64
+ * llevan el atributo puesto en cadena vacia, asi que las dos funcionan.
+ *
+ * Lo que NO funciona es date y time: no tienen marcador, asi que siempre
+ * coincidirian con :not(:placeholder-shown) y una fecha sin responder se veria
+ * como respondida. Por eso quedan fuera por su tipo.
+ */
+.rm-pantalla input:not([type='date']):not([type='time']):not(:placeholder-shown), .rm-pantalla select:not([disabled]), .rm-pantalla textarea:not(:placeholder-shown) { border-color: var(--campo-lleno); }
+
+.rm-pantalla input:hover:not([disabled]), .rm-pantalla select:hover:not([disabled]), .rm-pantalla textarea:hover:not([disabled]) {
+  border-color: var(--campo-lleno);
+}
+
+/* El foco NO pinta el borde de neon: el anillo de :focus-visible es lo que
+   avisa, y el neon es del error. Si el foco pintara el borde, un campo
+   enfocado y un campo mal se verian igual. */
+.rm-pantalla input[disabled], .rm-pantalla select[disabled] {
+  background: var(--campo-off-bg); color: var(--texto-off);
+  border-color: var(--campo-off-borde); cursor: not-allowed;
+}
 
 .rm-pantalla .con-moneda input { padding-left: 34px; }
 .rm-pantalla .simbolo-moneda {
-  position: absolute; left: var(--e3); color: var(--gris-lapiz); font-size: 16px; pointer-events: none;
+  position: absolute; left: var(--e3); color: var(--gris-lapiz); font-size: 17px; pointer-events: none;
 }
 
-.rm-pantalla .campo-error input, .rm-pantalla .campo-error select { border-color: var(--neon); }
-.rm-pantalla .mensaje-error { color: var(--neon-texto); font-size: 14px; margin: var(--e2) 0 0; display: flex; gap: var(--e2); }
+.rm-pantalla .campo-error input, .rm-pantalla .campo-error select {
+  border-color: var(--campo-error); border-width: 2px;
+}
+.rm-pantalla .mensaje-error { color: var(--neon-texto); font-size: 13.5px; font-weight: 700; margin: var(--e2) 0 0; display: flex; gap: var(--e2); }
 .rm-pantalla .mensaje-ok { color: var(--verde-confirma); font-size: 14px; margin: var(--e2) 0 0; display: flex; gap: var(--e2); align-items: center; }
 
 .rm-pantalla .asi-queda {
@@ -857,7 +947,7 @@
 
 .rm-pantalla .tabla { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--papel); }
 .rm-pantalla .tabla th, .rm-pantalla .tabla td { text-align: left; padding: var(--e3); border-bottom: 1px solid var(--borde); }
-.rm-pantalla .tabla th { font-family: var(--titulos); font-weight: 600; font-size: 13px; color: var(--gris-lapiz); }
+.rm-pantalla .tabla th { font-family: var(--titulos); font-weight: 700; font-size: 13px; color: var(--gris-lapiz); }
 .rm-pantalla .tabla tr:last-child td { border-bottom: 0; }
 .rm-pantalla .envoltorio-tabla { border: 1px solid var(--borde); border-radius: var(--r-panel); overflow: auto; }
 
@@ -903,7 +993,7 @@
 .rm-pantalla .selector-idioma button {
   border: 0; background: transparent; cursor: pointer;
   padding: 6px 12px; border-radius: 999px;
-  font: inherit; font-size: 0.82rem; font-weight: 600; color: var(--gris-lapiz);
+  font: inherit; font-size: 0.82rem; font-weight: 700; color: var(--gris-lapiz);
 }
 .rm-pantalla .selector-idioma button:hover { background: var(--niebla); }
 .rm-pantalla .selector-idioma button[aria-pressed="true"] { background: var(--neon-texto); color: var(--papel); }
@@ -917,7 +1007,7 @@
   content: counter(paso); position: absolute; left: 0; top: 0;
   width: 24px; height: 24px; border-radius: 50%;
   background: var(--beige); color: var(--neon-texto);
-  font-family: var(--titulos); font-weight: 600; font-size: 13px;
+  font-family: var(--titulos); font-weight: 700; font-size: 13px;
   display: flex; align-items: center; justify-content: center;
 }
 
@@ -936,7 +1026,7 @@
   .rm-pantalla.rm-celular .progreso-compacto {
     display: block; margin: 0 0 var(--e5); font-size: 14px; color: var(--gris-lapiz);
   }
-  .rm-pantalla.rm-celular .progreso-compacto strong { color: var(--tinta); font-family: var(--titulos); font-weight: 600; }
+  .rm-pantalla.rm-celular .progreso-compacto strong { color: var(--tinta); font-family: var(--titulos); font-weight: 700; }
   .rm-pantalla.rm-celular .progreso-linea {
     display: block; height: 2px; margin-top: var(--e2);
     background: var(--borde); border-radius: 1px; position: relative;
@@ -963,7 +1053,7 @@
     position: absolute; left: var(--e4); right: var(--e4); bottom: var(--e4); z-index: 35;
     padding: 14px; border-radius: var(--r-control); border: 0;
     background: var(--tinta); color: var(--papel);
-    font-family: var(--titulos); font-weight: 600; font-size: 15px;
+    font-family: var(--titulos); font-weight: 700; font-size: 15px;
   }
   .rm-pantalla.rm-celular .hoja { max-height: none; border: 0; box-shadow: none; border-radius: 0; padding: var(--e4) var(--e5) var(--e6); }
   .rm-pantalla.rm-celular .ficha dl { grid-template-columns: 1fr; gap: var(--e1); }
@@ -1118,7 +1208,7 @@ body.doc-cuerpo {
     <h1>RappiMind v3, el front actual</h1>
     <p class="doc-firma">
       48 pantallas de la herramienta funcionando, congeladas.
-      Generado el 21 de septiembre de 2026 desde <code>f5cb5a1</code> de la rama
+      Generado el 21 de septiembre de 2026 desde <code>7588e57</code> de la rama
       <code>claude/inspiring-feynman-atlswz</code>.
     </p>
 
@@ -2287,12 +2377,27 @@ carla@rappi.com" aria-label="Correos, separados por comas o por líneas"></texta
   --borde-control: var(--rm-borde-control);
   --borde-opcion: var(--rm-borde-opcion);
 
+  --campo-vacio: var(--rm-campo-vacio);
+  --campo-lleno: var(--rm-campo-lleno);
+  --campo-error: var(--rm-campo-error);
+  --campo-off-bg: var(--rm-campo-off-bg);
+  --campo-off-borde: var(--rm-campo-off-borde);
+  --marcador: var(--rm-placeholder);
+
   /* Se va en la fase 6, cuando el historial deje de distinguir Publicado por
      el matiz y pase a distinguirlo por peso visual. El verde no es de marca. */
   --verde-confirma: #0b7a52;
 
-  --titulos: 'Poppins', system-ui, -apple-system, sans-serif;   /* fase 2 */
-  --cuerpo: 'Lato', system-ui, -apple-system, sans-serif;       /* fase 2 */
+  /* Tres familias, y son dos de verdad. --display es PP Object Sans, de la que
+     se sirve UNA sola cara, la de peso 900, así que solo vale donde el peso es
+     900: si se usara en otro peso el navegador resolvería con la única cara que
+     hay y saldría Heavy sin avisar. --titulos y --cuerpo son Archivo, variable
+     de 400 a 900, y siguen separadas porque la hoja las llama por nombre en 275
+     sitios y porque el día que la marca traiga una segunda familia real entra
+     por aquí sin tocar nada más. */
+  --display: var(--rm-display);
+  --titulos: var(--rm-texto-familia);
+  --cuerpo: var(--rm-texto-familia);
 
   --e1: 4px; --e2: 8px; --e3: 12px; --e4: 16px;
   --e5: 24px; --e6: 32px; --e7: 48px; --e8: 64px;
@@ -2323,14 +2428,25 @@ body {
   color: var(--tinta);
   font-family: var(--cuerpo);
   font-size: 16px;
+  font-weight: 500;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, .marca, button, .opcion-titulo { font-family: var(--titulos); font-weight: 600; }
-h1 { font-size: 28px; line-height: 1.2; margin: 0 0 var(--e3); letter-spacing: -0.015em; }
-h2 { font-size: 21px; line-height: 1.3; margin: 0 0 var(--e2); letter-spacing: -0.01em; }
-h3 { font-size: 17px; line-height: 1.35; margin: 0 0 var(--e2); }
+/*
+ * Los titulares llevan la letra de marca y van SIEMPRE en peso 900: es la
+ * única cara de PP Object Sans que se sirve. Lo vigila la prueba
+ * `una familia de display solo se usa en peso 900`.
+ *
+ * Hay un h1 por pantalla dentro de #app, que es parte del contrato de
+ * accesibilidad de docs/PARA_EL_DISENO.md, así que la letra de marca aparece
+ * en las 48 pantallas sin que haga falta incrustar ningún peso más.
+ */
+h1, h2, .marca { font-family: var(--display); font-weight: 900; }
+h3, button, .opcion-titulo { font-family: var(--titulos); font-weight: 700; }
+h1 { font-size: 28px; line-height: 1.15; margin: 0 0 var(--e3); letter-spacing: -0.025em; }
+h2 { font-size: 21px; line-height: 1.25; margin: 0 0 var(--e2); letter-spacing: -0.02em; }
+h3 { font-size: 17px; line-height: 1.35; margin: 0 0 var(--e2); letter-spacing: -0.01em; }
 p { margin: 0 0 var(--e3); }
 a { color: var(--neon-texto); }
 
@@ -2362,7 +2478,11 @@ a { color: var(--neon-texto); }
   top: -2px; left: 40px;
   color: var(--neon);
 }
-.marca em { font-style: normal; color: var(--gris-lapiz); font-weight: 500; }
+/* El &quot;by Legal&quot; va en la letra de cuerpo y no en la de marca: hereda de
+ * .marca la familia de display, de la que solo hay cara de peso 900, asi
+ * que en peso 500 saldria en Heavy igual que el resto del logotipo y la
+ * distincion se perderia. */
+.marca em { font-style: normal; font-family: var(--titulos); color: var(--gris-lapiz); font-weight: 500; }
 
 /* --- Estructura --------------------------------------------------------- */
 
@@ -2376,7 +2496,7 @@ a { color: var(--neon-texto); }
 .barra-superior nav { margin-left: auto; display: flex; gap: var(--e1); flex-wrap: wrap; }
 
 .enlace-nav {
-  font-family: var(--titulos); font-weight: 600; font-size: 14px;
+  font-family: var(--titulos); font-weight: 700; font-size: 14px;
   color: var(--gris-lapiz); background: none; border: 0;
   padding: var(--e2) var(--e3); border-radius: var(--r-control); cursor: pointer;
 }
@@ -2420,28 +2540,54 @@ h1[tabindex='-1']:focus:not(:focus-visible) { outline: none; }
 
 button { font-size: 15px; cursor: pointer; }
 
+/*
+ * El boton primario, y aqui aterriza la decision 98.
+ *
+ * El brand book manda blanco sobre el gradiente neon, y el encargo manda 4.5:1
+ * de contraste. Las dos reglas no pueden cumplirse a la vez: medido con WCAG
+ * 2.1, el blanco sobre el gradiente completo da entre 2.58:1 y 3.79:1, y ese
+ * 3.79 es el MAXIMO de todo el tramo. No es que falte afinar un tono; el minimo
+ * de texto normal no se alcanza en ningun punto.
+ *
+ * La salida es el umbral de texto grande, que WCAG baja a 3:1 desde 18.66px en
+ * negrita. Por eso el texto va a 19px en peso 700, y por eso el gradiente
+ * arranca en el 17% del tramo, que es donde el blanco cruza ese 3:1. Los dos
+ * numeros van juntos: bajar el tamano o correr el recorte hacia el naranja
+ * rompe la cuenta. El par `blanco sobre el arranque del gradiente del boton`
+ * de npm run contraste lo vigila, y da 3:1 exactos.
+ *
+ * El gradiente completo se sigue usando donde no lleva texto encima.
+ */
 .boton {
   display: inline-flex; align-items: center; justify-content: center; gap: var(--e2);
   padding: 13px var(--e5);
-  border-radius: var(--r-control);
+  border-radius: var(--r-pildora);
   border: 1px solid transparent;
-  background: var(--neon-texto);
+  background: var(--gradiente-boton);
   color: var(--papel);
-  transition: background var(--t-rapido);
+  font-size: 19px; font-weight: 700; line-height: 1.2;
+  transition: background var(--t-rapido), box-shadow var(--t-rapido);
 }
-.boton:hover { background: var(--neon-presionado); }
+.boton:hover { background: var(--gradiente-hover); }
 .boton:active { background: var(--neon-presionado); }
+
+/* Sin opacity: bajarla arrastraria el texto por debajo del contraste minimo.
+   Fondo plano, letra apagada, y el borde se va con el fondo. */
 .boton[disabled] {
   background: var(--niebla); color: var(--texto-off);
-  cursor: not-allowed; border-color: var(--borde);
+  cursor: not-allowed; border-color: transparent;
 }
 
 .boton-secundario {
   background: transparent; color: var(--tinta);
   border-color: var(--borde-control);
+  font-size: 15px; font-weight: 700;
 }
-.boton-secundario:hover { background: var(--niebla); }
-.boton-secundario[disabled] { color: var(--texto-off); background: transparent; }
+.boton-secundario:hover { background: var(--niebla); border-color: var(--tinta); }
+.boton-secundario:active { background: var(--niebla); }
+.boton-secundario[disabled] {
+  color: var(--texto-off); background: transparent; border-color: var(--borde);
+}
 
 .boton-texto {
   background: none; border: 0; padding: var(--e1) 0;
@@ -2479,7 +2625,7 @@ button { font-size: 15px; cursor: pointer; }
 .pregunta:first-child { padding-top: 0; }
 .pregunta:last-child { border-bottom: 0; }
 
-.pregunta-titulo { font-family: var(--titulos); font-weight: 600; font-size: 21px; line-height: 1.3; margin: 0 0 var(--e2); }
+.pregunta-titulo { font-family: var(--titulos); font-weight: 700; font-size: 21px; line-height: 1.3; margin: 0 0 var(--e2); }
 .pregunta-ayuda { color: var(--gris-lapiz); font-size: 14px; margin: 0 0 var(--e3); }
 
 /* Marca de pregunta opcional, al lado del titulo. */
@@ -2500,7 +2646,7 @@ button { font-size: 15px; cursor: pointer; }
   gap: var(--e3); margin-bottom: var(--e2);
 }
 .copiable-etiqueta {
-  font-family: var(--titulos); font-weight: 600; font-size: 13px;
+  font-family: var(--titulos); font-weight: 700; font-size: 13px;
   letter-spacing: 0.02em; color: var(--gris-lapiz);
 }
 .copiable-valor {
@@ -2510,7 +2656,9 @@ button { font-size: 15px; cursor: pointer; }
   padding: var(--e2) var(--e3); word-break: break-word;
 }
 .copiable .pregunta-ayuda { margin: var(--e2) 0 0; }
-.boton-chico { padding: 4px 12px; font-size: 13px; min-height: 0; }
+/* Se usa sobre .boton-secundario, en la tarjeta del dato copiable. Anula el
+   tamano del primario a proposito: ahi no hay texto sobre gradiente. */
+.boton-chico { padding: 4px 12px; font-size: 13px; font-weight: 700; min-height: 0; }
 
 .por-que { margin: var(--e2) 0 0; }
 .por-que summary {
@@ -2530,23 +2678,57 @@ button { font-size: 15px; cursor: pointer; }
 
 input[type='text'], input[type='number'], input[type='date'], input[type='time'], input[type='search'], select, textarea {
   width: 100%;
-  font-family: var(--cuerpo); font-size: 16px; color: var(--tinta);
+  font-family: var(--cuerpo); font-size: 17px; font-weight: 500; color: var(--tinta);
   background: var(--papel);
-  border: 1px solid var(--borde-control);
-  border-radius: var(--r-control);
+  border: 1.5px solid var(--campo-vacio);
+  border-radius: var(--r-panel);
   padding: 12px var(--e3);
+  transition: border-color var(--t-rapido);
 }
-input:hover, select:hover, textarea:hover { border-color: var(--gris-lapiz); }
-input:focus, select:focus, textarea:focus { border-color: var(--neon); }
-input[disabled], select[disabled] { background: var(--niebla); color: var(--texto-off); cursor: not-allowed; }
+::placeholder { color: var(--marcador); opacity: 1; }
+
+/*
+ * El campo CON VALOR lleva borde tinta, no neon. Es el unico punto donde la
+ * especificacion pisa al prototipo, y con razon: alli el campo lleno y el
+ * campo en error compartian el borde neon y no se distinguian. Si &quot;lleno&quot; y
+ * &quot;mal&quot; son del mismo color, el color deja de decir nada. El neon queda
+ * reservado para el error.
+ *
+ * No hace falta que el JavaScript marque nada. Se comprobo en Chromium que
+ * placeholder=&quot;&quot; (vacio, que es lo que pone src/client/js/50-campos.js cuando
+ * la pregunta no trae ejemplo) sigue contando como marcador mostrado mientras
+ * el campo este vacio: 36 de las 100 preguntas traen ejemplo y las otras 64
+ * llevan el atributo puesto en cadena vacia, asi que las dos funcionan.
+ *
+ * Lo que NO funciona es date y time: no tienen marcador, asi que siempre
+ * coincidirian con :not(:placeholder-shown) y una fecha sin responder se veria
+ * como respondida. Por eso quedan fuera por su tipo.
+ */
+input:not([type='date']):not([type='time']):not(:placeholder-shown),
+select:not([disabled]),
+textarea:not(:placeholder-shown) { border-color: var(--campo-lleno); }
+
+input:hover:not([disabled]), select:hover:not([disabled]), textarea:hover:not([disabled]) {
+  border-color: var(--campo-lleno);
+}
+
+/* El foco NO pinta el borde de neon: el anillo de :focus-visible es lo que
+   avisa, y el neon es del error. Si el foco pintara el borde, un campo
+   enfocado y un campo mal se verian igual. */
+input[disabled], select[disabled] {
+  background: var(--campo-off-bg); color: var(--texto-off);
+  border-color: var(--campo-off-borde); cursor: not-allowed;
+}
 
 .con-moneda input { padding-left: 34px; }
 .simbolo-moneda {
-  position: absolute; left: var(--e3); color: var(--gris-lapiz); font-size: 16px; pointer-events: none;
+  position: absolute; left: var(--e3); color: var(--gris-lapiz); font-size: 17px; pointer-events: none;
 }
 
-.campo-error input, .campo-error select { border-color: var(--neon); }
-.mensaje-error { color: var(--neon-texto); font-size: 14px; margin: var(--e2) 0 0; display: flex; gap: var(--e2); }
+.campo-error input, .campo-error select {
+  border-color: var(--campo-error); border-width: 2px;
+}
+.mensaje-error { color: var(--neon-texto); font-size: 13.5px; font-weight: 700; margin: var(--e2) 0 0; display: flex; gap: var(--e2); }
 .mensaje-ok { color: var(--verde-confirma); font-size: 14px; margin: var(--e2) 0 0; display: flex; gap: var(--e2); align-items: center; }
 
 .asi-queda {
@@ -2693,7 +2875,7 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--text
 
 .tabla { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--papel); }
 .tabla th, .tabla td { text-align: left; padding: var(--e3); border-bottom: 1px solid var(--borde); }
-.tabla th { font-family: var(--titulos); font-weight: 600; font-size: 13px; color: var(--gris-lapiz); }
+.tabla th { font-family: var(--titulos); font-weight: 700; font-size: 13px; color: var(--gris-lapiz); }
 .tabla tr:last-child td { border-bottom: 0; }
 .envoltorio-tabla { border: 1px solid var(--borde); border-radius: var(--r-panel); overflow: auto; }
 
@@ -2739,7 +2921,7 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--text
 .selector-idioma button {
   border: 0; background: transparent; cursor: pointer;
   padding: 6px 12px; border-radius: 999px;
-  font: inherit; font-size: 0.82rem; font-weight: 600; color: var(--gris-lapiz);
+  font: inherit; font-size: 0.82rem; font-weight: 700; color: var(--gris-lapiz);
 }
 .selector-idioma button:hover { background: var(--niebla); }
 .selector-idioma button[aria-pressed=&quot;true&quot;] { background: var(--neon-texto); color: var(--papel); }
@@ -2753,7 +2935,7 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--text
   content: counter(paso); position: absolute; left: 0; top: 0;
   width: 24px; height: 24px; border-radius: 50%;
   background: var(--beige); color: var(--neon-texto);
-  font-family: var(--titulos); font-weight: 600; font-size: 13px;
+  font-family: var(--titulos); font-weight: 700; font-size: 13px;
   display: flex; align-items: center; justify-content: center;
 }
 
@@ -2771,7 +2953,7 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--text
   .progreso-compacto {
     display: block; margin: 0 0 var(--e5); font-size: 14px; color: var(--gris-lapiz);
   }
-  .progreso-compacto strong { color: var(--tinta); font-family: var(--titulos); font-weight: 600; }
+  .progreso-compacto strong { color: var(--tinta); font-family: var(--titulos); font-weight: 700; }
   .progreso-linea {
     display: block; height: 2px; margin-top: var(--e2);
     background: var(--borde); border-radius: 1px; position: relative;
@@ -2798,7 +2980,7 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--text
     position: fixed; left: var(--e4); right: var(--e4); bottom: var(--e4); z-index: 35;
     padding: 14px; border-radius: var(--r-control); border: 0;
     background: var(--tinta); color: var(--papel);
-    font-family: var(--titulos); font-weight: 600; font-size: 15px;
+    font-family: var(--titulos); font-weight: 700; font-size: 15px;
   }
   .hoja { max-height: none; border: 0; box-shadow: none; border-radius: 0; padding: var(--e4) var(--e5) var(--e6); }
   .ficha dl { grid-template-columns: 1fr; gap: var(--e1); }
@@ -2831,8 +3013,18 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--text
     &lt;title&gt;RappiMind v3&lt;/title&gt;
     &lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot; /&gt;
     &lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin /&gt;
+    &lt;!--
+      Archivo, variable de 400 a 900: los cuatro pesos salen de un solo archivo
+      de 34 KB, contra los 61 KB que pesaban Lato y Poppins juntos. Cubre el
+      cuerpo, los títulos de sección y los botones.
+
+      PP Object Sans no viene de aquí: no está en Google Fonts. Su única cara,
+      la de peso 900, viaja incrustada en base64 dentro de la hoja de estilos,
+      porque Apps Script no sirve archivos del repositorio. Ver la decisión 100
+      y docs/diseno/MEDICION_FUENTES.md.
+    --&gt;
     &lt;link
-      href=&quot;https://fonts.googleapis.com/css2?family=Lato:wght@400;700&amp;family=Poppins:wght@500;600&amp;display=swap&quot;
+      href=&quot;https://fonts.googleapis.com/css2?family=Archivo:wght@400..900&amp;display=swap&quot;
       rel=&quot;stylesheet&quot;
     /&gt;
     &lt;?!= incluir('Estilos') ?&gt;
@@ -2878,8 +3070,8 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--text
   <table class="doc-tabla">
 <thead><tr><th>Archivo</th><th>Líneas</th><th>Qué hace</th></tr></thead>
 <tbody>
-<tr><td><code>src/client/Index.html</code></td><td>26</td><td>La plantilla que evalúa Apps Script. Mete los estilos, el motor y la interfaz. Va completa en el anexo B.</td></tr>
-<tr><td><code>src/client/estilos.css</code></td><td>574</td><td>La hoja de estilos entera. Una sola superficie elevada en toda la app: la hoja del documento. Va completa en el anexo A.</td></tr>
+<tr><td><code>src/client/Index.html</code></td><td>36</td><td>La plantilla que evalúa Apps Script. Mete los estilos, el motor y la interfaz. Va completa en el anexo B.</td></tr>
+<tr><td><code>src/client/estilos.css</code></td><td>666</td><td>La hoja de estilos entera. Una sola superficie elevada en toda la app: la hoja del documento. Va completa en el anexo A.</td></tr>
 <tr><td><code>src/client/js/10-util.js</code></td><td>229</td><td>Crear elementos, copiar al portapapeles, iconos, anuncios para lectores de pantalla. Todo dato del usuario entra como texto, nunca como HTML.</td></tr>
 <tr><td><code>src/client/js/20-estado.js</code></td><td>226</td><td>El estado del recorrido (E), el borrador en el navegador, el idioma de la interfaz y el texto de cada pregunta.</td></tr>
 <tr><td><code>src/client/js/30-servidor.js</code></td><td>71</td><td>La única puerta al servidor. En Apps Script llama con google.script.run; en la demostración, al servidor simulado.</td></tr>

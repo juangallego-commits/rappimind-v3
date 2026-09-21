@@ -43,6 +43,13 @@
   --borde-control: var(--rm-borde-control);
   --borde-opcion: var(--rm-borde-opcion);
 
+  --campo-vacio: var(--rm-campo-vacio);
+  --campo-lleno: var(--rm-campo-lleno);
+  --campo-error: var(--rm-campo-error);
+  --campo-off-bg: var(--rm-campo-off-bg);
+  --campo-off-borde: var(--rm-campo-off-borde);
+  --marcador: var(--rm-placeholder);
+
   /* Se va en la fase 6, cuando el historial deje de distinguir Publicado por
      el matiz y pase a distinguirlo por peso visual. El verde no es de marca. */
   --verde-confirma: #0b7a52;
@@ -199,28 +206,54 @@ h1[tabindex='-1']:focus:not(:focus-visible) { outline: none; }
 
 button { font-size: 15px; cursor: pointer; }
 
+/*
+ * El boton primario, y aqui aterriza la decision 98.
+ *
+ * El brand book manda blanco sobre el gradiente neon, y el encargo manda 4.5:1
+ * de contraste. Las dos reglas no pueden cumplirse a la vez: medido con WCAG
+ * 2.1, el blanco sobre el gradiente completo da entre 2.58:1 y 3.79:1, y ese
+ * 3.79 es el MAXIMO de todo el tramo. No es que falte afinar un tono; el minimo
+ * de texto normal no se alcanza en ningun punto.
+ *
+ * La salida es el umbral de texto grande, que WCAG baja a 3:1 desde 18.66px en
+ * negrita. Por eso el texto va a 19px en peso 700, y por eso el gradiente
+ * arranca en el 17% del tramo, que es donde el blanco cruza ese 3:1. Los dos
+ * numeros van juntos: bajar el tamano o correr el recorte hacia el naranja
+ * rompe la cuenta. El par `blanco sobre el arranque del gradiente del boton`
+ * de npm run contraste lo vigila, y da 3:1 exactos.
+ *
+ * El gradiente completo se sigue usando donde no lleva texto encima.
+ */
 .boton {
   display: inline-flex; align-items: center; justify-content: center; gap: var(--e2);
   padding: 13px var(--e5);
-  border-radius: var(--r-control);
+  border-radius: var(--r-pildora);
   border: 1px solid transparent;
-  background: var(--neon-texto);
+  background: var(--gradiente-boton);
   color: var(--papel);
-  transition: background var(--t-rapido);
+  font-size: 19px; font-weight: 700; line-height: 1.2;
+  transition: background var(--t-rapido), box-shadow var(--t-rapido);
 }
-.boton:hover { background: var(--neon-presionado); }
+.boton:hover { background: var(--gradiente-hover); }
 .boton:active { background: var(--neon-presionado); }
+
+/* Sin opacity: bajarla arrastraria el texto por debajo del contraste minimo.
+   Fondo plano, letra apagada, y el borde se va con el fondo. */
 .boton[disabled] {
   background: var(--niebla); color: var(--texto-off);
-  cursor: not-allowed; border-color: var(--borde);
+  cursor: not-allowed; border-color: transparent;
 }
 
 .boton-secundario {
   background: transparent; color: var(--tinta);
   border-color: var(--borde-control);
+  font-size: 15px; font-weight: 700;
 }
-.boton-secundario:hover { background: var(--niebla); }
-.boton-secundario[disabled] { color: var(--texto-off); background: transparent; }
+.boton-secundario:hover { background: var(--niebla); border-color: var(--tinta); }
+.boton-secundario:active { background: var(--niebla); }
+.boton-secundario[disabled] {
+  color: var(--texto-off); background: transparent; border-color: var(--borde);
+}
 
 .boton-texto {
   background: none; border: 0; padding: var(--e1) 0;
@@ -289,7 +322,9 @@ button { font-size: 15px; cursor: pointer; }
   padding: var(--e2) var(--e3); word-break: break-word;
 }
 .copiable .pregunta-ayuda { margin: var(--e2) 0 0; }
-.boton-chico { padding: 4px 12px; font-size: 13px; min-height: 0; }
+/* Se usa sobre .boton-secundario, en la tarjeta del dato copiable. Anula el
+   tamano del primario a proposito: ahi no hay texto sobre gradiente. */
+.boton-chico { padding: 4px 12px; font-size: 13px; font-weight: 700; min-height: 0; }
 
 .por-que { margin: var(--e2) 0 0; }
 .por-que summary {
@@ -309,23 +344,57 @@ button { font-size: 15px; cursor: pointer; }
 
 input[type='text'], input[type='number'], input[type='date'], input[type='time'], input[type='search'], select, textarea {
   width: 100%;
-  font-family: var(--cuerpo); font-size: 16px; color: var(--tinta);
+  font-family: var(--cuerpo); font-size: 17px; font-weight: 500; color: var(--tinta);
   background: var(--papel);
-  border: 1px solid var(--borde-control);
-  border-radius: var(--r-control);
+  border: 1.5px solid var(--campo-vacio);
+  border-radius: var(--r-panel);
   padding: 12px var(--e3);
+  transition: border-color var(--t-rapido);
 }
-input:hover, select:hover, textarea:hover { border-color: var(--gris-lapiz); }
-input:focus, select:focus, textarea:focus { border-color: var(--neon); }
-input[disabled], select[disabled] { background: var(--niebla); color: var(--texto-off); cursor: not-allowed; }
+::placeholder { color: var(--marcador); opacity: 1; }
+
+/*
+ * El campo CON VALOR lleva borde tinta, no neon. Es el unico punto donde la
+ * especificacion pisa al prototipo, y con razon: alli el campo lleno y el
+ * campo en error compartian el borde neon y no se distinguian. Si "lleno" y
+ * "mal" son del mismo color, el color deja de decir nada. El neon queda
+ * reservado para el error.
+ *
+ * No hace falta que el JavaScript marque nada. Se comprobo en Chromium que
+ * placeholder="" (vacio, que es lo que pone src/client/js/50-campos.js cuando
+ * la pregunta no trae ejemplo) sigue contando como marcador mostrado mientras
+ * el campo este vacio: 36 de las 100 preguntas traen ejemplo y las otras 64
+ * llevan el atributo puesto en cadena vacia, asi que las dos funcionan.
+ *
+ * Lo que NO funciona es date y time: no tienen marcador, asi que siempre
+ * coincidirian con :not(:placeholder-shown) y una fecha sin responder se veria
+ * como respondida. Por eso quedan fuera por su tipo.
+ */
+input:not([type='date']):not([type='time']):not(:placeholder-shown),
+select:not([disabled]),
+textarea:not(:placeholder-shown) { border-color: var(--campo-lleno); }
+
+input:hover:not([disabled]), select:hover:not([disabled]), textarea:hover:not([disabled]) {
+  border-color: var(--campo-lleno);
+}
+
+/* El foco NO pinta el borde de neon: el anillo de :focus-visible es lo que
+   avisa, y el neon es del error. Si el foco pintara el borde, un campo
+   enfocado y un campo mal se verian igual. */
+input[disabled], select[disabled] {
+  background: var(--campo-off-bg); color: var(--texto-off);
+  border-color: var(--campo-off-borde); cursor: not-allowed;
+}
 
 .con-moneda input { padding-left: 34px; }
 .simbolo-moneda {
-  position: absolute; left: var(--e3); color: var(--gris-lapiz); font-size: 16px; pointer-events: none;
+  position: absolute; left: var(--e3); color: var(--gris-lapiz); font-size: 17px; pointer-events: none;
 }
 
-.campo-error input, .campo-error select { border-color: var(--neon); }
-.mensaje-error { color: var(--neon-texto); font-size: 14px; margin: var(--e2) 0 0; display: flex; gap: var(--e2); }
+.campo-error input, .campo-error select {
+  border-color: var(--campo-error); border-width: 2px;
+}
+.mensaje-error { color: var(--neon-texto); font-size: 13.5px; font-weight: 700; margin: var(--e2) 0 0; display: flex; gap: var(--e2); }
 .mensaje-ok { color: var(--verde-confirma); font-size: 14px; margin: var(--e2) 0 0; display: flex; gap: var(--e2); align-items: center; }
 
 .asi-queda {
