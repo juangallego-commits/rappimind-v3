@@ -70,6 +70,10 @@ var OPCIONES_SEGMENTO_TRAVEL = [
 var OPCIONES_PAGO_TRAVEL = [
   { valor: 'digitales', etiqueta: 'Digitales, excepto efectivo', nota: 'Lo habitual en Travel: tarjetas y billeteras.' },
   { valor: 'rappicard', etiqueta: 'Solo RappiCard', nota: 'La orden se paga entera con la tarjeta de Rappi.' },
+  // Una tarjeta o un banco concreto es un medio de pago, no una alianza: el
+  // banco no responde por la campana. Salio del filtro el 21 de septiembre de
+  // 2026. Las cuotas siguen en el filtro, porque eso ya es financiacion.
+  { valor: 'emisor', etiqueta: 'Solo con una tarjeta o banco', nota: 'Tú escribes cuál en la siguiente pregunta.' },
 ];
 
 var OPCIONES_CARGA_TRAVEL = [
@@ -1308,6 +1312,45 @@ var PREGUNTAS = {
     },
   }),
 
+  anunciaPrecio: p({
+    paso: 'pieza',
+    pregunta: '¿La pieza anuncia un precio o una tarifa?',
+    ayuda: 'Por ejemplo: "vuelos desde $199.000" o "hoteles desde US$50 la noche".',
+    porQue: 'Un precio anunciado obliga a decir en el documento qué incluye y en qué condiciones se consigue. Si no queda escrito, el usuario puede exigir ese precio sin ninguna de las condiciones.',
+    avanzaSola: true,
+    porDefecto: 'no',
+    opciones: [
+      { valor: 'no', etiqueta: 'No anuncia precio', nota: 'La pieza habla del descuento o del beneficio, no de un valor.' },
+      { valor: 'si', etiqueta: 'Sí, anuncia un precio', nota: 'Con "desde", una tarifa o un valor concreto.' },
+    ],
+    placeholders: ['TEXTO_PRECIO_ANUNCIADO'],
+    errores: { vacio: 'Dinos si la pieza anuncia un precio.' },
+  }),
+
+  precioIncluyeTodo: p({
+    paso: 'pieza',
+    pregunta: '¿Ese precio ya incluye impuestos, tasas y cargos?',
+    ayuda: 'Es el valor final que paga el usuario, sin sumas después.',
+    porQue: 'La ley exige que el precio anunciado sea el total. Un "desde" que después crece con impuestos es el caso que ya le costó una sanción a Rappi Travel.',
+    avanzaSola: true,
+    opciones: [
+      { valor: 'si', etiqueta: 'Sí, es el valor final', nota: 'Lo que el usuario ve es lo que paga.' },
+      { valor: 'no', etiqueta: 'No, se suman después', nota: 'Esta campaña la tiene que ver Legal.' },
+    ],
+    placeholders: ['TEXTO_PRECIO_ANUNCIADO'],
+    errores: { vacio: 'Dinos si el precio anunciado incluye impuestos, tasas y cargos.' },
+  }),
+
+  nombreMedioPago: p({
+    paso: 'participantes',
+    pregunta: '¿Con cuál tarjeta o banco?',
+    ayuda: 'Como lo ve el usuario al pagar. Por ejemplo: Tarjeta de Crédito Bancolombia.',
+    porQue: 'El nombre sale impreso en el documento, así que tiene que ser el que el usuario reconoce. Si queda impreciso, alguien con otra tarjeta del mismo banco va a creer que aplica.',
+    ejemplo: 'Tarjeta de Crédito Bancolombia',
+    placeholders: ['TEXTO_METODO_PAGO_TRAVEL'],
+    errores: { vacio: 'Escribe con cuál tarjeta o banco aplica el beneficio.' },
+  }),
+
   declaracion: p({
     paso: 'confirmacion',
     pregunta: 'Confirma que la información es correcta',
@@ -1678,6 +1721,7 @@ var NOMBRE_DEL_HUECO = {
   TEXTO_CONDICIONES_TRAVEL: 'las condiciones de la compra',
   TEXTO_SEGMENTO_TRAVEL: 'quiénes pueden participar',
   TEXTO_METODO_PAGO_TRAVEL: 'los medios de pago',
+  TEXTO_PRECIO_ANUNCIADO: 'si la pieza anuncia un precio',
   TEXTO_BENEFICIO_TRAVEL: 'en qué consiste el cashback',
   TEXTO_BASE_CALCULO_TRAVEL: 'sobre qué valor se calcula el cashback',
   TEXTO_EJEMPLO_TOPE_TRAVEL: 'el ejemplo del tope',

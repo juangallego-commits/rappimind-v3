@@ -184,14 +184,19 @@ async function recorrer() {
       titulo: q.querySelector('.pregunta-titulo').textContent.trim(),
       ayuda: (q.querySelector('.pregunta-ayuda') || {}).textContent || '',
     })));
-  revisar('el filtro de Travel tiene nueve preguntas, y el copy dice nueve',
-    preguntasDeTravel.length === 9 && enFiltroTravel.indexOf('Nueve preguntas rápidas') !== -1,
+  // El 21 de septiembre se fue la del precio "desde", que pasó a ser una
+  // pregunta del formulario, y quedaron ocho.
+  revisar('el filtro de Travel tiene ocho preguntas, y el copy dice ocho',
+    preguntasDeTravel.length === 8 && enFiltroTravel.indexOf('Ocho preguntas rápidas') !== -1,
     preguntasDeTravel.length + ' preguntas · ' + enFiltroTravel.slice(0, 120));
-  revisar('la sexta quedó partida en dos',
+  revisar('la del precio "desde" ya no está en el filtro',
+    !preguntasDeTravel.some((q) => q.titulo.indexOf('precio') !== -1),
+    preguntasDeTravel.map((q) => q.titulo).join(' | '));
+  revisar('la que mezclaba dos preguntas quedó partida en dos',
     preguntasDeTravel.some((q) => q.titulo === '¿Las condiciones cambian según destino, producto o usuario?') &&
     preguntasDeTravel.some((q) => q.titulo === '¿Mezcla descuento y cashback en la misma campaña?'),
     preguntasDeTravel.map((q) => q.titulo).join(' | '));
-  revisar('la quinta se acortó y sus ejemplos bajaron a la ayuda',
+  revisar('la del beneficio se acortó y sus ejemplos bajaron a la ayuda',
     preguntasDeTravel.some((q) => q.titulo === '¿El beneficio es otra cosa que Créditos o descuento?' &&
       q.ayuda.indexOf('noches o niños gratis') !== -1),
     preguntasDeTravel.map((q) => q.titulo + ' >> ' + q.ayuda).join(' | '));

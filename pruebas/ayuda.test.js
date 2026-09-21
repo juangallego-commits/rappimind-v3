@@ -197,7 +197,7 @@ test('el filtro va antes de la lista, no después', () => {
 
 // --- El filtro de Travel, las tres de la misma pantalla ----------------------
 
-test('el filtro de Travel tiene nueve preguntas, con la sexta partida en dos', () => {
+test('el filtro de Travel tiene ocho preguntas, con la quinta partida en dos', () => {
   /*
    * Metía dos preguntas en una ("¿cambian las condiciones... o se mezcla
    * descuento con cashback?") y quien contestaba sí no sabía cuál había
@@ -207,12 +207,20 @@ test('el filtro de Travel tiene nueve preguntas, con la sexta partida en dos', (
    * filtraba nada porque ninguna de las dos fondea una campaña, y quedaron
    * nueve. Las dos cosas pasaron en sesiones distintas y se encontraron al
    * traer main: por eso el número cambió sin que nadie tocara la partición.
+   *
+   * Y ese mismo día se fue la del precio "desde", que ahora es una pregunta del
+   * formulario. Lo que la ley castiga no es anunciar un precio, es anunciarlo
+   * mal: bloquear a los dos por igual mandaba a Legal campañas correctas. Solo
+   * el que anuncia un precio que no es el valor final se va a Legal, y eso lo
+   * decide validarTravel, no el filtro.
    */
-  assert.strictEqual(FILTRO_DE_TRAVEL.length, 9);
+  assert.strictEqual(FILTRO_DE_TRAVEL.length, 8);
 
-  // Y la que se fue no puede volver por la puerta de atrás.
+  // Y las que se fueron no pueden volver por la puerta de atrás.
   const ids = FILTRO_DE_TRAVEL.map((p) => p.id);
   assert.strictEqual(ids.indexOf('pagaRappi'), -1, 'volvió la pregunta de quién paga');
+  assert.strictEqual(ids.indexOf('anunciaPrecio'), -1,
+    'la del precio volvió al filtro: ahora es una pregunta del formulario');
   const textos = FILTRO_DE_TRAVEL.map((p) => p.texto);
   assert.ok(textos.indexOf('¿Las condiciones cambian según destino, producto o usuario?') !== -1);
   assert.ok(textos.indexOf('¿Mezcla descuento y cashback en la misma campaña?') !== -1);

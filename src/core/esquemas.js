@@ -777,6 +777,49 @@ var CAMPOS_TRAVEL_COMUNES = [
     opciones: [
       { valor: 'digitales', etiqueta: 'Digitales, excepto efectivo' },
       { valor: 'rappicard', etiqueta: 'Solo RappiCard' },
+      // Una tarjeta o un banco concreto es un medio de pago como cualquier
+      // otro: el banco no responde por la campana, solo es con lo que se paga.
+      // Salio del filtro el 21 de septiembre de 2026. Lo que sigue en el filtro
+      // son las cuotas, que es financiacion y es otra cosa.
+      { valor: 'emisor', etiqueta: 'Solo con una tarjeta o banco específico' },
+    ],
+  },
+  {
+    id: 'nombreMedioPago',
+    etiqueta: 'Tarjeta o banco',
+    tipo: 'texto',
+    paso: 'participantes',
+    obligatorio: true,
+    visible: function (entrada) { return entrada.metodoPago === 'emisor'; },
+  },
+
+  // --- La pieza publicitaria ----------------------------------------------
+  //
+  // Anunciar un precio no es el problema: anunciarlo mal si. La ley pide que el
+  // precio anunciado sea el final, con impuestos y cargos, y por eso esto
+  // bloqueaba entero hasta el 21 de septiembre de 2026. Ahora se pregunta, y
+  // solo el que anuncia un precio que no es el total se va a Legal.
+  {
+    id: 'anunciaPrecio',
+    etiqueta: 'La pieza anuncia un precio',
+    tipo: 'lista',
+    paso: 'pieza',
+    obligatorio: true,
+    opciones: [
+      { valor: 'no', etiqueta: 'No' },
+      { valor: 'si', etiqueta: 'Sí' },
+    ],
+  },
+  {
+    id: 'precioIncluyeTodo',
+    etiqueta: 'El precio anunciado es el final',
+    tipo: 'lista',
+    paso: 'pieza',
+    obligatorio: true,
+    visible: function (entrada) { return entrada.anunciaPrecio === 'si'; },
+    opciones: [
+      { valor: 'si', etiqueta: 'Sí' },
+      { valor: 'no', etiqueta: 'No' },
     ],
   },
 

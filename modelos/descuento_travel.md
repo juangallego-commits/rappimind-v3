@@ -21,6 +21,7 @@ El Beneficio consiste en {{TEXTO_DESCUENTO_TRAVEL}} sobre el valor de la tarifa 
 • Órdenes realizadas fuera de la vigencia de la Campaña.
 • Productos que no sean Productos Participantes, aunque se compren en la misma orden.
 El Beneficio obtenido en virtud de la presente Campaña no es acumulable con otras promociones.
+[[INCLUIR:travel_precio_anunciado]]
 [[INCLUIR:travel_publicidad]]
 [[INCLUIR:travel_atencion]]
 [[INCLUIR:travel_modificaciones]]

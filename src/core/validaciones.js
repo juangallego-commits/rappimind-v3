@@ -594,6 +594,17 @@ function validarTravel(entrada, pais, fechaReferencia, esAmpliacion) {
   var errores = [];
   var esDescuento = entrada.tipo === 'descuento_travel';
 
+  // Un precio anunciado que no es el valor final no se arregla con una clausula:
+  // la pieza esta mal y hay que corregirla. La ley pide que el precio anunciado
+  // sea el total, y en tarifas aereas eso ya le costo una sancion a Rappi
+  // Travel. Hasta el 21 de septiembre de 2026 esto bloqueaba a todo el que
+  // anunciara un precio, bien o mal; ahora solo al que lo anuncia mal.
+  if (entrada.anunciaPrecio === 'si' && entrada.precioIncluyeTodo === 'no') {
+    errores.push(error('precioIncluyeTodo',
+      'El precio anunciado tiene que ser el valor final, con impuestos, tasas y cargos incluidos. ' +
+      'Como el de tu pieza no lo es, hay que corregir la pieza antes de publicar y eso lo ve Legal.'));
+  }
+
   // Si el aliado pide algo que el formulario no cubre, el documento se queda
   // corto: eso lo redacta Legal.
   if (entrada.otraCondicion === 'si') {

@@ -214,11 +214,6 @@ var FILTRO_DE_TRAVEL = [
     razon: 'Las dinámicas con azar necesitan permiso previo de Coljuegos.',
   },
   {
-    id: 'anunciaPrecio',
-    texto: '¿La pieza anuncia un precio "desde" o una tarifa?',
-    razon: 'Los anuncios de tarifas tienen reglas especiales de información y ya generaron una sanción a Rappi Travel.',
-  },
-  {
     // Medía 25 palabras y sus ejemplos eran la mitad. Desde el 20 de septiembre
     // de 2026 las preguntas del filtro aceptan una línea de ayuda, así que el
     // enunciado se queda corto y los ejemplos van debajo (puntos F6 y F8).
@@ -242,8 +237,8 @@ var FILTRO_DE_TRAVEL = [
   },
   {
     id: 'dependeDeBanco',
-    texto: '¿El beneficio depende de un banco o de cuotas?',
-    razon: 'Esas campañas tienen otra entidad responsable y otro documento.',
+    texto: '¿El beneficio son cuotas sin interés o una financiación?',
+    razon: 'Quien otorga la financiación es el banco, con sus propias condiciones de tasa, plazo y aprobación. Ese documento lo redacta Legal con el banco.',
   },
   {
     id: 'esSeguro',

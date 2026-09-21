@@ -108,6 +108,33 @@ var EXCLUSION_DE_PAGOS_CON_CREDITOS =
   ' No se obtendrá el Beneficio respecto de órdenes pagadas parcial o totalmente con Créditos de la Plataforma.';
 
 /**
+ * ORACION: enciende la clausula del precio anunciado.
+ *
+ * No escribe el texto, que vive en modelos/bloques/travel_precio_anunciado.md:
+ * solo dice si la clausula va o no. El texto es el mismo siempre, y el unico
+ * caso en que no va es cuando la pieza no anuncia ningun precio.
+ *
+ * El que anuncia un precio que no es el valor final no llega hasta aqui: lo
+ * para validarTravel y va a Legal, porque eso no se arregla con una clausula.
+ */
+function textoPrecioAnunciado(entrada) {
+  return entrada.anunciaPrecio === 'si' ? 'si' : '';
+}
+
+/**
+ * La frase de un emisor concreto lleva su nombre adentro, asi que se arma en vez
+ * de estar escrita. Es el unico medio de pago que necesita un dato del
+ * comercial: los otros dos son siempre la misma frase.
+ */
+function textoMetodoPagoDeEmisor(nombre) {
+  var limpio = String(nombre === null || nombre === undefined ? '' : nombre).trim();
+  if (!limpio) return '';
+  return 'Campaña válida únicamente para órdenes pagadas en su totalidad con ' + limpio +
+    '. No se obtendrá el Beneficio respecto de órdenes pagadas parcial o totalmente con ' +
+    'Créditos de la Plataforma, ni con cualquier otro medio de pago.';
+}
+
+/**
  * ORACION: con que se paga.
  *
  * En los descuentos esa frase sale. Venia de los cashback, donde evita montar un
@@ -117,7 +144,9 @@ var EXCLUSION_DE_PAGOS_CON_CREDITOS =
  * septiembre de 2026 (punto D8); en cashback_travel se queda.
  */
 function textoMetodoPagoTravel(entrada) {
-  var texto = TEXTO_METODO_PAGO_TRAVEL_POR_OPCION[entrada.metodoPago] || '';
+  var texto = entrada.metodoPago === 'emisor'
+    ? textoMetodoPagoDeEmisor(entrada.nombreMedioPago)
+    : (TEXTO_METODO_PAGO_TRAVEL_POR_OPCION[entrada.metodoPago] || '');
   if (!texto) return '';
   if (entrada.tipo === 'descuento_travel') {
     return texto.replace(EXCLUSION_DE_PAGOS_CON_CREDITOS, '');
@@ -566,6 +595,7 @@ function calcularDerivadosTravel(entrada, pais) {
 
   valores.TEXTO_SEGMENTO_TRAVEL = textoSegmentoTravel(datos);
   valores.TEXTO_METODO_PAGO_TRAVEL = textoMetodoPagoTravel(datos);
+  valores.TEXTO_PRECIO_ANUNCIADO = textoPrecioAnunciado(datos);
   valores.TEXTO_PRODUCTOS_TRAVEL = textoProductosTravel(datos, p);
   valores.TEXTO_AMBITO_TRAVEL = textoAmbitoTravel(datos, p);
   valores.TEXTO_DESTINOS_TRAVEL = textoDestinosTravel(datos);
@@ -668,6 +698,7 @@ if (typeof module !== 'undefined') {
     TEXTO_VISIBILIDAD_POR_OPCION: TEXTO_VISIBILIDAD_POR_OPCION,
     textoSegmentoTravel: textoSegmentoTravel,
     textoMetodoPagoTravel: textoMetodoPagoTravel,
+    textoPrecioAnunciado: textoPrecioAnunciado,
     textoProductosTravel: textoProductosTravel,
     textoAmbitoTravel: textoAmbitoTravel,
     textoDestinosTravel: textoDestinosTravel,
