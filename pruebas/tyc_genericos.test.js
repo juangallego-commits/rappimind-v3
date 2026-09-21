@@ -104,14 +104,64 @@ test('del T&C que Legal repitió se ofrece uno solo, el de la ruta con año', ()
   assert.strictEqual(tycGenericoPorId('CO', 'descuento_productos_seleccionados_bis'), null);
 });
 
-test('los dos cupones sin descripción no llevan una inventada', () => {
+test('los dos cupones ya dicen para qué sirven, con las frases que Juan aprobó', () => {
+  /*
+   * Las filas 14 y 15 del Excel llegaron sin Beneficio Ofrecido ni Descripción,
+   * y la herramienta lo decía en vez de inventar una. Cupones es de lo que más
+   * se pide, así que el comercial los veía y no sabía cuál elegir.
+   *
+   * Juan aprobó las cuatro frases el 20 de septiembre de 2026 (punto E3, con
+   * los textos de la decisión 46 del encargo 01).
+   */
+  const valorFijo = tycGenericoPorId('CO', 'cupon_valor_fijo');
+  assert.strictEqual(valorFijo.beneficio,
+    'Descuento de un monto fijo de dinero sobre el pedido al redimir un cupón o código (el valor dependerá de lo que indique la pieza publicitaria).');
+  assert.strictEqual(valorFijo.paraQue,
+    'Respaldo legal para cupones o códigos que descuentan un valor fijo del pedido (ej. "$10.000 OFF con el código X"). Úsalo cuando el usuario debe ingresar o activar el cupón para ver la rebaja; el valor, la compra mínima y la vigencia van en la pieza.');
+
+  const todaLaTienda = tycGenericoPorId('CO', 'cupon_toda_la_tienda');
+  assert.strictEqual(todaLaTienda.beneficio,
+    'Porcentaje de descuento sobre el valor total del pedido al redimir un cupón o código (el porcentaje y el tope dependerán de lo que indique la pieza publicitaria).');
+  assert.strictEqual(todaLaTienda.paraQue,
+    'Respaldo legal para cupones o códigos que dan un porcentaje de descuento sobre el valor total del pedido (ej. "20% OFF en toda la tienda con el código X"). Úsalo cuando el descuento no es automático y el usuario debe ingresar o activar el cupón; el porcentaje, el tope y la compra mínima van en la pieza.');
+
+  // Y ya no sale el aviso de que Legal no explicó para qué sirven.
   for (const id of ['cupon_valor_fijo', 'cupon_toda_la_tienda']) {
     const tyc = tycGenericoPorId('CO', id);
-    assert.strictEqual(tyc.paraQue, '', id + ': alguien le escribió una descripción que Legal no dio');
-    assert.strictEqual(tyc.beneficio, '', id + ': alguien le escribió un beneficio que Legal no dio');
-    assert.ok(/no dice para qué sirve/i.test(descripcionDeTycGenerico(tyc)),
-      id + ' no avisa que falta la descripción');
+    assert.strictEqual(descripcionDeTycGenerico(tyc), tyc.paraQue, id);
+    assert.ok(!/no dice para qué sirve/i.test(descripcionDeTycGenerico(tyc)), id);
   }
+});
+
+test('el aviso de que falta la descripción sigue existiendo para el día que haga falta', () => {
+  // Ningún T&C lo lleva hoy, así que se construye uno: si mañana Legal manda
+  // una fila sin descripción, la herramienta tiene que decirlo en vez de
+  // dejar un hueco o inventar una.
+  assert.ok(/no dice para qué sirve/i.test(descripcionDeTycGenerico({ paraQue: '' })));
+  assert.ok(/no dice para qué sirve/i.test(descripcionDeTycGenerico({})));
+});
+
+test('ningún nombre de la lista lleva guion como signo de puntuación', () => {
+  // Regla 8 del proyecto. Los dos cupones eran los únicos textos visibles de
+  // toda la herramienta que lo rompían, y venían copiados del Excel de Legal.
+  // Juan los cambió el 20 de septiembre de 2026 (punto F3).
+  for (const tyc of tycGenericosDelPais('CO')) {
+    assert.strictEqual(/ - /.test(tyc.nombre), false, tyc.id + ': ' + tyc.nombre);
+  }
+  assert.strictEqual(tycGenericoPorId('CO', 'cupon_valor_fijo').nombre, 'Cupón de descuento de valor fijo');
+  assert.strictEqual(tycGenericoPorId('CO', 'cupon_toda_la_tienda').nombre, 'Cupón de descuento en toda la tienda');
+});
+
+test('las diez correcciones de ortografía quedaron aplicadas', () => {
+  // Punto F4. El archivo era la transcripción literal del Excel, con sus
+  // erratas a la vista. Juan aprobó los tres grupos el 20 de septiembre.
+  const todos = JSON.stringify(tycGenericosDelPais('CO'));
+  for (const errata of ['el costo de envio', 'el precio de la suscripcion', 'miembros rappi pro',
+    'Codigo de descuento', 'Service Fee OFF', 'Fee de Membresía OFF', 'check out']) {
+    assert.strictEqual(todos.indexOf(errata), -1, 'sigue estando: ' + errata);
+  }
+  assert.strictEqual(tycGenericoPorId('CO', 'codigo_descuento_eventos_externos').beneficio,
+    'Un externo da el descuento en su propio canal de venta. Por ejemplo: un código del 20% para las boletas de un evento.');
 });
 
 test('la descripción que sí trae el Excel se muestra tal cual', () => {

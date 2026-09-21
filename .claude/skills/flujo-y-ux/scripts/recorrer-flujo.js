@@ -472,11 +472,15 @@ async function recorrer() {
   const tarjetasTyc = await pagina.evaluate(() => document.querySelectorAll('.opcion').length);
   revisar('salen los catorce T&C generales', tarjetasTyc === 14, String(tarjetasTyc));
 
-  // Lo que Legal dejó sin resolver se dice antes del enlace, no después. Los dos
-  // cupones llegaron del Excel sin descripción y son los que hoy lo prueban: el
-  // "Descuento en Productos Seleccionados" dejó de estar repetido con la
-  // decisión 45 y ya no tiene nada pendiente.
-  await clic('Cupon de descuento - Valor fijo');
+  // Lo que Legal dejó sin resolver se dice antes del enlace, no después. Hoy lo
+  // prueban los cupones de membresía, cuyo enlace apunta a la versión de 2024
+  // aunque la vigencia diga 2026: hasta que alguien lo republique, el comercial
+  // tiene que enterarse antes de copiar el enlace.
+  //
+  // Antes lo probaban los dos cupones de descuento, que llegaron del Excel sin
+  // descripción. Juan las escribió el 20 de septiembre de 2026 (punto E3) y ya
+  // no tienen nada pendiente.
+  await clic('Cupones de Descuento para Membresía Rappi Pro y Black');
   await pagina.waitForTimeout(400);
   const conPendiente = await texto();
   revisar('un T&C con algo pendiente avisa antes de dar el enlace',

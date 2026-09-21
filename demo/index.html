@@ -1192,7 +1192,7 @@ if (typeof module !== 'undefined') { module.exports = { CATEGORIAS_TRAVEL: CATEG
 // Fuente: data/tyc_genericos.json
 
 var TYC_GENERICOS = {
-  "version": "2026-09-18",
+  "version": "2026-09-20",
   "fuente": "Excel \"T&C Generales 2026\", hoja \"T&C Generales 2026\", entregado por Juan Camilo Gallego el 17 de septiembre de 2026. Juan avisó que no lo había revisado.",
   "nota": "Estos T&C ya están publicados por Legal. RappiMind no genera documento para ellos: solo entrega el enlace. Los textos de nombre, beneficio y paraQue están copiados tal cual del Excel, sin corregir.",
   "revisiones": [
@@ -1239,6 +1239,25 @@ var TYC_GENERICOS = {
         "codigo_descuento_eventos_externos"
       ],
       "que": "En el Excel el nombre y la descripción traen un doble espacio (\"20%  para\"). Se dejó un solo espacio, con el mismo criterio de las filas 10 y 11: es espacio en blanco, no texto. La descripción repite el nombre; la pantalla no la muestra dos veces."
+    },
+    {
+      "ids": [
+        "cupon_valor_fijo",
+        "cupon_toda_la_tienda"
+      ],
+      "que": "Juan aprobo el 20 de septiembre de 2026 las cuatro frases de la decision 46 del encargo 01: el beneficio y el para que de los dos cupones, que llegaron vacios en el Excel. Con eso desaparece el aviso de que la lista de Legal no dice para que sirven, que era justo en lo que mas se pide."
+    },
+    {
+      "ids": [
+        "cupon_valor_fijo",
+        "cupon_toda_la_tienda",
+        "codigo_descuento_eventos_externos",
+        "tarifa_servicio_gratis",
+        "descuento_membresia_pro",
+        "envio_gratis",
+        "descuento_toda_la_tienda_pro"
+      ],
+      "que": "Las diez correcciones de la pantalla 30 del encargo 02, aprobadas por Juan el 20 de septiembre de 2026. Ocho son tildes, mayusculas y nombres que se ven en la lista; dos reescriben palabras de Legal: el beneficio del T&C del canal de venta externo y el para que del de precio tachado. El archivo deja de ser la transcripcion literal del Excel en esos diez puntos."
     }
   ],
   "paises": {
@@ -1287,7 +1306,7 @@ var TYC_GENERICOS = {
         "id": "envio_gratis",
         "nombre": "Envío Gratis",
         "beneficio": "Costo de envío $0",
-        "paraQue": "Respaldo legal para eliminar el costo de envio (cobro de domicilio) al usuario. (ej. \"Envío Gratis por compras superiores a $X\"). El descuento se refleja automáticamente en el check out.",
+        "paraQue": "Respaldo legal para eliminar el costo de envío (cobro de domicilio) al usuario. (ej. \"Envío Gratis por compras superiores a $X\"). El descuento aparece automáticamente al pagar.",
         "enlace": "https://promos.rappi.com/colombia/enviogratis",
         "vigenciaInicio": "2026-01-01",
         "vigenciaFin": "2026-12-31",
@@ -1296,7 +1315,7 @@ var TYC_GENERICOS = {
       {
         "id": "tarifa_servicio_gratis",
         "nombre": "Tarifa de Servicio Gratis",
-        "beneficio": "Tarifa de servicio $0 (Service Fee OFF)",
+        "beneficio": "Tarifa de servicio en $0",
         "paraQue": "Respaldo legal para no cobrar la tarifa de servicio. Ojo: No incluye el envío, solo la tarifa de servicio. Úsalo cuando se quiera eliminar esta barrera de costo adicional para el usuario.",
         "enlace": "https://promos.rappi.com/colombia/tarifadeservicio",
         "vigenciaInicio": "2026-02-01",
@@ -1317,7 +1336,7 @@ var TYC_GENERICOS = {
         "id": "descuento_toda_la_tienda_pro",
         "nombre": "Descuento en Toda la Tienda Rappi Pro",
         "beneficio": "% OFF en todo el menú para suscriptores (Exclusivo Pro)",
-        "paraQue": "Respaldo legal para descuentos generales en el menú exclusivos para miembros rappi pro. Úsalo para negociaciones donde se quiera premiar la fidelidad del usuario Pro. El descuento aplica a todo el catálogo de la tienda participante, pero solo es visible y aplicable para usuarios con la membresía activa.",
+        "paraQue": "Respaldo legal para descuentos generales en el menú exclusivos para miembros Rappi Pro. Úsalo para negociaciones donde se quiera premiar la fidelidad del usuario Pro. El descuento aplica a todo el catálogo de la tienda participante, pero solo es visible y aplicable para usuarios con la membresía activa.",
         "enlace": "https://promos.rappi.com/colombia/2026/descuento-en-toda-la-tienda-rappipro",
         "vigenciaInicio": "2026-01-01",
         "vigenciaFin": "2026-12-31",
@@ -1327,7 +1346,7 @@ var TYC_GENERICOS = {
         "id": "descuento_en_valor_pro",
         "nombre": "Descuento en Valor Rappi Pro",
         "beneficio": "Descuento de monto fijo exclusivo para suscriptores ($ OFF)",
-        "paraQue": "Respaldo legal para descuentos de dinero fijo exclusivos para miembros rappi pro. Similar al \"Descuento en Valor\" normal, pero el beneficio de restar un monto exacto (ej. \"$10.000 OFF\") solo aplica y es visible para usuarios Rappi Pro.",
+        "paraQue": "Respaldo legal para descuentos de dinero fijo exclusivos para miembros Rappi Pro. Similar al \"Descuento en Valor\" normal, pero el beneficio de restar un monto exacto (ej. \"$10.000 OFF\") solo aplica y es visible para usuarios Rappi Pro.",
         "enlace": "https://promos.rappi.com/colombia/2026/descuento-en-valor-rappi-pro",
         "vigenciaInicio": "2026-01-01",
         "vigenciaFin": "2026-12-31",
@@ -1336,8 +1355,8 @@ var TYC_GENERICOS = {
       {
         "id": "descuento_membresia_pro",
         "nombre": "Descuento en la Membresía Rappi Pro",
-        "beneficio": "Descuento en el valor de la suscripción (Fee de Membresía OFF)",
-        "paraQue": "Respaldo legal para vender la membresía Rappi Pro más barata. Úsalo exclusivamente cuando la oferta sea sobre el precio de la suscripcion. No sirve para descuentos en comida o productos.",
+        "beneficio": "Descuento en el valor de la suscripción",
+        "paraQue": "Respaldo legal para vender la membresía Rappi Pro más barata. Úsalo exclusivamente cuando la oferta sea sobre el precio de la suscripción. No sirve para descuentos en comida o productos.",
         "enlace": "https://promos.rappi.com/colombia/2026/descuentos-en-membresia-rappipro",
         "vigenciaInicio": "2026-01-01",
         "vigenciaFin": "2026-12-31",
@@ -1356,9 +1375,9 @@ var TYC_GENERICOS = {
       },
       {
         "id": "cupon_valor_fijo",
-        "nombre": "Cupon de descuento - Valor fijo",
-        "beneficio": "",
-        "paraQue": "",
+        "nombre": "Cupón de descuento de valor fijo",
+        "beneficio": "Descuento de un monto fijo de dinero sobre el pedido al redimir un cupón o código (el valor dependerá de lo que indique la pieza publicitaria).",
+        "paraQue": "Respaldo legal para cupones o códigos que descuentan un valor fijo del pedido (ej. \"$10.000 OFF con el código X\"). Úsalo cuando el usuario debe ingresar o activar el cupón para ver la rebaja; el valor, la compra mínima y la vigencia van en la pieza.",
         "enlace": "https://promos.rappi.com/colombia/cuponvalorfijoco",
         "vigenciaInicio": "2026-01-01",
         "vigenciaFin": "2026-12-31",
@@ -1366,9 +1385,9 @@ var TYC_GENERICOS = {
       },
       {
         "id": "cupon_toda_la_tienda",
-        "nombre": "Cupon de descuento - Toda la tienda",
-        "beneficio": "",
-        "paraQue": "",
+        "nombre": "Cupón de descuento en toda la tienda",
+        "beneficio": "Porcentaje de descuento sobre el valor total del pedido al redimir un cupón o código (el porcentaje y el tope dependerán de lo que indique la pieza publicitaria).",
+        "paraQue": "Respaldo legal para cupones o códigos que dan un porcentaje de descuento sobre el valor total del pedido (ej. \"20% OFF en toda la tienda con el código X\"). Úsalo cuando el descuento no es automático y el usuario debe ingresar o activar el cupón; el porcentaje, el tope y la compra mínima van en la pieza.",
         "enlace": "https://promos.rappi.com/colombia/cupondescuentoco",
         "vigenciaInicio": "2026-01-01",
         "vigenciaFin": "2026-12-31",
@@ -1376,9 +1395,9 @@ var TYC_GENERICOS = {
       },
       {
         "id": "codigo_descuento_eventos_externos",
-        "nombre": "Codigo de descuento para eventos externos (ej. codigo de 20% para boletas al vino al parque)",
-        "beneficio": "Descuento en producto o servicio que ofrece un externo por medio de un canal de venta independiente",
-        "paraQue": "Codigo de descuento para eventos externos (ej. codigo de 20% para boletas al vino al parque)",
+        "nombre": "Código de descuento para eventos externos",
+        "beneficio": "Un externo da el descuento en su propio canal de venta. Por ejemplo: un código del 20% para las boletas de un evento.",
+        "paraQue": "Código de descuento para eventos externos",
         "enlace": "https://promos.rappi.com/colombia/2026/9/7/trminos-y-condiciones-cupones-off",
         "vigenciaInicio": "2026-01-01",
         "vigenciaFin": "2026-12-31",
