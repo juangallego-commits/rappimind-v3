@@ -418,6 +418,41 @@ async function recorrer() {
   revisar('la pantalla de Legal ofrece a dónde ir',
     legal.indexOf('formulario') !== -1);
 
+  // Punto F8, 20 de septiembre de 2026. Llegar a Legal por marcar mal una
+  // casilla era un callejon: el unico camino de vuelta era "Volver al inicio",
+  // que borra todo lo respondido.
+  revisar('la pantalla de Legal deja cambiar la respuesta que llevó hasta ahí',
+    legal.indexOf('Cambiar mi respuesta') !== -1, legal.replace(/\n+/g, ' | ').slice(0, 400));
+
+  await clic('Cambiar mi respuesta');
+  await pagina.waitForTimeout(600);
+  const deVueltaAlFiltro = await texto();
+  revisar('y al pulsarlo vuelve al filtro, no al inicio',
+    deVueltaAlFiltro.indexOf('¿Hay azar') !== -1 &&
+    deVueltaAlFiltro.indexOf('Esta campaña la redacta Legal') === -1,
+    deVueltaAlFiltro.replace(/\n+/g, ' | ').slice(0, 300));
+
+  // --- 5b. Las tres preguntas que dejaron de venir marcadas ----------------
+  //
+  // Punto F8. Una respuesta que nadie leyo queda impresa, y despues no se puede
+  // excluir a nadie. Las tres deciden a quien se le puede negar el beneficio.
+  await desdeElInicio();
+  await decirQueNoATodo();
+  await clic('Colombia');
+  await clic('Rappi');
+  await clic('Cashback');
+  const sinMarcar = await pagina.evaluate(() => {
+    const entrada = RM.estado.entrada();
+    return {
+      redencion: entrada.redencion === undefined || entrada.redencion === null,
+      segmento: entrada.segmento === undefined || entrada.segmento === null,
+      metodoPago: entrada.metodoPago === undefined || entrada.metodoPago === null,
+    };
+  });
+  revisar('dónde se gastan los Créditos arranca sin respuesta marcada', sinMarcar.redencion, JSON.stringify(sinMarcar));
+  revisar('quiénes participan arranca sin respuesta marcada', sinMarcar.segmento, JSON.stringify(sinMarcar));
+  revisar('con qué se paga arranca sin respuesta marcada', sinMarcar.metodoPago, JSON.stringify(sinMarcar));
+
   // --- 6. Los T&C que Legal ya publicó ---------------------------------------
   await desdeElInicio();
   await decirQueNoATodo();

@@ -29,13 +29,59 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 /** La modalidad del boton Turbo. Los dos documentos publicados usan esta. */
 var MODALIDAD_TURBO_POR_DEFECTO = 'Turbo Restaurantes';
 
-/** Las secciones que se pueden excluir de la redencion, con su nombre impreso. */
+/**
+ * Las secciones que se pueden excluir de la redencion, con su nombre impreso.
+ *
+ * Empezaron siendo solo del ETA y desde el 20 de septiembre de 2026 (punto D5)
+ * las usa tambien el Cashback cuando los Creditos se pueden gastar en cualquier
+ * parte de Rappi. El nombre de la llave se queda por la frontera del Sheet: la
+ * columna exclusiones_eta ya existe y mover una columna desalinea el historico.
+ *
+ * "RappiFavor" va junto, que es como lo escriben los T&C publicados de Rappi en
+ * Colombia, Ecuador y Costa Rica.
+ *
+ * El SOAT es colombiano, asi que fuera de Colombia no se ofrece ni se imprime.
+ */
 var SECCIONES_EXCLUIBLES_ETA = [
-  { valor: 'travel', nombre: 'Rappi Travel' },
-  { valor: 'soat', nombre: 'SOAT' },
-  { valor: 'atm', nombre: 'Cajero ATM' },
-  { valor: 'favor', nombre: 'Rappi Favor' },
+  { valor: 'travel', nombre: 'Rappi Travel', nota: 'Vuelos, hoteles, autos y paquetes.' },
+  { valor: 'soat', nombre: 'SOAT', soloEn: 'CO', nota: 'El seguro obligatorio de vehículos.' },
+  { valor: 'atm', nombre: 'Cajero ATM', nota: 'El retiro de efectivo.' },
+  { valor: 'favor', nombre: 'RappiFavor', nota: 'Los mandados y diligencias.' },
 ];
+
+/** Las que se pueden ofrecer e imprimir en este pais. */
+function seccionesExcluiblesDe(codigoPais) {
+  var lista = [];
+  for (var i = 0; i < SECCIONES_EXCLUIBLES_ETA.length; i++) {
+    var seccion = SECCIONES_EXCLUIBLES_ETA[i];
+    if (seccion.soloEn && seccion.soloEn !== codigoPais) continue;
+    lista.push(seccion);
+  }
+  return lista;
+}
+
+/**
+ * FRAGMENTO: las secciones excluidas, entrecomilladas y en orden.
+ *
+ * "las secciones “Rappi Travel”, “SOAT”, “Cajero ATM” y “RappiFavor”". Con una
+ * sola marcada concuerda en singular: "la seccion “SOAT”".
+ */
+function textoSeccionesExcluidas(elegidas, codigoPais) {
+  var disponibles = seccionesExcluiblesDe(codigoPais);
+  var marcadas = elegidas || [];
+  var entrecomilladas = [];
+  for (var i = 0; i < disponibles.length; i++) {
+    for (var e = 0; e < marcadas.length; e++) {
+      if (marcadas[e] === disponibles[i].valor) {
+        entrecomilladas.push('“' + disponibles[i].nombre + '”');
+        break;
+      }
+    }
+  }
+  if (entrecomilladas.length === 0) return '';
+  var articulo = entrecomilladas.length === 1 ? 'la sección ' : 'las secciones ';
+  return articulo + listaY(entrecomilladas);
+}
 
 /**
  * FRAGMENTO: el tiempo prometido, en letras y cifra.
@@ -77,19 +123,11 @@ function textoLimiteOrdenes(entrada) {
  * Sin exclusiones la frase no puede quedar con un "a excepcion de" colgando, asi
  * que se dice entera de otra forma.
  */
-function textoRedencionEta(entrada) {
+function textoRedencionEta(entrada, pais) {
   var base = 'Se aclara que los Créditos otorgados podrán ser utilizados o redimidos en cualquier sección de la Plataforma Rappi';
-  var elegidas = entrada.exclusionesEta || [];
-  if (elegidas.length === 0) return base + '.';
-
-  var nombres = [];
-  for (var i = 0; i < SECCIONES_EXCLUIBLES_ETA.length; i++) {
-    for (var e = 0; e < elegidas.length; e++) {
-      if (elegidas[e] === SECCIONES_EXCLUIBLES_ETA[i].valor) { nombres.push(SECCIONES_EXCLUIBLES_ETA[i].nombre); break; }
-    }
-  }
-  if (nombres.length === 0) return base + '.';
-  return base + ', a excepción de ' + listaY(nombres) + '.';
+  var excluidas = textoSeccionesExcluidas(entrada.exclusionesEta, pais ? pais.codigo : 'CO');
+  if (!excluidas) return base + '.';
+  return base + ', a excepción de ' + excluidas + '.';
 }
 
 /**
@@ -115,7 +153,7 @@ function calcularDerivadosEta(entrada, pais) {
     // Va dentro de la clausula de vigencia y redencion de Creditos, que es
     // donde la ponen los demas modelos. En los documentos publicados estaba
     // suelta entre las restricciones. Ver docs/MEJORAS_ETA.md.
-    TEXTO_LUGAR_REDENCION: textoRedencionEta(entrada),
+    TEXTO_LUGAR_REDENCION: textoRedencionEta(entrada, pais),
     MODALIDAD_TURBO: MODALIDAD_TURBO_POR_DEFECTO,
     PRESUPUESTO: presupuestoEta(entrada, pais),
   };
@@ -125,6 +163,8 @@ if (typeof module !== 'undefined') {
   module.exports = {
     MODALIDAD_TURBO_POR_DEFECTO: MODALIDAD_TURBO_POR_DEFECTO,
     SECCIONES_EXCLUIBLES_ETA: SECCIONES_EXCLUIBLES_ETA,
+    seccionesExcluiblesDe: seccionesExcluiblesDe,
+    textoSeccionesExcluidas: textoSeccionesExcluidas,
     calcularDerivadosEta: calcularDerivadosEta,
   };
 }

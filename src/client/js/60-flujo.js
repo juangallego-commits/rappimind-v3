@@ -224,6 +224,7 @@ function pantallaFiltro(raiz) {
     for (var i = 0; i < preguntas.length; i++) {
       if (respuestas[preguntas[i].id] === true) {
         E.motivoDeLegal = estado.T(preguntas[i].razon);
+        E.volverDeLegal = 'filtro';
         RM.app.ir('legal');
         return;
       }
@@ -290,6 +291,7 @@ function pantallaFiltroTravel(raiz) {
     for (var i = 0; i < FILTRO_DE_TRAVEL.length; i++) {
       if (respuestas[FILTRO_DE_TRAVEL[i].id] === true) {
         E.motivoDeLegal = estado.T(FILTRO_DE_TRAVEL[i].razon);
+        E.volverDeLegal = 'filtroTravel';
         RM.app.ir('legal');
         return;
       }
@@ -365,6 +367,7 @@ function pantallaLegal(raiz) {
             document.createTextNode(estado.T('Ir al formulario de Legal')), RM.util.icono('abrir', 16),
           ])
         : crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Falta configurar el enlace del formulario de Legal. Avísale a Juan.') }),
+      botonDeCambiarMiRespuesta(),
       crear('button', {
         clase: 'boton boton-secundario', type: 'button', texto: estado.T('Volver al inicio'),
         onclick: function () { RM.app.ir('inicio'); },
@@ -372,6 +375,36 @@ function pantallaLegal(raiz) {
     ]),
   ]);
   raiz.appendChild(contenido);
+}
+
+/**
+ * El boton para volver a la pregunta que mando a Legal.
+ *
+ * Llegar a Legal por marcar mal una casilla del filtro era un callejon: el
+ * unico camino de vuelta era "Volver al inicio", que borra todo lo respondido.
+ * Juan lo decidio el 20 de septiembre de 2026 (punto F8).
+ *
+ * Solo sale cuando sabemos de donde vino. Un boton que no sepa a donde volver
+ * es peor que no tenerlo.
+ */
+function botonDeCambiarMiRespuesta() {
+  var desde = E.volverDeLegal;
+  if (!desde) return null;
+  return crear('button', {
+    clase: 'boton boton-secundario', type: 'button', texto: estado.T('Cambiar mi respuesta'),
+    onclick: function () {
+      if (desde === 'filtro') E.filtroRespondido = false;
+      if (desde === 'filtroTravel') E.filtroDeTravelRespondido = false;
+      if (desde === 'negocio') {
+        estado.fijar('negocio', null);
+        E.respondidas.negocio = false;
+        E.campoAbierto = 'negocio';
+      }
+      E.motivoDeLegal = null;
+      E.volverDeLegal = null;
+      RM.app.ir(desde === 'negocio' ? 'pasos' : desde);
+    },
+  });
 }
 
 RM.flujo = {

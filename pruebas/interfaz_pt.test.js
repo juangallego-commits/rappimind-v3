@@ -270,3 +270,45 @@ test('los números van como marcador, no como una palabra del idioma', () => {
   assert.strictEqual(traducirInterfaz('Faltan {n} datos', 'pt').replace('{n}', 3), 'Faltam 3 dados');
   assert.strictEqual(traducirInterfaz('Quedan {n} preguntas en este paso.', 'pt').replace('{n}', 2), 'Faltam 2 perguntas nesta etapa.');
 });
+
+// --- F2 y F7: lo que Juan decidió el 20 de septiembre de 2026 ---------------
+
+test('los nombres de los países se leen en portugués, y solo en la pantalla', () => {
+  const { nombreDePaisEnIdioma, NOMBRES_DE_PAIS_PT } = require('../src/core/textos_interfaz.js');
+
+  assert.strictEqual(nombreDePaisEnIdioma('Colombia', 'pt'), 'Colômbia');
+  assert.strictEqual(nombreDePaisEnIdioma('Perú', 'pt'), 'Peru');
+  assert.strictEqual(nombreDePaisEnIdioma('Ecuador', 'pt'), 'Equador');
+  assert.strictEqual(nombreDePaisEnIdioma('Uruguay', 'pt'), 'Uruguai');
+
+  // Los otros cinco se escriben igual en los dos idiomas.
+  for (const nombre of ['México', 'Argentina', 'Chile', 'Costa Rica', 'Brasil']) {
+    assert.strictEqual(nombreDePaisEnIdioma(nombre, 'pt'), nombre, nombre);
+  }
+
+  // En español no cambia nada, y un país que no esté en la lista se devuelve
+  // tal cual en vez de quedar vacío.
+  assert.strictEqual(nombreDePaisEnIdioma('Colombia', 'es'), 'Colombia');
+  assert.strictEqual(nombreDePaisEnIdioma('Paraguay', 'pt'), 'Paraguay');
+
+  // Y cada nombre traducido tiene que ser el de un país que existe: una clave
+  // mal escrita es una traducción que nunca se aplica.
+  const nombres = PAISES.map((p) => p.nombre);
+  for (const clave of Object.keys(NOMBRES_DE_PAIS_PT)) {
+    assert.ok(nombres.indexOf(clave) !== -1, 'no hay ningún país llamado ' + clave);
+  }
+});
+
+test('la columna nombre no se traduce: el documento sigue en español', () => {
+  // El nombre del país sale impreso dentro del T&C. Un documento de Ecuador
+  // dice "Ecuador" aunque quien llenó el formulario lo leyera en portugués.
+  const fuentes = fuentesDelCliente();
+  const traduceLaRuta = fuentes.some((f) => f.texto.indexOf('nombreDePais(pais.nombre) : \'\').toLowerCase()') !== -1);
+  assert.strictEqual(traduceLaRuta, false, 'la ruta de publicación se está armando con el nombre traducido');
+});
+
+test('el botón en portugués dice lo mismo que la pantalla que abre', () => {
+  // Punto F7. Decía "Ver o meu histórico" y la pantalla se llama "Minhas
+  // campanhas": el mismo descuadre que ya se había corregido en español.
+  assert.strictEqual(TEXTOS_PT['Ver mis campañas'], 'Ver minhas campanhas');
+});

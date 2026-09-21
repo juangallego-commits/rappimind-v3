@@ -19,6 +19,7 @@ const { rutaDesdeRaiz, leerJson } = require('../../scripts/lib/archivos');
 const { ESQUEMAS, camposVisibles, resolverAtributo } = require('../../src/core/esquemas.js');
 const { preguntaDe } = require('../../src/core/preguntas.js');
 const { seccionesDePais } = require('../../src/core/paises.js');
+const { seccionesExcluiblesDe } = require('../../src/core/derivados_eta.js');
 
 const CATEGORIAS_TRAVEL = leerJson(rutaDesdeRaiz('data', 'categorias_travel.json'));
 const SECCIONES = leerJson(rutaDesdeRaiz('data', 'secciones.json'));
@@ -72,6 +73,9 @@ function valorDePrueba(campo, codigoPais, tipoActual) {
   if (campo.tipo === 'identificacion') return IDENTIFICACIONES[codigoPais];
   if (campo.tipo === 'texto') return campo.id === 'ciudades' ? 'Bogotá' : 'Texto de prueba';
   if (campo.tipo === 'casillas') {
+    if (campo.id === 'exclusionesRedencion') {
+      return seccionesExcluiblesDe(codigoPais).map((s) => s.valor);
+    }
     if (campo.id === 'secciones') {
       const nombres = seccionesDePais(codigoPais, SECCIONES);
       return (nombres.length ? nombres : ['Restaurantes']).slice(0, 2);

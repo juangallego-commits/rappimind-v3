@@ -68,7 +68,7 @@ function pantallaResumen(raiz) {
     // lo que le faltaba al comercial, que era marcar la casilla.
     var porConfirmar = datosPorConfirmar(pais);
     var aviso = crear('div', { clase: 'aviso' }, [
-      crear('h3', { texto: pais.nombre + estado.T(' está en pruebas: no publiques este documento todavía') }),
+      crear('h3', { texto: estado.nombreDePais(pais.nombre) + estado.T(' está en pruebas: no publiques este documento todavía') }),
       crear('p', {
         texto: estado.T('Genera el documento, léelo y dinos si los datos legales de tu país están bien. Los propuso la herramienta por analogía con Colombia y no los ha confirmado nadie.'),
       }),

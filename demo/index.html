@@ -2203,7 +2203,9 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 
   var calcularDerivadosTravel = require('./derivados_travel.js').calcularDerivadosTravel;
   var calcularDerivadosBr = require('./derivados_br.js').calcularDerivadosBr;
-  var calcularDerivadosEta = require('./derivados_eta.js').calcularDerivadosEta;
+  var moduloEta = require('./derivados_eta.js');
+  var calcularDerivadosEta = moduloEta.calcularDerivadosEta;
+  var textoSeccionesExcluidas = moduloEta.textoSeccionesExcluidas;
   var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
   var moduloTextoDerivados = require('./texto.js');
   var tieneValor = moduloTextoDerivados.tieneValor;
@@ -2258,6 +2260,10 @@ var TEXTO_LUGAR_REDENCION_POR_OPCION = {
   tienda: 'Los Créditos podrán redimirse únicamente en la Tienda Participante donde se originó el Beneficio, dentro del Territorio.',
   general: 'Los Créditos podrán redimirse en cualquier sección de la Plataforma Rappi habilitada para el uso de Créditos, dentro del Territorio.',
 };
+
+/* El cierre de la oracion de "en cualquier parte" cuando hay secciones fuera. */
+var REDENCION_GENERAL_SIN_EXCLUSIONES =
+  'Los Créditos podrán redimirse en cualquier sección de la Plataforma Rappi habilitada para el uso de Créditos, dentro del Territorio';
 
 var CRITERIO_GANADOR_POR_OPCION = {
   mayor_valor: 'el mayor valor total en compras de Productos Participantes',
@@ -2395,7 +2401,25 @@ function textoVigenciaCreditos(entrada, pais) {
 }
 
 /** ORACION: donde se pueden redimir los Creditos. */
-function textoLugarRedencion(entrada) {
+function textoLugarRedencion(entrada, pais) {
+  /*
+   * "En cualquier parte de Rappi" casi nunca quiere decir en cualquier parte.
+   *
+   * Juan confirmo que estos Creditos no aplican a Rappi Travel, al SOAT, al
+   * Cajero ATM ni a RappiFavor, y hasta el 20 de septiembre de 2026 eso estaba
+   * dicho en la ayuda del formulario y no en el documento. Una exclusion que no
+   * esta en el T&C no se le puede oponer al usuario: si la app le rechaza los
+   * Creditos en RappiFavor, reclama con el documento en la mano. Punto D5.
+   *
+   * Las casillas vienen marcadas, asi que la oracion sale completa sin que nadie
+   * haga nada. Sin ninguna marcada queda la de antes, palabra por palabra.
+   */
+  if (entrada.redencion === 'general') {
+    var excluidas = textoSeccionesExcluidas(entrada.exclusionesRedencion, pais ? pais.codigo : 'CO');
+    if (!excluidas) return TEXTO_LUGAR_REDENCION_POR_OPCION.general;
+    return REDENCION_GENERAL_SIN_EXCLUSIONES + ', a excepción de ' + excluidas + '.';
+  }
+
   var fijo = TEXTO_LUGAR_REDENCION_POR_OPCION[entrada.redencion];
   if (fijo) return fijo;
   if (entrada.redencion !== 'secciones') return '';
@@ -2587,7 +2611,7 @@ function calcularDerivadosEnElIdiomaDelPais(entrada, pais) {
     valores.TEXTO_VERIFICACION = textoVerificacion(entrada);
   }
   if (tieneValor(entrada.vigencia)) valores.TEXTO_VIGENCIA_CREDITOS = textoVigenciaCreditos(entrada, pais);
-  if (tieneValor(entrada.redencion)) valores.TEXTO_LUGAR_REDENCION = textoLugarRedencion(entrada);
+  if (tieneValor(entrada.redencion)) valores.TEXTO_LUGAR_REDENCION = textoLugarRedencion(entrada, pais);
 
   if (entrada.tipo === 'carrera_compras') {
     derivadosCarrera(entrada, pais, valores);
@@ -2853,13 +2877,59 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 /** La modalidad del boton Turbo. Los dos documentos publicados usan esta. */
 var MODALIDAD_TURBO_POR_DEFECTO = 'Turbo Restaurantes';
 
-/** Las secciones que se pueden excluir de la redencion, con su nombre impreso. */
+/**
+ * Las secciones que se pueden excluir de la redencion, con su nombre impreso.
+ *
+ * Empezaron siendo solo del ETA y desde el 20 de septiembre de 2026 (punto D5)
+ * las usa tambien el Cashback cuando los Creditos se pueden gastar en cualquier
+ * parte de Rappi. El nombre de la llave se queda por la frontera del Sheet: la
+ * columna exclusiones_eta ya existe y mover una columna desalinea el historico.
+ *
+ * "RappiFavor" va junto, que es como lo escriben los T&C publicados de Rappi en
+ * Colombia, Ecuador y Costa Rica.
+ *
+ * El SOAT es colombiano, asi que fuera de Colombia no se ofrece ni se imprime.
+ */
 var SECCIONES_EXCLUIBLES_ETA = [
-  { valor: 'travel', nombre: 'Rappi Travel' },
-  { valor: 'soat', nombre: 'SOAT' },
-  { valor: 'atm', nombre: 'Cajero ATM' },
-  { valor: 'favor', nombre: 'Rappi Favor' },
+  { valor: 'travel', nombre: 'Rappi Travel', nota: 'Vuelos, hoteles, autos y paquetes.' },
+  { valor: 'soat', nombre: 'SOAT', soloEn: 'CO', nota: 'El seguro obligatorio de vehículos.' },
+  { valor: 'atm', nombre: 'Cajero ATM', nota: 'El retiro de efectivo.' },
+  { valor: 'favor', nombre: 'RappiFavor', nota: 'Los mandados y diligencias.' },
 ];
+
+/** Las que se pueden ofrecer e imprimir en este pais. */
+function seccionesExcluiblesDe(codigoPais) {
+  var lista = [];
+  for (var i = 0; i < SECCIONES_EXCLUIBLES_ETA.length; i++) {
+    var seccion = SECCIONES_EXCLUIBLES_ETA[i];
+    if (seccion.soloEn && seccion.soloEn !== codigoPais) continue;
+    lista.push(seccion);
+  }
+  return lista;
+}
+
+/**
+ * FRAGMENTO: las secciones excluidas, entrecomilladas y en orden.
+ *
+ * "las secciones “Rappi Travel”, “SOAT”, “Cajero ATM” y “RappiFavor”". Con una
+ * sola marcada concuerda en singular: "la seccion “SOAT”".
+ */
+function textoSeccionesExcluidas(elegidas, codigoPais) {
+  var disponibles = seccionesExcluiblesDe(codigoPais);
+  var marcadas = elegidas || [];
+  var entrecomilladas = [];
+  for (var i = 0; i < disponibles.length; i++) {
+    for (var e = 0; e < marcadas.length; e++) {
+      if (marcadas[e] === disponibles[i].valor) {
+        entrecomilladas.push('“' + disponibles[i].nombre + '”');
+        break;
+      }
+    }
+  }
+  if (entrecomilladas.length === 0) return '';
+  var articulo = entrecomilladas.length === 1 ? 'la sección ' : 'las secciones ';
+  return articulo + listaY(entrecomilladas);
+}
 
 /**
  * FRAGMENTO: el tiempo prometido, en letras y cifra.
@@ -2901,19 +2971,11 @@ function textoLimiteOrdenes(entrada) {
  * Sin exclusiones la frase no puede quedar con un "a excepcion de" colgando, asi
  * que se dice entera de otra forma.
  */
-function textoRedencionEta(entrada) {
+function textoRedencionEta(entrada, pais) {
   var base = 'Se aclara que los Créditos otorgados podrán ser utilizados o redimidos en cualquier sección de la Plataforma Rappi';
-  var elegidas = entrada.exclusionesEta || [];
-  if (elegidas.length === 0) return base + '.';
-
-  var nombres = [];
-  for (var i = 0; i < SECCIONES_EXCLUIBLES_ETA.length; i++) {
-    for (var e = 0; e < elegidas.length; e++) {
-      if (elegidas[e] === SECCIONES_EXCLUIBLES_ETA[i].valor) { nombres.push(SECCIONES_EXCLUIBLES_ETA[i].nombre); break; }
-    }
-  }
-  if (nombres.length === 0) return base + '.';
-  return base + ', a excepción de ' + listaY(nombres) + '.';
+  var excluidas = textoSeccionesExcluidas(entrada.exclusionesEta, pais ? pais.codigo : 'CO');
+  if (!excluidas) return base + '.';
+  return base + ', a excepción de ' + excluidas + '.';
 }
 
 /**
@@ -2939,7 +3001,7 @@ function calcularDerivadosEta(entrada, pais) {
     // Va dentro de la clausula de vigencia y redencion de Creditos, que es
     // donde la ponen los demas modelos. En los documentos publicados estaba
     // suelta entre las restricciones. Ver docs/MEJORAS_ETA.md.
-    TEXTO_LUGAR_REDENCION: textoRedencionEta(entrada),
+    TEXTO_LUGAR_REDENCION: textoRedencionEta(entrada, pais),
     MODALIDAD_TURBO: MODALIDAD_TURBO_POR_DEFECTO,
     PRESUPUESTO: presupuestoEta(entrada, pais),
   };
@@ -2949,6 +3011,8 @@ if (typeof module !== 'undefined') {
   module.exports = {
     MODALIDAD_TURBO_POR_DEFECTO: MODALIDAD_TURBO_POR_DEFECTO,
     SECCIONES_EXCLUIBLES_ETA: SECCIONES_EXCLUIBLES_ETA,
+    seccionesExcluiblesDe: seccionesExcluiblesDe,
+    textoSeccionesExcluidas: textoSeccionesExcluidas,
     calcularDerivadosEta: calcularDerivadosEta,
   };
 }
@@ -3699,9 +3763,26 @@ function textoSegmentoTravel(entrada) {
   return TEXTO_SEGMENTO_TRAVEL_POR_OPCION[entrada.segmento] || '';
 }
 
-/** ORACION: con que se paga. */
+/* La frase que solo tiene sentido cuando el beneficio son Creditos. */
+var EXCLUSION_DE_PAGOS_CON_CREDITOS =
+  ' No se obtendrá el Beneficio respecto de órdenes pagadas parcial o totalmente con Créditos de la Plataforma.';
+
+/**
+ * ORACION: con que se paga.
+ *
+ * En los descuentos esa frase sale. Venia de los cashback, donde evita montar un
+ * beneficio promocional sobre otro: el usuario no gana Creditos pagando con
+ * Creditos. En un descuento el beneficio no son Creditos, es un precio mas bajo,
+ * asi que la frase excluia pagos sin ninguna razon. Juan lo decidio el 20 de
+ * septiembre de 2026 (punto D8); en cashback_travel se queda.
+ */
 function textoMetodoPagoTravel(entrada) {
-  return TEXTO_METODO_PAGO_TRAVEL_POR_OPCION[entrada.metodoPago] || '';
+  var texto = TEXTO_METODO_PAGO_TRAVEL_POR_OPCION[entrada.metodoPago] || '';
+  if (!texto) return '';
+  if (entrada.tipo === 'descuento_travel') {
+    return texto.replace(EXCLUSION_DE_PAGOS_CON_CREDITOS, '');
+  }
+  return texto;
 }
 
 /** ORACION: que productos participan. */
@@ -4655,6 +4736,17 @@ var CAMPOS_CREDITOS = [
     obligatorio: function (entrada) { return entrada.redencion === 'secciones'; },
   },
   {
+    // Las secciones donde los Creditos no aplican. Solo con "en cualquier
+    // seccion": con "solo en esta tienda" o "en ciertas secciones" la oracion
+    // ya dice donde valen, y excluir ahi seria decir dos cosas a la vez.
+    id: 'exclusionesRedencion',
+    etiqueta: 'Secciones excluidas',
+    tipo: 'casillas',
+    paso: 'creditos',
+    obligatorio: false,
+    visible: function (entrada) { return entrada.redencion === 'general'; },
+  },
+  {
     id: 'condiciones',
     etiqueta: 'Condiciones adicionales',
     tipo: 'casillas',
@@ -4767,7 +4859,7 @@ var CAMPOS_CARRERA = [
     obligatorio: function (entrada) { return entrada.tipoPremio === 'fisico'; },
     opciones: [
       { valor: 'organizador', etiqueta: 'El Organizador' },
-      { valor: 'rappi', etiqueta: 'Rappi como operador logístico' },
+      { valor: 'rappi', etiqueta: 'Rappi, como operador logístico' },
     ],
   },
   {
@@ -4917,7 +5009,12 @@ var CAMPOS_TRAVEL_COMUNES = [
   // --- Organizador ---------------------------------------------------------
   { id: 'organizadorRazonSocial', etiqueta: 'Razón social del organizador', tipo: 'texto', paso: 'organizador', obligatorio: true },
   { id: 'organizadorId', etiqueta: 'Identificación del organizador', tipo: 'identificacion', paso: 'organizador', obligatorio: true },
-  { id: 'marcaAliado', etiqueta: 'Marca aliada', tipo: 'texto', paso: 'organizador', obligatorio: false },
+  // La marca es obligatoria desde el 20 de septiembre de 2026 (punto D7).
+  // Cuando se dejaba vacia, el nombre de la campana quedaba con la razon social
+  // adentro: "OPERADOR DE PRUEBA S.A.S. · 50% CASHBACK TRAVEL · 15 OCT 2026", y
+  // ese nombre va en el titulo del documento y, en la Carrera, dentro de una
+  // clausula.
+  { id: 'marcaAliado', etiqueta: 'Marca aliada', tipo: 'texto', paso: 'organizador', obligatorio: true },
 
   // --- Productos -----------------------------------------------------------
   { id: 'categorias', etiqueta: 'Categorías participantes', tipo: 'casillas', paso: 'productos_travel', obligatorio: true },
@@ -8898,7 +8995,6 @@ var PREGUNTAS = {
     ayuda: 'Por ejemplo: solo en la tienda donde se los ganó, que es lo más común.',
     porQue: 'Define dónde vale el saldo. Lo normal es que se gaste en la misma tienda donde el usuario se ganó el beneficio. En todo caso, estos Créditos casi nunca aplican a RappiFavor, Cajero ATM ni Rappi Travel.',
     avanzaSola: true,
-    porDefecto: 'tienda',
     opciones: [
       { valor: 'tienda', etiqueta: 'Solo en esta tienda', nota: 'Vuelve a comprar donde ganó el beneficio.' },
       { valor: 'secciones', etiqueta: 'En ciertas secciones de Rappi', nota: 'Tú eliges cuáles.' },
@@ -8969,6 +9065,29 @@ var PREGUNTAS = {
     placeholders: ['NOTIFICACION_INVIMA'],
   }),
 
+  /*
+   * Las secciones donde los Creditos NO aplican, en el Cashback.
+   *
+   * Es la misma pregunta del ETA, con la misma lista, y sale cuando los Creditos
+   * se pueden gastar "en cualquier parte de Rappi". Hasta el 20 de septiembre de
+   * 2026 eso estaba solo en la ayuda, y el documento prometia cualquier seccion.
+   * Punto D5.
+   *
+   * Vienen marcadas porque casi ninguna campana las abre: marcada no es
+   * respondida, la pregunta se muestra igual y alguien tiene que confirmarla.
+   */
+  exclusionesRedencion: p({
+    paso: 'creditos',
+    pregunta: '¿En qué secciones NO se pueden redimir los Créditos?',
+    ayuda: 'Vienen marcadas las de siempre. Desmarca una solo si esa campaña sí la permite.',
+    porQue: 'El documento tiene que decir dónde no vale el saldo. Una sección que no esté excluida aquí queda prometida, y después no se puede cerrar: el usuario reclama con el T&C en la mano.',
+    opcional: true,
+    multiple: true,
+    porDefecto: ['travel', 'soat', 'atm', 'favor'],
+    placeholders: ['TEXTO_LUGAR_REDENCION'],
+    errores: { vacio: 'Marca las secciones excluidas, o sigue sin marcar ninguna.' },
+  }),
+
   secciones: p({
     paso: 'creditos',
     pregunta: '¿En qué secciones?',
@@ -8988,12 +9107,13 @@ var PREGUNTAS = {
   marcaAliado: p({
     paso: 'organizador',
     pregunta: '¿De qué marca son los productos?',
-    ayuda: 'Como la ve el usuario en la app. Por ejemplo: JetSMART. Si participan todas, déjalo vacío.',
-    porQue: 'El documento dice de qué marca son los productos que participan. Si lo dejas vacío, participan todos los de las categorías que elijas.',
+    ayuda: 'Como la ve el usuario en la app. Por ejemplo: JetSMART.',
+    porQue: 'El documento dice de qué marca son los productos que participan, y el nombre de la campaña empieza por ella.',
     ejemplo: 'JetSMART',
-    opcional: true,
     placeholders: ['TEXTO_PRODUCTOS_TRAVEL'],
-    errores: {},
+    errores: {
+      vacio: 'Escribe la marca. Sin ella, el nombre de la campaña quedaría con la razón social.',
+    },
   }),
 
   categorias: p({
@@ -9467,6 +9587,13 @@ var PREGUNTAS = {
   }),
 
   // --- Quién participa ----------------------------------------------------
+  //
+  // Tres preguntas venian marcadas y dejaron de venirlo el 20 de septiembre de
+  // 2026 (punto F8): esta, la del medio de pago y la de donde se gastan los
+  // Creditos. Marcada no es respondida, la pregunta se mostraba igual y habia
+  // que confirmarla, pero la respuesta que nadie leyo queda impresa y despues no
+  // se puede excluir a nadie. Estas tres deciden a quien se le puede negar el
+  // beneficio, asi que las responde el comercial o no se genera.
 
   segmento: p({
     paso: 'participantes',
@@ -9474,7 +9601,6 @@ var PREGUNTAS = {
     ayuda: 'Por ejemplo: solo Pro, o quienes no compran hace 60 días.',
     porQue: 'Limita quién puede reclamar el beneficio. Si el documento dice "todos", no puedes excluir a nadie después.',
     avanzaSola: true,
-    porDefecto: 'todos',
     opciones: [
       { valor: 'todos', etiqueta: 'Todos los usuarios', nota: 'Cualquier persona mayor de edad.' },
       { valor: 'pro', etiqueta: 'Solo Pro y Pro Black', nota: 'Con la suscripción activa.' },
@@ -9510,7 +9636,6 @@ var PREGUNTAS = {
     ayuda: 'Con "cualquier medio" entran tarjetas, billeteras y efectivo donde exista.',
     porQue: 'Restringir el medio de pago cambia quién puede participar. Los pedidos pagados con Créditos nunca dan beneficio.',
     avanzaSola: true,
-    porDefecto: 'todos',
     opciones: [
       { valor: 'todos', etiqueta: 'Con cualquier medio de pago', nota: 'Lo más común.' },
       { valor: 'sin_efectivo', etiqueta: 'Con todo menos efectivo', nota: 'Tarjetas y billeteras sí, efectivo no.' },
@@ -10806,7 +10931,7 @@ var TEXTOS_PT = {
   'Abrir el documento': 'Abrir o documento',
   'Cuando ya esté publicado': 'Quando já estiver publicado',
   'Hacer otra campaña': 'Fazer outra campanha',
-  'Ver mis campañas': 'Ver o meu histórico',
+  'Ver mis campañas': 'Ver minhas campanhas',
   'Te llega por correo en un par de minutos, con los pasos para publicarlo o a quién pasárselo.':
     'Você recebe por e-mail em poucos minutos, com o passo a passo para publicar ou para saber a quem enviar.',
 
@@ -10828,6 +10953,36 @@ var TEXTOS_PT = {
 var DICCIONARIOS = { pt: TEXTOS_PT };
 
 /**
+ * Los nombres de los paises, solo en la pantalla.
+ *
+ * La columna "nombre" de la pestana Paises es una sola por pais y sale impresa
+ * dentro del documento, asi que no se toca: un T&C de Ecuador dice "Ecuador"
+ * aunque quien llene el formulario lo lea en portugues. Lo que cambia aqui es
+ * lo que se ve en la pantalla. Juan lo decidio el 20 de septiembre de 2026
+ * (punto F2).
+ *
+ * Solo van los cuatro que cambian. Mexico, Argentina, Chile, Costa Rica y
+ * Brasil se escriben igual en los dos idiomas.
+ */
+var NOMBRES_DE_PAIS_PT = {
+  'Colombia': 'Colômbia',
+  'Perú': 'Peru',
+  'Ecuador': 'Equador',
+  'Uruguay': 'Uruguai',
+};
+
+var NOMBRES_DE_PAIS = { pt: NOMBRES_DE_PAIS_PT };
+
+/** El nombre de un pais como se lee en la pantalla, en el idioma de la interfaz. */
+function nombreDePaisEnIdioma(nombre, idioma) {
+  if (!idioma || idioma === 'es') return nombre;
+  var mapa = NOMBRES_DE_PAIS[idioma];
+  if (!mapa) return nombre;
+  var traducido = mapa[nombre];
+  return traducido === undefined ? nombre : traducido;
+}
+
+/**
  * Traduce un texto de interfaz. Sin traduccion devuelve el espanol, que es la
  * degradacion correcta: se entiende, aunque no este en el idioma pedido.
  */
@@ -10843,6 +10998,8 @@ if (typeof module !== 'undefined') {
   module.exports = {
     IDIOMAS_DE_INTERFAZ: IDIOMAS_DE_INTERFAZ,
     TEXTOS_PT: TEXTOS_PT,
+    NOMBRES_DE_PAIS_PT: NOMBRES_DE_PAIS_PT,
+    nombreDePaisEnIdioma: nombreDePaisEnIdioma,
     traducirInterfaz: traducirInterfaz,
   };
 }
@@ -12271,6 +12428,10 @@ var estado = {
   filtroRespondido: false,
   filtroDeTravelRespondido: false,
   motivoDeLegal: null,
+  // De donde salio hacia la pantalla de Legal, para poder volver a esa misma
+  // pregunta con "Cambiar mi respuesta". Sin esto, el unico camino de vuelta
+  // era el inicio, y perder todo lo respondido por una respuesta mal marcada.
+  volverDeLegal: null,
   // Cuál de los T&C que Legal ya publicó está mirando. Null = la lista entera.
   tycGenericoElegido: null,
   errores: {},
@@ -12318,6 +12479,7 @@ function reiniciarFormulario(base, yaRespondidas) {
   estado.filtroRespondido = false;
   estado.filtroDeTravelRespondido = false;
   estado.motivoDeLegal = null;
+  estado.volverDeLegal = null;
   estado.tycGenericoElegido = null;
   estado.resultado = null;
   estado.ultimoTextoVistaPrevia = '';
@@ -12415,6 +12577,17 @@ function T(texto) {
 }
 
 /**
+ * El nombre de un pais como se lee en la pantalla.
+ *
+ * Aparte de T() porque no sale del diccionario de la interfaz: el nombre viene
+ * de la fila del pais y en el documento se imprime siempre en espanol. Lo que
+ * cambia es solo lo que se ve. Punto F2.
+ */
+function nombreDePais(nombre) {
+  return nombreDePaisEnIdioma(nombre, idiomaInterfaz());
+}
+
+/**
  * La pregunta de un campo, en la variante del tipo de campana elegido.
  *
  * Existe porque el mecanismo de variantes estaba construido y probado en Node,
@@ -12435,6 +12608,7 @@ RM.estado = {
   estado: estado,
   pregunta: pregunta,
   T: T,
+  nombreDePais: nombreDePais,
   idiomaInterfaz: idiomaInterfaz,
   fijarIdiomaInterfaz: fijarIdiomaInterfaz,
   entrada: entrada,
@@ -13227,6 +13401,7 @@ function pantallaFiltro(raiz) {
     for (var i = 0; i < preguntas.length; i++) {
       if (respuestas[preguntas[i].id] === true) {
         E.motivoDeLegal = estado.T(preguntas[i].razon);
+        E.volverDeLegal = 'filtro';
         RM.app.ir('legal');
         return;
       }
@@ -13293,6 +13468,7 @@ function pantallaFiltroTravel(raiz) {
     for (var i = 0; i < FILTRO_DE_TRAVEL.length; i++) {
       if (respuestas[FILTRO_DE_TRAVEL[i].id] === true) {
         E.motivoDeLegal = estado.T(FILTRO_DE_TRAVEL[i].razon);
+        E.volverDeLegal = 'filtroTravel';
         RM.app.ir('legal');
         return;
       }
@@ -13368,6 +13544,7 @@ function pantallaLegal(raiz) {
             document.createTextNode(estado.T('Ir al formulario de Legal')), RM.util.icono('abrir', 16),
           ])
         : crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Falta configurar el enlace del formulario de Legal. Avísale a Juan.') }),
+      botonDeCambiarMiRespuesta(),
       crear('button', {
         clase: 'boton boton-secundario', type: 'button', texto: estado.T('Volver al inicio'),
         onclick: function () { RM.app.ir('inicio'); },
@@ -13375,6 +13552,36 @@ function pantallaLegal(raiz) {
     ]),
   ]);
   raiz.appendChild(contenido);
+}
+
+/**
+ * El boton para volver a la pregunta que mando a Legal.
+ *
+ * Llegar a Legal por marcar mal una casilla del filtro era un callejon: el
+ * unico camino de vuelta era "Volver al inicio", que borra todo lo respondido.
+ * Juan lo decidio el 20 de septiembre de 2026 (punto F8).
+ *
+ * Solo sale cuando sabemos de donde vino. Un boton que no sepa a donde volver
+ * es peor que no tenerlo.
+ */
+function botonDeCambiarMiRespuesta() {
+  var desde = E.volverDeLegal;
+  if (!desde) return null;
+  return crear('button', {
+    clase: 'boton boton-secundario', type: 'button', texto: estado.T('Cambiar mi respuesta'),
+    onclick: function () {
+      if (desde === 'filtro') E.filtroRespondido = false;
+      if (desde === 'filtroTravel') E.filtroDeTravelRespondido = false;
+      if (desde === 'negocio') {
+        estado.fijar('negocio', null);
+        E.respondidas.negocio = false;
+        E.campoAbierto = 'negocio';
+      }
+      E.motivoDeLegal = null;
+      E.volverDeLegal = null;
+      RM.app.ir(desde === 'negocio' ? 'pasos' : desde);
+    },
+  });
 }
 
 RM.flujo = {
@@ -13430,7 +13637,7 @@ function comoTexto(campo) {
   // País y tipo traen sus nombres del servidor, no del esquema.
   if (campo.id === 'pais') {
     var pais = paisPorCodigo(E.configuracion.paises, valor);
-    return pais ? pais.nombre : String(valor);
+    return pais ? estado.nombreDePais(pais.nombre) : String(valor);
   }
   if (campo.id === 'tipo') {
     for (var t = 0; t < E.configuracion.tipos.length; t++) {
@@ -13505,7 +13712,7 @@ function opcionesDeshabilitadas(campo) {
     if (nombres.length > 0) return null;
     var sinSecciones = {};
     sinSecciones.secciones = estado.pregunta('redencion').razonSinSecciones
-      .replace('{pais}', pais.nombre);
+      .replace('{pais}', estado.nombreDePais(pais.nombre));
     return sinSecciones;
   }
 
@@ -13530,6 +13737,15 @@ function opcionesDeLosDatos(campo) {
   if (campo.id === 'secciones') {
     var nombres = pais ? seccionesDePais(pais.codigo, E.configuracion.secciones) : [];
     return nombres.map(function (nombre) { return { valor: nombre, etiqueta: nombre, nota: 'Sección de la app.' }; });
+  }
+
+  // Las secciones donde los Creditos no aplican. El SOAT es colombiano, asi que
+  // fuera de Colombia ni se ofrece ni se imprime: ofrecerlo seria dejar marcar
+  // una exclusion que el documento no va a decir.
+  if (campo.id === 'exclusionesRedencion') {
+    return seccionesExcluiblesDe(pais ? pais.codigo : '').map(function (seccion) {
+      return { valor: seccion.valor, etiqueta: seccion.nombre, nota: seccion.nota };
+    });
   }
 
   if (campo.id === 'acuerdoDatos') {
@@ -13585,7 +13801,7 @@ function avisoDePaisEnPruebas() {
   // de que hay que revisar va en el resumen, que es donde se decide publicar.
   return crear('div', { clase: 'aviso' }, [
     crear('p', {
-      texto: pais.nombre + estado.T(' está en pruebas: genera y revisa, pero todavía no publiques. Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.'),
+      texto: estado.nombreDePais(pais.nombre) + estado.T(' está en pruebas: genera y revisa, pero todavía no publiques. Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.'),
     }),
   ]);
 }
@@ -13620,7 +13836,7 @@ function panelDeAcuerdoDeDatos() {
     }
     caja.appendChild(lista);
   } else {
-    var nombre = pais ? pais.nombre : '';
+    var nombre = pais ? estado.nombreDePais(pais.nombre) : '';
     caja.appendChild(crear('p', {
       texto: (pais && pais.url_acuerdo_datos ? panel.conModelo : panel.sinModelo).replace('{país}', nombre),
     }));
@@ -13929,7 +14145,7 @@ function preguntaDeCatalogo(campo, campos, indice, pasos) {
   var opciones;
   if (campo.id === 'pais') {
     opciones = E.configuracion.paises.map(function (p) {
-      return { valor: p.codigo, etiqueta: p.nombre, nota: p.estado === 'piloto' ? estado.T('En piloto: solo para el equipo de pruebas.') : estado.T('Disponible.') };
+      return { valor: p.codigo, etiqueta: estado.nombreDePais(p.nombre), nota: p.estado === 'piloto' ? estado.T('En piloto: solo para el equipo de pruebas.') : estado.T('Disponible.') };
     });
   } else {
     // Solo los tipos del negocio elegido: Rappi y Rappi Travel son dos empresas
@@ -14128,6 +14344,7 @@ function alResponder(campoId, valor, campos, indice) {
       var porQueNo = razonParaNoHacerTravel();
       if (porQueNo) {
         E.motivoDeLegal = porQueNo;
+        E.volverDeLegal = 'negocio';
         RM.app.ir('legal');
         return true;
       }
@@ -14888,7 +15105,7 @@ function pantallaResumen(raiz) {
     // lo que le faltaba al comercial, que era marcar la casilla.
     var porConfirmar = datosPorConfirmar(pais);
     var aviso = crear('div', { clase: 'aviso' }, [
-      crear('h3', { texto: pais.nombre + estado.T(' está en pruebas: no publiques este documento todavía') }),
+      crear('h3', { texto: estado.nombreDePais(pais.nombre) + estado.T(' está en pruebas: no publiques este documento todavía') }),
       crear('p', {
         texto: estado.T('Genera el documento, léelo y dinos si los datos legales de tu país están bien. Los propuso la herramienta por analogía con Colombia y no los ha confirmado nadie.'),
       }),

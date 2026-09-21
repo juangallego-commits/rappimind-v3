@@ -167,7 +167,7 @@ var TEXTOS_PT = {
   'Abrir el documento': 'Abrir o documento',
   'Cuando ya esté publicado': 'Quando já estiver publicado',
   'Hacer otra campaña': 'Fazer outra campanha',
-  'Ver mis campañas': 'Ver o meu histórico',
+  'Ver mis campañas': 'Ver minhas campanhas',
   'Te llega por correo en un par de minutos, con los pasos para publicarlo o a quién pasárselo.':
     'Você recebe por e-mail em poucos minutos, com o passo a passo para publicar ou para saber a quem enviar.',
 
@@ -189,6 +189,36 @@ var TEXTOS_PT = {
 var DICCIONARIOS = { pt: TEXTOS_PT };
 
 /**
+ * Los nombres de los paises, solo en la pantalla.
+ *
+ * La columna "nombre" de la pestana Paises es una sola por pais y sale impresa
+ * dentro del documento, asi que no se toca: un T&C de Ecuador dice "Ecuador"
+ * aunque quien llene el formulario lo lea en portugues. Lo que cambia aqui es
+ * lo que se ve en la pantalla. Juan lo decidio el 20 de septiembre de 2026
+ * (punto F2).
+ *
+ * Solo van los cuatro que cambian. Mexico, Argentina, Chile, Costa Rica y
+ * Brasil se escriben igual en los dos idiomas.
+ */
+var NOMBRES_DE_PAIS_PT = {
+  'Colombia': 'Colômbia',
+  'Perú': 'Peru',
+  'Ecuador': 'Equador',
+  'Uruguay': 'Uruguai',
+};
+
+var NOMBRES_DE_PAIS = { pt: NOMBRES_DE_PAIS_PT };
+
+/** El nombre de un pais como se lee en la pantalla, en el idioma de la interfaz. */
+function nombreDePaisEnIdioma(nombre, idioma) {
+  if (!idioma || idioma === 'es') return nombre;
+  var mapa = NOMBRES_DE_PAIS[idioma];
+  if (!mapa) return nombre;
+  var traducido = mapa[nombre];
+  return traducido === undefined ? nombre : traducido;
+}
+
+/**
  * Traduce un texto de interfaz. Sin traduccion devuelve el espanol, que es la
  * degradacion correcta: se entiende, aunque no este en el idioma pedido.
  */
@@ -204,6 +234,8 @@ if (typeof module !== 'undefined') {
   module.exports = {
     IDIOMAS_DE_INTERFAZ: IDIOMAS_DE_INTERFAZ,
     TEXTOS_PT: TEXTOS_PT,
+    NOMBRES_DE_PAIS_PT: NOMBRES_DE_PAIS_PT,
+    nombreDePaisEnIdioma: nombreDePaisEnIdioma,
     traducirInterfaz: traducirInterfaz,
   };
 }

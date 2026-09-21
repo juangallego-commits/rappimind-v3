@@ -149,7 +149,17 @@ await p.evaluate(()=>{
 await p.waitForTimeout(300);
 const notasPt=await txt();
 ok('la nota "Em piloto" sale traducida en la tarjeta del país', notasPt.indexOf('Em piloto')!==-1 && notasPt.indexOf('En piloto')===-1, notasPt.replace(/\n+/g,' | ').slice(0,300));
-await clic('Ecuador'); await p.waitForTimeout(500);
+
+// Punto F2, 20 de septiembre de 2026: los nombres de los paises se leen en
+// portugues, y solo en la pantalla. La columna nombre no se toca, asi que el
+// documento sigue diciendo "Ecuador".
+ok('los nombres de los países se leen en portugués',
+  notasPt.indexOf('Colômbia')!==-1 && notasPt.indexOf('Equador')!==-1 &&
+  notasPt.indexOf('Peru')!==-1 && notasPt.indexOf('Uruguai')!==-1 &&
+  notasPt.indexOf('Colombia')===-1 && notasPt.indexOf('Ecuador')===-1,
+  notasPt.replace(/\n+/g,' | ').slice(0,400));
+
+await clic('Equador'); await p.waitForTimeout(500);
 const ecuadorPt=await p.evaluate(()=>{const a=document.querySelector('.columna-preguntas .aviso');return a?a.innerText:''});
 ok('un país en piloto sí lleva el aviso en portugués', ecuadorPt.indexOf('está em testes')!==-1 && ecuadorPt.indexOf('está en pruebas')===-1, ecuadorPt.replace(/\n+/g,' | ').slice(0,300));
 

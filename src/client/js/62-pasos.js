@@ -32,7 +32,7 @@ function comoTexto(campo) {
   // País y tipo traen sus nombres del servidor, no del esquema.
   if (campo.id === 'pais') {
     var pais = paisPorCodigo(E.configuracion.paises, valor);
-    return pais ? pais.nombre : String(valor);
+    return pais ? estado.nombreDePais(pais.nombre) : String(valor);
   }
   if (campo.id === 'tipo') {
     for (var t = 0; t < E.configuracion.tipos.length; t++) {
@@ -107,7 +107,7 @@ function opcionesDeshabilitadas(campo) {
     if (nombres.length > 0) return null;
     var sinSecciones = {};
     sinSecciones.secciones = estado.pregunta('redencion').razonSinSecciones
-      .replace('{pais}', pais.nombre);
+      .replace('{pais}', estado.nombreDePais(pais.nombre));
     return sinSecciones;
   }
 
@@ -132,6 +132,15 @@ function opcionesDeLosDatos(campo) {
   if (campo.id === 'secciones') {
     var nombres = pais ? seccionesDePais(pais.codigo, E.configuracion.secciones) : [];
     return nombres.map(function (nombre) { return { valor: nombre, etiqueta: nombre, nota: 'Sección de la app.' }; });
+  }
+
+  // Las secciones donde los Creditos no aplican. El SOAT es colombiano, asi que
+  // fuera de Colombia ni se ofrece ni se imprime: ofrecerlo seria dejar marcar
+  // una exclusion que el documento no va a decir.
+  if (campo.id === 'exclusionesRedencion') {
+    return seccionesExcluiblesDe(pais ? pais.codigo : '').map(function (seccion) {
+      return { valor: seccion.valor, etiqueta: seccion.nombre, nota: seccion.nota };
+    });
   }
 
   if (campo.id === 'acuerdoDatos') {
@@ -187,7 +196,7 @@ function avisoDePaisEnPruebas() {
   // de que hay que revisar va en el resumen, que es donde se decide publicar.
   return crear('div', { clase: 'aviso' }, [
     crear('p', {
-      texto: pais.nombre + estado.T(' está en pruebas: genera y revisa, pero todavía no publiques. Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.'),
+      texto: estado.nombreDePais(pais.nombre) + estado.T(' está en pruebas: genera y revisa, pero todavía no publiques. Los datos legales de este país los propuso la herramienta y no los ha confirmado nadie.'),
     }),
   ]);
 }
@@ -222,7 +231,7 @@ function panelDeAcuerdoDeDatos() {
     }
     caja.appendChild(lista);
   } else {
-    var nombre = pais ? pais.nombre : '';
+    var nombre = pais ? estado.nombreDePais(pais.nombre) : '';
     caja.appendChild(crear('p', {
       texto: (pais && pais.url_acuerdo_datos ? panel.conModelo : panel.sinModelo).replace('{país}', nombre),
     }));
@@ -531,7 +540,7 @@ function preguntaDeCatalogo(campo, campos, indice, pasos) {
   var opciones;
   if (campo.id === 'pais') {
     opciones = E.configuracion.paises.map(function (p) {
-      return { valor: p.codigo, etiqueta: p.nombre, nota: p.estado === 'piloto' ? estado.T('En piloto: solo para el equipo de pruebas.') : estado.T('Disponible.') };
+      return { valor: p.codigo, etiqueta: estado.nombreDePais(p.nombre), nota: p.estado === 'piloto' ? estado.T('En piloto: solo para el equipo de pruebas.') : estado.T('Disponible.') };
     });
   } else {
     // Solo los tipos del negocio elegido: Rappi y Rappi Travel son dos empresas
@@ -730,6 +739,7 @@ function alResponder(campoId, valor, campos, indice) {
       var porQueNo = razonParaNoHacerTravel();
       if (porQueNo) {
         E.motivoDeLegal = porQueNo;
+        E.volverDeLegal = 'negocio';
         RM.app.ir('legal');
         return true;
       }

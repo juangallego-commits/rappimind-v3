@@ -625,7 +625,6 @@ var PREGUNTAS = {
     ayuda: 'Por ejemplo: solo en la tienda donde se los ganó, que es lo más común.',
     porQue: 'Define dónde vale el saldo. Lo normal es que se gaste en la misma tienda donde el usuario se ganó el beneficio. En todo caso, estos Créditos casi nunca aplican a RappiFavor, Cajero ATM ni Rappi Travel.',
     avanzaSola: true,
-    porDefecto: 'tienda',
     opciones: [
       { valor: 'tienda', etiqueta: 'Solo en esta tienda', nota: 'Vuelve a comprar donde ganó el beneficio.' },
       { valor: 'secciones', etiqueta: 'En ciertas secciones de Rappi', nota: 'Tú eliges cuáles.' },
@@ -696,6 +695,29 @@ var PREGUNTAS = {
     placeholders: ['NOTIFICACION_INVIMA'],
   }),
 
+  /*
+   * Las secciones donde los Creditos NO aplican, en el Cashback.
+   *
+   * Es la misma pregunta del ETA, con la misma lista, y sale cuando los Creditos
+   * se pueden gastar "en cualquier parte de Rappi". Hasta el 20 de septiembre de
+   * 2026 eso estaba solo en la ayuda, y el documento prometia cualquier seccion.
+   * Punto D5.
+   *
+   * Vienen marcadas porque casi ninguna campana las abre: marcada no es
+   * respondida, la pregunta se muestra igual y alguien tiene que confirmarla.
+   */
+  exclusionesRedencion: p({
+    paso: 'creditos',
+    pregunta: '¿En qué secciones NO se pueden redimir los Créditos?',
+    ayuda: 'Vienen marcadas las de siempre. Desmarca una solo si esa campaña sí la permite.',
+    porQue: 'El documento tiene que decir dónde no vale el saldo. Una sección que no esté excluida aquí queda prometida, y después no se puede cerrar: el usuario reclama con el T&C en la mano.',
+    opcional: true,
+    multiple: true,
+    porDefecto: ['travel', 'soat', 'atm', 'favor'],
+    placeholders: ['TEXTO_LUGAR_REDENCION'],
+    errores: { vacio: 'Marca las secciones excluidas, o sigue sin marcar ninguna.' },
+  }),
+
   secciones: p({
     paso: 'creditos',
     pregunta: '¿En qué secciones?',
@@ -715,12 +737,13 @@ var PREGUNTAS = {
   marcaAliado: p({
     paso: 'organizador',
     pregunta: '¿De qué marca son los productos?',
-    ayuda: 'Como la ve el usuario en la app. Por ejemplo: JetSMART. Si participan todas, déjalo vacío.',
-    porQue: 'El documento dice de qué marca son los productos que participan. Si lo dejas vacío, participan todos los de las categorías que elijas.',
+    ayuda: 'Como la ve el usuario en la app. Por ejemplo: JetSMART.',
+    porQue: 'El documento dice de qué marca son los productos que participan, y el nombre de la campaña empieza por ella.',
     ejemplo: 'JetSMART',
-    opcional: true,
     placeholders: ['TEXTO_PRODUCTOS_TRAVEL'],
-    errores: {},
+    errores: {
+      vacio: 'Escribe la marca. Sin ella, el nombre de la campaña quedaría con la razón social.',
+    },
   }),
 
   categorias: p({
@@ -1194,6 +1217,13 @@ var PREGUNTAS = {
   }),
 
   // --- Quién participa ----------------------------------------------------
+  //
+  // Tres preguntas venian marcadas y dejaron de venirlo el 20 de septiembre de
+  // 2026 (punto F8): esta, la del medio de pago y la de donde se gastan los
+  // Creditos. Marcada no es respondida, la pregunta se mostraba igual y habia
+  // que confirmarla, pero la respuesta que nadie leyo queda impresa y despues no
+  // se puede excluir a nadie. Estas tres deciden a quien se le puede negar el
+  // beneficio, asi que las responde el comercial o no se genera.
 
   segmento: p({
     paso: 'participantes',
@@ -1201,7 +1231,6 @@ var PREGUNTAS = {
     ayuda: 'Por ejemplo: solo Pro, o quienes no compran hace 60 días.',
     porQue: 'Limita quién puede reclamar el beneficio. Si el documento dice "todos", no puedes excluir a nadie después.',
     avanzaSola: true,
-    porDefecto: 'todos',
     opciones: [
       { valor: 'todos', etiqueta: 'Todos los usuarios', nota: 'Cualquier persona mayor de edad.' },
       { valor: 'pro', etiqueta: 'Solo Pro y Pro Black', nota: 'Con la suscripción activa.' },
@@ -1237,7 +1266,6 @@ var PREGUNTAS = {
     ayuda: 'Con "cualquier medio" entran tarjetas, billeteras y efectivo donde exista.',
     porQue: 'Restringir el medio de pago cambia quién puede participar. Los pedidos pagados con Créditos nunca dan beneficio.',
     avanzaSola: true,
-    porDefecto: 'todos',
     opciones: [
       { valor: 'todos', etiqueta: 'Con cualquier medio de pago', nota: 'Lo más común.' },
       { valor: 'sin_efectivo', etiqueta: 'Con todo menos efectivo', nota: 'Tarjetas y billeteras sí, efectivo no.' },

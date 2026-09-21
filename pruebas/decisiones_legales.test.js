@@ -147,3 +147,144 @@ test('el modelo del ETA deja a salvo las causas del usuario y la fuerza mayor', 
   assert.ok(eta.indexOf('No habrá lugar al Beneficio cuando el retraso se deba a causas que te sean imputables') !== -1);
   assert.ok(eta.indexOf('ni cuando obedezca a fuerza mayor o caso fortuito') !== -1);
 });
+
+// --- D5: las secciones donde los Créditos no aplican -------------------------
+
+/**
+ * Juan confirmó que estos Créditos casi nunca aplican a RappiFavor, al Cajero
+ * ATM ni a Rappi Travel, y hasta el 20 de septiembre de 2026 eso estaba dicho
+ * en la ayuda del formulario y no en el documento. Una exclusión que no está en
+ * el T&C no se le puede oponer al usuario: si la app le rechaza los Créditos en
+ * RappiFavor, reclama con el documento en la mano.
+ */
+test('la oración de las exclusiones es la que Juan aprobó, letra por letra', () => {
+  const { textoLugarRedencion } = require('../src/core/derivados.js');
+  const { leerJson, rutaDesdeRaiz } = require('../scripts/lib/archivos');
+  const paises = leerJson(rutaDesdeRaiz('data', 'paises.json')).paises;
+  const CO = paises.filter((p) => p.codigo === 'CO')[0];
+  const MX = paises.filter((p) => p.codigo === 'MX')[0];
+  const LAS_CUATRO = ['travel', 'soat', 'atm', 'favor'];
+
+  assert.strictEqual(
+    textoLugarRedencion({ redencion: 'general', exclusionesRedencion: LAS_CUATRO }, CO),
+    'Los Créditos podrán redimirse en cualquier sección de la Plataforma Rappi habilitada para el uso de Créditos, dentro del Territorio, a excepción de las secciones “Rappi Travel”, “SOAT”, “Cajero ATM” y “RappiFavor”.');
+
+  // El SOAT es colombiano: fuera de Colombia ni se ofrece ni se imprime.
+  assert.strictEqual(
+    textoLugarRedencion({ redencion: 'general', exclusionesRedencion: LAS_CUATRO }, MX),
+    'Los Créditos podrán redimirse en cualquier sección de la Plataforma Rappi habilitada para el uso de Créditos, dentro del Territorio, a excepción de las secciones “Rappi Travel”, “Cajero ATM” y “RappiFavor”.');
+
+  // Con una sola, la frase concuerda en singular.
+  assert.strictEqual(
+    textoLugarRedencion({ redencion: 'general', exclusionesRedencion: ['soat'] }, CO),
+    'Los Créditos podrán redimirse en cualquier sección de la Plataforma Rappi habilitada para el uso de Créditos, dentro del Territorio, a excepción de la sección “SOAT”.');
+
+  // Sin ninguna marcada, queda la oración de antes, palabra por palabra.
+  assert.strictEqual(
+    textoLugarRedencion({ redencion: 'general', exclusionesRedencion: [] }, CO),
+    'Los Créditos podrán redimirse en cualquier sección de la Plataforma Rappi habilitada para el uso de Créditos, dentro del Territorio.');
+});
+
+test('las casillas de las exclusiones vienen marcadas, y el SOAT solo en Colombia', () => {
+  const { PREGUNTAS } = require('../src/core/preguntas.js');
+  const { seccionesExcluiblesDe } = require('../src/core/derivados_eta.js');
+
+  assert.deepStrictEqual(PREGUNTAS.exclusionesRedencion.porDefecto, ['travel', 'soat', 'atm', 'favor'],
+    'las casillas ya no vienen marcadas de entrada');
+  assert.deepStrictEqual(seccionesExcluiblesDe('CO').map((s) => s.nombre),
+    ['Rappi Travel', 'SOAT', 'Cajero ATM', 'RappiFavor']);
+  for (const codigo of ['MX', 'PE', 'AR', 'CL', 'EC', 'UY', 'CR']) {
+    assert.deepStrictEqual(seccionesExcluiblesDe(codigo).map((s) => s.nombre),
+      ['Rappi Travel', 'Cajero ATM', 'RappiFavor'], codigo);
+  }
+});
+
+test('el ETA nombra sus exclusiones con la misma forma que el Cashback', () => {
+  // Punto D5: las secciones entre comillas, y "Rappi Favor" pasa a "RappiFavor",
+  // que es como lo escriben los T&C publicados de Rappi en Colombia, Ecuador y
+  // Costa Rica.
+  const { cargarModelos } = require('../scripts/lib/modelos');
+  const { leerTexto, rutaDesdeRaiz } = require('../scripts/lib/archivos');
+  const eta = leerTexto(rutaDesdeRaiz('pruebas', 'salidas_esperadas', 'ETA01.txt'));
+  assert.ok(eta.indexOf('a excepción de las secciones “Rappi Travel”, “SOAT”, “Cajero ATM” y “RappiFavor”.') !== -1,
+    'el documento del ETA no trae la forma nueva');
+  assert.strictEqual(eta.indexOf('Rappi Favor'), -1, 'quedó "Rappi Favor" separado en el documento');
+  assert.ok(cargarModelos, 'la carga de modelos sigue existiendo');
+});
+
+// --- D7 y D8: Rappi Travel ---------------------------------------------------
+
+test('la marca del aliado es obligatoria en los dos tipos de Travel', () => {
+  // Punto D7. Cuando se dejaba vacía, el nombre de la campaña quedaba con la
+  // razón social adentro ("OPERADOR DE PRUEBA S.A.S. · 50% CASHBACK TRAVEL ·
+  // 15 OCT 2026"), y ese nombre va en el título del documento.
+  const { ESQUEMAS } = require('../src/core/esquemas.js');
+  const { PREGUNTAS } = require('../src/core/preguntas.js');
+
+  for (const tipo of ['cashback_travel', 'descuento_travel']) {
+    const campo = ESQUEMAS[tipo].campos.filter((c) => c.id === 'marcaAliado')[0];
+    assert.ok(campo, tipo + ' ya no pregunta la marca');
+    assert.strictEqual(campo.obligatorio, true, tipo + ': la marca volvió a ser opcional');
+  }
+  assert.strictEqual(PREGUNTAS.marcaAliado.opcional, undefined, 'la pregunta sigue marcada como opcional');
+  assert.strictEqual(PREGUNTAS.marcaAliado.errores.vacio,
+    'Escribe la marca. Sin ella, el nombre de la campaña quedaría con la razón social.');
+});
+
+test('el descuento de Travel no excluye las órdenes pagadas con Créditos', () => {
+  /*
+   * Punto D8. La frase venía de los cashback, donde evita montar un beneficio
+   * promocional sobre otro: el usuario no gana Créditos pagando con Créditos.
+   * En un descuento el beneficio no son Créditos, es un precio más bajo, así
+   * que la frase excluía pagos sin ninguna razón. En cashback_travel se queda.
+   */
+  const { textoMetodoPagoTravel } = require('../src/core/derivados_travel.js');
+  const CON_CREDITOS = 'pagadas parcial o totalmente con Créditos';
+
+  for (const metodoPago of ['digitales', 'rappicard']) {
+    const conCashback = textoMetodoPagoTravel({ tipo: 'cashback_travel', metodoPago });
+    const conDescuento = textoMetodoPagoTravel({ tipo: 'descuento_travel', metodoPago });
+
+    assert.ok(conCashback.indexOf(CON_CREDITOS) !== -1,
+      'el cashback de Travel perdió la exclusión: ' + conCashback);
+    assert.strictEqual(conDescuento.indexOf(CON_CREDITOS), -1,
+      'el descuento de Travel sigue excluyendo los pagos con Créditos: ' + conDescuento);
+
+    // Y lo que queda sigue siendo una oración entera, sin nada colgando.
+    assert.ok(/\.$/.test(conDescuento), 'la oración quedó rota: ' + conDescuento);
+  }
+});
+
+// --- F1 y F8: lo que el comercial ve -----------------------------------------
+
+test('la opción del operador logístico se llama igual en los dos sitios', () => {
+  // Punto F1. El circuito de Colombia del acuerdo de datos manda a cambiar la
+  // respuesta a "Rappi, como operador logístico", con coma. La etiqueta que el
+  // comercial lee ya la tenía; la copia del esquema decía otra cosa.
+  const { ESQUEMAS } = require('../src/core/esquemas.js');
+  const { PREGUNTAS } = require('../src/core/preguntas.js');
+
+  const delEsquema = ESQUEMAS.carrera_compras.campos
+    .filter((c) => c.id === 'entregaPor')[0].opciones
+    .filter((o) => o.valor === 'rappi')[0];
+  const deLaPregunta = PREGUNTAS.entregaPor.opciones.filter((o) => o.valor === 'rappi')[0];
+
+  assert.strictEqual(deLaPregunta.etiqueta, 'Rappi, como operador logístico');
+  assert.strictEqual(delEsquema.etiqueta, deLaPregunta.etiqueta,
+    'las dos copias de la etiqueta se desincronizaron');
+  assert.strictEqual(delEsquema.valor, 'rappi', 'cambió el valor interno, que no se tocaba');
+});
+
+test('las tres preguntas que decidían a quién excluir arrancan sin marcar', () => {
+  // Punto F8. Una respuesta que nadie leyó queda impresa, y después no se puede
+  // excluir a nadie. Las tres siguen siendo obligatorias: no se genera sin ellas.
+  const { PREGUNTAS } = require('../src/core/preguntas.js');
+  const { ESQUEMAS } = require('../src/core/esquemas.js');
+
+  for (const campoId of ['redencion', 'segmento', 'metodoPago']) {
+    assert.strictEqual(PREGUNTAS[campoId].porDefecto, undefined,
+      campoId + ' volvió a venir con una respuesta marcada');
+    const campo = ESQUEMAS.cashback.campos.filter((c) => c.id === campoId)[0];
+    assert.strictEqual(campo.obligatorio, true, campoId + ' dejó de ser obligatorio');
+  }
+});

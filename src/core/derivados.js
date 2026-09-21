@@ -35,7 +35,9 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 
   var calcularDerivadosTravel = require('./derivados_travel.js').calcularDerivadosTravel;
   var calcularDerivadosBr = require('./derivados_br.js').calcularDerivadosBr;
-  var calcularDerivadosEta = require('./derivados_eta.js').calcularDerivadosEta;
+  var moduloEta = require('./derivados_eta.js');
+  var calcularDerivadosEta = moduloEta.calcularDerivadosEta;
+  var textoSeccionesExcluidas = moduloEta.textoSeccionesExcluidas;
   var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
   var moduloTextoDerivados = require('./texto.js');
   var tieneValor = moduloTextoDerivados.tieneValor;
@@ -90,6 +92,10 @@ var TEXTO_LUGAR_REDENCION_POR_OPCION = {
   tienda: 'Los Créditos podrán redimirse únicamente en la Tienda Participante donde se originó el Beneficio, dentro del Territorio.',
   general: 'Los Créditos podrán redimirse en cualquier sección de la Plataforma Rappi habilitada para el uso de Créditos, dentro del Territorio.',
 };
+
+/* El cierre de la oracion de "en cualquier parte" cuando hay secciones fuera. */
+var REDENCION_GENERAL_SIN_EXCLUSIONES =
+  'Los Créditos podrán redimirse en cualquier sección de la Plataforma Rappi habilitada para el uso de Créditos, dentro del Territorio';
 
 var CRITERIO_GANADOR_POR_OPCION = {
   mayor_valor: 'el mayor valor total en compras de Productos Participantes',
@@ -227,7 +233,25 @@ function textoVigenciaCreditos(entrada, pais) {
 }
 
 /** ORACION: donde se pueden redimir los Creditos. */
-function textoLugarRedencion(entrada) {
+function textoLugarRedencion(entrada, pais) {
+  /*
+   * "En cualquier parte de Rappi" casi nunca quiere decir en cualquier parte.
+   *
+   * Juan confirmo que estos Creditos no aplican a Rappi Travel, al SOAT, al
+   * Cajero ATM ni a RappiFavor, y hasta el 20 de septiembre de 2026 eso estaba
+   * dicho en la ayuda del formulario y no en el documento. Una exclusion que no
+   * esta en el T&C no se le puede oponer al usuario: si la app le rechaza los
+   * Creditos en RappiFavor, reclama con el documento en la mano. Punto D5.
+   *
+   * Las casillas vienen marcadas, asi que la oracion sale completa sin que nadie
+   * haga nada. Sin ninguna marcada queda la de antes, palabra por palabra.
+   */
+  if (entrada.redencion === 'general') {
+    var excluidas = textoSeccionesExcluidas(entrada.exclusionesRedencion, pais ? pais.codigo : 'CO');
+    if (!excluidas) return TEXTO_LUGAR_REDENCION_POR_OPCION.general;
+    return REDENCION_GENERAL_SIN_EXCLUSIONES + ', a excepción de ' + excluidas + '.';
+  }
+
   var fijo = TEXTO_LUGAR_REDENCION_POR_OPCION[entrada.redencion];
   if (fijo) return fijo;
   if (entrada.redencion !== 'secciones') return '';
@@ -419,7 +443,7 @@ function calcularDerivadosEnElIdiomaDelPais(entrada, pais) {
     valores.TEXTO_VERIFICACION = textoVerificacion(entrada);
   }
   if (tieneValor(entrada.vigencia)) valores.TEXTO_VIGENCIA_CREDITOS = textoVigenciaCreditos(entrada, pais);
-  if (tieneValor(entrada.redencion)) valores.TEXTO_LUGAR_REDENCION = textoLugarRedencion(entrada);
+  if (tieneValor(entrada.redencion)) valores.TEXTO_LUGAR_REDENCION = textoLugarRedencion(entrada, pais);
 
   if (entrada.tipo === 'carrera_compras') {
     derivadosCarrera(entrada, pais, valores);

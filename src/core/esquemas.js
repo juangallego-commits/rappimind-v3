@@ -251,6 +251,17 @@ var CAMPOS_CREDITOS = [
     obligatorio: function (entrada) { return entrada.redencion === 'secciones'; },
   },
   {
+    // Las secciones donde los Creditos no aplican. Solo con "en cualquier
+    // seccion": con "solo en esta tienda" o "en ciertas secciones" la oracion
+    // ya dice donde valen, y excluir ahi seria decir dos cosas a la vez.
+    id: 'exclusionesRedencion',
+    etiqueta: 'Secciones excluidas',
+    tipo: 'casillas',
+    paso: 'creditos',
+    obligatorio: false,
+    visible: function (entrada) { return entrada.redencion === 'general'; },
+  },
+  {
     id: 'condiciones',
     etiqueta: 'Condiciones adicionales',
     tipo: 'casillas',
@@ -363,7 +374,7 @@ var CAMPOS_CARRERA = [
     obligatorio: function (entrada) { return entrada.tipoPremio === 'fisico'; },
     opciones: [
       { valor: 'organizador', etiqueta: 'El Organizador' },
-      { valor: 'rappi', etiqueta: 'Rappi como operador logístico' },
+      { valor: 'rappi', etiqueta: 'Rappi, como operador logístico' },
     ],
   },
   {
@@ -513,7 +524,12 @@ var CAMPOS_TRAVEL_COMUNES = [
   // --- Organizador ---------------------------------------------------------
   { id: 'organizadorRazonSocial', etiqueta: 'Razón social del organizador', tipo: 'texto', paso: 'organizador', obligatorio: true },
   { id: 'organizadorId', etiqueta: 'Identificación del organizador', tipo: 'identificacion', paso: 'organizador', obligatorio: true },
-  { id: 'marcaAliado', etiqueta: 'Marca aliada', tipo: 'texto', paso: 'organizador', obligatorio: false },
+  // La marca es obligatoria desde el 20 de septiembre de 2026 (punto D7).
+  // Cuando se dejaba vacia, el nombre de la campana quedaba con la razon social
+  // adentro: "OPERADOR DE PRUEBA S.A.S. · 50% CASHBACK TRAVEL · 15 OCT 2026", y
+  // ese nombre va en el titulo del documento y, en la Carrera, dentro de una
+  // clausula.
+  { id: 'marcaAliado', etiqueta: 'Marca aliada', tipo: 'texto', paso: 'organizador', obligatorio: true },
 
   // --- Productos -----------------------------------------------------------
   { id: 'categorias', etiqueta: 'Categorías participantes', tipo: 'casillas', paso: 'productos_travel', obligatorio: true },

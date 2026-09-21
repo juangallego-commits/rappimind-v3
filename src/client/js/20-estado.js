@@ -22,6 +22,10 @@ var estado = {
   filtroRespondido: false,
   filtroDeTravelRespondido: false,
   motivoDeLegal: null,
+  // De donde salio hacia la pantalla de Legal, para poder volver a esa misma
+  // pregunta con "Cambiar mi respuesta". Sin esto, el unico camino de vuelta
+  // era el inicio, y perder todo lo respondido por una respuesta mal marcada.
+  volverDeLegal: null,
   // Cuál de los T&C que Legal ya publicó está mirando. Null = la lista entera.
   tycGenericoElegido: null,
   errores: {},
@@ -69,6 +73,7 @@ function reiniciarFormulario(base, yaRespondidas) {
   estado.filtroRespondido = false;
   estado.filtroDeTravelRespondido = false;
   estado.motivoDeLegal = null;
+  estado.volverDeLegal = null;
   estado.tycGenericoElegido = null;
   estado.resultado = null;
   estado.ultimoTextoVistaPrevia = '';
@@ -166,6 +171,17 @@ function T(texto) {
 }
 
 /**
+ * El nombre de un pais como se lee en la pantalla.
+ *
+ * Aparte de T() porque no sale del diccionario de la interfaz: el nombre viene
+ * de la fila del pais y en el documento se imprime siempre en espanol. Lo que
+ * cambia es solo lo que se ve. Punto F2.
+ */
+function nombreDePais(nombre) {
+  return nombreDePaisEnIdioma(nombre, idiomaInterfaz());
+}
+
+/**
  * La pregunta de un campo, en la variante del tipo de campana elegido.
  *
  * Existe porque el mecanismo de variantes estaba construido y probado en Node,
@@ -186,6 +202,7 @@ RM.estado = {
   estado: estado,
   pregunta: pregunta,
   T: T,
+  nombreDePais: nombreDePais,
   idiomaInterfaz: idiomaInterfaz,
   fijarIdiomaInterfaz: fijarIdiomaInterfaz,
   entrada: entrada,

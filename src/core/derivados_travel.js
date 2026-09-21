@@ -103,9 +103,26 @@ function textoSegmentoTravel(entrada) {
   return TEXTO_SEGMENTO_TRAVEL_POR_OPCION[entrada.segmento] || '';
 }
 
-/** ORACION: con que se paga. */
+/* La frase que solo tiene sentido cuando el beneficio son Creditos. */
+var EXCLUSION_DE_PAGOS_CON_CREDITOS =
+  ' No se obtendrá el Beneficio respecto de órdenes pagadas parcial o totalmente con Créditos de la Plataforma.';
+
+/**
+ * ORACION: con que se paga.
+ *
+ * En los descuentos esa frase sale. Venia de los cashback, donde evita montar un
+ * beneficio promocional sobre otro: el usuario no gana Creditos pagando con
+ * Creditos. En un descuento el beneficio no son Creditos, es un precio mas bajo,
+ * asi que la frase excluia pagos sin ninguna razon. Juan lo decidio el 20 de
+ * septiembre de 2026 (punto D8); en cashback_travel se queda.
+ */
 function textoMetodoPagoTravel(entrada) {
-  return TEXTO_METODO_PAGO_TRAVEL_POR_OPCION[entrada.metodoPago] || '';
+  var texto = TEXTO_METODO_PAGO_TRAVEL_POR_OPCION[entrada.metodoPago] || '';
+  if (!texto) return '';
+  if (entrada.tipo === 'descuento_travel') {
+    return texto.replace(EXCLUSION_DE_PAGOS_CON_CREDITOS, '');
+  }
+  return texto;
 }
 
 /** ORACION: que productos participan. */

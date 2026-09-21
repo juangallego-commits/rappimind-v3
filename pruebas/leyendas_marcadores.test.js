@@ -176,7 +176,7 @@ test('el ETA nombra sus exclusiones, y sin exclusiones dice otra cosa', () => {
     vigencia: 'dias', diasVigencia: 7, carga: 'dia_siguiente',
   }, {});
   assert.strictEqual(con,
-    'para redimir en Rappi, excepto en Rappi Travel, SOAT, Cajero ATM y Rappi Favor durante 7 días desde que los recibes');
+    'para redimir en Rappi, excepto en Rappi Travel, SOAT, Cajero ATM y RappiFavor durante 7 días desde que los recibes');
 
   const sin = textoCreditosCorto({
     tipo: 'cashback_eta', exclusionesEta: [], vigencia: 'dias', diasVigencia: 7, carga: 'dia_siguiente',

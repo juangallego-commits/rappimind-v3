@@ -509,6 +509,12 @@
         "vigencia": "dias",
         "diasVigencia": 31,
         "redencion": "general",
+        "exclusionesRedencion": [
+          "travel",
+          "soat",
+          "atm",
+          "favor"
+        ],
         "condiciones": [],
         "compraMinima": 200000,
         "negocio": "rappi"
@@ -564,6 +570,12 @@
         "vigencia": "dias",
         "diasVigencia": 31,
         "redencion": "general",
+        "exclusionesRedencion": [
+          "travel",
+          "soat",
+          "atm",
+          "favor"
+        ],
         "condiciones": [],
         "compraMinima": 200000,
         "negocio": "rappi"
@@ -810,7 +822,7 @@
     },
     {
       "id": "TV05",
-      "descripcion": "Cashback Travel en las ocho categorías, franja de un solo día, Pro o RappiCard",
+      "descripcion": "Cashback Travel en las ocho categorías, franja de un solo día, Pro o RappiCard. La marca es obligatoria desde el 20 de septiembre de 2026 (punto D7): antes este caso la dejaba vacía y el nombre de la campaña salía con la razón social adentro",
       "fecha_referencia": "2026-09-16",
       "usuario_en_equipo": true,
       "entrada": {
@@ -830,6 +842,7 @@
         "tipo": "cashback_travel",
         "organizadorRazonSocial": "Operador de Prueba S.A.S.",
         "organizadorId": "900999000-2",
+        "marcaAliado": "Operadora de Prueba",
         "categorias": [
           "Hoteles",
           "Vuelos",
@@ -1013,7 +1026,8 @@
         "carga": "al_confirmarse",
         "diasVigencia": 30,
         "redencion": "todo_travel",
-        "negocio": "travel"
+        "negocio": "travel",
+        "marcaAliado": "Operadora de Prueba"
       },
       "esperado": {
         "resultado": "falla",
@@ -1060,7 +1074,8 @@
         "carga": "al_confirmarse",
         "diasVigencia": 30,
         "redencion": "todo_travel",
-        "negocio": "travel"
+        "negocio": "travel",
+        "marcaAliado": "Operadora de Prueba"
       },
       "esperado": {
         "resultado": "falla",
@@ -1104,7 +1119,8 @@
         ],
         "sinLimitePorUsuario": true,
         "sinUnidades": true,
-        "negocio": "travel"
+        "negocio": "travel",
+        "marcaAliado": "Operadora de Prueba"
       },
       "esperado": {
         "resultado": "falla",
@@ -1149,7 +1165,8 @@
         ],
         "limitePorUsuario": 1,
         "sinUnidades": true,
-        "negocio": "travel"
+        "negocio": "travel",
+        "marcaAliado": "Operadora de Prueba"
       },
       "esperado": {
         "resultado": "falla",
@@ -1194,7 +1211,8 @@
         "carga": "al_confirmarse",
         "diasVigencia": 30,
         "redencion": "todo_travel",
-        "negocio": "travel"
+        "negocio": "travel",
+        "marcaAliado": "Operadora de Prueba"
       },
       "esperado": {
         "resultado": "falla",
@@ -1238,7 +1256,8 @@
         "carga": "al_confirmarse",
         "diasVigencia": 30,
         "redencion": "todo_travel",
-        "negocio": "travel"
+        "negocio": "travel",
+        "marcaAliado": "Operadora de Prueba"
       },
       "esperado": {
         "resultado": "falla",
@@ -1285,7 +1304,8 @@
         "carga": "al_confirmarse",
         "diasVigencia": 30,
         "redencion": "todo_travel",
-        "negocio": "travel"
+        "negocio": "travel",
+        "marcaAliado": "Operadora de Prueba"
       },
       "esperado": {
         "resultado": "falla",
