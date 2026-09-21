@@ -25,6 +25,7 @@ var AVISO_AZAR = {
     'Cashback Multitienda: varias tiendas hacen cashback dentro de la misma jornada, cada una con su propio porcentaje, su tope y su presupuesto.',
     '15 minutos o Cashback: Rappi promete un tiempo de entrega en el botón Turbo y, si la orden llega tarde, devuelve en Créditos parte de lo que el usuario pagó.',
     'Cashback Travel y Descuento Travel: las dos formas de campaña de vuelos, hoteles, autos y paquetes.',
+    'Millas: un programa de lealtad aliado da millas por comprar, en la Plataforma Rappi o en Rappi Travel. Todos los que cumplen las reciben.',
   ],
   noValidas: [
     'Sorteo entre todos los participantes, aunque sea "entre quienes compren".',
@@ -123,7 +124,10 @@ var FILTRO_DE_TRAVEL = [
   },
   {
     id: 'beneficioDeTercero',
-    texto: '¿El beneficio es distinto a Créditos o a un descuento en el precio? Por ejemplo: noches o niños gratis, cupones, millas, eSIM, bonos o cuotas sin interés.',
+    // Las millas salieron de la lista el 21 de septiembre de 2026: ya tienen
+    // modelo propio (millas_travel). Una pregunta que manda a Legal lo que la
+    // herramienta si sabe hacer es devolverle el trabajo a Juan.
+    texto: '¿El beneficio es distinto a Créditos, a millas de un programa de lealtad o a un descuento en el precio? Por ejemplo: noches o niños gratis, cupones, eSIM, bonos o cuotas sin interés.',
     razon: 'Ese beneficio lo presta un tercero con sus propias condiciones, así que necesita otro documento.',
   },
   {

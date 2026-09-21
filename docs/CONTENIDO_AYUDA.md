@@ -25,6 +25,7 @@ Esta herramienta solo genera documentos para dinámicas SIN azar. Si tu campaña
 - Cashback Multitienda: varias tiendas hacen cashback dentro de la misma jornada, cada una con su propio porcentaje, su tope y su presupuesto.
 - 15 minutos o Cashback: Rappi promete un tiempo de entrega en el botón Turbo y, si la orden llega tarde, devuelve en Créditos parte de lo que el usuario pagó.
 - Cashback Travel y Descuento Travel: las dos formas de campaña de vuelos, hoteles, autos y paquetes.
+- Millas: un programa de lealtad aliado da millas por comprar, en la Plataforma Rappi o en Rappi Travel. Todos los que cumplen las reciben.
 
 ### No sirven: las redacta Legal
 

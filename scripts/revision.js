@@ -195,6 +195,23 @@ const TANDAS = [
     salvoLasDe: ['cashback'],
   },
   {
+    id: 'millas',
+    titulo: 'Millas: la misma mecánica en dos verticales',
+    deQueVa:
+      'Millas y Millas Travel. Es el mismo beneficio, un programa de lealtad aliado que le da ' +
+      'millas al usuario por comprar, y se pide igual en la Plataforma Rappi y en Rappi Travel. ' +
+      'Las preguntas son nuevas y no han pasado por una revisión de copy.',
+    mirar: [
+      'Las dos formas del beneficio: "un número fijo por orden" y "millas por cada tanto gastado". ¿Se distinguen sin tener las dos piezas al lado?',
+      'La bolsa de millas y su equivalencia en órdenes: son dos números que tienen que cuadrar. ¿Entiende el comercial que uno sale del otro?',
+      'La pregunta de cómo se vincula el usuario al programa: las dos opciones vienen de campañas reales distintas. ¿Sabe el comercial cuál es la suya?',
+      'El vocabulario del programa: "enrolado", "programa preferido de acumulación", "cartola". ¿Son palabras que un KAM usa, o del programa?',
+      'Si alguna pregunta pide un dato que solo tiene el programa de lealtad y no el comercial.',
+    ],
+    preguntasDe: ['millas', 'millas_travel'],
+    salvoLasDe: ['cashback', 'cashback_travel'],
+  },
+  {
     id: 'brasil',
     titulo: 'Brasil y la interfaz en portugués',
     deQueVa:

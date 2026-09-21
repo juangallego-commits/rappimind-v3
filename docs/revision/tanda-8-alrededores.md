@@ -1,4 +1,4 @@
-# Tanda 7 de 7 · Mis campañas, la Ayuda, Administración y lo que se lee cuando algo falla
+# Tanda 8 de 8 · Mis campañas, la Ayuda, Administración y lo que se lee cuando algo falla
 
 > **Antes de pegar esto, pega `PROMPT.md`.** Ahí va quién revisa, qué es
 > RappiMind, qué no se puede tocar y en qué formato tiene que venir la
@@ -453,6 +453,21 @@ Cada uno sale debajo del campo, en rojo, mientras el comercial escribe. Leídos 
 | ¿Qué día le avisas? | las fechas van al revés | Tiene que ser después de que termine la campaña: antes todavía no sabes quién ganó. |
 | ¿Cuántos días tiene para responder? | lo deja en blanco | Escribe cuántos días hábiles tiene para responder. |
 | ¿Cuántos días tiene para responder? | el número se sale del rango | El plazo va de 1 a 30 días hábiles. |
+| ¿Cuál es el programa de lealtad? | lo deja en blanco | Escribe el nombre del programa de lealtad que da las millas. |
+| ¿Cómo se vincula el usuario al programa? | lo deja en blanco | Dinos cómo se vincula el usuario al programa. |
+| ¿Cómo se calculan las millas? | lo deja en blanco | Dinos cómo se calculan las millas. |
+| ¿Cuántas millas recibe por cada orden? | lo deja en blanco | Escribe cuántas millas recibe el usuario por cada orden. |
+| ¿Cuántas millas recibe por cada orden? | el número se sale del rango | Tiene que ser al menos una milla. |
+| ¿Cuántas millas da cada fracción? | lo deja en blanco | Escribe cuántas millas da cada fracción de gasto. |
+| ¿Cuántas millas da cada fracción? | el número se sale del rango | Tiene que ser al menos una milla. |
+| ¿De cuánto es cada fracción de gasto? | lo deja en blanco | Escribe el valor de cada fracción de gasto. |
+| ¿De cuánto es cada fracción de gasto? | el número se sale del rango | Tiene que ser mayor que cero. |
+| ¿Las millas se juntan con otras promociones? | lo deja en blanco | Dinos si las millas se juntan con otras promociones. |
+| ¿Hay un tope de millas por persona? | el número se sale del rango | Si hay tope, tiene que ser al menos una milla. |
+| ¿Cuántas millas tiene la bolsa de la campaña? | el número se sale del rango | Si hay bolsa, tiene que ser al menos una milla. |
+| ¿Cuándo se acreditan las millas? | lo deja en blanco | Dinos cuándo se acreditan las millas. |
+| ¿Cuántos días después de la compra? | lo deja en blanco | Escribe cuántos días después de la compra se acreditan las millas. |
+| ¿Cuántos días después de la compra? | el número se sale del rango | El plazo va de 1 a 60 días. |
 | ¿Qué tiendas participan? | el número es muy bajo | Agrega al menos 2 tiendas participantes. |
 | ¿Qué tiendas participan? | el número es muy alto | No puedes agregar más de 60 tiendas. |
 | ¿Qué tiendas participan? | la respuesta está repetida | Esa identificación ya está en otra tienda de la lista. |
@@ -472,7 +487,7 @@ La herramienta corre sobre Google Apps Script. Cuando Google falla, el mensaje c
 
 ---
 
-## Fin de la tanda 7
+## Fin de la tanda 8
 
 Responde con las fichas de hallazgo en el formato del prompt, la tabla de cierre
 y las tres preguntas para Juan. Si algo está bien, dilo en una línea y sigue: lo

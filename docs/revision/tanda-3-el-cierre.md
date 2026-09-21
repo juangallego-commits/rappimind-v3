@@ -1,4 +1,4 @@
-# Tanda 3 de 7 · El cierre: revisar, generar y publicar
+# Tanda 3 de 8 · El cierre: revisar, generar y publicar
 
 > **Antes de pegar esto, pega `PROMPT.md`.** Ahí va quién revisa, qué es
 > RappiMind, qué no se puede tocar y en qué formato tiene que venir la

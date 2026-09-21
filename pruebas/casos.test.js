@@ -34,9 +34,9 @@ function salidaEsperada(caso) {
   return normalizarParaComparar(leerTexto(rutaDesdeRaiz('pruebas', 'salidas_esperadas', caso.id + '.txt')));
 }
 
-test('hay treinta y siete casos, veinticinco que generan y doce que fallan', () => {
-  assert.strictEqual(casos.length, 37);
-  assert.strictEqual(generan.length, 25);
+test('hay treinta y nueve casos, veintisiete que generan y doce que fallan', () => {
+  assert.strictEqual(casos.length, 39);
+  assert.strictEqual(generan.length, 27);
   assert.strictEqual(fallan.length, 12);
 
   /*
@@ -93,6 +93,18 @@ test('hay treinta y siete casos, veinticinco que generan y doce que fallan', () 
   const deTravel = casos.filter((caso) => String(caso.id).indexOf('TV') === 0);
   assert.strictEqual(deTravel.length, 14);
   assert.strictEqual(deTravel.filter((c) => c.esperado.resultado === 'genera').length, 7);
+
+  /*
+   * Los dos de millas, uno por vertical.
+   *
+   * Son la misma mecanica en la Plataforma Rappi y en Rappi Travel, y ese es el
+   * punto: si un cambio en la mecanica solo cuadra en una de las dos, el otro
+   * caso dorado se cae. Llevan los datos de las dos campanas publicadas.
+   */
+  const deMillas = casos.filter((caso) => String(caso.id).indexOf('MI') === 0);
+  assert.strictEqual(deMillas.length, 2);
+  assert.deepStrictEqual(deMillas.map((caso) => caso.entrada.tipo).sort(), ['millas', 'millas_travel']);
+  assert.ok(deMillas.every((caso) => caso.esperado.resultado === 'genera'));
 });
 
 for (const caso of generan) {

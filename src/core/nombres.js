@@ -87,6 +87,17 @@ function tramoDeBeneficio(entrada, esquema) {
     return conPorcentaje ? porcentaje + '% ' + nombreDelTipo : nombreDelTipo;
   }
 
+  // Millas: el titulo dice cuantas millas solo cuando son un numero fijo por
+  // orden, que es la unica forma en que el numero significa lo mismo suelto que
+  // en la clausula. En la forma por fraccion, un "6 Millas" sin el valor de la
+  // fraccion promete algo distinto de lo que el documento dice.
+  if (esquema.id === 'millas' || esquema.id === 'millas_travel') {
+    if (entrada.formaMillas !== 'por_orden') return nombreDelTipo;
+    var cuantasMillas = Math.trunc(Number(entrada.millasPorOrden));
+    if (!isFinite(cuantasMillas) || cuantasMillas <= 0) return nombreDelTipo;
+    return cuantasMillas + ' ' + nombreDelTipo;
+  }
+
   // Cashback Travel con monto fijo no lleva porcentaje, porque no tiene.
   if (esquema.id === 'cashback_travel') {
     if (entrada.formaBeneficio !== 'porcentaje' || !conPorcentaje) return nombreDelTipo;

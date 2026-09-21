@@ -194,10 +194,11 @@ test('cada país solo ofrece los tipos que tiene habilitados', () => {
   const catalogo = Object.keys(ESQUEMAS).map((k) => ESQUEMAS[k]);
   const co = tiposDelPais(paises.find((p) => p.codigo === 'CO'), catalogo);
   const mx = tiposDelPais(paises.find((p) => p.codigo === 'MX'), catalogo);
-  // Colombia tiene los tres de delivery más los dos de Rappi Travel.
+  // Colombia tiene los de delivery, los dos de Rappi Travel y los dos de millas.
   assert.deepStrictEqual(
     co.map((t) => t.id).sort(),
-    ['carrera_compras', 'cashback', 'cashback_day', 'cashback_eta', 'cashback_travel', 'descuento_travel']
+    ['carrera_compras', 'cashback', 'cashback_day', 'cashback_eta', 'cashback_travel',
+      'descuento_travel', 'millas', 'millas_travel']
   );
   assert.deepStrictEqual(mx.map((t) => t.id), ['cashback']);
 });

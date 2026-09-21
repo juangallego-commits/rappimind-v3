@@ -1,0 +1,2 @@
+%% Bloque de millas: responsabilidad e indemnidad del Organizador · versión 1.0 · base: rappi-millas-lifemiles-muss-tanga-turbo.md, cláusula XI (TAL CUAL, con la entidad como placeholder) · revisar con Juan
+§ Responsabilidad e indemnidad. El Organizador asume total responsabilidad frente a los participantes y frente a terceros por la ejecución de la Campaña, así como por la correcta y oportuna acreditación de las Millas. El Organizador mantendrá indemne a **{{ENTIDAD_MILLAS}}** frente a cualquier reclamación, sanción o gasto derivado de la Campaña.

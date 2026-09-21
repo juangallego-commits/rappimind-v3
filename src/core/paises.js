@@ -205,7 +205,7 @@ function rolDe(equipo, correo) {
  * hereda de la fila del pais, asi que un pais sin bloque travel no ofrece estos
  * tipos. Ver docs/INVESTIGACION_TRAVEL.md.
  */
-var TIPOS_DE_TRAVEL = ['cashback_travel', 'descuento_travel'];
+var TIPOS_DE_TRAVEL = ['cashback_travel', 'descuento_travel', 'millas_travel'];
 
 /** Los datos de Travel sin los cuales un T&C saldria incompleto. */
 var DATOS_DE_TRAVEL_OBLIGATORIOS = [

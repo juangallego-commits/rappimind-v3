@@ -13,7 +13,9 @@
         "cashback_day",
         "cashback_eta",
         "cashback_travel",
-        "descuento_travel"
+        "descuento_travel",
+        "millas",
+        "millas_travel"
       ],
       "entidad_legal": "Rappi S.A.S.",
       "id_fiscal": "NIT 900.843.898-9",

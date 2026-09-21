@@ -1,4 +1,4 @@
-# Tanda 1 de 7 · La entrada: donde el comercial decide si esto le sirve
+# Tanda 1 de 8 · La entrada: donde el comercial decide si esto le sirve
 
 > **Antes de pegar esto, pega `PROMPT.md`.** Ahí va quién revisa, qué es
 > RappiMind, qué no se puede tocar y en qué formato tiene que venir la

@@ -876,3 +876,176 @@ escribir texto legal.
 La reconstrucción, para que Juan la confirme o la corrija, está copiada en el
 punto D3 de `docs/PARA_DECIDIR.md`. **No se aplicó nada mientras tanto**: no se
 aplica a medias, así que la frase del caso de un ganador tampoco entró.
+
+---
+
+# El modelo de millas (21 de septiembre de 2026)
+
+Sale del encargo de `docs/PROMPT_MODELOS_NUEVOS.md` y de las dos piezas de
+millas de `docs/piezas_publicadas/`. Todo lo que hay aquí lo decide Juan: el
+modelo genera hoy los dos documentos completos, pero ninguno se publica hasta
+que estos puntos estén resueltos.
+
+Para leer los dos documentos que produce:
+
+```
+npm run previsualizar MI01      # millas en la Plataforma Rappi (MUSS y TANGA en Turbo)
+npm run previsualizar MI02      # millas en Rappi Travel (tours de Civitatis)
+```
+
+## Lo que hay que decidir
+
+**M1. Quién es el Organizador en la pieza de Civitatis, y con qué NIT.**
+La pieza de Turbo dice expresamente "el Organizador (Lifemiles)". La de
+Civitatis **no nombra ningún Organizador**: solo dice que Rappi Travel es
+agencia intermediaria y que las millas se rigen por el reglamento de LifeMiles.
+El modelo, por la regla 1 de `CLAUDE.md`, pone al programa de lealtad como
+Organizador en las dos verticales y le imprime razón social e identificación.
+Hace falta la razón social y el NIT reales de LifeMiles en Colombia. Los dos
+casos de prueba usan hoy `Organizador del Programa de Lealtad S.A.S.` y el NIT
+de prueba `900.111.222-1`: **no son datos reales y no se pueden publicar así.**
+
+**M2. Los pagos con Créditos: las dos piezas siguen reglas distintas, y hay que
+escoger una.** No es la misma frase con otras palabras, son dos reglas:
+
+- *Civitatis (cláusula VII), la orden sí cuenta pero solo por la parte en
+  dinero:* "El beneficio aplica únicamente sobre el valor pagado con dinero
+  real, excluyendo cualquier porción de la compra que haya sido pagada con
+  Créditos de la Plataforma u otros cupones."
+- *El texto de medios de pago que Legal ya tiene aprobado en RappiMind, la orden
+  no cuenta del todo:* "No se obtendrá el Beneficio respecto de órdenes pagadas
+  parcial o totalmente con Créditos de la Plataforma."
+
+El modelo imprime hoy **la segunda**, porque es la que ya está aprobada y
+porque poner las dos dejaba el documento contradiciéndose dentro de la misma
+cláusula. Si Juan prefiere la de Civitatis, se cambia y se anota aquí.
+
+Ojo con un efecto de esto: la pieza de Turbo (cláusula X) decía simplemente
+"válida para órdenes pagadas con todos los medios de pago habilitados", sin
+ninguna exclusión de Créditos. El documento que genera hoy el modelo sí la
+lleva. Es más restrictivo que lo que se publicó.
+
+**M3. La acumulación con otras promociones: las dos piezas dicen lo contrario, y
+las dos están en el formulario como opción.** Confirmar que las dos redacciones
+valen tal cual:
+
+- *No acumulable (Civitatis, cláusula VII):* "El Beneficio obtenido en virtud de
+  la presente Campaña no es acumulable con otras promociones de acumulación
+  acelerada de Millas."
+- *Sí acumulable (Turbo, cláusula IX):* "El Beneficio obtenido en virtud de la
+  presente Campaña sí es acumulable con otras promociones exhibidas en la
+  Plataforma Rappi."
+
+**M4. Los requisitos de vinculación al programa también son distintos en las dos
+piezas, y también quedaron como opción.** Confirmar las dos:
+
+- *Civitatis (cláusula III):* "Se encuentren afiliados y tengan una cuenta
+  activa en el programa de lealtad LifeMiles."
+- *Turbo (cláusula VI):* "Estar vinculados (enrolados) al programa de lealtad
+  Lifemiles dentro de la Plataforma Rappi" y "Tener a Lifemiles seleccionado
+  como su programa preferido de acumulación dentro de la Plataforma Rappi."
+
+**M5. El documento de la Plataforma Rappi trae dos cláusulas seguidas sobre el
+rol de Rappi, y se pisan.** La cláusula 1 es el bloque de Organizador que ya
+usan todos los modelos ("Rappi actúa únicamente como plataforma de contacto e
+intermediación tecnológica... Rappi no es el organizador"). La cláusula 2 es la
+cláusula III de la pieza de Turbo, que es más fuerte y es la que protege a Rappi
+en esta mecánica ("no organiza, patrocina, administra ni asume responsabilidad
+alguna respecto de la mecánica, la selección, la acreditación ni la entrega del
+Beneficio"). Las dos están publicadas, así que se dejaron las dos. Juntarlas en
+una sola es escribir texto legal nuevo, y eso lo decide Juan.
+
+**M6. El documento de Rappi Travel no lleva la cláusula de limitación de
+responsabilidad que sí llevan Cashback Travel y Descuento Travel.** Esa cláusula
+termina diciendo de qué sí responde Rappi Travel, y en el cashback eso es "la
+correcta acreditación de los Créditos". En millas Rappi Travel no acredita nada:
+acredita el programa. Poner ahí una frase nueva sería redactar, así que el
+modelo usa en su lugar la "Declaración" de la pieza de Civitatis (cláusula VIII)
+más la responsabilidad e indemnidad del Organizador de la pieza de Turbo
+(cláusula XI). Si Juan quiere conservar la cláusula completa de Travel, hace
+falta que Legal escriba de qué responde Rappi Travel en una campaña de millas.
+
+**M7. La política de privacidad del programa va sin enlace.** La pieza de Turbo
+enlaza los T&C de LifeMiles. El formulario no puede pedir ese enlace: la regla 6
+de `CLAUDE.md` solo permite texto libre para nombres, razones sociales,
+ciudades, la descripción de un premio físico y la lista de productos. Hoy la
+cláusula de datos nombra la política del Organizador sin enlace. Tres caminos, y
+lo decide Juan: (a) dejarlo sin enlace, como hizo la pieza de Civitatis; (b)
+permitir una pregunta de enlace, que es una excepción a la regla 6; (c) guardar
+el enlace de cada programa en la configuración por país, con Legal como dueño.
+
+**M8. La cláusula de datos se armó con dos fuentes.** La autorización para
+compartir la identificación y los datos de la transacción con el Organizador
+sale de la cláusula XII de la pieza de Turbo. El cierre, con los derechos del
+titular y la autoridad a la que puede acudir, sale del bloque de datos que ya
+usan todos los modelos. **La pieza de Civitatis no tiene cláusula de datos
+personales**, y en una mecánica donde los datos del usuario salen hacia un
+tercero eso es un vacío. Confirmar que la cláusula armada sirve para las dos.
+
+**M9. El filtro general de entrada puede seguir mandando las millas a Legal.**
+La segunda pregunta del filtro general, la que todos ven antes de elegir el
+tipo, es "¿La tienda o la marca exige sus propios términos y condiciones?". En
+una campaña de millas el programa de lealtad **siempre** tiene los suyos, y el
+documento ya remite a ellos. Un comercial que responda "sí" se va a Legal
+aunque el caso esté cubierto. Habría que reformular esa pregunta para que no
+alcance a las millas. Es cambio de producto y de criterio legal a la vez.
+
+**M10. La jurisdicción.** La pieza de Turbo dice "la jurisdicción ordinaria de
+la ciudad de Bogotá D.C.". El documento que genera RappiMind dice lo que trae la
+fila del país, "la justicia ordinaria de la República de Colombia", como todos
+los demás modelos. Confirmar que se queda la del país.
+
+**M11. El título del documento ya no nombra al programa.** Los títulos
+publicados eran "LIFEMILES, MUSS & TANGA EN TURBO" y "Compra tours &
+actividades y acumula millas con LifeMiles". RappiMind arma el nombre con la
+regla que Juan fijó el 16 de septiembre (tienda o marca, beneficio y día), así
+que salen "Turbo · 400 Millas · 18 may 2026" y "Civitatis · Millas Travel · 23
+sep 2026". LifeMiles no aparece en el título. Si el programa debe ir en el
+nombre, es un cambio a la regla del nombre y afecta a todos los tipos.
+
+## En qué se apartó el texto de las piezas publicadas
+
+Además de lo anterior, que son decisiones abiertas, esto es lo que cambió y ya
+está aplicado:
+
+1. **Los dos documentos son mucho más largos que las piezas.** Las piezas tenían
+   nueve y catorce cláusulas; los documentos generados tienen veintiuna y
+   veintidós. Lo que se sumó no es texto nuevo: es el esqueleto que Legal ya
+   aprobó para cada vertical (publicidad y prevalencia, atención al usuario,
+   modificaciones, fraude, aplicación de otros T&C, ley aplicable y, en Travel,
+   sistemas, cobertura, productos y confirmación de la reserva). Es el mismo
+   esqueleto del Cashback y del Cashback Travel.
+2. **"Millas" va siempre con mayúscula y en femenino.** La pieza de Civitatis
+   escribía "millas" en minúscula y la de Turbo "Millas". Se unificó en
+   "Millas", que es como queda definido el término en el documento.
+3. **Las cifras se escriben en letras y cifra, en femenino:** "cuatrocientas
+   (400) Millas", "ciento cuarenta y ocho mil (148.000) Millas". Las piezas ya lo
+   hacían así.
+4. **"Tours y Actividades", no "Tours & Actividades".** El nombre sale del
+   catálogo de categorías de la app (`data/categorias_travel.json`), y el
+   documento lo cita entre comillas, así que tiene que coincidir con la app.
+5. **Se quitó la palabra "(cartola)".** La pieza de Turbo dice "la cuenta digital
+   (cartola) del Usuario/Consumidor". "Cartola" no se usa en Colombia. El
+   documento dice "la cuenta del Usuario/Consumidor Participante dentro de la
+   plataforma del programa".
+6. **En Rappi Travel, la compra mínima sale en la cláusula de condiciones de los
+   Productos Participantes y no dentro de la frase del beneficio**, que es donde
+   ya la pone el modelo de Travel. En la Plataforma Rappi sale dentro de la
+   frase del beneficio, como en la pieza de Turbo.
+
+## Errores en las piezas publicadas (regla 3: se anotan y se sigue)
+
+1. **La pieza de Civitatis se contradice en el valor de la fracción.** La
+   cláusula V dice "por cada fracción de **cuatro mil ciento cincuenta pesos
+   colombianos ($3.500 COP)**". Las letras dicen 4.150 y la cifra dice 3.500.
+   Como el documento dice que en caso de discrepancia se aplica la condición más
+   favorable para el usuario, hoy esa campaña está obligada a la fracción de
+   3.500, que es la que da más millas. El modelo escribe las letras y la cifra
+   del mismo número, así que sale "tres mil quinientos pesos M/Cte. ($3.500)".
+   **Confirmar cuál de los dos números era el de la campaña.**
+2. **La pieza de Turbo salta de la cláusula XII a la XIV.** No hay cláusula
+   XIII. En el documento generado la numeración es automática y corrida.
+3. **Varios enlaces de la pieza de Turbo llevan pegado `?utm_source=chatgpt.com`**,
+   incluidos el de la política de datos de Rappi y el de los T&C de la
+   Plataforma. Los enlaces del documento generado salen de la fila del país y no
+   llevan ese parámetro.

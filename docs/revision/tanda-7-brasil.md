@@ -1,4 +1,4 @@
-# Tanda 6 de 7 · Brasil y la interfaz en portugués
+# Tanda 7 de 8 · Brasil y la interfaz en portugués
 
 > **Antes de pegar esto, pega `PROMPT.md`.** Ahí va quién revisa, qué es
 > RappiMind, qué no se puede tocar y en qué formato tiene que venir la
@@ -369,7 +369,7 @@ A la izquierda, el texto en español que dibuja la interfaz. A la derecha, lo qu
 
 ---
 
-## Fin de la tanda 6
+## Fin de la tanda 7
 
 Responde con las fichas de hallazgo en el formato del prompt, la tabla de cierre
 y las tres preguntas para Juan. Si algo está bien, dilo en una línea y sigue: lo

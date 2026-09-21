@@ -7,6 +7,7 @@
 | 2 | listo, falta verificar en Google | `npm test` (157 pruebas) | Correr `setup()` y completar las propiedades |
 | 3 | listo | `npm run demo` y abrir `demo/index.html` | Revisar las capturas y los textos |
 | 4 | pendiente | | Falta el despliegue versionado, que lo dispara Juan |
+| millas | listo, esperando aprobación de Juan | `npm test` (642 pruebas), `npm run previsualizar MI01` y `MI02` | Aprobar el texto y resolver `docs/PENDIENTES_LEGAL.md`, sección del modelo de millas |
 
 ## Bloque 0 · Repo, build y despliegue
 
@@ -1833,3 +1834,97 @@ Con los ojos, en la demostración: entra a Rappi Travel, elige Cashback Travel y
 mira que la pregunta de las categorías traiga las ocho de la app y deje avanzar.
 Y en la pregunta del NIT del Organizador, escribe 900.843.898-9: el mensaje
 tiene que decir Rappi S.A.S., no Rappi Travel.
+
+---
+
+## Modelos nuevos · 1 de 3: millas (21 de septiembre de 2026)
+
+Rama `claude/modelo-millas`. **No está mezclada a `main` y no tiene pull
+request: el texto legal lo aprueba Juan antes de entrar.**
+
+Es la primera de las tres mecánicas del encargo de
+`docs/PROMPT_MODELOS_NUEVOS.md`. Las otras dos, el descuento variable por hotel
+y la eSIM, no se tocaron.
+
+### Qué quedó
+
+**El modelo de millas sirve para las dos verticales.** Las dos piezas
+publicadas son la misma mecánica en Rappi Travel (tours de Civitatis) y en la
+Plataforma Rappi (MUSS y TANGA en Turbo), y las dos salen del mismo modelo:
+
+- La mecánica vive una sola vez: `src/core/derivados_millas.js`, la lista de
+  campos `CAMPOS_MILLAS_MECANICA` y once bloques compartidos en
+  `modelos/bloques/millas_*.md`.
+- Los documentos son dos, `modelos/millas.md` y `modelos/millas_travel.md`,
+  porque la entidad que opera el canal, las cláusulas de plataforma y el reparto
+  de responsabilidad **son distintos de verdad** entre las dos verticales, y así
+  estaban en las piezas publicadas. Cada uno pega la misma mecánica sobre el
+  esqueleto que su vertical ya tenía aprobado. Es el mismo patrón de `cashback` y
+  `cashback_travel`. Está explicado en `docs/DECISIONES.md`, punto 80.
+- Dos tipos de campaña nuevos, **Millas** y **Millas Travel**, habilitados en
+  Colombia. El comercial llega a ellos por el camino de siempre: Millas sale al
+  elegir negocio Rappi y Millas Travel al elegir Rappi Travel.
+- Trece preguntas nuevas y cuatro reusadas con variante. Todas con su ayuda, su
+  "por qué" y su mensaje de error, y con ejemplos sacados de las dos campañas
+  reales.
+- **El filtro de Rappi Travel ya no manda las millas a Legal.** La pregunta que
+  decía "¿El beneficio es distinto a Créditos o a un descuento en el precio?
+  Por ejemplo: ... millas ..." ahora reconoce las millas como caso cubierto. Era
+  la razón por la que las dos campañas se redactaron a mano.
+- Tres validaciones propias: la bolsa de millas tiene que cuadrar con su
+  equivalencia en órdenes, la bolsa tiene que alcanzar al menos para una orden y
+  el tope por persona no puede pasarse de la bolsa ni quedarse por debajo de una
+  sola orden.
+- Una tanda de revisión de copy propia, `docs/revision/tanda-6-millas.md`.
+
+### Cómo probarlo
+
+```
+npm test                                   # 642 pruebas
+npm run previsualizar MI01                 # el documento de MUSS y TANGA en Turbo
+npm run previsualizar MI02                 # el documento de los tours de Civitatis
+npm run demo
+```
+
+En la demostración, con los ojos, los dos caminos:
+
+- **Millas.** Colombia, negocio Rappi. La tarjeta "Millas" sale entre Cashback y
+  Carrera de Compras.
+- **Millas Travel.** Colombia, negocio Rappi Travel. En el filtro de las nueve
+  preguntas, la quinta ya nombra las millas como caso cubierto; respondiendo que
+  no a todas, "Millas Travel" está en la lista de tipos.
+
+Las pruebas nuevas están en `pruebas/millas.test.js`. La que más vale es la que
+recorre las setenta y dos combinaciones de la mecánica en las dos verticales: si
+un cambio solo cuadra en una, se cae ahí y no en producción.
+
+### Qué necesito de Juan
+
+Todo está en `docs/PENDIENTES_LEGAL.md`, en la sección "El modelo de millas".
+Lo que bloquea publicar:
+
+1. **La razón social y el NIT de LifeMiles en Colombia** (M1). Los documentos
+   generados llevan hoy un organizador de prueba, porque no se inventan datos de
+   una empresa real.
+2. **Qué pasa con los pagos con Créditos** (M2). Las dos piezas siguen reglas
+   distintas y hay que escoger una. Las dos redacciones están copiadas.
+3. **Las dos parejas de textos donde las piezas dicen cosas opuestas** (M3 y M4):
+   la acumulación con otras promociones y los requisitos de vinculación al
+   programa. Están las dos versiones de cada una, sin elegir.
+4. **Si las dos cláusulas sobre el rol de Rappi se juntan en una** (M5), y **de
+   qué responde Rappi Travel en una campaña de millas** (M6). Las dos piden
+   texto de Legal.
+5. **Si el enlace de los T&C del programa tiene que salir impreso** (M7). Hoy no
+   sale, porque el formulario no puede pedir un enlace sin romper la regla 6.
+6. **El error de la pieza de Civitatis**: dice "cuatro mil ciento cincuenta pesos
+   colombianos ($3.500 COP)". Las letras y la cifra no son el mismo número.
+   ¿Cuál era el de la campaña?
+
+### Lo que no se tocó, a propósito
+
+- El descuento variable por hotel y la eSIM, que son las otras dos mecánicas del
+  encargo.
+- La pregunta del filtro de Travel sobre seguros y Universal Assistance. Sigue
+  sin haber ninguna pieza suya en el repositorio, así que quitarla seguiría
+  siendo abrir un camino que no se sabe a dónde lleva.
+- Los modelos, las preguntas y los casos de los tipos que ya existían.

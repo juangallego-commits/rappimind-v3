@@ -2,7 +2,7 @@
 
 Esto se pega **entero, al empezar cada conversación de Claude chat**, y justo
 después se pega el archivo de la tanda que toque. Es el mismo texto para las
-7 tandas: lo único que cambia es la tanda que va detrás.
+8 tandas: lo único que cambia es la tanda que va detrás.
 
 La línea de abajo es donde empieza lo que se copia.
 

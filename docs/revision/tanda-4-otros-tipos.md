@@ -1,4 +1,4 @@
-# Tanda 4 de 7 · Los otros tipos de campaña de Rappi
+# Tanda 4 de 8 · Los otros tipos de campaña de Rappi
 
 > **Antes de pegar esto, pega `PROMPT.md`.** Ahí va quién revisa, qué es
 > RappiMind, qué no se puede tocar y en qué formato tiene que venir la

@@ -18,11 +18,11 @@ de copy. Cabe en una conversación, pero deja poco aire para pensar, y una revis
 de 46 pantallas con poco aire vuelve con quince observaciones
 generales en vez de las doscientas concretas que necesitamos.
 
-Por eso el front va partido en 7 tandas. Cada tanda es una
+Por eso el front va partido en 8 tandas. Cada tanda es una
 conversación aparte, con su pedazo del producto y nada más, y con toda la ventana
 libre para revisar de verdad.
 
-## Las 7 tandas
+## Las 8 tandas
 
 | # | Archivo | De qué va | Qué trae |
 |---|---|---|---|
@@ -31,8 +31,9 @@ libre para revisar de verdad.
 | 3 | `tanda-3-el-cierre.md` | El cierre: revisar, generar y publicar | 3 pantallas, 2 fotos |
 | 4 | `tanda-4-otros-tipos.md` | Los otros tipos de campaña de Rappi | 3 pantallas, 17 preguntas, 2 fotos |
 | 5 | `tanda-5-travel.md` | Rappi Travel: los dos tipos, y las preguntas que nadie ha revisado | 41 preguntas |
-| 6 | `tanda-6-brasil.md` | Brasil y la interfaz en portugués | 4 pantallas, 2 preguntas, 1 foto, el diccionario del portugués |
-| 7 | `tanda-7-alrededores.md` | Mis campañas, la Ayuda, Administración y lo que se lee cuando algo falla | 4 pantallas, 3 fotos, los mensajes de error |
+| 6 | `tanda-6-millas.md` | Millas: la misma mecánica en dos verticales | 17 preguntas |
+| 7 | `tanda-7-brasil.md` | Brasil y la interfaz en portugués | 4 pantallas, 2 preguntas, 1 foto, el diccionario del portugués |
+| 8 | `tanda-8-alrededores.md` | Mis campañas, la Ayuda, Administración y lo que se lee cuando algo falla | 4 pantallas, 3 fotos, los mensajes de error |
 
 El orden importa: la tanda 1 es la que más devuelve, porque son las pantallas
 donde el comercial decide si se queda. Si solo hay tiempo para tres, que sean la
@@ -52,8 +53,9 @@ Todo vive en `docs/revision/`, dentro del repositorio. En GitHub se abre en
 | `tanda-3-el-cierre.md` | Tanda 3: El cierre: revisar, generar y publicar |
 | `tanda-4-otros-tipos.md` | Tanda 4: Los otros tipos de campaña de Rappi |
 | `tanda-5-travel.md` | Tanda 5: Rappi Travel: los dos tipos, y las preguntas que nadie ha revisado |
-| `tanda-6-brasil.md` | Tanda 6: Brasil y la interfaz en portugués |
-| `tanda-7-alrededores.md` | Tanda 7: Mis campañas, la Ayuda, Administración y lo que se lee cuando algo falla |
+| `tanda-6-millas.md` | Tanda 6: Millas: la misma mecánica en dos verticales |
+| `tanda-7-brasil.md` | Tanda 7: Brasil y la interfaz en portugués |
+| `tanda-8-alrededores.md` | Tanda 8: Mis campañas, la Ayuda, Administración y lo que se lee cuando algo falla |
 | `respuestas/` | Donde va lo que responda Claude chat |
 | `pantallas.json` | El texto de las pantallas, del que se arman las tandas. No se lee a mano |
 
@@ -73,8 +75,9 @@ Son 21 en total, repartidas así:
 | 3 | pantalla 23, Resumen, con algo pendiente; pantalla 25, Listo |
 | 4 | pantalla 34, Formulario, Cashback Multitienda y su lista de tiendas; pantalla 35, Formulario, Carrera de Compras con una opción bloqueada |
 | 5 | nada: esta tanda es de preguntas, no de pantallas |
-| 6 | pantalla 43, Formulario en portugués, el tipo de campaña |
-| 7 | pantalla 26, Mis campañas; pantalla 27, Ayuda; pantalla 39, Administración |
+| 6 | nada: esta tanda es de preguntas, no de pantallas |
+| 7 | pantalla 43, Formulario en portugués, el tipo de campaña |
+| 8 | pantalla 26, Mis campañas; pantalla 27, Ayuda; pantalla 39, Administración |
 
 No son todas las pantallas de cada tanda, y no hacen falta: las demás son la
 misma forma con otro texto, y el texto va completo dentro de la tanda. Con una

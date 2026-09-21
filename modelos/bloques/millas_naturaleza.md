@@ -1,0 +1,2 @@
+%% Bloque de millas: naturaleza de las Millas · versión 1.0 · base: rappi-millas-lifemiles-muss-tanga-turbo.md, cláusula IX, y travel-millas-lifemiles-tours-civitatis.md, cláusula VIII · revisar con Juan
+§ Naturaleza de las Millas. Las Millas no son dinero en efectivo, no son canjeables por Créditos de la Plataforma Rappi, y su uso se rige por los Términos y Condiciones del programa **{{PROGRAMA_MILLAS}}**. La administración, la vigencia y la redención de las Millas se rigen exclusivamente por el reglamento del programa **{{PROGRAMA_MILLAS}}**.

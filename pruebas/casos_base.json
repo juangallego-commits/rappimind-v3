@@ -1901,6 +1901,106 @@
           "Organizador"
         ]
       }
+    },
+    {
+      "id": "MI01",
+      "descripcion": "Millas en la Plataforma Rappi, con los datos de la pieza publicada de Lifemiles, MUSS y TANGA en Turbo",
+      "fecha_referencia": "2026-05-10",
+      "entrada": {
+        "pais": "CO",
+        "negocio": "rappi",
+        "tipo": "millas",
+        "tienda": "Turbo",
+        "alcance": "Nacional",
+        "ciudades": "",
+        "enTurbo": true,
+        "productos": "marca",
+        "makerMarca": "MUSS, TANGA",
+        "organizadorRazonSocial": "Organizador del Programa de Lealtad S.A.S.",
+        "organizadorId": "900111222-1",
+        "programaLealtad": "LifeMiles",
+        "fechaInicio": "2026-05-18",
+        "horaInicio": "00:01",
+        "fechaFin": "2026-06-14",
+        "horaFin": "23:59",
+        "segmento": "pro",
+        "vinculacionPrograma": "enrolado_preferido",
+        "metodoPago": "todos",
+        "compraMinima": 50000,
+        "formaMillas": "por_orden",
+        "millasPorOrden": 400,
+        "acumulableMillas": "si",
+        "limitePorUsuario": 10,
+        "sinLimitePorUsuario": false,
+        "topeMillasUsuario": 4000,
+        "bolsaMillas": 148000,
+        "maxOrdenes": 370,
+        "acreditacionMillas": "programa",
+        "declaracion": true
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "cuatrocientas (400) Millas del programa LifeMiles",
+          "las marcas “MUSS” y “TANGA”",
+          "ciento cuarenta y ocho mil (148.000) Millas equivalentes a trescientas setenta (370) órdenes válidas",
+          "El Organizador mantendrá indemne a Rappi S.A.S.",
+          "no organiza, patrocina, administra ni asume responsabilidad alguna",
+          "Términos y Condiciones del Botón Turbo"
+        ]
+      }
+    },
+    {
+      "id": "MI02",
+      "descripcion": "Millas en Rappi Travel, con los datos de la pieza publicada de tours y actividades de Civitatis",
+      "fecha_referencia": "2026-09-16",
+      "usuario_en_equipo": true,
+      "entrada": {
+        "pais": "CO",
+        "negocio": "travel",
+        "tipo": "millas_travel",
+        "organizadorRazonSocial": "Organizador del Programa de Lealtad S.A.S.",
+        "organizadorId": "900111222-1",
+        "marcaAliado": "Civitatis",
+        "programaLealtad": "LifeMiles",
+        "categorias": [
+          "Tours y Actividades"
+        ],
+        "ambito": "ambos",
+        "destinos": "",
+        "sinCompraMinima": true,
+        "otraCondicion": "no",
+        "fechaInicio": "2026-09-23",
+        "horaInicio": "00:00",
+        "fechaFin": "2026-11-23",
+        "horaFin": "23:59",
+        "segmento": "todos",
+        "vinculacionPrograma": "afiliado",
+        "metodoPago": "digitales",
+        "formaMillas": "por_fraccion",
+        "millasPorFraccion": 6,
+        "valorFraccion": 3500,
+        "fraccionEsDolar": true,
+        "acumulableMillas": "no",
+        "sinLimitePorUsuario": true,
+        "acreditacionMillas": "dias_calendario",
+        "diasAcreditacion": 5,
+        "fechaPrimeraComunicacion": "2026-09-22",
+        "linkAnterior": "",
+        "aliadoAprobo": true,
+        "declaracionPiezas": true,
+        "declaracion": true
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "seis (6) Millas del programa LifeMiles",
+          "por cada fracción de tres mil quinientos pesos M/Cte. ($3.500)",
+          "inscrita en el Registro Nacional de Turismo con el número 79000",
+          "cinco (5) días calendario después de haberse realizado y confirmado exitosamente la compra",
+          "agencia de viajes intermediaria (portal de contacto)"
+        ]
+      }
     }
   ]
 }

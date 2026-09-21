@@ -1,4 +1,4 @@
-# Tanda 5 de 7 · Rappi Travel: los dos tipos, y las preguntas que nadie ha revisado
+# Tanda 5 de 8 · Rappi Travel: los dos tipos, y las preguntas que nadie ha revisado
 
 > **Antes de pegar esto, pega `PROMPT.md`.** Ahí va quién revisa, qué es
 > RappiMind, qué no se puede tocar y en qué formato tiene que venir la

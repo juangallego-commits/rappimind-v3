@@ -34,6 +34,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var esquemaDe = moduloEsquemas2.esquemaDe;
 
   var calcularDerivadosTravel = require('./derivados_travel.js').calcularDerivadosTravel;
+  var calcularDerivadosMillas = require('./derivados_millas.js').calcularDerivadosMillas;
   var calcularDerivadosBr = require('./derivados_br.js').calcularDerivadosBr;
   var moduloEta = require('./derivados_eta.js');
   var calcularDerivadosEta = moduloEta.calcularDerivadosEta;
@@ -468,6 +469,24 @@ function calcularDerivadosEnElIdiomaDelPais(entrada, pais) {
     for (var llaveEta in deEta) {
       if (Object.prototype.hasOwnProperty.call(deEta, llaveEta)) valores[llaveEta] = deEta[llaveEta];
     }
+  }
+
+  // La mecanica de millas corre en las dos verticales, asi que va despues de
+  // Travel: cuando el tipo es de Travel ya estan calculados los textos de
+  // Travel y los dos de abajo se resuelven con los que correspondan.
+  if (esquemaActual && esquemaActual.esDeMillas) {
+    var deMillas = calcularDerivadosMillas(entrada, pais);
+    for (var llaveMillas in deMillas) {
+      if (Object.prototype.hasOwnProperty.call(deMillas, llaveMillas)) valores[llaveMillas] = deMillas[llaveMillas];
+    }
+    // El segmento y el medio de pago no cambian con la mecanica, sino con la
+    // vertical: en Travel se habla de ordenes y de los Sistemas Rappi Travel, y
+    // en la Plataforma Rappi de pedidos. Se toman los que ya estan calculados
+    // en vez de escribir una tercera version de los mismos textos.
+    valores.TEXTO_SEGMENTO_MILLAS = esquemaActual.esDeTravel ? valores.TEXTO_SEGMENTO_TRAVEL : valores.TEXTO_SEGMENTO;
+    valores.TEXTO_METODO_PAGO_MILLAS = esquemaActual.esDeTravel
+      ? valores.TEXTO_METODO_PAGO_TRAVEL
+      : valores.TEXTO_METODO_PAGO;
   }
 
   // Brasil tiene su propio modelo y sus propios textos, en portugues y con su

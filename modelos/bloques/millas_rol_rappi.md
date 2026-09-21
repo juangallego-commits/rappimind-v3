@@ -1,0 +1,2 @@
+%% Bloque de millas: rol de Rappi · versión 1.0 · base: rappi-millas-lifemiles-muss-tanga-turbo.md, cláusula III (TAL CUAL, con la entidad como placeholder) · solo Plataforma Rappi
+§ Rol de Rappi. **{{ENTIDAD_LEGAL}}** actúa únicamente como plataforma tecnológica de contacto y canal de difusión. **{{ENTIDAD_LEGAL}}** no organiza, patrocina, administra ni asume responsabilidad alguna respecto de la mecánica, la selección, la acreditación ni la entrega del Beneficio.

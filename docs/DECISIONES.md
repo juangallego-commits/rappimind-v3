@@ -1089,3 +1089,71 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
     piloto a mano. Lo mismo con la comprobación del recorrido que abría el
     detalle de un T&C con algo pendiente: los cupones dejaron de tener pendiente
     y pasó a usar los de membresía, que sí lo tienen.
+
+80. **La mecánica de millas es una sola; los documentos son dos, uno por
+    vertical.** Las dos piezas publicadas de millas son la misma mecánica en
+    Rappi Travel y en la Plataforma Rappi, así que la mecánica vive una sola vez:
+    un archivo de derivados (`src/core/derivados_millas.js`), una lista de campos
+    (`CAMPOS_MILLAS_MECANICA`) y once bloques compartidos en
+    `modelos/bloques/millas_*.md`. Lo que no se puede compartir es el envoltorio:
+    la entidad que opera el canal (Rappi S.A.S. contra Travel Moustache S.A.S.),
+    las cláusulas de plataforma y el reparto de responsabilidad son distintos de
+    verdad, y así estaban en las piezas. Por eso hay dos tipos, `millas` y
+    `millas_travel`, cada uno pegando la misma mecánica sobre el esqueleto que su
+    vertical ya tenía aprobado. Es el mismo patrón de `cashback` y
+    `cashback_travel`, que no son un tipo con una bifurcación por una razón
+    idéntica. Un tipo único con `esDeTravel` condicional habría peleado con todo
+    lo que ya existe: `validarNegocio`, `tiposDelPais`, el filtro de Travel y la
+    lista de campos visibles.
+
+81. **`esDeMillas` es la marca del tipo, y es independiente de `esDeTravel`.**
+    `calcularDerivados` mezcla los valores de millas **después** de los de
+    Travel, para que `TEXTO_SEGMENTO_MILLAS` y `TEXTO_METODO_PAGO_MILLAS` puedan
+    tomar el texto que ya calculó la vertical en vez de escribir una tercera
+    versión de los mismos textos aprobados. Mismo patrón que Travel, el ETA y
+    Brasil: encima, sin tocar nada de lo que ya estaba.
+
+82. **Las cantidades de millas se escriben en femenino y con separador de
+    miles.** `letrasYCifraFemenino()` no servía: escribe la cifra sin separador
+    ("148000"), y una bolsa de campaña se lee "148.000". `millasEnLetras()`, en
+    `derivados_millas.js`, junta `enFemenino(numeroEnLetras())` con
+    `formatearMiles()` del país. Milla es femenino en las dos piezas publicadas
+    ("cuatrocientas (400) Millas"), así que el masculino sería un error visible.
+
+83. **La bolsa de millas y su equivalencia en órdenes se validan una contra
+    otra.** La pieza de Turbo publica los dos números como dos caras del mismo
+    ("148.000 Millas equivalentes a 370 órdenes válidas", con 400 por orden). Si
+    no cuadran, el documento dice las dos cosas a la vez y la red de seguridad
+    del motor no lo ve, porque las dos frases están bien formadas. `validarMillas`
+    las cruza y bloquea con el número que sí sale de la multiplicación.
+
+84. **El botón Turbo se pregunta con una casilla propia (`enTurbo`) y no con la
+    pregunta de "en qué pedidos aplica".** Son dos cosas distintas: la pregunta
+    vieja restringe el pedido ("el Beneficio aplica únicamente para pedidos
+    realizados a través de Turbo") y la casilla nueva solo agrega el documento al
+    que la Campaña queda sujeta. En la campaña de MUSS y TANGA la Tienda
+    Participante **es** Turbo, así que la restricción habría salido circular
+    ("solo pedidos por Turbo" en una campaña cuya tienda es Turbo) y la remisión
+    a los T&C del Botón Turbo, que la pieza sí traía, se habría perdido.
+
+85. **La equivalencia en órdenes reusa el campo `maxOrdenes` de Travel en vez de
+    inventar uno.** Es el mismo dato con el mismo significado, el máximo de
+    órdenes con beneficio de toda la campaña, y reusarlo evita una columna nueva
+    en el Sheet y una pregunta gemela. Lo que cambia es el texto y que en millas
+    es opcional y solo se ve cuando hay bolsa, y eso va en `variantes`, que es el
+    mecanismo que ya existe para que una pregunta se lea distinto según el tipo.
+
+86. **Los dos casos dorados de millas llevan los datos de las campañas reales, y
+    cada uno su fecha de referencia.** MI01 reproduce la campaña de MUSS y TANGA,
+    que corrió en mayo de 2026, así que su `fecha_referencia` es `2026-05-10` y
+    no la de siempre: con la fecha de septiembre la validación de vigencia la
+    habría rechazado por empezar en el pasado, que es justo lo que esa validación
+    existe para impedir. Lo único que no es real en los dos casos es la razón
+    social y el NIT del Organizador, que no los tenemos (ver `M1` en
+    `docs/PENDIENTES_LEGAL.md`).
+
+87. **La revisión de copy de millas es una tanda propia, no un apartado de la de
+    Travel.** La mecánica cruza las dos verticales, así que meterla en la tanda
+    de Travel habría dejado sin revisar la mitad que vive en la Plataforma
+    Rappi. `docs/revision/` se renumeró solo al agregarla: millas quedó de
+    sexta, Brasil de séptima y los alrededores de octava.

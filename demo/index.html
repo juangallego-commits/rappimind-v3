@@ -590,6 +590,8 @@ var MODELOS = {
     "cashback_eta": "3.0",
     "cashback_travel": "1.0",
     "descuento_travel": "1.0",
+    "millas": "1.0",
+    "millas_travel": "1.0",
     "promocao_br": "3.0"
   },
   modelos: {
@@ -599,6 +601,8 @@ var MODELOS = {
     "cashback_eta": "%% Modelo: Cashback por incumplimiento del ETA (Turbo) · versión 3.0\n%% Base: los T&C publicados de Bogotá (16/09/2026) y Barranquilla (1/09/2026).\n%% Los dos son el mismo documento con la ciudad, la fecha, las horas y el\n%% presupuesto cambiados. Las mejoras aplicadas están en docs/MEJORAS_ETA.md.\n%% OJO: en este modelo no hay aliado que fondee. Es una promesa de servicio de\n%% Rappi sobre su propio tiempo de entrega. Ver docs/PENDIENTES_LEGAL.md.\n# TÉRMINOS Y CONDICIONES\n## {{NOMBRE_CAMPANA_MAYUS}}\nPor medio del presente documento **{{ENTIDAD_LEGAL}}**, identificada con **{{ID_FISCAL}}** y domiciliada en {{DOMICILIO_LEGAL}} (en adelante, “Rappi”), da a conocer los términos y condiciones de la campaña denominada “{{NOMBRE_CAMPANA}}” (en adelante la “Campaña”). La participación en la Campaña implica conocimiento y aceptación total, expresa y vinculante de estos Términos y Condiciones por parte del Usuario/Consumidor.\n[[INCLUIR:eta_definiciones]]\n§ Territorio. La Campaña será válida únicamente para las órdenes realizadas dentro de las zonas de cobertura de las Tiendas Participantes en la Plataforma Rappi, en {{TEXTO_CIUDAD_ETA}}, dentro de {{PAIS_LEGAL}}.\n§ Vigencia y presupuesto. La Campaña será válida desde las **{{HORA_INICIO}}** hasta las **{{HORA_FIN}}** del **{{FECHA_INICIO}}** ({{TEXTO_HORA_LOCAL}}) y/o hasta agotar existencias, lo que primero ocurra. Para efectos de la Campaña se ha establecido un valor total máximo de **{{PRESUPUESTO}}** a ser entregados como Cashback a los Usuarios/Consumidores que participen en la Campaña (las “Existencias”). El agotamiento del presupuesto con anterioridad a la hora de finalización implicará la terminación automática de la Campaña.\n§ Tipo de Usuarios Participantes. Podrán participar todos los Usuarios/Consumidores registrados en la Plataforma Rappi que durante la vigencia de la Campaña realicen órdenes en las Tiendas Participantes, con independencia de que cuenten o no con suscripción activa.\n§ Tiendas Participantes. Participarán todas las tiendas virtuales bajo la modalidad “{{MODALIDAD_TURBO}}” al interior de la Plataforma Rappi que se encuentren habilitadas en {{TEXTO_CIUDAD_ETA}} durante la vigencia de la Campaña. El listado de Tiendas Participantes será el que se encuentre visible y disponible para el Usuario/Consumidor dentro del botón “Turbo” de la Plataforma Rappi al momento de realizar la orden, el cual podrá variar en función de la operación y disponibilidad de cada Aliado Comercial.\n§ Productos Participantes. Participarán todos los productos que hacen parte del catálogo de las Tiendas Participantes al interior del botón “Turbo” de la Plataforma Rappi.\n§ Beneficio y dinámica de la Campaña. Si durante la vigencia de la Campaña realizas una orden en las Tiendas Participantes y su entrega supera {{TEXTO_ETA}}, contados desde la aceptación de la orden por parte del Aliado Comercial hasta la entrega efectiva por parte del repartidor independiente, recibirás en Créditos el **{{PORCENTAJE}}** del valor de los Productos Participantes. Rappi se obliga a cumplir con el ETA exhibido dentro de la Plataforma Rappi. No habrá lugar al Beneficio cuando el retraso se deba a causas que te sean imputables, como una dirección de entrega incorrecta o incompleta, la modificación de la orden o de la dirección después de realizada, o la falta de disponibilidad para recibirla, ni cuando obedezca a fuerza mayor o caso fortuito.\nEl Cashback será calculado única y exclusivamente sobre el valor efectivamente pagado por los productos adquiridos en la orden, sin que en ningún caso se incluyan para dicho cálculo los costos de envío, la tarifa de servicio, las propinas voluntarias, ni los descuentos u otras promociones aplicadas. El monto máximo del Cashback que se otorgará por orden es de **{{TOPE}}**.\n[[INCLUIR:acreditacion]]\n[[INCLUIR:vigencia_creditos]]\n[[INCLUIR:eta_condiciones]]\n§ Medio de pago. {{TEXTO_METODO_PAGO}}\n§ Modificaciones e interpretación. Rappi se reserva el derecho de modificar, suspender o cancelar la Campaña en cualquier momento y sin previo aviso, en caso de detectarse fraude, abuso del sistema, caso fortuito o fuerza mayor. Rappi podrá cancelar cualquier orden que no aplique para el Beneficio sin previo aviso.\n[[INCLUIR:eta_intermediacion]]\n[[INCLUIR:naturaleza_creditos]]\n[[INCLUIR:datos]]\n[[INCLUIR:ley]]\n",
     "cashback_travel": "%% Modelo: Cashback Travel · versión 1.0 · base: docs/MODELO_BASE_TRAVEL.md, sección 6 · pendiente de revisión de Juan (docs/PENDIENTES_LEGAL.md)\n# TÉRMINOS Y CONDICIONES\n## {{NOMBRE_CAMPANA_MAYUS}}\n[[INCLUIR:travel_organizador]]\n[[INCLUIR:travel_sistemas]]\n[[INCLUIR:travel_cobertura]]\n§ Vigencia. La Campaña estará vigente desde las **{{HORA_INICIO}}** del **{{FECHA_INICIO}}** hasta las **{{HORA_FIN}}** del **{{FECHA_FIN}}** ({{TEXTO_HORA_LOCAL}})[[?TEXTO_AGOTAMIENTO_VIGENCIA_TRAVEL]], o hasta agotar {{TEXTO_AGOTAMIENTO_VIGENCIA_TRAVEL}}, lo que ocurra primero[[/?]]. Las órdenes realizadas fuera de la vigencia no darán lugar al beneficio de la Campaña.\n[[INCLUIR:travel_usuarios]]\n[[INCLUIR:travel_productos]]\n[[INCLUIR:travel_condiciones]]\n§ Mecánica y Beneficio. Para obtener el beneficio de la Campaña (en adelante, el “Beneficio”) debes:\n• Comprar uno o varios Productos Participantes a través de los Sistemas Rappi Travel durante la vigencia de la Campaña.\n• Obtener la confirmación de tu reserva por parte del Proveedor, sin que haya sido cancelada.\n• Pagar la orden con un medio de pago válido para la Campaña.\n{{TEXTO_METODO_PAGO_TRAVEL}}\nEl Beneficio consiste en {{TEXTO_BENEFICIO_TRAVEL}}, acreditado como Créditos en tu Billetera de Créditos de la Plataforma Rappi.[[?TEXTO_BASE_CALCULO_TRAVEL]] {{TEXTO_BASE_CALCULO_TRAVEL}}[[/?]][[?TEXTO_EJEMPLO_TOPE_TRAVEL]] {{TEXTO_EJEMPLO_TOPE_TRAVEL}}[[/?]]\n§ Topes y límites.\n[[?TOPE_TRAVEL]]• **Tope por orden:** el Beneficio máximo por cada orden es de **{{TOPE_TRAVEL}}**.\n[[/?]]• **Máximo de órdenes por usuario:** {{TEXTO_LIMITE_ORDENES_TRAVEL}}\n• **Límite de la Campaña:** {{TEXTO_LIMITE_CAMPANA_TRAVEL}}\n[[?TEXTO_CONTEO_IDA_REGRESO_TRAVEL]]• **Compras de ida y regreso:** {{TEXTO_CONTEO_IDA_REGRESO_TRAVEL}}\n[[/?]]§ Confirmación de la reserva. Debido a la naturaleza de los inventarios turísticos, el Beneficio está sujeto a la confirmación de la reserva por parte del Proveedor. Si por fallas en la conexión con el Proveedor la orden es rechazada y el servicio no se emite, no se otorgará el Beneficio.\n§ Acreditación del Beneficio. Los Créditos correspondientes al Beneficio se acreditarán en tu Billetera de Créditos **{{TEXTO_CARGA_TRAVEL}}**. Podrás verificar el estado de tus Créditos en las secciones “Cuenta” y “Créditos” de la Plataforma Rappi. {{TEXTO_VERIFICACION_TRAVEL}}\n§ Naturaleza de los Créditos. El Beneficio consiste en Créditos que Rappi Travel otorga y acredita en tu Billetera de Créditos de la Plataforma Rappi. Al participar, reconoces y aceptas que:\n• Los Créditos son intangibles que te permiten adquirir los productos y servicios indicados en la cláusula de vigencia y redención.\n• Los Créditos no constituyen dinero en efectivo, valores ni instrumentos financieros, y no pueden convertirse en dinero ni reembolsarse.\n• Los Créditos no son transferibles a terceros ni a otras cuentas de la Plataforma Rappi.\n• Los Créditos no son acumulables con otros cupones o promociones, salvo que se indique expresamente lo contrario.\n• Los Créditos otorgados en virtud de la Campaña se rigen por los presentes Términos y Condiciones.\n[[?TEXTO_CREDITOS_FUERA_DE_TRAVEL]]{{TEXTO_CREDITOS_FUERA_DE_TRAVEL}}\n[[/?]]§ Vigencia y redención de los Créditos. Los Créditos acreditados en virtud de la Campaña **{{TEXTO_VIGENCIA_CREDITOS}}**. {{TEXTO_REDENCION_TRAVEL}} Una vez vencidos, los Créditos no podrán ser recuperados, reactivados ni compensados. Eres responsable de redimir tus Créditos dentro del plazo indicado.\n§ Cancelaciones, modificaciones y reembolsos. Para proteger la integridad de la Campaña, se establecen de forma estricta las siguientes reglas en caso de modificaciones o cancelaciones de la reserva:\n• **Pérdida del Beneficio:** en caso de cancelación o reembolso de la reserva, o de modificación hecha por el Usuario/Consumidor, este no recibirá los Créditos promocionales. Si el Proveedor modifica la reserva y el Usuario/Consumidor la acepta sin reembolso, conservará el Beneficio.\n• **Reversión de Créditos:** si al momento de la cancelación los Créditos ya hubieren sido acreditados en la cuenta del usuario en la Plataforma Rappi, estos serán eliminados y revocados automáticamente por el sistema.\n• **Cruce de cuentas (deducción de reembolsos):** si el Usuario/Consumidor hubiere utilizado total o parcialmente los Créditos otorgados como Beneficio y posteriormente la orden original es objeto de cancelación o reembolso, el valor en dinero equivalente a los Créditos efectivamente utilizados será descontado de plano del monto total a reembolsar por concepto de la reserva. El usuario autoriza expresamente a Rappi Travel a realizar dicha deducción de su reembolso.\n• **Reembolso parcial:** si la orden se reembolsa parcialmente, el Beneficio se recalculará sobre el valor final pagado.\n• **Plazo:** estas reglas aplican a las cancelaciones, modificaciones y reembolsos que ocurran antes de la prestación del servicio. Una vez prestado el servicio (realizado el vuelo, la estadía, el alquiler o la actividad), el Beneficio queda en firme y no se revertirá, salvo en casos de fraude comprobado.\n§ Exclusiones y restricciones. El Beneficio no aplica para:\n• Órdenes canceladas, reembolsadas o no confirmadas, en los términos de las cláusulas anteriores.\n• Órdenes pagadas con medios de pago diferentes a los aplicables para la Campaña, en efectivo o, total o parcialmente, con Créditos.\n• Órdenes realizadas fuera de la vigencia de la Campaña.\n• Productos que no sean Productos Participantes, aunque se compren en la misma orden.\nEl Beneficio obtenido en virtud de la presente Campaña no es acumulable con otras promociones.\nEn los casos en que el Usuario/Consumidor realice el pago con su tarjeta RappiCard, para asegurar la correcta y automática acreditación del Beneficio, la tarjeta deberá estar registrada de forma nativa dentro de la sección de métodos de pago de la Plataforma Rappi. Aquellas transacciones realizadas con RappiCard a través de billeteras digitales de terceros (tales como Apple Pay o Google Pay) o en las que la tarjeta sea ingresada manualmente como una tarjeta de crédito externa podrían presentar demoras en la validación del Beneficio o requerir una gestión adicional por parte del usuario ante el equipo de soporte, sin que esto implique el incumplimiento de los presentes términos por parte de Rappi Travel.\n[[INCLUIR:travel_publicidad]]\n[[INCLUIR:travel_atencion]]\n[[INCLUIR:travel_modificaciones]]\n§ Fraude, abuso y descalificación. Rappi Travel se reserva el derecho de descalificarte de la Campaña, de rechazar o cancelar órdenes y de bloquear temporal o definitivamente tu cuenta si, a juicio razonable de Rappi Travel:\n• Utilizas la Campaña de manera fraudulenta, incluido el uso de cuentas múltiples, datos falsos o la manipulación del sistema o del historial de compras.\n• Intentas alterar, manipular o interferir con el funcionamiento de los Sistemas Rappi Travel o de la Campaña.\n• Incumples los Términos y Condiciones de los Sistemas Rappi Travel o de la Plataforma Rappi.\nEn caso de descalificación, Rappi Travel podrá revocar los Créditos acreditados en virtud de la Campaña que aún no hayan sido redimidos. Los Créditos ya redimidos no serán objeto de recuperación, salvo en casos de fraude comprobado conforme a la legislación aplicable. Rappi Travel te informará la razón de la descalificación a través de los canales de comunicación de la Plataforma Rappi.\n[[INCLUIR:travel_otros_tyc]]\n[[INCLUIR:travel_responsabilidad]]\n[[INCLUIR:travel_datos]]\n[[INCLUIR:travel_ley]]\n[[?TEXTO_NOTAS_DE_MODIFICACION]]{{TEXTO_NOTAS_DE_MODIFICACION}}[[/?]]\n",
     "descuento_travel": "%% Modelo: Descuento Travel · versión 1.0 · base: docs/MODELO_BASE_TRAVEL.md, sección 7 · pendiente de revisión de Juan (docs/PENDIENTES_LEGAL.md)\n# TÉRMINOS Y CONDICIONES\n## {{NOMBRE_CAMPANA_MAYUS}}\n[[INCLUIR:travel_organizador]]\n[[INCLUIR:travel_sistemas]]\n[[INCLUIR:travel_cobertura]]\n§ Vigencia. La Campaña estará vigente desde las **{{HORA_INICIO}}** del **{{FECHA_INICIO}}** hasta las **{{HORA_FIN}}** del **{{FECHA_FIN}}** ({{TEXTO_HORA_LOCAL}})[[?TEXTO_AGOTAMIENTO_VIGENCIA_TRAVEL]], o hasta agotar {{TEXTO_AGOTAMIENTO_VIGENCIA_TRAVEL}}, lo que ocurra primero[[/?]]. Las órdenes realizadas fuera de la vigencia no darán lugar al beneficio de la Campaña.\n[[INCLUIR:travel_usuarios]]\n[[INCLUIR:travel_productos]]\n[[INCLUIR:travel_condiciones]]\n§ Mecánica y Beneficio. Para obtener el beneficio de la Campaña (en adelante, el “Beneficio”) debes comprar uno o varios Productos Participantes a través de los Sistemas Rappi Travel durante la vigencia de la Campaña y pagar la orden con un medio de pago válido para la Campaña.\n{{TEXTO_METODO_PAGO_TRAVEL}}\nEl Beneficio consiste en {{TEXTO_DESCUENTO_TRAVEL}} sobre el valor de la tarifa de los Productos Participantes[[?TEXTO_SEGUN_PRODUCTO_TRAVEL]]{{TEXTO_SEGUN_PRODUCTO_TRAVEL}}[[/?]]. El descuento se aplica directamente en el precio y el valor final con descuento se muestra antes de que pagues.[[?TEXTO_MAXIMO_DISPONIBLE_TRAVEL]] {{TEXTO_MAXIMO_DISPONIBLE_TRAVEL}}[[/?]][[?TEXTO_ASISTENCIA_TRAVEL]] {{TEXTO_ASISTENCIA_TRAVEL}}[[/?]]\n§ Cómo identificar el descuento. El descuento estará identificado en {{TEXTO_VISIBILIDAD_TRAVEL}}, y el porcentaje exacto de cada Producto Participante se mostrará antes de que pagues.\n§ Límites.\n• **Máximo de órdenes por usuario:** {{TEXTO_LIMITE_ORDENES_TRAVEL}}\n[[?TEXTO_LIMITE_CAMPANA_TRAVEL]]• **Unidades disponibles:** {{TEXTO_LIMITE_CAMPANA_TRAVEL}}\n[[/?]]§ Cambios, cancelaciones y reembolsos. Los cambios, cancelaciones y reembolsos de las órdenes con descuento se rigen por las condiciones del Proveedor y de la tarifa adquirida, que se informan antes de pagar. En caso de reembolso, se tendrá en cuenta el valor efectivamente pagado con el descuento. Si modificas la reserva, el descuento se mantendrá solo si el nuevo producto también es un Producto Participante y la modificación se hace dentro de la vigencia de la Campaña.\n§ Exclusiones y restricciones. El Beneficio no aplica para:\n• Órdenes pagadas con medios de pago diferentes a los aplicables para la Campaña o en efectivo.\n• Órdenes realizadas fuera de la vigencia de la Campaña.\n• Productos que no sean Productos Participantes, aunque se compren en la misma orden.\nEl Beneficio obtenido en virtud de la presente Campaña no es acumulable con otras promociones.\n[[INCLUIR:travel_publicidad]]\n[[INCLUIR:travel_atencion]]\n[[INCLUIR:travel_modificaciones]]\n§ Fraude, abuso y descalificación. Rappi Travel se reserva el derecho de descalificarte de la Campaña, de rechazar o cancelar órdenes y de bloquear temporal o definitivamente tu cuenta si, a juicio razonable de Rappi Travel:\n• Utilizas la Campaña de manera fraudulenta, incluido el uso de cuentas múltiples, datos falsos o la manipulación del sistema o del historial de compras.\n• Intentas alterar, manipular o interferir con el funcionamiento de los Sistemas Rappi Travel o de la Campaña.\n• Incumples los Términos y Condiciones de los Sistemas Rappi Travel o de la Plataforma Rappi.\nRappi Travel te informará la razón de la descalificación a través de los canales de comunicación de la Plataforma Rappi.\n[[INCLUIR:travel_otros_tyc]]\n[[INCLUIR:travel_responsabilidad]]\n[[INCLUIR:travel_datos]]\n[[INCLUIR:travel_ley]]\n[[?TEXTO_NOTAS_DE_MODIFICACION]]{{TEXTO_NOTAS_DE_MODIFICACION}}[[/?]]\n",
+    "millas": "%% Modelo: Millas (Plataforma Rappi) · versión 1.0 · base: docs/piezas_publicadas/rappi-millas-lifemiles-muss-tanga-turbo.md · pendiente de revisión de Juan (docs/PENDIENTES_LEGAL.md, bloque de millas)\n# TÉRMINOS Y CONDICIONES\n## {{NOMBRE_CAMPANA_MAYUS}}\nPor medio del presente documento se dan a conocer los términos y condiciones de la campaña promocional denominada “**{{NOMBRE_CAMPANA}}**”. La participación en la Campaña constituye la aceptación total e incondicional de los presentes Términos y Condiciones, los cuales resultan definitivos y vinculantes para los Usuarios/Consumidores participantes que cumplan con los requisitos aquí dispuestos.\n[[INCLUIR:organizador]]\n[[INCLUIR:millas_rol_rappi]]\n[[INCLUIR:cobertura_tienda]]\n§ Vigencia. La Campaña estará vigente desde las **{{HORA_INICIO}}** del **{{FECHA_INICIO}}** hasta las **{{HORA_FIN}}** del **{{FECHA_FIN}}** ({{TEXTO_HORA_LOCAL}})[[?TEXTO_AGOTAMIENTO_MILLAS]], o hasta agotar {{TEXTO_AGOTAMIENTO_MILLAS}}, lo que ocurra primero[[/?]]. Los pedidos realizados fuera de la vigencia no darán lugar al beneficio de la Campaña.\n[[INCLUIR:millas_usuarios]]\n§ Productos Participantes. {{TEXTO_PRODUCTOS_MILLAS}} Los productos son ofrecidos y comercializados directamente por los Aliados Comerciales.\n[[?TEXTO_CONDICIONES]]{{TEXTO_CONDICIONES}}[[/?]]\n[[INCLUIR:millas_beneficio]]\n[[INCLUIR:millas_limites]]\n[[INCLUIR:millas_acreditacion]]\n[[INCLUIR:millas_naturaleza]]\n[[INCLUIR:millas_reversion]]\n[[INCLUIR:millas_exclusiones]]\n[[INCLUIR:publicidad]]\n[[INCLUIR:atencion]]\n[[INCLUIR:modificaciones]]\n[[INCLUIR:millas_fraude]]\n[[INCLUIR:tyc_plataforma]]\n[[?TEXTO_TC_TURBO]]{{TEXTO_TC_TURBO}}[[/?]]\n[[INCLUIR:responsabilidad]]\n[[INCLUIR:millas_responsabilidad]]\n[[INCLUIR:millas_datos]]\n[[INCLUIR:ley]]\n",
+    "millas_travel": "%% Modelo: Millas Travel · versión 1.0 · base: docs/piezas_publicadas/travel-millas-lifemiles-tours-civitatis.md y modelos/cashback_travel.md · pendiente de revisión de Juan (docs/PENDIENTES_LEGAL.md, bloque de millas)\n# TÉRMINOS Y CONDICIONES\n## {{NOMBRE_CAMPANA_MAYUS}}\nPor medio del presente documento se dan a conocer los términos y condiciones de la campaña promocional denominada “**{{NOMBRE_CAMPANA}}**”. La participación en la Campaña constituye la aceptación total e incondicional de los presentes Términos y Condiciones, los cuales resultan definitivos y vinculantes para los Usuarios/Consumidores participantes que cumplan con los requisitos aquí dispuestos.\n[[INCLUIR:travel_organizador]]\n[[INCLUIR:travel_sistemas]]\n[[INCLUIR:travel_cobertura]]\n§ Vigencia. La Campaña estará vigente desde las **{{HORA_INICIO}}** del **{{FECHA_INICIO}}** hasta las **{{HORA_FIN}}** del **{{FECHA_FIN}}** ({{TEXTO_HORA_LOCAL}})[[?TEXTO_AGOTAMIENTO_MILLAS]], o hasta agotar {{TEXTO_AGOTAMIENTO_MILLAS}}, lo que ocurra primero[[/?]]. Las órdenes realizadas fuera de la vigencia no darán lugar al beneficio de la Campaña.\n[[INCLUIR:millas_usuarios]]\n[[INCLUIR:travel_productos]]\n[[INCLUIR:travel_condiciones]]\n[[INCLUIR:millas_beneficio]]\n[[INCLUIR:millas_limites]]\n§ Confirmación de la reserva. Debido a la naturaleza de los inventarios turísticos, el Beneficio está sujeto a la confirmación de la reserva por parte del Proveedor. Si por fallas en la conexión con el Proveedor la orden es rechazada y el servicio no se emite, no se otorgará el Beneficio.\n[[INCLUIR:millas_acreditacion]]\n[[INCLUIR:millas_naturaleza]]\n[[INCLUIR:millas_reversion]]\n[[INCLUIR:millas_exclusiones]]\n[[INCLUIR:travel_publicidad]]\n[[INCLUIR:travel_atencion]]\n[[INCLUIR:travel_modificaciones]]\n[[INCLUIR:millas_fraude]]\n[[INCLUIR:travel_otros_tyc]]\n[[INCLUIR:millas_declaracion_travel]]\n[[INCLUIR:millas_responsabilidad]]\n[[INCLUIR:millas_datos]]\n[[INCLUIR:travel_ley]]\n[[?TEXTO_NOTAS_DE_MODIFICACION]]{{TEXTO_NOTAS_DE_MODIFICACION}}[[/?]]\n",
     "promocao_br": "%% Modelo: Brasil · Promoção (desconto, frete grátis, taxa de serviço) · versión 3.0\n%% Base: los cuatro T&C aprobados por Legal BR (septiembre 2026). Ver\n%% docs/MODELO_BASE_BRASIL.md para el mapa y docs/CORRECCIONES_BRASIL.md para\n%% cada corrección aplicada, con su antes y su después.\n%% EXCEPCIÓN de la regla 1 de CLAUDE.md, autorizada por Juan: en Brasil el\n%% documento está escrito con Rappi como quien concede y cancela la promoción.\n# TERMOS E CONDIÇÕES\n## {{NOMBRE_CAMPANA_MAYUS}}\nPor meio desta oferta, divulgamos os Termos e Condições da campanha “{{NOMBRE_CAMPANA}}”, na qual os usuários que realizarem compras[[?TEXTO_MINIMO_APERTURA]]{{TEXTO_MINIMO_APERTURA}}[[/?]] nas lojas do Parceiro **{{PARCEIRO}}**, na plataforma Rappi, em período específico, {{TEXTO_BENEFICIO_APERTURA}}.\n“Usuário” para fins deste T&C significa a pessoa física inscrita na plataforma Rappi.\n§ REGRAS PRINCIPAIS DA PROMOÇÃO\n• Esta campanha aplica-se apenas aos usuários cadastrados na plataforma Rappi que efetuarem a compra no período de **{{FECHA_INICIO}}** às **{{HORA_INICIO}}** até **{{FECHA_FIN}}** às **{{HORA_FIN}}**;\n• {{TEXTO_BENEFICIO_REGRA}};\n[[?TEXTO_TOPE_BENEFICIO]]• {{TEXTO_TOPE_BENEFICIO}};[[/?]]\n• {{TEXTO_LIMITE_PEDIDOS}};\n• Promoção válida nas áreas de cobertura do aplicativo em todo o território brasileiro, onde houver lojas parceiras credenciadas e com estoque dos produtos;\n• {{TEXTO_METODO_PAGO}};\n• É esclarecido que esta campanha não se aplica a pedidos parcialmente ou totalmente cancelados;\n• Promoção sujeita a disponibilidade de estoque;\n• Promoção não cumulativa com outras promoções.\n[[INCLUIR:br_condicoes_gerais]]\n[[INCLUIR:br_plataforma]]\n"
   },
   bloques: {
@@ -614,6 +618,18 @@ var MODELOS = {
     "exclusiones_beneficio": "%% Bloque compartido: exclusiones_beneficio · versión 3.0\n§ Exclusiones y restricciones. El Beneficio no aplica para:\n• Pedidos cancelados, devueltos o que no se completen exitosamente por cualquier causa.\n• Pedidos pagados con medios de pago diferentes a los aplicables para la Campaña.\n• Pedidos realizados fuera de la vigencia de la Campaña.\n• Propinas, costos de envío, tarifas de servicio e impuestos.\nLa Campaña no es acumulable con otros cupones, descuentos o promociones vigentes en la Plataforma Rappi, salvo que Rappi indique expresamente lo contrario en la comunicación de la Campaña.\n",
     "fraude": "%% Bloque compartido: fraude · versión 3.0\n§ Fraude, abuso y descalificación. Rappi se reserva el derecho de descalificarte de la Campaña y de bloquear temporal o definitivamente tu cuenta si, a juicio razonable de Rappi:\n• Utilizas la Campaña de manera fraudulenta, incluido el uso de cuentas múltiples, datos falsos o la manipulación del sistema o del historial de compras.\n• Intentas alterar, manipular o interferir con el funcionamiento de la Plataforma Rappi o de la Campaña.\n• Incumples los Términos y Condiciones de Uso de la Plataforma Rappi.\nEn caso de descalificación, Rappi podrá revocar los Créditos acreditados o el premio asignado en virtud de la Campaña que aún no hayan sido redimidos o entregados. Los Créditos ya redimidos y los premios ya entregados no serán objeto de recuperación, salvo en casos de fraude comprobado conforme a la legislación aplicable. Rappi te informará la razón de la descalificación a través de los canales de comunicación de la Plataforma Rappi.\n",
     "ley": "%% Bloque compartido: ley · versión 3.0\n§ Ley aplicable y jurisdicción. Los presentes Términos y Condiciones se rigen e interpretan de conformidad con {{LEY_APLICABLE}}. Cualquier controversia que surja con ocasión de la Campaña o de los presentes Términos y Condiciones se someterá a {{JURISDICCION}}, sin perjuicio de las acciones, derechos y mecanismos de protección que la ley reconoce a los consumidores ante {{ENTIDAD_VIGILANCIA}}.\n",
+    "millas_acreditacion": "%% Bloque de millas: acreditación · versión 1.0 · base: rappi-millas-lifemiles-muss-tanga-turbo.md, cláusula VIII, y travel-millas-lifemiles-tours-civitatis.md, cláusula VI · revisar con Juan\n§ Acreditación del Beneficio. {{TEXTO_ACREDITACION_MILLAS}} Las Millas se verán reflejadas en la cuenta del Usuario/Consumidor Participante dentro de la plataforma del programa **{{PROGRAMA_MILLAS}}**.\n",
+    "millas_beneficio": "%% Bloque de millas: mecánica y beneficio · versión 1.0 · base: rappi-millas-lifemiles-muss-tanga-turbo.md, cláusula VII, y travel-millas-lifemiles-tours-civitatis.md, cláusulas IV y V · revisar con Juan\n§ Mecánica y Beneficio. {{TEXTO_BENEFICIO_MILLAS}} {{TEXTO_BASE_MILLAS}}[[?TEXTO_NOTA_FRACCION_MILLAS]] {{TEXTO_NOTA_FRACCION_MILLAS}}[[/?]]\n{{TEXTO_METODO_PAGO_MILLAS}}\n",
+    "millas_datos": "%% Bloque de millas: tratamiento de datos · versión 1.0 · base: rappi-millas-lifemiles-muss-tanga-turbo.md, cláusula XII, con el cierre del bloque datos de v3 · PENDIENTE: la política del Organizador no tiene enlace (ver docs/PENDIENTES_LEGAL.md, M7)\n§ Tratamiento de datos personales. El Usuario/Consumidor Participante autoriza a **{{ENTIDAD_MILLAS}}** a compartir sus datos personales, esto es, su identificación y los datos de la transacción, con el Organizador, con el único fin de que este último pueda realizar la validación y la correcta acreditación del Beneficio. El tratamiento de datos se regirá por las políticas de privacidad de cada parte: la de **{{ENTIDAD_MILLAS}}** es {{POLITICA_PRIVACIDAD_MILLAS}}, disponible en: {{URL_PRIVACIDAD_MILLAS}}, previamente aceptada por el Usuario/Consumidor, y la del Organizador es la que rige el programa **{{PROGRAMA_MILLAS}}**. Podrás ejercer en cualquier momento {{TEXTO_DERECHOS_DATOS}}, a través de los canales dispuestos para tal fin en dichos documentos, así como acudir ante {{AUTORIDAD_DATOS}}.\n",
+    "millas_declaracion_travel": "%% Bloque de millas: declaración de intermediación de Rappi Travel · versión 1.0 · base: travel-millas-lifemiles-tours-civitatis.md, cláusula VIII, con el cierre de la cláusula III de la pieza de Turbo · revisar con Juan\n§ Declaración. Rappi Travel actúa de manera exclusiva como agencia de viajes intermediaria (portal de contacto). Los productos y servicios turísticos son responsabilidad directa de los Proveedores. Rappi Travel no organiza la Campaña ni asume responsabilidad alguna respecto de la acreditación ni de la entrega del Beneficio, que corresponden al Organizador.\n",
+    "millas_exclusiones": "%% Bloque de millas: exclusiones y restricciones · versión 1.0 · base: travel-millas-lifemiles-tours-civitatis.md, cláusula VII, y rappi-millas-lifemiles-muss-tanga-turbo.md, cláusula IX · revisar con Juan\n§ Exclusiones y restricciones. El Beneficio no aplica para:\n• Órdenes canceladas, reembolsadas o que no se completen exitosamente por cualquier causa.\n• Órdenes pagadas con medios de pago diferentes a los aplicables para la Campaña.\n• Órdenes realizadas fuera de la vigencia de la Campaña.\n• Productos que no sean Productos Participantes, aunque se compren en la misma orden.\n{{TEXTO_ACUMULABLE_MILLAS}}\n",
+    "millas_fraude": "%% Bloque de millas: fraude y descalificación · versión 1.0 · base: bloque fraude de v3 (viñetas) y rappi-millas-lifemiles-muss-tanga-turbo.md, cláusula IX (cierre) · revisar con Juan\n§ Fraude, abuso y descalificación. {{NOMBRE_CANAL_MILLAS}} se reserva el derecho de descalificarte de la Campaña y de bloquear temporal o definitivamente tu cuenta si, a juicio razonable de {{NOMBRE_CANAL_MILLAS}}:\n• Utilizas la Campaña de manera fraudulenta, incluido el uso de cuentas múltiples, datos falsos o la manipulación del sistema o del historial de compras.\n• Intentas alterar, manipular o interferir con el funcionamiento de {{SISTEMAS_MILLAS}} o de la Campaña.\n• Incumples los Términos y Condiciones de {{SISTEMAS_MILLAS}}.\nEn caso de fraude o manipulación de la orden, el Usuario/Consumidor perderá automáticamente el derecho al Beneficio. {{NOMBRE_CANAL_MILLAS}} te informará la razón de la descalificación a través de los canales de comunicación de la Plataforma Rappi.\n",
+    "millas_limites": "%% Bloque de millas: topes y límites · versión 1.0 · base: rappi-millas-lifemiles-muss-tanga-turbo.md, cláusulas II, VII y IX · revisar con Juan\n§ Topes y límites.\n• **Máximo de órdenes por persona:** {{TEXTO_LIMITE_ORDENES_MILLAS}}\n[[?TEXTO_TOPE_MILLAS]]• **Tope de Millas por persona:** {{TEXTO_TOPE_MILLAS}}\n[[/?]][[?TEXTO_EXISTENCIAS_MILLAS]]• **Existencias de la Campaña:** {{TEXTO_EXISTENCIAS_MILLAS}}\n[[/?]]\n",
+    "millas_naturaleza": "%% Bloque de millas: naturaleza de las Millas · versión 1.0 · base: rappi-millas-lifemiles-muss-tanga-turbo.md, cláusula IX, y travel-millas-lifemiles-tours-civitatis.md, cláusula VIII · revisar con Juan\n§ Naturaleza de las Millas. Las Millas no son dinero en efectivo, no son canjeables por Créditos de la Plataforma Rappi, y su uso se rige por los Términos y Condiciones del programa **{{PROGRAMA_MILLAS}}**. La administración, la vigencia y la redención de las Millas se rigen exclusivamente por el reglamento del programa **{{PROGRAMA_MILLAS}}**.\n",
+    "millas_responsabilidad": "%% Bloque de millas: responsabilidad e indemnidad del Organizador · versión 1.0 · base: rappi-millas-lifemiles-muss-tanga-turbo.md, cláusula XI (TAL CUAL, con la entidad como placeholder) · revisar con Juan\n§ Responsabilidad e indemnidad. El Organizador asume total responsabilidad frente a los participantes y frente a terceros por la ejecución de la Campaña, así como por la correcta y oportuna acreditación de las Millas. El Organizador mantendrá indemne a **{{ENTIDAD_MILLAS}}** frente a cualquier reclamación, sanción o gasto derivado de la Campaña.\n",
+    "millas_reversion": "%% Bloque de millas: cancelaciones y reversión · versión 1.0 · base: travel-millas-lifemiles-tours-civitatis.md, cláusula VI, y rappi-millas-lifemiles-muss-tanga-turbo.md, cláusula IX · revisar con Juan\n§ Cancelaciones y reversión. En caso de cancelación, reversión, fraude o manipulación de la orden, el Usuario/Consumidor perderá automáticamente el derecho al Beneficio. {{TEXTO_REVERSION_MILLAS}} El Usuario/Consumidor autoriza expresamente a {{NOMBRE_CANAL_MILLAS}} y a **{{PROGRAMA_MILLAS}}** a realizar los cruces de cuentas y las reversiones en su saldo de Millas en caso de cancelaciones o reembolsos.\n",
+    "millas_rol_rappi": "%% Bloque de millas: rol de Rappi · versión 1.0 · base: rappi-millas-lifemiles-muss-tanga-turbo.md, cláusula III (TAL CUAL, con la entidad como placeholder) · solo Plataforma Rappi\n§ Rol de Rappi. **{{ENTIDAD_LEGAL}}** actúa únicamente como plataforma tecnológica de contacto y canal de difusión. **{{ENTIDAD_LEGAL}}** no organiza, patrocina, administra ni asume responsabilidad alguna respecto de la mecánica, la selección, la acreditación ni la entrega del Beneficio.\n",
+    "millas_usuarios": "%% Bloque de millas: usuarios participantes · versión 1.0 · base: docs/piezas_publicadas/rappi-millas-lifemiles-muss-tanga-turbo.md, cláusula VI, y travel-millas-lifemiles-tours-civitatis.md, cláusula III · revisar con Juan\n§ Usuarios participantes. {{TEXTO_SEGMENTO_MILLAS}} Además, el Usuario/Consumidor debe cumplir la totalidad de las siguientes condiciones al momento de realizar la orden:\n• Ser {{TEXTO_PERSONA}} y mayor de edad.\n• Tener una cuenta activa en la Plataforma Rappi.\n{{TEXTO_VINCULACION_MILLAS}}\n",
     "modificaciones": "%% Bloque compartido: modificaciones · versión 3.0\n§ Modificaciones. Rappi podrá modificar los presentes Términos y Condiciones siempre que se cumplan las siguientes condiciones:\n• Las modificaciones se publicarán en el mismo medio en que se publicaron los Términos y Condiciones originales.\n• Las modificaciones no afectarán los beneficios ya acreditados ni los premios ya asignados con anterioridad a la modificación.\n• Las modificaciones que resulten menos favorables para ti regirán a partir del día siguiente a su publicación y no tendrán efecto retroactivo.\nSi las modificaciones implican un cambio sustancial en las condiciones de la Campaña, como la reducción del beneficio o del premio, la modificación de los comercios o productos participantes o la anticipación de la fecha de finalización, Rappi hará esfuerzos razonables para informarte a través de los canales disponibles en la Plataforma Rappi.\n",
     "naturaleza_creditos": "%% Bloque compartido: naturaleza_creditos · versión 3.0\n§ Naturaleza del Beneficio. El Beneficio consiste en Créditos acreditados en tu Billetera de Créditos de la Plataforma Rappi. Al participar, reconoces y aceptas que:\n• Los Créditos son intangibles que te permiten adquirir productos y/o servicios exhibidos por los Aliados Comerciales a través de la Plataforma Rappi.\n• Los Créditos no constituyen dinero en efectivo, valores ni instrumentos financieros, y no pueden convertirse en dinero.\n• Los Créditos no son transferibles a terceros ni a otras cuentas de la Plataforma Rappi.\n• Los Créditos no son acumulables con otros cupones o promociones, salvo que Rappi indique expresamente lo contrario.\n• El funcionamiento de los Créditos se rige por los Términos y Condiciones de Funcionamiento de los Créditos de la Plataforma Rappi, disponibles en: {{URL_TC_CREDITOS}}.\n",
     "organizador": "%% Bloque compartido: organizador · versión 3.0\n§ Organizador y rol de Rappi. La presente campaña promocional (en adelante, la “Campaña”) es organizada por **{{ORGANIZADOR}}**, identificada con **{{ID_ORGANIZADOR}}** (en adelante, el “Organizador”), quien responde por su desarrollo, sus condiciones y el beneficio o premio ofrecido. **{{ENTIDAD_LEGAL}}** (en adelante, “Rappi”) actúa únicamente como plataforma de contacto e intermediación tecnológica y como medio de difusión de la Campaña; Rappi no es el organizador de la Campaña.\nLos términos con mayúscula inicial que no se definan en este documento tendrán el significado que les asignan los Términos y Condiciones de Uso de la Plataforma Rappi.\n",
@@ -723,7 +739,9 @@ var PAISES_SEMILLA = [
       "cashback_day",
       "cashback_eta",
       "cashback_travel",
-      "descuento_travel"
+      "descuento_travel",
+      "millas",
+      "millas_travel"
     ],
     "entidad_legal": "Rappi S.A.S.",
     "id_fiscal": "NIT 900.843.898-9",
@@ -1822,6 +1840,7 @@ var AVISO_AZAR = {
     'Cashback Multitienda: varias tiendas hacen cashback dentro de la misma jornada, cada una con su propio porcentaje, su tope y su presupuesto.',
     '15 minutos o Cashback: Rappi promete un tiempo de entrega en el botón Turbo y, si la orden llega tarde, devuelve en Créditos parte de lo que el usuario pagó.',
     'Cashback Travel y Descuento Travel: las dos formas de campaña de vuelos, hoteles, autos y paquetes.',
+    'Millas: un programa de lealtad aliado da millas por comprar, en la Plataforma Rappi o en Rappi Travel. Todos los que cumplen las reciben.',
   ],
   noValidas: [
     'Sorteo entre todos los participantes, aunque sea "entre quienes compren".',
@@ -1920,7 +1939,10 @@ var FILTRO_DE_TRAVEL = [
   },
   {
     id: 'beneficioDeTercero',
-    texto: '¿El beneficio es distinto a Créditos o a un descuento en el precio? Por ejemplo: noches o niños gratis, cupones, millas, eSIM, bonos o cuotas sin interés.',
+    // Las millas salieron de la lista el 21 de septiembre de 2026: ya tienen
+    // modelo propio (millas_travel). Una pregunta que manda a Legal lo que la
+    // herramienta si sabe hacer es devolverle el trabajo a Juan.
+    texto: '¿El beneficio es distinto a Créditos, a millas de un programa de lealtad o a un descuento en el precio? Por ejemplo: noches o niños gratis, cupones, eSIM, bonos o cuotas sin interés.',
     razon: 'Ese beneficio lo presta un tercero con sus propias condiciones, así que necesita otro documento.',
   },
   {
@@ -2223,6 +2245,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var esquemaDe = moduloEsquemas2.esquemaDe;
 
   var calcularDerivadosTravel = require('./derivados_travel.js').calcularDerivadosTravel;
+  var calcularDerivadosMillas = require('./derivados_millas.js').calcularDerivadosMillas;
   var calcularDerivadosBr = require('./derivados_br.js').calcularDerivadosBr;
   var moduloEta = require('./derivados_eta.js');
   var calcularDerivadosEta = moduloEta.calcularDerivadosEta;
@@ -2657,6 +2680,24 @@ function calcularDerivadosEnElIdiomaDelPais(entrada, pais) {
     for (var llaveEta in deEta) {
       if (Object.prototype.hasOwnProperty.call(deEta, llaveEta)) valores[llaveEta] = deEta[llaveEta];
     }
+  }
+
+  // La mecanica de millas corre en las dos verticales, asi que va despues de
+  // Travel: cuando el tipo es de Travel ya estan calculados los textos de
+  // Travel y los dos de abajo se resuelven con los que correspondan.
+  if (esquemaActual && esquemaActual.esDeMillas) {
+    var deMillas = calcularDerivadosMillas(entrada, pais);
+    for (var llaveMillas in deMillas) {
+      if (Object.prototype.hasOwnProperty.call(deMillas, llaveMillas)) valores[llaveMillas] = deMillas[llaveMillas];
+    }
+    // El segmento y el medio de pago no cambian con la mecanica, sino con la
+    // vertical: en Travel se habla de ordenes y de los Sistemas Rappi Travel, y
+    // en la Plataforma Rappi de pedidos. Se toman los que ya estan calculados
+    // en vez de escribir una tercera version de los mismos textos.
+    valores.TEXTO_SEGMENTO_MILLAS = esquemaActual.esDeTravel ? valores.TEXTO_SEGMENTO_TRAVEL : valores.TEXTO_SEGMENTO;
+    valores.TEXTO_METODO_PAGO_MILLAS = esquemaActual.esDeTravel
+      ? valores.TEXTO_METODO_PAGO_TRAVEL
+      : valores.TEXTO_METODO_PAGO;
   }
 
   // Brasil tiene su propio modelo y sus propios textos, en portugues y con su
@@ -3662,6 +3703,404 @@ if (typeof module !== 'undefined') {
     esDeTurbo: esDeTurbo,
     cifraDeMonto: cifraDeMonto,
     cifraDePorcentaje: cifraDePorcentaje,
+  };
+}
+
+// --- src/core/derivados_millas.js ---
+'use strict';
+
+/**
+ * Derivados de la mecanica de millas.
+ *
+ * Los textos salen de las dos piezas publicadas de millas y no se reescriben
+ * aqui: el texto legal es de Legal (regla 3 de CLAUDE.md).
+ *
+ *   docs/piezas_publicadas/travel-millas-lifemiles-tours-civitatis.md
+ *   docs/piezas_publicadas/rappi-millas-lifemiles-muss-tanga-turbo.md
+ *
+ * Cada funcion dice de que clausula de que pieza sale su texto. Lo que no sale
+ * de una pieza publicada esta anotado en docs/PENDIENTES_LEGAL.md.
+ *
+ * Este archivo es uno solo para las dos verticales a proposito. La mecanica es
+ * la misma en Rappi Travel y en la Plataforma Rappi; lo que cambia es la
+ * entidad que opera el canal, las clausulas de plataforma y el reparto de
+ * responsabilidad, y eso ya lo resuelve el esqueleto de cada vertical. Si un
+ * texto tuviera que partirse en dos aqui, se parte por vertical con
+ * `esDeTravel`, nunca por campana.
+ *
+ * Marca ORACION: devuelve oracion completa (mayuscula inicial y punto final).
+ * Marca FRAGMENTO: se inserta dentro de otra frase (sin mayuscula ni punto).
+ */
+
+/* En Node las dependencias se cargan con require; en Apps Script ya son globales. */
+if (typeof module !== 'undefined' && typeof require === 'function') {
+  var moduloNumerosMillas = require('./numeros.js');
+  var numeroEnLetras = moduloNumerosMillas.numeroEnLetras;
+  var letrasYCifra = moduloNumerosMillas.letrasYCifra;
+  var enFemenino = moduloNumerosMillas.enFemenino;
+  var formatearMiles = moduloNumerosMillas.formatearMiles;
+  var montoConMoneda = moduloNumerosMillas.montoConMoneda;
+
+  var listaY = require('./fechas.js').listaY;
+  var separarPorComas = require('./fechas.js').separarPorComas;
+
+  var terminoDeDias = require('./texto.js').terminoDeDias;
+
+  var esquemaDe = require('./esquemas.js').esquemaDe;
+}
+
+// --- Ayudas ----------------------------------------------------------------
+
+function tieneValorMillas(valor) {
+  if (valor === null || valor === undefined) return false;
+  if (Object.prototype.toString.call(valor) === '[object Array]') return valor.length > 0;
+  return String(valor).trim() !== '';
+}
+
+/** true si el tipo de campana es de Rappi Travel. */
+function esDeTravelMillas(entrada) {
+  var esquema = esquemaDe((entrada || {}).tipo);
+  return !!(esquema && esquema.esDeTravel);
+}
+
+/**
+ * Cantidad de Millas en letras y cifra: "cuatrocientas (400)".
+ *
+ * Milla es femenino, asi que va "cuatrocientas" y no "cuatrocientos", como en
+ * las dos piezas publicadas. Y la cifra lleva el separador de miles del pais,
+ * porque una bolsa de campana se escribe "148.000" y no "148000".
+ */
+function millasEnLetras(cantidad, pais) {
+  var entero = Math.trunc(Number(cantidad));
+  var separador = (pais && pais.separador_miles) || '.';
+  return enFemenino(numeroEnLetras(entero)) + ' (' + formatearMiles(entero, separador) + ')';
+}
+
+/** "Milla" o "Millas", segun la cantidad. */
+function palabraMillas(cantidad) {
+  return Math.trunc(Number(cantidad)) === 1 ? 'Milla' : 'Millas';
+}
+
+/** La cantidad con su sustantivo: "cuatrocientas (400) Millas". */
+function millasConSustantivo(cantidad, pais) {
+  return millasEnLetras(cantidad, pais) + ' ' + palabraMillas(cantidad);
+}
+
+/** Las marcas entre comillas, con "la marca" o "las marcas" delante. */
+function frasePorMarcas(marcas) {
+  var entrecomilladas = [];
+  for (var i = 0; i < marcas.length; i++) entrecomilladas.push('“' + marcas[i] + '”');
+  var articulo = entrecomilladas.length === 1 ? 'la marca' : 'las marcas';
+  return articulo + ' ' + listaY(entrecomilladas);
+}
+
+// --- Textos por opcion -----------------------------------------------------
+
+/**
+ * Las vinetas de la vinculacion al programa de lealtad.
+ *
+ * Las dos piezas piden cosas distintas y las dos estan publicadas: Civitatis
+ * (clausula III) pide estar afiliado con cuenta activa, y la de Turbo
+ * (clausula VI) pide estar enrolado dentro de la Plataforma Rappi y tener el
+ * programa seleccionado como preferido de acumulacion. La pregunta deja elegir
+ * cual, sin inventar una tercera.
+ */
+function textoVinculacionMillas(entrada) {
+  var programa = String(entrada.programaLealtad || '').trim();
+  if (!programa) return '';
+
+  if (entrada.vinculacionPrograma === 'afiliado') {
+    return '• Encontrarse afiliado y tener una cuenta activa en el programa de lealtad **' + programa + '**.';
+  }
+  if (entrada.vinculacionPrograma === 'enrolado_preferido') {
+    return (
+      '• Estar vinculado (enrolado) al programa de lealtad **' + programa + '** dentro de la Plataforma Rappi.\n' +
+      '• Tener a **' + programa + '** seleccionado como su programa preferido de acumulación dentro de la Plataforma Rappi.'
+    );
+  }
+  return '';
+}
+
+/**
+ * ORACION: la mecanica y el beneficio, en una sola frase.
+ *
+ * "Por orden" sale de la clausula VII de la pieza de Turbo y "por fraccion" de
+ * las clausulas IV y V de la de Civitatis. El minimo de compra va dentro de la
+ * frase solo en la Plataforma Rappi, porque en Rappi Travel ya sale en la
+ * clausula de condiciones de los Productos Participantes y saldria dos veces.
+ */
+function textoBeneficioMillas(entrada, pais) {
+  var programa = String(entrada.programaLealtad || '').trim();
+  if (!programa) return '';
+
+  var esTravel = esDeTravelMillas(entrada);
+  var donde = esTravel
+    ? 'a través de los Sistemas Rappi Travel'
+    : 'a través de la Tienda Participante en la Plataforma Rappi';
+
+  var conMinimo = !esTravel && !entrada.sinCompraMinima && tieneValorMillas(entrada.compraMinima);
+  var minimo = conMinimo ? montoConMoneda(entrada.compraMinima, pais) : '';
+
+  if (entrada.formaMillas === 'por_orden') {
+    if (!tieneValorMillas(entrada.millasPorOrden)) return '';
+    return (
+      'Los Usuarios/Consumidores Participantes que, durante la vigencia de la Campaña, realicen órdenes válidas ' +
+      donde + ' que incluyan Productos Participantes' +
+      (conMinimo ? ', y cumplan con un valor mínimo de compra de **' + minimo + '**' : '') +
+      ', recibirán **' + millasConSustantivo(entrada.millasPorOrden, pais) + '** del programa **' + programa +
+      '** (en adelante, el “Beneficio”) por cada orden válida.'
+    );
+  }
+
+  if (entrada.formaMillas === 'por_fraccion') {
+    if (!tieneValorMillas(entrada.millasPorFraccion) || !tieneValorMillas(entrada.valorFraccion)) return '';
+    return (
+      'Los Usuarios/Consumidores Participantes que, durante la vigencia de la Campaña, compren Productos ' +
+      'Participantes ' + donde +
+      (conMinimo ? ', por un valor igual o superior a **' + minimo + '**,' : ',') +
+      ' recibirán **' + millasConSustantivo(entrada.millasPorFraccion, pais) + '** del programa **' + programa +
+      '** (en adelante, el “Beneficio”) por cada fracción de **' + montoConMoneda(entrada.valorFraccion, pais) +
+      '** gastados en su ' + (esTravel ? 'reserva' : 'orden') + '.'
+    );
+  }
+  return '';
+}
+
+/** ORACION: sobre que valor se calculan las Millas. Civitatis, clausula V. */
+function textoBaseMillas(entrada) {
+  if (!entrada.formaMillas) return '';
+  return 'El cálculo de las Millas se realizará sobre el valor neto pagado por los Productos Participantes.';
+}
+
+/**
+ * ORACION: de donde sale el valor de la fraccion. Civitatis, nota de la
+ * clausula V. Solo cuando la campana lo declara, porque no toda fraccion
+ * corresponde a un dolar.
+ */
+function textoNotaFraccionMillas(entrada, pais) {
+  if (entrada.formaMillas !== 'por_fraccion' || !entrada.fraccionEsDolar) return '';
+  var moneda = String((pais && pais.moneda_nombre) || '').trim();
+  if (!moneda) return '';
+  // La moneda de Colombia se escribe "pesos M/Cte.", con punto propio. Sin esto
+  // la frase terminaba en "pesos M/Cte.." y el motor la frenaba por dos puntos
+  // seguidos, que es justo lo que esa red de seguridad existe para cazar.
+  var cierre = moneda.charAt(moneda.length - 1) === '.' ? '' : '.';
+  return 'El valor base de conversión corresponde a la equivalencia referencial de un dólar americano (USD $1) en ' +
+    moneda + cierre;
+}
+
+/*
+ * La pieza de Civitatis (clausula VII) dice que el Beneficio se calcula sobre
+ * el valor pagado con dinero real, "excluyendo cualquier porcion de la compra
+ * que haya sido pagada con Creditos de la Plataforma u otros cupones": la orden
+ * si da millas, pero solo por la parte pagada en dinero. Los textos de medios
+ * de pago que Legal ya tiene aprobados dicen otra cosa mas estricta: una orden
+ * pagada parcialmente con Creditos no da beneficio ninguno.
+ *
+ * No son dos maneras de decir lo mismo, son dos reglas distintas, asi que el
+ * modelo imprime la aprobada y la de Civitatis queda anotada para que Juan
+ * decida (docs/PENDIENTES_LEGAL.md, M3). Poner las dos dejaba el documento
+ * contradiciendose solo dentro de la misma clausula.
+ */
+
+/** FRAGMENTO: cuantas ordenes con Beneficio puede tener cada persona. Turbo, clausula VII. */
+function textoLimiteOrdenesMillas(entrada) {
+  if (entrada.sinLimitePorUsuario) {
+    return 'la Campaña no establece un número máximo de órdenes con Beneficio por Usuario/Consumidor.';
+  }
+  if (!tieneValorMillas(entrada.limitePorUsuario)) return '';
+
+  var cuantas = Math.trunc(Number(entrada.limitePorUsuario));
+  // Con una sola orden salia "hasta por un maximo de una (1) ordenes validas".
+  var enPalabras = enFemenino(numeroEnLetras(cuantas)) + ' (' + cuantas + ')' +
+    (cuantas === 1 ? ' orden válida' : ' órdenes válidas');
+  return 'cada Usuario/Consumidor podrá recibir el Beneficio hasta por un máximo de **' + enPalabras +
+    '** durante la vigencia de la Campaña.';
+}
+
+/** FRAGMENTO: el tope de Millas por persona. Turbo, clausula IX. */
+function textoTopeMillas(entrada, pais) {
+  if (!tieneValorMillas(entrada.topeMillasUsuario)) return '';
+  var programa = String(entrada.programaLealtad || '').trim();
+  if (!programa) return '';
+  return 'cada Usuario/Consumidor podrá recibir un máximo de **' +
+    millasConSustantivo(entrada.topeMillasUsuario, pais) + '** del programa **' + programa +
+    '** durante toda la vigencia de la Campaña.';
+}
+
+/**
+ * FRAGMENTO: la bolsa que agota la Campana antes de la fecha de fin.
+ * Turbo, clausula II. Aqui se definen las "Existencias", igual que en la pieza.
+ */
+function textoAgotamientoMillas(entrada, pais) {
+  if (!tieneValorMillas(entrada.bolsaMillas)) return '';
+  var texto = 'la bolsa total de Millas disponibles para la Campaña, ascendente a **' +
+    millasConSustantivo(entrada.bolsaMillas, pais) + '**';
+
+  if (tieneValorMillas(entrada.maxOrdenes)) {
+    var ordenes = Math.trunc(Number(entrada.maxOrdenes));
+    texto += ' equivalentes a **' + enFemenino(numeroEnLetras(ordenes)) + ' (' +
+      formatearMiles(ordenes, (pais && pais.separador_miles) || '.') + ')' +
+      (ordenes === 1 ? ' orden válida' : ' órdenes válidas') + '**';
+  }
+  return texto + ' (en adelante, las “Existencias”)';
+}
+
+/** FRAGMENTO: que pasa cuando se agotan las Existencias. Turbo, clausula IX. */
+function textoExistenciasMillas(entrada) {
+  if (!tieneValorMillas(entrada.bolsaMillas)) return '';
+  return 'la Campaña es válida hasta agotar las Existencias. Una vez agotadas, la Campaña finalizará ' +
+    'automáticamente, aunque no haya terminado su vigencia.';
+}
+
+/** ORACION: cuando y quien acredita las Millas. */
+function textoAcreditacionMillas(entrada, pais) {
+  var programa = String(entrada.programaLealtad || '').trim();
+  if (!programa) return '';
+
+  // Civitatis, clausula VI.
+  if (entrada.acreditacionMillas === 'dias_calendario') {
+    if (!tieneValorMillas(entrada.diasAcreditacion)) return '';
+    var dias = Math.trunc(Number(entrada.diasAcreditacion));
+    // Con un solo dia salia "un (1) dias calendario despues".
+    var conTermino = pais && pais.termino_dias ? pais : { termino_dias: 'días calendario' };
+    return 'Las Millas serán acreditadas de forma automática a la cuenta del Usuario/Consumidor **' +
+      letrasYCifra(dias) + ' ' + terminoDeDias(conTermino, dias) +
+      '** después de haberse realizado y confirmado exitosamente la compra en la Plataforma.';
+  }
+
+  // Turbo, clausula VIII.
+  if (entrada.acreditacionMillas === 'programa') {
+    return 'El Beneficio será acreditado por el Organizador conforme a los tiempos y procesos internos del ' +
+      'programa **' + programa + '**.';
+  }
+  return '';
+}
+
+/** ORACION: que pasa con las Millas cuando se cancela la compra. */
+function textoReversionMillas(entrada) {
+  if (esDeTravelMillas(entrada)) {
+    // Civitatis, clausula VI.
+    return 'En el evento en que el Usuario/Consumidor, o el Proveedor, cancele la reserva adquirida bajo esta ' +
+      'Campaña, se revertirá de manera inmediata y automática la acreditación de las Millas correspondientes a ' +
+      'dicha compra.';
+  }
+  return 'En el evento en que la orden realizada bajo esta Campaña sea cancelada o reembolsada, se revertirá de ' +
+    'manera inmediata y automática la acreditación de las Millas correspondientes a dicha compra.';
+}
+
+/**
+ * ORACION: si el Beneficio se junta con otras promociones.
+ *
+ * Las dos piezas dicen lo contrario entre si y las dos estan publicadas:
+ * Civitatis (clausula VII) no lo hace acumulable con otras promociones de
+ * acumulacion acelerada de millas, y la de Turbo (clausula IX) si lo hace
+ * acumulable con las demas promociones de la Plataforma. Lo elige la campana.
+ */
+function textoAcumulableMillas(entrada) {
+  if (entrada.acumulableMillas === 'no') {
+    return 'El Beneficio obtenido en virtud de la presente Campaña no es acumulable con otras promociones de ' +
+      'acumulación acelerada de Millas.';
+  }
+  if (entrada.acumulableMillas === 'si') {
+    return 'El Beneficio obtenido en virtud de la presente Campaña sí es acumulable con otras promociones ' +
+      'exhibidas en la Plataforma Rappi.';
+  }
+  return '';
+}
+
+/** ORACION: que productos participan. Solo en la Plataforma Rappi. Turbo, clausula V. */
+function textoProductosMillas(entrada) {
+  if (esDeTravelMillas(entrada)) return '';
+
+  if (entrada.productos === 'todos') {
+    return 'Participan todos los productos del catálogo de la Tienda Participante exhibidos en la Plataforma ' +
+      'Rappi (en adelante, los “Productos Participantes”).';
+  }
+  if (entrada.productos === 'marca') {
+    var marcas = separarPorComas(entrada.makerMarca);
+    if (marcas.length === 0) return '';
+    return 'Participan todos los productos de ' + frasePorMarcas(marcas) +
+      ' exhibidos dentro de la Tienda Participante (en adelante, los “Productos Participantes”).';
+  }
+  if (entrada.productos === 'especificos') {
+    var productos = separarPorComas(entrada.productosLista);
+    if (productos.length === 0) return '';
+    return 'Participan únicamente los siguientes productos de la Tienda Participante (en adelante, los ' +
+      '“Productos Participantes”): ' + listaY(productos) + '.';
+  }
+  return '';
+}
+
+/**
+ * ORACION: la Campana tambien se sujeta a los T&C del Boton Turbo.
+ * Turbo, disposiciones finales.
+ */
+function textoTcTurboMillas(entrada, pais) {
+  if (esDeTravelMillas(entrada) || !entrada.enTurbo) return '';
+  var url = (pais && pais.url_tc_turbo) || '';
+  if (!url) return '';
+  return 'La Campaña se encuentra sujeta a los Términos y Condiciones del Botón Turbo, disponibles en: ' + url + '.';
+}
+
+/**
+ * Los valores de millas que entran a los modelos.
+ *
+ * Los valores comunes con el resto del sistema (fechas, horas, territorio,
+ * segmento, medio de pago) los pone calcularDerivados, que ademas resuelve
+ * TEXTO_SEGMENTO_MILLAS y TEXTO_METODO_PAGO_MILLAS segun la vertical.
+ */
+function calcularDerivadosMillas(entrada, pais) {
+  var valores = {};
+  var datos = entrada || {};
+  var p = pais || {};
+  var esTravel = esDeTravelMillas(datos);
+
+  valores.PROGRAMA_MILLAS = String(datos.programaLealtad || '').trim();
+
+  // La entidad que opera el canal no es la misma en las dos verticales: los
+  // domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S.
+  valores.ENTIDAD_MILLAS = esTravel ? (p.travel_entidad || '') : (p.entidad_legal || '');
+  valores.NOMBRE_CANAL_MILLAS = esTravel ? 'Rappi Travel' : 'Rappi';
+  valores.SISTEMAS_MILLAS = esTravel ? 'los Sistemas Rappi Travel' : 'la Plataforma Rappi';
+  valores.POLITICA_PRIVACIDAD_MILLAS = esTravel ? (p.travel_politica_privacidad || '') : (p.politica_privacidad || '');
+  valores.URL_PRIVACIDAD_MILLAS = esTravel ? (p.travel_url_privacidad || '') : (p.url_privacidad || '');
+
+  valores.TEXTO_VINCULACION_MILLAS = textoVinculacionMillas(datos);
+  valores.TEXTO_BENEFICIO_MILLAS = textoBeneficioMillas(datos, p);
+  valores.TEXTO_BASE_MILLAS = textoBaseMillas(datos);
+  valores.TEXTO_NOTA_FRACCION_MILLAS = textoNotaFraccionMillas(datos, p);
+  valores.TEXTO_LIMITE_ORDENES_MILLAS = textoLimiteOrdenesMillas(datos);
+  valores.TEXTO_TOPE_MILLAS = textoTopeMillas(datos, p);
+  valores.TEXTO_AGOTAMIENTO_MILLAS = textoAgotamientoMillas(datos, p);
+  valores.TEXTO_EXISTENCIAS_MILLAS = textoExistenciasMillas(datos);
+  valores.TEXTO_ACREDITACION_MILLAS = textoAcreditacionMillas(datos, p);
+  valores.TEXTO_REVERSION_MILLAS = textoReversionMillas(datos);
+  valores.TEXTO_ACUMULABLE_MILLAS = textoAcumulableMillas(datos);
+  valores.TEXTO_PRODUCTOS_MILLAS = textoProductosMillas(datos);
+  valores.TEXTO_TC_TURBO = textoTcTurboMillas(datos, p);
+
+  return valores;
+}
+
+if (typeof module !== 'undefined') {
+  module.exports = {
+    millasEnLetras: millasEnLetras,
+    millasConSustantivo: millasConSustantivo,
+    textoVinculacionMillas: textoVinculacionMillas,
+    textoBeneficioMillas: textoBeneficioMillas,
+    textoBaseMillas: textoBaseMillas,
+    textoNotaFraccionMillas: textoNotaFraccionMillas,
+    textoLimiteOrdenesMillas: textoLimiteOrdenesMillas,
+    textoTopeMillas: textoTopeMillas,
+    textoAgotamientoMillas: textoAgotamientoMillas,
+    textoExistenciasMillas: textoExistenciasMillas,
+    textoAcreditacionMillas: textoAcreditacionMillas,
+    textoReversionMillas: textoReversionMillas,
+    textoAcumulableMillas: textoAcumulableMillas,
+    textoProductosMillas: textoProductosMillas,
+    textoTcTurboMillas: textoTcTurboMillas,
+    calcularDerivadosMillas: calcularDerivadosMillas,
   };
 }
 
@@ -5409,6 +5848,190 @@ var CAMPOS_DESCUENTO_TRAVEL = [
 ];
 
 
+/* --- Millas ---------------------------------------------------------------
+ *
+ * Dos tipos, una sola mecanica: millas (Plataforma Rappi) y millas_travel
+ * (Rappi Travel). Las dos piezas publicadas de millas son la misma mecanica en
+ * dos verticales, y lo que cambia entre ellas no es la mecanica sino el
+ * esqueleto: la entidad que opera el canal, las clausulas de plataforma y el
+ * reparto de responsabilidad. Por eso CAMPOS_MILLAS_MECANICA es uno solo y
+ * cada tipo lo pega sobre el esqueleto de su vertical, igual que el cashback
+ * ya tiene cashback y cashback_travel.
+ *
+ * Ver docs/piezas_publicadas/ y docs/DECISIONES.md.
+ */
+
+/** true cuando la campana declaro una bolsa de Millas. */
+function hayBolsaDeMillas(entrada) {
+  var valor = (entrada || {}).bolsaMillas;
+  return valor !== null && valor !== undefined && String(valor).trim() !== '';
+}
+
+function esMillasPorOrden(entrada) {
+  return (entrada || {}).formaMillas === 'por_orden';
+}
+
+function esMillasPorFraccion(entrada) {
+  return (entrada || {}).formaMillas === 'por_fraccion';
+}
+
+/** La mecanica de millas. La comparten los dos tipos, sin una sola diferencia. */
+var CAMPOS_MILLAS_MECANICA = [
+  { id: 'programaLealtad', etiqueta: 'Programa de lealtad', tipo: 'texto', paso: 'organizador', obligatorio: true },
+  {
+    id: 'vinculacionPrograma',
+    etiqueta: 'Cómo se vincula el usuario al programa',
+    tipo: 'lista',
+    paso: 'participantes',
+    obligatorio: true,
+    opciones: [
+      { valor: 'afiliado', etiqueta: 'Con una cuenta activa en el programa' },
+      { valor: 'enrolado_preferido', etiqueta: 'Enrolado en Rappi y con el programa de preferencia' },
+    ],
+  },
+
+  {
+    id: 'formaMillas',
+    etiqueta: 'Forma del beneficio',
+    tipo: 'lista',
+    paso: 'beneficio',
+    obligatorio: true,
+    opciones: [
+      { valor: 'por_orden', etiqueta: 'Un número fijo de millas por orden' },
+      { valor: 'por_fraccion', etiqueta: 'Millas por cada fracción de gasto' },
+    ],
+  },
+  {
+    id: 'millasPorOrden',
+    etiqueta: 'Millas por orden',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: esMillasPorOrden,
+    obligatorio: esMillasPorOrden,
+  },
+  {
+    id: 'millasPorFraccion',
+    etiqueta: 'Millas por fracción',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: esMillasPorFraccion,
+    obligatorio: esMillasPorFraccion,
+  },
+  {
+    id: 'valorFraccion',
+    etiqueta: 'Valor de la fracción',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: esMillasPorFraccion,
+    obligatorio: esMillasPorFraccion,
+  },
+  {
+    id: 'fraccionEsDolar',
+    etiqueta: 'La fracción equivale a un dólar',
+    tipo: 'casilla',
+    paso: 'beneficio',
+    visible: esMillasPorFraccion,
+    obligatorio: false,
+  },
+  {
+    id: 'acumulableMillas',
+    etiqueta: '¿Se junta con otras promociones?',
+    tipo: 'lista',
+    paso: 'beneficio',
+    obligatorio: true,
+    opciones: [
+      { valor: 'no', etiqueta: 'No' },
+      { valor: 'si', etiqueta: 'Sí' },
+    ],
+  },
+
+  {
+    id: 'limitePorUsuario',
+    etiqueta: 'Órdenes con beneficio por persona',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: function (entrada) { return !entrada.sinLimitePorUsuario; },
+    obligatorio: function (entrada) { return !entrada.sinLimitePorUsuario; },
+  },
+  { id: 'sinLimitePorUsuario', etiqueta: 'Sin límite por persona', tipo: 'casilla', paso: 'beneficio', obligatorio: false },
+  { id: 'topeMillasUsuario', etiqueta: 'Tope de millas por persona', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: false },
+  { id: 'bolsaMillas', etiqueta: 'Bolsa total de millas', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: false },
+  // Solo tiene sentido cuando hay bolsa: es la equivalencia en ordenes que la
+  // pieza de Turbo publica al lado de la bolsa ("148.000 Millas equivalentes a
+  // 370 ordenes validas"). Sin bolsa no hay nada a que equivaler.
+  {
+    id: 'maxOrdenes',
+    etiqueta: 'Órdenes equivalentes a la bolsa',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: hayBolsaDeMillas,
+    obligatorio: false,
+  },
+
+  {
+    id: 'acreditacionMillas',
+    etiqueta: '¿Cuándo se acreditan las millas?',
+    tipo: 'lista',
+    paso: 'beneficio',
+    obligatorio: true,
+    opciones: [
+      { valor: 'dias_calendario', etiqueta: 'Unos días después de la compra' },
+      { valor: 'programa', etiqueta: 'Según los tiempos del programa' },
+    ],
+  },
+  {
+    id: 'diasAcreditacion',
+    etiqueta: 'Días para la acreditación',
+    tipo: 'numero',
+    minimo: 1,
+    maximo: 60,
+    paso: 'beneficio',
+    visible: function (entrada) { return entrada.acreditacionMillas === 'dias_calendario'; },
+    obligatorio: function (entrada) { return entrada.acreditacionMillas === 'dias_calendario'; },
+  },
+];
+
+/** Lo que solo pregunta la vertical de la Plataforma Rappi. */
+var CAMPOS_MILLAS_PLATAFORMA = [
+  {
+    id: 'productos',
+    etiqueta: 'Productos que participan',
+    tipo: 'lista',
+    paso: 'campana',
+    obligatorio: true,
+    opciones: [
+      { valor: 'todos', etiqueta: 'Todos los de la tienda' },
+      { valor: 'marca', etiqueta: 'Los de una o varias marcas' },
+      { valor: 'especificos', etiqueta: 'Productos específicos' },
+    ],
+  },
+  {
+    id: 'makerMarca',
+    etiqueta: 'Marcas participantes (separadas por comas)',
+    tipo: 'texto',
+    paso: 'campana',
+    visible: function (entrada) { return entrada.productos === 'marca'; },
+    obligatorio: function (entrada) { return entrada.productos === 'marca'; },
+  },
+  {
+    id: 'productosLista',
+    etiqueta: 'Productos (separados por comas)',
+    tipo: 'texto',
+    paso: 'campana',
+    visible: function (entrada) { return entrada.productos === 'especificos'; },
+    obligatorio: function (entrada) { return entrada.productos === 'especificos'; },
+  },
+  // Turbo tiene sus propios T&C y la pieza publicada los cita. Es una casilla y
+  // no la pregunta de "en que pedidos aplica", porque no restringe el pedido:
+  // agrega el documento al que la Campana tambien queda sujeta.
+  { id: 'enTurbo', etiqueta: 'La campaña corre dentro del botón Turbo', tipo: 'casilla', paso: 'campana', obligatorio: false },
+];
+
 /* --- Brasil ---------------------------------------------------------------
  *
  * Un solo tipo con cuatro formas del beneficio: desconto, frete gratis, taxa de
@@ -5650,6 +6273,29 @@ var ESQUEMAS = {
     campos: unir(CAMPOS_TRAVEL_COMUNES, CAMPOS_DESCUENTO_TRAVEL),
     filtroDeEntrada: [],
     esDeTravel: true,
+  },
+  millas: {
+    id: 'millas',
+    nombre: 'Millas',
+    descripcion: 'Un programa de lealtad aliado le da millas al usuario por comprar en una tienda de la Plataforma Rappi. El programa organiza la campaña y acredita las millas; Rappi difunde y transmite la orden.',
+    modelo: 'millas',
+    campos: unir(CAMPOS_COMUNES, CAMPOS_TIENDA_Y_ORGANIZADOR, CAMPOS_MILLAS_PLATAFORMA, CAMPOS_MILLAS_MECANICA),
+    // El filtro general pregunta si el aliado exige sus propios T&C. En millas
+    // el programa siempre tiene los suyos, y el documento ya remite a ellos, asi
+    // que preguntarlo otra vez aqui mandaria a Legal todas las campanas de
+    // millas. Ver docs/PENDIENTES_LEGAL.md, M9.
+    filtroDeEntrada: [],
+    esDeMillas: true,
+  },
+  millas_travel: {
+    id: 'millas_travel',
+    nombre: 'Millas Travel',
+    descripcion: 'Un programa de lealtad aliado le da millas al usuario por comprar su vuelo, hotel, auto, tour o paquete en Rappi Travel. El programa organiza la campaña y acredita las millas.',
+    modelo: 'millas_travel',
+    campos: unir(CAMPOS_TRAVEL_COMUNES, CAMPOS_MILLAS_MECANICA),
+    filtroDeEntrada: [],
+    esDeTravel: true,
+    esDeMillas: true,
   },
   cashback_eta: {
     id: 'cashback_eta',
@@ -7487,6 +8133,17 @@ function tramoDeBeneficio(entrada, esquema) {
     return conPorcentaje ? porcentaje + '% ' + nombreDelTipo : nombreDelTipo;
   }
 
+  // Millas: el titulo dice cuantas millas solo cuando son un numero fijo por
+  // orden, que es la unica forma en que el numero significa lo mismo suelto que
+  // en la clausula. En la forma por fraccion, un "6 Millas" sin el valor de la
+  // fraccion promete algo distinto de lo que el documento dice.
+  if (esquema.id === 'millas' || esquema.id === 'millas_travel') {
+    if (entrada.formaMillas !== 'por_orden') return nombreDelTipo;
+    var cuantasMillas = Math.trunc(Number(entrada.millasPorOrden));
+    if (!isFinite(cuantasMillas) || cuantasMillas <= 0) return nombreDelTipo;
+    return cuantasMillas + ' ' + nombreDelTipo;
+  }
+
   // Cashback Travel con monto fijo no lleva porcentaje, porque no tiene.
   if (esquema.id === 'cashback_travel') {
     if (entrada.formaBeneficio !== 'porcentaje' || !conPorcentaje) return nombreDelTipo;
@@ -8217,7 +8874,7 @@ function rolDe(equipo, correo) {
  * hereda de la fila del pais, asi que un pais sin bloque travel no ofrece estos
  * tipos. Ver docs/INVESTIGACION_TRAVEL.md.
  */
-var TIPOS_DE_TRAVEL = ['cashback_travel', 'descuento_travel'];
+var TIPOS_DE_TRAVEL = ['cashback_travel', 'descuento_travel', 'millas_travel'];
 
 /** Los datos de Travel sin los cuales un T&C saldria incompleto. */
 var DATOS_DE_TRAVEL_OBLIGATORIOS = [
@@ -8901,6 +9558,10 @@ var PREGUNTAS = {
       },
       cashback_travel: { paso: 'condiciones_travel', placeholders: ['TEXTO_CONDICIONES_TRAVEL'] },
       descuento_travel: { paso: 'condiciones_travel', placeholders: ['TEXTO_CONDICIONES_TRAVEL'] },
+      // En millas el minimo sale dentro de la frase del beneficio, como en la
+      // pieza de Turbo, y no en una clausula aparte.
+      millas: { placeholders: ['TEXTO_BENEFICIO_MILLAS'] },
+      millas_travel: { paso: 'condiciones_travel', placeholders: ['TEXTO_CONDICIONES_TRAVEL'] },
     },
   }),
 
@@ -9450,6 +10111,13 @@ var PREGUNTAS = {
       vacio: 'Escribe cuántas órdenes con beneficio puede tener una persona.',
       rango: 'Tiene que ser al menos una orden.',
     },
+    variantes: {
+      millas: {
+        ayuda: 'En la campaña de MUSS y TANGA fueron 10 órdenes por persona.',
+        placeholders: ['TEXTO_LIMITE_ORDENES_MILLAS'],
+      },
+      millas_travel: { placeholders: ['TEXTO_LIMITE_ORDENES_MILLAS'] },
+    },
   }),
 
   maxOrdenes: p({
@@ -9462,6 +10130,30 @@ var PREGUNTAS = {
     errores: {
       vacio: 'Escribe el máximo de órdenes, o marca que no hay máximo.',
       rango: 'Tiene que ser al menos una orden.',
+    },
+    variantes: {
+      // En millas el maximo de ordenes no es un freno aparte: es la
+      // equivalencia en ordenes de la bolsa de millas, que la pieza de Turbo
+      // publica al lado de la bolsa. Por eso es opcional y solo se ve cuando
+      // hay bolsa.
+      millas: {
+        pregunta: '¿A cuántas órdenes equivale esa bolsa?',
+        ayuda: 'La bolsa dividida entre las millas de cada orden. Si no la tienes, déjalo vacío.',
+        porQue: 'La pieza publicada dice la bolsa y su equivalencia en órdenes, y así el usuario entiende cuántas compras alcanzan antes de que la campaña se acabe.',
+        ejemplo: '370',
+        opcional: true,
+        placeholders: ['TEXTO_AGOTAMIENTO_MILLAS'],
+        errores: { rango: 'Tiene que ser al menos una orden.' },
+      },
+      millas_travel: {
+        pregunta: '¿A cuántas órdenes equivale esa bolsa?',
+        ayuda: 'La bolsa dividida entre las millas de cada orden. Si no la tienes, déjalo vacío.',
+        porQue: 'La pieza publicada dice la bolsa y su equivalencia en órdenes, y así el usuario entiende cuántas compras alcanzan antes de que la campaña se acabe.',
+        ejemplo: '370',
+        opcional: true,
+        placeholders: ['TEXTO_AGOTAMIENTO_MILLAS'],
+        errores: { rango: 'Tiene que ser al menos una orden.' },
+      },
     },
   }),
 
@@ -9530,6 +10222,10 @@ var PREGUNTAS = {
     pregunta: null,
     placeholders: ['TEXTO_LIMITE_ORDENES_TRAVEL'],
     errores: {},
+    variantes: {
+      millas: { placeholders: ['TEXTO_LIMITE_ORDENES_MILLAS'] },
+      millas_travel: { placeholders: ['TEXTO_LIMITE_ORDENES_MILLAS'] },
+    },
   }),
 
   unidades: p({
@@ -9645,6 +10341,8 @@ var PREGUNTAS = {
     variantes: {
       cashback_travel: { opciones: OPCIONES_SEGMENTO_TRAVEL, placeholders: ['TEXTO_SEGMENTO_TRAVEL'] },
       descuento_travel: { opciones: OPCIONES_SEGMENTO_TRAVEL, placeholders: ['TEXTO_SEGMENTO_TRAVEL'] },
+      millas: { placeholders: ['TEXTO_SEGMENTO_MILLAS'] },
+      millas_travel: { opciones: OPCIONES_SEGMENTO_TRAVEL, placeholders: ['TEXTO_SEGMENTO_MILLAS'] },
     },
   }),
 
@@ -9677,6 +10375,8 @@ var PREGUNTAS = {
     variantes: {
       cashback_travel: { opciones: OPCIONES_PAGO_TRAVEL, placeholders: ['TEXTO_METODO_PAGO_TRAVEL'] },
       descuento_travel: { opciones: OPCIONES_PAGO_TRAVEL, placeholders: ['TEXTO_METODO_PAGO_TRAVEL'] },
+      millas: { placeholders: ['TEXTO_METODO_PAGO_MILLAS'] },
+      millas_travel: { opciones: OPCIONES_PAGO_TRAVEL, placeholders: ['TEXTO_METODO_PAGO_MILLAS'] },
     },
   }),
 
@@ -9704,6 +10404,19 @@ var PREGUNTAS = {
     ],
     placeholders: ['TEXTO_PRODUCTOS'],
     errores: { vacio: 'Dinos qué productos participan.' },
+    variantes: {
+      millas: {
+        paso: 'campana',
+        ayuda: 'En la campaña de MUSS y TANGA participaron los productos de dos marcas.',
+        porQue: 'Define qué compras dan millas. Si no queda claro, el usuario compra cualquier cosa de la tienda y después reclama las millas.',
+        opciones: [
+          { valor: 'todos', etiqueta: 'Todo lo de la tienda', nota: 'Cualquier producto del catálogo.' },
+          { valor: 'marca', etiqueta: 'Solo los de una o varias marcas', nota: 'Las marcas que fondean la campaña.' },
+          { valor: 'especificos', etiqueta: 'Unos productos puntuales', nota: 'Tú haces la lista.' },
+        ],
+        placeholders: ['TEXTO_PRODUCTOS_MILLAS'],
+      },
+    },
   }),
 
   makerMarca: p({
@@ -9714,6 +10427,17 @@ var PREGUNTAS = {
     ejemplo: 'Galletas Lunaria',
     placeholders: ['TEXTO_PRODUCTOS'],
     errores: { vacio: 'Escribe el nombre de la marca.' },
+    variantes: {
+      millas: {
+        paso: 'campana',
+        pregunta: '¿De qué marcas son los productos?',
+        ayuda: 'Sepáralas con comas. Por ejemplo: MUSS, TANGA.',
+        porQue: 'Las marcas salen entre comillas en el documento, así que tienen que llamarse igual que en la app para que el usuario las encuentre.',
+        ejemplo: 'MUSS, TANGA',
+        placeholders: ['TEXTO_PRODUCTOS_MILLAS'],
+        errores: { vacio: 'Escribe las marcas participantes, separadas por comas.' },
+      },
+    },
   }),
 
   productosLista: p({
@@ -9724,6 +10448,9 @@ var PREGUNTAS = {
     ejemplo: 'Galletas Lunaria clásicas, Galletas Lunaria de chocolate',
     placeholders: ['TEXTO_PRODUCTOS'],
     errores: { vacio: 'Escribe los productos que participan, separados por comas.' },
+    variantes: {
+      millas: { paso: 'campana', placeholders: ['TEXTO_PRODUCTOS_MILLAS'] },
+    },
   }),
 
   criterioGanador: p({
@@ -9917,6 +10644,173 @@ var PREGUNTAS = {
     },
   }),
 
+  // --- Millas (los dos tipos) ---------------------------------------------
+  //
+  // La mecanica es la misma en Rappi Travel y en la Plataforma Rappi, asi que
+  // las preguntas tambien: los ejemplos salen de las dos piezas publicadas de
+  // millas, una de cada vertical.
+
+  programaLealtad: p({
+    paso: 'organizador',
+    pregunta: '¿Cuál es el programa de lealtad?',
+    ayuda: 'El nombre como lo ve el usuario. Por ejemplo: LifeMiles.',
+    porQue: 'El documento nombra el programa en la mecánica, en la acreditación y en la cláusula de datos. Si el nombre no coincide con el de la app, el usuario no sabe dónde buscar sus millas.',
+    ejemplo: 'LifeMiles',
+    placeholders: ['PROGRAMA_MILLAS'],
+    errores: { vacio: 'Escribe el nombre del programa de lealtad que da las millas.' },
+  }),
+
+  vinculacionPrograma: p({
+    paso: 'participantes',
+    pregunta: '¿Cómo se vincula el usuario al programa?',
+    ayuda: 'Las dos campañas publicadas piden cosas distintas. Elige la tuya.',
+    porQue: 'Es un requisito para participar y sale escrito como viñeta. Si pides menos de lo que el programa exige, el usuario compra y después no recibe sus millas.',
+    avanzaSola: true,
+    opciones: [
+      { valor: 'afiliado', etiqueta: 'Con una cuenta activa en el programa', nota: 'Basta con estar afiliado, como en la campaña de Civitatis.' },
+      { valor: 'enrolado_preferido', etiqueta: 'Enrolado en Rappi y con el programa de preferencia', nota: 'Además de enrolarse, lo elige como programa preferido de acumulación.' },
+    ],
+    placeholders: ['TEXTO_VINCULACION_MILLAS'],
+    errores: { vacio: 'Dinos cómo se vincula el usuario al programa.' },
+  }),
+
+  formaMillas: p({
+    paso: 'beneficio',
+    pregunta: '¿Cómo se calculan las millas?',
+    ayuda: 'Un número fijo por orden, o unas millas por cada tanto gastado.',
+    porQue: 'Es la frase central del documento: dice qué recibe el usuario y por qué. Las dos formas están publicadas y un mismo documento no puede llevar las dos.',
+    avanzaSola: true,
+    opciones: [
+      { valor: 'por_orden', etiqueta: 'Un número fijo por orden', nota: 'Como en la campaña de MUSS y TANGA: 400 millas por cada orden válida.' },
+      { valor: 'por_fraccion', etiqueta: 'Millas por cada tanto gastado', nota: 'Como en la de Civitatis: 6 millas por cada fracción de 3.500 pesos.' },
+    ],
+    placeholders: ['TEXTO_BENEFICIO_MILLAS'],
+    errores: { vacio: 'Dinos cómo se calculan las millas.' },
+  }),
+
+  millasPorOrden: p({
+    paso: 'beneficio',
+    pregunta: '¿Cuántas millas recibe por cada orden?',
+    ayuda: 'El número exacto que promete la campaña. Por ejemplo: 400.',
+    porQue: 'Es el número que el usuario ve prometido y el que el programa tiene que acreditar. Sale escrito en letras y en cifra, así que no puede quedar aproximado.',
+    ejemplo: '400',
+    placeholders: ['TEXTO_BENEFICIO_MILLAS'],
+    errores: {
+      vacio: 'Escribe cuántas millas recibe el usuario por cada orden.',
+      rango: 'Tiene que ser al menos una milla.',
+    },
+  }),
+
+  millasPorFraccion: p({
+    paso: 'beneficio',
+    pregunta: '¿Cuántas millas da cada fracción?',
+    ayuda: 'Por ejemplo: 6 millas por cada fracción gastada.',
+    porQue: 'Junto con el valor de la fracción forma la promesa completa. Si uno de los dos números está mal, el usuario recibe menos millas de las que la pieza le prometió.',
+    ejemplo: '6',
+    placeholders: ['TEXTO_BENEFICIO_MILLAS'],
+    errores: {
+      vacio: 'Escribe cuántas millas da cada fracción de gasto.',
+      rango: 'Tiene que ser al menos una milla.',
+    },
+  }),
+
+  valorFraccion: p({
+    paso: 'beneficio',
+    pregunta: '¿De cuánto es cada fracción de gasto?',
+    ayuda: 'Lo que hay que gastar para ganar esas millas. Por ejemplo: 3.500.',
+    porQue: 'Es el divisor de la promesa. Un valor distinto al de la pieza publicitaria cambia cuántas millas recibe el usuario por la misma compra.',
+    ejemplo: '3500',
+    moneda: true,
+    placeholders: ['TEXTO_BENEFICIO_MILLAS'],
+    errores: {
+      vacio: 'Escribe el valor de cada fracción de gasto.',
+      rango: 'Tiene que ser mayor que cero.',
+    },
+  }),
+
+  fraccionEsDolar: p({
+    paso: 'beneficio',
+    pregunta: '¿La fracción equivale a un dólar?',
+    ayuda: 'Márcalo si el valor sale de convertir un dólar a la moneda del país.',
+    porQue: 'Cuando la fracción sale de una conversión, el documento lo explica, y así el usuario entiende de dónde viene una cifra que si no parece arbitraria.',
+    opcional: true,
+    placeholders: ['TEXTO_NOTA_FRACCION_MILLAS'],
+    errores: {},
+  }),
+
+  acumulableMillas: p({
+    paso: 'beneficio',
+    pregunta: '¿Las millas se juntan con otras promociones?',
+    ayuda: 'Las dos campañas publicadas lo resolvieron distinto. Confírmalo con el aliado.',
+    porQue: 'El documento lo dice expresamente. Si dice que sí y el programa no lo permite, el usuario reclama con el documento en la mano.',
+    avanzaSola: true,
+    opciones: [
+      { valor: 'no', etiqueta: 'No se juntan', nota: 'Como en la de Civitatis, que las excluye con otras promociones de millas.' },
+      { valor: 'si', etiqueta: 'Sí se juntan', nota: 'Como en la de MUSS y TANGA, acumulable con las demás promociones de la app.' },
+    ],
+    placeholders: ['TEXTO_ACUMULABLE_MILLAS'],
+    errores: { vacio: 'Dinos si las millas se juntan con otras promociones.' },
+  }),
+
+  topeMillasUsuario: p({
+    paso: 'beneficio',
+    pregunta: '¿Hay un tope de millas por persona?',
+    ayuda: 'El total que una persona puede acumular en toda la campaña. Si no hay, déjalo vacío.',
+    porQue: 'Es un freno distinto al de las órdenes: una persona puede quedarse dentro del número de órdenes y aun así pasarse del tope. Si no está escrito, no lo puedes aplicar.',
+    ejemplo: '4000',
+    opcional: true,
+    placeholders: ['TEXTO_TOPE_MILLAS'],
+    errores: { rango: 'Si hay tope, tiene que ser al menos una milla.' },
+  }),
+
+  bolsaMillas: p({
+    paso: 'beneficio',
+    pregunta: '¿Cuántas millas tiene la bolsa de la campaña?',
+    ayuda: 'El total que el programa puso para toda la campaña. Si no hay bolsa, déjalo vacío.',
+    porQue: 'Cuando se agota, la campaña termina sola aunque no haya llegado la fecha de fin. El documento lo dice en la vigencia, así que el usuario sabe que puede acabarse antes.',
+    ejemplo: '148000',
+    opcional: true,
+    placeholders: ['TEXTO_AGOTAMIENTO_MILLAS', 'TEXTO_EXISTENCIAS_MILLAS'],
+    errores: { rango: 'Si hay bolsa, tiene que ser al menos una milla.' },
+  }),
+
+  acreditacionMillas: p({
+    paso: 'beneficio',
+    pregunta: '¿Cuándo se acreditan las millas?',
+    ayuda: 'Unos días después de la compra, o cuando el programa las procese.',
+    porQue: 'Es el compromiso de fecha frente al usuario. Antes de ese plazo no puede reclamar, después sí, así que prometer menos días de los reales genera reclamos.',
+    avanzaSola: true,
+    opciones: [
+      { valor: 'dias_calendario', etiqueta: 'Unos días después de la compra', nota: 'Como en la de Civitatis: cinco días calendario después de confirmarse.' },
+      { valor: 'programa', etiqueta: 'Según los tiempos del programa', nota: 'Como en la de MUSS y TANGA, con los procesos internos del programa.' },
+    ],
+    placeholders: ['TEXTO_ACREDITACION_MILLAS'],
+    errores: { vacio: 'Dinos cuándo se acreditan las millas.' },
+  }),
+
+  diasAcreditacion: p({
+    paso: 'beneficio',
+    pregunta: '¿Cuántos días después de la compra?',
+    ayuda: 'Días calendario contados desde que la compra se confirma. Por ejemplo: 5.',
+    porQue: 'Ese número es la promesa que el usuario puede exigir. Si el programa se demora más, el reclamo se resuelve con lo que diga el documento.',
+    ejemplo: '5',
+    placeholders: ['TEXTO_ACREDITACION_MILLAS'],
+    errores: {
+      vacio: 'Escribe cuántos días después de la compra se acreditan las millas.',
+      rango: 'El plazo va de 1 a 60 días.',
+    },
+  }),
+
+  enTurbo: p({
+    paso: 'campana',
+    pregunta: '¿La campaña corre dentro del botón Turbo?',
+    ayuda: 'Márcalo si la tienda participante es Turbo o está dentro de Turbo.',
+    porQue: 'Turbo tiene sus propios términos y condiciones, y el documento tiene que remitir a ellos. Sin esa remisión, las reglas de Turbo no le aplican a la campaña.',
+    opcional: true,
+    placeholders: ['TEXTO_TC_TURBO'],
+    errores: {},
+  }),
+
   // --- Las tiendas (Cashback Day) -----------------------------------------
 
   tiendas: p({
@@ -9983,6 +10877,27 @@ var NOMBRE_DEL_HUECO = {
   TEXTO_ASISTENCIA_TRAVEL: 'el alcance del descuento de la asistencia',
   TEXTO_CREDITOS_FUERA_DE_TRAVEL: 'el uso de los Créditos fuera de los viajes',
   TEXTO_NOTAS_DE_MODIFICACION: 'las modificaciones de la campaña',
+  PROGRAMA_MILLAS: 'el programa de lealtad',
+  ENTIDAD_MILLAS: 'la razón social de la empresa de rappi que opera el canal',
+  NOMBRE_CANAL_MILLAS: 'el canal por el que se compra',
+  SISTEMAS_MILLAS: 'los sistemas por los que se compra',
+  POLITICA_PRIVACIDAD_MILLAS: 'la política de datos que aplica',
+  URL_PRIVACIDAD_MILLAS: 'el enlace de la política de datos que aplica',
+  TEXTO_SEGMENTO_MILLAS: 'quiénes pueden participar',
+  TEXTO_VINCULACION_MILLAS: 'cómo se vincula el usuario al programa',
+  TEXTO_BENEFICIO_MILLAS: 'cómo se calculan las millas',
+  TEXTO_BASE_MILLAS: 'sobre qué valor se calculan las millas',
+  TEXTO_NOTA_FRACCION_MILLAS: 'de dónde sale el valor de la fracción',
+  TEXTO_METODO_PAGO_MILLAS: 'los medios de pago',
+  TEXTO_LIMITE_ORDENES_MILLAS: 'cuántas órdenes puede beneficiar una persona',
+  TEXTO_TOPE_MILLAS: 'el tope de millas por persona',
+  TEXTO_AGOTAMIENTO_MILLAS: 'la bolsa de millas que agota la campaña',
+  TEXTO_EXISTENCIAS_MILLAS: 'qué pasa cuando se agota la bolsa',
+  TEXTO_ACREDITACION_MILLAS: 'cuándo se acreditan las millas',
+  TEXTO_REVERSION_MILLAS: 'qué pasa con las millas si se cancela la compra',
+  TEXTO_ACUMULABLE_MILLAS: 'si las millas se juntan con otras promociones',
+  TEXTO_PRODUCTOS_MILLAS: 'qué productos participan',
+  TEXTO_TC_TURBO: 'los términos del botón turbo',
   TEXTO_RESPONSABILIDAD_TRAVEL: 'de qué responde la entidad de viajes',
   TEXTO_YA_OTORGADO_TRAVEL: 'lo que ya se otorgó',
   VERBO_BENEFICIO_TRAVEL: 'qué se hace con el beneficio',
@@ -11950,6 +12865,47 @@ function validarDescuentoTravel(entrada) {
 }
 
 /**
+ * Las reglas propias de la mecanica de millas, en las dos verticales.
+ *
+ * La pieza de Turbo publica la bolsa y su equivalencia en ordenes como dos
+ * caras del mismo numero ("148.000 Millas equivalentes a 370 ordenes validas").
+ * Si los dos numeros no cuadran, el documento se contradice solo, y eso no lo
+ * ve la red de seguridad del motor: las dos frases estan bien formadas.
+ */
+function validarMillas(entrada) {
+  var errores = [];
+
+  var bolsa = Number(entrada.bolsaMillas);
+  var porOrden = Number(entrada.millasPorOrden);
+  var ordenes = Number(entrada.maxOrdenes);
+  var hayBolsa = isFinite(bolsa) && bolsa > 0;
+
+  if (entrada.formaMillas === 'por_orden' && isFinite(porOrden) && porOrden > 0) {
+    if (hayBolsa && porOrden > bolsa) {
+      errores.push(error('bolsaMillas', 'La bolsa de millas es menor que las millas de una sola orden. Con eso no alcanza ni para la primera. Revisa los dos números.'));
+    }
+    if (hayBolsa && isFinite(ordenes) && ordenes > 0 && porOrden * ordenes !== bolsa) {
+      errores.push(error('maxOrdenes', 'La bolsa no cuadra con las órdenes: ' + ordenes + ' órdenes de ' + porOrden +
+        ' millas son ' + (ordenes * porOrden) + ', no ' + bolsa + '. El documento diría las dos cosas a la vez.'));
+    }
+  }
+
+  var tope = Number(entrada.topeMillasUsuario);
+  if (isFinite(tope) && tope > 0) {
+    if (hayBolsa && tope > bolsa) {
+      errores.push(error('topeMillasUsuario', 'El tope de millas por persona es mayor que la bolsa de la campaña. Con eso, una sola persona se lleva la campaña entera. Revisa los dos números.'));
+    }
+    var porPersona = Number(entrada.limitePorUsuario);
+    if (entrada.formaMillas === 'por_orden' && isFinite(porOrden) && porOrden > 0 &&
+      !entrada.sinLimitePorUsuario && isFinite(porPersona) && porPersona > 0 && porOrden > tope) {
+      errores.push(error('topeMillasUsuario', 'El tope de millas por persona es menor que las millas de una sola orden. Nadie alcanzaría a recibir el beneficio completo.'));
+    }
+  }
+
+  return errores;
+}
+
+/**
  * Avisos de Travel: no bloquean, se muestran en el resumen.
  *
  * PENDIENTE (R17 de docs/MODELO_BASE_TRAVEL.md): Juan decide si alguno pasa a
@@ -12039,6 +12995,9 @@ function validarSolicitud(entrada, pais, contexto) {
   if (entrada.tipo === 'cashback_day') {
     errores = errores.concat(validarTiendas(entrada, pais, esquema));
   }
+  if (esquema && esquema.esDeMillas) {
+    errores = errores.concat(validarMillas(entrada));
+  }
   if (esquema && esquema.esDeTravel) {
     // Sin los datos de Travel del pais, o con el RNT vencido, no se genera.
     var estadoTravel = travelDisponible(pais, opciones.fechaReferencia);
@@ -12068,6 +13027,7 @@ if (typeof module !== 'undefined') {
     entidadesDeRappi: entidadesDeRappi,
     validarCashbackTravel: validarCashbackTravel,
     validarDescuentoTravel: validarDescuentoTravel,
+    validarMillas: validarMillas,
     avisosDeTravel: avisosDeTravel,
     NOMBRES_PROHIBIDOS_DE_RAPPI: NOMBRES_PROHIBIDOS_DE_RAPPI,
     estaVacio: estaVacio,

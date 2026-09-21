@@ -3584,6 +3584,1935 @@ No tiene pregunta propia: se responde dentro de **unidades**.
 
 ---
 
+# Millas
+
+Un programa de lealtad aliado le da millas al usuario por comprar en una tienda de la Plataforma Rappi. El programa organiza la campaña y acredita las millas; Rappi difunde y transmite la orden.
+
+## Filtro de entrada
+
+Antes del formulario. Si responde **sí** a cualquiera, no se genera: se muestra
+la pantalla "Esta campaña la redacta Legal" con la razón y el enlace al
+formulario manual.
+
+
+## Paso: Campaña
+
+### ¿En qué país corre la campaña?
+
+> Si tu país no aparece en la lista, todavía no está habilitado.
+
+**Por qué te preguntamos esto.** Cada país tiene su propia entidad legal de Rappi, su moneda y su autoridad de protección al consumidor. El documento cambia completo según el país.
+
+| | |
+|---|---|
+| Campo interno | `pais` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `PAIS_LEGAL`, `ENTIDAD_LEGAL` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el país de la campaña.
+
+### ¿La campaña es de Rappi o de Rappi Travel?
+
+> Si es de vuelos, hoteles, autos o paquetes, es Rappi Travel.
+
+**Por qué te preguntamos esto.** Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.
+
+| | |
+|---|---|
+| Campo interno | `negocio` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | rappi |
+| Avanza sola | sí |
+
+**Opciones** (botones grandes, una sola):
+
+- **Rappi**: Restaurantes, supermercados, farmacias y todo lo que llega a domicilio.
+- **Rappi Travel**: Vuelos, hoteles, autos, paquetes, tours y asistencia al viajero.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si la campaña es de Rappi o de Rappi Travel.
+
+### ¿Qué tipo de campaña vas a hacer?
+
+> Elige el que se parezca a tu campaña. Cada opción dice de qué se trata.
+
+**Por qué te preguntamos esto.** Cada tipo usa un modelo legal distinto, aprobado por Legal. Elegir mal significa generar el documento equivocado.
+
+| | |
+|---|---|
+| Campo interno | `tipo` |
+| Paso | Campaña |
+| Tipo de control | tarjetas |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el tipo de campaña.
+
+### ¿En qué tienda aplica?
+
+> La marca comercial como aparece en la app. Por ejemplo: Pollo Dorado.
+
+**Por qué te preguntamos esto.** El documento nombra la tienda y la define como Tienda Participante. Si el nombre no coincide con el de la app, el usuario no la encuentra.
+
+| | |
+|---|---|
+| Campo interno | `tienda` |
+| Paso | Campaña |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | Pollo Dorado |
+| Avanza sola | no |
+| Llena en el documento | `TIENDA` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe la tienda donde aplica la campaña.
+
+### ¿Dónde aplica la campaña?
+
+> Si es solo en algunas ciudades, las escribes en la siguiente pregunta.
+
+**Por qué te preguntamos esto.** La cobertura define dónde puede reclamar el usuario. Si el documento dice más de lo que la campaña cubre, el usuario tiene derecho a exigirlo.
+
+| | |
+|---|---|
+| Campo interno | `alcance` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | Nacional |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_TERRITORIO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **En todo el país**: Donde sea que Rappi tenga cobertura.
+- **Solo en algunas ciudades**: Por ejemplo: Bogotá y Medellín.
+
+**Mensajes de validación:**
+
+- `vacio`: Elige si la campaña es nacional o por ciudades.
+
+### ¿En qué ciudades?
+
+> Sepáralas con comas. Por ejemplo: Bogotá, Medellín, Cali.
+
+**Por qué te preguntamos esto.** Las ciudades salen escritas tal cual en la cláusula de cobertura. Si falta una, el usuario de esa ciudad no puede reclamar.
+
+| | |
+|---|---|
+| Campo interno | `ciudades` |
+| Paso | Campaña |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | Bogotá, Medellín, Cali |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_TERRITORIO` |
+
+**Sugerencias clicables:** Bogotá, Medellín, Cali, Barranquilla, Bucaramanga, Cúcuta
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe al menos una ciudad, o vuelve y elige cobertura nacional.
+
+### ¿Qué productos participan?
+
+> Si el concurso lo paga una marca, suelen participar solo sus productos.
+
+**Por qué te preguntamos esto.** Define qué compras cuentan para el ranking. Si no queda claro, cualquier compra podría contar.
+
+| | |
+|---|---|
+| Campo interno | `productos` |
+| Paso | Concurso |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_PRODUCTOS` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Todo lo de la tienda**: Cualquier producto del catálogo.
+- **Solo los de una marca**: Los productos de un Maker.
+- **Unos productos puntuales**: Tú haces la lista.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos qué productos participan.
+
+### ¿De qué marca?
+
+> El nombre comercial de la marca. Por ejemplo: Galletas Lunaria.
+
+**Por qué te preguntamos esto.** El documento nombra la marca, así que el usuario sabe exactamente qué comprar para participar.
+
+| | |
+|---|---|
+| Campo interno | `makerMarca` |
+| Paso | Concurso |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | Galletas Lunaria |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_PRODUCTOS` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el nombre de la marca.
+
+### ¿Cuáles productos?
+
+> Sepáralos con comas, como aparecen en la app.
+
+**Por qué te preguntamos esto.** La lista sale escrita tal cual en el documento. Si falta uno, las compras de ese producto no cuentan.
+
+| | |
+|---|---|
+| Campo interno | `productosLista` |
+| Paso | Concurso |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | Galletas Lunaria clásicas, Galletas Lunaria de chocolate |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_PRODUCTOS` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe los productos que participan, separados por comas.
+
+### ¿La campaña corre dentro del botón Turbo?
+
+> Márcalo si la tienda participante es Turbo o está dentro de Turbo.
+
+**Por qué te preguntamos esto.** Turbo tiene sus propios términos y condiciones, y el documento tiene que remitir a ellos. Sin esa remisión, las reglas de Turbo no le aplican a la campaña.
+
+| | |
+|---|---|
+| Campo interno | `enTurbo` |
+| Paso | Campaña |
+| Tipo de control | casilla |
+| Obligatorio | no |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_TC_TURBO` |
+
+## Paso: Organizador
+
+### ¿Qué empresa paga el beneficio?
+
+> Tal como sale en su RUT, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.
+
+**Por qué te preguntamos esto.** El Organizador responde por la campaña frente al usuario y frente a la autoridad. Rappi solo pone la plataforma, así que el nombre tiene que ser exacto.
+
+| | |
+|---|---|
+| Campo interno | `organizadorRazonSocial` |
+| Paso | Organizador |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | Alimentos del Norte S.A.S. |
+| Avanza sola | no |
+| Llena en el documento | `ORGANIZADOR` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe la razón social de la empresa que paga el beneficio. Si no la tienes, pídesela a tu contacto en la tienda.
+
+### ¿Cuál es el NIT de esa empresa?
+
+> Con dígito de verificación, tal como sale en el RUT: 900.111.222-1.
+
+**Por qué te preguntamos esto.** El documento identifica al Organizador con su número tributario. Un número mal escrito deja el documento sin un responsable identificable.
+
+| | |
+|---|---|
+| Campo interno | `organizadorId` |
+| Paso | Organizador |
+| Tipo de control | identificacion |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 900.111.222-1 |
+| Avanza sola | no |
+| Llena en el documento | `ID_ORGANIZADOR` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el NIT de la empresa organizadora, con el dígito de verificación.
+- `formato`: Ese número no cuadra. Revisa el dígito de verificación, que es el que va después del guion.
+
+**Al validar bien** muestra el valor formateado seguido de "válido".
+
+### ¿Cuál es el programa de lealtad?
+
+> El nombre como lo ve el usuario. Por ejemplo: LifeMiles.
+
+**Por qué te preguntamos esto.** El documento nombra el programa en la mecánica, en la acreditación y en la cláusula de datos. Si el nombre no coincide con el de la app, el usuario no sabe dónde buscar sus millas.
+
+| | |
+|---|---|
+| Campo interno | `programaLealtad` |
+| Paso | Organizador |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | LifeMiles |
+| Avanza sola | no |
+| Llena en el documento | `PROGRAMA_MILLAS` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el nombre del programa de lealtad que da las millas.
+
+## Paso: Cuándo
+
+### ¿Qué día arranca la campaña?
+
+> Puede ser hoy. Publica los T&C antes de que arranque.
+
+**Por qué te preguntamos esto.** Los Términos y Condiciones tienen que estar publicados antes de que la campaña empiece. Si arrancó ayer, ya no se pueden publicar a tiempo.
+
+| | |
+|---|---|
+| Campo interno | `fechaInicio` |
+| Paso | Cuándo |
+| Tipo de control | fecha |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `FECHA_INICIO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el día en que arranca la campaña.
+- `pasado`: Esa fecha ya pasó. Los T&C se publican antes de que la campaña empiece, así que elige hoy o un día futuro.
+
+**Aviso:** Faltan menos de 48 horas. Alcanzas, pero publica los T&C hoy mismo.
+
+### ¿A qué hora arranca?
+
+> Por defecto arranca a medianoche.
+
+**Por qué te preguntamos esto.** La hora exacta define desde cuándo un pedido cuenta para la campaña. Un pedido un minuto antes no da beneficio.
+
+| | |
+|---|---|
+| Campo interno | `horaInicio` |
+| Paso | Cuándo |
+| Tipo de control | hora |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 00:00 |
+| Avanza sola | no |
+| Llena en el documento | `HORA_INICIO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige la hora de inicio.
+
+### ¿Qué día termina?
+
+> La mayoría de los cashback duran un solo día. Te la dejamos igual a la de inicio.
+
+**Por qué te preguntamos esto.** Después de esta fecha la campaña no da beneficio. También se usa para calcular hasta cuándo sirven los Créditos.
+
+| | |
+|---|---|
+| Campo interno | `fechaFin` |
+| Paso | Cuándo |
+| Tipo de control | fecha |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `FECHA_FIN` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el día en que termina la campaña.
+- `orden`: La campaña no puede terminar antes de empezar. Revisa la fecha y la hora de fin.
+
+### ¿A qué hora termina?
+
+> Por defecto termina a las 11:59 de la noche.
+
+**Por qué te preguntamos esto.** Define hasta qué minuto cuenta un pedido. Los pedidos posteriores se procesan como pedidos normales.
+
+| | |
+|---|---|
+| Campo interno | `horaFin` |
+| Paso | Cuándo |
+| Tipo de control | hora |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 23:59 |
+| Avanza sola | no |
+| Llena en el documento | `HORA_FIN` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige la hora de fin.
+- `orden`: La hora de fin tiene que ser después de la de inicio: la campaña es de un solo día.
+
+## Paso: Beneficio
+
+### ¿Cómo se calculan las millas?
+
+> Un número fijo por orden, o unas millas por cada tanto gastado.
+
+**Por qué te preguntamos esto.** Es la frase central del documento: dice qué recibe el usuario y por qué. Las dos formas están publicadas y un mismo documento no puede llevar las dos.
+
+| | |
+|---|---|
+| Campo interno | `formaMillas` |
+| Paso | Beneficio |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_BENEFICIO_MILLAS` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Un número fijo por orden**: Como en la campaña de MUSS y TANGA: 400 millas por cada orden válida.
+- **Millas por cada tanto gastado**: Como en la de Civitatis: 6 millas por cada fracción de 3.500 pesos.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos cómo se calculan las millas.
+
+### ¿Cuántas millas recibe por cada orden?
+
+> El número exacto que promete la campaña. Por ejemplo: 400.
+
+**Por qué te preguntamos esto.** Es el número que el usuario ve prometido y el que el programa tiene que acreditar. Sale escrito en letras y en cifra, así que no puede quedar aproximado.
+
+| | |
+|---|---|
+| Campo interno | `millasPorOrden` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 400 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_BENEFICIO_MILLAS` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe cuántas millas recibe el usuario por cada orden.
+- `rango`: Tiene que ser al menos una milla.
+
+### ¿Cuántas millas da cada fracción?
+
+> Por ejemplo: 6 millas por cada fracción gastada.
+
+**Por qué te preguntamos esto.** Junto con el valor de la fracción forma la promesa completa. Si uno de los dos números está mal, el usuario recibe menos millas de las que la pieza le prometió.
+
+| | |
+|---|---|
+| Campo interno | `millasPorFraccion` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 6 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_BENEFICIO_MILLAS` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe cuántas millas da cada fracción de gasto.
+- `rango`: Tiene que ser al menos una milla.
+
+### ¿De cuánto es cada fracción de gasto?
+
+> Lo que hay que gastar para ganar esas millas. Por ejemplo: 3.500.
+
+**Por qué te preguntamos esto.** Es el divisor de la promesa. Un valor distinto al de la pieza publicitaria cambia cuántas millas recibe el usuario por la misma compra.
+
+| | |
+|---|---|
+| Campo interno | `valorFraccion` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 3500 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_BENEFICIO_MILLAS` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el valor de cada fracción de gasto.
+- `rango`: Tiene que ser mayor que cero.
+
+### ¿La fracción equivale a un dólar?
+
+> Márcalo si el valor sale de convertir un dólar a la moneda del país.
+
+**Por qué te preguntamos esto.** Cuando la fracción sale de una conversión, el documento lo explica, y así el usuario entiende de dónde viene una cifra que si no parece arbitraria.
+
+| | |
+|---|---|
+| Campo interno | `fraccionEsDolar` |
+| Paso | Beneficio |
+| Tipo de control | casilla |
+| Obligatorio | no |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_NOTA_FRACCION_MILLAS` |
+
+### ¿Las millas se juntan con otras promociones?
+
+> Las dos campañas publicadas lo resolvieron distinto. Confírmalo con el aliado.
+
+**Por qué te preguntamos esto.** El documento lo dice expresamente. Si dice que sí y el programa no lo permite, el usuario reclama con el documento en la mano.
+
+| | |
+|---|---|
+| Campo interno | `acumulableMillas` |
+| Paso | Beneficio |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_ACUMULABLE_MILLAS` |
+
+**Opciones** (botones grandes, una sola):
+
+- **No se juntan**: Como en la de Civitatis, que las excluye con otras promociones de millas.
+- **Sí se juntan**: Como en la de MUSS y TANGA, acumulable con las demás promociones de la app.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si las millas se juntan con otras promociones.
+
+### ¿Cuántas órdenes puede beneficiar una persona?
+
+> En las campañas de Travel lo más usado son 2.
+
+**Por qué te preguntamos esto.** Sin límite, unos pocos usuarios consumen el presupuesto. Con límite, el beneficio llega a más gente.
+
+| | |
+|---|---|
+| Campo interno | `limitePorUsuario` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 2 |
+| Ejemplo | 2 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_LIMITE_ORDENES_TRAVEL` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe cuántas órdenes con beneficio puede tener una persona.
+- `rango`: Tiene que ser al menos una orden.
+
+### sinLimitePorUsuario
+
+No tiene pregunta propia: se responde dentro de **limitePorUsuario**.
+
+### ¿Hay un tope de millas por persona?
+
+> El total que una persona puede acumular en toda la campaña. Si no hay, déjalo vacío.
+
+**Por qué te preguntamos esto.** Es un freno distinto al de las órdenes: una persona puede quedarse dentro del número de órdenes y aun así pasarse del tope. Si no está escrito, no lo puedes aplicar.
+
+| | |
+|---|---|
+| Campo interno | `topeMillasUsuario` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | no |
+| Ejemplo | 4000 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_TOPE_MILLAS` |
+
+**Mensajes de validación:**
+
+- `rango`: Si hay tope, tiene que ser al menos una milla.
+
+### ¿Cuántas millas tiene la bolsa de la campaña?
+
+> El total que el programa puso para toda la campaña. Si no hay bolsa, déjalo vacío.
+
+**Por qué te preguntamos esto.** Cuando se agota, la campaña termina sola aunque no haya llegado la fecha de fin. El documento lo dice en la vigencia, así que el usuario sabe que puede acabarse antes.
+
+| | |
+|---|---|
+| Campo interno | `bolsaMillas` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | no |
+| Ejemplo | 148000 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_AGOTAMIENTO_MILLAS`, `TEXTO_EXISTENCIAS_MILLAS` |
+
+**Mensajes de validación:**
+
+- `rango`: Si hay bolsa, tiene que ser al menos una milla.
+
+### ¿Hay un máximo de órdenes en la campaña?
+
+> Cuando se llegue a ese número, la campaña termina sola. En Travel es habitual.
+
+**Por qué te preguntamos esto.** Es un segundo freno además del presupuesto. El documento dice que la campaña termina al agotarse cualquiera de los dos.
+
+| | |
+|---|---|
+| Campo interno | `maxOrdenes` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 33 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_LIMITE_CAMPANA_TRAVEL` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el máximo de órdenes, o marca que no hay máximo.
+- `rango`: Tiene que ser al menos una orden.
+
+### ¿Cuándo se acreditan las millas?
+
+> Unos días después de la compra, o cuando el programa las procese.
+
+**Por qué te preguntamos esto.** Es el compromiso de fecha frente al usuario. Antes de ese plazo no puede reclamar, después sí, así que prometer menos días de los reales genera reclamos.
+
+| | |
+|---|---|
+| Campo interno | `acreditacionMillas` |
+| Paso | Beneficio |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_ACREDITACION_MILLAS` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Unos días después de la compra**: Como en la de Civitatis: cinco días calendario después de confirmarse.
+- **Según los tiempos del programa**: Como en la de MUSS y TANGA, con los procesos internos del programa.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos cuándo se acreditan las millas.
+
+### ¿Cuántos días después de la compra?
+
+> Días calendario contados desde que la compra se confirma. Por ejemplo: 5.
+
+**Por qué te preguntamos esto.** Ese número es la promesa que el usuario puede exigir. Si el programa se demora más, el reclamo se resuelve con lo que diga el documento.
+
+| | |
+|---|---|
+| Campo interno | `diasAcreditacion` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 5 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_ACREDITACION_MILLAS` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe cuántos días después de la compra se acreditan las millas.
+- `rango`: El plazo va de 1 a 60 días.
+
+## Paso: Participantes
+
+### ¿Quiénes pueden participar?
+
+> Por ejemplo: solo Pro, o quienes no compran hace 60 días.
+
+**Por qué te preguntamos esto.** Limita quién puede reclamar el beneficio. Si el documento dice "todos", no puedes excluir a nadie después.
+
+| | |
+|---|---|
+| Campo interno | `segmento` |
+| Paso | Participantes |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_SEGMENTO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Todos los usuarios**: Cualquier persona mayor de edad.
+- **Solo Pro y Pro Black**: Con la suscripción activa.
+- **Solo usuarios nuevos**: Su primer pedido en Rappi.
+- **Usuarios que no compran hace rato**: Tú dices desde cuándo.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos quiénes pueden participar.
+
+### ¿Cuántos días sin comprar?
+
+> Se cuentan hacia atrás desde que arranca la campaña. Por ejemplo: 60.
+
+**Por qué te preguntamos esto.** Define exactamente a quién le llega. El documento lo dice en letras y en número, para que no haya discusión.
+
+| | |
+|---|---|
+| Campo interno | `diasSinCompra` |
+| Paso | Participantes |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 60 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_SEGMENTO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe cuántos días sin comprar.
+- `rango`: Los días van de 1 a 365.
+
+### ¿Con qué medio de pago aplica el beneficio?
+
+> Con "cualquier medio" entran tarjetas, billeteras y efectivo donde exista.
+
+**Por qué te preguntamos esto.** Restringir el medio de pago cambia quién puede participar. Los pedidos pagados con Créditos nunca dan beneficio.
+
+| | |
+|---|---|
+| Campo interno | `metodoPago` |
+| Paso | Participantes |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_METODO_PAGO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Con cualquier medio de pago**: Lo más común.
+- **Con todo menos efectivo**: Tarjetas y billeteras sí, efectivo no.
+- **Solo con RappiCard**: Únicamente la tarjeta de Rappi.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos con qué puede pagar el usuario.
+
+### ¿Hay que gastar un mínimo para participar?
+
+> Por ejemplo: 30.000. Si no hay mínimo, déjalo vacío.
+
+**Por qué te preguntamos esto.** Si lo exiges, tiene que quedar escrito. Si no aparece en el documento, no lo puedes aplicar después.
+
+| | |
+|---|---|
+| Campo interno | `compraMinima` |
+| Paso | Participantes |
+| Tipo de control | numero |
+| Obligatorio | no |
+| Ejemplo | 100000 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_MINIMO_COMPRA`, `TEXTO_UMBRAL` |
+
+**Mensajes de validación:**
+
+- `cero`: Si no quieres exigir un mínimo, deja el campo vacío.
+
+### ¿Cómo se vincula el usuario al programa?
+
+> Las dos campañas publicadas piden cosas distintas. Elige la tuya.
+
+**Por qué te preguntamos esto.** Es un requisito para participar y sale escrito como viñeta. Si pides menos de lo que el programa exige, el usuario compra y después no recibe sus millas.
+
+| | |
+|---|---|
+| Campo interno | `vinculacionPrograma` |
+| Paso | Participantes |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_VINCULACION_MILLAS` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Con una cuenta activa en el programa**: Basta con estar afiliado, como en la campaña de Civitatis.
+- **Enrolado en Rappi y con el programa de preferencia**: Además de enrolarse, lo elige como programa preferido de acumulación.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos cómo se vincula el usuario al programa.
+
+## Paso: Pieza
+
+### ¿Qué categoría tiene el producto de la pieza?
+
+> Casi siempre es Ninguna. Solo cambia la leyenda del arte, no tu T&C.
+
+**Por qué te preguntamos esto.** Algunas categorías tienen que llevar una advertencia por ley dentro de la pieza, como los licores o los medicamentos. La leyenda que te damos ya la trae.
+
+| | |
+|---|---|
+| Campo interno | `categoriaProducto` |
+| Paso | Pieza |
+| Tipo de control | lista |
+| Obligatorio | no |
+| Valor por defecto | ninguna |
+| Avanza sola | sí |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige una categoría, o Ninguna si el producto no es de ninguna de esas.
+
+### ¿Cuál es el registro sanitario?
+
+> Está en el empaque. Sin él no te damos la leyenda de la pieza.
+
+**Por qué te preguntamos esto.** Una pieza de un medicamento o de un fitoterapéutico tiene que mostrar su registro sanitario. Sin ese número no se puede publicar.
+
+| | |
+|---|---|
+| Campo interno | `registroSanitario` |
+| Paso | Pieza |
+| Tipo de control | texto |
+| Obligatorio | no |
+| Ejemplo | INVIMA 2020M-0012345 |
+| Avanza sola | no |
+| Llena en el documento | `REGISTRO_SANITARIO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el registro sanitario del producto.
+
+### ¿Tiene número de notificación ante el INVIMA?
+
+> Es opcional. Si no lo tienes a la mano, déjalo vacío.
+
+**Por qué te preguntamos esto.** Cuando la pieza de un medicamento se notificó al INVIMA, el número va dentro de la leyenda. Si no lo pones, la leyenda sale sin esa frase.
+
+| | |
+|---|---|
+| Campo interno | `notificacionInvima` |
+| Paso | Pieza |
+| Tipo de control | texto |
+| Obligatorio | no |
+| Ejemplo | 20251234567 |
+| Avanza sola | no |
+| Llena en el documento | `NOTIFICACION_INVIMA` |
+
+## Paso: Revisar
+
+### Confirma que la información es correcta
+
+> Confirmo que estos datos son ciertos y son los de mi campaña.
+
+**Por qué te preguntamos esto.** El documento se genera con lo que escribiste y se publica tal cual. Nadie de Legal lo revisa antes.
+
+| | |
+|---|---|
+| Campo interno | `declaracion` |
+| Paso | Revisar |
+| Tipo de control | casilla |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+
+**Mensajes de validación:**
+
+- `vacio`: Marca la casilla para confirmar que la información es correcta.
+
+---
+
+# Millas Travel
+
+Un programa de lealtad aliado le da millas al usuario por comprar su vuelo, hotel, auto, tour o paquete en Rappi Travel. El programa organiza la campaña y acredita las millas.
+
+## Filtro de entrada
+
+Antes del formulario. Si responde **sí** a cualquiera, no se genera: se muestra
+la pantalla "Esta campaña la redacta Legal" con la razón y el enlace al
+formulario manual.
+
+
+## Paso: Campaña
+
+### ¿En qué país corre la campaña?
+
+> Si tu país no aparece en la lista, todavía no está habilitado.
+
+**Por qué te preguntamos esto.** Cada país tiene su propia entidad legal de Rappi, su moneda y su autoridad de protección al consumidor. El documento cambia completo según el país.
+
+| | |
+|---|---|
+| Campo interno | `pais` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `PAIS_LEGAL`, `ENTIDAD_LEGAL` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el país de la campaña.
+
+### ¿La campaña es de Rappi o de Rappi Travel?
+
+> Si es de vuelos, hoteles, autos o paquetes, es Rappi Travel.
+
+**Por qué te preguntamos esto.** Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.
+
+| | |
+|---|---|
+| Campo interno | `negocio` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | rappi |
+| Avanza sola | sí |
+
+**Opciones** (botones grandes, una sola):
+
+- **Rappi**: Restaurantes, supermercados, farmacias y todo lo que llega a domicilio.
+- **Rappi Travel**: Vuelos, hoteles, autos, paquetes, tours y asistencia al viajero.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si la campaña es de Rappi o de Rappi Travel.
+
+### ¿Qué tipo de campaña vas a hacer?
+
+> Elige el que se parezca a tu campaña. Cada opción dice de qué se trata.
+
+**Por qué te preguntamos esto.** Cada tipo usa un modelo legal distinto, aprobado por Legal. Elegir mal significa generar el documento equivocado.
+
+| | |
+|---|---|
+| Campo interno | `tipo` |
+| Paso | Campaña |
+| Tipo de control | tarjetas |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el tipo de campaña.
+
+## Paso: Organizador
+
+### ¿Qué empresa paga el beneficio?
+
+> Tal como sale en su RUT, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.
+
+**Por qué te preguntamos esto.** El Organizador responde por la campaña frente al usuario y frente a la autoridad. Rappi solo pone la plataforma, así que el nombre tiene que ser exacto.
+
+| | |
+|---|---|
+| Campo interno | `organizadorRazonSocial` |
+| Paso | Organizador |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | Alimentos del Norte S.A.S. |
+| Avanza sola | no |
+| Llena en el documento | `ORGANIZADOR` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe la razón social de la empresa que paga el beneficio. Si no la tienes, pídesela a tu contacto en la tienda.
+
+### ¿Cuál es el NIT de esa empresa?
+
+> Con dígito de verificación, tal como sale en el RUT: 900.111.222-1.
+
+**Por qué te preguntamos esto.** El documento identifica al Organizador con su número tributario. Un número mal escrito deja el documento sin un responsable identificable.
+
+| | |
+|---|---|
+| Campo interno | `organizadorId` |
+| Paso | Organizador |
+| Tipo de control | identificacion |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 900.111.222-1 |
+| Avanza sola | no |
+| Llena en el documento | `ID_ORGANIZADOR` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el NIT de la empresa organizadora, con el dígito de verificación.
+- `formato`: Ese número no cuadra. Revisa el dígito de verificación, que es el que va después del guion.
+
+**Al validar bien** muestra el valor formateado seguido de "válido".
+
+### ¿De qué marca son los productos?
+
+> Como la ve el usuario en la app. Por ejemplo: JetSMART.
+
+**Por qué te preguntamos esto.** El documento dice de qué marca son los productos que participan, y el nombre de la campaña empieza por ella.
+
+| | |
+|---|---|
+| Campo interno | `marcaAliado` |
+| Paso | Organizador |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | JetSMART |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_PRODUCTOS_TRAVEL` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe la marca. Sin ella, el nombre de la campaña quedaría con la razón social.
+
+### ¿Cuál es el programa de lealtad?
+
+> El nombre como lo ve el usuario. Por ejemplo: LifeMiles.
+
+**Por qué te preguntamos esto.** El documento nombra el programa en la mecánica, en la acreditación y en la cláusula de datos. Si el nombre no coincide con el de la app, el usuario no sabe dónde buscar sus millas.
+
+| | |
+|---|---|
+| Campo interno | `programaLealtad` |
+| Paso | Organizador |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | LifeMiles |
+| Avanza sola | no |
+| Llena en el documento | `PROGRAMA_MILLAS` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el nombre del programa de lealtad que da las millas.
+
+## Paso: Productos
+
+### ¿Qué categorías de Travel participan?
+
+> Las mismas de la app. Puedes marcar varias. Por ejemplo: Vuelos y Paquetes.
+
+**Por qué te preguntamos esto.** Los nombres salen entre comillas en el documento, así que tienen que coincidir con los de la app. De esto también dependen las preguntas que vienen: los vuelos tienen condiciones que los hoteles no.
+
+| | |
+|---|---|
+| Campo interno | `categorias` |
+| Paso | Productos |
+| Tipo de control | casillas |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_PRODUCTOS_TRAVEL` |
+
+**Mensajes de validación:**
+
+- `vacio`: Marca al menos una categoría.
+
+### ¿Los viajes son nacionales o internacionales?
+
+> Si aplica a los dos, elige la tercera opción y el documento no lo menciona.
+
+**Por qué te preguntamos esto.** Define si el beneficio cubre un vuelo a Medellín, uno a Madrid o los dos. Si no queda escrito, el usuario lo puede exigir en cualquiera.
+
+| | |
+|---|---|
+| Campo interno | `ambito` |
+| Paso | Productos |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | ambos |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_AMBITO_TRAVEL` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Solo nacionales**: Origen y destino dentro del país.
+- **Solo internacionales**: Origen o destino fuera del país.
+- **Nacionales e internacionales**: Sin restricción de destino.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si los viajes son nacionales, internacionales o los dos.
+
+### ¿Aplica solo a algunos destinos?
+
+> Es opcional. Ciudades o países separados por comas. Por ejemplo: España, México.
+
+**Por qué te preguntamos esto.** Si la campaña solo cubre unos destinos, tienen que quedar escritos. Si lo dejas vacío, el beneficio aplica a cualquier destino del ámbito que elegiste.
+
+| | |
+|---|---|
+| Campo interno | `destinos` |
+| Paso | Productos |
+| Tipo de control | texto |
+| Obligatorio | no |
+| Ejemplo | España, Estados Unidos, México |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_DESTINOS_TRAVEL` |
+
+### ¿Qué hoteles participan?
+
+> Si son pocos, los escribes en la siguiente pregunta.
+
+**Por qué te preguntamos esto.** El usuario tiene que poder saber, antes de reservar, si ese hotel entra en la campaña. Si el documento no lo dice, entra cualquiera.
+
+| | |
+|---|---|
+| Campo interno | `hotelesModo` |
+| Paso | Productos |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | todos |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_HOTELES_TRAVEL` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Todos**: Todos los de las categorías de alojamiento que marcaste.
+- **Solo algunos**: Los nombras uno por uno.
+- **Los que tengan la etiqueta de la campaña**: El usuario los identifica en la app.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos qué hoteles participan.
+
+### ¿Cuáles hoteles?
+
+> Sepáralos con comas, como aparecen en la app.
+
+**Por qué te preguntamos esto.** Los nombres salen escritos en el documento. Si falta uno, el usuario que reserve ahí no recibe el beneficio.
+
+| | |
+|---|---|
+| Campo interno | `hotelesLista` |
+| Paso | Productos |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | Hotel Estelar Santamar, Decameron Galeón |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_HOTELES_TRAVEL` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe al menos un hotel, o vuelve y elige que participan todos.
+
+## Paso: Condiciones
+
+### ¿Aplica solo a una aerolínea?
+
+> Es opcional. Escríbela como aparece en la app. Por ejemplo: Avianca.
+
+**Por qué te preguntamos esto.** Casi todas las campañas de vuelos las paga una aerolínea y aplican solo a sus vuelos. Si lo dejas vacío, aplica a cualquier aerolínea.
+
+| | |
+|---|---|
+| Campo interno | `aerolinea` |
+| Paso | Condiciones |
+| Tipo de control | texto |
+| Obligatorio | no |
+| Ejemplo | Avianca |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_CONDICIONES_TRAVEL` |
+
+### ¿Solo vuelos que ella misma opere?
+
+> Márcalo si quedan fuera los vuelos en código compartido con otra aerolínea.
+
+**Por qué te preguntamos esto.** Una aerolínea vende vuelos que opera otra compañía. Si la campaña no los cubre y el documento no lo dice, el usuario los puede reclamar.
+
+| | |
+|---|---|
+| Campo interno | `soloOperados` |
+| Paso | Condiciones |
+| Tipo de control | casilla |
+| Obligatorio | no |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_CONDICIONES_TRAVEL` |
+
+### ¿Qué trayectos aplican?
+
+> Muchas campañas de aerolínea exigen ida y regreso.
+
+**Por qué te preguntamos esto.** Si la campaña exige ida y regreso y el documento no lo dice, quien compre solo ida puede reclamar el beneficio.
+
+| | |
+|---|---|
+| Campo interno | `trayecto` |
+| Paso | Condiciones |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | cualquiera |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_CONDICIONES_TRAVEL` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Cualquiera**: Ida sola, ida y regreso, lo que sea.
+- **Solo ida y regreso**: No aplica a un tiquete de ida sola.
+- **Solo ida**: No aplica a un tiquete de ida y regreso.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos qué trayectos aplican.
+
+### ¿Una ida y regreso cuenta como una orden?
+
+> Es lo habitual: una compra, una orden, un beneficio.
+
+**Por qué te preguntamos esto.** De esto depende cuántas veces se aplica el tope y cuánto consume del presupuesto una sola compra. Si el documento no lo dice, el usuario puede sostener que son dos.
+
+| | |
+|---|---|
+| Campo interno | `conteoIdaRegreso` |
+| Paso | Condiciones |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | una_orden |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_CONTEO_IDA_REGRESO_TRAVEL` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Sí, cuenta como una**: El beneficio se calcula sobre el total de la compra.
+- **No, cada trayecto cuenta aparte**: El beneficio se calcula sobre cada trayecto.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos cómo se cuenta una compra de ida y regreso.
+
+### ¿Hay clases tarifarias excluidas?
+
+> Es opcional. Una letra cada una, separadas por comas. Por ejemplo: A, F.
+
+**Por qué te preguntamos esto.** Las aerolíneas excluyen sus tarifas más baratas o promocionales. Si no quedan escritas, el usuario que compre esa clase puede reclamar.
+
+| | |
+|---|---|
+| Campo interno | `clasesExcluidas` |
+| Paso | Condiciones |
+| Tipo de control | texto |
+| Obligatorio | no |
+| Ejemplo | A, F |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_CONDICIONES_TRAVEL` |
+
+**Mensajes de validación:**
+
+- `formato`: Cada clase tarifaria es una sola letra, separada por comas. Por ejemplo: A, F.
+
+### ¿Solo vuelos que salgan del país?
+
+> Márcalo si no aplica a vuelos que empiezan en el exterior.
+
+**Por qué te preguntamos esto.** Un vuelo Madrid a Bogotá también se vende en la app. Si la campaña no lo cubre, tiene que decirlo.
+
+| | |
+|---|---|
+| Campo interno | `soloOrigenPais` |
+| Paso | Condiciones |
+| Tipo de control | casilla |
+| Obligatorio | no |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_CONDICIONES_TRAVEL` |
+
+### ¿Hay que comprar con anticipación?
+
+> Es opcional. Cuántos días antes del viaje. Por ejemplo: 15.
+
+**Por qué te preguntamos esto.** Si la campaña exige comprar con anticipación y el documento no lo dice, el usuario que compre el mismo día puede reclamar el beneficio.
+
+| | |
+|---|---|
+| Campo interno | `anticipacionDias` |
+| Paso | Condiciones |
+| Tipo de control | numero |
+| Obligatorio | no |
+| Ejemplo | 15 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_CONDICIONES_TRAVEL` |
+
+**Mensajes de validación:**
+
+- `rango`: Los días de anticipación van de 1 a 365.
+
+### ¿El viaje tiene que ser desde cierta fecha?
+
+> Es opcional, y no es lo mismo que la vigencia: es cuándo viaja, no cuándo compra.
+
+**Por qué te preguntamos esto.** La campaña puede correr en octubre para viajes de diciembre. Son dos fechas distintas y el documento las separa.
+
+| | |
+|---|---|
+| Campo interno | `periodoViajeInicio` |
+| Paso | Condiciones |
+| Tipo de control | fecha |
+| Obligatorio | no |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_CONDICIONES_TRAVEL` |
+
+### ¿Y hasta qué fecha?
+
+> El último día en que se puede viajar o usar el servicio.
+
+**Por qué te preguntamos esto.** Cierra el periodo de viaje. Sin esta fecha, el periodo queda abierto y el usuario lo puede usar cuando quiera.
+
+| | |
+|---|---|
+| Campo interno | `periodoViajeFin` |
+| Paso | Condiciones |
+| Tipo de control | fecha |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_CONDICIONES_TRAVEL` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe hasta cuándo se puede viajar.
+- `orden`: El periodo de viaje no puede terminar antes de empezar.
+
+### ¿Los dos trayectos dentro de ese periodo?
+
+> Márcalo si el regreso también tiene que caer dentro de las fechas.
+
+**Por qué te preguntamos esto.** Sin esta regla, alguien vuela dentro del periodo y regresa meses después. Si el aliado no lo acepta, tiene que quedar escrito.
+
+| | |
+|---|---|
+| Campo interno | `ambasFechasDentro` |
+| Paso | Condiciones |
+| Tipo de control | casilla |
+| Obligatorio | no |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_CONDICIONES_TRAVEL` |
+
+### ¿Hay fechas en las que no aplica?
+
+> Es opcional. En formato año-mes-día, separadas por comas. Por ejemplo: 2026-12-24, 2026-12-31.
+
+**Por qué te preguntamos esto.** Los hoteles y las rentadoras suelen excluir puentes y fin de año. Si no queda escrito, el usuario puede reclamar esas fechas.
+
+| | |
+|---|---|
+| Campo interno | `fechasExcluidas` |
+| Paso | Condiciones |
+| Tipo de control | texto |
+| Obligatorio | no |
+| Ejemplo | 2026-12-24, 2026-12-31 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_CONDICIONES_TRAVEL` |
+
+**Mensajes de validación:**
+
+- `formato`: Las fechas van en formato año-mes-día, separadas por comas. Por ejemplo: 2026-12-24.
+- `fuera`: Las fechas excluidas tienen que estar dentro del periodo de viaje.
+
+### ¿Hay un mínimo de noches?
+
+> Es opcional. Por ejemplo: 2.
+
+**Por qué te preguntamos esto.** Si el hotel exige dos noches y el documento no lo dice, quien reserve una puede reclamar el beneficio.
+
+| | |
+|---|---|
+| Campo interno | `nochesMinimas` |
+| Paso | Condiciones |
+| Tipo de control | numero |
+| Obligatorio | no |
+| Ejemplo | 2 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_CONDICIONES_TRAVEL` |
+
+**Mensajes de validación:**
+
+- `rango`: El mínimo de noches va de 1 a 365.
+
+### ¿Hay un mínimo de días de alquiler?
+
+> Es opcional. Por ejemplo: 3.
+
+**Por qué te preguntamos esto.** Las rentadoras suelen pedir un mínimo de días. Si no queda escrito, no se puede exigir después.
+
+| | |
+|---|---|
+| Campo interno | `diasAlquilerMinimo` |
+| Paso | Condiciones |
+| Tipo de control | numero |
+| Obligatorio | no |
+| Ejemplo | 3 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_CONDICIONES_TRAVEL` |
+
+**Mensajes de validación:**
+
+- `rango`: El mínimo de días va de 1 a 365.
+
+### ¿Y un máximo?
+
+> El alquiler más largo que entra en la campaña. Por ejemplo: 15.
+
+**Por qué te preguntamos esto.** Cierra el rango. Un alquiler de dos meses puede llevarse el beneficio entero si no hay tope de días.
+
+| | |
+|---|---|
+| Campo interno | `diasAlquilerMaximo` |
+| Paso | Condiciones |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 15 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_CONDICIONES_TRAVEL` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el máximo de días de alquiler.
+- `orden`: El mínimo de días no puede ser mayor que el máximo.
+
+### ¿Hay que gastar un mínimo para participar?
+
+> Por ejemplo: 30.000. Si no hay mínimo, déjalo vacío.
+
+**Por qué te preguntamos esto.** Si lo exiges, tiene que quedar escrito. Si no aparece en el documento, no lo puedes aplicar después.
+
+| | |
+|---|---|
+| Campo interno | `compraMinima` |
+| Paso | Participantes |
+| Tipo de control | numero |
+| Obligatorio | no |
+| Ejemplo | 100000 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_MINIMO_COMPRA`, `TEXTO_UMBRAL` |
+
+**Mensajes de validación:**
+
+- `cero`: Si no quieres exigir un mínimo, deja el campo vacío.
+
+### sinCompraMinima
+
+No tiene pregunta propia: se responde dentro de **compraMinima**.
+
+### ¿El aliado pide alguna otra condición?
+
+> Cualquier requisito que no te hayamos preguntado ya.
+
+**Por qué te preguntamos esto.** Si el aliado exige algo que este documento no cubre, el T&C se queda corto y el usuario puede reclamar lo que no quedó escrito. En ese caso la campaña la redacta Legal.
+
+| | |
+|---|---|
+| Campo interno | `otraCondicion` |
+| Paso | Condiciones |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | no |
+| Avanza sola | sí |
+
+**Opciones** (botones grandes, una sola):
+
+- **No, nada más**: Todo lo que pide el aliado ya lo respondiste.
+- **Sí, pide algo más**: Te llevamos al formulario de Legal, que la redacta a mano.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si el aliado pide alguna otra condición.
+
+## Paso: Cuándo
+
+### ¿Qué día arranca la campaña?
+
+> Puede ser hoy. Publica los T&C antes de que arranque.
+
+**Por qué te preguntamos esto.** Los Términos y Condiciones tienen que estar publicados antes de que la campaña empiece. Si arrancó ayer, ya no se pueden publicar a tiempo.
+
+| | |
+|---|---|
+| Campo interno | `fechaInicio` |
+| Paso | Cuándo |
+| Tipo de control | fecha |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `FECHA_INICIO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el día en que arranca la campaña.
+- `pasado`: Esa fecha ya pasó. Los T&C se publican antes de que la campaña empiece, así que elige hoy o un día futuro.
+
+**Aviso:** Faltan menos de 48 horas. Alcanzas, pero publica los T&C hoy mismo.
+
+### ¿A qué hora arranca?
+
+> Por defecto arranca a medianoche.
+
+**Por qué te preguntamos esto.** La hora exacta define desde cuándo un pedido cuenta para la campaña. Un pedido un minuto antes no da beneficio.
+
+| | |
+|---|---|
+| Campo interno | `horaInicio` |
+| Paso | Cuándo |
+| Tipo de control | hora |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 00:00 |
+| Avanza sola | no |
+| Llena en el documento | `HORA_INICIO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige la hora de inicio.
+
+### ¿Qué día termina?
+
+> La mayoría de los cashback duran un solo día. Te la dejamos igual a la de inicio.
+
+**Por qué te preguntamos esto.** Después de esta fecha la campaña no da beneficio. También se usa para calcular hasta cuándo sirven los Créditos.
+
+| | |
+|---|---|
+| Campo interno | `fechaFin` |
+| Paso | Cuándo |
+| Tipo de control | fecha |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `FECHA_FIN` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el día en que termina la campaña.
+- `orden`: La campaña no puede terminar antes de empezar. Revisa la fecha y la hora de fin.
+
+### ¿A qué hora termina?
+
+> Por defecto termina a las 11:59 de la noche.
+
+**Por qué te preguntamos esto.** Define hasta qué minuto cuenta un pedido. Los pedidos posteriores se procesan como pedidos normales.
+
+| | |
+|---|---|
+| Campo interno | `horaFin` |
+| Paso | Cuándo |
+| Tipo de control | hora |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 23:59 |
+| Avanza sola | no |
+| Llena en el documento | `HORA_FIN` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige la hora de fin.
+- `orden`: La hora de fin tiene que ser después de la de inicio: la campaña es de un solo día.
+
+## Paso: Beneficio
+
+### ¿Cómo se calculan las millas?
+
+> Un número fijo por orden, o unas millas por cada tanto gastado.
+
+**Por qué te preguntamos esto.** Es la frase central del documento: dice qué recibe el usuario y por qué. Las dos formas están publicadas y un mismo documento no puede llevar las dos.
+
+| | |
+|---|---|
+| Campo interno | `formaMillas` |
+| Paso | Beneficio |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_BENEFICIO_MILLAS` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Un número fijo por orden**: Como en la campaña de MUSS y TANGA: 400 millas por cada orden válida.
+- **Millas por cada tanto gastado**: Como en la de Civitatis: 6 millas por cada fracción de 3.500 pesos.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos cómo se calculan las millas.
+
+### ¿Cuántas millas recibe por cada orden?
+
+> El número exacto que promete la campaña. Por ejemplo: 400.
+
+**Por qué te preguntamos esto.** Es el número que el usuario ve prometido y el que el programa tiene que acreditar. Sale escrito en letras y en cifra, así que no puede quedar aproximado.
+
+| | |
+|---|---|
+| Campo interno | `millasPorOrden` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 400 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_BENEFICIO_MILLAS` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe cuántas millas recibe el usuario por cada orden.
+- `rango`: Tiene que ser al menos una milla.
+
+### ¿Cuántas millas da cada fracción?
+
+> Por ejemplo: 6 millas por cada fracción gastada.
+
+**Por qué te preguntamos esto.** Junto con el valor de la fracción forma la promesa completa. Si uno de los dos números está mal, el usuario recibe menos millas de las que la pieza le prometió.
+
+| | |
+|---|---|
+| Campo interno | `millasPorFraccion` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 6 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_BENEFICIO_MILLAS` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe cuántas millas da cada fracción de gasto.
+- `rango`: Tiene que ser al menos una milla.
+
+### ¿De cuánto es cada fracción de gasto?
+
+> Lo que hay que gastar para ganar esas millas. Por ejemplo: 3.500.
+
+**Por qué te preguntamos esto.** Es el divisor de la promesa. Un valor distinto al de la pieza publicitaria cambia cuántas millas recibe el usuario por la misma compra.
+
+| | |
+|---|---|
+| Campo interno | `valorFraccion` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 3500 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_BENEFICIO_MILLAS` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el valor de cada fracción de gasto.
+- `rango`: Tiene que ser mayor que cero.
+
+### ¿La fracción equivale a un dólar?
+
+> Márcalo si el valor sale de convertir un dólar a la moneda del país.
+
+**Por qué te preguntamos esto.** Cuando la fracción sale de una conversión, el documento lo explica, y así el usuario entiende de dónde viene una cifra que si no parece arbitraria.
+
+| | |
+|---|---|
+| Campo interno | `fraccionEsDolar` |
+| Paso | Beneficio |
+| Tipo de control | casilla |
+| Obligatorio | no |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_NOTA_FRACCION_MILLAS` |
+
+### ¿Las millas se juntan con otras promociones?
+
+> Las dos campañas publicadas lo resolvieron distinto. Confírmalo con el aliado.
+
+**Por qué te preguntamos esto.** El documento lo dice expresamente. Si dice que sí y el programa no lo permite, el usuario reclama con el documento en la mano.
+
+| | |
+|---|---|
+| Campo interno | `acumulableMillas` |
+| Paso | Beneficio |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_ACUMULABLE_MILLAS` |
+
+**Opciones** (botones grandes, una sola):
+
+- **No se juntan**: Como en la de Civitatis, que las excluye con otras promociones de millas.
+- **Sí se juntan**: Como en la de MUSS y TANGA, acumulable con las demás promociones de la app.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si las millas se juntan con otras promociones.
+
+### ¿Cuántas órdenes puede beneficiar una persona?
+
+> En las campañas de Travel lo más usado son 2.
+
+**Por qué te preguntamos esto.** Sin límite, unos pocos usuarios consumen el presupuesto. Con límite, el beneficio llega a más gente.
+
+| | |
+|---|---|
+| Campo interno | `limitePorUsuario` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 2 |
+| Ejemplo | 2 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_LIMITE_ORDENES_TRAVEL` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe cuántas órdenes con beneficio puede tener una persona.
+- `rango`: Tiene que ser al menos una orden.
+
+### sinLimitePorUsuario
+
+No tiene pregunta propia: se responde dentro de **limitePorUsuario**.
+
+### ¿Hay un tope de millas por persona?
+
+> El total que una persona puede acumular en toda la campaña. Si no hay, déjalo vacío.
+
+**Por qué te preguntamos esto.** Es un freno distinto al de las órdenes: una persona puede quedarse dentro del número de órdenes y aun así pasarse del tope. Si no está escrito, no lo puedes aplicar.
+
+| | |
+|---|---|
+| Campo interno | `topeMillasUsuario` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | no |
+| Ejemplo | 4000 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_TOPE_MILLAS` |
+
+**Mensajes de validación:**
+
+- `rango`: Si hay tope, tiene que ser al menos una milla.
+
+### ¿Cuántas millas tiene la bolsa de la campaña?
+
+> El total que el programa puso para toda la campaña. Si no hay bolsa, déjalo vacío.
+
+**Por qué te preguntamos esto.** Cuando se agota, la campaña termina sola aunque no haya llegado la fecha de fin. El documento lo dice en la vigencia, así que el usuario sabe que puede acabarse antes.
+
+| | |
+|---|---|
+| Campo interno | `bolsaMillas` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | no |
+| Ejemplo | 148000 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_AGOTAMIENTO_MILLAS`, `TEXTO_EXISTENCIAS_MILLAS` |
+
+**Mensajes de validación:**
+
+- `rango`: Si hay bolsa, tiene que ser al menos una milla.
+
+### ¿Hay un máximo de órdenes en la campaña?
+
+> Cuando se llegue a ese número, la campaña termina sola. En Travel es habitual.
+
+**Por qué te preguntamos esto.** Es un segundo freno además del presupuesto. El documento dice que la campaña termina al agotarse cualquiera de los dos.
+
+| | |
+|---|---|
+| Campo interno | `maxOrdenes` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 33 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_LIMITE_CAMPANA_TRAVEL` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el máximo de órdenes, o marca que no hay máximo.
+- `rango`: Tiene que ser al menos una orden.
+
+### ¿Cuándo se acreditan las millas?
+
+> Unos días después de la compra, o cuando el programa las procese.
+
+**Por qué te preguntamos esto.** Es el compromiso de fecha frente al usuario. Antes de ese plazo no puede reclamar, después sí, así que prometer menos días de los reales genera reclamos.
+
+| | |
+|---|---|
+| Campo interno | `acreditacionMillas` |
+| Paso | Beneficio |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_ACREDITACION_MILLAS` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Unos días después de la compra**: Como en la de Civitatis: cinco días calendario después de confirmarse.
+- **Según los tiempos del programa**: Como en la de MUSS y TANGA, con los procesos internos del programa.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos cuándo se acreditan las millas.
+
+### ¿Cuántos días después de la compra?
+
+> Días calendario contados desde que la compra se confirma. Por ejemplo: 5.
+
+**Por qué te preguntamos esto.** Ese número es la promesa que el usuario puede exigir. Si el programa se demora más, el reclamo se resuelve con lo que diga el documento.
+
+| | |
+|---|---|
+| Campo interno | `diasAcreditacion` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 5 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_ACREDITACION_MILLAS` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe cuántos días después de la compra se acreditan las millas.
+- `rango`: El plazo va de 1 a 60 días.
+
+## Paso: Participantes
+
+### ¿Quiénes pueden participar?
+
+> Por ejemplo: solo Pro, o quienes no compran hace 60 días.
+
+**Por qué te preguntamos esto.** Limita quién puede reclamar el beneficio. Si el documento dice "todos", no puedes excluir a nadie después.
+
+| | |
+|---|---|
+| Campo interno | `segmento` |
+| Paso | Participantes |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_SEGMENTO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Todos los usuarios**: Cualquier persona mayor de edad.
+- **Solo Pro y Pro Black**: Con la suscripción activa.
+- **Solo usuarios nuevos**: Su primer pedido en Rappi.
+- **Usuarios que no compran hace rato**: Tú dices desde cuándo.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos quiénes pueden participar.
+
+### ¿Con qué medio de pago aplica el beneficio?
+
+> Con "cualquier medio" entran tarjetas, billeteras y efectivo donde exista.
+
+**Por qué te preguntamos esto.** Restringir el medio de pago cambia quién puede participar. Los pedidos pagados con Créditos nunca dan beneficio.
+
+| | |
+|---|---|
+| Campo interno | `metodoPago` |
+| Paso | Participantes |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_METODO_PAGO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Con cualquier medio de pago**: Lo más común.
+- **Con todo menos efectivo**: Tarjetas y billeteras sí, efectivo no.
+- **Solo con RappiCard**: Únicamente la tarjeta de Rappi.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos con qué puede pagar el usuario.
+
+### ¿Cómo se vincula el usuario al programa?
+
+> Las dos campañas publicadas piden cosas distintas. Elige la tuya.
+
+**Por qué te preguntamos esto.** Es un requisito para participar y sale escrito como viñeta. Si pides menos de lo que el programa exige, el usuario compra y después no recibe sus millas.
+
+| | |
+|---|---|
+| Campo interno | `vinculacionPrograma` |
+| Paso | Participantes |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_VINCULACION_MILLAS` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Con una cuenta activa en el programa**: Basta con estar afiliado, como en la campaña de Civitatis.
+- **Enrolado en Rappi y con el programa de preferencia**: Además de enrolarse, lo elige como programa preferido de acumulación.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos cómo se vincula el usuario al programa.
+
+## Paso: Revisar
+
+### ¿Qué día sale la primera pieza?
+
+> El día del primer correo, push, banner o mensaje. El T&C se publica antes.
+
+**Por qué te preguntamos esto.** En junio de 2026 salió un mensaje de WhatsApp antes de que el T&C estuviera publicado y un usuario reclamó. Esta fecha nos deja verificar que eso no se repita.
+
+| | |
+|---|---|
+| Campo interno | `fechaPrimeraComunicacion` |
+| Paso | Revisar |
+| Tipo de control | fecha |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el día en que sale la primera comunicación.
+- `pasado`: La primera comunicación no puede ser una fecha que ya pasó: el T&C se publica antes de que salga la primera pieza.
+
+### ¿Esta campaña repite una anterior?
+
+> Es opcional. Pega el link de promos.rappi.com de la campaña anterior.
+
+**Por qué te preguntamos esto.** Nos deja comparar las dos y ver si alguna condición cambió sin que nadie lo notara. No sale en el documento.
+
+| | |
+|---|---|
+| Campo interno | `linkAnterior` |
+| Paso | Revisar |
+| Tipo de control | texto |
+| Obligatorio | no |
+| Ejemplo | https://promos.rappi.com/colombia/... |
+| Avanza sola | no |
+
+### Confirma que el aliado aprobó la mecánica
+
+> Confirmo que el aliado aprobó esta mecánica.
+
+**Por qué te preguntamos esto.** El aliado es el Organizador y responde por la campaña. Si no la aprobó, no se puede publicar a su nombre.
+
+| | |
+|---|---|
+| Campo interno | `aliadoAprobo` |
+| Paso | Revisar |
+| Tipo de control | casilla |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+
+**Mensajes de validación:**
+
+- `vacio`: Confirma que el aliado aprobó la mecánica.
+
+### Confirma que las piezas dicen lo mismo que el T&C
+
+> Confirmo que las piezas dicen lo mismo que este T&C (el porcentaje, la palabra "hasta" junto al tope y las categorías donde se usan los Créditos) y que nada sale antes de publicarlo.
+
+**Por qué te preguntamos esto.** En agosto de 2025 una etiqueta prometía 250.000 de cashback sin la palabra "hasta" y terminó en un reclamo por publicidad engañosa que hubo que pagar.
+
+| | |
+|---|---|
+| Campo interno | `declaracionPiezas` |
+| Paso | Revisar |
+| Tipo de control | casilla |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+
+**Mensajes de validación:**
+
+- `vacio`: Confirma que las piezas dicen lo mismo que el T&C.
+
+### Confirma que la información es correcta
+
+> Confirmo que estos datos son ciertos y son los de mi campaña.
+
+**Por qué te preguntamos esto.** El documento se genera con lo que escribiste y se publica tal cual. Nadie de Legal lo revisa antes.
+
+| | |
+|---|---|
+| Campo interno | `declaracion` |
+| Paso | Revisar |
+| Tipo de control | casilla |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+
+**Mensajes de validación:**
+
+- `vacio`: Marca la casilla para confirmar que la información es correcta.
+
+---
+
 # 15 minutos o Cashback
 
 Rappi promete un tiempo de entrega en el botón Turbo de una ciudad. Si la orden llega tarde, el usuario recibe en Créditos un porcentaje de lo que pagó. No hay tienda aliada que fondee: el presupuesto lo pone Rappi.
@@ -5095,6 +7024,27 @@ la pregunta que lo llena. Estos son los nombres:
 | `TEXTO_ASISTENCIA_TRAVEL` | el alcance del descuento de la asistencia |
 | `TEXTO_CREDITOS_FUERA_DE_TRAVEL` | el uso de los Créditos fuera de los viajes |
 | `TEXTO_NOTAS_DE_MODIFICACION` | las modificaciones de la campaña |
+| `PROGRAMA_MILLAS` | el programa de lealtad |
+| `ENTIDAD_MILLAS` | la razón social de la empresa de rappi que opera el canal |
+| `NOMBRE_CANAL_MILLAS` | el canal por el que se compra |
+| `SISTEMAS_MILLAS` | los sistemas por los que se compra |
+| `POLITICA_PRIVACIDAD_MILLAS` | la política de datos que aplica |
+| `URL_PRIVACIDAD_MILLAS` | el enlace de la política de datos que aplica |
+| `TEXTO_SEGMENTO_MILLAS` | quiénes pueden participar |
+| `TEXTO_VINCULACION_MILLAS` | cómo se vincula el usuario al programa |
+| `TEXTO_BENEFICIO_MILLAS` | cómo se calculan las millas |
+| `TEXTO_BASE_MILLAS` | sobre qué valor se calculan las millas |
+| `TEXTO_NOTA_FRACCION_MILLAS` | de dónde sale el valor de la fracción |
+| `TEXTO_METODO_PAGO_MILLAS` | los medios de pago |
+| `TEXTO_LIMITE_ORDENES_MILLAS` | cuántas órdenes puede beneficiar una persona |
+| `TEXTO_TOPE_MILLAS` | el tope de millas por persona |
+| `TEXTO_AGOTAMIENTO_MILLAS` | la bolsa de millas que agota la campaña |
+| `TEXTO_EXISTENCIAS_MILLAS` | qué pasa cuando se agota la bolsa |
+| `TEXTO_ACREDITACION_MILLAS` | cuándo se acreditan las millas |
+| `TEXTO_REVERSION_MILLAS` | qué pasa con las millas si se cancela la compra |
+| `TEXTO_ACUMULABLE_MILLAS` | si las millas se juntan con otras promociones |
+| `TEXTO_PRODUCTOS_MILLAS` | qué productos participan |
+| `TEXTO_TC_TURBO` | los términos del botón turbo |
 | `TEXTO_RESPONSABILIDAD_TRAVEL` | de qué responde la entidad de viajes |
 | `TEXTO_YA_OTORGADO_TRAVEL` | lo que ya se otorgó |
 | `VERBO_BENEFICIO_TRAVEL` | qué se hace con el beneficio |

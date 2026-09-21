@@ -1,4 +1,4 @@
-# Tanda 2 de 7 · El Cashback, pregunta por pregunta
+# Tanda 2 de 8 · El Cashback, pregunta por pregunta
 
 > **Antes de pegar esto, pega `PROMPT.md`.** Ahí va quién revisa, qué es
 > RappiMind, qué no se puede tocar y en qué formato tiene que venir la

@@ -1,0 +1,2 @@
+%% Bloque de millas: declaración de intermediación de Rappi Travel · versión 1.0 · base: travel-millas-lifemiles-tours-civitatis.md, cláusula VIII, con el cierre de la cláusula III de la pieza de Turbo · revisar con Juan
+§ Declaración. Rappi Travel actúa de manera exclusiva como agencia de viajes intermediaria (portal de contacto). Los productos y servicios turísticos son responsabilidad directa de los Proveedores. Rappi Travel no organiza la Campaña ni asume responsabilidad alguna respecto de la acreditación ni de la entrega del Beneficio, que corresponden al Organizador.

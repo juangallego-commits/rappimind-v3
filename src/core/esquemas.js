@@ -916,6 +916,190 @@ var CAMPOS_DESCUENTO_TRAVEL = [
 ];
 
 
+/* --- Millas ---------------------------------------------------------------
+ *
+ * Dos tipos, una sola mecanica: millas (Plataforma Rappi) y millas_travel
+ * (Rappi Travel). Las dos piezas publicadas de millas son la misma mecanica en
+ * dos verticales, y lo que cambia entre ellas no es la mecanica sino el
+ * esqueleto: la entidad que opera el canal, las clausulas de plataforma y el
+ * reparto de responsabilidad. Por eso CAMPOS_MILLAS_MECANICA es uno solo y
+ * cada tipo lo pega sobre el esqueleto de su vertical, igual que el cashback
+ * ya tiene cashback y cashback_travel.
+ *
+ * Ver docs/piezas_publicadas/ y docs/DECISIONES.md.
+ */
+
+/** true cuando la campana declaro una bolsa de Millas. */
+function hayBolsaDeMillas(entrada) {
+  var valor = (entrada || {}).bolsaMillas;
+  return valor !== null && valor !== undefined && String(valor).trim() !== '';
+}
+
+function esMillasPorOrden(entrada) {
+  return (entrada || {}).formaMillas === 'por_orden';
+}
+
+function esMillasPorFraccion(entrada) {
+  return (entrada || {}).formaMillas === 'por_fraccion';
+}
+
+/** La mecanica de millas. La comparten los dos tipos, sin una sola diferencia. */
+var CAMPOS_MILLAS_MECANICA = [
+  { id: 'programaLealtad', etiqueta: 'Programa de lealtad', tipo: 'texto', paso: 'organizador', obligatorio: true },
+  {
+    id: 'vinculacionPrograma',
+    etiqueta: 'Cómo se vincula el usuario al programa',
+    tipo: 'lista',
+    paso: 'participantes',
+    obligatorio: true,
+    opciones: [
+      { valor: 'afiliado', etiqueta: 'Con una cuenta activa en el programa' },
+      { valor: 'enrolado_preferido', etiqueta: 'Enrolado en Rappi y con el programa de preferencia' },
+    ],
+  },
+
+  {
+    id: 'formaMillas',
+    etiqueta: 'Forma del beneficio',
+    tipo: 'lista',
+    paso: 'beneficio',
+    obligatorio: true,
+    opciones: [
+      { valor: 'por_orden', etiqueta: 'Un número fijo de millas por orden' },
+      { valor: 'por_fraccion', etiqueta: 'Millas por cada fracción de gasto' },
+    ],
+  },
+  {
+    id: 'millasPorOrden',
+    etiqueta: 'Millas por orden',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: esMillasPorOrden,
+    obligatorio: esMillasPorOrden,
+  },
+  {
+    id: 'millasPorFraccion',
+    etiqueta: 'Millas por fracción',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: esMillasPorFraccion,
+    obligatorio: esMillasPorFraccion,
+  },
+  {
+    id: 'valorFraccion',
+    etiqueta: 'Valor de la fracción',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: esMillasPorFraccion,
+    obligatorio: esMillasPorFraccion,
+  },
+  {
+    id: 'fraccionEsDolar',
+    etiqueta: 'La fracción equivale a un dólar',
+    tipo: 'casilla',
+    paso: 'beneficio',
+    visible: esMillasPorFraccion,
+    obligatorio: false,
+  },
+  {
+    id: 'acumulableMillas',
+    etiqueta: '¿Se junta con otras promociones?',
+    tipo: 'lista',
+    paso: 'beneficio',
+    obligatorio: true,
+    opciones: [
+      { valor: 'no', etiqueta: 'No' },
+      { valor: 'si', etiqueta: 'Sí' },
+    ],
+  },
+
+  {
+    id: 'limitePorUsuario',
+    etiqueta: 'Órdenes con beneficio por persona',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: function (entrada) { return !entrada.sinLimitePorUsuario; },
+    obligatorio: function (entrada) { return !entrada.sinLimitePorUsuario; },
+  },
+  { id: 'sinLimitePorUsuario', etiqueta: 'Sin límite por persona', tipo: 'casilla', paso: 'beneficio', obligatorio: false },
+  { id: 'topeMillasUsuario', etiqueta: 'Tope de millas por persona', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: false },
+  { id: 'bolsaMillas', etiqueta: 'Bolsa total de millas', tipo: 'numero', minimo: 1, paso: 'beneficio', obligatorio: false },
+  // Solo tiene sentido cuando hay bolsa: es la equivalencia en ordenes que la
+  // pieza de Turbo publica al lado de la bolsa ("148.000 Millas equivalentes a
+  // 370 ordenes validas"). Sin bolsa no hay nada a que equivaler.
+  {
+    id: 'maxOrdenes',
+    etiqueta: 'Órdenes equivalentes a la bolsa',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: hayBolsaDeMillas,
+    obligatorio: false,
+  },
+
+  {
+    id: 'acreditacionMillas',
+    etiqueta: '¿Cuándo se acreditan las millas?',
+    tipo: 'lista',
+    paso: 'beneficio',
+    obligatorio: true,
+    opciones: [
+      { valor: 'dias_calendario', etiqueta: 'Unos días después de la compra' },
+      { valor: 'programa', etiqueta: 'Según los tiempos del programa' },
+    ],
+  },
+  {
+    id: 'diasAcreditacion',
+    etiqueta: 'Días para la acreditación',
+    tipo: 'numero',
+    minimo: 1,
+    maximo: 60,
+    paso: 'beneficio',
+    visible: function (entrada) { return entrada.acreditacionMillas === 'dias_calendario'; },
+    obligatorio: function (entrada) { return entrada.acreditacionMillas === 'dias_calendario'; },
+  },
+];
+
+/** Lo que solo pregunta la vertical de la Plataforma Rappi. */
+var CAMPOS_MILLAS_PLATAFORMA = [
+  {
+    id: 'productos',
+    etiqueta: 'Productos que participan',
+    tipo: 'lista',
+    paso: 'campana',
+    obligatorio: true,
+    opciones: [
+      { valor: 'todos', etiqueta: 'Todos los de la tienda' },
+      { valor: 'marca', etiqueta: 'Los de una o varias marcas' },
+      { valor: 'especificos', etiqueta: 'Productos específicos' },
+    ],
+  },
+  {
+    id: 'makerMarca',
+    etiqueta: 'Marcas participantes (separadas por comas)',
+    tipo: 'texto',
+    paso: 'campana',
+    visible: function (entrada) { return entrada.productos === 'marca'; },
+    obligatorio: function (entrada) { return entrada.productos === 'marca'; },
+  },
+  {
+    id: 'productosLista',
+    etiqueta: 'Productos (separados por comas)',
+    tipo: 'texto',
+    paso: 'campana',
+    visible: function (entrada) { return entrada.productos === 'especificos'; },
+    obligatorio: function (entrada) { return entrada.productos === 'especificos'; },
+  },
+  // Turbo tiene sus propios T&C y la pieza publicada los cita. Es una casilla y
+  // no la pregunta de "en que pedidos aplica", porque no restringe el pedido:
+  // agrega el documento al que la Campana tambien queda sujeta.
+  { id: 'enTurbo', etiqueta: 'La campaña corre dentro del botón Turbo', tipo: 'casilla', paso: 'campana', obligatorio: false },
+];
+
 /* --- Brasil ---------------------------------------------------------------
  *
  * Un solo tipo con cuatro formas del beneficio: desconto, frete gratis, taxa de
@@ -1157,6 +1341,29 @@ var ESQUEMAS = {
     campos: unir(CAMPOS_TRAVEL_COMUNES, CAMPOS_DESCUENTO_TRAVEL),
     filtroDeEntrada: [],
     esDeTravel: true,
+  },
+  millas: {
+    id: 'millas',
+    nombre: 'Millas',
+    descripcion: 'Un programa de lealtad aliado le da millas al usuario por comprar en una tienda de la Plataforma Rappi. El programa organiza la campaña y acredita las millas; Rappi difunde y transmite la orden.',
+    modelo: 'millas',
+    campos: unir(CAMPOS_COMUNES, CAMPOS_TIENDA_Y_ORGANIZADOR, CAMPOS_MILLAS_PLATAFORMA, CAMPOS_MILLAS_MECANICA),
+    // El filtro general pregunta si el aliado exige sus propios T&C. En millas
+    // el programa siempre tiene los suyos, y el documento ya remite a ellos, asi
+    // que preguntarlo otra vez aqui mandaria a Legal todas las campanas de
+    // millas. Ver docs/PENDIENTES_LEGAL.md, M9.
+    filtroDeEntrada: [],
+    esDeMillas: true,
+  },
+  millas_travel: {
+    id: 'millas_travel',
+    nombre: 'Millas Travel',
+    descripcion: 'Un programa de lealtad aliado le da millas al usuario por comprar su vuelo, hotel, auto, tour o paquete en Rappi Travel. El programa organiza la campaña y acredita las millas.',
+    modelo: 'millas_travel',
+    campos: unir(CAMPOS_TRAVEL_COMUNES, CAMPOS_MILLAS_MECANICA),
+    filtroDeEntrada: [],
+    esDeTravel: true,
+    esDeMillas: true,
   },
   cashback_eta: {
     id: 'cashback_eta',

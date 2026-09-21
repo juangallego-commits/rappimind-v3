@@ -723,6 +723,47 @@ function validarDescuentoTravel(entrada) {
 }
 
 /**
+ * Las reglas propias de la mecanica de millas, en las dos verticales.
+ *
+ * La pieza de Turbo publica la bolsa y su equivalencia en ordenes como dos
+ * caras del mismo numero ("148.000 Millas equivalentes a 370 ordenes validas").
+ * Si los dos numeros no cuadran, el documento se contradice solo, y eso no lo
+ * ve la red de seguridad del motor: las dos frases estan bien formadas.
+ */
+function validarMillas(entrada) {
+  var errores = [];
+
+  var bolsa = Number(entrada.bolsaMillas);
+  var porOrden = Number(entrada.millasPorOrden);
+  var ordenes = Number(entrada.maxOrdenes);
+  var hayBolsa = isFinite(bolsa) && bolsa > 0;
+
+  if (entrada.formaMillas === 'por_orden' && isFinite(porOrden) && porOrden > 0) {
+    if (hayBolsa && porOrden > bolsa) {
+      errores.push(error('bolsaMillas', 'La bolsa de millas es menor que las millas de una sola orden. Con eso no alcanza ni para la primera. Revisa los dos números.'));
+    }
+    if (hayBolsa && isFinite(ordenes) && ordenes > 0 && porOrden * ordenes !== bolsa) {
+      errores.push(error('maxOrdenes', 'La bolsa no cuadra con las órdenes: ' + ordenes + ' órdenes de ' + porOrden +
+        ' millas son ' + (ordenes * porOrden) + ', no ' + bolsa + '. El documento diría las dos cosas a la vez.'));
+    }
+  }
+
+  var tope = Number(entrada.topeMillasUsuario);
+  if (isFinite(tope) && tope > 0) {
+    if (hayBolsa && tope > bolsa) {
+      errores.push(error('topeMillasUsuario', 'El tope de millas por persona es mayor que la bolsa de la campaña. Con eso, una sola persona se lleva la campaña entera. Revisa los dos números.'));
+    }
+    var porPersona = Number(entrada.limitePorUsuario);
+    if (entrada.formaMillas === 'por_orden' && isFinite(porOrden) && porOrden > 0 &&
+      !entrada.sinLimitePorUsuario && isFinite(porPersona) && porPersona > 0 && porOrden > tope) {
+      errores.push(error('topeMillasUsuario', 'El tope de millas por persona es menor que las millas de una sola orden. Nadie alcanzaría a recibir el beneficio completo.'));
+    }
+  }
+
+  return errores;
+}
+
+/**
  * Avisos de Travel: no bloquean, se muestran en el resumen.
  *
  * PENDIENTE (R17 de docs/MODELO_BASE_TRAVEL.md): Juan decide si alguno pasa a
@@ -812,6 +853,9 @@ function validarSolicitud(entrada, pais, contexto) {
   if (entrada.tipo === 'cashback_day') {
     errores = errores.concat(validarTiendas(entrada, pais, esquema));
   }
+  if (esquema && esquema.esDeMillas) {
+    errores = errores.concat(validarMillas(entrada));
+  }
   if (esquema && esquema.esDeTravel) {
     // Sin los datos de Travel del pais, o con el RNT vencido, no se genera.
     var estadoTravel = travelDisponible(pais, opciones.fechaReferencia);
@@ -841,6 +885,7 @@ if (typeof module !== 'undefined') {
     entidadesDeRappi: entidadesDeRappi,
     validarCashbackTravel: validarCashbackTravel,
     validarDescuentoTravel: validarDescuentoTravel,
+    validarMillas: validarMillas,
     avisosDeTravel: avisosDeTravel,
     NOMBRES_PROHIBIDOS_DE_RAPPI: NOMBRES_PROHIBIDOS_DE_RAPPI,
     estaVacio: estaVacio,

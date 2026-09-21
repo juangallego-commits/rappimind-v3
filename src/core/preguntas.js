@@ -518,6 +518,10 @@ var PREGUNTAS = {
       },
       cashback_travel: { paso: 'condiciones_travel', placeholders: ['TEXTO_CONDICIONES_TRAVEL'] },
       descuento_travel: { paso: 'condiciones_travel', placeholders: ['TEXTO_CONDICIONES_TRAVEL'] },
+      // En millas el minimo sale dentro de la frase del beneficio, como en la
+      // pieza de Turbo, y no en una clausula aparte.
+      millas: { placeholders: ['TEXTO_BENEFICIO_MILLAS'] },
+      millas_travel: { paso: 'condiciones_travel', placeholders: ['TEXTO_CONDICIONES_TRAVEL'] },
     },
   }),
 
@@ -1067,6 +1071,13 @@ var PREGUNTAS = {
       vacio: 'Escribe cuántas órdenes con beneficio puede tener una persona.',
       rango: 'Tiene que ser al menos una orden.',
     },
+    variantes: {
+      millas: {
+        ayuda: 'En la campaña de MUSS y TANGA fueron 10 órdenes por persona.',
+        placeholders: ['TEXTO_LIMITE_ORDENES_MILLAS'],
+      },
+      millas_travel: { placeholders: ['TEXTO_LIMITE_ORDENES_MILLAS'] },
+    },
   }),
 
   maxOrdenes: p({
@@ -1079,6 +1090,30 @@ var PREGUNTAS = {
     errores: {
       vacio: 'Escribe el máximo de órdenes, o marca que no hay máximo.',
       rango: 'Tiene que ser al menos una orden.',
+    },
+    variantes: {
+      // En millas el maximo de ordenes no es un freno aparte: es la
+      // equivalencia en ordenes de la bolsa de millas, que la pieza de Turbo
+      // publica al lado de la bolsa. Por eso es opcional y solo se ve cuando
+      // hay bolsa.
+      millas: {
+        pregunta: '¿A cuántas órdenes equivale esa bolsa?',
+        ayuda: 'La bolsa dividida entre las millas de cada orden. Si no la tienes, déjalo vacío.',
+        porQue: 'La pieza publicada dice la bolsa y su equivalencia en órdenes, y así el usuario entiende cuántas compras alcanzan antes de que la campaña se acabe.',
+        ejemplo: '370',
+        opcional: true,
+        placeholders: ['TEXTO_AGOTAMIENTO_MILLAS'],
+        errores: { rango: 'Tiene que ser al menos una orden.' },
+      },
+      millas_travel: {
+        pregunta: '¿A cuántas órdenes equivale esa bolsa?',
+        ayuda: 'La bolsa dividida entre las millas de cada orden. Si no la tienes, déjalo vacío.',
+        porQue: 'La pieza publicada dice la bolsa y su equivalencia en órdenes, y así el usuario entiende cuántas compras alcanzan antes de que la campaña se acabe.',
+        ejemplo: '370',
+        opcional: true,
+        placeholders: ['TEXTO_AGOTAMIENTO_MILLAS'],
+        errores: { rango: 'Tiene que ser al menos una orden.' },
+      },
     },
   }),
 
@@ -1147,6 +1182,10 @@ var PREGUNTAS = {
     pregunta: null,
     placeholders: ['TEXTO_LIMITE_ORDENES_TRAVEL'],
     errores: {},
+    variantes: {
+      millas: { placeholders: ['TEXTO_LIMITE_ORDENES_MILLAS'] },
+      millas_travel: { placeholders: ['TEXTO_LIMITE_ORDENES_MILLAS'] },
+    },
   }),
 
   unidades: p({
@@ -1262,6 +1301,8 @@ var PREGUNTAS = {
     variantes: {
       cashback_travel: { opciones: OPCIONES_SEGMENTO_TRAVEL, placeholders: ['TEXTO_SEGMENTO_TRAVEL'] },
       descuento_travel: { opciones: OPCIONES_SEGMENTO_TRAVEL, placeholders: ['TEXTO_SEGMENTO_TRAVEL'] },
+      millas: { placeholders: ['TEXTO_SEGMENTO_MILLAS'] },
+      millas_travel: { opciones: OPCIONES_SEGMENTO_TRAVEL, placeholders: ['TEXTO_SEGMENTO_MILLAS'] },
     },
   }),
 
@@ -1294,6 +1335,8 @@ var PREGUNTAS = {
     variantes: {
       cashback_travel: { opciones: OPCIONES_PAGO_TRAVEL, placeholders: ['TEXTO_METODO_PAGO_TRAVEL'] },
       descuento_travel: { opciones: OPCIONES_PAGO_TRAVEL, placeholders: ['TEXTO_METODO_PAGO_TRAVEL'] },
+      millas: { placeholders: ['TEXTO_METODO_PAGO_MILLAS'] },
+      millas_travel: { opciones: OPCIONES_PAGO_TRAVEL, placeholders: ['TEXTO_METODO_PAGO_MILLAS'] },
     },
   }),
 
@@ -1321,6 +1364,19 @@ var PREGUNTAS = {
     ],
     placeholders: ['TEXTO_PRODUCTOS'],
     errores: { vacio: 'Dinos qué productos participan.' },
+    variantes: {
+      millas: {
+        paso: 'campana',
+        ayuda: 'En la campaña de MUSS y TANGA participaron los productos de dos marcas.',
+        porQue: 'Define qué compras dan millas. Si no queda claro, el usuario compra cualquier cosa de la tienda y después reclama las millas.',
+        opciones: [
+          { valor: 'todos', etiqueta: 'Todo lo de la tienda', nota: 'Cualquier producto del catálogo.' },
+          { valor: 'marca', etiqueta: 'Solo los de una o varias marcas', nota: 'Las marcas que fondean la campaña.' },
+          { valor: 'especificos', etiqueta: 'Unos productos puntuales', nota: 'Tú haces la lista.' },
+        ],
+        placeholders: ['TEXTO_PRODUCTOS_MILLAS'],
+      },
+    },
   }),
 
   makerMarca: p({
@@ -1331,6 +1387,17 @@ var PREGUNTAS = {
     ejemplo: 'Galletas Lunaria',
     placeholders: ['TEXTO_PRODUCTOS'],
     errores: { vacio: 'Escribe el nombre de la marca.' },
+    variantes: {
+      millas: {
+        paso: 'campana',
+        pregunta: '¿De qué marcas son los productos?',
+        ayuda: 'Sepáralas con comas. Por ejemplo: MUSS, TANGA.',
+        porQue: 'Las marcas salen entre comillas en el documento, así que tienen que llamarse igual que en la app para que el usuario las encuentre.',
+        ejemplo: 'MUSS, TANGA',
+        placeholders: ['TEXTO_PRODUCTOS_MILLAS'],
+        errores: { vacio: 'Escribe las marcas participantes, separadas por comas.' },
+      },
+    },
   }),
 
   productosLista: p({
@@ -1341,6 +1408,9 @@ var PREGUNTAS = {
     ejemplo: 'Galletas Lunaria clásicas, Galletas Lunaria de chocolate',
     placeholders: ['TEXTO_PRODUCTOS'],
     errores: { vacio: 'Escribe los productos que participan, separados por comas.' },
+    variantes: {
+      millas: { paso: 'campana', placeholders: ['TEXTO_PRODUCTOS_MILLAS'] },
+    },
   }),
 
   criterioGanador: p({
@@ -1534,6 +1604,173 @@ var PREGUNTAS = {
     },
   }),
 
+  // --- Millas (los dos tipos) ---------------------------------------------
+  //
+  // La mecanica es la misma en Rappi Travel y en la Plataforma Rappi, asi que
+  // las preguntas tambien: los ejemplos salen de las dos piezas publicadas de
+  // millas, una de cada vertical.
+
+  programaLealtad: p({
+    paso: 'organizador',
+    pregunta: '¿Cuál es el programa de lealtad?',
+    ayuda: 'El nombre como lo ve el usuario. Por ejemplo: LifeMiles.',
+    porQue: 'El documento nombra el programa en la mecánica, en la acreditación y en la cláusula de datos. Si el nombre no coincide con el de la app, el usuario no sabe dónde buscar sus millas.',
+    ejemplo: 'LifeMiles',
+    placeholders: ['PROGRAMA_MILLAS'],
+    errores: { vacio: 'Escribe el nombre del programa de lealtad que da las millas.' },
+  }),
+
+  vinculacionPrograma: p({
+    paso: 'participantes',
+    pregunta: '¿Cómo se vincula el usuario al programa?',
+    ayuda: 'Las dos campañas publicadas piden cosas distintas. Elige la tuya.',
+    porQue: 'Es un requisito para participar y sale escrito como viñeta. Si pides menos de lo que el programa exige, el usuario compra y después no recibe sus millas.',
+    avanzaSola: true,
+    opciones: [
+      { valor: 'afiliado', etiqueta: 'Con una cuenta activa en el programa', nota: 'Basta con estar afiliado, como en la campaña de Civitatis.' },
+      { valor: 'enrolado_preferido', etiqueta: 'Enrolado en Rappi y con el programa de preferencia', nota: 'Además de enrolarse, lo elige como programa preferido de acumulación.' },
+    ],
+    placeholders: ['TEXTO_VINCULACION_MILLAS'],
+    errores: { vacio: 'Dinos cómo se vincula el usuario al programa.' },
+  }),
+
+  formaMillas: p({
+    paso: 'beneficio',
+    pregunta: '¿Cómo se calculan las millas?',
+    ayuda: 'Un número fijo por orden, o unas millas por cada tanto gastado.',
+    porQue: 'Es la frase central del documento: dice qué recibe el usuario y por qué. Las dos formas están publicadas y un mismo documento no puede llevar las dos.',
+    avanzaSola: true,
+    opciones: [
+      { valor: 'por_orden', etiqueta: 'Un número fijo por orden', nota: 'Como en la campaña de MUSS y TANGA: 400 millas por cada orden válida.' },
+      { valor: 'por_fraccion', etiqueta: 'Millas por cada tanto gastado', nota: 'Como en la de Civitatis: 6 millas por cada fracción de 3.500 pesos.' },
+    ],
+    placeholders: ['TEXTO_BENEFICIO_MILLAS'],
+    errores: { vacio: 'Dinos cómo se calculan las millas.' },
+  }),
+
+  millasPorOrden: p({
+    paso: 'beneficio',
+    pregunta: '¿Cuántas millas recibe por cada orden?',
+    ayuda: 'El número exacto que promete la campaña. Por ejemplo: 400.',
+    porQue: 'Es el número que el usuario ve prometido y el que el programa tiene que acreditar. Sale escrito en letras y en cifra, así que no puede quedar aproximado.',
+    ejemplo: '400',
+    placeholders: ['TEXTO_BENEFICIO_MILLAS'],
+    errores: {
+      vacio: 'Escribe cuántas millas recibe el usuario por cada orden.',
+      rango: 'Tiene que ser al menos una milla.',
+    },
+  }),
+
+  millasPorFraccion: p({
+    paso: 'beneficio',
+    pregunta: '¿Cuántas millas da cada fracción?',
+    ayuda: 'Por ejemplo: 6 millas por cada fracción gastada.',
+    porQue: 'Junto con el valor de la fracción forma la promesa completa. Si uno de los dos números está mal, el usuario recibe menos millas de las que la pieza le prometió.',
+    ejemplo: '6',
+    placeholders: ['TEXTO_BENEFICIO_MILLAS'],
+    errores: {
+      vacio: 'Escribe cuántas millas da cada fracción de gasto.',
+      rango: 'Tiene que ser al menos una milla.',
+    },
+  }),
+
+  valorFraccion: p({
+    paso: 'beneficio',
+    pregunta: '¿De cuánto es cada fracción de gasto?',
+    ayuda: 'Lo que hay que gastar para ganar esas millas. Por ejemplo: 3.500.',
+    porQue: 'Es el divisor de la promesa. Un valor distinto al de la pieza publicitaria cambia cuántas millas recibe el usuario por la misma compra.',
+    ejemplo: '3500',
+    moneda: true,
+    placeholders: ['TEXTO_BENEFICIO_MILLAS'],
+    errores: {
+      vacio: 'Escribe el valor de cada fracción de gasto.',
+      rango: 'Tiene que ser mayor que cero.',
+    },
+  }),
+
+  fraccionEsDolar: p({
+    paso: 'beneficio',
+    pregunta: '¿La fracción equivale a un dólar?',
+    ayuda: 'Márcalo si el valor sale de convertir un dólar a la moneda del país.',
+    porQue: 'Cuando la fracción sale de una conversión, el documento lo explica, y así el usuario entiende de dónde viene una cifra que si no parece arbitraria.',
+    opcional: true,
+    placeholders: ['TEXTO_NOTA_FRACCION_MILLAS'],
+    errores: {},
+  }),
+
+  acumulableMillas: p({
+    paso: 'beneficio',
+    pregunta: '¿Las millas se juntan con otras promociones?',
+    ayuda: 'Las dos campañas publicadas lo resolvieron distinto. Confírmalo con el aliado.',
+    porQue: 'El documento lo dice expresamente. Si dice que sí y el programa no lo permite, el usuario reclama con el documento en la mano.',
+    avanzaSola: true,
+    opciones: [
+      { valor: 'no', etiqueta: 'No se juntan', nota: 'Como en la de Civitatis, que las excluye con otras promociones de millas.' },
+      { valor: 'si', etiqueta: 'Sí se juntan', nota: 'Como en la de MUSS y TANGA, acumulable con las demás promociones de la app.' },
+    ],
+    placeholders: ['TEXTO_ACUMULABLE_MILLAS'],
+    errores: { vacio: 'Dinos si las millas se juntan con otras promociones.' },
+  }),
+
+  topeMillasUsuario: p({
+    paso: 'beneficio',
+    pregunta: '¿Hay un tope de millas por persona?',
+    ayuda: 'El total que una persona puede acumular en toda la campaña. Si no hay, déjalo vacío.',
+    porQue: 'Es un freno distinto al de las órdenes: una persona puede quedarse dentro del número de órdenes y aun así pasarse del tope. Si no está escrito, no lo puedes aplicar.',
+    ejemplo: '4000',
+    opcional: true,
+    placeholders: ['TEXTO_TOPE_MILLAS'],
+    errores: { rango: 'Si hay tope, tiene que ser al menos una milla.' },
+  }),
+
+  bolsaMillas: p({
+    paso: 'beneficio',
+    pregunta: '¿Cuántas millas tiene la bolsa de la campaña?',
+    ayuda: 'El total que el programa puso para toda la campaña. Si no hay bolsa, déjalo vacío.',
+    porQue: 'Cuando se agota, la campaña termina sola aunque no haya llegado la fecha de fin. El documento lo dice en la vigencia, así que el usuario sabe que puede acabarse antes.',
+    ejemplo: '148000',
+    opcional: true,
+    placeholders: ['TEXTO_AGOTAMIENTO_MILLAS', 'TEXTO_EXISTENCIAS_MILLAS'],
+    errores: { rango: 'Si hay bolsa, tiene que ser al menos una milla.' },
+  }),
+
+  acreditacionMillas: p({
+    paso: 'beneficio',
+    pregunta: '¿Cuándo se acreditan las millas?',
+    ayuda: 'Unos días después de la compra, o cuando el programa las procese.',
+    porQue: 'Es el compromiso de fecha frente al usuario. Antes de ese plazo no puede reclamar, después sí, así que prometer menos días de los reales genera reclamos.',
+    avanzaSola: true,
+    opciones: [
+      { valor: 'dias_calendario', etiqueta: 'Unos días después de la compra', nota: 'Como en la de Civitatis: cinco días calendario después de confirmarse.' },
+      { valor: 'programa', etiqueta: 'Según los tiempos del programa', nota: 'Como en la de MUSS y TANGA, con los procesos internos del programa.' },
+    ],
+    placeholders: ['TEXTO_ACREDITACION_MILLAS'],
+    errores: { vacio: 'Dinos cuándo se acreditan las millas.' },
+  }),
+
+  diasAcreditacion: p({
+    paso: 'beneficio',
+    pregunta: '¿Cuántos días después de la compra?',
+    ayuda: 'Días calendario contados desde que la compra se confirma. Por ejemplo: 5.',
+    porQue: 'Ese número es la promesa que el usuario puede exigir. Si el programa se demora más, el reclamo se resuelve con lo que diga el documento.',
+    ejemplo: '5',
+    placeholders: ['TEXTO_ACREDITACION_MILLAS'],
+    errores: {
+      vacio: 'Escribe cuántos días después de la compra se acreditan las millas.',
+      rango: 'El plazo va de 1 a 60 días.',
+    },
+  }),
+
+  enTurbo: p({
+    paso: 'campana',
+    pregunta: '¿La campaña corre dentro del botón Turbo?',
+    ayuda: 'Márcalo si la tienda participante es Turbo o está dentro de Turbo.',
+    porQue: 'Turbo tiene sus propios términos y condiciones, y el documento tiene que remitir a ellos. Sin esa remisión, las reglas de Turbo no le aplican a la campaña.',
+    opcional: true,
+    placeholders: ['TEXTO_TC_TURBO'],
+    errores: {},
+  }),
+
   // --- Las tiendas (Cashback Day) -----------------------------------------
 
   tiendas: p({
@@ -1600,6 +1837,27 @@ var NOMBRE_DEL_HUECO = {
   TEXTO_ASISTENCIA_TRAVEL: 'el alcance del descuento de la asistencia',
   TEXTO_CREDITOS_FUERA_DE_TRAVEL: 'el uso de los Créditos fuera de los viajes',
   TEXTO_NOTAS_DE_MODIFICACION: 'las modificaciones de la campaña',
+  PROGRAMA_MILLAS: 'el programa de lealtad',
+  ENTIDAD_MILLAS: 'la razón social de la empresa de rappi que opera el canal',
+  NOMBRE_CANAL_MILLAS: 'el canal por el que se compra',
+  SISTEMAS_MILLAS: 'los sistemas por los que se compra',
+  POLITICA_PRIVACIDAD_MILLAS: 'la política de datos que aplica',
+  URL_PRIVACIDAD_MILLAS: 'el enlace de la política de datos que aplica',
+  TEXTO_SEGMENTO_MILLAS: 'quiénes pueden participar',
+  TEXTO_VINCULACION_MILLAS: 'cómo se vincula el usuario al programa',
+  TEXTO_BENEFICIO_MILLAS: 'cómo se calculan las millas',
+  TEXTO_BASE_MILLAS: 'sobre qué valor se calculan las millas',
+  TEXTO_NOTA_FRACCION_MILLAS: 'de dónde sale el valor de la fracción',
+  TEXTO_METODO_PAGO_MILLAS: 'los medios de pago',
+  TEXTO_LIMITE_ORDENES_MILLAS: 'cuántas órdenes puede beneficiar una persona',
+  TEXTO_TOPE_MILLAS: 'el tope de millas por persona',
+  TEXTO_AGOTAMIENTO_MILLAS: 'la bolsa de millas que agota la campaña',
+  TEXTO_EXISTENCIAS_MILLAS: 'qué pasa cuando se agota la bolsa',
+  TEXTO_ACREDITACION_MILLAS: 'cuándo se acreditan las millas',
+  TEXTO_REVERSION_MILLAS: 'qué pasa con las millas si se cancela la compra',
+  TEXTO_ACUMULABLE_MILLAS: 'si las millas se juntan con otras promociones',
+  TEXTO_PRODUCTOS_MILLAS: 'qué productos participan',
+  TEXTO_TC_TURBO: 'los términos del botón turbo',
   TEXTO_RESPONSABILIDAD_TRAVEL: 'de qué responde la entidad de viajes',
   TEXTO_YA_OTORGADO_TRAVEL: 'lo que ya se otorgó',
   VERBO_BENEFICIO_TRAVEL: 'qué se hace con el beneficio',
