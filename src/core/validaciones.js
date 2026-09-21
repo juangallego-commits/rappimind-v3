@@ -206,6 +206,12 @@ function validarVigencia(entrada, fechaReferencia, esquema, idioma, esAmpliacion
 
 /** Identificacion del organizador, con el algoritmo del pais. */
 function validarOrganizador(entrada, pais) {
+  // Que no sea Rappi va primero y vale para todos los flujos: un NIT de Rappi
+  // bien formado pasa la revision de formato sin problema, y el documento
+  // saldria nombrando a Rappi de Organizador, que es la regla 1 de CLAUDE.md.
+  var errores = validarOrganizadorNoEsRappi(entrada, pais);
+  if (errores.length) return errores;
+
   if (estaVacio(entrada.organizadorId)) return [];
   var revision = validarIdentificacion(pais.codigo, entrada.organizadorId);
   return revision.valido ? [] : [error('organizadorId', revision.mensaje)];
@@ -487,34 +493,96 @@ function comoClaveDeNombre(texto) {
   return salida;
 }
 
-/** Nombres que nunca pueden ser el Organizador de una campana de Travel. */
-var NOMBRES_PROHIBIDOS_DE_TRAVEL = ['rappi', 'travel moustache', 'travel mustache'];
-
-var MENSAJE_ORGANIZADOR_DE_TRAVEL =
-  'Rappi Travel nunca es el Organizador. Escribe la empresa dueña de la marca que paga el beneficio. ' +
-  'Si la campaña la paga Rappi Travel, la redacta Legal.';
+/** Nombres que nunca pueden ser el Organizador de ninguna campana. */
+var NOMBRES_PROHIBIDOS_DE_RAPPI = ['rappi', 'travel moustache', 'travel mustache', 'moustache beams'];
 
 /**
- * El Organizador de una campana de Travel no puede ser Rappi ni Travel Moustache.
+ * Las entidades de Rappi del pais, con el nombre que le toca a cada NIT.
  *
- * Es la regla 1 de CLAUDE.md llevada a Travel: el Organizador es siempre quien
- * pone la plata, y que Rappi Travel opere la mecanica no lo vuelve organizador.
+ * Existen tres y son empresas distintas: la que opera los domicilios, la
+ * agencia de viajes que opera Rappi Travel, y la que opera Turbo. Ninguna puede
+ * ser el Organizador, pero el mensaje tiene que nombrar la que el comercial
+ * escribio de verdad.
+ *
+ * Esto salio de una pantalla que Juan vio el 21 de septiembre de 2026: escribio
+ * el NIT de Rappi S.A.S. y el mensaje le respondio "Rappi Travel nunca es el
+ * Organizador". Ese NIT no es el de Rappi Travel. Un mensaje que nombra la
+ * empresa equivocada le ensena mal al comercial justo en la pregunta donde el
+ * dato sale impreso en el documento.
+ *
+ * Van planas en la fila del pais (frontera 3): una llave por columna, porque un
+ * objeto anidado no sobrevive al Sheet.
  */
-function validarOrganizadorDeTravel(entrada, pais) {
+function entidadesDeRappi(pais) {
+  if (!pais) return [];
+  var posibles = [
+    { nombre: pais.entidad_legal, id: pais.id_fiscal, que: 'la que opera la Plataforma Rappi' },
+    { nombre: pais.travel_entidad, id: pais.travel_id_fiscal, que: 'la agencia de viajes que opera Rappi Travel' },
+    { nombre: pais.turbo_entidad, id: pais.turbo_id_fiscal, que: 'la que opera Turbo' },
+  ];
+  var entidades = [];
+  for (var i = 0; i < posibles.length; i++) {
+    if (posibles[i].nombre && posibles[i].id) entidades.push(posibles[i]);
+  }
+  return entidades;
+}
+
+/** El nombre con un solo punto final, venga o no con el suyo. */
+function terminadaEnPunto(nombre) {
+  var texto = String(nombre || '').trim();
+  return texto.charAt(texto.length - 1) === '.' ? texto : texto + '.';
+}
+
+/** Que decir cuando el Organizador que escribieron es una empresa de Rappi. */
+function mensajeDeEntidadDeRappi(entidad) {
+  if (!entidad) {
+    return 'Rappi nunca es el Organizador. Escribe la empresa dueña de la marca que paga el beneficio.';
+  }
+  return 'Ese es el de ' + entidad.nombre + ', ' + entidad.que + ', y Rappi nunca es el Organizador. ' +
+    'El Organizador es la tienda o la marca que pone la plata del beneficio. Escribe la de ella.';
+}
+
+/**
+ * Ninguna empresa de Rappi puede ser el Organizador, en ningun flujo.
+ *
+ * Es la regla 1 de CLAUDE.md, y hasta el 21 de septiembre de 2026 solo corria
+ * en los dos tipos de Travel: en un Cashback cualquiera se podia poner a Rappi
+ * S.A.S. de Organizador y el documento salia diciendolo. La regla no era de
+ * Travel, era de todos.
+ */
+function validarOrganizadorNoEsRappi(entrada, pais) {
   var errores = [];
+  var entidades = entidadesDeRappi(pais);
 
   var nombre = comoClaveDeNombre(entrada.organizadorRazonSocial);
-  for (var i = 0; i < NOMBRES_PROHIBIDOS_DE_TRAVEL.length; i++) {
-    if (nombre.indexOf(NOMBRES_PROHIBIDOS_DE_TRAVEL[i]) !== -1) {
-      errores.push(error('organizadorRazonSocial', MENSAJE_ORGANIZADOR_DE_TRAVEL));
+  if (nombre) {
+    for (var i = 0; i < NOMBRES_PROHIBIDOS_DE_RAPPI.length; i++) {
+      if (nombre.indexOf(NOMBRES_PROHIBIDOS_DE_RAPPI[i]) === -1) continue;
+      // Cual de las tres escribio, para nombrarla bien.
+      var cual = null;
+      for (var j = 0; j < entidades.length; j++) {
+        if (comoClaveDeNombre(entidades[j].nombre).indexOf(NOMBRES_PROHIBIDOS_DE_RAPPI[i]) !== -1) {
+          cual = entidades[j];
+          break;
+        }
+      }
+      // Sin punto de mas: casi todas las razones sociales terminan en "S.A.S."
+      // y "ni Rappi S.A.S.." se lee como un error de la herramienta.
+      var conNombre = cual ? 'Rappi nunca es el Organizador, ni ' + terminadaEnPunto(cual.nombre)
+        : 'Rappi nunca es el Organizador.';
+      errores.push(error('organizadorRazonSocial', conNombre + ' ' +
+        'El Organizador es la tienda o la marca que pone la plata del beneficio. Escribe la de ella.'));
       break;
     }
   }
 
   var nitDado = nitSinVerificacion(entrada.organizadorId);
-  var prohibidos = [nitSinVerificacion(pais && pais.id_fiscal), nitSinVerificacion(pais && pais.travel_id_fiscal)];
-  if (nitDado && prohibidos.indexOf(nitDado) !== -1) {
-    errores.push(error('organizadorId', MENSAJE_ORGANIZADOR_DE_TRAVEL));
+  if (nitDado) {
+    for (var k = 0; k < entidades.length; k++) {
+      if (nitSinVerificacion(entidades[k].id) !== nitDado) continue;
+      errores.push(error('organizadorId', mensajeDeEntidadDeRappi(entidades[k])));
+      break;
+    }
   }
   return errores;
 }
@@ -523,8 +591,6 @@ function validarOrganizadorDeTravel(entrada, pais) {
 function validarTravel(entrada, pais, fechaReferencia, esAmpliacion) {
   var errores = [];
   var esDescuento = entrada.tipo === 'descuento_travel';
-
-  errores = errores.concat(validarOrganizadorDeTravel(entrada, pais));
 
   // Si el aliado pide algo que el formulario no cubre, el documento se queda
   // corto: eso lo redacta Legal.
@@ -771,11 +837,12 @@ if (typeof module !== 'undefined') {
     validarTiendas: validarTiendas,
     validarNegocio: validarNegocio,
     validarTravel: validarTravel,
-    validarOrganizadorDeTravel: validarOrganizadorDeTravel,
+    validarOrganizadorNoEsRappi: validarOrganizadorNoEsRappi,
+    entidadesDeRappi: entidadesDeRappi,
     validarCashbackTravel: validarCashbackTravel,
     validarDescuentoTravel: validarDescuentoTravel,
     avisosDeTravel: avisosDeTravel,
-    NOMBRES_PROHIBIDOS_DE_TRAVEL: NOMBRES_PROHIBIDOS_DE_TRAVEL,
+    NOMBRES_PROHIBIDOS_DE_RAPPI: NOMBRES_PROHIBIDOS_DE_RAPPI,
     estaVacio: estaVacio,
     mensajeDe: mensajeDe,
     validarIdiomaDelPais: validarIdiomaDelPais,

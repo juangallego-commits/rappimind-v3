@@ -1661,3 +1661,67 @@ letra, el paquete funcionó.
 3. **Mira con lupa lo que proponga sobre texto legal.** El prompt le dice que no
    lo toque, pero va a proponer mejoras de redacción que suenan bien y que no se
    aplican.
+
+## Los cuatro defectos que Juan encontró probando Rappi Travel
+
+Juan probó el formulario de Travel el 21 de septiembre y trajo diez
+observaciones. Cuatro eran defectos, no opiniones, y están arreglados. El resto
+son decisiones suyas y están en `docs/PARA_DECIDIR.md`.
+
+### 1. El mensaje del NIT nombraba la empresa equivocada
+
+Escribió el NIT de Rappi S.A.S. (900.843.898-9) y la herramienta le respondió
+"Rappi Travel nunca es el Organizador". Ese NIT no es el de Rappi Travel. El
+mensaje era uno solo para las dos empresas.
+
+Ahora hay tres entidades mapeadas en la fila del país, planas, una llave por
+columna: `entidad_legal` (Rappi S.A.S., la que opera la Plataforma),
+`travel_entidad` (Travel Moustache S.A.S., la agencia de viajes) y
+`turbo_entidad` (Moustache Beams S.A.S., la que opera Turbo, nueva). El mensaje
+nombra la que el comercial escribió de verdad.
+
+### 2. La regla del Organizador solo corría en Travel
+
+Buscando lo anterior salió algo más grande: `validarOrganizadorDeTravel` se
+llamaba únicamente desde los dos tipos de Travel. En un Cashback cualquiera se
+podía poner a Rappi S.A.S. de Organizador y el documento salía diciéndolo. La
+regla 1 de `CLAUDE.md` no es de Travel, es de todos los flujos, y ahora corre en
+`validarOrganizador`, que es por donde pasan todos.
+
+### 3. setup decía que completaba el país, y no escribía nada
+
+Al agregar las dos columnas de Moustache Beams, `setup()` empezó a decir
+"1 país completado con lo que faltaba de la semilla" en cada corrida, sin
+escribir nunca. La causa: la lista de columnas se escribe a mano en
+`PESTANAS` de `src/server/Config.js`, la semilla vive en `data/paises.json`, y
+`actualizarFila` descartaba en silencio (`continue`) todo valor sin columna.
+
+Ahora `actualizarFila` revienta con el nombre de la llave y dónde agregarla, y
+una prueba compara las llaves de la semilla contra las columnas de la pestaña.
+Esto valía para cualquier columna futura, no solo para esta.
+
+### 4. Rappi Travel estaba muerto en la pregunta de las categorías
+
+"¿Qué categorías de Travel participan?" salía con cero casillas y sin nada que
+marcar, y como el campo es obligatorio, no se podía avanzar. Travel entero
+terminaba ahí.
+
+El catálogo de categorías nunca se le mandaba al navegador:
+`estadoInicial()` entregaba `secciones` pero no `categoriasTravel`. Es la
+frontera 2 de la skill, con su síntoma de siempre, la pantalla sin opciones.
+
+Y de paso, el arreglo no se veía en la demostración, porque `scripts/demo.js`
+tiene su propio `estadoInicial` que imita al del servidor: dos sitios
+describiendo lo mismo. Ahora una prueba compara las llaves de los dos.
+
+### Cómo probarlo
+
+```
+npm test                                                  # 593 pruebas
+npm run demo
+```
+
+Con los ojos, en la demostración: entra a Rappi Travel, elige Cashback Travel y
+mira que la pregunta de las categorías traiga las ocho de la app y deje avanzar.
+Y en la pregunta del NIT del Organizador, escribe 900.843.898-9: el mensaje
+tiene que decir Rappi S.A.S., no Rappi Travel.

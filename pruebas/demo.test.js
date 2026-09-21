@@ -40,3 +40,40 @@ test('todo lo que la interfaz le pide al servidor existe en el servidor simulado
   const faltan = Array.from(pedidas).filter((n) => !definidas.has(n));
   assert.deepStrictEqual(faltan, [], 'la demo no simula: ' + faltan.join(', '));
 });
+
+// --- la paridad con el servidor de verdad -----------------------------------
+
+test('la demostración entrega la misma configuración que el servidor', () => {
+  // scripts/demo.js tiene su propio estadoInicial, que imita el de
+  // src/server/Api.js. Son dos sitios describiendo lo mismo, y se
+  // desincronizan: el 21 de septiembre de 2026 se agregó categoriasTravel al
+  // servidor y la demostración se quedó sin él, así que la pregunta de las
+  // categorías de Travel seguía saliendo vacía justo donde Juan la probaba.
+  const fuenteApi = fs.readFileSync(path.join(__dirname, '..', 'src', 'server', 'Api.js'), 'utf8');
+  const fuenteDemo = fs.readFileSync(path.join(__dirname, '..', 'scripts', 'demo.js'), 'utf8');
+
+  const llavesDe = (fuente, desde) => {
+    const inicio = fuente.indexOf(desde);
+    assert.ok(inicio !== -1, 'no encontré "' + desde + '"');
+    const trozo = fuente.slice(inicio, inicio + 2000);
+    const llaves = [];
+    for (const linea of trozo.split('\n')) {
+      const coincide = linea.match(/^\s{4,}([a-zA-Z][a-zA-Z0-9]*):\s/);
+      if (coincide) llaves.push(coincide[1]);
+      if (llaves.length && /^\s*\};?\s*$/.test(linea)) break;
+    }
+    return llaves.sort();
+  };
+
+  const delServidor = llavesDe(fuenteApi, 'function estadoInicial()');
+  const deLaDemo = llavesDe(fuenteDemo, 'estadoInicial: function ()');
+
+  const faltan = delServidor.filter((llave) => deLaDemo.indexOf(llave) === -1);
+  assert.deepStrictEqual(faltan, [],
+    'la demostración no entrega lo que el servidor sí, así que estas pantallas se ven bien en ' +
+    'producción y rotas en la demostración (o al revés): ' + faltan.join(', '));
+
+  const sobran = deLaDemo.filter((llave) => delServidor.indexOf(llave) === -1);
+  assert.deepStrictEqual(sobran, [],
+    'la demostración entrega algo que el servidor no: ' + sobran.join(', '));
+});

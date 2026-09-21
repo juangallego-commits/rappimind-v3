@@ -69,11 +69,23 @@ function actualizarFila(nombre, numeroFila, cambios) {
   var hoja = hojaPorNombre(nombre);
   var encabezados = encabezadosDeLaHoja(hoja, nombre);
 
+  var sinColumna = [];
   for (var llave in cambios) {
     if (!Object.prototype.hasOwnProperty.call(cambios, llave)) continue;
     var columna = encabezados.indexOf(llave);
-    if (columna === -1) continue;
+    if (columna === -1) { sinColumna.push(llave); continue; }
     hoja.getRange(numeroFila, columna + 1).setValue(cambios[llave]);
+  }
+
+  // Un valor sin columna se perdia callado, y setup seguia diciendo que habia
+  // completado el pais: lo decia en cada corrida, porque en ninguna escribia.
+  // Paso de verdad el 21 de septiembre de 2026 al agregar turbo_id_fiscal a la
+  // semilla. Quien agrega una llave a data/paises.json tiene que agregar su
+  // columna en PESTANAS de Config.js, y ahora se entera aqui en vez de dentro
+  // de seis meses.
+  if (sinColumna.length > 0) {
+    throw new Error('La pestaña "' + nombre + '" no tiene columna para: ' + sinColumna.join(', ') +
+      '. Agrégalas a PESTANAS en src/server/Config.js.');
   }
 }
 

@@ -62,6 +62,34 @@ test('setup es idempotente: la segunda vez no crea nada', () => {
   assert.ok(resumen.pasos.join(' ').indexOf('Paises ya estaba al día') !== -1, resumen.pasos.join(' | '));
 });
 
+test('toda llave de la semilla de países tiene su columna en la pestaña', () => {
+  // La lista de columnas se escribe a mano en Config.js y la semilla vive en
+  // data/paises.json: son dos sitios y se desincronizan. Cuando pasa, el valor
+  // se pierde sin avisar y setup dice "1 país completado" en cada corrida sin
+  // haber escrito nunca. Pasó el 21 de septiembre de 2026 con turbo_id_fiscal.
+  const semilla = require('../data/paises.json').paises;
+  const columnas = encabezadosDe('Paises');
+
+  const sinColumna = [];
+  for (const pais of semilla) {
+    for (const llave of Object.keys(pais)) {
+      if (columnas.indexOf(llave) === -1 && sinColumna.indexOf(llave) === -1) sinColumna.push(llave);
+    }
+  }
+  assert.deepStrictEqual(sinColumna, [],
+    'estas llaves de data/paises.json no tienen columna en PESTANAS.Paises de src/server/Config.js, ' +
+    'así que su valor nunca llega al Sheet: ' + sinColumna.join(', '));
+});
+
+test('un valor sin columna revienta en vez de perderse callado', () => {
+  conSetup();
+  const fila = leerPaises().find((p) => p.codigo === 'CO')._fila;
+  assert.throws(
+    () => actualizarFila('Paises', fila, { columna_que_no_existe: 'algo' }),
+    /no tiene columna para: columna_que_no_existe/
+  );
+});
+
 test('setup nunca pisa lo que ya está en Paises', () => {
   conSetup();
   adminGuardarEstadoDePais('MX', 'activo');
