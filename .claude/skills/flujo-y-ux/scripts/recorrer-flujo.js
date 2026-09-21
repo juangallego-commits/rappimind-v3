@@ -236,16 +236,34 @@ async function recorrer() {
     trasLaCiudad.length === 1 && trasLaCiudad[0].indexOf('día arranca') !== -1,
     trasLaCiudad.join(' | '));
 
+  /**
+   * Pone un pais en piloto en la configuracion que ya tiene el navegador.
+   *
+   * Desde el 20 de septiembre de 2026 los nueve paises son activos. El aviso de
+   * "esta en pruebas" sigue existiendo y tiene que seguir saliendo, asi que el
+   * pais en piloto se construye aqui, como se hace en las pruebas de Node.
+   */
+  async function ponerEnPiloto(codigo) {
+    await pagina.evaluate((cod) => {
+      const config = RM.estado.estado.configuracion;
+      config.paises.forEach((p) => { if (p.codigo === cod) p.estado = 'piloto'; });
+      RM.app.dibujar();
+    }, codigo);
+    await pagina.waitForTimeout(200);
+  }
+
   // --- 3c. El aviso de que un pais esta en pruebas -------------------------
   //
   // Un pais en piloto lleva valores legales que propuso la herramienta y que no
   // ha confirmado nadie. Quien prueba tiene que saberlo antes de leer el
   // documento y darlo por bueno.
   //
-  // Antes este tramo usaba Mexico. El 18 de septiembre Mexico salio de piloto
-  // junto con Peru, Argentina, Chile, Uruguay y Brasil, y quedan Ecuador y
-  // Costa Rica, que siguen sin decir si escriben los miles con punto o con coma.
+  // Antes este tramo usaba Mexico, y despues Ecuador. El 20 de septiembre de
+  // 2026 salieron de piloto los dos ultimos, Ecuador y Costa Rica, asi que hoy
+  // no queda ninguno: el pais en piloto se pone aqui. Lo que se revisa es que el
+  // aviso siga funcionando para el dia en que entre un pais nuevo.
   await desdeElInicio();
+  await ponerEnPiloto('EC');
   await decirQueNoATodo();
   await clic('Ecuador');
 
@@ -471,6 +489,7 @@ async function recorrer() {
   }
 
   await irAlResumenCon(pagina, campanaEnPruebas);
+  await ponerEnPiloto('EC');
   await pagina.click('#declaracion');
   await pagina.waitForTimeout(400);
   await clic('Generar T&C');
@@ -531,6 +550,14 @@ async function recorrer() {
     acuerdoEnColombia.indexOf('[object') === -1,
     acuerdoEnColombia.replace(/\n+/g, ' | ').slice(0, 400));
 
+  // El boton lleva a una carpeta de Drive que hoy no todos pueden abrir. Juan
+  // decidio el 20 de septiembre que el boton se queda y que debajo va como
+  // conseguir el acceso, en vez de dejar al comercial delante de "pide permiso".
+  revisar('el botón del modelo de acuerdo dice qué hacer si no abre',
+    acuerdoEnColombia.indexOf('Abrir el modelo de acuerdo') !== -1 &&
+    acuerdoEnColombia.indexOf('Si no puedes abrirlo, pide el acceso desde la misma pantalla de Google y avísanos en #tyc-rappi.') !== -1,
+    acuerdoEnColombia.replace(/\n+/g, ' | ').slice(-400));
+
   const acuerdoEnCreditos = await abrirEnElAcuerdo(Object.assign({}, carreraConPremioFisico, {
     tipoPremio: 'creditos', creditosPremio: 500000, descripcionPremio: '',
   }));
@@ -566,12 +593,25 @@ async function recorrer() {
   // --- 7b. Una opción que el país no puede cumplir se bloquea con su razón ---
   //
   // Los nombres de las secciones tienen que ser los de la app, porque el
-  // documento los imprime entre comillas, y esa lista solo existe para
-  // Colombia. En México el comercial elegia "En ciertas secciones de Rappi" y
+  // documento los imprime entre comillas. Cuando esa lista existia solo para
+  // Colombia, en México el comercial elegia "En ciertas secciones de Rappi" y
   // quedaba delante de una pregunta sin una sola casilla que marcar.
-  async function opcionesDeLaRedencionCon(codigoPais, identificacion) {
+  //
+  // Desde el 20 de septiembre de 2026 la lista es comun a todos los paises, asi
+  // que hoy ninguno queda bloqueado. El bloqueo se sigue revisando aqui con un
+  // pais al que se le pone lista propia vacia: el mecanismo tiene que seguir
+  // enchufado a la pantalla para el dia en que vuelva a hacer falta.
+  async function opcionesDeLaRedencionCon(codigoPais, identificacion, sinSecciones) {
     await pagina.goto(DEMO);
     await pagina.waitForTimeout(800);
+    if (sinSecciones) {
+      await pagina.evaluate((codigo) => {
+        const propias = {};
+        propias[codigo] = [];
+        const config = RM.estado.estado.configuracion;
+        config.secciones = { comun: config.secciones.comun, paises: propias };
+      }, codigoPais);
+    }
     await pagina.evaluate((datos) => {
       RM.estado.reiniciarFormulario(Object.assign(RM.app.valoresIniciales(), datos), {});
       RM.estado.estado.filtroRespondido = true;
@@ -600,15 +640,36 @@ async function recorrer() {
     JSON.stringify(redencionCO));
 
   const redencionMX = await opcionesDeLaRedencionCon('MX', 'PRU200101AB5');
-  const seccionesMX = (redencionMX || []).filter((o) => /secciones/i.test(o.texto))[0];
-  revisar('en un país sin lista de secciones, esa opción se bloquea',
-    !!seccionesMX && seccionesMX.bloqueada, JSON.stringify(redencionMX));
-  revisar('y dice por qué, nombrando al país',
-    !!seccionesMX && seccionesMX.texto.indexOf('México') !== -1,
-    seccionesMX ? seccionesMX.texto : '(no salió la opción)');
-  revisar('las otras dos opciones siguen disponibles, no es un callejón',
-    !!redencionMX && redencionMX.filter((o) => !o.bloqueada).length === 2,
+  revisar('en México también se pueden elegir las tres, con la lista común',
+    !!redencionMX && redencionMX.length === 3 && redencionMX.every((o) => !o.bloqueada),
     JSON.stringify(redencionMX));
+
+  await opcionesDeLaRedencionCon('MX', 'PRU200101AB5');
+  await pagina.evaluate(() => {
+    RM.estado.estado.campoAbierto = 'secciones';
+    RM.estado.fijar('redencion', 'secciones');
+    RM.app.ir('pasos');
+  });
+  await pagina.waitForTimeout(600);
+  const nombresMX = await pagina.evaluate(() => {
+    const grupo = document.querySelector('.casillas');
+    if (!grupo) return null;
+    return [].map.call(grupo.querySelectorAll('.casilla input'), (c) => c.value);
+  });
+  revisar('y al elegirla, México sí tiene casillas que marcar',
+    !!nombresMX && nombresMX.length === 5 && nombresMX.indexOf('Turbo Restaurantes') !== -1,
+    JSON.stringify(nombresMX));
+
+  const redencionSinLista = await opcionesDeLaRedencionCon('MX', 'PRU200101AB5', true);
+  const seccionesSinLista = (redencionSinLista || []).filter((o) => /secciones/i.test(o.texto))[0];
+  revisar('un país con lista propia vacía sigue bloqueando esa opción',
+    !!seccionesSinLista && seccionesSinLista.bloqueada, JSON.stringify(redencionSinLista));
+  revisar('y dice por qué, nombrando al país',
+    !!seccionesSinLista && seccionesSinLista.texto.indexOf('México') !== -1,
+    seccionesSinLista ? seccionesSinLista.texto : '(no salió la opción)');
+  revisar('las otras dos opciones siguen disponibles, no es un callejón',
+    !!redencionSinLista && redencionSinLista.filter((o) => !o.bloqueada).length === 2,
+    JSON.stringify(redencionSinLista));
 
   // --- 8. Quien no ve la pantalla también tiene que enterarse de que cambió ---
   //

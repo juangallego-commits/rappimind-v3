@@ -173,17 +173,21 @@ test('ir y volver entre fila y país no pierde nada', () => {
   assert.strictEqual(vuelta.entidad_legal, original.entidad_legal);
 });
 
-test('los países en piloto solo aparecen para el equipo', () => {
-  // Desde el 18 de septiembre siete países son activos y solo Ecuador y Costa
-  // Rica siguen en piloto, así que un comercial de fuera del equipo ve siete.
+test('los nueve países son activos: cualquier comercial los ve todos', () => {
+  // El 20 de septiembre Ecuador y Costa Rica salieron de piloto, que eran los
+  // dos últimos. Desde entonces un comercial ve los nueve.
   const paraTodos = paisesDisponibles(paises, false).map((p) => p.codigo);
-  assert.deepStrictEqual(paraTodos.sort(), ['AR', 'BR', 'CL', 'CO', 'MX', 'PE', 'UY']);
+  assert.deepStrictEqual(paraTodos.sort(), ['AR', 'BR', 'CL', 'CO', 'CR', 'EC', 'MX', 'PE', 'UY']);
+  assert.deepStrictEqual(paisesDisponibles(paises, true).map((p) => p.codigo).sort(), paraTodos.sort());
+});
 
-  const paraElEquipo = paisesDisponibles(paises, true).map((p) => p.codigo);
-  assert.ok(paraElEquipo.indexOf('EC') !== -1, 'el equipo no ve Ecuador');
-  assert.ok(paraElEquipo.indexOf('CR') !== -1, 'el equipo no ve Costa Rica');
-  assert.ok(paraElEquipo.length > paraTodos.length);
-  assert.ok(paisesDisponibles(paises, true).every((p) => p.estado !== 'bloqueado'));
+test('un país en piloto sigue apareciendo solo para el equipo', () => {
+  // Ya no hay ninguno, así que se construye: el mecanismo tiene que seguir
+  // funcionando para el día en que entre un país nuevo.
+  const conPiloto = paises.map((p) => (p.codigo === 'CR' ? Object.assign({}, p, { estado: 'piloto' }) : p));
+  assert.strictEqual(paisesDisponibles(conPiloto, false).filter((p) => p.codigo === 'CR').length, 0);
+  assert.strictEqual(paisesDisponibles(conPiloto, true).filter((p) => p.codigo === 'CR').length, 1);
+  assert.ok(paisesDisponibles(conPiloto, true).every((p) => p.estado !== 'bloqueado'));
 });
 
 test('cada país solo ofrece los tipos que tiene habilitados', () => {

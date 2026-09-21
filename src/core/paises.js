@@ -323,6 +323,23 @@ function puedeVerPiloto(rol) {
   return rol === 'pruebas' || rol === 'legal' || rol === 'admin';
 }
 
+/**
+ * Las secciones de la app de un pais, para la opcion "En ciertas secciones".
+ *
+ * Juan confirmo el 20 de septiembre de 2026 que las secciones se llaman igual
+ * en todos los paises, asi que la lista vive una sola vez en "comun". Queda la
+ * puerta abierta a que un pais tenga la suya: si aparece en "paises", esa gana.
+ * Una lista propia vacia deja la opcion bloqueada en ese pais, que es lo que
+ * pasaba en los cinco activos que no eran Colombia antes de esta decision.
+ */
+function seccionesDePais(codigo, catalogo) {
+  var datos = catalogo || {};
+  var porPais = datos.paises || {};
+  var propias = porPais[codigo];
+  if (propias) return propias;
+  return datos.comun || [];
+}
+
 if (typeof module !== 'undefined') {
   module.exports = {
     ESTADOS: ESTADOS,
@@ -343,6 +360,7 @@ if (typeof module !== 'undefined') {
     datosPorConfirmar: datosPorConfirmar,
     paisEnPruebas: paisEnPruebas,
     comoLista: comoLista,
+    seccionesDePais: seccionesDePais,
     TIPOS_DE_TRAVEL: TIPOS_DE_TRAVEL,
     DATOS_DE_TRAVEL_OBLIGATORIOS: DATOS_DE_TRAVEL_OBLIGATORIOS,
     esTipoDeTravel: esTipoDeTravel,

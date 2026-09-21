@@ -12,8 +12,11 @@ const { paises } = leerJson(rutaDesdeRaiz('data', 'paises.json'));
 const CO = paises.find((p) => p.codigo === 'CO');
 const MX = paises.find((p) => p.codigo === 'MX');
 const BR = paises.find((p) => p.codigo === 'BR');
-// El país en piloto de las pruebas. Era México hasta el 18 de septiembre.
+// Desde el 20 de septiembre de 2026 no queda ningún país en piloto, así que el
+// país en piloto de las pruebas se construye aquí, como ya se hacía con el
+// bloqueado. La regla es de la validación, no de qué país esté en piloto hoy.
 const EC = paises.find((p) => p.codigo === 'EC');
+const EN_PILOTO = Object.assign({}, EC, { estado: 'piloto' });
 
 /** Una solicitud de Cashback CO válida, para ir rompiéndola de a un campo. */
 function solicitudBase(cambios) {
@@ -59,9 +62,18 @@ test('la solicitud base es válida', () => {
 });
 
 test('un país en piloto no aparece para quien no está en el equipo', () => {
-  // Ecuador, porque México salió de piloto el 18 de septiembre.
-  assert.ok(validarPais(EC, false));
-  assert.strictEqual(validarPais(EC, true), null);
+  assert.ok(validarPais(EN_PILOTO, false));
+  assert.strictEqual(validarPais(EN_PILOTO, true), null);
+});
+
+test('Ecuador y Costa Rica ya son activos: los ve cualquier comercial', () => {
+  // Juan los sacó de piloto el 20 de septiembre, con el separador de miles
+  // confirmado: Ecuador con coma, Costa Rica con punto.
+  for (const codigo of ['EC', 'CR']) {
+    const pais = paises.find((p) => p.codigo === codigo);
+    assert.strictEqual(pais.estado, 'activo', codigo);
+    assert.strictEqual(validarPais(pais, false), null, codigo);
+  }
 });
 
 test('un país bloqueado no genera para nadie', () => {
@@ -91,7 +103,7 @@ test('el tipo debe estar habilitado para el país', () => {
 });
 
 test('si el país no está disponible no se revisa nada más', () => {
-  const resultado = validarSolicitud({ pais: 'EC', tipo: 'cashback' }, EC, CONTEXTO);
+  const resultado = validarSolicitud({ pais: 'EC', tipo: 'cashback' }, EN_PILOTO, CONTEXTO);
   assert.strictEqual(resultado.errores.length, 1);
   assert.strictEqual(resultado.errores[0].campo, 'pais');
 });

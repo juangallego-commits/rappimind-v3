@@ -34,10 +34,10 @@ function salidaEsperada(caso) {
   return normalizarParaComparar(leerTexto(rutaDesdeRaiz('pruebas', 'salidas_esperadas', caso.id + '.txt')));
 }
 
-test('hay treinta y dos casos, diecinueve que generan y trece que fallan', () => {
+test('hay treinta y dos casos, veinte que generan y doce que fallan', () => {
   assert.strictEqual(casos.length, 32);
-  assert.strictEqual(generan.length, 19);
-  assert.strictEqual(fallan.length, 13);
+  assert.strictEqual(generan.length, 20);
+  assert.strictEqual(fallan.length, 12);
 
   // CC03 es el único caso con premio físico entregado por el Organizador, que
   // es la única combinación en la que el documento autoriza transferir los

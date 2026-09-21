@@ -18,6 +18,7 @@
 const { rutaDesdeRaiz, leerJson } = require('../../scripts/lib/archivos');
 const { ESQUEMAS, camposVisibles, resolverAtributo } = require('../../src/core/esquemas.js');
 const { preguntaDe } = require('../../src/core/preguntas.js');
+const { seccionesDePais } = require('../../src/core/paises.js');
 
 const CATEGORIAS_TRAVEL = leerJson(rutaDesdeRaiz('data', 'categorias_travel.json'));
 const SECCIONES = leerJson(rutaDesdeRaiz('data', 'secciones.json'));
@@ -71,7 +72,10 @@ function valorDePrueba(campo, codigoPais, tipoActual) {
   if (campo.tipo === 'identificacion') return IDENTIFICACIONES[codigoPais];
   if (campo.tipo === 'texto') return campo.id === 'ciudades' ? 'Bogotá' : 'Texto de prueba';
   if (campo.tipo === 'casillas') {
-    if (campo.id === 'secciones') return (SECCIONES[codigoPais] || ['Restaurantes']).slice(0, 2);
+    if (campo.id === 'secciones') {
+      const nombres = seccionesDePais(codigoPais, SECCIONES);
+      return (nombres.length ? nombres : ['Restaurantes']).slice(0, 2);
+    }
     if (campo.id === 'categorias' || campo.id === 'categoriasRedencion') {
       return (CATEGORIAS_TRAVEL[codigoPais] || ['Hoteles']).slice(0, 2);
     }

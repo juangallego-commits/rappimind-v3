@@ -90,7 +90,10 @@ ok('el paso y los botones también', parceiroPt.indexOf('Avançar')!==-1 && parc
 ok('el por qué del país y del tipo también en portugués',
   paisPt.indexOf('¿Por qué te preguntamos esto?')===-1 && tipoPt.indexOf('¿Por qué te preguntamos esto?')===-1 && paisPt.indexOf('Por que perguntamos isso?')!==-1,
   (paisPt+tipoPt).replace(/\n+/g,' | ').slice(0,300));
-ok('las notas de los países en portugués', paisPt.indexOf('Disponível.')!==-1 && paisPt.indexOf('Em piloto')!==-1 && paisPt.indexOf('En piloto')===-1);
+// "Em piloto" ya no sale en ninguna tarjeta, porque desde el 20 de septiembre de
+// 2026 los nueve paises son activos. La nota traducida se revisa mas abajo, con
+// un pais puesto en piloto a mano.
+ok('las notas de los países en portugués', paisPt.indexOf('Disponível.')!==-1 && paisPt.indexOf('Disponible.')===-1, paisPt.replace(/\n+/g,' | ').slice(0,300));
 ok('Brasil, que salió de piloto el 18 de septiembre, ya no lleva el aviso de pruebas', parceiroPt.indexOf('está em testes')===-1 && parceiroPt.indexOf('está en pruebas')===-1, parceiroPt.replace(/\n+/g,' | ').slice(0,300));
 ok('la vista previa vacía en portugués', paisPt.indexOf('Seu documento aparece aqui')!==-1 && paisPt.indexOf('Tu documento aparece aquí')===-1, paisPt.replace(/\n+/g,' | ').slice(0,300));
 
@@ -129,15 +132,23 @@ await p.waitForTimeout(300);
 await p.reload(); await p.waitForTimeout(900);
 ok('la preferencia sobrevive a recargar', (await txt()).indexOf('Gere os Termos e Condições')!==-1);
 
-// El aviso de pais en pruebas en portugues sigue existiendo para Ecuador y
-// Costa Rica, que son los dos que quedan en piloto. Sin esta comprobacion, la
-// frase se quedaba traducida y sin nadie que la mirara, porque Brasil, el unico
+// El aviso de pais en pruebas en portugues. Desde el 20 de septiembre de 2026 no
+// queda ningun pais en piloto, asi que aqui se pone uno: sin esta comprobacion
+// la frase se queda traducida y sin nadie que la mire, porque Brasil, el unico
 // pais que lee en portugues, salio de piloto el 18 de septiembre.
 await p.goto(DEMO); await p.waitForTimeout(900);
 await p.evaluate(()=>[...document.querySelectorAll('.selector-idioma button')].find(b=>b.textContent.trim()==='BR').click());
 await p.waitForTimeout(400);
 await clic('Começar'); await p.waitForTimeout(300);
 await noAtodo();
+await p.evaluate(()=>{
+  const config=RM.estado.estado.configuracion;
+  config.paises.forEach((x)=>{ if(x.codigo==='EC') x.estado='piloto'; });
+  RM.app.dibujar();
+});
+await p.waitForTimeout(300);
+const notasPt=await txt();
+ok('la nota "Em piloto" sale traducida en la tarjeta del país', notasPt.indexOf('Em piloto')!==-1 && notasPt.indexOf('En piloto')===-1, notasPt.replace(/\n+/g,' | ').slice(0,300));
 await clic('Ecuador'); await p.waitForTimeout(500);
 const ecuadorPt=await p.evaluate(()=>{const a=document.querySelector('.columna-preguntas .aviso');return a?a.innerText:''});
 ok('un país en piloto sí lleva el aviso en portugués', ecuadorPt.indexOf('está em testes')!==-1 && ecuadorPt.indexOf('está en pruebas')===-1, ecuadorPt.replace(/\n+/g,' | ').slice(0,300));

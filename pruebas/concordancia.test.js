@@ -149,14 +149,16 @@ const PALABRAS_SINGULARES_CON_S = ['mes', 'país', 'análisis', 'más', 'menos',
   'miércoles', 'jueves', 'viernes'];
 
 /*
- * La única excepción conocida, y está en el texto de Legal, no en el motor:
- * modelos/carrera_compras.md dice "dentro de los {{PLAZO_CONFIRMACION}}
- * siguientes", con el artículo y el adjetivo en plural dentro de la cláusula.
- * Con un plazo de un día hábil sale "dentro de los un (1) día hábil
- * siguientes". Arreglarlo es cambiar la cláusula, así que está en
- * docs/PARA_DECIDIR.md y lo decide Juan.
+ * Ya no queda ninguna excepción.
+ *
+ * La última vivía en el texto de Legal, no en el motor: carrera_compras.md
+ * decía "dentro de los {{PLAZO_CONFIRMACION}} siguientes", con el artículo y el
+ * adjetivo en plural dentro de la cláusula, así que con un plazo de un día
+ * salía "dentro de los un (1) día hábil siguientes". Juan la cambió el 20 de
+ * septiembre de 2026 (punto A4) por "dentro de un plazo de
+ * {{PLAZO_CONFIRMACION}} a partir de la notificación", que sirve en singular y
+ * en plural. Con más de un día el documento sale palabra por palabra igual.
  */
-const PENDIENTE_DE_JUAN = /dentro de los un \(1\) día hábil siguientes/;
 
 test('ninguna pregunta numérica deja una cifra 1 pegada a un plural', () => {
   const rotas = [];
@@ -172,7 +174,7 @@ test('ninguna pregunta numérica deja una cifra 1 pegada a un plural', () => {
         if (!camposVisibles(tipo, entrada).some((c) => c.id === campo.id)) return;
         const salida = generarTexto(entrada, pais, modelos, { fechaReferencia: FECHA, usuarioEnEquipo: true });
         if (!salida.valido) return; // la validación ya lo frena: no hay documento que revisar
-        const plano = textoPlano(salida.texto).replace(PENDIENTE_DE_JUAN, '');
+        const plano = textoPlano(salida.texto);
         const patron = /\b(un|una) \(1\) ([a-záéíóúñ]+s)\b/g;
         let encontrado = patron.exec(plano);
         while (encontrado !== null) {

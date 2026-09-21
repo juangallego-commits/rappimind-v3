@@ -386,16 +386,10 @@ function avisoDeAcuerdoDeDatos() {
     }),
   ]);
 
-  if (pais && pais.url_acuerdo_datos) {
-    caja.appendChild(crear('div', { clase: 'fila-botones' }, [
-      crear('a', {
-        clase: 'boton boton-secundario', href: pais.url_acuerdo_datos,
-        target: '_blank', rel: 'noopener',
-      }, [
-        document.createTextNode(estado.T('Abrir el modelo de acuerdo')), RM.util.icono('abrir', 16),
-      ]),
-    ]));
-  }
+  // El boton y su linea los arma RM.pasos, para que el texto viva en un solo
+  // sitio: aqui y en la pregunta se ve exactamente lo mismo.
+  var boton = RM.pasos.botonDelModeloDeAcuerdo(pais);
+  if (boton) caja.appendChild(boton);
   return caja;
 }
 

@@ -536,18 +536,57 @@
     },
     {
       "id": "EC01",
-      "descripcion": "Cashback EC con usuario que NO está en el equipo de pruebas: no debe generar. Era de México hasta que México salió de piloto el 18 de septiembre; el caso se mudó a Ecuador, que sigue en piloto porque nadie ha dicho cómo escribe los miles",
+      "descripcion": "Cashback EC. Hasta el 20 de septiembre este caso probaba que un país en piloto no generara; Ecuador salió de piloto ese día, así que pasa a ser el caso dorado de Ecuador. Los datos de campaña son los mismos de MX01 a propósito: así la única diferencia entre los documentos de cada país son los dieciséis valores que salen de la fila del país",
       "fecha_referencia": "2026-09-16",
-      "usuario_en_equipo": false,
+      "usuario_en_equipo": true,
       "entrada": {
         "pais": "EC",
         "tipo": "cashback",
+        "nombreCampana": "Cashback de prueba Ecuador",
+        "tienda": "Tienda de Prueba EC",
+        "alcance": "Nacional",
+        "ciudades": "",
+        "segmento": "todos",
+        "metodoPago": "sin_efectivo",
+        "declaracion": true,
+        "fechaInicio": "2026-09-20",
+        "horaInicio": "00:00",
+        "fechaFin": "2026-09-25",
+        "horaFin": "23:59",
+        "organizadorRazonSocial": "Organizador de Prueba S.A.S.",
+        "organizadorId": "1791234561001",
+        "porcentaje": 21,
+        "tope": 500,
+        "presupuesto": 1000000,
+        "maxPedidos": 21,
+        "sinLimite": false,
+        "carga": "dia_siguiente",
+        "vigencia": "dias",
+        "diasVigencia": 31,
+        "redencion": "general",
+        "condiciones": [],
+        "compraMinima": 200000,
         "negocio": "rappi"
       },
       "esperado": {
-        "resultado": "falla",
-        "errores": [
-          "pais"
+        "resultado": "genera",
+        "contiene": [
+          "RUC 1791234561001",
+          "RAPPIEC S.A.S.",
+          "el territorio nacional de la República del Ecuador",
+          "un millón (1,000,000) de Créditos",
+          "doscientos mil dólares USD ($200,000)",
+          "treinta y un (31) días calendario",
+          "hora del Ecuador continental",
+          "la Política de privacidad de Rappi y Tratamiento de datos personales",
+          "la Superintendencia de Protección de Datos Personales (SPDP)",
+          "los Tribunales del Distrito Metropolitano de Quito",
+          "la Defensoría del Pueblo"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          ".."
         ]
       }
     },

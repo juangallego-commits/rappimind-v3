@@ -24,7 +24,7 @@ Antes de declarar a los ganadores, Rappi verificará la elegibilidad de cada par
 § Naturaleza del premio. {{TEXTO_NATURALEZA_PREMIO}}
 § Notificación, aceptación y entrega del premio.
 • **Notificación:** Rappi contactará a cada ganador mediante {{MEDIO_NOTIFICACION}}, a más tardar el **{{FECHA_NOTIFICACION}}**.
-• **Aceptación:** el ganador deberá aceptar el premio y confirmar sus datos, y su dirección de entrega cuando corresponda, dentro de los **{{PLAZO_CONFIRMACION}}** siguientes a la notificación. Si Rappi no logra contactarlo tras intentos razonables, o si no acepta el premio o no confirma sus datos dentro de ese plazo, el premio podrá asignarse al siguiente participante del ranking, de forma sucesiva.
+• **Aceptación:** el ganador deberá aceptar el premio y confirmar sus datos, y su dirección de entrega cuando corresponda, dentro de un plazo de **{{PLAZO_CONFIRMACION}}** a partir de la notificación. Si Rappi no logra contactarlo tras intentos razonables, o si no acepta el premio o no confirma sus datos dentro de ese plazo, el premio podrá asignarse al siguiente participante del ranking, de forma sucesiva.
 • **Entrega:** {{TEXTO_ENTREGA}}
 § Exclusiones. No suman al acumulado del concurso:
 • Los pedidos cancelados, devueltos o que no se completen exitosamente por cualquier causa.

@@ -635,10 +635,12 @@ var PREGUNTAS = {
     errores: { vacio: 'Dinos dónde puede gastar los Créditos.' },
     /*
      * Los nombres de las secciones tienen que ser los de la app, porque el
-     * documento los imprime entre comillas. Hoy solo esta la lista de Colombia
-     * (data/secciones.json). En los demas paises esta opcion se podia elegir y
-     * despues no habia ni una casilla que marcar, con una validacion que pedia
-     * marcar al menos una: un camino que arranca y muere.
+     * documento los imprime entre comillas. Cuando la lista existia solo para
+     * Colombia, en los demas paises esta opcion se podia elegir y despues no
+     * habia ni una casilla que marcar, con una validacion que pedia marcar al
+     * menos una: un camino que arranca y muere. Desde el 20 de septiembre de
+     * 2026 la lista de data/secciones.json es comun a todos los paises, pero la
+     * razon se queda escrita porque un pais puede tener lista propia vacia.
      */
     razonSinSecciones: 'Todavía no tenemos la lista de secciones de la app en {pais}, y el documento tiene que nombrarlas igual que la app. Si tu campaña las necesita, escríbenos a #tyc-rappi.',
     variantes: {

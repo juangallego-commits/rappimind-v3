@@ -86,12 +86,16 @@ function opcionesDeshabilitadas(campo) {
   /*
    * "En ciertas secciones de Rappi" solo se puede elegir donde sabemos como se
    * llaman esas secciones en la app, porque el documento las imprime entre
-   * comillas. Hoy esa lista existe solo para Colombia.
+   * comillas.
    *
    * Sin esto, un comercial de Mexico elegia la opcion y se quedaba delante de
    * una pregunta sin una sola casilla que marcar, y con una validacion que le
    * pedia marcar al menos una: imposible de cumplir y sin salida mas que
    * adivinar que habia que cambiar la respuesta anterior.
+   *
+   * Desde el 20 de septiembre de 2026 la lista es comun a todos los paises, asi
+   * que hoy no queda ninguno bloqueado. El bloqueo se queda escrito porque un
+   * pais puede tener lista propia vacia, y entonces vuelve a hacer falta.
    *
    * Deshabilitada con su razon, y no escondida: si desapareciera, el comercial
    * creeria que la herramienta no sabe hacerlo y volveria a escribirle a Legal.
@@ -99,7 +103,7 @@ function opcionesDeshabilitadas(campo) {
   if (campo.id === 'redencion') {
     var pais = flujo.paisElegido();
     if (!pais) return null;
-    var nombres = (E.configuracion.secciones && E.configuracion.secciones[pais.codigo]) || [];
+    var nombres = seccionesDePais(pais.codigo, E.configuracion.secciones);
     if (nombres.length > 0) return null;
     var sinSecciones = {};
     sinSecciones.secciones = estado.pregunta('redencion').razonSinSecciones
@@ -126,7 +130,7 @@ function opcionesDeLosDatos(campo) {
   var pais = flujo.paisElegido();
 
   if (campo.id === 'secciones') {
-    var nombres = (E.configuracion.secciones && pais) ? (E.configuracion.secciones[pais.codigo] || []) : [];
+    var nombres = pais ? seccionesDePais(pais.codigo, E.configuracion.secciones) : [];
     return nombres.map(function (nombre) { return { valor: nombre, etiqueta: nombre, nota: 'Sección de la app.' }; });
   }
 
@@ -235,16 +239,33 @@ function panelDeAcuerdoDeDatos() {
   return caja;
 }
 
-/** El botón que abre el modelo de acuerdo del país, si ese país tiene uno. */
+/**
+ * El boton que abre el modelo de acuerdo del pais, si ese pais tiene uno.
+ *
+ * Debajo va la linea de que hacer si no se puede abrir. En el hilo, dos
+ * personas se toparon con la pantalla de "pide permiso" de Google: el comercial
+ * hizo lo que la herramienta le dijo y encontro una puerta cerrada, sin nadie
+ * que le dijera como abrirla. Juan lo decidio el 20 de septiembre (punto A5):
+ * el boton se queda, y debajo va como conseguir el acceso.
+ *
+ * Vive aqui y se comparte por RM.pasos porque la pantalla del resumen muestra
+ * el mismo boton: dos copias del texto se desincronizan.
+ */
 function botonDelModeloDeAcuerdo(pais) {
   if (!pais || !pais.url_acuerdo_datos) return null;
-  return crear('div', { clase: 'fila-botones' }, [
-    crear('a', {
-      clase: 'boton boton-secundario', href: pais.url_acuerdo_datos,
-      target: '_blank', rel: 'noopener',
-    }, [
-      document.createTextNode(estado.T('Abrir el modelo de acuerdo')), RM.util.icono('abrir', 16),
+  return crear('div', {}, [
+    crear('div', { clase: 'fila-botones' }, [
+      crear('a', {
+        clase: 'boton boton-secundario', href: pais.url_acuerdo_datos,
+        target: '_blank', rel: 'noopener',
+      }, [
+        document.createTextNode(estado.T('Abrir el modelo de acuerdo')), RM.util.icono('abrir', 16),
+      ]),
     ]),
+    crear('p', {
+      clase: 'nota',
+      texto: estado.T('Si no puedes abrirlo, pide el acceso desde la misma pantalla de Google y avísanos en #tyc-rappi.'),
+    }),
   ]);
 }
 
@@ -852,6 +873,7 @@ function retroceder(camposViejos, indiceViejo, pasosViejos) {
 
 RM.pasos = {
   pantallaPasos: pantallaPasos,
+  botonDelModeloDeAcuerdo: botonDelModeloDeAcuerdo,
   avanzar: avanzar,
   comoTexto: comoTexto,
   columnaDocumento: columnaDocumento,

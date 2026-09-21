@@ -1,10 +1,11 @@
 {
-  "nota": "Nombres de secciones de la app para la opción de redención. Salen entre comillas en el documento, así que tienen que coincidir con los de la app. Lista de CO confirmada por Juan Camilo Gallego. Faltan los demás países.",
-  "CO": [
+  "nota": "Nombres de las secciones de la app para la opción de redención del cashback. Salen entre comillas en el documento, así que tienen que coincidir con los de la app. Juan Camilo Gallego confirmó el 20 de septiembre de 2026 que la lista es la misma en todos los países, así que vive una sola vez en \"comun\". Si algún país resulta tener secciones propias, se le escribe su lista en \"paises\" y esa gana sobre la común; una lista propia vacía deja la opción bloqueada en ese país.",
+  "comun": [
     "Restaurantes",
     "Turbo",
     "Supermercados",
     "CPGs",
     "Turbo Restaurantes"
-  ]
+  ],
+  "paises": {}
 }

@@ -42,7 +42,7 @@ const DONDE_VIVE_CADA_TEXTO = [
   ['Todo el contenido de la pantalla de Ayuda y las nueve preguntas del filtro de Travel', 'src/core/ayuda.js'],
   ['La lista de países, su estado (activo, piloto, bloqueado) y sus datos legales', 'data/paises.json'],
   ['Los T&C que Legal ya publicó, con su enlace y sus pendientes', 'data/tyc_genericos.json'],
-  ['Las secciones de la app por país', 'data/secciones.json'],
+  ['Las secciones de la app', 'data/secciones.json'],
   ['El texto legal del documento', 'modelos/ y modelos/bloques/'],
   ['Las reglas de validación de un dato (NIT, fechas, números)', 'src/core/validaciones.js'],
   ['Las frases que un dato escribe en el documento ("Así queda en tu T&C")', 'src/core/derivados.js y sus variantes'],

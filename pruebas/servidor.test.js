@@ -16,7 +16,9 @@ const { levantarEntorno, solicitudValida } = require('./dobles/entorno.js');
 
 /** Cada prueba arranca con un mundo limpio. */
 function nuevoMundo(opciones) {
-  return levantarEntorno(opciones || {});
+  const mundo = levantarEntorno(opciones || {});
+  mundo.correoDeQuienInstalo = mundo.correo;
+  return mundo;
 }
 
 function conSetup(opciones) {
@@ -33,6 +35,18 @@ function conSetup(opciones) {
 function comoComercial(mundo, correo) {
   mundo.correo = correo;
   assert.strictEqual(rolDe(leerEquipo(), correo), 'comercial', correo + ' debería ser comercial');
+  return mundo;
+}
+
+/**
+ * Volver a ser quien instaló, que es el administrador.
+ *
+ * Hace falta desde que ningún país está en piloto: para probar que un país en
+ * piloto no se le ofrece a un comercial, primero hay que poner uno, y eso solo
+ * lo puede hacer un administrador.
+ */
+function comoAdministrador(mundo) {
+  mundo.correo = mundo.correoDeQuienInstalo;
   return mundo;
 }
 
@@ -250,8 +264,12 @@ test('el servidor vuelve a validar aunque el navegador diga que está bien', () 
   const mundo = conSetup();
   comoComercial(mundo, 'kam@rappi.com');
   // Un país en piloto para alguien que no es del equipo: el cliente podría
-  // mandarlo igual, el servidor tiene que rechazarlo. Ecuador, porque México
-  // salió de piloto el 18 de septiembre.
+  // mandarlo igual, el servidor tiene que rechazarlo. Desde el 20 de septiembre
+  // no queda ninguno en piloto, así que se pone uno: la regla es del servidor,
+  // no de qué país esté en piloto hoy.
+  comoAdministrador(mundo);
+  adminGuardarEstadoDePais('EC', 'piloto');
+  comoComercial(mundo, 'kam@rappi.com');
   const resultado = generar(solicitudValida({ pais: 'EC' }));
   assert.ok(!resultado.valido);
   assert.strictEqual(resultado.errores[0].campo, 'pais');
@@ -259,6 +277,7 @@ test('el servidor vuelve a validar aunque el navegador diga que está bien', () 
 
 test('a alguien del equipo de pruebas sí se le permite un país en piloto', () => {
   const mundo = conSetup();
+  adminGuardarEstadoDePais('EC', 'piloto');
   adminGuardarMiembro({ email: 'pruebas@rappi.com', rol: 'pruebas' });
   mundo.correo = 'pruebas@rappi.com';
 
@@ -353,6 +372,9 @@ test('solo un administrador entra a la administración', () => {
 
 test('un administrador cambia el estado de un país', () => {
   conSetup();
+  assert.strictEqual(paisPorCodigo(leerPaises(), 'EC').estado, 'activo');
+
+  assert.ok(adminGuardarEstadoDePais('EC', 'piloto').valido);
   assert.strictEqual(paisPorCodigo(leerPaises(), 'EC').estado, 'piloto');
 
   assert.ok(adminGuardarEstadoDePais('EC', 'activo').valido);
@@ -745,12 +767,16 @@ test('sin rol, la persona solo ve los países activos', () => {
   const mundo = conSetup();
   mundo.correo = 'nadie@rappi.com';
 
-  // Desde el 18 de septiembre son siete los activos. Ecuador y Costa Rica, que
-  // siguen en piloto, no le pueden salir a un comercial sin rol.
+  // Desde el 20 de septiembre los nueve son activos, así que un comercial sin
+  // rol los ve todos. Si alguien vuelve a poner uno en piloto, desaparece.
   const codigos = estadoInicial().paises.map((p) => p.codigo);
-  assert.deepStrictEqual(codigos.slice().sort(), ['AR', 'BR', 'CL', 'CO', 'MX', 'PE', 'UY']);
-  assert.strictEqual(codigos.indexOf('EC'), -1, 'un comercial nuevo no debería ver Ecuador');
-  assert.strictEqual(codigos.indexOf('CR'), -1, 'un comercial nuevo no debería ver Costa Rica');
+  assert.deepStrictEqual(codigos.slice().sort(), ['AR', 'BR', 'CL', 'CO', 'CR', 'EC', 'MX', 'PE', 'UY']);
+
+  comoAdministrador(mundo);
+  adminGuardarEstadoDePais('CR', 'piloto');
+  mundo.correo = 'nadie@rappi.com';
+  assert.strictEqual(estadoInicial().paises.map((p) => p.codigo).indexOf('CR'), -1,
+    'un comercial nuevo no debería ver un país en piloto');
 });
 
 test('la carga masiva nunca le baja el rol a quien ya estaba', () => {
@@ -1083,17 +1109,18 @@ test('cada confirmación declarada nombra un país y una columna que existen', (
 });
 
 /**
- * La tanda que saca seis paises de piloto.
+ * Las dos tandas que sacan de piloto.
  *
- * El Sheet de Juan existe desde antes y dice "piloto" en las seis filas. La
- * regla general es que la hoja manda sobre la semilla, asi que cambiar
+ * El Sheet de Juan existe desde antes y dice "piloto" en las filas. La regla
+ * general es que la hoja manda sobre la semilla, asi que cambiar
  * data/paises.json no mueve una fila que ya existe: sin la tanda, Juan despliega,
  * corre setup(), y Mexico le sigue saliendo solo al equipo de pruebas.
  *
- * Esta prueba corre el camino entero: hoja vieja, setup(), y los seis paises
- * salen activos, con Ecuador y Costa Rica intactos en piloto.
+ * La tanda del 18 de septiembre saco seis paises y la del 20 saco los dos que
+ * quedaban, Ecuador y Costa Rica. Esta prueba corre el camino entero: hoja
+ * vieja, setup(), y los ocho salen activos.
  */
-test('la tanda de estados saca de piloto a los seis países en una hoja vieja', () => {
+test('las tandas de estados sacan de piloto a los ocho países en una hoja vieja', () => {
   const mundo = conSetup();
 
   const hoja = hojaPorNombre('Paises');
@@ -1110,12 +1137,15 @@ test('la tanda de estados saca de piloto a los seis países en una hoja vieja', 
   setup();
 
   const paises = leerPaises();
-  for (const codigo of ['MX', 'PE', 'AR', 'CL', 'UY', 'BR']) {
+  for (const codigo of ['MX', 'PE', 'AR', 'CL', 'UY', 'BR', 'EC', 'CR']) {
     assert.strictEqual(paisPorCodigo(paises, codigo).estado, 'activo',
       codigo + ' siguió en piloto después de correr setup');
   }
-  assert.strictEqual(paisPorCodigo(paises, 'EC').estado, 'piloto', 'Ecuador no debía salir de piloto');
-  assert.strictEqual(paisPorCodigo(paises, 'CR').estado, 'piloto', 'Costa Rica no debía salir de piloto');
+
+  // Y la tanda del 20 de septiembre también dejó escrito el separador de miles,
+  // que es el dato con el que Ecuador y Costa Rica salieron de piloto.
+  assert.strictEqual(paisPorCodigo(paises, 'EC').separador_miles, ',');
+  assert.strictEqual(paisPorCodigo(paises, 'CR').separador_miles, '.');
 });
 
 test('si Juan vuelve a poner un país en piloto, setup no lo saca otra vez', () => {

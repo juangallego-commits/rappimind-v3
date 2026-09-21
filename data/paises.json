@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-18",
+  "version": "2026-09-20",
   "fuente": "RappiMind_Config_Legal_por_Pais_4.xlsx",
   "paises": [
     {
@@ -138,7 +138,7 @@
       "pais_legal": "la República Argentina",
       "ley_aplicable": "las leyes de la República Argentina",
       "jurisdiccion": "los Tribunales Ordinarios en lo Comercial de la Ciudad Autónoma de Buenos Aires",
-      "entidad_vigilancia": "la Dirección Nacional de Defensa del Consumidor",
+      "entidad_vigilancia": "la Dirección Nacional de Defensa del Consumidor y Arbitraje del Consumo, o la autoridad que haga sus veces",
       "autoridad_datos": "la Agencia de Acceso a la Información Pública (AAIP)",
       "url_tc_plataforma": "https://legal.rappi.com.co/argentina/terminos-y-condiciones-rappi-2/",
       "url_privacidad": "https://legal.rappi.com.co/argentina/politica-de-privacidad-de-rappi/",
@@ -199,7 +199,7 @@
     {
       "codigo": "EC",
       "nombre": "Ecuador",
-      "estado": "piloto",
+      "estado": "activo",
       "idioma": "es",
       "modelos": [
         "cashback"
@@ -225,9 +225,7 @@
       "texto_persona": "persona natural",
       "texto_hora_local": "hora del Ecuador continental",
       "texto_derechos_datos": "tus derechos de acceso, rectificación y actualización, eliminación, oposición, portabilidad y suspensión del tratamiento de tus datos personales",
-      "por_confirmar_en_pruebas": [
-        "separador_miles"
-      ],
+      "por_confirmar_en_pruebas": [],
       "url_tc_turbo": "",
       "ruta_promos": "",
       "url_tc_pro": "",
@@ -273,7 +271,7 @@
     {
       "codigo": "CR",
       "nombre": "Costa Rica",
-      "estado": "piloto",
+      "estado": "activo",
       "idioma": "es",
       "modelos": [
         "cashback"
@@ -299,9 +297,7 @@
       "texto_persona": "persona física",
       "texto_hora_local": "hora local de la República de Costa Rica",
       "texto_derechos_datos": "tus derechos de acceso, rectificación y supresión de tus datos personales, y el de revocar tu consentimiento",
-      "por_confirmar_en_pruebas": [
-        "separador_miles"
-      ],
+      "por_confirmar_en_pruebas": [],
       "url_tc_turbo": "",
       "ruta_promos": "",
       "url_tc_pro": "",
@@ -390,6 +386,37 @@
         "CL.estado",
         "UY.estado",
         "BR.estado"
+      ]
+    },
+    {
+      "id": "estados-2026-09-20",
+      "nota": "Ecuador y Costa Rica salen de piloto. Juan lo aprobo el 20 de septiembre con el dato que faltaba: Ecuador escribe los miles con coma, porque los T&C publicados de Rappi Ecuador escriben \"USD 1,000\" y \"USD 230.00\"; Costa Rica con punto, porque el T&C de Creditos de Costa Rica, que cada documento nuestro cita, escribe \"mil (1.000) Creditos\". Con esto no queda ningun pais en pruebas. La columna estado la escribe esta tanda porque la hoja manda sobre la semilla.",
+      "campos": [
+        "EC.estado",
+        "EC.separador_miles",
+        "EC.por_confirmar_en_pruebas",
+        "CR.estado",
+        "CR.separador_miles",
+        "CR.por_confirmar_en_pruebas"
+      ]
+    },
+    {
+      "id": "brasil-2026-09-20",
+      "nota": "Los valores legales de Brasil, otra vez, sin cambiarlos. Brasil publica desde el 18 de septiembre y la confirmacion del encargo 01 puede no haber alcanzado a llegar a la hoja. Esta tanda vuelve a escribir en la pestana Paises lo que ya dice la semilla, incluido texto_derechos_datos, que va vacio a proposito por la decision 1 del encargo 01: promocao_br no lleva clausula de datos.",
+      "campos": [
+        "BR.pais_legal",
+        "BR.ley_aplicable",
+        "BR.jurisdiccion",
+        "BR.entidad_vigilancia",
+        "BR.autoridad_datos",
+        "BR.texto_derechos_datos"
+      ]
+    },
+    {
+      "id": "argentina-2026-09-20",
+      "nota": "La autoridad de consumo de Argentina. La dependencia firma con ese nombre sus disposiciones de 2026 y la salvaguarda final la cubre si la vuelven a renombrar, que ya paso varias veces. Juan lo decidio el 20 de septiembre.",
+      "campos": [
+        "AR.entidad_vigilancia"
       ]
     }
   ]
