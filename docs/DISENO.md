@@ -1,232 +1,242 @@
 # Sistema visual de RappiMind v3
 
-Para quien implemente: los tokens de la última sección son los nombres exactos que
-usa `src/client/estilos.css`.
+Reescrito el 21 de septiembre de 2026, al cerrar el cambio de identidad. Antes
+describía el sistema anterior, de dos naranjas y el par Poppins y Lato, que ya no
+existe. Lo que sobrevivió intacto es la idea de la hoja de papel y el
+razonamiento de contraste, que es justo lo que esta identidad vuelve a necesitar.
+
+Para quien implemente: los valores no están aquí. Están en `src/client/tokens/`,
+que son los cinco archivos que de verdad se sirven, y esta página explica por qué
+son esos y no otros. Si un número de aquí no coincide con el token, manda el
+token y esta página está vieja.
 
 ## La idea: el documento es una hoja de papel
 
-La pantalla tiene dos cosas y una sola protagonista.
+Esto no cambió, y es lo que el rebrand tenía que respetar.
 
-A la izquierda, las preguntas, sobre el fondo gris de la página. Sin tarjetas, sin
-sombras, separadas por líneas de un pixel. Deliberadamente sobrias.
+La pantalla tiene dos cosas y una sola protagonista. A la izquierda, las
+preguntas, sobre el fondo gris de la página. A la derecha, **una hoja de papel
+blanca**, y es el único elemento elevado de toda la aplicación. No es una tarjeta
+más: es el documento, y se lee como papel.
 
-A la derecha, **una hoja de papel blanca** con una sombra suave y un borde apenas
-visible. Es el único elemento elevado de toda la aplicación. No es una tarjeta más:
-es el documento, y se lee como papel.
+Lo que hace que esto no parezca una plantilla es cómo se comporta esa hoja. El
+T&C empieza escrito, con **huecos beige subrayados** donde falta un dato, como un
+formulario de llenar los espacios. Cada hueco dice qué pregunta lo llena: "el
+porcentaje", "el tope por pedido". Cuando el comercial responde, el hueco se
+rellena con la frase legal de verdad y **destella un instante**, y la hoja se
+desplaza hasta ahí.
 
-Lo que hace que esto no parezca una plantilla es cómo se comporta esa hoja. El T&C
-empieza escrito, con **espacios en blanco subrayados en gris** donde falta un dato,
-como un formulario de llenar los espacios. Cada espacio dice qué pregunta lo llena:
-"el porcentaje", "el tope por pedido". Cuando el comercial responde, el espacio se
-rellena con la frase legal de verdad y **destella un instante en naranja**, y la hoja
-se desplaza hasta ahí.
+El comercial nunca se pregunta para qué sirve lo que está escribiendo, porque lo
+ve convertirse en el documento mientras lo escribe. Esa es toda la idea. Nada más
+en la interfaz compite con ella, y por eso nada más lleva sombra.
 
-El comercial nunca se pregunta para qué sirve lo que está escribiendo, porque lo ve
-convertirse en el documento mientras lo escribe. Esa es toda la idea. Nada más en la
-interfaz compite con ella.
+Con la identidad nueva la hoja gana una señal más: **con la hoja vacía no hay
+sombra, solo el borde**. La sombra entra cuando hay contenido de verdad, y ese
+cambio es lo que marca que el documento arrancó.
 
-## Paleta
+## De dónde salen los colores
 
-Seis colores con nombre, más tres de estado. Los contrastes están calculados contra
-Papel `#FFFFFF` y Niebla `#F4F6F8`, con la fórmula de luminancia relativa de WCAG.
+De `docs/diseno/tokens/`, que es lo que entregó Claude Design a partir del Rappi
+Brand Book 2026, más `rappimind.css`, una quinta capa escrita para este traspaso
+que cubre lo que el design system no define: estados de control, niveles de aviso
+y estados de campaña.
 
-| Nombre | Hex | Para qué | Contraste |
-|---|---|---|---|
-| **Naranja Rappi** | `#FF441F` | La marca. Acento, resaltado del documento, corona, anillo de foco, la línea del paso activo. | 3.44:1 sobre Papel |
-| **Naranja acción** | `#D32F0F` | Botones primarios y enlaces. | 5.02:1 con texto blanco |
-| **Tinta** | `#16181D` | Texto principal y el cuerpo del documento. | 17.76:1 sobre Papel |
-| **Gris lápiz** | `#5D626D` | Ayudas, texto secundario, etiquetas. | 6.12:1 sobre Papel |
-| **Papel** | `#FFFFFF` | La hoja del documento y las superficies. | fondo |
-| **Niebla** | `#F4F6F8` | Fondo de la página. Gris frío, nunca crema. | fondo |
+Esa entrega **no es lo que se sirve**. Producción vive en `src/client/tokens/` y
+lleva seis valores cambiados, que son los seis arreglos de
+`docs/diseno/AUDITORIA_CONTRASTE.md`. Sin ellos, `npm run contraste` devuelve 1 con
+nueve pares por debajo del mínimo. La entrega original se queda intacta para poder
+volver a ella.
 
-| Estado | Hex | Para qué | Contraste |
-|---|---|---|---|
-| Verde confirma | `#0B7A52` | "NIT 900.111.222-1 válido" | 5.36:1 sobre Papel |
-| Rojo alerta | `#C4320A` | Errores de validación | 5.52:1 sobre Papel |
-| Rubor | `#FFEDE8` | Fondo del destello y de los avisos | Tinta encima da 15.67:1 |
+### El neón es dos colores, y la diferencia no es cosmética
 
-Auxiliares: Borde `#E2E6EB` para líneas decorativas, y Borde de control `#767E8C`
-para el contorno de campos y botones, que llega a 4.09:1 y cumple el mínimo de 3:1
-que WCAG pide para los bordes de un control.
+| Token | Valor | Para qué |
+|---|---|---|
+| `--rm-neon` | `#FF2526` | Lo que **no** lleva texto encima: bordes, anillos, viñetas |
+| `--rm-neon-texto` | `#D41D1E` | Lo que **sí** lo lleva: mensajes de error, enlaces, números |
 
-### Por qué hay dos naranjas
+El primero da 3.79:1 sobre papel, que es suficiente para un borde o un anillo,
+donde WCAG pide 3. El segundo es el mismo neón hundido, y da 5.26 sobre papel,
+4.82 sobre niebla, 4.70 sobre beige y 4.50 sobre celeste, que son los cuatro
+fondos donde aparece. Un mensaje de error de 13.5px es texto normal y le toca 4.5,
+así que con el neón plano no llegaba.
 
-Esto es lo único que me tomé la libertad de ajustar, y es por accesibilidad.
+### El gradiente es tres gradientes, y por la misma razón
 
-**Texto blanco sobre el naranja Rappi `#FF441F` da 3.44:1 y no pasa AA**, que exige
-4.5:1 para texto normal. Un botón primario naranja con texto blanco sería ilegible
-para bastante gente y no cumpliría la regla de contraste accesible que pediste.
+El gradiente de marca es `#FF7A4D → #FF2526 → #FF4583`. Con blanco encima da entre
+2.58:1 y 3.79:1, y **ese 3.79 es el máximo de todo el tramo**: una letra normal en
+blanco no llega a 4.5 en ningún punto. No es que falte afinar un tono.
 
-La salida es no forzarlo: `#FF441F` se queda como **color de marca y de acento**,
-donde 3:1 es suficiente porque no lleva texto encima (bordes, el destello, la corona,
-el anillo de foco, la línea del paso activo). Para lo que sí lleva texto encima
-(botones y enlaces) se usa `#D32F0F`, el mismo tono un paso más profundo, que da
-5.02:1 con blanco. Uno al lado del otro se leen como el mismo naranja.
+| Token | Para qué |
+|---|---|
+| `--rm-grad` | Donde no hay nada encima |
+| `--rm-grad-boton` | El botón primario, recortado al 17% del tramo |
+| `--rm-grad-texto` | Donde hay algo encima y no puede crecer de tamaño |
 
-Si prefieres el naranja exacto en los botones, la alternativa que sí cumple es texto
-Tinta sobre `#FF441F` (5.16:1). Se ve menos convencional para un botón primario, pero
-es tu marca y es tu decisión. Está anotado para mañana.
+El botón primario sale por el umbral de texto grande, que WCAG baja a 3:1 desde
+18.66px en negrita: su texto va a **19px en peso 700** y el gradiente **arranca en
+el 17%**, que es donde el blanco cruza ese 3:1. Los dos números van juntos; bajar
+el tamaño o correr el recorte rompe la cuenta.
 
-## Tipografía
+Eso sirve donde el texto puede crecer. La píldora de "Publicado" va a 13px dentro
+de una tabla y no puede, así que lleva `--rm-grad-texto`: el mismo gradiente con
+las tres paradas hundidas hasta que el blanco pasa 4.5:1 en **todo** el tramo. El
+peor punto da 4.62:1, y conserva la señal, que es que Publicado sea el único
+estado con gradiente.
 
-**Poppins** 600 para títulos, botones y la marca. **Lato** 400 y 700 para todo lo
-demás, incluido el cuerpo del documento.
+## La letra
 
-| Uso | Familia | Tamaño | Interlineado |
-|---|---|---|---|
-| Título de pantalla | Poppins 600 | 28px (23px en celular) | 1.2 |
-| Pregunta | Poppins 600 | 21px (19px en celular) | 1.3 |
-| Título de sección | Poppins 600 | 17px | 1.35 |
-| Cuerpo y campos | Lato 400 | 16px | 1.55 |
-| Ayuda de una línea | Lato 400 | 14px | 1.5 |
-| Documento | Lato 400 | 15px | 1.65 |
-| Etiqueta pequeña | Lato 700 | 13px | 1.4 |
+Dos familias, y la separación es mecánica y no de gusto.
 
-Nunca en mayúsculas sostenidas. Las etiquetas se distinguen por peso y color, no por
-gritar.
+**`--rm-display` es PP Object Sans**, y **solo vale en peso 900**. De esa familia
+se sirve una sola cara, la Heavy, incrustada en base64 dentro de la hoja porque
+Apps Script no sirve archivos del repositorio. Dentro de una familia, cuando el
+peso pedido no existe el navegador elige el más cercano que sí exista: si esa
+familia estuviera en la pila del cuerpo, pedir 400 devolvería la de 900 y la
+aplicación entera saldría en Heavy sin que nada fallara. Lo cuida la prueba `una
+familia de display solo se usa en peso 900`, que mira quién la declara **y quién
+la hereda**.
 
-## Espaciado y radios
+**`--rm-texto-familia` es Archivo**, variable de 400 a 900, desde Google Fonts.
+Cubre el cuerpo, los títulos de sección, los botones y las etiquetas.
 
-Escala de espaciado en múltiplos de 4: `4, 8, 12, 16, 24, 32, 48, 64`. Nada fuera de
-esa escala.
+Por qué solo una cara de la marca: los cuatro pesos pesan 89,8 KB en woff2 y
+119,7 KB en base64, y el base64 es la única parte de la carga que **no se
+comprime**, mientras el resto baja cuatro a uno con gzip. Sobre lo que de verdad
+viaja, los cuatro costaban un 42,9% más en cada carga, y Apps Script arma el HTML
+con `doGet` en cada petición y no lo cachea. Con una sola cara cuesta un 10,4%, y
+la primera visita pesa **menos** que antes del cambio, porque Archivo variable son
+34 KB contra los 61 KB que pesaban Lato y Poppins juntos. Los números están en
+`docs/diseno/MEDICION_FUENTES.md` y la decisión la tomó Juan con ellos delante.
 
-Radios: `6px` para campos y botones, `10px` para paneles, `14px` para la hoja del
-documento y las hojas deslizables. Un radio por tamaño de cosa, no uno por capricho.
+Los titulares (`h1`, `h2` y la marca) van en la letra de marca, en peso 900. Como
+el contrato de accesibilidad exige un `h1` por pantalla dentro de `#app`, la letra
+de marca aparece en las 48 pantallas sin incrustar ni un peso más.
 
-## Componentes
+La escala de pesos que la hoja usa es 400, 500, 600, 700, 800 y 900. Los cuatro
+del brand book son los de PP Object Sans; el 600 y el 800 los pide la
+especificación de estados y los sirve Archivo, que es variable. Lo cuida la prueba
+`los pesos de letra que usa la hoja están en la escala declarada`, que no prohíbe
+nada: solo obliga a que un peso nuevo entre a propósito.
 
-Para cada uno: reposo, cursor encima, foco de teclado, deshabilitado y error.
+## Los tres niveles de aviso
 
-**Botón primario.** Fondo Naranja acción, texto blanco, Poppins 600, 13px de alto
-interno, radio 6. Encima: `#B82A0C`. Foco: anillo de 3px Naranja Rappi con 2px de
-separación. Deshabilitado: fondo `#E2E6EB`, texto `#767E8C`, cursor no permitido, y
-**se ve deshabilitado de verdad**, no solo se comporta así. Sin flecha al final del
-texto: el botón dice lo que pasa ("Generar T&C", "Guardar link publicado").
+Se distinguen por **estructura**, no por color de borde, así que se reconocen
+aunque se vean en blanco y negro. El brand book prohíbe el borde izquierdo de
+color, que era lo único que separaba a los dos primeros.
 
-**Botón secundario.** Fondo transparente, borde 1px Borde de control, texto Tinta.
-Encima: fondo Niebla. Mismo anillo de foco.
+| Nivel | Cómo se ve |
+|---|---|
+| Informativo | Panel celeste. Sin adorno |
+| Serio | Panel beige, con una regla de 3px de gradiente en el borde **superior** |
+| Error de campo | Sin panel. Borde de 2px en el campo y el mensaje suelto debajo |
 
-**Campo de texto.** Borde 1px Borde de control, radio 6, 12px de padding, fondo
-Papel. Foco: borde Naranja Rappi más anillo de 3px. Error: borde Rojo alerta y el
-mensaje debajo en Rojo alerta. Válido: una marca de verificación verde a la derecha
-y el texto confirmando en Verde confirma.
+La regla superior se hace con dos fondos superpuestos, no con un elemento nuevo,
+porque el JavaScript no emite ninguno.
 
-**Campo numérico con moneda.** El símbolo va dentro del campo, a la izquierda, en
-Gris lápiz. Debajo, siempre, la línea "Así queda en tu T&C:" con la frase real.
+**El título del aviso serio no va en caja alta**, y eso se aparta de la
+especificación a propósito (decisión 112). La regla se pensó para una etiqueta
+corta, y los siete títulos que la aplicación pone ahí son frases: "Antes de usar
+este enlace, confirma con Legal", "Antes de lanzar: ¿tu dinámica tiene azar?". Una
+frase de ocho palabras en mayúsculas no se lee, se escanea, y estas son
+advertencias legales.
 
-**Grupo de opciones grandes.** Cada opción es un bloque del ancho completo con borde
-1px, radio 6, el título en Poppins 600 y una línea de explicación en Gris lápiz
-debajo. La elegida lleva borde Naranja Rappi de 2px y fondo Rubor. Se navega con las
-flechas del teclado. Una opción deshabilitada (como el desempate igual al criterio
-del ganador) va con opacidad 0.5 y **la razón visible**, no escondida.
+**Un solo pastel por pieza.** Si coinciden dos avisos, el de mayor prioridad se
+queda con su color y el otro baja a tarjeta blanca. La prioridad es error, serio,
+informativo. En CSS eso solo se puede cuando los dos son hermanos y el serio va
+primero; cuando no, se quedan los dos pasteles, y es un límite conocido.
 
-**Casillas.** Cuadro de 20px, borde Borde de control, radio 4. Marcada: fondo Naranja
-acción con un visto blanco en SVG. Se usan cuando las opciones no son excluyentes.
+## Los estados de una campaña
 
-**Barra de progreso por pasos.** Una fila de nombres de paso con una línea de 2px
-debajo. El paso hecho lleva la línea en Naranja acción, el actual en Naranja Rappi y
-con el nombre en Tinta, y el que falta en Borde con el nombre en Gris lápiz. Sin
-números dentro de círculos.
+Ordenados por **peso visual**, no por matiz, así que Publicado se encuentra de un
+vistazo en una lista larga y el sistema aguanta un quinto estado sin inventar
+colores.
 
-**Aviso.** Fondo Rubor, una barra de 3px a la izquierda en Naranja Rappi, texto
-Tinta. Sin icono decorativo. El aviso legal de azar usa el mismo patrón pero con el
-título en Poppins 600.
+| Estado | Cómo se ve |
+|---|---|
+| Publicado | Gradiente hundido, letra blanca. Es el único con gradiente |
+| Generado | Beige, letra tinta |
+| Borrador | Niebla, letra gris |
+| Vencido | Transparente con borde |
 
-**Glosario.** El término va con subrayado punteado y `cursor: help`. Al pasar el
-cursor o tocar, aparece un panel de 260px con fondo Tinta y texto blanco, radio 6.
-En celular se abre al tocar y se cierra al tocar fuera. Funciona con teclado.
+El verde salió: no es de marca, y era lo único que distinguía publicada de
+generada. Borrador y Vencido están escritos aunque hoy no se vean, porque el
+historial solo emite dos: emitir los otros dos es JavaScript y producto, no piel.
 
-**Hoja deslizable (celular).** Entra desde abajo, radio 14 arriba, fondo Papel, con
-un asa de 36x4 en Borde. La abre el botón fijo "Ver cómo va mi T&C". Se cierra con
-Escape, con el botón y tocando fuera.
+## La barra de progreso
 
-## Movimiento
+Una sola fila, siempre, con un segmento por paso y la barra encima de la etiqueta.
+La aplicación muestra entre cinco y nueve pasos según el tipo de campaña.
 
-Solo como respuesta a algo que hizo el usuario:
+> Las etiquetas se ven si hay **seis pasos o menos** y cada segmento mide **88px o
+> más**. Si falla cualquiera de las dos, se caen **todas a la vez**, y el nombre
+> del paso queda en la línea de encima, que dice "Paso 7 de 9 · Participantes".
 
-- El destello del fragmento que acaba de cambiar: 900ms de fondo Rubor que se apaga.
-- El desplazamiento de la hoja hasta esa frase: `scroll-behavior: smooth`.
-- La apertura de una ayuda o del glosario: 160ms.
-- La hoja deslizable del celular: 220ms.
+La mitad del número de pasos sale con `:has()`. La de los 88px **no se puede medir
+con una consulta de ancho de ventana**, porque la barra vive en una columna cuyo
+ancho lo decide la rejilla: en escritorio es media pantalla y en el filtro es la
+página angosta. Por eso se mide con `@container`, sobre el ancho real de la barra.
 
-Nada se mueve solo. Nada pulsa, nada rebota, nada aparece por aparecer.
-
-Todo esto va dentro de `@media (prefers-reduce-motion: reduce)` con duración cero. El
-destello se vuelve un borde estático que se queda hasta el siguiente cambio, para que
-quien no puede ver animaciones tampoco pierda la información.
+Cuando las etiquetas se caen se esconden con **sangría, no con `display: none`**:
+así el botón de cada paso conserva su nombre accesible y quien navega con teclado
+sigue pudiendo volver a un paso. Y el alto del blanco de clic lo pone el relleno,
+no una altura fija: la barra puede verse de 4px sin que el blanco mida 4px.
 
 ## Lo que no se hace
 
-Esto es tan importante como lo anterior, y está en la lista porque es lo primero que
-aparece cuando uno no piensa:
+Es lo primero que aparece cuando uno no piensa.
 
-1. **Tarjetas idénticas con la misma sombra.** Hay una sola superficie elevada en toda
-   la aplicación: la hoja del documento. Todo lo demás se separa con líneas de 1px.
-2. **Etiquetas en mayúsculas sostenidas.** Ninguna.
-3. **Flechas al final de los botones.** El texto del botón ya dice qué pasa.
-4. **Degradados decorativos.** Todos los fondos son planos.
-5. **Emojis como iconos.** Los iconos son SVG de un solo trazo, 20px, `currentColor`.
+1. **Tarjetas idénticas con la misma sombra.** Hay una sola superficie elevada en
+   toda la aplicación: la hoja del documento.
+2. **Ningún estado se comunica con `opacity`.** Bajar la opacidad arrastra el
+   texto por debajo del contraste mínimo. Lo apagado va con fondo plano y letra
+   apagada.
+3. **Ninguna superficie del color exacto del fondo de página.** Un control en
+   niebla sobre una página en niebla deja de leerse como control. Pasó dos veces
+   en este cambio, con el botón deshabilitado y con la opción apagada.
+4. **Mayúsculas sostenidas solo en etiquetas cortas**, y son las cabeceras de
+   tabla y la marca de "Opcional". Nunca en una frase.
+5. **Flechas al final de los botones.** El texto del botón ya dice qué pasa.
+6. **Emojis como iconos.** Los iconos son SVG de un solo trazo, `currentColor`. El
+   brand book no define un sistema de iconos (su propio readme dice que usa Lucide
+   como sustituto provisional), así que los de RappiMind se quedan.
+7. **Copiar un número del prototipo sin mirar a qué escala está.** El hueco del
+   documento está dibujado a 10px en el prototipo, pero ahí el documento entero
+   está a 12px: es una maqueta. Sobre la hoja real, que va a 15px, el equivalente
+   es `0.85em`.
 
 ## La corona
 
-Anna pidió conservarla. Va sobre la "M" de RappiMind, pequeña, en Naranja Rappi, como
-si la palabra la llevara puesta. No es un logo aparte ni un adorno centrado: es parte
-de la palabra, y por eso no se vuelve cursi.
+Se conserva. Va sobre la "M" de RappiMind, pequeña, en el neón, como si la palabra
+la llevara puesta. No es un logo aparte ni un adorno centrado: es parte de la
+palabra, y por eso no se vuelve cursi. En pantallas muy pequeñas no se quita: se
+reduce.
 
-```html
-<svg class="corona" viewBox="0 0 24 14" aria-hidden="true" focusable="false">
-  <path d="M2 12.5 L2 4 L6.5 7.5 L12 1.5 L17.5 7.5 L22 4 L22 12.5 Z"
-        fill="currentColor" stroke="currentColor" stroke-width="1.6"
-        stroke-linejoin="round"/>
-</svg>
+El lockup de la marca todavía no entra, y no es por el peso: la marca de la barra
+superior es texto en el DOM, y el SVG del lockup no es autosuficiente. Está en la
+decisión 110.
+
+## Cómo se comprueba que un cambio no rompió nada
+
+```
+npm test
+npm run contraste
+npm run demo
+export NODE_PATH=/opt/node22/lib/node_modules
+export PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
+node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js
+node .claude/skills/flujo-y-ux/scripts/recorrer-en-portugues.js
+npm run front
 ```
 
-Se pinta con `color: var(--naranja-marca)` y se coloca con `position:absolute` sobre
-la letra, a 14px de ancho. En pantallas muy pequeñas no se quita: se reduce a 11px.
+`npm run contraste` es una puerta, no un informe: devuelve 1 mientras quede un par
+por debajo de su mínimo, y la lista de qué va encima de qué es lo único escrito a
+mano, porque eso no se deduce de un archivo de tokens. Si aparece un par nuevo, se
+agrega ahí. **Un par sin nota que no llegue es una falla.**
 
-## Tokens CSS
-
-```css
-:root {
-  /* Paleta */
-  --naranja-marca: #FF441F;
-  --naranja-accion: #D32F0F;
-  --naranja-presionado: #A82409;
-  --tinta: #16181D;
-  --gris-lapiz: #5D626D;
-  --papel: #FFFFFF;
-  --niebla: #F4F6F8;
-
-  /* Estados */
-  --verde-confirma: #0B7A52;
-  --verde-palido: #E6F4EE;
-  --rojo-alerta: #C4320A;
-  --rojo-palido: #FDECE6;
-  --rubor: #FFEDE8;
-
-  /* Líneas */
-  --borde: #E2E6EB;
-  --borde-control: #767E8C;
-
-  /* Tipografía */
-  --titulos: 'Poppins', system-ui, sans-serif;
-  --cuerpo: 'Lato', system-ui, sans-serif;
-
-  /* Espaciado */
-  --e1: 4px;  --e2: 8px;  --e3: 12px; --e4: 16px;
-  --e5: 24px; --e6: 32px; --e7: 48px; --e8: 64px;
-
-  /* Radios */
-  --r-control: 6px;
-  --r-panel: 10px;
-  --r-hoja: 14px;
-
-  /* Elevación: una sola, la del documento */
-  --sombra-hoja: 0 1px 2px rgba(22, 24, 29, 0.05), 0 8px 24px rgba(22, 24, 29, 0.07);
-
-  /* Movimiento */
-  --t-rapido: 160ms;
-  --t-hoja: 220ms;
-  --t-destello: 900ms;
-}
-```
+Y algo que este cambio aprendió a golpes: el modo de falla de esta aplicación es
+silencioso. Un `@import` que Apps Script no resuelve, una `url()` relativa a un
+archivo del repositorio, un token que se renombra y deja sin color a
+`scripts/lib/front-documento.js`. Nada de eso lanza un error: la pantalla sale
+despintada y el síntoma aparece lejos de la causa. Por eso la concatenación de la
+hoja está escrita en un solo sitio, `scripts/lib/hoja-completa.js`, y por eso las
+pruebas leen por ahí. Ver la skill `frontera-apps-script`.
