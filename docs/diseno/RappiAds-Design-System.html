@@ -1,0 +1,167 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<link rel="stylesheet" href="styles.css">
+<script src="doc-page.js"></script>
+<style>
+*{-webkit-print-color-adjust:exact;print-color-adjust:exact;box-sizing:border-box}
+doc-page:not(:defined){visibility:hidden}
+body{font-family:'PPObjectSans',sans-serif;color:#0A0A0A;margin:0}
+h1{font-size:30px;font-weight:900;letter-spacing:-0.04em;margin:0 0 4px;line-height:1}
+h2{font-size:18px;font-weight:900;letter-spacing:-0.02em;margin:0 0 14px;padding-bottom:8px;border-bottom:2px solid #0A0A0A}
+.sub{font-size:13px;font-weight:500;color:rgba(0,0,0,.5);margin:0}
+.section{margin-bottom:30px}
+.label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(0,0,0,.4);margin:0 0 8px}
+.grid{display:flex;gap:8px;flex-wrap:wrap}
+.sw{border-radius:8px;padding:10px;height:82px;display:flex;flex-direction:column;justify-content:flex-end;min-width:96px;flex:1}
+.sw .n{font-size:10px;font-weight:900}
+.sw .h{font-size:9px;font-weight:600;opacity:.75;font-variant-numeric:tabular-nums}
+.row{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.item{display:flex;flex-direction:column;gap:4px;align-items:center}
+.item img{border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.12);object-fit:contain;background:#eee}
+.name{font-size:9px;font-weight:900;text-align:center}
+.dims{font-size:8px;font-weight:700;color:#FF2526;text-align:center}
+.spec{font-size:8px;font-weight:500;color:rgba(0,0,0,.4);text-align:center;max-width:96px}
+.type-row{display:flex;align-items:baseline;gap:14px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.08)}
+.type-row .meta{font-size:9px;font-weight:700;color:rgba(0,0,0,.4);width:120px;flex-shrink:0}
+table{width:100%;border-collapse:collapse;font-size:10px}
+th{text-align:left;font-weight:700;color:rgba(0,0,0,.4);text-transform:uppercase;letter-spacing:.06em;font-size:8px;padding:6px 8px;border-bottom:1.5px solid #0A0A0A}
+td{padding:6px 8px;border-bottom:1px solid rgba(0,0,0,.07);vertical-align:top}
+td b{font-weight:900}
+.pill{display:inline-block;padding:2px 8px;border-radius:9999px;font-size:9px;font-weight:700}
+.es{background:rgba(255,37,38,.1);color:#FF2526}
+.pt{background:rgba(36,143,99,.12);color:#248F63}
+.chip{padding:3px 9px;border-radius:9999px;font-size:9px;font-weight:700;background:#0A0A0A;color:#fff}
+.note{padding:8px 12px;border-radius:8px;font-size:10px;font-weight:600;margin-top:10px}
+.logo-strip{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:14px;background:#F4F0FC;border-radius:10px}
+.logo-strip img{height:34px;object-fit:contain}
+.cover{background:linear-gradient(-45deg,#FF7A4D 0%,#FF2526 50%,#FF4583 100%);color:#fff;border-radius:14px;padding:40px 34px;margin-bottom:30px}
+.cover h1{font-size:52px;color:#fff}
+.cover p{font-size:15px;font-weight:600;opacity:.92;margin:10px 0 0}
+</style>
+</head><body>
+<doc-page size="a4" margin="0.55in">
+
+<div class="cover">
+  <h1>RappiAds</h1>
+  <p>Design System · Brand Book 2026 · Neón_805 Monetization</p>
+  <p style="opacity:.8;font-weight:500;font-size:12px">Colores · Tipografía · Componentes · Formatos · Firmas de país</p>
+</div>
+
+<div class="section">
+  <h2>01 · Marca</h2>
+  <div class="label">Logos maestros y sub-marcas</div>
+  <div class="logo-strip">
+    <img src="assets/logo/rappi-logo.png">
+    <img src="assets/logo/logo-turbo.png">
+    <img src="assets/logo/logo-pro.png">
+    <img src="assets/logo/logo-soyrappi.png">
+    <img src="assets/logo/logo-rappitravel.png">
+    <img src="assets/logo/rappi-bigote.png">
+  </div>
+</div>
+
+<div class="section">
+  <h2>02 · Color</h2>
+  <div class="label">Neon Gradient — comunicación externa (siempre gradiente, nunca plano)</div>
+  <div class="grid">
+    <div class="sw" style="background:linear-gradient(-45deg,#FF7A4D,#FF2526 50%,#FF4583);color:#fff"><span class="n">Neon 45°</span><span class="h">#FF7A4D → #FF2526 → #FF4583</span></div>
+    <div class="sw" style="background:#FF7A4D;color:#fff"><span class="n">Naranja</span><span class="h">#FF7A4D</span></div>
+    <div class="sw" style="background:#FF2526;color:#fff"><span class="n">Rojo</span><span class="h">#FF2526</span></div>
+    <div class="sw" style="background:#FF4583;color:#fff"><span class="n">Rosa</span><span class="h">#FF4583</span></div>
+  </div>
+  <div class="label" style="margin-top:14px">Paleta secundaria — own media / in-app</div>
+  <div class="grid">
+    <div class="sw" style="background:#D9F1FF"><span class="n">Celeste</span><span class="h">#D9F1FF</span></div>
+    <div class="sw" style="background:#E5DCFF"><span class="n">Morado</span><span class="h">#E5DCFF</span></div>
+    <div class="sw" style="background:#F4DFF6"><span class="n">Rosado</span><span class="h">#F4DFF6</span></div>
+    <div class="sw" style="background:#F4F0FC"><span class="n">Lavanda</span><span class="h">#F4F0FC</span></div>
+    <div class="sw" style="background:#FFF0DD"><span class="n">Beige</span><span class="h">#FFF0DD</span></div>
+  </div>
+  <div class="label" style="margin-top:14px">Sub-marcas y neutrales</div>
+  <div class="grid">
+    <div class="sw" style="background:#248F63;color:#fff"><span class="n">Turbo</span><span class="h">#248F63</span></div>
+    <div class="sw" style="background:#00453E;color:#fff"><span class="n">Turbo Dark</span><span class="h">#00453E</span></div>
+    <div class="sw" style="background:#E8A24C;color:#fff"><span class="n">PRO Gold</span><span class="h">#E8A24C</span></div>
+    <div class="sw" style="background:#2A2B2B;color:#fff"><span class="n">PRO Black</span><span class="h">#2A2B2B</span></div>
+    <div class="sw" style="background:#0A0A0A;color:#fff"><span class="n">Ink</span><span class="h">#0A0A0A</span></div>
+    <div class="sw" style="background:#FAEEDA"><span class="n">Cream</span><span class="h">#FAEEDA</span></div>
+  </div>
+</div>
+
+<div class="section" style="break-before:page">
+  <h2>03 · Tipografía</h2>
+  <div class="label">PP Object Sans — Regular · Medium · Bold · Heavy</div>
+  <div class="type-row"><span class="meta">Display · 900</span><span style="font-size:44px;font-weight:900;letter-spacing:-0.045em;line-height:.9">Pídelo por Rappi</span></div>
+  <div class="type-row"><span class="meta">H1 · 900</span><span style="font-size:30px;font-weight:900;letter-spacing:-0.03em">Todo, rápido</span></div>
+  <div class="type-row"><span class="meta">H2 · 900</span><span style="font-size:22px;font-weight:900">Sección de contenido</span></div>
+  <div class="type-row"><span class="meta">H3 · 700</span><span style="font-size:17px;font-weight:700">Sub-encabezado</span></div>
+  <div class="type-row"><span class="meta">Body · 500</span><span style="font-size:14px;font-weight:500">Cuerpo de texto en Medium, interlineado 1.7 para lectura cómoda.</span></div>
+  <div class="type-row"><span class="meta">Meta · 600</span><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase">Eyebrow / Meta</span></div>
+</div>
+
+<div class="section">
+  <h2>04 · Firmas de país</h2>
+  <table>
+    <tr><th>Región</th><th>Firma</th><th>Idioma</th></tr>
+    <tr><td>🇲🇽 México · 🇨🇱 Chile</td><td><b>Pídelo por Rappi</b></td><td><span class="pill es">ES</span></td></tr>
+    <tr><td>🇨🇴 Colombia · 🇵🇪 Perú · 🇪🇨 Ecuador</td><td><b>Pide un Rappi</b></td><td><span class="pill es">ES</span></td></tr>
+    <tr><td>🇦🇷 Argentina · 🇺🇾 Uruguay</td><td><b>Pedí un Rappi</b></td><td><span class="pill es">ES · voseo</span></td></tr>
+    <tr><td>🇧🇷 Brasil</td><td><b>Pede no Rappi</b></td><td><span class="pill pt">PT-BR</span></td></tr>
+  </table>
+  <div class="note" style="background:#FFF0DD">Firma obligatoria como cierre en toda pieza externa. Brasil opera en portugués (PT-BR) con las mismas reglas de voz de marca.</div>
+</div>
+
+<div class="section" style="break-before:page">
+  <h2>05 · Formatos — Own Media</h2>
+  <div class="row">
+    <div class="item"><img src="assets/templates/struct-banner-home.png" style="height:48px"><span class="name">Banner Home</span><span class="dims">320×136 · 3×</span></div>
+    <div class="item"><img src="assets/templates/struct-banner-filtro.png" style="height:48px"><span class="name">Banner Filtro</span><span class="dims">960×408 · 3×</span></div>
+    <div class="item"><img src="assets/templates/struct-inapp.png" style="height:88px"><span class="name">Inapp Card</span><span class="dims">300×400 · 3×</span></div>
+    <div class="item"><img src="assets/templates/struct-splash.png" style="height:88px"><span class="name">Splash</span><span class="dims">390×844 · 3×</span></div>
+    <div class="item"><img src="assets/templates/struct-whatsapp.png" style="height:48px"><span class="name">WhatsApp</span><span class="dims">600×300</span></div>
+  </div>
+  <div class="note" style="background:#F4F0FC;color:#0A0A0A">3 estructuras por formato — E1: logo izq. de toda la info · E2: logo izq. del deal · E3: deal en 2 líneas, logo al final</div>
+</div>
+
+<div class="section">
+  <div class="label">Merchandising — In-App Branding (arte 90–100% aliado)</div>
+  <table>
+    <tr><th>Formato</th><th>Dimensiones</th><th>Arte</th><th>Copy</th></tr>
+    <tr><td><b>Headline Banner</b></td><td>695×155 px · Logo 320×320</td><td>90% aliado</td><td>Titular 20 · Sec 30 chars · máx 3 prod</td></tr>
+    <tr><td><b>Category/Subcategory</b></td><td>695×155 / 474×155 px</td><td>90% aliado</td><td>Titular 20 · Sec 30 chars · máx 3 prod</td></tr>
+    <tr><td><b>Turbo Banner</b></td><td>654×272 px · Header 684×228</td><td>100% aliado</td><td>~75 chars · header sin texto · CTA · máx 6</td></tr>
+    <tr><td><b>Pop Out Corridor</b></td><td>981×240 px · Header 684×228</td><td>100% aliado</td><td>Corridor 30 · banner 75 chars · máx 6</td></tr>
+  </table>
+</div>
+
+<div class="section" style="break-before:page">
+  <h2>06 · Formatos — Paid Media</h2>
+  <div class="row">
+    <div class="item"><img src="assets/templates/struct-ig-1x1.png" style="height:74px"><span class="name">IG / Meta 1:1</span><span class="dims">1200×1200</span></div>
+    <div class="item"><img src="assets/templates/struct-ig-4x5.png" style="height:88px"><span class="name">IG / UAC 4:5</span><span class="dims">1200×1500</span></div>
+    <div class="item"><img src="assets/templates/struct-ig-stories.png" style="height:100px"><span class="name">Stories 9:16</span><span class="dims">1080×1920</span></div>
+    <div class="item"><img src="assets/templates/paid-tiktok.png" style="height:100px"><span class="name">TikTok 9:16</span><span class="dims">1080×1920</span></div>
+    <div class="item"><img src="assets/templates/paid-x.png" style="height:74px"><span class="name">X-Twitter</span><span class="dims">1200×1200</span></div>
+    <div class="item"><img src="assets/templates/paid-uac.png" style="height:56px"><span class="name">UAC 16:9</span><span class="dims">1200×628</span></div>
+    <div class="item"><img src="assets/templates/paid-programatica.png" style="height:74px"><span class="name">Programática</span><span class="dims">300×250 · 728×90…</span></div>
+  </div>
+  <div class="note" style="background:#FFF0DD;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <span style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(0,0,0,.5)">Obligatorio en paid:</span>
+    <span style="font-weight:900;background:linear-gradient(135deg,#FF7A4D,#FF2526 55%,#FF4583);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Fondo Neon</span>
+    <span style="font-weight:700">· Logo Rappi · Firma de país · Legal · Área segura</span>
+  </div>
+</div>
+
+<div class="section">
+  <h2>07 · Voz de marca — El Amigo</h2>
+  <table>
+    <tr><th>Principio</th><th>Regla</th></tr>
+    <tr><td><b>Directo y cálido</b></td><td>Beneficio primero, en máx. 7 palabras</td></tr>
+    <tr><td><b>Tuteo siempre</b></td><td>Tú (ES) / você (PT-BR) — nunca usted</td></tr>
+    <tr><td><b>CTAs</b></td><td>Máximo 3 palabras</td></tr>
+    <tr><td><b>Sin emoji</b></td><td>En campaña, OOH, UX ni email</td></tr>
+    <tr><td><b>Puntuación</b></td><td>Sin signos dobles ni exclamaciones excesivas</td></tr>
+  </table>
+</div>
+
+</doc-page>
+</body></html>

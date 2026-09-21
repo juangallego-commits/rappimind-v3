@@ -1,0 +1,7 @@
+/* RappiAds Design System · Global Stylesheet
+   Import this file in any consuming project. */
+
+@import url('./tokens/fonts.css');
+@import url('./tokens/colors.css');
+@import url('./tokens/typography.css');
+@import url('./tokens/spacing.css');

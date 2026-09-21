@@ -1,0 +1,635 @@
+<!DOCTYPE html><html lang="es"><head>
+<style data-omelette-print-defaults>
+@media print {
+  @page { margin: 0.5in; }
+  h1, h2, h3, h4, h5, h6 { break-after: avoid; }
+  figure, table, pre, blockquote, img, svg, tr, [class~="card" i] { break-inside: avoid; }
+  img, svg { max-width: 100%; }
+  p { orphans: 3; widows: 3; }
+}
+</style><meta charset="UTF-8">
+<link rel="stylesheet" href="styles.css">
+<script src="doc-page.js"></script>
+<style>
+*{-webkit-print-color-adjust:exact;print-color-adjust:exact;box-sizing:border-box}
+doc-page:not(:defined){visibility:hidden}
+body{font-family:'PPObjectSans',sans-serif;color:#0A0A0A;margin:0}
+h1{font-size:30px;font-weight:900;letter-spacing:-0.04em;margin:0 0 4px;line-height:1}
+h2{font-size:18px;font-weight:900;letter-spacing:-0.02em;margin:0 0 14px;padding-bottom:8px;border-bottom:2px solid #0A0A0A}
+.sub{font-size:13px;font-weight:500;color:rgba(0,0,0,.5);margin:0}
+.section{margin-bottom:30px}
+.label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(0,0,0,.4);margin:0 0 8px}
+.grid{display:flex;gap:8px;flex-wrap:wrap}
+.sw{border-radius:8px;padding:10px;height:82px;display:flex;flex-direction:column;justify-content:flex-end;min-width:96px;flex:1}
+.sw .n{font-size:10px;font-weight:900}
+.sw .h{font-size:9px;font-weight:600;opacity:.75;font-variant-numeric:tabular-nums}
+.row{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.item{display:flex;flex-direction:column;gap:4px;align-items:center}
+.item img{border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.12);object-fit:contain;background:#eee}
+.name{font-size:9px;font-weight:900;text-align:center}
+.dims{font-size:8px;font-weight:700;color:#FF2526;text-align:center}
+.spec{font-size:8px;font-weight:500;color:rgba(0,0,0,.4);text-align:center;max-width:96px}
+.type-row{display:flex;align-items:baseline;gap:14px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.08)}
+.type-row .meta{font-size:9px;font-weight:700;color:rgba(0,0,0,.4);width:120px;flex-shrink:0}
+table{width:100%;border-collapse:collapse;font-size:10px}
+th{text-align:left;font-weight:700;color:rgba(0,0,0,.4);text-transform:uppercase;letter-spacing:.06em;font-size:8px;padding:6px 8px;border-bottom:1.5px solid #0A0A0A}
+td{padding:6px 8px;border-bottom:1px solid rgba(0,0,0,.07);vertical-align:top}
+td b{font-weight:900}
+.pill{display:inline-block;padding:2px 8px;border-radius:9999px;font-size:9px;font-weight:700}
+.es{background:rgba(255,37,38,.1);color:#FF2526}
+.pt{background:rgba(36,143,99,.12);color:#248F63}
+.chip{padding:3px 9px;border-radius:9999px;font-size:9px;font-weight:700;background:#0A0A0A;color:#fff}
+.note{padding:8px 12px;border-radius:8px;font-size:10px;font-weight:600;margin-top:10px}
+.logo-strip{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:14px;background:#F4F0FC;border-radius:10px}
+.logo-strip img{height:34px;object-fit:contain}
+.cover{background:linear-gradient(-45deg,#FF7A4D 0%,#FF2526 50%,#FF4583 100%);color:#fff;border-radius:14px;padding:40px 34px;margin-bottom:30px}
+.cover h1{font-size:52px;color:#fff}
+.cover p{font-size:15px;font-weight:600;opacity:.92;margin:10px 0 0}
+</style>
+</head><body>
+<doc-page size="a4" margin="0.55in">
+
+<div class="cover">
+  <h1>RappiAds</h1>
+  <p>Design System · Brand Book 2026 · Neón_805 Monetization</p>
+  <p style="opacity:.8;font-weight:500;font-size:12px">Colores · Tipografía · Componentes · Formatos · Firmas de país</p>
+</div>
+
+<div class="section">
+  <h2>01 · Marca</h2>
+  <div class="label">Logos maestros y sub-marcas</div>
+  <div class="logo-strip">
+    <img src="assets/logo/rappi-logo.png">
+    <img src="assets/logo/logo-turbo.png">
+    <img src="assets/logo/logo-pro.png">
+    <img src="assets/logo/logo-soyrappi.png">
+    <img src="assets/logo/logo-rappitravel.png">
+    <img src="assets/logo/rappi-bigote.png">
+  </div>
+</div>
+
+<div class="section">
+  <h2>02 · Color</h2>
+  <div class="label">Neon Gradient — comunicación externa (siempre gradiente, nunca plano)</div>
+  <div class="grid">
+    <div class="sw" style="background:linear-gradient(-45deg,#FF7A4D,#FF2526 50%,#FF4583);color:#fff"><span class="n">Neon 45°</span><span class="h">#FF7A4D → #FF2526 → #FF4583</span></div>
+    <div class="sw" style="background:#FF7A4D;color:#fff"><span class="n">Naranja</span><span class="h">#FF7A4D</span></div>
+    <div class="sw" style="background:#FF2526;color:#fff"><span class="n">Rojo</span><span class="h">#FF2526</span></div>
+    <div class="sw" style="background:#FF4583;color:#fff"><span class="n">Rosa</span><span class="h">#FF4583</span></div>
+  </div>
+  <div class="label" style="margin-top:14px">Paleta secundaria — own media / in-app</div>
+  <div class="grid">
+    <div class="sw" style="background:#D9F1FF"><span class="n">Celeste</span><span class="h">#D9F1FF</span></div>
+    <div class="sw" style="background:#E5DCFF"><span class="n">Morado</span><span class="h">#E5DCFF</span></div>
+    <div class="sw" style="background:#F4DFF6"><span class="n">Rosado</span><span class="h">#F4DFF6</span></div>
+    <div class="sw" style="background:#F4F0FC"><span class="n">Lavanda</span><span class="h">#F4F0FC</span></div>
+    <div class="sw" style="background:#FFF0DD"><span class="n">Beige</span><span class="h">#FFF0DD</span></div>
+  </div>
+  <div class="label" style="margin-top:14px">Sub-marcas y neutrales</div>
+  <div class="grid">
+    <div class="sw" style="background:#248F63;color:#fff"><span class="n">Turbo</span><span class="h">#248F63</span></div>
+    <div class="sw" style="background:#00453E;color:#fff"><span class="n">Turbo Dark</span><span class="h">#00453E</span></div>
+    <div class="sw" style="background:#E8A24C;color:#fff"><span class="n">PRO Gold</span><span class="h">#E8A24C</span></div>
+    <div class="sw" style="background:#2A2B2B;color:#fff"><span class="n">PRO Black</span><span class="h">#2A2B2B</span></div>
+    <div class="sw" style="background:#0A0A0A;color:#fff"><span class="n">Ink</span><span class="h">#0A0A0A</span></div>
+    <div class="sw" style="background:#FAEEDA"><span class="n">Cream</span><span class="h">#FAEEDA</span></div>
+  </div>
+</div>
+
+<div class="section" style="break-before:page">
+  <h2>03 · Tipografía</h2>
+  <div class="label">PP Object Sans — Regular · Medium · Bold · Heavy</div>
+  <div class="type-row"><span class="meta">Display · 900</span><span style="font-size:44px;font-weight:900;letter-spacing:-0.045em;line-height:.9">Pídelo por Rappi</span></div>
+  <div class="type-row"><span class="meta">H1 · 900</span><span style="font-size:30px;font-weight:900;letter-spacing:-0.03em">Todo, rápido</span></div>
+  <div class="type-row"><span class="meta">H2 · 900</span><span style="font-size:22px;font-weight:900">Sección de contenido</span></div>
+  <div class="type-row"><span class="meta">H3 · 700</span><span style="font-size:17px;font-weight:700">Sub-encabezado</span></div>
+  <div class="type-row"><span class="meta">Body · 500</span><span style="font-size:14px;font-weight:500">Cuerpo de texto en Medium, interlineado 1.7 para lectura cómoda.</span></div>
+  <div class="type-row"><span class="meta">Meta · 600</span><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase">Eyebrow / Meta</span></div>
+</div>
+
+<div class="section">
+  <h2>04 · Firmas de país</h2>
+  <table>
+    <tr><th>Región</th><th>Firma</th><th>Idioma</th></tr>
+    <tr><td>🇲🇽 México · 🇨🇱 Chile</td><td><b>Pídelo por Rappi</b></td><td><span class="pill es">ES</span></td></tr>
+    <tr><td>🇨🇴 Colombia · 🇵🇪 Perú · 🇪🇨 Ecuador</td><td><b>Pide un Rappi</b></td><td><span class="pill es">ES</span></td></tr>
+    <tr><td>🇦🇷 Argentina · 🇺🇾 Uruguay</td><td><b>Pedí un Rappi</b></td><td><span class="pill es">ES · voseo</span></td></tr>
+    <tr><td>🇧🇷 Brasil</td><td><b>Pede no Rappi</b></td><td><span class="pill pt">PT-BR</span></td></tr>
+  </table>
+  <div class="note" style="background:#FFF0DD">Firma obligatoria como cierre en toda pieza externa. Brasil opera en portugués (PT-BR) con las mismas reglas de voz de marca.</div>
+</div>
+
+<div class="section" style="break-before:page">
+  <h2>05 · Formatos — Own Media</h2>
+  <div class="row">
+    <div class="item"><img src="assets/templates/struct-banner-home.png" style="height:48px"><span class="name">Banner Home</span><span class="dims">320×136 · 3×</span></div>
+    <div class="item"><img src="assets/templates/struct-banner-filtro.png" style="height:48px"><span class="name">Banner Filtro</span><span class="dims">960×408 · 3×</span></div>
+    <div class="item"><img src="assets/templates/struct-inapp.png" style="height:88px"><span class="name">Inapp Card</span><span class="dims">300×400 · 3×</span></div>
+    <div class="item"><img src="assets/templates/struct-splash.png" style="height:88px"><span class="name">Splash</span><span class="dims">390×844 · 3×</span></div>
+    <div class="item"><img src="assets/templates/struct-whatsapp.png" style="height:48px"><span class="name">WhatsApp</span><span class="dims">600×300</span></div>
+  </div>
+  <div class="note" style="background:#F4F0FC;color:#0A0A0A">3 estructuras por formato — E1: logo izq. de toda la info · E2: logo izq. del deal · E3: deal en 2 líneas, logo al final</div>
+</div>
+
+<div class="section">
+  <div class="label">Merchandising — In-App Branding (arte 90–100% aliado)</div>
+  <table>
+    <tr><th>Formato</th><th>Dimensiones</th><th>Arte</th><th>Copy</th></tr>
+    <tr><td><b>Headline Banner</b></td><td>695×155 px · Logo 320×320</td><td>90% aliado</td><td>Titular 20 · Sec 30 chars · máx 3 prod</td></tr>
+    <tr><td><b>Category/Subcategory</b></td><td>695×155 / 474×155 px</td><td>90% aliado</td><td>Titular 20 · Sec 30 chars · máx 3 prod</td></tr>
+    <tr><td><b>Turbo Banner</b></td><td>654×272 px · Header 684×228</td><td>100% aliado</td><td>~75 chars · header sin texto · CTA · máx 6</td></tr>
+    <tr><td><b>Pop Out Corridor</b></td><td>981×240 px · Header 684×228</td><td>100% aliado</td><td>Corridor 30 · banner 75 chars · máx 6</td></tr>
+  </table>
+</div>
+
+<div class="section" style="break-before:page">
+  <h2>06 · Formatos — Paid Media</h2>
+  <div class="row">
+    <div class="item"><img src="assets/templates/struct-ig-1x1.png" style="height:74px"><span class="name">IG / Meta 1:1</span><span class="dims">1200×1200</span></div>
+    <div class="item"><img src="assets/templates/struct-ig-4x5.png" style="height:88px"><span class="name">IG / UAC 4:5</span><span class="dims">1200×1500</span></div>
+    <div class="item"><img src="assets/templates/struct-ig-stories.png" style="height:100px"><span class="name">Stories 9:16</span><span class="dims">1080×1920</span></div>
+    <div class="item"><img src="assets/templates/paid-tiktok.png" style="height:100px"><span class="name">TikTok 9:16</span><span class="dims">1080×1920</span></div>
+    <div class="item"><img src="assets/templates/paid-x.png" style="height:74px"><span class="name">X-Twitter</span><span class="dims">1200×1200</span></div>
+    <div class="item"><img src="assets/templates/paid-uac.png" style="height:56px"><span class="name">UAC 16:9</span><span class="dims">1200×628</span></div>
+    <div class="item"><img src="assets/templates/paid-programatica.png" style="height:74px"><span class="name">Programática</span><span class="dims">300×250 · 728×90…</span></div>
+  </div>
+  <div class="note" style="background:#FFF0DD;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <span style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(0,0,0,.5)">Obligatorio en paid:</span>
+    <span style="font-weight:900;background:linear-gradient(135deg,#FF7A4D,#FF2526 55%,#FF4583);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Fondo Neon</span>
+    <span style="font-weight:700">· Logo Rappi · Firma de país · Legal · Área segura</span>
+  </div>
+</div>
+
+<div class="section">
+  <h2>07 · Voz de marca — El Amigo</h2>
+  <table>
+    <tr><th>Principio</th><th>Regla</th></tr>
+    <tr><td><b>Directo y cálido</b></td><td>Beneficio primero, en máx. 7 palabras</td></tr>
+    <tr><td><b>Tuteo siempre</b></td><td>Tú (ES) / você (PT-BR) — nunca usted</td></tr>
+    <tr><td><b>CTAs</b></td><td>Máximo 3 palabras</td></tr>
+    <tr><td><b>Sin emoji</b></td><td>En campaña, OOH, UX ni email</td></tr>
+    <tr><td><b>Puntuación</b></td><td>Sin signos dobles ni exclamaciones excesivas</td></tr>
+  </table>
+</div>
+
+</doc-page>
+<script>
+(async () => {
+  if (!document.title || !document.title.trim()) document.title = "RappiAds-Design-System";
+  // rAF raced with a short timeout: inside a cross-origin iframe (PrintMode),
+  // rAF can be throttled or paused even while the tab is focused, which would
+  // hang the scroll loop and never reach print(). Same pattern as
+  // buildExportSettleScript (export/shared.ts).
+  var raf = function () {
+    return Promise.race([
+      new Promise(function (r) { requestAnimationFrame(r); }),
+      new Promise(function (r) { setTimeout(r, 50); }),
+    ]);
+  };
+  var t0 = performance.now();
+  var mark = function (phase) {
+    var ms = Math.round(performance.now() - t0);
+    console.info('[autoprint]', phase, ms + 'ms');
+    try { parent.postMessage({ __omelette_autoprint: { phase: phase, ms: ms } }, '*'); } catch (e) {}
+  };
+  mark('start');
+  // Prepend so page-supplied @page / break rules (deck-stage's margin:0,
+  // author CSS) keep source-order precedence over the baseline.
+  const baseCss = document.createElement('style');
+  baseCss.textContent = "@media print {\n  figure, table { break-inside: avoid; }\n  *, *::before, *::after {\n    print-color-adjust: exact; -webkit-print-color-adjust: exact;\n    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;\n    animation-delay: -99s !important; animation-duration: .001s !important;\n    animation-iteration-count: 1 !important; animation-fill-mode: both !important;\n    animation-play-state: running !important; transition-duration: 0s !important;\n  }\n}";
+  document.head.prepend(baseCss);
+  if (document.readyState === 'loading') {
+    await new Promise((r) => document.addEventListener('DOMContentLoaded', r, { once: true }));
+  }
+  let ds = document.querySelector('deck-stage');
+  // whenDefined never resolves when nothing registers the element, so only
+  // await it when a <deck-stage> tag exists (and race a timeout regardless).
+  if (ds && !customElements.get('deck-stage')) {
+    try {
+      await Promise.race([
+        customElements.whenDefined('deck-stage'),
+        new Promise((r) => setTimeout(r, 3000)),
+      ]);
+    } catch (e) {}
+    ds = document.querySelector('deck-stage');
+  }
+  // dc-runtime assigns window.DCLogic at init and mounts into #dc-root on
+  // DOMContentLoaded; settle on that subtree so React has rendered before
+  // print(). Non-DC pages fall through to weighing body.
+  const isDc = !ds && 'DCLogic' in window;
+  const settleRoot = ds || (isDc ? document.getElementById('dc-root') : null) || document.body;
+  if (settleRoot) {
+    // Weigh only content children — skip script/style/template so inline
+    // Babel/CSS doesn't register as stable "content" before the framework
+    // has mounted anything.
+    const MEDIA = 'img,svg,canvas,video,picture,iframe,embed,object';
+    const weigh = () => {
+      let text = 0, media = 0;
+      for (const c of settleRoot.children) {
+        const t = c.tagName;
+        if (t === 'SCRIPT' || t === 'STYLE' || t === 'TEMPLATE') continue;
+        text += (c.textContent || '').trim().length;
+        media += c.querySelectorAll(MEDIA).length + (c.matches(MEDIA) ? 1 : 0);
+      }
+      return text + media * 100;
+    };
+    // "Non-zero and stable" alone is not sufficient to mean rendered: generic
+    // body can carry a static shell while async main content is pending, and
+    // #dc-root can carry the root DC's static text while child refs are still
+    // .sc-placeholder boxes. Gate generic on readyState 'complete', and never
+    // accept stability while a dc-runtime placeholder is present.
+    const isGeneric = settleRoot === document.body;
+    // A placeholder whose fetch failed (.sc-placeholder-error inside) keeps
+    // .sc-placeholder forever — don't wait on it. JS loop, not :has(), so an
+    // engine without :has() support can't throw out of the while and skip
+    // print() entirely.
+    var pendingPlaceholders = function () {
+      var all = settleRoot.querySelectorAll('.sc-placeholder'), n = 0;
+      for (var i = 0; i < all.length; i++)
+        if (!all[i].querySelector('.sc-placeholder-error')) n++;
+      return n;
+    };
+    const deadline = Date.now() + 15000;
+    let last = -1, stable = 0;
+    while (Date.now() < deadline) {
+      const n = weigh();
+      const ready =
+        (!isGeneric || document.readyState === 'complete') &&
+        pendingPlaceholders() === 0;
+      if (n > 0 && n === last && ready) { if (++stable >= 2) break; } else { stable = 0; }
+      last = n;
+      await new Promise((r) => setTimeout(r, 250));
+    }
+  }
+  mark('settle-done' + (settleRoot ? ' (errs=' + settleRoot.querySelectorAll('.sc-placeholder-error').length + ' pending=' + pendingPlaceholders() + ')' : ''));
+  // Project support.js may predate runtime default-seeding; push via bridge.
+  if (isDc && window.__dcSetProps && window.__dcRootName) {
+    try {
+      const dpEl = document.querySelector('script[data-dc-script]');
+      const meta = JSON.parse((dpEl && dpEl.getAttribute('data-props')) || '{}');
+      const bag = {};
+      for (const k in meta)
+        if (k[0] !== '$' && meta[k] && meta[k].default !== undefined)
+          bag[k] = meta[k].default;
+      if (Object.keys(bag).length) {
+        window.__dcSetProps(window.__dcRootName(), bag);
+        await new Promise((r) => setTimeout(r, 50));
+      }
+    } catch (e) {}
+  }
+  // Reveal content gated on scroll or visibility before printing. Lazy <img>,
+  // IntersectionObserver fade-ins, and collapsed <details> don't render while
+  // off-screen, so a long page would print with them blank or closed. Open
+  // every <details>, force native-lazy images eager, and scroll the document
+  // through its full height to trip lazy-load + IO; then wait (bounded) for the
+  // newly-triggered images. Inert for deck-stage (slides aren't scroll-gated).
+  try {
+    for (const d of document.querySelectorAll('details')) d.open = true;
+    for (const img of document.querySelectorAll('img[loading="lazy"]'))
+      img.loading = 'eager';
+    const scroller = document.scrollingElement || document.documentElement;
+    const full = Math.max(scroller.scrollHeight, document.body.scrollHeight);
+    const step = window.innerHeight || 800;
+    var scrollDeadline = Date.now() + 4000;
+    for (let y = 0; y <= full && Date.now() < scrollDeadline; y += step) {
+      window.scrollTo(0, y);
+      await raf();
+    }
+    window.scrollTo(0, 0);
+    await Promise.race([
+      Promise.all(
+        [...document.images].map((img) =>
+          img.complete
+            ? null
+            : new Promise((res) => {
+                img.addEventListener('load', res, { once: true });
+                img.addEventListener('error', res, { once: true });
+              })
+        )
+      ),
+      new Promise((r) => setTimeout(r, 4000)),
+    ]);
+  } catch (e) {}
+  mark('scroll-done');
+  try { await Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 3000))]); } catch (e) {}
+  mark('fonts-done');
+  // Jump every animation to its end state so print() never captures a slide
+  // mid-entrance. Ordering matters: the 0s-transition style must be live
+  // BEFORE data-deck-active is set so attribute-keyed transitions don't
+  // start a (now-0s) run from the pre-active base.
+  const st = document.createElement('style');
+  st.textContent = '*,*::before,*::after{animation-delay:-99s !important;animation-duration:.001s !important;animation-iteration-count:1 !important;animation-fill-mode:both !important;animation-play-state:running !important;transition-duration:0s !important}';
+  document.head.appendChild(st);
+  for (const d of document.querySelectorAll('deck-stage')) {
+    for (const c of d.children) {
+      const t = c.tagName;
+      if (t === 'SCRIPT' || t === 'STYLE' || t === 'TEMPLATE') continue;
+      c.setAttribute('data-deck-active', '');
+    }
+  }
+  // Re-append deck-stage's @page last so no author @page can add a margin and
+  // spill each full-bleed slide onto two sheets. Backstop for old copies.
+  if (ds) {
+    let pg = document.getElementById('deck-stage-print-page');
+    if (!pg) {
+      pg = document.createElement('style');
+      pg.textContent = '@page{size:' + (+ds.getAttribute('width') || 1920) +
+        'px ' + (+ds.getAttribute('height') || 1080) + 'px;margin:0}';
+    }
+    document.body.appendChild(pg);
+  }
+  try {
+    const sweep = () => {
+      for (const a of document.getAnimations()) {
+        try { a.finish(); } catch (e) {
+          try { a.currentTime = (a.effect && a.effect.getComputedTiming().duration) || 0; a.pause(); } catch (e2) {}
+        }
+      }
+    };
+    sweep();
+    await raf();
+    sweep();
+    await raf();
+  } catch (e) {}
+  // A document that owns its print CSS (the doc-page starter injects the
+  // meta at runtime; hand-rolled print designs author it) gets no automatic
+  // page geometry and keeps its forced breaks: strip the injected default
+  // @page — write time cannot see a runtime-injected meta — skip the frame
+  // override below, and skip the fakepage-flattening further down. What
+  // still applies: the print baseline and break-hygiene defaults (no @page
+  // in either; low specificity, so the document's own print CSS wins) and
+  // the break-inside relaxation on >page elements (avoid on those cannot
+  // be honored whoever authored it).
+  var ownsPrint = !!document.querySelector('meta[name="omelette-owns-print" i]');
+  if (ownsPrint) {
+    var dst = document.querySelector('style[data-omelette-print-defaults]');
+    if (dst && dst.textContent) {
+      dst.textContent = dst.textContent.replace(/@page\b[^{}]*\{[^}]*\}/, '');
+    }
+  }
+  // Size the PDF page to the rendered design unless the file opted into
+  // standard paper via @page{size:letter|A4|…} or declared print ownership
+  // via the meta above. Decks own their own @page.
+  // Wrappers (body, …) lose padding+margin so the frame sits at (0,0); the
+  // frame itself loses only margin — its padding is INSIDE the measured
+  // rect and must stay, or content shifts and leaves a gap at bottom/right.
+  var __m = null;
+  try { __m = (() => {
+  var STAMP = true;
+  var docEl = document.documentElement;
+  var doc = { width: docEl.scrollWidth, height: docEl.scrollHeight };
+  // Name-presence check, case-insensitive — the same contract as the
+  // instant-PDF path's runtime check in deck-stage-export.ts. The name is
+  // a string literal here because that file interpolates this script into
+  // its print script, so importing a shared constant from it would be a
+  // cycle; measure.test.ts pins the literal so the two cannot drift apart
+  // silently.
+  var ownsPrint = !!document.querySelector('meta[name="omelette-owns-print" i]');
+
+  var ds = document.querySelector('deck-stage');
+  if (ds) {
+    var dw = Number(ds.getAttribute('width')) || 1920;
+    var dh = Number(ds.getAttribute('height')) || 1080;
+    var n = typeof ds.length === 'number' ? ds.length : ds.children.length;
+    var idx = typeof ds.index === 'number' ? ds.index : 0;
+    var frames = [];
+    for (var i = 0; i < n; i++) frames.push({ left: 0, top: 0, width: dw, height: dh });
+    return { kind: 'deck', source: 'declared', doc: doc, frames: frames,
+      authored: frames.map(function(){return{width:true,height:true}}),
+      deck: { width: dw, height: dh, slideCount: n, index: idx },
+      signals: { paperPage: false, pxPage: false, ownsPrint: ownsPrint } };
+  }
+
+  // Declared kind: a doc-page tag names the kind outright, so no signal
+  // heuristics run (like the deck branch above, signals report false —
+  // they describe inferred classifications only). The tag alone is not
+  // trusted: the element must have upgraded (shadowRoot present), so a
+  // leftover tag whose script was deleted falls through to the heuristics
+  // that handle plain markup.
+  var stageSx = window.scrollX || 0, stageSy = window.scrollY || 0;
+  var dp = document.querySelector('doc-page');
+  if (dp && dp.shadowRoot) {
+    // Crop to the sheet, not the host — the desk around it is screen-only
+    // chrome that must not land in PNG exports.
+    var sheet = dp.shadowRoot.querySelector('.sheet');
+    var sr = (sheet || dp).getBoundingClientRect();
+    return { kind: 'paper-doc', source: 'declared', doc: doc,
+      frames: [{ left: sr.left + stageSx, top: sr.top + stageSy,
+        width: sr.width, height: sr.height }],
+      authored: [{ width: false, height: false }],
+      signals: { paperPage: false, pxPage: false, ownsPrint: ownsPrint } };
+  }
+  var paperPage = false, pxPage = false;
+  var eachRule = function (fn) {
+    for (var s = 0; s < document.styleSheets.length; s++) {
+      var rs; try { rs = document.styleSheets[s].cssRules; } catch (e) { continue; }
+      for (var r = 0; r < rs.length; r++) {
+        fn(rs[r]);
+        if (rs[r].cssRules) for (var n = 0; n < rs[r].cssRules.length; n++) fn(rs[r].cssRules[n]);
+      }
+    }
+  };
+  eachRule(function (r) {
+    if (r.type !== 6) return;
+    var m = /\bsize\s*:\s*([^;}]+)/i.exec(r.cssText || '');
+    if (!m) return;
+    if (/\b(letter|a[3-5]|legal|ledger)\b/i.test(m[1])) paperPage = true;
+    if (/\d+(?:\.\d+)?px\b/i.test(m[1])) pxPage = true;
+  });
+  var signals = { paperPage: paperPage, pxPage: pxPage, ownsPrint: ownsPrint };
+
+  var pxVal = function (v) {
+    var m = /^(\d+(?:\.\d+)?)px$/.exec(v || ''); return m ? +m[1] : 0;
+  };
+  var authoredPx = function (el, prop) {
+    if (pxVal(el.style[prop])) return true;
+    var attr = el.getAttribute(prop);
+    if (attr && /^\d+$/.test(attr)) return true;
+    var hit = false;
+    eachRule(function (r) {
+      if (hit || r.type !== 1 || !r.style) return;
+      try { if (el.matches(r.selectorText) && pxVal(r.style[prop])) hit = true; } catch (e) {}
+    });
+    return hit;
+  };
+
+  var el = document.body, rootPxW = false;
+  for (;;) {
+    var kids = [];
+    for (var c = 0; c < el.children.length; c++) {
+      var t = el.children[c].tagName;
+      if (t !== 'SCRIPT' && t !== 'STYLE' && t !== 'TEMPLATE') kids.push(el.children[c]);
+    }
+    if (kids.length !== 1 || !(kids[0] instanceof HTMLElement)) break;
+    if (STAMP) el.setAttribute('data-om-frame-wrap', '');
+    el = kids[0];
+    rootPxW = authoredPx(el, 'width');
+    if (rootPxW) break;
+  }
+  if (!rootPxW) rootPxW = authoredPx(el, 'width');
+
+  // @page{size:letter} alone is a flowing doc; with a px-width root it's a
+  // fixed sheet pretending to be paper — fall through and size to render.
+  if (paperPage && !rootPxW) {
+    return { kind: 'paper-doc', source: 'inferred', doc: doc, signals: signals,
+      frames: [{ left: 0, top: 0, width: doc.width, height: doc.height }],
+      authored: [{ width: false, height: false }] };
+  }
+
+  var sx = window.scrollX || 0, sy = window.scrollY || 0;
+  var rectOf = function (e) {
+    var r = e.getBoundingClientRect();
+    var oy; try { oy = getComputedStyle(e).overflowY; } catch (err) {}
+    var h = oy === 'visible' ? Math.max(r.height, e.scrollHeight || 0) : r.height;
+    return { left: r.left + sx, top: r.top + sy, width: r.width, height: h };
+  };
+
+  // Multi-frame: off unless the page opts in via data-om-multi-frame on the
+  // stop element — the explicit opt-in is what guards against card grids
+  // and pricing tables that match the geometry but aren't separate
+  // canvases. Two ways to name the frames, explicit first:
+  // 1. Descendants marked data-om-frame-export (the social-frames starter
+  //    marks each asset frame; shells/panels around them are presentation,
+  //    so nesting is expected). Document order.
+  // 2. Fallback, no marked descendants: direct children with an authored px
+  //    width AND height (the original geometry heuristic).
+  // Frames may be different sizes (a gallery mixes 1080×1920 stories with
+  // 728×90 banners); data-om-frame-label rides along for export filenames.
+  if (el.hasAttribute('data-om-multi-frame')) {
+    var visOk = function (e) {
+      var cs; try { cs = getComputedStyle(e); } catch (err) { return false; }
+      return cs.display !== 'none' && cs.visibility !== 'hidden' && cs.position !== 'fixed';
+    };
+    // A frame's crop is its VISUAL box — never the scrollHeight-inflated
+    // rect that rectOf computes for page roots. Shadow-DOM hover controls
+    // (image-slot's Replace bar parks 29px below its host) and similar
+    // escaping UI contribute scrollable overflow to the frame, and the
+    // inflated height both squashes the nominal-size resize and drags
+    // content below the frame into the crop. Zoom-independent; bit every
+    // slot-bearing frame.
+    var frameRectOf = function (e) {
+      var r = e.getBoundingClientRect();
+      return { left: r.left + sx, top: r.top + sy, width: r.width, height: r.height };
+    };
+    var pushCand = function (list, e) {
+      if (!visOk(e)) return;
+      var rc = frameRectOf(e);
+      if (rc.width < 2 || rc.height < 2) return;
+      var lbl = e.getAttribute('data-om-frame-label');
+      if (lbl) rc.label = lbl;
+      list.push(rc);
+    };
+    var cands = [];
+    var marked = el.querySelectorAll('[data-om-frame-export]');
+    if (marked.length) {
+      for (var mk = 0; mk < marked.length; mk++) pushCand(cands, marked[mk]);
+    } else {
+      for (var k = 0; k < el.children.length; k++) {
+        var ch = el.children[k];
+        if (!authoredPx(ch, 'width') || !authoredPx(ch, 'height')) continue;
+        pushCand(cands, ch);
+      }
+    }
+    if (cands.length >= 2) {
+      return { kind: 'multi-frame', source: 'inferred', doc: doc, signals: signals,
+        frames: cands, authored: cands.map(function(){return{width:true,height:true}}) };
+    }
+  }
+
+  if (STAMP) el.setAttribute('data-om-frame', '');
+  return { kind: 'single-canvas', source: 'inferred', doc: doc, signals: signals,
+    frames: [rectOf(el)],
+    authored: [{ width: rootPxW, height: authoredPx(el, 'height') }] };
+})(); } catch (e) {}
+  var frame = null;
+  if (!ownsPrint && __m && __m.kind === 'single-canvas') {
+    var f = __m.frames && __m.frames[0];
+    if (f && f.width >= 200 && f.height >= 200) {
+      frame = f;
+      var fst = document.createElement('style');
+      fst.textContent = '@media print{@page{size:' + Math.ceil(f.width) + 'px ' +
+        Math.ceil(f.height) + 'px;margin:0}' +
+        'html,body,[data-om-frame-wrap]{padding:0!important;margin:0!important;background:none!important}' +
+        '[data-om-frame]{margin:0!important}}';
+      document.body.appendChild(fst);
+    }
+  }
+  // Relax break-inside on oversized elements. An element taller than a
+  // printable page can't honor break-inside: avoid — browsers either overflow
+  // it or push it whole to the next page, leaving a blank gap, then break it
+  // anyway at an arbitrary point. After the final layout (content revealed,
+  // animations jumped), find elements taller than a page that still compute
+  // break-inside: avoid and reset them to auto, so the browser breaks them at
+  // their children's boundaries instead (children keep their own avoid). PAGE_PX
+  // is a conservative portrait estimate at 96 CSS px/in — Letter/A4 usable
+  // height minus our 0.5in margins — so only clearly-oversized elements are
+  // touched and under-page elements still stay whole. Skipped for decks (slides
+  // are sized to the page) and for fixed-size canvases (frame set, or an author
+  // px-based @page) — runs as before for flowing docs on letter/A4.
+  try {
+    if (!ds && !frame && !(__m && __m.signals && __m.signals.pxPage)) {
+      const PAGE_PX = 1024;
+      // Our print defaults add a real @page margin only when the source has
+      // no @page of its own; computed style can't tell us (it reports screen
+      // media), so read the injected rule directly.
+      const defaults = document.querySelector('style[data-omelette-print-defaults]');
+      const pageInset = /@page\s*\{[^}]*margin/.test(defaults ? defaults.textContent || '' : '');
+      const SEL = 'section,article,figure,table,pre,blockquote,[class~="card" i],[class~="page" i],[class~="sheet" i]';
+      for (const el of document.body.querySelectorAll(SEL)) {
+        if (el instanceof HTMLElement && el.offsetHeight > PAGE_PX) {
+          el.setAttribute('data-om-oversized', '');
+          // Fake-paged docs simulate sheets with over-tall break-after:page
+          // boxes; honoring the break spills half-blank pages and ends a
+          // colored box mid-sheet. Flow them, and (only when we own the page
+          // inset) drop the redundant padding/background via the rule below.
+          const cs = getComputedStyle(el);
+          // An owns-print doc's forced breaks are intentional sheet
+          // boundaries, never fake-paged simulation — don't strip them.
+          // The break-inside relaxation above still applies: avoid on a
+          // >page element is impossible to honor whoever authored it.
+          if (
+            !ownsPrint &&
+            (cs.breakAfter === 'page' || cs.pageBreakAfter === 'always')
+          ) {
+            el.setAttribute('data-om-fakepage', '');
+          }
+        }
+      }
+      const ost = document.createElement('style');
+      ost.textContent = '@media print{' +
+        '[data-om-oversized]{break-inside:auto !important;page-break-inside:auto !important}' +
+        '[data-om-fakepage]{break-after:auto !important;page-break-after:auto !important}' +
+        (pageInset ? '[data-om-fakepage]{padding:0 !important;background:none !important}' : '') +
+        '}';
+      document.head.appendChild(ost);
+    }
+  } catch (e) {}
+  // macOS Preview renders Skia-PDF Luminosity soft-masks as opaque grey boxes;
+  // swap the CSS that triggers them for Preview-safe forms.
+  try {
+    for (const el of document.body.querySelectorAll('*')) {
+      const cs = getComputedStyle(el);
+
+      if (cs.boxShadow !== 'none' && cs.filter === 'none') {
+        const outs = [], kept = [];
+        for (const s of cs.boxShadow.split(/,(?![^(]*[)])/)) {
+          const t = s.trim();
+          const m = t.match(/^(rgba?[(][^)]+[)]) (-?[0-9.]+px) (-?[0-9.]+px) ([0-9.]+px) -?[0-9.]+px$/);
+          if (m && parseFloat(m[4]) > 0) outs.push('drop-shadow(' + m[2] + ' ' + m[3] + ' ' + m[4] + ' ' + m[1] + ')');
+          else kept.push(t);
+        }
+        if (outs.length) {
+          el.style.setProperty('filter', outs.join(' '), 'important');
+          el.style.setProperty('box-shadow', kept.join(', ') || 'none', 'important');
+        }
+      }
+
+      const mask = cs.maskImage && cs.maskImage !== 'none' ? cs.maskImage : cs.webkitMaskImage;
+      if (mask && mask !== 'none' && cs.filter === 'none') el.style.setProperty('filter', 'opacity(1)', 'important');
+    }
+  } catch (e) {}
+  mark('print-calling');
+  setTimeout(() => { try { window.print(); } catch (e) {} }, 200);
+})();
+</script>
+</body></html>
