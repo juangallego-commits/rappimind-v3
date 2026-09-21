@@ -247,3 +247,57 @@ test('en celular la última fila de botones no queda debajo del selector de idio
   assert.ok(reservado >= llegaHasta + margen,
     'la página reserva ' + reservado + 'px y el selector llega hasta ' + llegaHasta + 'px');
 });
+
+test('los umbrales de la barra de progreso cuadran con la regla de los 88px', () => {
+  // La regla de docs/diseno/ESPECIFICACION_ESTADOS.md, sección 1: las etiquetas
+  // se ven si hay 6 pasos o menos Y cada segmento mide 88px o más. Si falla
+  // cualquiera de las dos, se caen todas a la vez.
+  //
+  // En CSS eso son cinco consultas de contenedor, una por número de pasos, y
+  // cada umbral es una cuenta: n segmentos de 88px más (n-1) huecos. Si alguien
+  // cambia el hueco de la barra o el mínimo por segmento y no rehace los cinco
+  // números, la regla deja de cumplirse y nada falla a la vista: las etiquetas
+  // simplemente se caen antes o después de lo que deberían.
+  const mapa = valores(HOJA);
+  const minimo = Number(/^(\d+)px$/.exec(resolver('var(--rm-paso-min-etiqueta)', mapa))[1]);
+  const maximo = Number(resolver('var(--rm-paso-max-etiqueta)', mapa));
+  const hueco = Number(/^(\d+)px$/.exec(resolver('var(--e3)', mapa))[1]);
+
+  assert.strictEqual(minimo, 88, 'cambió el mínimo por segmento');
+  assert.strictEqual(maximo, 6, 'cambió el máximo de pasos con etiqueta');
+
+  const reglaDeLaBarra = /\.progreso\s*\{[^}]*gap:\s*([^;}]+)[;}]/.exec(ESTILOS);
+  assert.ok(reglaDeLaBarra, 'no encontré la regla de .progreso');
+  assert.strictEqual(resolver(reglaDeLaBarra[1].trim(), mapa), hueco + 'px',
+    'el hueco de la barra ya no es el que suponen los umbrales');
+
+  // Una consulta por cada número de pasos que todavía lleva etiqueta, de 2 a 6.
+  // La de 2 cubre también el caso de un solo paso.
+  const consultas = {};
+  const patron = /@container\s+barra\s*\(min-width:\s*(\d+)px\)\s*\{\s*\.progreso:not\(:has\(li:nth-child\((\d+)\)\)\)/g;
+  let hallado;
+  while ((hallado = patron.exec(ESTILOS)) !== null) {
+    consultas[Number(hallado[2]) - 1] = Number(hallado[1]);
+  }
+
+  const esperados = {};
+  for (let pasos = 2; pasos <= maximo; pasos++) esperados[pasos] = pasos * minimo + (pasos - 1) * hueco;
+
+  assert.deepStrictEqual(consultas, esperados,
+    'los umbrales no cuadran con n * ' + minimo + ' + (n-1) * ' + hueco);
+});
+
+test('la barra de progreso es una sola fila y no se parte', () => {
+  // Con nueve pasos y flex-wrap, la barra pasaba a una segunda fila. La
+  // especificación dice una fila siempre, con un segmento por paso, y son las
+  // etiquetas las que se caen cuando no caben.
+  const regla = /\.progreso\s*\{[^}]*\}/.exec(ESTILOS);
+  assert.ok(regla, 'no encontré la regla de .progreso');
+  assert.ok(/flex-wrap:\s*nowrap/.test(regla[0]), regla[0]);
+
+  // Y el nombre del paso actual tiene que quedar a la vista en escritorio, que
+  // es a donde se mudó cuando las etiquetas se caen.
+  const compacta = /\.progreso-compacto\s*\{[^}]*\}/.exec(ESTILOS);
+  assert.ok(compacta && /display:\s*block/.test(compacta[0]),
+    'la línea de "Paso n de m · Nombre" no se ve: si las etiquetas se caen, nadie sabe en qué paso está');
+});

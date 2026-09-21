@@ -471,6 +471,11 @@
   --campo-off-borde: var(--rm-campo-off-borde);
   --marcador: var(--rm-placeholder);
 
+  --paso-hecho: var(--rm-paso-hecho);
+  --paso-actual: var(--rm-paso-actual);
+  --paso-pendiente: var(--rm-paso-pendiente);
+  --paso-alto: var(--rm-paso-alto);
+
   /* Se va en la fase 6, cuando el historial deje de distinguir Publicado por
      el matiz y pase a distinguirlo por peso visual. El verde no es de marca. */
   --verde-confirma: #0b7a52;
@@ -686,23 +691,86 @@ button { font-size: 15px; cursor: pointer; }
 
 /* --- Barra de progreso -------------------------------------------------- */
 
-.progreso-compacto { display: none; }
-
-/* Los pasos se reparten el ancho, y si no caben pasan a una segunda fila.
-   Con seis pasos entraban justos; al entrar el de la pieza publicitaria, el
-   septimo, "Organizador" y "Cuando" se leian pegados, como una sola palabra. */
-.progreso { display: flex; flex-wrap: wrap; gap: var(--e1) var(--e3); margin: 0 0 var(--e6); list-style: none; padding: 0; }
-.progreso li { flex: 1 1 auto; min-width: 82px; }
-.progreso button {
-  width: 100%; text-align: left; background: none; border: 0;
-  padding: var(--e2) 0 var(--e2);
-  border-bottom: 2px solid var(--borde);
-  font-family: var(--cuerpo); font-size: 13px; color: var(--gris-lapiz);
-  line-height: 1.25; word-break: normal; hyphens: none;
+/*
+ * LA BARRA DE PROGRESO
+ *
+ * Una sola fila, siempre, con un segmento por paso, y la barra ENCIMA de la
+ * etiqueta en vez de debajo. La aplicacion muestra entre cinco y nueve pasos
+ * segun el tipo de campana: Brasil cinco, el cashback por ETA seis, el
+ * Cashback Travel nueve.
+ *
+ * La regla, que es una sola: las etiquetas se ven si hay SEIS PASOS O MENOS y
+ * cada segmento mide 88px O MAS. Si falla cualquiera de las dos, se caen
+ * TODAS a la vez, nunca algunas si y otras no. Cuando se caen, el nombre del
+ * paso queda igual en la linea de encima, que dice "Paso 7 de 9 · Participantes".
+ *
+ * Esa linea ya existia: es .progreso-compacto, que se dibuja siempre y hasta
+ * ahora solo se veia en celular. No hace falta que el JavaScript agregue nada.
+ *
+ * La mitad del numero de pasos se resuelve con :has(). La de los 88px NO se
+ * puede resolver con una consulta de ancho de ventana, porque la barra vive en
+ * una columna cuyo ancho lo decide la rejilla: en escritorio es media pantalla
+ * y en el filtro es la pagina angosta. Por eso .columna-preguntas se declara
+ * contenedor y la medida se hace con @container, sobre el ancho real de la
+ * barra. El acotador de scripts/lib/estilos-acotados.js aprendio @container
+ * para esto.
+ *
+ * Los umbrales salen de la cuenta: n segmentos de 88px mas (n-1) huecos de
+ * 12px. Dos 188, tres 288, cuatro 388, cinco 488, seis 588.
+ */
+.progreso-compacto {
+  display: block; margin: 0 0 var(--e3);
+  font-size: 13px; font-weight: 700; color: var(--gris-lapiz);
 }
-.progreso .hecho button { border-bottom-color: var(--neon-texto); color: var(--tinta); }
-.progreso .actual button { border-bottom-color: var(--neon); color: var(--tinta); font-weight: 700; }
+.progreso-compacto strong { color: var(--tinta); font-family: var(--titulos); font-weight: 900; }
+.progreso-cuenta { color: var(--gris-lapiz); }
+
+.columna-preguntas, .pagina-angosta { container: barra / inline-size; }
+
+.progreso {
+  display: flex; flex-wrap: nowrap; gap: var(--e3);
+  margin: 0 0 var(--e6); list-style: none; padding: 0;
+}
+.progreso li { flex: 1 1 0; min-width: 0; }
+.progreso button {
+  width: 100%; text-align: left; background: none; border: 0; padding: 0;
+  font-family: var(--cuerpo); font-size: 11.5px; font-weight: 600;
+  color: var(--texto-off); line-height: 1.3; letter-spacing: -0.01em;
+  /* Las etiquetas arrancan caidas y solo bajan a la vista si se cumplen las
+     dos condiciones. Se esconden con sangria y no con display:none ni
+     font-size:0, para que el boton conserve su nombre accesible y su tamano
+     de blanco: quien navega con teclado sigue pudiendo volver a un paso. */
+  text-indent: -9999px; overflow: hidden; white-space: nowrap;
+  height: var(--paso-alto);
+}
+.progreso button::before {
+  content: ''; display: block; height: var(--paso-alto); text-indent: 0;
+  border-radius: var(--r-pildora); background: var(--paso-pendiente);
+  margin-bottom: var(--e2);
+}
+.progreso .hecho button::before { background: var(--paso-hecho); }
+.progreso .actual button::before { background: var(--paso-actual); }
+.progreso .hecho button { color: var(--tinta); }
+.progreso .actual button { color: var(--tinta); font-weight: 800; }
 .progreso button[disabled] { cursor: default; }
+
+/* Con siete pasos o mas, caidas pase lo que pase. */
+@container barra (min-width: 188px) {
+  .progreso:not(:has(li:nth-child(3))) button { text-indent: 0; height: auto; }
+}
+@container barra (min-width: 288px) {
+  .progreso:not(:has(li:nth-child(4))) button { text-indent: 0; height: auto; }
+}
+@container barra (min-width: 388px) {
+  .progreso:not(:has(li:nth-child(5))) button { text-indent: 0; height: auto; }
+}
+@container barra (min-width: 488px) {
+  .progreso:not(:has(li:nth-child(6))) button { text-indent: 0; height: auto; }
+}
+@container barra (min-width: 588px) {
+  .progreso:not(:has(li:nth-child(7))) button { text-indent: 0; height: auto; }
+}
+
 
 /* --- Preguntas ---------------------------------------------------------- */
 
@@ -1036,18 +1104,18 @@ input[disabled], select[disabled] {
   .columna-documento { display: none; }
   h1 { font-size: 23px; }
   .pregunta-titulo { font-size: 19px; }
+  /* En celular no caben siete nombres sin encaramarse, asi que la barra por
+     segmentos se va entera y se queda la linea de texto con su carril, que ya
+     se ve en escritorio como la linea de encima. */
   .progreso { display: none; }
-  .progreso-compacto {
-    display: block; margin: 0 0 var(--e5); font-size: 14px; color: var(--gris-lapiz);
-  }
-  .progreso-compacto strong { color: var(--tinta); font-family: var(--titulos); font-weight: 700; }
+  .progreso-compacto { margin: 0 0 var(--e5); font-size: 14px; }
   .progreso-linea {
-    display: block; height: 2px; margin-top: var(--e2);
-    background: var(--borde); border-radius: 1px; position: relative;
+    display: block; height: var(--paso-alto); margin-top: var(--e2);
+    background: var(--paso-pendiente); border-radius: var(--r-pildora); position: relative;
   }
   .progreso-linea::before {
     content: ''; position: absolute; inset: 0 auto 0 0;
-    width: var(--avance); background: var(--neon); border-radius: 1px;
+    width: var(--avance); background: var(--paso-actual); border-radius: var(--r-pildora);
   }
 
   .barra-superior { padding: var(--e2) var(--e4); gap: var(--e3); }
