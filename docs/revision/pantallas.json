@@ -1,7 +1,7 @@
 {
   "generado": "2026-09-21",
-  "commit": "84e8ac1",
-  "rama": "claude/dazzling-bell-w5o6pf",
+  "commit": "881bc36",
+  "rama": "claude/inspiring-feynman-atlswz",
   "partes": [
     {
       "titulo": "El recorrido del comercial",
@@ -396,7 +396,7 @@
       "queHace": "Solo lo ve quien eligió Rappi Travel. Responde nueve preguntas antes de poder elegir el tipo. Tiene una salida propia para quien entró por equivocación.",
       "nota": "",
       "valeFoto": true,
-      "texto": "RappiMind v3\nGenerar\nMis campañas\nAyuda\nAdministración\nAntes de seguir con tu campaña de Rappi Travel\n\nNueve preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano. No es un castigo: es un caso que un abogado tiene que mirar.\n\n¿El aliado exige sus propios términos y condiciones?\nNo\nSí\n¿Hay sorteo o concurso?\nNo\nSí\n¿La pieza anuncia un precio \"desde\" o una tarifa?\nNo\nSí\n¿El beneficio es otra cosa que Créditos o descuento?\n\nPor ejemplo: noches o niños gratis, cupones, millas, eSIM, bonos o cuotas sin interés.\n\nNo\nSí\n¿Las condiciones cambian según destino, producto o usuario?\n\nEl porcentaje, el tope o la compra mínima.\n\nNo\nSí\n¿Mezcla descuento y cashback en la misma campaña?\nNo\nSí\n¿El beneficio depende de un banco o de cuotas?\nNo\nSí\n¿El producto es un seguro, no una asistencia al viajero?\nNo\nSí\n¿Es solo para empleados o no tiene fecha de fin?\nNo\nSí\nEsta campaña no es de Travel\nES\nBR"
+      "texto": "RappiMind v3\nGenerar\nMis campañas\nAyuda\nAdministración\nAntes de seguir con tu campaña de Rappi Travel\n\nSiete preguntas rápidas. Si alguna es sí, tu campaña necesita que Legal la redacte a mano. No es un castigo: es un caso que un abogado tiene que mirar.\n\n¿El aliado exige sus propios términos y condiciones?\nNo\nSí\n¿Hay sorteo o concurso?\nNo\nSí\n¿El beneficio es otra cosa que Créditos o descuento?\n\nPor ejemplo: noches o niños gratis, cupones, millas, eSIM, bonos o cuotas sin interés.\n\nNo\nSí\n¿Mezcla descuento y cashback en la misma campaña?\nNo\nSí\n¿El beneficio son cuotas sin interés o una financiación?\nNo\nSí\n¿El producto es un seguro, no una asistencia al viajero?\nNo\nSí\n¿Es solo para empleados o no tiene fecha de fin?\nNo\nSí\nEsta campaña no es de Travel\nES\nBR"
     },
     {
       "id": "tipos-travel",
