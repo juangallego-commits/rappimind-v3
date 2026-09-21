@@ -7,6 +7,7 @@
 | 2 | listo, falta verificar en Google | `npm test` (157 pruebas) | Correr `setup()` y completar las propiedades |
 | 3 | listo | `npm run demo` y abrir `demo/index.html` | Revisar las capturas y los textos |
 | 4 | pendiente | | Falta el despliegue versionado, que lo dispara Juan |
+| 10 · revisión legal global | listo, falta que Juan lo mande | `python3 scripts/hoja_feedback.py salida.xlsx` y abrir el archivo | Subir la hoja a Drive, pegar el enlace en el mensaje, poner las menciones y mandarlo por #legalglobal |
 | 9 · identidad | cerrado | `npm test` (681), `npm run contraste` y los dos recorridos | Mirar el titular y la píldora Publicado en pantalla, y decidir el correo, el lockup y los estados del historial |
 
 ## Bloque 0 · Repo, build y despliegue
@@ -2380,3 +2381,45 @@ lo tome:
 mide los tokens que se sirven en la aplicación. Si el correo entra al sistema, sus
 pares tienen que entrar a `PARES` en `scripts/contraste.js`, o se queda fuera de la
 única puerta que hay.
+
+---
+
+# Bloque 10 · La revisión legal con los nueve países
+
+Es la apertura a los equipos legales de los nueve países, antes de que la
+herramienta la vea un comercial. Está preparado, falta que Juan lo mande.
+
+## Qué quedó
+
+- **`docs/REVISION_LEGAL_GLOBAL.md`**: el mensaje del canal y los dos del hilo,
+  escritos para pegar; el mapa de la hoja de feedback pestaña por pestaña; la
+  regla de los accesos a Squarespace; y qué se hace el lunes con lo que llegue.
+- **`scripts/hoja_feedback.py`**: arma el libro que se sube a Drive y se
+  convierte en el Google Sheet. Once pestañas, con los 194 datos legales de los
+  nueve países y las 55 leyendas ya escritas desde el repositorio, listas
+  desplegables, fórmulas de resumen y una hoja de LÉEME.
+
+## Cómo probarlo
+
+```
+pip install openpyxl
+python3 scripts/hoja_feedback.py /tmp/revision.xlsx
+```
+
+Abre el archivo y mira la pestaña LÉEME primero, que es lo que van a leer ellos.
+
+## Qué necesito de Juan
+
+1. **Subir la hoja a Drive.** Se arrastra el `.xlsx` y Drive lo convierte en
+   Sheet con todo dentro. Compartirla con `rappi.com` como editor, porque el
+   enlace va a un canal de nueve países.
+2. **Pegar el enlace de la hoja** donde el mensaje dice `LINK_DEL_SHEET`.
+3. **Confirmar el enlace de la web app.** El que hay escrito es el del despliegue
+   de aquella noche.
+4. **Las menciones y el `cc`**, que los pone él.
+5. **Confirmar quién es Maca** y avisarle antes de que empiecen a llegar nombres
+   a la pestaña 6.
+
+La fecha límite del mensaje es el **viernes 25 de septiembre a las 6:00 p.m. hora
+de Colombia**. Si se manda otro día, hay que cambiarla en el mensaje y en la
+constante `FECHA_LIMITE` del script, que la escribe en la hoja.

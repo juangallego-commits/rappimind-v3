@@ -1534,3 +1534,28 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      haría que `setup` no los encontrara y creara unos nuevos, vacíos, y el
      historial quedaría en los viejos sin que nada avisara. El nombre interno es
      un identificador, no una etiqueta.
+
+123. **La hoja de feedback de la revisión legal se genera con un script, y ese
+     script está en Python.** `scripts/hoja_feedback.py` arma el libro de Excel
+     que se sube a Drive y se convierte en el Google Sheet de la ronda de pruebas
+     con los nueve países. Ver `docs/REVISION_LEGAL_GLOBAL.md`.
+
+     **Por qué un script y no una hoja escrita a mano.** La mitad de la hoja son
+     datos que ya están en el repositorio: los 194 valores legales de
+     `data/paises.json` y las 55 leyendas de `modelos/leyendas/`. Copiarlos a mano
+     una vez es tedioso; copiarlos otra vez cuando cambie uno es donde se cuelan
+     los errores, y un valor mal copiado en esa hoja se convierte en una
+     corrección equivocada en el modelo. El script los lee de la fuente.
+
+     **Por qué Python y no Node.** Escribir un `.xlsx` es escribir un zip con
+     varios XML dentro, y en Node haría falta o una dependencia nueva o unas
+     doscientas líneas de armar el zip a mano. `openpyxl` lo hace en una línea por
+     celda, incluidas las listas desplegables y las fórmulas, que son justo lo que
+     hace usable la hoja.
+
+     **No entra al build ni a las pruebas.** No lo llama `npm run build`, no lo
+     toca `dist/` y `npm test` sigue corriendo solo con `node --test`, sin
+     dependencias externas. Es una utilidad que se corre a mano cuando hace falta
+     una hoja nueva, igual que `npm run previsualizar`. La única dependencia,
+     `openpyxl`, se instala en el momento y no queda declarada en ninguna parte
+     del proyecto.
