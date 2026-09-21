@@ -458,6 +458,11 @@
   --campo-off-borde: var(--rm-campo-off-borde);
   --marcador: var(--rm-placeholder);
 
+  --paso-hecho: var(--rm-paso-hecho);
+  --paso-actual: var(--rm-paso-actual);
+  --paso-pendiente: var(--rm-paso-pendiente);
+  --paso-alto: var(--rm-paso-alto);
+
   /* Se va en la fase 6, cuando el historial deje de distinguir Publicado por
      el matiz y pase a distinguirlo por peso visual. El verde no es de marca. */
   --verde-confirma: #0b7a52;
@@ -673,23 +678,96 @@
 
 /* --- Barra de progreso -------------------------------------------------- */
 
-.rm-pantalla .progreso-compacto { display: none; }
-
-/* Los pasos se reparten el ancho, y si no caben pasan a una segunda fila.
-   Con seis pasos entraban justos; al entrar el de la pieza publicitaria, el
-   septimo, "Organizador" y "Cuando" se leian pegados, como una sola palabra. */
-.rm-pantalla .progreso { display: flex; flex-wrap: wrap; gap: var(--e1) var(--e3); margin: 0 0 var(--e6); list-style: none; padding: 0; }
-.rm-pantalla .progreso li { flex: 1 1 auto; min-width: 82px; }
-.rm-pantalla .progreso button {
-  width: 100%; text-align: left; background: none; border: 0;
-  padding: var(--e2) 0 var(--e2);
-  border-bottom: 2px solid var(--borde);
-  font-family: var(--cuerpo); font-size: 13px; color: var(--gris-lapiz);
-  line-height: 1.25; word-break: normal; hyphens: none;
+/*
+ * LA BARRA DE PROGRESO
+ *
+ * Una sola fila, siempre, con un segmento por paso, y la barra ENCIMA de la
+ * etiqueta en vez de debajo. La aplicacion muestra entre cinco y nueve pasos
+ * segun el tipo de campana: Brasil cinco, el cashback por ETA seis, el
+ * Cashback Travel nueve.
+ *
+ * La regla, que es una sola: las etiquetas se ven si hay SEIS PASOS O MENOS y
+ * cada segmento mide 88px O MAS. Si falla cualquiera de las dos, se caen
+ * TODAS a la vez, nunca algunas si y otras no. Cuando se caen, el nombre del
+ * paso queda igual en la linea de encima, que dice "Paso 7 de 9 · Participantes".
+ *
+ * Esa linea ya existia: es .progreso-compacto, que se dibuja siempre y hasta
+ * ahora solo se veia en celular. No hace falta que el JavaScript agregue nada.
+ *
+ * La mitad del numero de pasos se resuelve con :has(). La de los 88px NO se
+ * puede resolver con una consulta de ancho de ventana, porque la barra vive en
+ * una columna cuyo ancho lo decide la rejilla: en escritorio es media pantalla
+ * y en el filtro es la pagina angosta. Por eso .columna-preguntas se declara
+ * contenedor y la medida se hace con @container, sobre el ancho real de la
+ * barra. El acotador de scripts/lib/estilos-acotados.js aprendio @container
+ * para esto.
+ *
+ * Los umbrales salen de la cuenta: n segmentos de 88px mas (n-1) huecos de
+ * 12px. Dos 188, tres 288, cuatro 388, cinco 488, seis 588.
+ */
+.rm-pantalla .progreso-compacto {
+  display: block; margin: 0 0 var(--e3);
+  font-size: 13px; font-weight: 700; color: var(--gris-lapiz);
 }
-.rm-pantalla .progreso .hecho button { border-bottom-color: var(--neon-texto); color: var(--tinta); }
-.rm-pantalla .progreso .actual button { border-bottom-color: var(--neon); color: var(--tinta); font-weight: 700; }
+.rm-pantalla .progreso-compacto strong { color: var(--tinta); font-family: var(--titulos); font-weight: 900; }
+.rm-pantalla .progreso-cuenta { color: var(--gris-lapiz); }
+
+.rm-pantalla .columna-preguntas, .rm-pantalla .pagina-angosta { container: barra / inline-size; }
+
+.rm-pantalla .progreso {
+  display: flex; flex-wrap: nowrap; gap: var(--e3);
+  margin: 0 0 var(--e6); list-style: none; padding: 0;
+}
+.rm-pantalla .progreso li { flex: 1 1 0; min-width: 0; }
+.rm-pantalla .progreso button {
+  width: 100%; text-align: left; background: none; border: 0; padding: 0;
+  font-family: var(--cuerpo); font-size: 11.5px; font-weight: 600;
+  color: var(--texto-off); line-height: 1.3; letter-spacing: -0.01em;
+  /* Las etiquetas arrancan caidas y solo bajan a la vista si se cumplen las
+     dos condiciones. Se esconden con sangria y no con display:none ni
+     font-size:0, para que el boton conserve su nombre accesible y su tamano
+     de blanco: quien navega con teclado sigue pudiendo volver a un paso. */
+  text-indent: -9999px; overflow: hidden; white-space: nowrap;
+  height: var(--paso-alto);
+}
+.rm-pantalla .progreso button::before {
+  content: ''; display: block; height: var(--paso-alto); text-indent: 0;
+  border-radius: var(--r-pildora); background: var(--paso-pendiente);
+  margin-bottom: var(--e2);
+}
+.rm-pantalla .progreso .hecho button::before { background: var(--paso-hecho); }
+.rm-pantalla .progreso .actual button::before { background: var(--paso-actual); }
+.rm-pantalla .progreso .hecho button { color: var(--tinta); }
+.rm-pantalla .progreso .actual button { color: var(--tinta); font-weight: 800; }
 .rm-pantalla .progreso button[disabled] { cursor: default; }
+
+/* Con siete pasos o mas, caidas pase lo que pase. */
+@container barra (min-width: 188px) {
+
+  .rm-pantalla .progreso:not(:has(li:nth-child(3))) button { text-indent: 0; height: auto; }
+
+}
+@container barra (min-width: 288px) {
+
+  .rm-pantalla .progreso:not(:has(li:nth-child(4))) button { text-indent: 0; height: auto; }
+
+}
+@container barra (min-width: 388px) {
+
+  .rm-pantalla .progreso:not(:has(li:nth-child(5))) button { text-indent: 0; height: auto; }
+
+}
+@container barra (min-width: 488px) {
+
+  .rm-pantalla .progreso:not(:has(li:nth-child(6))) button { text-indent: 0; height: auto; }
+
+}
+@container barra (min-width: 588px) {
+
+  .rm-pantalla .progreso:not(:has(li:nth-child(7))) button { text-indent: 0; height: auto; }
+
+}
+
 
 /* --- Preguntas ---------------------------------------------------------- */
 
@@ -816,21 +894,56 @@
 .rm-pantalla .opciones { display: grid; gap: var(--e2); margin: 0; padding: 0; border: 0; }
 .rm-pantalla .opciones legend { padding: 0; }
 
+/*
+ * La marca redonda de la izquierda se dibuja con ::before y no con un elemento
+ * propio: el JavaScript no lo emite y la ronda prohibe agregar clases desde
+ * ahi. Va en posicion absoluta y no en rejilla porque una misma opcion puede
+ * traer hasta cuatro .opcion-nota, y con rejilla la marca se centraria
+ * respecto de todas en vez de quedarse junto al titulo.
+ *
+ * El borde se queda en 1.5px elegida y sin elegir, asi que desaparece la
+ * compensacion de relleno que hacia falta cuando engordaba a 2px.
+ */
 .rm-pantalla .opcion {
+  position: relative;
   display: block; width: 100%; text-align: left;
-  border: 1px solid var(--borde-control); border-radius: var(--r-control);
-  background: var(--papel); padding: var(--e3) var(--e4);
+  border: 1.5px solid var(--borde-opcion); border-radius: var(--r-panel);
+  background: var(--papel); padding: var(--e4) 18px var(--e4) 46px;
   font-family: var(--cuerpo); font-size: 15px; color: var(--tinta);
   transition: border-color var(--t-rapido), background var(--t-rapido);
 }
-.rm-pantalla .opcion:hover:not([disabled]) { border-color: var(--gris-lapiz); }
-.rm-pantalla .opcion[aria-pressed='true'], .rm-pantalla .opcion.elegida {
-  border: 2px solid var(--neon); background: var(--beige); padding: 11px 15px;
+.rm-pantalla .opcion::before {
+  content: ''; position: absolute; left: 18px; top: 18px;
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 1.5px solid var(--borde-control); background: transparent;
 }
-.rm-pantalla .opcion[disabled] { opacity: 0.55; cursor: not-allowed; }
-.rm-pantalla .opcion-titulo { display: block; font-size: 15px; }
-.rm-pantalla .opcion-nota { display: block; color: var(--gris-lapiz); font-size: 13px; margin-top: 2px; }
-.rm-pantalla .opcion[disabled] .opcion-nota { color: var(--neon-texto); }
+.rm-pantalla .opcion:hover:not([disabled]):not(.opcion-vencida) { border-color: var(--campo-lleno); }
+
+/* Sin sombra, por decision de Juan del 21 de septiembre: la hoja del documento
+   sigue siendo la unica superficie elevada de toda la aplicacion, que es lo
+   que la hace destacar. La opcion elegida se distingue por borde y fondo. */
+.rm-pantalla .opcion[aria-pressed='true'], .rm-pantalla .opcion.elegida {
+  border-color: var(--rm-opcion-sel-borde); background: var(--rm-opcion-sel-bg);
+}
+.rm-pantalla .opcion[aria-pressed='true']::before, .rm-pantalla .opcion.elegida::before {
+  border-color: transparent; background: var(--gradiente);
+  box-shadow: inset 0 0 0 4px var(--papel);
+}
+
+.rm-pantalla .opcion-titulo { display: block; font-size: 16px; font-weight: 800; letter-spacing: -0.015em; }
+.rm-pantalla .opcion-nota { display: block; color: var(--gris-lapiz); font-size: 13.5px; margin-top: 3px; }
+
+/* Nada de opacity: arrastra el texto por debajo del contraste minimo. Fondo
+   plano y letra apagada.
+   Y la nota deja de ir en rojo: que algo no se pueda elegir no es un error de
+   quien responde, y ademas el neon esta reservado para el error de verdad. */
+.rm-pantalla .opcion[disabled] {
+  cursor: not-allowed; background: var(--rm-opcion-off-bg);
+  border-color: var(--campo-off-borde); color: var(--gris-lapiz);
+}
+.rm-pantalla .opcion[disabled]::before { border-color: var(--borde-control); background: transparent; }
+.rm-pantalla .opcion[disabled] .opcion-titulo { color: var(--gris-lapiz); }
+.rm-pantalla .opcion[disabled] .opcion-nota { color: var(--texto-off); }
 
 /* El buscador del historial. Sin la regla de arriba para type=search, el
    campo salia con el ancho del navegador y cortaba su propio texto de ayuda:
@@ -846,9 +959,16 @@
    en gris. No va con disabled: un boton deshabilitado no recibe foco y quien
    navega con teclado o lector de pantalla pasaria de largo sin enterarse de
    que existe ni de que vencio. */
-.rm-pantalla .opcion-vencida { opacity: 0.7; cursor: not-allowed; }
-.rm-pantalla .opcion-vencida .opcion-nota { color: var(--gris-lapiz); }
-.rm-pantalla .opcion-vencida .opcion-nota-vencido { color: var(--neon-texto); }
+.rm-pantalla .opcion-vencida {
+  cursor: not-allowed; background: var(--rm-opcion-off-bg);
+  border-color: var(--campo-off-borde);
+}
+.rm-pantalla .opcion-vencida .opcion-titulo { color: var(--gris-lapiz); }
+.rm-pantalla .opcion-vencida .opcion-nota { color: var(--texto-off); }
+/* La razon del vencimiento es una frase larga ("Venció el 31 de diciembre de
+   2026..."), asi que va como texto y no como pildora en caja alta: una frase
+   asi en mayusculas no se lee. */
+.rm-pantalla .opcion-vencida .opcion-nota-vencido { color: var(--neon-texto); font-size: 13.5px; font-weight: 700; }
 
 .rm-pantalla .casillas { display: grid; gap: var(--e2); border: 0; padding: 0; margin: 0; }
 .rm-pantalla .casilla { display: flex; gap: var(--e3); align-items: flex-start; cursor: pointer; padding: var(--e2) 0; }
@@ -858,22 +978,23 @@
 
 .rm-pantalla .sugerencias { display: flex; flex-wrap: wrap; gap: var(--e2); margin: var(--e2) 0 0; }
 .rm-pantalla .sugerencia {
-  border: 1px solid var(--borde-control); background: var(--papel);
-  border-radius: 999px; padding: 5px var(--e3); font-size: 13px; font-family: var(--cuerpo);
+  border: 1.5px solid var(--borde-control); background: var(--papel);
+  border-radius: var(--r-pildora); padding: 5px var(--e3); font-size: 13px;
+  font-family: var(--cuerpo); font-weight: 700; color: var(--tinta);
 }
-.rm-pantalla .sugerencia:hover { background: var(--beige); border-color: var(--neon); }
+.rm-pantalla .sugerencia:hover { background: var(--niebla); border-color: var(--campo-lleno); }
 
 /* --- Glosario ----------------------------------------------------------- */
 
 .rm-pantalla .glosario {
-  border-bottom: 1px dotted var(--gris-lapiz); cursor: help;
+  border-bottom: 1.5px dotted var(--campo-lleno); cursor: help;
   background: none; border-top: 0; border-left: 0; border-right: 0;
   font: inherit; color: inherit; padding: 0;
 }
 .rm-pantalla .glosario-panel {
   position: absolute; z-index: 50; max-width: 260px;
   background: var(--tinta); color: var(--papel);
-  padding: var(--e3); border-radius: var(--r-control);
+  padding: var(--e3); border-radius: var(--r-panel);
   font-size: 13px; line-height: 1.45;
   box-shadow: var(--sombra-glosario);
 }
@@ -886,6 +1007,13 @@
 .rm-pantalla .documento-encabezado h2 { margin: 0; font-size: 17px; }
 .rm-pantalla .documento-encabezado .cuenta { color: var(--gris-lapiz); font-size: 13px; margin-left: auto; }
 
+/*
+ * La unica superficie elevada de toda la aplicacion, y por decision de Juan
+ * del 21 de septiembre sigue siendolo: nada mas lleva sombra.
+ *
+ * La sombra entra cuando hay contenido de verdad. Con la hoja vacia el borde
+ * se queda solo, y ese cambio es lo que marca que el documento arranco.
+ */
 .rm-pantalla .hoja {
   background: var(--papel);
   border: 1px solid var(--borde);
@@ -908,7 +1036,7 @@
 .rm-pantalla .hoja .doc-vineta::before { content: '\2022'; position: absolute; left: -14px; color: var(--gris-lapiz); }
 
 .rm-pantalla .hoja mark {
-  background: var(--beige); color: inherit; border-radius: 3px; padding: 0 2px;
+  background: transparent; color: inherit; border-radius: 3px; padding: 0 2px;
   animation: destello var(--t-destello) ease-out forwards;
 }
 @keyframes destello {
@@ -916,15 +1044,26 @@
   100% { background: transparent; }
 }
 
+/*
+ * El hueco: lo que todavia falta por responder, dentro del documento que se va
+ * llenando. Es la pieza que sostiene la promesa del producto, asi que se ve
+ * sin esfuerzo pero sin gritar.
+ *
+ * El tamano va en em y no en px. El prototipo lo dibuja a 10px, pero alli el
+ * documento entero esta a 12px: es una maqueta a escala. Sobre la hoja real,
+ * que va a 15px, el equivalente es 0.85em. Copiar el 10px literal dejaria
+ * ilegible justo esto.
+ */
 .rm-pantalla .falta {
-  display: inline; color: var(--gris-lapiz);
-  border-bottom: 2px dotted var(--borde-control);
-  background: var(--niebla); border-radius: 3px; padding: 0 4px;
-  font-size: 13px;
+  display: inline; color: inherit; font-weight: 700; letter-spacing: 0.02em;
+  border-bottom: var(--rm-hueco-subrayado);
+  background: var(--rm-hueco-bg); border-radius: 5px; padding: 1px 6px;
+  font-size: 0.85em;
 }
 
+.rm-pantalla .hoja:has(.hoja-vacia) { box-shadow: none; }
 .rm-pantalla .hoja-vacia {
-  color: var(--gris-lapiz); text-align: center;
+  color: var(--gris-lapiz); text-align: center; font-size: 13px;
   padding: var(--e7) var(--e4); max-width: 34ch; margin: 0 auto;
 }
 
@@ -1022,18 +1161,18 @@
   .rm-pantalla.rm-celular .columna-documento { display: none; }
   .rm-pantalla.rm-celular h1 { font-size: 23px; }
   .rm-pantalla.rm-celular .pregunta-titulo { font-size: 19px; }
+  /* En celular no caben siete nombres sin encaramarse, asi que la barra por
+     segmentos se va entera y se queda la linea de texto con su carril, que ya
+     se ve en escritorio como la linea de encima. */
   .rm-pantalla.rm-celular .progreso { display: none; }
-  .rm-pantalla.rm-celular .progreso-compacto {
-    display: block; margin: 0 0 var(--e5); font-size: 14px; color: var(--gris-lapiz);
-  }
-  .rm-pantalla.rm-celular .progreso-compacto strong { color: var(--tinta); font-family: var(--titulos); font-weight: 700; }
+  .rm-pantalla.rm-celular .progreso-compacto { margin: 0 0 var(--e5); font-size: 14px; }
   .rm-pantalla.rm-celular .progreso-linea {
-    display: block; height: 2px; margin-top: var(--e2);
-    background: var(--borde); border-radius: 1px; position: relative;
+    display: block; height: var(--paso-alto); margin-top: var(--e2);
+    background: var(--paso-pendiente); border-radius: var(--r-pildora); position: relative;
   }
   .rm-pantalla.rm-celular .progreso-linea::before {
     content: ''; position: absolute; inset: 0 auto 0 0;
-    width: var(--avance); background: var(--neon); border-radius: 1px;
+    width: var(--avance); background: var(--paso-actual); border-radius: var(--r-pildora);
   }
 
   .rm-pantalla.rm-celular .barra-superior { padding: var(--e2) var(--e4); gap: var(--e3); }
@@ -1069,7 +1208,7 @@
     scroll-behavior: auto !important;
   }
   /* Sin animación, el destello se queda como borde fijo hasta el próximo cambio. */
-  .rm-pantalla .hoja mark { background: var(--beige); outline: 2px solid var(--neon); outline-offset: 1px; }
+  .rm-pantalla .hoja mark { background: var(--destello); outline: 2px solid var(--neon); outline-offset: 1px; }
 
 }
 
@@ -1208,7 +1347,7 @@ body.doc-cuerpo {
     <h1>RappiMind v3, el front actual</h1>
     <p class="doc-firma">
       48 pantallas de la herramienta funcionando, congeladas.
-      Generado el 21 de septiembre de 2026 desde <code>7588e57</code> de la rama
+      Generado el 21 de septiembre de 2026 desde <code>31cdc95</code> de la rama
       <code>claude/inspiring-feynman-atlswz</code>.
     </p>
 
@@ -2384,6 +2523,11 @@ carla@rappi.com" aria-label="Correos, separados por comas o por líneas"></texta
   --campo-off-borde: var(--rm-campo-off-borde);
   --marcador: var(--rm-placeholder);
 
+  --paso-hecho: var(--rm-paso-hecho);
+  --paso-actual: var(--rm-paso-actual);
+  --paso-pendiente: var(--rm-paso-pendiente);
+  --paso-alto: var(--rm-paso-alto);
+
   /* Se va en la fase 6, cuando el historial deje de distinguir Publicado por
      el matiz y pase a distinguirlo por peso visual. El verde no es de marca. */
   --verde-confirma: #0b7a52;
@@ -2599,23 +2743,86 @@ button { font-size: 15px; cursor: pointer; }
 
 /* --- Barra de progreso -------------------------------------------------- */
 
-.progreso-compacto { display: none; }
-
-/* Los pasos se reparten el ancho, y si no caben pasan a una segunda fila.
-   Con seis pasos entraban justos; al entrar el de la pieza publicitaria, el
-   septimo, &quot;Organizador&quot; y &quot;Cuando&quot; se leian pegados, como una sola palabra. */
-.progreso { display: flex; flex-wrap: wrap; gap: var(--e1) var(--e3); margin: 0 0 var(--e6); list-style: none; padding: 0; }
-.progreso li { flex: 1 1 auto; min-width: 82px; }
-.progreso button {
-  width: 100%; text-align: left; background: none; border: 0;
-  padding: var(--e2) 0 var(--e2);
-  border-bottom: 2px solid var(--borde);
-  font-family: var(--cuerpo); font-size: 13px; color: var(--gris-lapiz);
-  line-height: 1.25; word-break: normal; hyphens: none;
+/*
+ * LA BARRA DE PROGRESO
+ *
+ * Una sola fila, siempre, con un segmento por paso, y la barra ENCIMA de la
+ * etiqueta en vez de debajo. La aplicacion muestra entre cinco y nueve pasos
+ * segun el tipo de campana: Brasil cinco, el cashback por ETA seis, el
+ * Cashback Travel nueve.
+ *
+ * La regla, que es una sola: las etiquetas se ven si hay SEIS PASOS O MENOS y
+ * cada segmento mide 88px O MAS. Si falla cualquiera de las dos, se caen
+ * TODAS a la vez, nunca algunas si y otras no. Cuando se caen, el nombre del
+ * paso queda igual en la linea de encima, que dice &quot;Paso 7 de 9 · Participantes&quot;.
+ *
+ * Esa linea ya existia: es .progreso-compacto, que se dibuja siempre y hasta
+ * ahora solo se veia en celular. No hace falta que el JavaScript agregue nada.
+ *
+ * La mitad del numero de pasos se resuelve con :has(). La de los 88px NO se
+ * puede resolver con una consulta de ancho de ventana, porque la barra vive en
+ * una columna cuyo ancho lo decide la rejilla: en escritorio es media pantalla
+ * y en el filtro es la pagina angosta. Por eso .columna-preguntas se declara
+ * contenedor y la medida se hace con @container, sobre el ancho real de la
+ * barra. El acotador de scripts/lib/estilos-acotados.js aprendio @container
+ * para esto.
+ *
+ * Los umbrales salen de la cuenta: n segmentos de 88px mas (n-1) huecos de
+ * 12px. Dos 188, tres 288, cuatro 388, cinco 488, seis 588.
+ */
+.progreso-compacto {
+  display: block; margin: 0 0 var(--e3);
+  font-size: 13px; font-weight: 700; color: var(--gris-lapiz);
 }
-.progreso .hecho button { border-bottom-color: var(--neon-texto); color: var(--tinta); }
-.progreso .actual button { border-bottom-color: var(--neon); color: var(--tinta); font-weight: 700; }
+.progreso-compacto strong { color: var(--tinta); font-family: var(--titulos); font-weight: 900; }
+.progreso-cuenta { color: var(--gris-lapiz); }
+
+.columna-preguntas, .pagina-angosta { container: barra / inline-size; }
+
+.progreso {
+  display: flex; flex-wrap: nowrap; gap: var(--e3);
+  margin: 0 0 var(--e6); list-style: none; padding: 0;
+}
+.progreso li { flex: 1 1 0; min-width: 0; }
+.progreso button {
+  width: 100%; text-align: left; background: none; border: 0; padding: 0;
+  font-family: var(--cuerpo); font-size: 11.5px; font-weight: 600;
+  color: var(--texto-off); line-height: 1.3; letter-spacing: -0.01em;
+  /* Las etiquetas arrancan caidas y solo bajan a la vista si se cumplen las
+     dos condiciones. Se esconden con sangria y no con display:none ni
+     font-size:0, para que el boton conserve su nombre accesible y su tamano
+     de blanco: quien navega con teclado sigue pudiendo volver a un paso. */
+  text-indent: -9999px; overflow: hidden; white-space: nowrap;
+  height: var(--paso-alto);
+}
+.progreso button::before {
+  content: ''; display: block; height: var(--paso-alto); text-indent: 0;
+  border-radius: var(--r-pildora); background: var(--paso-pendiente);
+  margin-bottom: var(--e2);
+}
+.progreso .hecho button::before { background: var(--paso-hecho); }
+.progreso .actual button::before { background: var(--paso-actual); }
+.progreso .hecho button { color: var(--tinta); }
+.progreso .actual button { color: var(--tinta); font-weight: 800; }
 .progreso button[disabled] { cursor: default; }
+
+/* Con siete pasos o mas, caidas pase lo que pase. */
+@container barra (min-width: 188px) {
+  .progreso:not(:has(li:nth-child(3))) button { text-indent: 0; height: auto; }
+}
+@container barra (min-width: 288px) {
+  .progreso:not(:has(li:nth-child(4))) button { text-indent: 0; height: auto; }
+}
+@container barra (min-width: 388px) {
+  .progreso:not(:has(li:nth-child(5))) button { text-indent: 0; height: auto; }
+}
+@container barra (min-width: 488px) {
+  .progreso:not(:has(li:nth-child(6))) button { text-indent: 0; height: auto; }
+}
+@container barra (min-width: 588px) {
+  .progreso:not(:has(li:nth-child(7))) button { text-indent: 0; height: auto; }
+}
+
 
 /* --- Preguntas ---------------------------------------------------------- */
 
@@ -2744,21 +2951,56 @@ input[disabled], select[disabled] {
 .opciones { display: grid; gap: var(--e2); margin: 0; padding: 0; border: 0; }
 .opciones legend { padding: 0; }
 
+/*
+ * La marca redonda de la izquierda se dibuja con ::before y no con un elemento
+ * propio: el JavaScript no lo emite y la ronda prohibe agregar clases desde
+ * ahi. Va en posicion absoluta y no en rejilla porque una misma opcion puede
+ * traer hasta cuatro .opcion-nota, y con rejilla la marca se centraria
+ * respecto de todas en vez de quedarse junto al titulo.
+ *
+ * El borde se queda en 1.5px elegida y sin elegir, asi que desaparece la
+ * compensacion de relleno que hacia falta cuando engordaba a 2px.
+ */
 .opcion {
+  position: relative;
   display: block; width: 100%; text-align: left;
-  border: 1px solid var(--borde-control); border-radius: var(--r-control);
-  background: var(--papel); padding: var(--e3) var(--e4);
+  border: 1.5px solid var(--borde-opcion); border-radius: var(--r-panel);
+  background: var(--papel); padding: var(--e4) 18px var(--e4) 46px;
   font-family: var(--cuerpo); font-size: 15px; color: var(--tinta);
   transition: border-color var(--t-rapido), background var(--t-rapido);
 }
-.opcion:hover:not([disabled]) { border-color: var(--gris-lapiz); }
-.opcion[aria-pressed='true'], .opcion.elegida {
-  border: 2px solid var(--neon); background: var(--beige); padding: 11px 15px;
+.opcion::before {
+  content: ''; position: absolute; left: 18px; top: 18px;
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 1.5px solid var(--borde-control); background: transparent;
 }
-.opcion[disabled] { opacity: 0.55; cursor: not-allowed; }
-.opcion-titulo { display: block; font-size: 15px; }
-.opcion-nota { display: block; color: var(--gris-lapiz); font-size: 13px; margin-top: 2px; }
-.opcion[disabled] .opcion-nota { color: var(--neon-texto); }
+.opcion:hover:not([disabled]):not(.opcion-vencida) { border-color: var(--campo-lleno); }
+
+/* Sin sombra, por decision de Juan del 21 de septiembre: la hoja del documento
+   sigue siendo la unica superficie elevada de toda la aplicacion, que es lo
+   que la hace destacar. La opcion elegida se distingue por borde y fondo. */
+.opcion[aria-pressed='true'], .opcion.elegida {
+  border-color: var(--rm-opcion-sel-borde); background: var(--rm-opcion-sel-bg);
+}
+.opcion[aria-pressed='true']::before, .opcion.elegida::before {
+  border-color: transparent; background: var(--gradiente);
+  box-shadow: inset 0 0 0 4px var(--papel);
+}
+
+.opcion-titulo { display: block; font-size: 16px; font-weight: 800; letter-spacing: -0.015em; }
+.opcion-nota { display: block; color: var(--gris-lapiz); font-size: 13.5px; margin-top: 3px; }
+
+/* Nada de opacity: arrastra el texto por debajo del contraste minimo. Fondo
+   plano y letra apagada.
+   Y la nota deja de ir en rojo: que algo no se pueda elegir no es un error de
+   quien responde, y ademas el neon esta reservado para el error de verdad. */
+.opcion[disabled] {
+  cursor: not-allowed; background: var(--rm-opcion-off-bg);
+  border-color: var(--campo-off-borde); color: var(--gris-lapiz);
+}
+.opcion[disabled]::before { border-color: var(--borde-control); background: transparent; }
+.opcion[disabled] .opcion-titulo { color: var(--gris-lapiz); }
+.opcion[disabled] .opcion-nota { color: var(--texto-off); }
 
 /* El buscador del historial. Sin la regla de arriba para type=search, el
    campo salia con el ancho del navegador y cortaba su propio texto de ayuda:
@@ -2774,9 +3016,16 @@ input[disabled], select[disabled] {
    en gris. No va con disabled: un boton deshabilitado no recibe foco y quien
    navega con teclado o lector de pantalla pasaria de largo sin enterarse de
    que existe ni de que vencio. */
-.opcion-vencida { opacity: 0.7; cursor: not-allowed; }
-.opcion-vencida .opcion-nota { color: var(--gris-lapiz); }
-.opcion-vencida .opcion-nota-vencido { color: var(--neon-texto); }
+.opcion-vencida {
+  cursor: not-allowed; background: var(--rm-opcion-off-bg);
+  border-color: var(--campo-off-borde);
+}
+.opcion-vencida .opcion-titulo { color: var(--gris-lapiz); }
+.opcion-vencida .opcion-nota { color: var(--texto-off); }
+/* La razon del vencimiento es una frase larga (&quot;Venció el 31 de diciembre de
+   2026...&quot;), asi que va como texto y no como pildora en caja alta: una frase
+   asi en mayusculas no se lee. */
+.opcion-vencida .opcion-nota-vencido { color: var(--neon-texto); font-size: 13.5px; font-weight: 700; }
 
 .casillas { display: grid; gap: var(--e2); border: 0; padding: 0; margin: 0; }
 .casilla { display: flex; gap: var(--e3); align-items: flex-start; cursor: pointer; padding: var(--e2) 0; }
@@ -2786,22 +3035,23 @@ input[disabled], select[disabled] {
 
 .sugerencias { display: flex; flex-wrap: wrap; gap: var(--e2); margin: var(--e2) 0 0; }
 .sugerencia {
-  border: 1px solid var(--borde-control); background: var(--papel);
-  border-radius: 999px; padding: 5px var(--e3); font-size: 13px; font-family: var(--cuerpo);
+  border: 1.5px solid var(--borde-control); background: var(--papel);
+  border-radius: var(--r-pildora); padding: 5px var(--e3); font-size: 13px;
+  font-family: var(--cuerpo); font-weight: 700; color: var(--tinta);
 }
-.sugerencia:hover { background: var(--beige); border-color: var(--neon); }
+.sugerencia:hover { background: var(--niebla); border-color: var(--campo-lleno); }
 
 /* --- Glosario ----------------------------------------------------------- */
 
 .glosario {
-  border-bottom: 1px dotted var(--gris-lapiz); cursor: help;
+  border-bottom: 1.5px dotted var(--campo-lleno); cursor: help;
   background: none; border-top: 0; border-left: 0; border-right: 0;
   font: inherit; color: inherit; padding: 0;
 }
 .glosario-panel {
   position: absolute; z-index: 50; max-width: 260px;
   background: var(--tinta); color: var(--papel);
-  padding: var(--e3); border-radius: var(--r-control);
+  padding: var(--e3); border-radius: var(--r-panel);
   font-size: 13px; line-height: 1.45;
   box-shadow: var(--sombra-glosario);
 }
@@ -2814,6 +3064,13 @@ input[disabled], select[disabled] {
 .documento-encabezado h2 { margin: 0; font-size: 17px; }
 .documento-encabezado .cuenta { color: var(--gris-lapiz); font-size: 13px; margin-left: auto; }
 
+/*
+ * La unica superficie elevada de toda la aplicacion, y por decision de Juan
+ * del 21 de septiembre sigue siendolo: nada mas lleva sombra.
+ *
+ * La sombra entra cuando hay contenido de verdad. Con la hoja vacia el borde
+ * se queda solo, y ese cambio es lo que marca que el documento arranco.
+ */
 .hoja {
   background: var(--papel);
   border: 1px solid var(--borde);
@@ -2836,7 +3093,7 @@ input[disabled], select[disabled] {
 .hoja .doc-vineta::before { content: '\2022'; position: absolute; left: -14px; color: var(--gris-lapiz); }
 
 .hoja mark {
-  background: var(--beige); color: inherit; border-radius: 3px; padding: 0 2px;
+  background: transparent; color: inherit; border-radius: 3px; padding: 0 2px;
   animation: destello var(--t-destello) ease-out forwards;
 }
 @keyframes destello {
@@ -2844,15 +3101,26 @@ input[disabled], select[disabled] {
   100% { background: transparent; }
 }
 
+/*
+ * El hueco: lo que todavia falta por responder, dentro del documento que se va
+ * llenando. Es la pieza que sostiene la promesa del producto, asi que se ve
+ * sin esfuerzo pero sin gritar.
+ *
+ * El tamano va en em y no en px. El prototipo lo dibuja a 10px, pero alli el
+ * documento entero esta a 12px: es una maqueta a escala. Sobre la hoja real,
+ * que va a 15px, el equivalente es 0.85em. Copiar el 10px literal dejaria
+ * ilegible justo esto.
+ */
 .falta {
-  display: inline; color: var(--gris-lapiz);
-  border-bottom: 2px dotted var(--borde-control);
-  background: var(--niebla); border-radius: 3px; padding: 0 4px;
-  font-size: 13px;
+  display: inline; color: inherit; font-weight: 700; letter-spacing: 0.02em;
+  border-bottom: var(--rm-hueco-subrayado);
+  background: var(--rm-hueco-bg); border-radius: 5px; padding: 1px 6px;
+  font-size: 0.85em;
 }
 
+.hoja:has(.hoja-vacia) { box-shadow: none; }
 .hoja-vacia {
-  color: var(--gris-lapiz); text-align: center;
+  color: var(--gris-lapiz); text-align: center; font-size: 13px;
   padding: var(--e7) var(--e4); max-width: 34ch; margin: 0 auto;
 }
 
@@ -2949,18 +3217,18 @@ input[disabled], select[disabled] {
   .columna-documento { display: none; }
   h1 { font-size: 23px; }
   .pregunta-titulo { font-size: 19px; }
+  /* En celular no caben siete nombres sin encaramarse, asi que la barra por
+     segmentos se va entera y se queda la linea de texto con su carril, que ya
+     se ve en escritorio como la linea de encima. */
   .progreso { display: none; }
-  .progreso-compacto {
-    display: block; margin: 0 0 var(--e5); font-size: 14px; color: var(--gris-lapiz);
-  }
-  .progreso-compacto strong { color: var(--tinta); font-family: var(--titulos); font-weight: 700; }
+  .progreso-compacto { margin: 0 0 var(--e5); font-size: 14px; }
   .progreso-linea {
-    display: block; height: 2px; margin-top: var(--e2);
-    background: var(--borde); border-radius: 1px; position: relative;
+    display: block; height: var(--paso-alto); margin-top: var(--e2);
+    background: var(--paso-pendiente); border-radius: var(--r-pildora); position: relative;
   }
   .progreso-linea::before {
     content: ''; position: absolute; inset: 0 auto 0 0;
-    width: var(--avance); background: var(--neon); border-radius: 1px;
+    width: var(--avance); background: var(--paso-actual); border-radius: var(--r-pildora);
   }
 
   .barra-superior { padding: var(--e2) var(--e4); gap: var(--e3); }
@@ -2995,7 +3263,7 @@ input[disabled], select[disabled] {
     scroll-behavior: auto !important;
   }
   /* Sin animación, el destello se queda como borde fijo hasta el próximo cambio. */
-  .hoja mark { background: var(--beige); outline: 2px solid var(--neon); outline-offset: 1px; }
+  .hoja mark { background: var(--destello); outline: 2px solid var(--neon); outline-offset: 1px; }
 }
 </pre>
 
@@ -3071,7 +3339,7 @@ input[disabled], select[disabled] {
 <thead><tr><th>Archivo</th><th>Líneas</th><th>Qué hace</th></tr></thead>
 <tbody>
 <tr><td><code>src/client/Index.html</code></td><td>36</td><td>La plantilla que evalúa Apps Script. Mete los estilos, el motor y la interfaz. Va completa en el anexo B.</td></tr>
-<tr><td><code>src/client/estilos.css</code></td><td>666</td><td>La hoja de estilos entera. Una sola superficie elevada en toda la app: la hoja del documento. Va completa en el anexo A.</td></tr>
+<tr><td><code>src/client/estilos.css</code></td><td>795</td><td>La hoja de estilos entera. Una sola superficie elevada en toda la app: la hoja del documento. Va completa en el anexo A.</td></tr>
 <tr><td><code>src/client/js/10-util.js</code></td><td>229</td><td>Crear elementos, copiar al portapapeles, iconos, anuncios para lectores de pantalla. Todo dato del usuario entra como texto, nunca como HTML.</td></tr>
 <tr><td><code>src/client/js/20-estado.js</code></td><td>226</td><td>El estado del recorrido (E), el borrador en el navegador, el idioma de la interfaz y el texto de cada pregunta.</td></tr>
 <tr><td><code>src/client/js/30-servidor.js</code></td><td>71</td><td>La única puerta al servidor. En Apps Script llama con google.script.run; en la demostración, al servidor simulado.</td></tr>

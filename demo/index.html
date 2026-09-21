@@ -899,21 +899,56 @@ input[disabled], select[disabled] {
 .opciones { display: grid; gap: var(--e2); margin: 0; padding: 0; border: 0; }
 .opciones legend { padding: 0; }
 
+/*
+ * La marca redonda de la izquierda se dibuja con ::before y no con un elemento
+ * propio: el JavaScript no lo emite y la ronda prohibe agregar clases desde
+ * ahi. Va en posicion absoluta y no en rejilla porque una misma opcion puede
+ * traer hasta cuatro .opcion-nota, y con rejilla la marca se centraria
+ * respecto de todas en vez de quedarse junto al titulo.
+ *
+ * El borde se queda en 1.5px elegida y sin elegir, asi que desaparece la
+ * compensacion de relleno que hacia falta cuando engordaba a 2px.
+ */
 .opcion {
+  position: relative;
   display: block; width: 100%; text-align: left;
-  border: 1px solid var(--borde-control); border-radius: var(--r-control);
-  background: var(--papel); padding: var(--e3) var(--e4);
+  border: 1.5px solid var(--borde-opcion); border-radius: var(--r-panel);
+  background: var(--papel); padding: var(--e4) 18px var(--e4) 46px;
   font-family: var(--cuerpo); font-size: 15px; color: var(--tinta);
   transition: border-color var(--t-rapido), background var(--t-rapido);
 }
-.opcion:hover:not([disabled]) { border-color: var(--gris-lapiz); }
-.opcion[aria-pressed='true'], .opcion.elegida {
-  border: 2px solid var(--neon); background: var(--beige); padding: 11px 15px;
+.opcion::before {
+  content: ''; position: absolute; left: 18px; top: 18px;
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 1.5px solid var(--borde-control); background: transparent;
 }
-.opcion[disabled] { opacity: 0.55; cursor: not-allowed; }
-.opcion-titulo { display: block; font-size: 15px; }
-.opcion-nota { display: block; color: var(--gris-lapiz); font-size: 13px; margin-top: 2px; }
-.opcion[disabled] .opcion-nota { color: var(--neon-texto); }
+.opcion:hover:not([disabled]):not(.opcion-vencida) { border-color: var(--campo-lleno); }
+
+/* Sin sombra, por decision de Juan del 21 de septiembre: la hoja del documento
+   sigue siendo la unica superficie elevada de toda la aplicacion, que es lo
+   que la hace destacar. La opcion elegida se distingue por borde y fondo. */
+.opcion[aria-pressed='true'], .opcion.elegida {
+  border-color: var(--rm-opcion-sel-borde); background: var(--rm-opcion-sel-bg);
+}
+.opcion[aria-pressed='true']::before, .opcion.elegida::before {
+  border-color: transparent; background: var(--gradiente);
+  box-shadow: inset 0 0 0 4px var(--papel);
+}
+
+.opcion-titulo { display: block; font-size: 16px; font-weight: 800; letter-spacing: -0.015em; }
+.opcion-nota { display: block; color: var(--gris-lapiz); font-size: 13.5px; margin-top: 3px; }
+
+/* Nada de opacity: arrastra el texto por debajo del contraste minimo. Fondo
+   plano y letra apagada.
+   Y la nota deja de ir en rojo: que algo no se pueda elegir no es un error de
+   quien responde, y ademas el neon esta reservado para el error de verdad. */
+.opcion[disabled] {
+  cursor: not-allowed; background: var(--rm-opcion-off-bg);
+  border-color: var(--campo-off-borde); color: var(--gris-lapiz);
+}
+.opcion[disabled]::before { border-color: var(--borde-control); background: transparent; }
+.opcion[disabled] .opcion-titulo { color: var(--gris-lapiz); }
+.opcion[disabled] .opcion-nota { color: var(--texto-off); }
 
 /* El buscador del historial. Sin la regla de arriba para type=search, el
    campo salia con el ancho del navegador y cortaba su propio texto de ayuda:
@@ -929,9 +964,16 @@ input[disabled], select[disabled] {
    en gris. No va con disabled: un boton deshabilitado no recibe foco y quien
    navega con teclado o lector de pantalla pasaria de largo sin enterarse de
    que existe ni de que vencio. */
-.opcion-vencida { opacity: 0.7; cursor: not-allowed; }
-.opcion-vencida .opcion-nota { color: var(--gris-lapiz); }
-.opcion-vencida .opcion-nota-vencido { color: var(--neon-texto); }
+.opcion-vencida {
+  cursor: not-allowed; background: var(--rm-opcion-off-bg);
+  border-color: var(--campo-off-borde);
+}
+.opcion-vencida .opcion-titulo { color: var(--gris-lapiz); }
+.opcion-vencida .opcion-nota { color: var(--texto-off); }
+/* La razon del vencimiento es una frase larga ("Venció el 31 de diciembre de
+   2026..."), asi que va como texto y no como pildora en caja alta: una frase
+   asi en mayusculas no se lee. */
+.opcion-vencida .opcion-nota-vencido { color: var(--neon-texto); font-size: 13.5px; font-weight: 700; }
 
 .casillas { display: grid; gap: var(--e2); border: 0; padding: 0; margin: 0; }
 .casilla { display: flex; gap: var(--e3); align-items: flex-start; cursor: pointer; padding: var(--e2) 0; }
@@ -941,22 +983,23 @@ input[disabled], select[disabled] {
 
 .sugerencias { display: flex; flex-wrap: wrap; gap: var(--e2); margin: var(--e2) 0 0; }
 .sugerencia {
-  border: 1px solid var(--borde-control); background: var(--papel);
-  border-radius: 999px; padding: 5px var(--e3); font-size: 13px; font-family: var(--cuerpo);
+  border: 1.5px solid var(--borde-control); background: var(--papel);
+  border-radius: var(--r-pildora); padding: 5px var(--e3); font-size: 13px;
+  font-family: var(--cuerpo); font-weight: 700; color: var(--tinta);
 }
-.sugerencia:hover { background: var(--beige); border-color: var(--neon); }
+.sugerencia:hover { background: var(--niebla); border-color: var(--campo-lleno); }
 
 /* --- Glosario ----------------------------------------------------------- */
 
 .glosario {
-  border-bottom: 1px dotted var(--gris-lapiz); cursor: help;
+  border-bottom: 1.5px dotted var(--campo-lleno); cursor: help;
   background: none; border-top: 0; border-left: 0; border-right: 0;
   font: inherit; color: inherit; padding: 0;
 }
 .glosario-panel {
   position: absolute; z-index: 50; max-width: 260px;
   background: var(--tinta); color: var(--papel);
-  padding: var(--e3); border-radius: var(--r-control);
+  padding: var(--e3); border-radius: var(--r-panel);
   font-size: 13px; line-height: 1.45;
   box-shadow: var(--sombra-glosario);
 }
@@ -969,6 +1012,13 @@ input[disabled], select[disabled] {
 .documento-encabezado h2 { margin: 0; font-size: 17px; }
 .documento-encabezado .cuenta { color: var(--gris-lapiz); font-size: 13px; margin-left: auto; }
 
+/*
+ * La unica superficie elevada de toda la aplicacion, y por decision de Juan
+ * del 21 de septiembre sigue siendolo: nada mas lleva sombra.
+ *
+ * La sombra entra cuando hay contenido de verdad. Con la hoja vacia el borde
+ * se queda solo, y ese cambio es lo que marca que el documento arranco.
+ */
 .hoja {
   background: var(--papel);
   border: 1px solid var(--borde);
@@ -991,7 +1041,7 @@ input[disabled], select[disabled] {
 .hoja .doc-vineta::before { content: '\2022'; position: absolute; left: -14px; color: var(--gris-lapiz); }
 
 .hoja mark {
-  background: var(--beige); color: inherit; border-radius: 3px; padding: 0 2px;
+  background: transparent; color: inherit; border-radius: 3px; padding: 0 2px;
   animation: destello var(--t-destello) ease-out forwards;
 }
 @keyframes destello {
@@ -999,15 +1049,26 @@ input[disabled], select[disabled] {
   100% { background: transparent; }
 }
 
+/*
+ * El hueco: lo que todavia falta por responder, dentro del documento que se va
+ * llenando. Es la pieza que sostiene la promesa del producto, asi que se ve
+ * sin esfuerzo pero sin gritar.
+ *
+ * El tamano va en em y no en px. El prototipo lo dibuja a 10px, pero alli el
+ * documento entero esta a 12px: es una maqueta a escala. Sobre la hoja real,
+ * que va a 15px, el equivalente es 0.85em. Copiar el 10px literal dejaria
+ * ilegible justo esto.
+ */
 .falta {
-  display: inline; color: var(--gris-lapiz);
-  border-bottom: 2px dotted var(--borde-control);
-  background: var(--niebla); border-radius: 3px; padding: 0 4px;
-  font-size: 13px;
+  display: inline; color: inherit; font-weight: 700; letter-spacing: 0.02em;
+  border-bottom: var(--rm-hueco-subrayado);
+  background: var(--rm-hueco-bg); border-radius: 5px; padding: 1px 6px;
+  font-size: 0.85em;
 }
 
+.hoja:has(.hoja-vacia) { box-shadow: none; }
 .hoja-vacia {
-  color: var(--gris-lapiz); text-align: center;
+  color: var(--gris-lapiz); text-align: center; font-size: 13px;
   padding: var(--e7) var(--e4); max-width: 34ch; margin: 0 auto;
 }
 
@@ -1150,7 +1211,7 @@ input[disabled], select[disabled] {
     scroll-behavior: auto !important;
   }
   /* Sin animación, el destello se queda como borde fijo hasta el próximo cambio. */
-  .hoja mark { background: var(--beige); outline: 2px solid var(--neon); outline-offset: 1px; }
+  .hoja mark { background: var(--destello); outline: 2px solid var(--neon); outline-offset: 1px; }
 }
 
 
