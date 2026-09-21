@@ -51,6 +51,10 @@ publicar su T&C sin escribirle a Legal, o lo aleja?
 - **Las primeras líneas de cada pantalla del formulario** (Campaña, Organizador,
   Cuándo, Beneficio, Créditos, Participantes, Pieza) son la barra de progreso, no
   preguntas.
+- **Las fotos, si las hay.** Puede que te adjunte fotos de algunas pantallas de
+  la tanda, no de todas: las demás son la misma forma con otro texto. El texto
+  de todas va completo en el mensaje, así que si no ves foto de una pantalla,
+  revísala igual con su texto.
 - **En todas las pantallas** hay una barra superior con RappiMind v3 y las secciones
   Generar, Mis campañas, Ayuda y Administración (esta última solo la ve un
   administrador), y un botón fijo abajo a la derecha con ES y BR que cambia el
@@ -115,13 +119,26 @@ aplicar los cambios buscando y reemplazando, sin volver a escribir nada a mano.
 ```
 ### H-<tanda>.<número> · <título corto del hallazgo>
 
-- **Dónde:** Pantalla <número> · <nombre de la pantalla>
+- **Dónde:** <ver abajo, según de dónde venga>
 - **Gravedad:** alta | media | nit
 - **Qué pasa:** una o dos frases.
 - **Dice hoy:** «el texto actual, copiado letra por letra, con sus tildes»
 - **Debería decir:** «el texto nuevo, listo para pegar»
 - **Por qué:** una frase, desde el comercial.
 ```
+
+**El campo Dónde**, según de dónde venga el hallazgo. No todo lo que te paso es
+una pantalla: hay tandas que son listas de preguntas, y bloques de mensajes que
+solo salen cuando algo se equivoca.
+
+- De una pantalla: `Pantalla 12 · Formulario, el tope por pedido`
+- De una pregunta sin pantalla: `Pregunta «¿Qué categorías de Travel
+  participan?» · campo categorias`. Ese "campo" sale en la ficha de cada
+  pregunta, en la fila "Campo interno". Cópialo: es con lo que la encuentro.
+- De un mensaje de validación: `Validación de «¿Cuál es el máximo de Créditos
+  por pedido?» · cuando lo deja en blanco`
+- De la traducción al portugués: `Portugués · «Mis campañas»`, con el texto en
+  español, que es la clave del diccionario.
 
 Las tres gravedades:
 
