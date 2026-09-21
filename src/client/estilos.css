@@ -824,6 +824,55 @@ input[disabled], select[disabled] {
   display: flex; align-items: center; justify-content: center;
 }
 
+/* --- Paneles de momento -------------------------------------------------
+ *
+ * Las tres pantallas que Juan aprobo como momento el 21 de septiembre: el
+ * inicio, "Tu T&C esta listo" y el bloque de azar de la Ayuda. Legal, el error
+ * y el pais en piloto quedaron fuera a proposito: son callejones donde la
+ * campana no sigue por la herramienta, y un panel grande ahi no celebra nada,
+ * subraya que te quedaste afuera.
+ *
+ * El de la Ayuda ya esta hecho: es el aviso serio de la fase 6, que es panel
+ * beige con regla de gradiente arriba. Aqui van los otros dos.
+ *
+ * El prototipo dibuja el momento como una seccion propia, pero el JavaScript
+ * no emite ningun contenedor para ella y la ronda prohibe agregarlo. El panel
+ * se arma con lo que si hay: el h1 y el parrafo que lo sigue comparten fondo,
+ * se les quita el margen de en medio y cada uno redondea su mitad. A la vista
+ * es un solo panel.
+ *
+ * Los dos selectores estan medidos contra las 48 pantallas congeladas, para no
+ * pintar de mas: el primero da las tres vistas del inicio (escritorio,
+ * portugues y celular) y el segundo da solo "Tu T&C esta listo".
+ */
+.pagina-angosta:has(> .pasos-publicar) > h1:has(+ .pregunta-ayuda),
+.pagina-angosta:has(.pasos-publicar):not(:has(> .pasos-publicar)) > h1:has(+ .pregunta-ayuda) {
+  background: var(--beige);
+  margin: 0;
+  padding: var(--e7) var(--e7) 0;
+  border-radius: var(--r-hoja) var(--r-hoja) 0 0;
+  font-size: clamp(32px, 4.4vw, 48px);
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+
+/* La regla de gradiente que separa el titular de su bajada. */
+.pagina-angosta:has(> .pasos-publicar) > h1:has(+ .pregunta-ayuda)::after,
+.pagina-angosta:has(.pasos-publicar):not(:has(> .pasos-publicar)) > h1:has(+ .pregunta-ayuda)::after {
+  content: ''; display: block;
+  width: 96px; height: 6px; margin-top: var(--e5);
+  border-radius: var(--r-pildora); background: var(--gradiente);
+}
+
+.pagina-angosta:has(> .pasos-publicar) > h1:has(+ .pregunta-ayuda) + .pregunta-ayuda,
+.pagina-angosta:has(.pasos-publicar):not(:has(> .pasos-publicar)) > h1:has(+ .pregunta-ayuda) + .pregunta-ayuda {
+  background: var(--beige);
+  margin: 0 0 var(--e6);
+  padding: var(--e5) var(--e7) var(--e7);
+  border-radius: 0 0 var(--r-hoja) var(--r-hoja);
+  font-size: 19px; color: var(--gris-lapiz); max-width: 46ch;
+}
+
 /* --- Celular ------------------------------------------------------------ */
 
 @media (max-width: 900px) {
@@ -857,6 +906,17 @@ input[disabled], select[disabled] {
   }
   .barra-superior nav::-webkit-scrollbar { display: none; }
   .enlace-nav { white-space: nowrap; padding: var(--e2); font-size: 13px; }
+
+  /* El relleno del panel de momento baja: 48px a cada lado se comen una
+     pantalla de 360px. */
+  .pagina-angosta:has(> .pasos-publicar) > h1:has(+ .pregunta-ayuda),
+  .pagina-angosta:has(.pasos-publicar):not(:has(> .pasos-publicar)) > h1:has(+ .pregunta-ayuda) {
+    padding: var(--e5) var(--e4) 0;
+  }
+  .pagina-angosta:has(> .pasos-publicar) > h1:has(+ .pregunta-ayuda) + .pregunta-ayuda,
+  .pagina-angosta:has(.pasos-publicar):not(:has(> .pasos-publicar)) > h1:has(+ .pregunta-ayuda) + .pregunta-ayuda {
+    padding: var(--e3) var(--e4) var(--e5); font-size: 16px;
+  }
 
   .selector-idioma { bottom: 76px; }
 

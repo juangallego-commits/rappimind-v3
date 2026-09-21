@@ -111,6 +111,7 @@ const PARES = [
   // El numero del paso de la pantalla final. Con la paleta vieja daba 4.43:1,
   // por debajo de 4.5, y quedo anotado en docs/PARA_EL_DISENO.md punto 3.
   { que: 'numero del paso de publicar', frente: '--rm-neon-texto', fondo: '--rm-hueco-bg', min: 4.5 },
+  { que: 'bajada del panel de momento sobre beige', frente: '--rm-texto-2', fondo: '--rm-hueco-bg', min: 4.5 },
 
   // --- El mensaje de error, que es texto normal (13.5px en negrita) ------
   { que: 'mensaje de error sobre papel', frente: '--rm-aviso-error-color', fondo: '#FFFFFF', min: 4.5 },

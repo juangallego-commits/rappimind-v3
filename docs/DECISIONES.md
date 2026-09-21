@@ -1349,3 +1349,43 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      donde la campaña no sigue por la herramienta, y un panel grande ahí no
      celebra nada, subraya que te quedaste afuera. La regla del flujo dice
      expresamente que ir a Legal no es un castigo.
+
+109. **El panel de momento se arma con el `h1` y su bajada, no con un contenedor
+     nuevo.** El prototipo dibuja el momento como una sección propia, pero el
+     JavaScript no emite ningún contenedor para ella y la ronda 2 del encargo
+     prohíbe agregarlo. Se arma con lo que ya hay: el `h1` y el párrafo que lo
+     sigue comparten el fondo beige, se les quita el margen de en medio y cada
+     uno redondea su mitad. A la vista es un solo panel, y la regla de gradiente
+     de 96 por 6 va entre los dos con un `::after` del título.
+
+     Los dos selectores están medidos contra las 48 pantallas congeladas, no
+     deducidos: el primero da exactamente las tres vistas del inicio, la de
+     escritorio, la de portugués y la de celular, y el segundo da solo "Tu T&C
+     está listo". El tercer momento, el bloque de azar de la Ayuda, ya quedó
+     resuelto en la fase 6: es el aviso serio, que es panel beige con regla de
+     gradiente arriba.
+
+110. **El lockup no entra en esta ronda, y no es por el peso.** La marca de la
+     barra superior es texto en el DOM (`RappiMind` más un `em` con `v3`, más la
+     corona en SVG), así que cambiarla por la imagen del lockup es tocar
+     `src/client/js/70-app.js`, que la ronda prohíbe. Además el SVG del lockup
+     todavía no es autosuficiente: el logotipo entra por referencia relativa a
+     `../logo/rappi-logo-440.png`, así que carga dentro de un HTML pero no dentro
+     de un `<img>`, y "Mind" y "By Legal" van como `<text>`, que dependen de que
+     PP Object Sans esté disponible. De la familia solo se sirve la cara de peso
+     900, así que esos dos textos saldrían los dos en Heavy.
+
+     Lo que sí se midió, por si sirve al decidir: el lockup en SVG cuesta 12,5 KB
+     en base64 contra los 36,0 KB del logo en PNG de 220, y además es texto, así
+     que gzip sí lo comprime. El favicon en SVG cuesta 11,0 KB contra 72,3 KB en
+     PNG. O sea que la ruta del SVG es mucho más barata en cuanto sea
+     autosuficiente.
+
+111. **El adorno del bigote del prototipo no entra.** El héroe del prototipo
+     lleva `rappi-bigote.png` de fondo, a 320px y al 10% de opacidad. Cuesta 67,3
+     KB en base64, que es la parte de la carga que no se comprime, en una
+     herramienta cuyo peso de descarga ya está anotado como problema en
+     `docs/PARA_EL_DISENO.md` sección 7 y que va a crecer cuando entren los
+     catálogos de leyendas de los otros ocho países. Setenta kilobytes en cada
+     carga por una decoración que se ve al 10% no es un cambio que se pague solo.
+     Si Juan lo quiere, la ruta barata es un SVG.
