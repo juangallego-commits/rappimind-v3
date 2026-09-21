@@ -986,13 +986,17 @@ realizadas a través de las Tiendas Participantes identificadas con la modalidad
 «Turbo Restaurantes»", igual que el documento aprobado. Con tiendas concretas no
 hay categoría que nombrar y cierra en "las Tiendas Participantes".
 
-**Lo que falta, y es dato de Juan.** Las dos categorías que el documento sabe
-nombrar hoy son **"Turbo Restaurantes"** y **"Turbo"**, que son las que propuso
-la decisión 33 y las que están en `data/secciones.json`. Si una campaña de ETA
-puede correr en **Turbo Carulla** como categoría entera, hace falta **el nombre
-exacto con el que Legal quiere que salga impreso**, y entra como una opción más
-en `MODALIDAD_POR_ALCANCE` de `src/core/derivados_eta.js`. Mientras tanto, una
-campaña en dark stores concretas se cubre con la forma 2, nombrándolas.
+**Turbo Carulla va por la forma 2, y es una decisión mía.** Juan me la dejó el
+21 de septiembre de 2026. Las dos categorías que el documento sabe nombrar,
+"Turbo Restaurantes" y "Turbo", son secciones de la app: están en
+`data/secciones.json` y las propuso la decisión 33. Turbo Carulla es una marca
+comercial de dark stores, y escribir "bajo la modalidad «Turbo Carulla»"
+repetiría el error que Juan corrigió. Además la razón que obliga a nombrar la
+categoría en Turbo Restaurantes aquí no existe: las marcas de restaurantes de
+una ciudad son decenas y cambian de un día para otro, y las dark stores de un
+banner en una ciudad son pocas, con nombre propio y estables. **Si Legal
+prefiere nombrarla como categoría, hace falta el nombre exacto impreso y entra
+como una opción más en `MODALIDAD_POR_ALCANCE` de `src/core/derivados_eta.js`.**
 
 **Lo que no cambió, a propósito.** La cláusula de Territorio, que ya decía
 "dentro de las zonas de cobertura de las Tiendas Participantes … en la ciudad de

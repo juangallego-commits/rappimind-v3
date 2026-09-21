@@ -1369,7 +1369,7 @@ var PREGUNTAS = {
       },
       {
         valor: 'tiendas', etiqueta: 'En unas tiendas concretas de Turbo',
-        nota: 'Las dark stores de una zona, por ejemplo Turbo Calleja. El documento las nombra una por una.',
+        nota: 'Las dark stores, como las de Turbo Carulla: Turbo Calleja, Turbo Chico, Turbo Laureles. El documento las nombra una por una.',
       },
     ],
     placeholders: ['TEXTO_TIENDAS_ETA'],

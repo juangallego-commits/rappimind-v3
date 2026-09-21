@@ -1222,3 +1222,21 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
     nombrar y el título queda con la ciudad: cinco dark stores no caben en un
     título, y reusar "Turbo" haría indistinguibles dos campañas distintas en el
     historial.
+
+97. **Turbo Carulla no entra como categoría del documento: sus tiendas se
+    nombran.** Juan dejó la decisión en mis manos el 21 de septiembre de 2026.
+    Las dos categorías que el T&C sabe nombrar, "Turbo Restaurantes" y "Turbo",
+    son secciones de la app: están en `data/secciones.json` y las propuso la
+    decisión 33 de Legal. Turbo Carulla es otra cosa, una marca comercial de
+    dark stores, y escribir "bajo la modalidad «Turbo Carulla»" repetiría justo
+    el error que Juan corrigió, que es llamar modalidad a algo que no lo es.
+    Además la razón que obliga a nombrar la categoría en Turbo Restaurantes aquí
+    no existe: las marcas de restaurantes de una ciudad son decenas y cambian de
+    un día para otro, mientras que las dark stores de un banner en una ciudad se
+    cuentan con los dedos de una mano, tienen nombre propio y son estables. Son
+    exactamente el caso que Juan describió como "tiendas por zona, con nombre
+    propio", así que la forma que les sirve es la de nombrarlas. El nombre vive
+    ahora en la nota de esa opción del formulario, que es interfaz y no texto
+    legal, para que el comercial sepa dónde encaja su campaña. Si algún día hace
+    falta la categoría entera, es una línea en `MODALIDAD_POR_ALCANCE` y el
+    nombre impreso lo da Legal.

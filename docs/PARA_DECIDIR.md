@@ -12,15 +12,9 @@ quedaban**, D1 incluido. **No queda ninguna pregunta abierta.**
 Lo que sí queda es **un bloque de tareas de ejecución**, que ya no dependen de
 ninguna decisión: alguien tiene que hacerlas fuera del repositorio.
 
-Y queda **un dato pequeño**: si una campaña de "15 minutos o Cashback" puede
-correr en **Turbo Carulla** como categoría entera, hace falta el nombre exacto
-con el que Legal quiere que salga impreso. Hoy el documento sabe nombrar "Turbo
-Restaurantes" y "Turbo"; una campaña en dark stores concretas ya se cubre
-nombrándolas una por una.
-
-Y **una cosa que leer, no que decidir**: la cláusula de esa segunda forma la
-escribió la herramienta, porque elegiste la forma y no el texto. Está entera,
-con el antes y el después, en `docs/PENDIENTES_LEGAL.md`.
+Y **una cosa que leer, no que decidir**: la cláusula de la segunda forma del
+cashback por ETA la escribió la herramienta, porque elegiste la forma y no el
+texto. Está entera, con el antes y el después, en `docs/PENDIENTES_LEGAL.md`.
 
 ## Cómo está armado
 
@@ -169,7 +163,7 @@ No vuelve a aparecer como pregunta abierta.
 | **B3.** Brasil: la hora y el límite | La campaña arranca a las 00:01, y los pedidos y los porcentajes van con la cifra primero: "1 (um) pedido", "10% (dez por cento)" | 21 sep |
 | **C3.** "Solo consumo en el local" | **Se borra.** En Rappi no existe esa modalidad. Sale del formulario, del modelo, de la leyenda, de las pruebas y de la fila del país | 21 sep |
 | **C5.** Las veintiuna que quedaban | Siete cambian algo y catorce se cierran como hoy se imprimen. Las de medicamentos y nicotina se resolvieron con la regla nueva de Colombia | 21 sep |
-| **D1.** Qué nombra el T&C del cashback por ETA | Se pregunta. En toda una categoría del botón Turbo, que es como corren casi todas y donde vuelve el texto aprobado palabra por palabra, o en unas tiendas concretas, que el documento nombra una por una. Falta el nombre impreso de Turbo Carulla, si esa categoría hace falta | 21 sep |
+| **D1.** Qué nombra el T&C del cashback por ETA | Se pregunta. En toda una categoría del botón Turbo, que es como corren casi todas y donde vuelve el texto aprobado palabra por palabra, o en unas tiendas concretas, que el documento nombra una por una. Turbo Carulla va por la segunda forma: es marca, no sección de la app (decisión 97) | 21 sep |
 | **D3.** El valor del premio en la Carrera | Entra, con los dos textos de la decisión 36 (ii). Solo en Colombia y solo con premio físico | 21 sep |
 | **D4.** Los productos con nombre y EAN | Entra. Filas con nombre y código de barras, validado con su dígito de control | 21 sep |
 | **D6.** El filtro antes de los T&C generales | Entra. Seis preguntas de sí o no, con tres salidas, y los tres requisitos de la pieza en la pantalla del enlace | 21 sep |

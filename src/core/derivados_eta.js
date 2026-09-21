@@ -40,6 +40,13 @@ var MODALIDAD_TURBO_POR_DEFECTO = 'Turbo Restaurantes';
  * separen.
  *
  * La tercera opcion, 'tiendas', no tiene categoria: nombra las tiendas.
+ *
+ * Turbo Carulla no entra aqui, a proposito. Es una marca comercial de dark
+ * stores, no una seccion de la app como las otras dos, y llamarla "modalidad"
+ * en el documento repetiria justo el error que Juan corrigio. Sus tiendas se
+ * cuentan con los dedos de una mano por ciudad, tienen nombre propio y no
+ * cambian de un dia para otro, asi que la forma que les sirve es la de
+ * nombrarlas: Turbo Calleja, Turbo Chico, Turbo Laureles. Ver la decision 97.
  */
 var MODALIDAD_POR_ALCANCE = {
   restaurantes: 'Turbo Restaurantes',
