@@ -14,27 +14,31 @@ entra en el build.
 | `_ds_manifest.json`, `_ds_bundle.js`, `doc-page.js` | El andamiaje del design system. No se leen para implementar |
 | `RappiAds-Design-System.html` y su versión de impresión | El design system navegable |
 
-## Qué falta y dónde va
-
-Está en `Identidad corporativa Rappi (2).zip`, en la carpeta de Drive. Al
-descomprimirlo, esta es la estructura que la implementación espera:
+## Cómo está organizada
 
 ```
 docs/diseno/
-  tokens/          fonts.css, colors.css, typography.css, spacing.css
-                   y rappimind.css, que se importa AL FINAL y pisa a los otros
-  assets/
-    fonts/         PP Object Sans, cuatro pesos, en OTF y TTF
-    logo/          rappi-logo-220.png (el de la barra), -440, y el bigote
-    lockup/        cuatro versiones más favicon, en SVG y PNG a 3x
-  prototipo/       los tres .dc.html con su support.js al lado
+  AUDITORIA_CONTRASTE.md    los 28 pares medidos y los 6 arreglos. Se reproduce con npm run contraste
+  ESPECIFICACION_ESTADOS.md los estados, los avisos y el progreso
+  styles.css                importa los cinco tokens, en orden
+  tokens/                   los cuatro del design system mas rappimind.css, que va AL FINAL
+  assets/fonts/             PP Object Sans, cuatro pesos, en OTF y TTF
+  assets/logo/              rappi-logo-220.png es el de la barra superior
+  assets/lockup/            cuatro versiones mas favicon, en SVG y PNG
+  *.dc.html                 el prototipo. Estados, Identidad y Logo
+  support.js                lo necesitan los .dc.html para abrirse
+  README.md, README-identidad.md, PROMPT-identidad.md, DECISIONES.md   del traspaso
+  sistema/                  el RappiAds Design System navegable
 ```
 
-`styles.css` busca `tokens/` por ruta relativa, así que esa subcarpeta tiene que
-llamarse así y estar al lado.
+Los `.dc.html` buscan `./support.js` y `assets/` por ruta relativa, y `styles.css`
+busca `tokens/`, así que nada de esto se puede mover de sitio sin romperlo.
 
-Los tres `.dc.html` necesitan `support.js` en la misma carpeta para abrirse.
-El que resuelve los estados es `RappiMind Estados.dc.html`.
+El `readme.md` del design system está en `sistema/` y no en la raíz a propósito:
+al lado del `README.md` del traspaso chocarían en Windows, que es el sistema de
+referencia del proyecto según la decisión 0.
+
+El que hay que leer primero es `ESPECIFICACION_ESTADOS.md`.
 
 ## Cuál fuente manda cuando dos se contradicen
 

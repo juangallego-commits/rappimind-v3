@@ -1,0 +1,69 @@
+/* RappiAds · Color Tokens
+   Source: Rappi Brand Book 2026 · Cap. 5 */
+
+:root {
+  /* === NEON GRADIENT (primary external communication) === */
+  --color-neon-orange: #FF7A4D;
+  --color-neon-red: #FF2526;
+  --color-neon-pink: #FF4583;
+  --color-plain-neon: #FE3F23;
+
+  /* Gradient shortcuts */
+  --gradient-neon: linear-gradient(135deg, #FF7A4D 0%, #FF2526 55%, #FF4583 100%); /* @kind color */
+  --gradient-neon-hero: radial-gradient(circle at 18% 20%, #FF8559 0%, #FF2526 48%, #E61E5C 100%); /* @kind color */
+  --gradient-neon-dark: radial-gradient(circle at 80% 90%, #B8001F 0%, #FF2526 60%, #FF7A4D 100%); /* @kind color */
+  --gradient-neon-45: linear-gradient(-45deg, #FF7A4D 0%, #FF2526 50%, #FF4583 100%); /* @kind color */
+
+  /* === COUNTRY SIGNATURES ===
+     MX / CL: Pídelo por Rappi
+     CO / PE / EC: Pide un Rappi
+     AR / UY: Pedí un Rappi
+     BR: Pede no Rappi
+  */
+
+  /* === APP SECONDARY PALETTE (own media / in-app only) === */
+  --color-celeste: #D9F1FF;
+  --color-morado: #E5DCFF;
+  --color-rosado: #F4DFF6;
+  --color-lavanda: #F4F0FC;
+  --color-beige: #FFF0DD;
+
+  /* === TURBO === */
+  --color-turbo-green: #248F63;
+  --color-turbo-dark: #00453E;
+
+  /* === PRO (light) === */
+  --color-pro-bg: #ECEFF3;
+  --color-pro-text: #000000;
+  --color-pro-muted: #646464;
+  --color-pro-gold-light: #F0B769;
+  --color-pro-gold-dark: #E8A24C;
+
+  /* === PRO BLACK (dark) === */
+  --color-pro-black-bg: #2A2B2B;
+  --color-pro-black-text: #FFFFFF;
+  --color-pro-black-surface: #ECEFF3;
+
+  /* === NEUTRALS === */
+  --color-ink: #0A0A0A;
+  --color-muted: rgba(10,10,10,0.55);
+  --color-line: rgba(10,10,10,0.10);
+  --color-cream: #FAEEDA;
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+
+  /* === EMAIL BODY === */
+  --color-email-text: #383838;
+
+  /* === SEMANTIC ALIASES === */
+  --surface-page: var(--color-white);
+  --surface-card: var(--color-white);
+  --surface-neon: var(--gradient-neon);
+  --text-primary: var(--color-ink);
+  --text-secondary: var(--color-muted);
+  --text-on-neon: var(--color-white);
+  --text-on-dark: var(--color-white);
+  --accent-primary: var(--color-neon-red);
+  --accent-gradient: var(--gradient-neon);
+  --accent-gold: var(--color-pro-gold-light);
+}

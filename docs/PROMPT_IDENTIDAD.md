@@ -13,7 +13,8 @@ pregunta.
 | Dónde | Qué dice |
 |---|---|
 | `docs/PLAN_IDENTIDAD.md` | El análisis completo: nueve hallazgos, la cobertura y el plan por fases |
-| `docs/diseno/ESPECIFICACION_ESTADOS.md` | Los estados, los tres niveles de aviso, el progreso de 5 a 9 pasos y los contrastes ya medidos |
+| `docs/diseno/ESPECIFICACION_ESTADOS.md` | Los estados, los tres niveles de aviso y el progreso de 5 a 9 pasos |
+| `docs/diseno/AUDITORIA_CONTRASTE.md` | Los 28 pares medidos y los 6 que hay que arreglar antes de dar nada por bueno |
 | `docs/DECISIONES.md` 80 | El botón primario va con texto blanco a 19px peso 700 sobre el gradiente recortado al 17% |
 | `docs/DECISIONES.md` 81 | La tipografía se decide con el peso medido |
 | `docs/PARA_EL_DISENO.md` | Lo que no se puede tocar, que es producto y no estética |
@@ -137,11 +138,15 @@ Reglas duras de esta ronda:
 Corren sobre el resultado final. Cada uno entrega hallazgos con archivo y línea,
 no impresiones.
 
-1. **CONTRASTE.** Mide con la fórmula de WCAG 2.1 cada par de color que lleve
-   texto o que sea borde de control. Contrasta contra la tabla ya medida de
-   `ESPECIFICACION_ESTADOS.md` sección 6. Texto normal 4.5:1, texto grande 3:1 a
-   partir de 18.66px en negrita, bordes de control 3:1. Los componentes inactivos
-   están exentos.
+1. **CONTRASTE.** Empieza por `npm run contraste`, que mide los veintiocho pares de
+   la paleta contra WCAG 2.1 leyendo los valores de `docs/diseno/tokens/` y devuelve
+   1 mientras quede alguno sin arreglar. Los seis que hoy no llegan, con su arreglo,
+   están en `docs/diseno/AUDITORIA_CONTRASTE.md`. Cuando eso esté en verde, busca
+   los pares que la lista todavía no cubre y agrégalos a `PARES` en
+   `scripts/contraste.js`, con su mínimo y, si se acepta por debajo, con la nota que
+   explique por qué. Texto normal 4.5:1, texto grande 3:1 desde 18.66px en negrita,
+   bordes de control e indicadores de foco 3:1. Los componentes inactivos están
+   exentos.
 2. **ACCESIBILIDAD.** Foco visible en todo control, un `h1` por pantalla dentro de
    `#app`, la región `#anuncios` intacta, el foco al título al cambiar de pantalla,
    y ningún texto visible con un guion usado como signo de puntuación. Las pruebas

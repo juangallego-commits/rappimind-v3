@@ -72,50 +72,27 @@ por debajo del contraste mínimo. Va con fondo `#F4F5F6`, borde
 
 ## 5. Lo que salió de verificar los números
 
-Se midieron con la fórmula de luminancia relativa de WCAG 2.1. Casi todo pasa.
-Tres notas.
+Se midieron los veintiocho pares de color de la paleta contra WCAG 2.1, con los
+valores reales de `tokens/`. **Veintitrés llegan, cuatro están exentos y seis hay
+que arreglar.**
 
-**Una corrección menor.** El texto deshabilitado `#6B6B6B` sobre `#F4F5F6` da
-**4.88:1**, no 5.3:1 como dice la especificación. La conclusión no cambia, porque
-4.88 pasa AA. Solo queda anotado para que nadie ajuste el color creyendo que
-tiene más margen del que tiene.
+El detalle, con el arreglo propuesto para cada uno, está en
+**`docs/diseno/AUDITORIA_CONTRASTE.md`**. Se reproduce con `npm run contraste`.
 
-**Un problema real: el mensaje de error suelto no pasa.** En neón `#FF2526` da
-3.79:1 sobre papel y 3.47:1 sobre niebla. A 13.5px en peso 700 eso es texto
-normal para WCAG, no texto grande, así que el mínimo es 4.5:1. Y es justo el
-texto que tiene que leerse.
+Los seis, en corto:
 
-> **El arreglo: `#D91F20` para el texto del mensaje de error.** Es el mismo neón
-> al 85% de brillo y da 5.81:1 sobre papel, 5.33:1 sobre niebla y 5.19:1 sobre
-> beige. A ojo se lee como el mismo rojo.
->
-> El `#FF2526` se queda **para el borde del campo en error y para el anillo de
-> foco**, donde el mínimo es 3:1 y sí lo pasa (3.79:1). O sea que hacen falta dos
-> tokens: `--neon` para lo que no lleva texto y `--neon-texto` para lo que sí.
->
-> Es el mismo patrón que ya existe hoy con `--naranja-marca` y `--naranja-accion`.
-
-**Dos bordes de bajo contraste que no son un problema.** El borde del
-deshabilitado (`rgba(10,10,10,.10)`, 1.23:1) y el del estado "Vencido"
-(`rgba(10,10,10,.20)`, 1.57:1) quedan muy por debajo de 3:1, pero no incumplen:
-WCAG exime explícitamente los componentes inactivos, y la píldora de "Vencido"
-no es un control sino una etiqueta cuyo significado lo carga su propio texto.
-Se dejan como están.
-
-## 6. Contrastes verificados, para no volver a medirlos
-
-| Par | Razón | Mínimo | |
+| Qué | Da | Necesita | Arreglo |
 |---|---|---|---|
-| Tinta `#0A0A0A` sobre celeste `#D9F1FF` | 16.95:1 | 4.5 | pasa |
-| Tinta `#0A0A0A` sobre beige `#FFF0DD` | 17.69:1 | 4.5 | pasa |
-| Borrador `#595959` sobre `#F4F5F6` | 6.42:1 | 4.5 | pasa |
-| Deshabilitado `#6B6B6B` sobre `#F4F5F6` | 4.88:1 | 4.5 | pasa |
-| Borde del campo con valor, tinta sobre papel | 19.8:1 | 3 | pasa |
-| Borde del campo en error, `#FF2526` sobre papel | 3.79:1 | 3 | pasa |
-| Mensaje de error `#FF2526` sobre papel | 3.79:1 | 4.5 | **no pasa** |
-| Mensaje de error `#D91F20` sobre papel | 5.81:1 | 4.5 | pasa |
+| Anillo de foco del control | 1.99:1 | 3 | El neón sólido `#FF2526`, o alfa .75 |
+| Anillo del campo enfocado | 1.57:1 | 3 | Lo mismo |
+| Mensaje de error | 3.79:1 | 4.5 | `#D91F20` |
+| Marcador de posición | 3.45:1 | 4.5 | `#707070` |
+| Borde del campo vacío | 1.5:1 | 3 | Alfa .44 |
+| Subrayado del hueco | 2.32:1 | 3 | Alfa .84, o `#D91F20` |
 
----
+El del anillo de foco es el que más importa: el foco visible está en la lista de
+lo que no se puede tocar de `docs/PARA_EL_DISENO.md`, y el anillo de hoy ya cumple
+con 3.44:1. Bajarlo a 1.99 sería romper algo que estaba bien.
 
 ## 7. Las tres advertencias de entrega
 

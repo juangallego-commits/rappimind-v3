@@ -1,0 +1,67 @@
+/* RappiAds · Typography Tokens
+   Source: Rappi Brand Book 2026 · Cap. 5 §5.15–5.16 */
+
+:root {
+  /* === FONT FAMILIES === */
+  --font-primary: 'PPObjectSans', sans-serif;
+  /* Email only — Jornada Sans not available; using PP Object Sans as fallback */
+  --font-email: 'PPObjectSans', sans-serif;
+
+  /* === WEIGHTS === */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+  --weight-heavy: 900;
+
+  /* === TYPE SCALE (brand-canonical sizes) === */
+  /* Display — dominante, cover headlines */
+  --text-display: 900 clamp(64px, 12vw, 230px)/0.86 var(--font-primary);
+  --text-display-size: clamp(64px, 12vw, 230px);
+
+  /* Section heading */
+  --text-h1-size: clamp(40px, 6vw, 100px);
+  --text-h1: 900 var(--text-h1-size)/0.96 var(--font-primary);
+
+  /* Content heading */
+  --text-h2-size: clamp(28px, 4vw, 64px);
+  --text-h2: 900 var(--text-h2-size)/1.03 var(--font-primary);
+
+  /* Sub-heading */
+  --text-h3-size: clamp(20px, 2.5vw, 40px);
+  --text-h3: 700 var(--text-h3-size)/1.15 var(--font-primary);
+
+  /* Body */
+  --text-body-size: 17px;
+  --text-body: 500 var(--text-body-size)/1.7 var(--font-primary);
+
+  /* Lede / intro */
+  --text-lede-size: 22px;
+  --text-lede: 500 var(--text-lede-size)/1.55 var(--font-primary);
+
+  /* Meta / eyebrow */
+  --text-meta-size: 12px;
+  --text-meta: 600 var(--text-meta-size)/1 var(--font-primary);
+
+  /* Legal / fine print */
+  --text-legal-size: 11px;
+  --text-legal: 400 var(--text-legal-size)/1.5 var(--font-primary);
+
+  /* === IN-APP FORMAT SIZES (Brand Book §6) === */
+  --inapp-title-size: 33px;  /* Inapp titular · Heavy */
+  --inapp-desc-size: 21px;   /* Inapp description · Medium */
+  --banner-home-title: 26px; /* Banner Home · Heavy */
+  --banner-home-sub: 20px;   /* Banner Home · Medium */
+  --banner-filtro-title: 88px; /* Banner Filtro · Heavy */
+  --banner-filtro-desc: 40px;  /* Banner Filtro · Medium */
+
+  /* === EMAIL SIZES === */
+  --email-title-size: 40px;  /* Jornada Sans · Heavy */
+  --email-body-size: 20px;   /* Jornada Sans · Medium */
+  --email-cta-size: 28px;    /* Jornada Sans · Heavy */
+
+  /* === LETTER SPACING === */
+  --tracking-tight: -0.045em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.12em;
+  --tracking-widest: 0.16em;
+}

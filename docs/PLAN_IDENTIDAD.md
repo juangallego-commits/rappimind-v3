@@ -87,26 +87,20 @@ Recomiendo la **a**. Y conviene saber que esto no es nuevo: `docs/DISENO.md` ya
 documenta que blanco sobre `#FF441F` da 3.44:1, y por eso hoy existen dos
 naranjas. Es el mismo problema con otra paleta.
 
-### 3.2 Otros cuatro valores que no llegan al mínimo
+### 3.2 Seis valores más que no llegan al mínimo
 
-**`--gris-lapiz: rgba(10,10,10,.55)`.** Da 4.42:1 sobre blanco y entre 4.22 y 4.30
-sobre los pasteles. Hoy `#5D626D` da 6.12:1. Importa porque es el color de todas
-las ayudas y de los "¿por qué te preguntamos esto?", que es texto que el comercial
-sí lee. **Arreglo barato: subir el alfa de .55 a .57** y pasa sobre los cinco
-fondos. A ojo no se nota.
+Al llegar los tokens de verdad se midió la paleta completa: veintiocho pares contra
+WCAG 2.1. Veintitrés llegan, cuatro están exentos y **seis hay que arreglar**. Todos
+tienen arreglo barato y ninguno obliga a renunciar a la identidad.
 
-**`--neon #FF2526` como texto de acento y enlaces.** Da 3.79:1 sobre blanco. Hoy
-los enlaces son `#D32F0F` con 5.02:1. Como anillo de foco sí sirve, porque ahí el
-mínimo es 3:1. El problema aparece solo cuando lleva texto encima.
+El más importante es el **anillo de foco**, que con `rgba(255,37,38,.45)` da 1.99:1
+cuando necesita 3. El foco visible está en la lista de lo que no se puede tocar de
+`docs/PARA_EL_DISENO.md`, y el anillo de hoy ya cumple con 3.44:1, así que dejarlo
+así sería romper algo que funcionaba. Con el neón sólido llega a 3.79:1.
 
-**`--borde-control: rgba(10,10,10,.18)`.** Da 1.5:1. WCAG pide 3:1 para el
-contorno de un control, que es lo que le dice a alguien dónde empieza y termina un
-campo. Hoy `#767E8C` da 4.09:1. Para llegar a 3:1 el alfa tendría que subir a .44,
-que sí es un cambio visible.
-
-**El subrayado punteado del hueco, `rgba(255,37,38,.6)` sobre beige.** Da 2.32:1.
-Es la señal de que falta un dato, o sea lo que sostiene la promesa central del
-producto.
+La tabla completa y los seis arreglos están en `docs/diseno/AUDITORIA_CONTRASTE.md`.
+Se reproduce con `npm run contraste`, que devuelve 1 mientras quede alguno sin
+arreglar.
 
 ### 3.3 La barra de progreso no tiene seis pasos · RESUELTO
 
@@ -152,19 +146,15 @@ especificación pide cuatro pesos, incluido 900. Hay que rehacer esa carga.
 
 ### 3.6 El mensaje de error en neón tampoco pasa
 
-Salió de verificar la especificación nueva. El mensaje de error suelto va en neón
-`#FF2526` a 13.5px en peso 700. Eso es texto normal para WCAG, no texto grande, así
-que el mínimo es 4.5:1 y el neón da 3.79:1 sobre papel y 3.47:1 sobre niebla. Es
-justo el texto que tiene que leerse.
+Es uno de los seis de 3.2 y se menciona aparte porque obliga a un token nuevo. El
+mensaje va en neón `#FF2526` a 13.5px en peso 700, que para WCAG sigue siendo texto
+normal, así que le toca 4.5:1 y da 3.79. El arreglo es `#D91F20`, el mismo neón al
+85% de brillo, que da 5.04:1.
 
-El arreglo es `#D91F20`, el mismo neón al 85% de brillo, que da 5.81:1 sobre papel.
-El `#FF2526` se queda para el borde del campo y el anillo de foco, donde el mínimo
-es 3:1 y lo pasa. O sea que hacen falta dos tokens, `--neon` y `--neon-texto`, que
-es el mismo patrón que hoy tienen `--naranja-marca` y `--naranja-accion`.
-
-También quedó anotada una corrección menor: el texto deshabilitado `#6B6B6B` sobre
-`#F4F5F6` da 4.88:1, no 5.3:1 como afirma la especificación. Pasa igual, pero tiene
-menos margen del que parece.
+O sea que hacen falta **dos tokens de neón**: uno para lo que no lleva texto (bordes,
+anillos, el gradiente) y otro para lo que sí. Es el mismo patrón que hoy tienen
+`--naranja-marca` y `--naranja-accion`, y el mapeo de tokens tiene que contemplarlo
+desde el principio.
 
 ### 3.7 Renombrar tokens rompe pruebas que hoy pasan
 
