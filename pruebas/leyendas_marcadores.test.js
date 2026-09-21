@@ -262,19 +262,37 @@ test('la cifra de un monto usa la moneda y el separador del país', () => {
 // --- Lo que todavía no se puede -------------------------------------------
 
 test('sin frase aprobada no hay leyenda, y se dice por qué', () => {
-  // Tres casos donde la respuesta del encargo 03 no dio frase corta. La regla 3
-  // de CLAUDE.md dice que el texto legal es de Legal: aquí no se inventa una.
-  const secciones = faltantesParaLaLeyenda({ redencion: 'secciones' }, CO);
-  assert.ok(secciones[0].indexOf('ciertas secciones') !== -1, secciones.join(' | '));
-
+  // Eran tres casos sin frase corta aprobada. La regla 3 de CLAUDE.md dice que
+  // el texto legal es de Legal: aquí no se inventa una. Juan escribió dos el 20
+  // de septiembre (punto C3) y queda solo el del consumo en el local, que
+  // depende de un dato que todavía nadie tiene: el nombre exacto con el que la
+  // app de Colombia muestra hoy esa modalidad.
   const local = faltantesParaLaLeyenda({ condiciones: ['consumo_local'] }, CO);
   assert.ok(local[0].indexOf('consumo en el local') !== -1, local.join(' | '));
 
-  const carrera = faltantesParaLaLeyenda({ tipo: 'carrera_compras', criterioGanador: 'mas_pedidos' }, CO);
-  assert.ok(carrera[0].indexOf('más pedidos') !== -1, carrera.join(' | '));
-
   // Y una campaña normal no tiene nada pendiente.
   assert.deepStrictEqual(faltantesParaLaLeyenda(campanaDeElCorral(), CO), []);
+});
+
+test('las dos frases que Juan escribió el 20 de septiembre ya salen', () => {
+  // C3. Sin ellas, una campaña de cashback por secciones y una Carrera que se
+  // gana por número de pedidos se quedaban sin ninguna de sus cinco leyendas.
+  assert.deepStrictEqual(faltantesParaLaLeyenda({ redencion: 'secciones' }, CO), []);
+  assert.deepStrictEqual(
+    faltantesParaLaLeyenda({ tipo: 'carrera_compras', criterioGanador: 'mas_pedidos' }, CO), []);
+
+  const { dondeSeRedimen, textoGanadoresCorto } = require('../src/core/derivados_leyendas.js');
+
+  assert.strictEqual(dondeSeRedimen({ redencion: 'secciones', secciones: ['Turbo'] }, {}),
+    'en la sección “Turbo” de Rappi');
+  assert.strictEqual(
+    dondeSeRedimen({ redencion: 'secciones', secciones: ['Restaurantes', 'Turbo'] }, {}),
+    'en las secciones “Restaurantes” y “Turbo” de Rappi');
+
+  assert.strictEqual(textoGanadoresCorto({ criterioGanador: 'mas_pedidos', numeroGanadores: 1 }),
+    'Gana el usuario con el mayor número de pedidos válidos con productos participantes.');
+  assert.strictEqual(textoGanadoresCorto({ criterioGanador: 'mas_pedidos', numeroGanadores: 3 }),
+    'Ganan los 3 usuarios con el mayor número de pedidos válidos con productos participantes.');
 });
 
 test('una campaña sin frase aprobada no entrega ninguna leyenda a medias', () => {
@@ -284,10 +302,11 @@ test('una campaña sin frase aprobada no entrega ninguna leyenda a medias', () =
   assert.ok(r.faltantes.length > 0);
 });
 
-test('el enlace es el mismo en las cinco leyendas', () => {
+test('el enlace es el mismo en todas las leyendas que lo llevan', () => {
   // Juan lo decidió el 18 de septiembre: no hay enlace corto. Dos direcciones
-  // para el mismo T&C es una que alguien va a copiar mal. La consecuencia es que
-  // la leyenda de push no cabe con el enlace, y la herramienta lo dice.
+  // para el mismo T&C es una que alguien va a copiar mal. El 20 de septiembre
+  // cerró la otra mitad (punto C2): la de push y SMS sale sin enlace, y por eso
+  // ya cabe en los 70 caracteres del formato.
   const r = leyendasDe(campanaDeElCorral(), CO, { nombreCampana: 'Cashback 99 El Corral' });
   assert.deepStrictEqual(r.errores, [], r.errores.join(' | '));
   assert.deepStrictEqual(r.pendientes, [], 'ya no queda ningún formato pendiente');
@@ -301,8 +320,10 @@ test('el enlace es el mismo en las cinco leyendas', () => {
 
   const push = r.leyendas.filter((l) => l.formato === 'push_sms')[0];
   assert.ok(push, 'la leyenda de push ya se entrega');
-  assert.strictEqual(push.cabe, false, 'con el enlace, la push no cabe en 70 caracteres');
-  assert.ok(push.sobra > 0 && push.caracteresEnEnlaces > 0, JSON.stringify(push));
+  assert.strictEqual(push.texto.indexOf('http'), -1, 'la push volvió a llevar enlace: ' + push.texto);
+  assert.strictEqual(push.caracteresEnEnlaces, 0, JSON.stringify(push));
+  assert.strictEqual(push.cabe, true, 'sin enlace, la push tiene que caber en 70: ' + push.texto);
+  assert.strictEqual(push.sobra, 0, JSON.stringify(push));
 });
 
 // --- El enlace del T&C -----------------------------------------------------
@@ -335,11 +356,35 @@ test('un país sin ruta de publicación no inventa un enlace', () => {
 
 test('una campaña de Turbo pega la leyenda de Turbo sin preguntar nada', () => {
   assert.strictEqual(esDeTurbo({ condiciones: ['turbo'] }), true);
-  assert.strictEqual(esDeTurbo({ tipo: 'cashback_eta' }), true);
   assert.strictEqual(esDeTurbo({ condiciones: [] }), false);
 
-  const r = leyendasDe(caso('ETA01'));
+  const r = leyendasDe(campanaDeElCorral({ condiciones: ['turbo'] }));
   assert.deepStrictEqual(r.complementos, ['leyenda_turbo_co']);
+  assert.ok(porFormato(r, 'letra_pequena').texto.indexOf('El tiempo de entrega es estimado') !== -1);
+});
+
+test('el ETA no pega la leyenda de Turbo, porque se contradiría con su cláusula', () => {
+  /*
+   * Punto C5, 20 de septiembre de 2026. El complemento de Turbo dice que el
+   * tiempo de entrega es estimado, y el T&C del ETA dice que Rappi se obliga a
+   * cumplirlo. La pieza no puede desdecir al documento.
+   *
+   * Hasta esa fecha el complemento sí se elegía, y no se veía de milagro: las
+   * tres leyendas del ETA no llevan {{TEXTO_COMPLEMENTOS}}, así que el texto se
+   * calculaba y se tiraba. Agregarle ese marcador a una leyenda del ETA lo
+   * habría hecho aparecer sin que nadie lo decidiera.
+   */
+  assert.strictEqual(esDeTurbo({ tipo: 'cashback_eta' }), false);
+
+  const r = leyendasDe(caso('ETA01'));
+  assert.deepStrictEqual(r.complementos, []);
+  for (const leyenda of r.leyendas) {
+    assert.strictEqual(leyenda.texto.indexOf('El tiempo de entrega es estimado'), -1,
+      leyenda.formato + ' trae el aviso de tiempo estimado: ' + leyenda.texto);
+  }
+
+  // Y el enlace de los términos de Turbo sigue saliendo, porque las leyendas del
+  // ETA lo traen escrito en su propio cuerpo.
   assert.ok(porFormato(r, 'letra_pequena').texto.indexOf('términos y condiciones Turbo') !== -1);
 });
 
@@ -372,9 +417,48 @@ test('ninguna leyenda de los casos dorados sale rota ni con huecos', () => {
   }
 });
 
-test('un país sin leyenda de campaña lo dice, no entrega una de Colombia', () => {
+test('México ya recibe sus leyendas, y dice cuál no puede armar todavía', () => {
+  /*
+   * Punto C4, 20 de septiembre de 2026. Las leyendas de campaña del cashback
+   * sirven también en México, Perú, Argentina, Chile, Ecuador, Uruguay y Costa
+   * Rica, armadas con los datos de cada país.
+   *
+   * Ninguno de los siete tiene todavía ruta de publicación, así que los tres
+   * formatos que empiezan por el enlace del T&C salen como "todavía no", con el
+   * nombre de lo que falta. Los otros dos se entregan.
+   */
   const entrada = Object.assign(caso('MX01'), { categoriaProducto: 'licores' });
   const r = leyendasDe(entrada, MX, { nombreCampana: 'Cashback de prueba México' });
-  assert.strictEqual(r.hay, false);
-  assert.deepStrictEqual(r.leyendas, []);
+
+  assert.strictEqual(r.hay, true);
+  assert.deepStrictEqual(r.leyendas.map((l) => l.formato), ['texto_apoyo', 'push_sms']);
+  assert.deepStrictEqual(r.pendientes.map((p) => p.formato),
+    ['letra_pequena', 'banner_corto', 'exterior']);
+  for (const pendiente of r.pendientes) {
+    assert.ok(pendiente.razones.join(' ').indexOf('ruta con la que se publican') !== -1,
+      pendiente.formato + ': ' + pendiente.razones.join(' | '));
+  }
+  assert.deepStrictEqual(r.errores, [], r.errores.join(' | '));
+
+  // Y la leyenda que sí sale lleva los montos en pesos mexicanos, no en pesos
+  // colombianos: se arma con los datos del país, no se copia la de Colombia.
+  assert.ok(r.leyendas[0].texto.indexOf('$500') !== -1, r.leyendas[0].texto);
+});
+
+test('en Perú el anuncio dice cuánto es el presupuesto, y en los demás no', () => {
+  // Punto C4. El artículo 14 del Código de Protección y Defensa del Consumidor
+  // pide que el anuncio diga la duración y las unidades disponibles.
+  const PE = PAISES.filter((p) => p.codigo === 'PE')[0];
+  const CL = PAISES.filter((p) => p.codigo === 'CL')[0];
+  const conRuta = (pais) => Object.assign({}, pais, { ruta_promos: pais.codigo.toLowerCase() });
+
+  const entrada = (codigo) => Object.assign(caso('MX01'), { pais: codigo });
+  const letraPequena = (pais) => porFormato(
+    leyendasDe(entrada(pais.codigo), conRuta(pais), { nombreCampana: 'Cashback de prueba' }),
+    'letra_pequena').texto;
+
+  assert.ok(letraPequena(PE).indexOf('o hasta agotar el presupuesto disponible de S/ 1,000,000.') !== -1,
+    letraPequena(PE));
+  assert.ok(letraPequena(CL).indexOf('o hasta agotar el presupuesto disponible.') !== -1,
+    letraPequena(CL));
 });

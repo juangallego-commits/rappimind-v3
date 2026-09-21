@@ -353,8 +353,9 @@ async function recorrer() {
     conMedicamento.indexOf('\nmedicamento\n') === -1,
     conMedicamento.replace(/\n+/g, ' | ').slice(0, 400));
 
-  // Y en un pais sin leyenda de campana la pregunta no existe: pedir la
-  // categoria sin nada donde imprimirla es pedir un dato por pedirlo.
+  // Mexico ya tiene leyendas de campana desde el 20 de septiembre de 2026
+  // (punto C4), asi que su paso de la pieza existe y ofrece las categorias
+  // mexicanas, no las colombianas.
   await desdeElInicio();
   await decirQueNoATodo();
   await clic('México');
@@ -363,8 +364,21 @@ async function recorrer() {
   const pasosDeMexico = await pagina.evaluate(function () {
     return RM.flujo.pasosDelTipo(RM.estado.entrada()).map(function (p) { return p.id; });
   });
-  revisar('en un país sin leyenda de campaña no se pregunta la categoría',
-    pasosDeMexico.indexOf('pieza') === -1, pasosDeMexico.join(' > '));
+  revisar('México ya tiene paso de pieza, porque ya tiene leyendas',
+    pasosDeMexico.indexOf('pieza') !== -1, pasosDeMexico.join(' > '));
+
+  // Y en un pais sin ninguna advertencia de categoria la pregunta no existe:
+  // pedir la categoria sin nada donde imprimirla es pedir un dato por pedirlo.
+  await desdeElInicio();
+  await decirQueNoATodo();
+  await clic('Uruguay');
+  await clic('Rappi');
+  await clic('Cashback');
+  const pasosDeUruguay = await pagina.evaluate(function () {
+    return RM.flujo.pasosDelTipo(RM.estado.entrada()).map(function (p) { return p.id; });
+  });
+  revisar('en un país sin categorías que ofrecer no se pregunta la categoría',
+    pasosDeUruguay.indexOf('pieza') === -1, pasosDeUruguay.join(' > '));
 
   // --- 4. Los caminos que terminan en Legal --------------------------------
   await desdeElInicio();
@@ -498,6 +512,36 @@ async function recorrer() {
   revisar('la pantalla final de un país en pruebas también dice "no publiques"',
     pantallaFinal.indexOf('Tu T&C está listo') !== -1 && pantallaFinal.indexOf('no publiques') !== -1,
     pantallaFinal.replace(/\n+/g, ' | ').slice(0, 300));
+
+  // --- 6a. Lo que dice la pantalla final sobre las leyendas ----------------
+  //
+  // Dos decisiones de Juan del 20 de septiembre que solo existen si se ven:
+  // C2, la leyenda de push y SMS sale sin enlace y la pantalla dice por que;
+  // C1, la que no cabe dice que hacer, sin subir ningun limite.
+  const campanaConLeyendas = {
+    pais: 'CO', negocio: 'rappi', tipo: 'cashback', tienda: 'El Corral', alcance: 'Nacional',
+    ciudades: '', segmento: 'todos', metodoPago: 'todos', declaracion: false,
+    fechaInicio: '2026-12-01', horaInicio: '00:00', fechaFin: '2026-12-31', horaFin: '23:59',
+    organizadorRazonSocial: 'El Corral S.A.S.', organizadorId: '900111222-1',
+    porcentaje: 20, tope: 25000, presupuesto: 50000000, maxPedidos: 1, sinLimite: false,
+    carga: 'dia_siguiente', vigencia: 'dias', diasVigencia: 30, redencion: 'tienda',
+    condiciones: [], compraMinima: 30000, categoriaProducto: 'licores',
+  };
+  await irAlResumenCon(pagina, campanaConLeyendas);
+  await pagina.click('#declaracion');
+  await pagina.waitForTimeout(400);
+  await clic('Generar T&C');
+  await pagina.waitForTimeout(1200);
+  const conLeyendas = await texto();
+
+  revisar('la push sale sin enlace, y la pantalla dice por qué',
+    conLeyendas.indexOf('El push o el SMS tiene que llevar al usuario a la campaña dentro de la app, donde está el enlace a los T&C.') !== -1,
+    conLeyendas.replace(/\n+/g, ' | ').slice(-600));
+
+  revisar('la leyenda que no cabe dice qué hacer, y no se recorta nada',
+    conLeyendas.indexOf('Se pasa por') !== -1 &&
+    conLeyendas.indexOf('Esta leyenda no cabe en este formato. Usa letra pequeña o un formato más grande; en exterior, agrega el código QR al mismo enlace.') !== -1,
+    conLeyendas.replace(/\n+/g, ' | ').slice(-600));
 
   // --- 6b. El acuerdo de transferencia de datos ----------------------------
   //

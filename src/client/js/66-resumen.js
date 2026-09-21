@@ -335,6 +335,16 @@ function bloqueDeLeyendas(leyendas) {
       }
       caja.appendChild(RM.util.paraCopiar(estado.T(leyenda.nombre), leyenda.texto, ayuda));
 
+      // La push y el SMS van sin enlace desde el 20 de septiembre de 2026
+      // (punto C2): se comía 35 de los 70 caracteres del formato y la leyenda
+      // no cabía nunca. Hay que decir por qué no está, o alguien lo pega a mano.
+      if (leyenda.formato === 'push_sms') {
+        caja.appendChild(crear('p', {
+          clase: 'pregunta-ayuda',
+          texto: estado.T('El push o el SMS tiene que llevar al usuario a la campaña dentro de la app, donde está el enlace a los T&C.'),
+        }));
+      }
+
       if (!leyenda.cabe) {
         // Con los números, no solo con el "no cabe": cuánto se pasa y cuánto de
         // eso se lo están comiendo los enlaces, que suelen ser la mitad.
@@ -343,10 +353,13 @@ function bloqueDeLeyendas(leyendas) {
           porCuanto += ' ' + estado.T('Los enlaces ocupan {n} de los {total}.')
             .replace('{n}', leyenda.caracteresEnEnlaces).replace('{total}', leyenda.largo);
         }
+        // Y qué hacer. Juan decidió el 20 de septiembre (punto C1) no subir
+        // ningún límite ni marcar nada como recortable: lo que no cabe es justo
+        // lo que la ley exige, así que lo que cambia es el formato, no el texto.
         caja.appendChild(crear('div', { clase: 'aviso aviso-serio' }, [
           crear('p', { texto: porCuanto }),
           crear('p', {
-            texto: estado.T('No hay nada más que se pueda quitar: todo lo que queda es obligatorio. Usa un formato más grande o escríbele a Legal antes de mandar a diseñar.'),
+            texto: estado.T('Esta leyenda no cabe en este formato. Usa letra pequeña o un formato más grande; en exterior, agrega el código QR al mismo enlace.'),
           }),
         ]));
       }

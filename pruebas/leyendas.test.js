@@ -56,6 +56,37 @@ test('el nombre del archivo es el identificador de la leyenda', () => {
  * cae aquí. La regla 3 de CLAUDE.md dice que el texto legal es de Legal, y una
  * regla que nadie vigila se rompe sola.
  */
+/**
+ * Las leyendas que Juan cambió después de la respuesta del encargo.
+ *
+ * El catálogo es de Legal y no se toca, así que cada diferencia frente a la
+ * respuesta tiene que estar escrita aquí con su decisión. Sin esta lista, una
+ * leyenda cambiada a escondidas pasaría desapercibida.
+ */
+const CAMBIADAS_POR_JUAN = {
+  // Punto C2, 20 de septiembre de 2026: la leyenda de push y SMS sale sin
+  // enlace. El enlace se comía 35 de los 70 caracteres del formato, así que la
+  // leyenda nunca cabía; el push lleva al usuario a la campaña dentro de la
+  // app, y ahí está el enlace al T&C.
+  leyenda_push_co: '[[?TOPE_CIFRA]]Máx. {{TOPE_CIFRA}} en Créditos. [[/?]][[?MINIMO_CIFRA]]Compra mínima {{MINIMO_CIFRA}}. [[/?]]Aplican TyC',
+};
+
+/**
+ * Las leyendas a las que Juan les agregó el presupuesto del anuncio.
+ *
+ * Punto C4, 20 de septiembre de 2026. En Perú el artículo 14 del Código de
+ * Protección y Defensa del Consumidor pide que el anuncio diga la duración y
+ * las unidades disponibles, así que "o hasta agotar el presupuesto disponible."
+ * pasa a "o hasta agotar el presupuesto disponible de {cifra}.". El marcador va
+ * vacío en los demás países, donde la frase no cambia ni un carácter.
+ */
+/** Punto C4: las cuatro leyendas de campaña del cashback pasan a ocho países. */
+const EXTENDIDAS_A_OCHO_PAISES = ['leyenda_cashback_apoyo_co', 'leyenda_cashback_banner_co',
+  'leyenda_cashback_letra_pequena_co', 'leyenda_push_co'];
+
+const CON_PRESUPUESTO_DE_PERU = ['leyenda_cashback_banner_co', 'leyenda_cashback_letra_pequena_co'];
+const MARCA_DEL_PRESUPUESTO = '[[?TEXTO_PRESUPUESTO_CORTO]] {{TEXTO_PRESUPUESTO_CORTO}}[[/?]]';
+
 test('el texto de cada leyenda es el de la respuesta, letra por letra', () => {
   const respuesta = leerTexto(rutaDesdeRaiz('docs', 'encargos', 'respuestas', '03-leyendas.md'));
   const seccion = respuesta.slice(
@@ -71,11 +102,22 @@ test('el texto de cada leyenda es el de la respuesta, letra por letra', () => {
     const deLaRespuesta = leyendaDesdeTexto(crudo);
     const delRepositorio = CATALOGO[deLaRespuesta.id];
     assert.ok(delRepositorio, 'falta en el repositorio: ' + deLaRespuesta.id);
-    assert.strictEqual(delRepositorio.cuerpo, deLaRespuesta.cuerpo,
-      'el texto de ' + deLaRespuesta.id + ' ya no es el de la respuesta');
+    let esperado = CAMBIADAS_POR_JUAN[deLaRespuesta.id] || deLaRespuesta.cuerpo;
+    if (CON_PRESUPUESTO_DE_PERU.indexOf(deLaRespuesta.id) !== -1) {
+      esperado = esperado.replace('o hasta agotar el presupuesto disponible.',
+        'o hasta agotar el presupuesto disponible' + MARCA_DEL_PRESUPUESTO + '.');
+    }
+    assert.strictEqual(delRepositorio.cuerpo, esperado,
+      'el texto de ' + deLaRespuesta.id + ' ya no es el que Legal escribió ni el que Juan decidió');
     assert.strictEqual(delRepositorio.largo_max, deLaRespuesta.largo_max, deLaRespuesta.id);
     assert.deepStrictEqual(delRepositorio.tipo_pieza, deLaRespuesta.tipo_pieza, deLaRespuesta.id);
-    assert.deepStrictEqual(delRepositorio.pais, deLaRespuesta.pais, deLaRespuesta.id);
+    if (EXTENDIDAS_A_OCHO_PAISES.indexOf(deLaRespuesta.id) !== -1) {
+      assert.deepStrictEqual(delRepositorio.pais,
+        ['CO', 'MX', 'PE', 'AR', 'CL', 'EC', 'UY', 'CR'],
+        deLaRespuesta.id + ' ya no sirve en los ocho países');
+    } else {
+      assert.deepStrictEqual(delRepositorio.pais, deLaRespuesta.pais, deLaRespuesta.id);
+    }
   }
 });
 
@@ -150,16 +192,20 @@ test('una categoría que este país no tiene no pega nada de otro país', () => 
   assert.deepStrictEqual(complementosQueAplican(CATALOGO, 'CO', 'alimentos', false), []);
 });
 
-test('hoy solo Colombia tiene leyenda de campaña', () => {
-  // La respuesta lo dice en la sección 7A: para los demás países el SSL solo da
-  // recetas. El punto 9 de la 7E manda esas piezas a Legal del país.
-  const deColombia = leyendasDeLaCampana(CATALOGO, 'CO', 'cashback').map((x) => x.formato);
-  assert.deepStrictEqual(deColombia, ['texto_apoyo', 'letra_pequena', 'banner_corto', 'exterior', 'push_sms']);
-
-  for (const codigo of ['MX', 'PE', 'AR', 'CL', 'EC', 'UY', 'CR', 'BR']) {
-    assert.deepStrictEqual(leyendasDeLaCampana(CATALOGO, codigo, 'cashback'), [],
-      codigo + ' no debería tener leyenda de campaña todavía');
+test('las leyendas de campaña del cashback sirven en los ocho países en español', () => {
+  // La respuesta del encargo 03 las daba solo para Colombia y decía "no
+  // cubierto" para el resto. Juan las extendió el 20 de septiembre de 2026
+  // (punto C4): son las mismas leyendas, armadas con los datos de cada país.
+  const LOS_CINCO = ['texto_apoyo', 'letra_pequena', 'banner_corto', 'exterior', 'push_sms'];
+  for (const codigo of ['CO', 'MX', 'PE', 'AR', 'CL', 'EC', 'UY', 'CR']) {
+    assert.deepStrictEqual(leyendasDeLaCampana(CATALOGO, codigo, 'cashback').map((x) => x.formato),
+      LOS_CINCO, codigo + ' no tiene los cinco formatos');
   }
+
+  // Brasil no entra: sus leyendas se escriben en portugués sobre sus propios
+  // modelos, y eso es otra sesión.
+  assert.deepStrictEqual(leyendasDeLaCampana(CATALOGO, 'BR', 'promocao_br'), []);
+  assert.deepStrictEqual(leyendasDeLaCampana(CATALOGO, 'BR', 'cashback'), []);
 });
 
 test('cada tipo de campaña de Colombia trae los formatos que le tocan', () => {

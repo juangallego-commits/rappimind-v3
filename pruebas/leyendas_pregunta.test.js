@@ -58,10 +58,25 @@ test('el paso de la pieza existe y va justo antes de revisar', () => {
 });
 
 test('la pregunta solo aparece donde hay una leyenda que darle', () => {
-  // En México hay complementos de categoría, pero no hay leyenda de campaña
-  // donde pegarlos: preguntarlo sería pedir un dato que no se va a usar.
-  assert.deepStrictEqual(camposDePieza({ pais: 'CO', tipo: 'cashback' }), ['categoriaProducto']);
-  assert.deepStrictEqual(camposDePieza({ pais: 'MX', tipo: 'cashback' }), []);
+  // Hacen falta las dos cosas: una leyenda de campaña donde pegar el
+  // complemento, y complementos de categoría que ofrecer.
+  //
+  // Desde el 20 de septiembre de 2026 (punto C4) los ocho países en español
+  // tienen leyenda de campaña del cashback, así que la pregunta ya aparece en
+  // los seis que además tienen categorías, y no solo en Colombia.
+  for (const codigo of ['CO', 'MX', 'PE', 'AR', 'CL', 'EC']) {
+    assert.deepStrictEqual(camposDePieza({ pais: codigo, tipo: 'cashback' }), ['categoriaProducto'],
+      codigo + ' no ofrece la pregunta de la categoría');
+  }
+
+  // Uruguay y Costa Rica tienen leyenda de campaña pero ninguna advertencia de
+  // categoría en el catálogo: preguntarlo sería pedir un dato que no se usa.
+  for (const codigo of ['UY', 'CR']) {
+    assert.deepStrictEqual(camposDePieza({ pais: codigo, tipo: 'cashback' }), [],
+      codigo + ' pregunta la categoría sin tener ninguna que ofrecer');
+  }
+
+  // Brasil no: sus leyendas se escriben en portugués sobre sus propios modelos.
   assert.deepStrictEqual(camposDePieza({ pais: 'BR', tipo: 'promocao_br' }), []);
 });
 

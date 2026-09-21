@@ -142,9 +142,39 @@ function dondeSeRedimen(entrada, valores) {
     return tieneValor(valores.TIENDA) ? 'en ' + valores.TIENDA : '';
   }
   if (entrada.redencion === 'general') return 'en cualquier sección de Rappi habilitada para Créditos';
-  // "secciones" no tiene frase corta aprobada: es el insumo 5 de la lista 3 de
-  // la respuesta. Sin frase, la leyenda no se entrega. No se inventa aqui.
+  /*
+   * Las secciones, con sus nombres entre comillas como en el documento.
+   *
+   * Hasta el 20 de septiembre de 2026 esto devolvia cadena vacia y la campana se
+   * quedaba sin leyenda, porque la respuesta del encargo 03 no dio frase corta
+   * (insumo 5 de la lista 3) y aqui no se inventa una. Juan la escribio ese dia
+   * (punto C3) y desde entonces esas campanas entregan sus cinco leyendas como
+   * las demas.
+   */
+  if (entrada.redencion === 'secciones') {
+    var secciones = entrada.secciones || [];
+    if (secciones.length === 0) return '';
+    var entrecomilladas = [];
+    for (var s = 0; s < secciones.length; s++) entrecomilladas.push('“' + secciones[s] + '”');
+    var articulo = entrecomilladas.length === 1 ? 'en la sección ' : 'en las secciones ';
+    return articulo + listaY(entrecomilladas) + ' de Rappi';
+  }
   return '';
+}
+
+/**
+ * FRAGMENTO: el presupuesto dentro del anuncio, solo donde la ley lo pide.
+ *
+ * Vacio en todos los paises menos Peru. El articulo 14 del Codigo de Proteccion
+ * y Defensa del Consumidor pide que el anuncio de una promocion diga su duracion
+ * y las unidades disponibles, asi que alla la frase pasa de "o hasta agotar el
+ * presupuesto disponible." a "o hasta agotar el presupuesto disponible de
+ * {cifra}.". Juan lo decidio el 20 de septiembre de 2026 (punto C4).
+ */
+function textoPresupuestoCorto(entrada, pais) {
+  if (!pais || pais.codigo !== 'PE') return '';
+  var cifra = cifraDeMonto(entrada.presupuesto, pais);
+  return cifra ? 'de ' + cifra : '';
 }
 
 /** FRAGMENTO: hasta cuando se pueden gastar los Creditos, en corto. */
@@ -261,7 +291,21 @@ function textoCondicionesCorto(entrada, pais) {
 
 /** Si la campana es de Turbo, para saber si se pega la leyenda de Turbo. */
 function esDeTurbo(entrada) {
-  if (entrada.tipo === 'cashback_eta') return true;
+  /*
+   * El ETA no, aunque corra sobre Turbo.
+   *
+   * El complemento de Turbo termina en "*El tiempo de entrega es estimado y
+   * depende de condiciones climaticas y de trafico", y en una campana de ETA eso
+   * contradice la clausula donde Rappi se obliga a cumplir el ETA exhibido: la
+   * pieza diria que el tiempo es un estimado y el documento que es una promesa.
+   * Juan lo decidio el 20 de septiembre de 2026 (punto C5, pregunta 6 del
+   * encargo 03). El aviso sigue valiendo en piezas que mencionan tiempos sin
+   * garantizarlos, que son las de Turbo a secas.
+   *
+   * Las tres leyendas del ETA ya traen "Aplican terminos y condiciones Turbo"
+   * escrito en su propio cuerpo, asi que no se pierde nada al no pegarlo.
+   */
+  if (entrada.tipo === 'cashback_eta') return false;
   var condiciones = entrada.condiciones || [];
   for (var i = 0; i < condiciones.length; i++) {
     if (condiciones[i] === 'turbo') return true;
@@ -316,10 +360,26 @@ function listaTiendasCorta(entrada) {
  * aqui.
  */
 function textoGanadoresCorto(entrada) {
-  if (entrada.criterioGanador !== 'mayor_valor') return '';
   var cuantos = tieneValor(entrada.numeroGanadores) ? Math.trunc(Number(entrada.numeroGanadores)) : 1;
-  if (cuantos === 1) return 'Gana el usuario con el mayor valor en compras de los productos participantes.';
-  return 'Ganan los ' + cuantos + ' usuarios con el mayor valor en compras de los productos participantes.';
+
+  if (entrada.criterioGanador === 'mayor_valor') {
+    if (cuantos === 1) return 'Gana el usuario con el mayor valor en compras de los productos participantes.';
+    return 'Ganan los ' + cuantos + ' usuarios con el mayor valor en compras de los productos participantes.';
+  }
+
+  /*
+   * El otro criterio: gana quien haga mas pedidos.
+   *
+   * Hasta el 20 de septiembre de 2026 esta rama devolvia cadena vacia y la
+   * Carrera que se ganaba por numero de pedidos se quedaba sin leyenda. Juan
+   * escribio la frase ese dia (punto C3).
+   */
+  if (entrada.criterioGanador === 'mas_pedidos') {
+    if (cuantos === 1) return 'Gana el usuario con el mayor número de pedidos válidos con productos participantes.';
+    return 'Ganan los ' + cuantos + ' usuarios con el mayor número de pedidos válidos con productos participantes.';
+  }
+
+  return '';
 }
 
 /** FRAGMENTO: el premio. */
@@ -408,11 +468,23 @@ function urlDelTcDeLaCampana(entrada, pais, nombreCampana, enlacePublicado) {
  * uno de estos se entrega como pendiente, con su razon, en vez de salir rota o
  * de tumbar las otras cuatro.
  *
- * Hoy esta vacio. URL_CORTA estuvo aqui hasta que Juan decidio, el 18 de
- * septiembre, que el enlace tiene que ser el mismo en todas partes: no hay
- * enlace corto y no lo va a haber.
+ * URL_CORTA estuvo aqui hasta que Juan decidio, el 18 de septiembre, que el
+ * enlace tiene que ser el mismo en todas partes: no hay enlace corto y no lo va
+ * a haber. Hoy lo que hay son los enlaces que un pais todavia no tiene.
+ *
+ * Desde el 20 de septiembre de 2026 (punto C4) las leyendas de campana del
+ * cashback sirven tambien en Mexico, Peru, Argentina, Chile, Ecuador, Uruguay y
+ * Costa Rica. Ninguno de esos siete tiene todavia ruta de publicacion, asi que
+ * los dos formatos que empiezan por el enlace del T&C no se pueden armar. En vez
+ * de entregarlos con un hueco, o de tumbar con ellos a los otros tres, cada uno
+ * sale como "todavia no" con el nombre de lo que falta: es un dato de la fila
+ * del pais, no codigo, y el dia que alguien lo escriba se desbloquean solos.
  */
-var PENDIENTES_POR_MARCADOR = {};
+var PENDIENTES_POR_MARCADOR = {
+  URL_TC_CAMPANA: 'Falta la ruta con la que se publican los T&C de este país, así que todavía no hay enlace de la campaña',
+  URL_TC_TURBO: 'Falta el enlace de los términos de Turbo de este país',
+  URL_TC_PRO: 'Falta el enlace de los términos de RappiPro de este país',
+};
 
 /**
  * Lo que le falta a esta campana para poder tener leyenda, en palabras.
@@ -429,10 +501,6 @@ var PENDIENTES_POR_MARCADOR = {};
 function faltantesParaLaLeyenda(entrada, pais) {
   var faltantes = [];
 
-  if (entrada.redencion === 'secciones') {
-    faltantes.push('cómo se dice en una pieza que los Créditos solo sirven en ciertas secciones');
-  }
-
   var condiciones = entrada.condiciones || [];
   for (var i = 0; i < condiciones.length; i++) {
     if (condiciones[i] === 'consumo_local' && !tieneValor(pais.nombre_modalidad_local)) {
@@ -444,10 +512,6 @@ function faltantesParaLaLeyenda(entrada, pais) {
     faltantes.push('el enlace de los términos de RappiPro de este país');
   }
 
-  if (entrada.tipo === 'carrera_compras' && entrada.criterioGanador &&
-      entrada.criterioGanador !== 'mayor_valor') {
-    faltantes.push('cómo se dice en una pieza que gana quien haga más pedidos');
-  }
 
   // El registro sanitario no bloquea el documento, pero sin el la pieza de un
   // medicamento o de un fitoterapeutico no se puede publicar (Legal CO,
@@ -477,17 +541,24 @@ function calcularDerivadosDeLeyendas(entrada, pais, valoresDelDocumento, opcione
   var cortos = {
     URL_TC_CAMPANA: urlDeLaCampana,
     /*
-     * Un solo enlace, el mismo en todas partes.
+     * Un solo enlace, el mismo en todas partes, y ninguno en push y SMS.
      *
      * La respuesta del encargo 03 proponia un enlace corto aparte para que la
      * leyenda de push cupiera en 70 caracteres. Juan lo descarto el 18 de
      * septiembre: el enlace tiene que ser el mismo en la letra pequena, en el
      * banner y en la push, porque dos direcciones para el mismo T&C es una que
-     * alguien va a copiar mal. Ademas, en push y SMS casi nunca ponen el enlace.
+     * alguien va a copiar mal.
      *
-     * Asi que URL_CORTA es la direccion de la campana. La leyenda de push mide
-     * mas de lo que admite el formato y la herramienta lo dice, que es la
-     * verdad: con el enlace no cabe.
+     * El 20 de septiembre cerro la otra mitad (punto C2): la leyenda de push y
+     * SMS sale sin enlace, porque el enlace se comia 35 de los 70 caracteres del
+     * formato y en la practica casi nunca lo ponen. El push lleva al usuario a
+     * la campana dentro de la app, y ahi esta el enlace al T&C. Sin el, la
+     * leyenda cabe siempre y desaparece un aviso rojo que salia en todas las
+     * campanas.
+     *
+     * URL_CORTA se queda como marcador, apuntando a la misma direccion de
+     * campana, porque ninguna leyenda lo usa hoy pero el catalogo es de Legal y
+     * puede volver a usarlo.
      */
     URL_CORTA: urlDeLaCampana,
     URL_TC_PRO: pais.url_tc_pro || '',
@@ -495,6 +566,7 @@ function calcularDerivadosDeLeyendas(entrada, pais, valoresDelDocumento, opcione
     TOPE_CIFRA: cifraDeMonto(entrada.tope, pais),
     MINIMO_CIFRA: cifraDeMonto(entrada.compraMinima, pais),
     TEXTO_VIGENCIA_CORTA: textoVigenciaCorta(entrada),
+    TEXTO_PRESUPUESTO_CORTO: textoPresupuestoCorto(entrada, pais),
     TEXTO_CREDITOS_CORTO: textoCreditosCorto(entrada, valores),
     TEXTO_LIMITE_CORTO: textoLimiteCorto(entrada),
     TEXTO_TERRITORIO_CORTO: textoTerritorioCorto(entrada),
@@ -554,6 +626,8 @@ if (typeof module !== 'undefined') {
     textoCondicionesCorto: textoCondicionesCorto,
     listaTiendasCorta: listaTiendasCorta,
     textoGanadoresCorto: textoGanadoresCorto,
+    textoPresupuestoCorto: textoPresupuestoCorto,
+    dondeSeRedimen: dondeSeRedimen,
     textoPremioCorto: textoPremioCorto,
     textoBeneficioTravelCorto: textoBeneficioTravelCorto,
     textoDescuentoTravelCorto: textoDescuentoTravelCorto,

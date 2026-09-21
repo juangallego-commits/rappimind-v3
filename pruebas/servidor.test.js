@@ -1191,11 +1191,20 @@ test('generar entrega las leyendas con el enlace previsto', () => {
 
   // Los cinco formatos. La push entra desde que Juan decidió que el enlace es
   // uno solo: antes se quedaba esperando un enlace corto que ya no va a existir.
+  //
+  // Dos formatos no llevan enlace: el texto de apoyo, que nunca lo llevó, y la
+  // push, desde el 20 de septiembre (punto C2). Los demás llevan el mismo.
+  const SIN_ENLACE = ['texto_apoyo', 'push_sms'];
   const formatos = resultado.leyendas.leyendas.map((l) => l.formato);
   assert.deepStrictEqual(formatos, ['texto_apoyo', 'letra_pequena', 'banner_corto', 'exterior', 'push_sms']);
   for (const leyenda of resultado.leyendas.leyendas) {
-    assert.ok(leyenda.texto.indexOf(resultado.leyendas.enlacePrevisto) !== -1 || leyenda.formato === 'texto_apoyo',
-      leyenda.formato + ' no lleva el enlace: ' + leyenda.texto);
+    if (SIN_ENLACE.indexOf(leyenda.formato) === -1) {
+      assert.ok(leyenda.texto.indexOf(resultado.leyendas.enlacePrevisto) !== -1,
+        leyenda.formato + ' no lleva el enlace: ' + leyenda.texto);
+    } else {
+      assert.strictEqual(leyenda.texto.indexOf('http'), -1,
+        leyenda.formato + ' no debería llevar enlace: ' + leyenda.texto);
+    }
     assert.strictEqual(/\{\{|\[\[/.test(leyenda.texto), false, leyenda.formato + ': ' + leyenda.texto);
   }
 });

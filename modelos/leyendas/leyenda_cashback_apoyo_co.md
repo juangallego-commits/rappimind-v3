@@ -1,5 +1,5 @@
 %% id: leyenda_cashback_apoyo_co
-%% pais: CO
+%% pais: CO, MX, PE, AR, CL, EC, UY, CR
 %% tipo_campana: cashback, cashback_day
 %% tipo_pieza: texto_apoyo
 %% origen: pieza_real_1, pieza_real_3, propuesta
