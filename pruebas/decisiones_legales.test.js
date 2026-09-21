@@ -144,6 +144,6 @@ test('el modelo del ETA deja a salvo las causas del usuario y la fuerza mayor', 
   const { cargarModelos } = require('../scripts/lib/modelos');
   const eta = cargarModelos().modelos.cashback_eta;
   assert.ok(eta.indexOf('Rappi se obliga a cumplir con el ETA exhibido dentro de la Plataforma Rappi.') !== -1);
-  assert.ok(eta.indexOf('No habrá lugar al Beneficio cuando el retraso se deba a causas imputables al Usuario/Consumidor') !== -1);
+  assert.ok(eta.indexOf('No habrá lugar al Beneficio cuando el retraso se deba a causas que te sean imputables') !== -1);
   assert.ok(eta.indexOf('ni cuando obedezca a fuerza mayor o caso fortuito') !== -1);
 });

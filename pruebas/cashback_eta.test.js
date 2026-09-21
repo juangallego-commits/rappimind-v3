@@ -49,7 +49,10 @@ test('el documento de Bogotá sale como el publicado', () => {
   assert.ok(texto.indexOf('fijado para esta Campaña en quince (15) minutos') !== -1, texto);
   assert.ok(texto.indexOf('en la ciudad de Bogotá, dentro de la República de Colombia') !== -1, texto);
   assert.ok(texto.indexOf('desde las **11:00 a. m.** hasta las **3:00 p. m.** del **16 de septiembre de 2026**') !== -1, texto);
-  assert.ok(texto.indexOf('recibirán en Créditos el **cien por ciento (100%)** del valor de los Productos Participantes') !== -1, texto);
+  // Desde el 20 de septiembre de 2026 (punto B4) esta cláusula tutea, como el
+  // resto del documento. Antes decía "recibirán", en tercera persona, y el
+  // documento cambiaba de persona a mitad.
+  assert.ok(texto.indexOf('recibirás en Créditos el **cien por ciento (100%)** del valor de los Productos Participantes') !== -1, texto);
   assert.ok(texto.indexOf('El monto máximo del Cashback que se otorgará por orden es de **cien mil (100.000) Créditos**') !== -1, texto);
   assert.ok(texto.indexOf('Rappi se obliga a cumplir con el ETA exhibido') !== -1, texto);
 });
