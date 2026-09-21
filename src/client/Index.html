@@ -7,8 +7,18 @@
     <title>RappiMind v3</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!--
+      Archivo, variable de 400 a 900: los cuatro pesos salen de un solo archivo
+      de 34 KB, contra los 61 KB que pesaban Lato y Poppins juntos. Cubre el
+      cuerpo, los títulos de sección y los botones.
+
+      PP Object Sans no viene de aquí: no está en Google Fonts. Su única cara,
+      la de peso 900, viaja incrustada en base64 dentro de la hoja de estilos,
+      porque Apps Script no sirve archivos del repositorio. Ver la decisión 100
+      y docs/diseno/MEDICION_FUENTES.md.
+    -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400..900&display=swap"
       rel="stylesheet"
     />
     <?!= incluir('Estilos') ?>

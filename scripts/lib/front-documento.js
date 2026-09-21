@@ -476,7 +476,7 @@ function armar(datos) {
     aviso,
     '<link rel="preconnect" href="https://fonts.googleapis.com" />',
     '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />',
-    '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&amp;family=Poppins:wght@500;600&amp;display=swap" rel="stylesheet" />',
+    '<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400..900&amp;display=swap" rel="stylesheet" />',
     '<style>',
     '/* La hoja de estilos de la app, acotada a ' + MARCO + '. NO ES LA FUENTE: la',
     ' * fuente literal es src/client/estilos.css y va completa en el anexo A. */',

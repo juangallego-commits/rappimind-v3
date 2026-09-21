@@ -148,6 +148,31 @@ test('una familia de display solo se usa en peso 900', () => {
   }
   assert.deepStrictEqual(sinPeso, [],
     'estas reglas piden la familia de display sin fijar peso 900, así que saldrían en Heavy sin avisar: ' + sinPeso.join(' · '));
+
+  // La otra mitad, y es la que se escapa mirando solo quién declara la familia:
+  // un hijo la HEREDA. `.marca em` heredaba display y pedía peso 500, así que
+  // habría salido en Heavy igual que el resto del logotipo, sin declarar nada.
+  // Por eso todo descendiente de quien usa display tiene que decir su familia.
+  const conDisplay = [];
+  for (const regla of reglas) {
+    const cuerpo = regla.slice(regla.indexOf('{'));
+    if (/var\(\s*--display\s*\)/.test(cuerpo)) {
+      for (const sel of regla.split('{')[0].split(',')) conDisplay.push(sel.trim());
+    }
+  }
+  const herederos = [];
+  for (const regla of reglas) {
+    const selector = regla.split('{')[0].trim();
+    const cuerpo = regla.slice(regla.indexOf('{'));
+    const peso = /font-weight:\s*(\d+)/.exec(cuerpo);
+    if (!peso || peso[1] === '900') continue;
+    if (/font-family:/.test(cuerpo)) continue;      // dice la suya, no hereda
+    for (const padre of conDisplay) {
+      if (selector.indexOf(padre + ' ') === 0) herederos.push(selector);
+    }
+  }
+  assert.deepStrictEqual(herederos, [],
+    'estas reglas heredan la familia de display y piden otro peso, así que saldrían en Heavy: ' + herederos.join(' · '));
 });
 
 test('la variable que se puso desde el JavaScript existe donde se dice', () => {

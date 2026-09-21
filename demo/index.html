@@ -13,8 +13,18 @@
     <title>RappiMind v3 · demostración</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!--
+      Archivo, variable de 400 a 900: los cuatro pesos salen de un solo archivo
+      de 34 KB, contra los 61 KB que pesaban Lato y Poppins juntos. Cubre el
+      cuerpo, los títulos de sección y los botones.
+
+      PP Object Sans no viene de aquí: no está en Google Fonts. Su única cara,
+      la de peso 900, viaja incrustada en base64 dentro de la hoja de estilos,
+      porque Apps Script no sirve archivos del repositorio. Ver la decisión 100
+      y docs/diseno/MEDICION_FUENTES.md.
+    -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400..900&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -458,8 +468,16 @@
      el matiz y pase a distinguirlo por peso visual. El verde no es de marca. */
   --verde-confirma: #0b7a52;
 
-  --titulos: 'Poppins', system-ui, -apple-system, sans-serif;   /* fase 2 */
-  --cuerpo: 'Lato', system-ui, -apple-system, sans-serif;       /* fase 2 */
+  /* Tres familias, y son dos de verdad. --display es PP Object Sans, de la que
+     se sirve UNA sola cara, la de peso 900, así que solo vale donde el peso es
+     900: si se usara en otro peso el navegador resolvería con la única cara que
+     hay y saldría Heavy sin avisar. --titulos y --cuerpo son Archivo, variable
+     de 400 a 900, y siguen separadas porque la hoja las llama por nombre en 275
+     sitios y porque el día que la marca traiga una segunda familia real entra
+     por aquí sin tocar nada más. */
+  --display: var(--rm-display);
+  --titulos: var(--rm-texto-familia);
+  --cuerpo: var(--rm-texto-familia);
 
   --e1: 4px; --e2: 8px; --e3: 12px; --e4: 16px;
   --e5: 24px; --e6: 32px; --e7: 48px; --e8: 64px;
@@ -490,14 +508,25 @@ body {
   color: var(--tinta);
   font-family: var(--cuerpo);
   font-size: 16px;
+  font-weight: 500;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, .marca, button, .opcion-titulo { font-family: var(--titulos); font-weight: 600; }
-h1 { font-size: 28px; line-height: 1.2; margin: 0 0 var(--e3); letter-spacing: -0.015em; }
-h2 { font-size: 21px; line-height: 1.3; margin: 0 0 var(--e2); letter-spacing: -0.01em; }
-h3 { font-size: 17px; line-height: 1.35; margin: 0 0 var(--e2); }
+/*
+ * Los titulares llevan la letra de marca y van SIEMPRE en peso 900: es la
+ * única cara de PP Object Sans que se sirve. Lo vigila la prueba
+ * `una familia de display solo se usa en peso 900`.
+ *
+ * Hay un h1 por pantalla dentro de #app, que es parte del contrato de
+ * accesibilidad de docs/PARA_EL_DISENO.md, así que la letra de marca aparece
+ * en las 48 pantallas sin que haga falta incrustar ningún peso más.
+ */
+h1, h2, .marca { font-family: var(--display); font-weight: 900; }
+h3, button, .opcion-titulo { font-family: var(--titulos); font-weight: 700; }
+h1 { font-size: 28px; line-height: 1.15; margin: 0 0 var(--e3); letter-spacing: -0.025em; }
+h2 { font-size: 21px; line-height: 1.25; margin: 0 0 var(--e2); letter-spacing: -0.02em; }
+h3 { font-size: 17px; line-height: 1.35; margin: 0 0 var(--e2); letter-spacing: -0.01em; }
 p { margin: 0 0 var(--e3); }
 a { color: var(--neon-texto); }
 
@@ -529,7 +558,11 @@ a { color: var(--neon-texto); }
   top: -2px; left: 40px;
   color: var(--neon);
 }
-.marca em { font-style: normal; color: var(--gris-lapiz); font-weight: 500; }
+/* El "by Legal" va en la letra de cuerpo y no en la de marca: hereda de
+ * .marca la familia de display, de la que solo hay cara de peso 900, asi
+ * que en peso 500 saldria en Heavy igual que el resto del logotipo y la
+ * distincion se perderia. */
+.marca em { font-style: normal; font-family: var(--titulos); color: var(--gris-lapiz); font-weight: 500; }
 
 /* --- Estructura --------------------------------------------------------- */
 
@@ -543,7 +576,7 @@ a { color: var(--neon-texto); }
 .barra-superior nav { margin-left: auto; display: flex; gap: var(--e1); flex-wrap: wrap; }
 
 .enlace-nav {
-  font-family: var(--titulos); font-weight: 600; font-size: 14px;
+  font-family: var(--titulos); font-weight: 700; font-size: 14px;
   color: var(--gris-lapiz); background: none; border: 0;
   padding: var(--e2) var(--e3); border-radius: var(--r-control); cursor: pointer;
 }
@@ -646,7 +679,7 @@ button { font-size: 15px; cursor: pointer; }
 .pregunta:first-child { padding-top: 0; }
 .pregunta:last-child { border-bottom: 0; }
 
-.pregunta-titulo { font-family: var(--titulos); font-weight: 600; font-size: 21px; line-height: 1.3; margin: 0 0 var(--e2); }
+.pregunta-titulo { font-family: var(--titulos); font-weight: 700; font-size: 21px; line-height: 1.3; margin: 0 0 var(--e2); }
 .pregunta-ayuda { color: var(--gris-lapiz); font-size: 14px; margin: 0 0 var(--e3); }
 
 /* Marca de pregunta opcional, al lado del titulo. */
@@ -667,7 +700,7 @@ button { font-size: 15px; cursor: pointer; }
   gap: var(--e3); margin-bottom: var(--e2);
 }
 .copiable-etiqueta {
-  font-family: var(--titulos); font-weight: 600; font-size: 13px;
+  font-family: var(--titulos); font-weight: 700; font-size: 13px;
   letter-spacing: 0.02em; color: var(--gris-lapiz);
 }
 .copiable-valor {
@@ -860,7 +893,7 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--text
 
 .tabla { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--papel); }
 .tabla th, .tabla td { text-align: left; padding: var(--e3); border-bottom: 1px solid var(--borde); }
-.tabla th { font-family: var(--titulos); font-weight: 600; font-size: 13px; color: var(--gris-lapiz); }
+.tabla th { font-family: var(--titulos); font-weight: 700; font-size: 13px; color: var(--gris-lapiz); }
 .tabla tr:last-child td { border-bottom: 0; }
 .envoltorio-tabla { border: 1px solid var(--borde); border-radius: var(--r-panel); overflow: auto; }
 
@@ -906,7 +939,7 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--text
 .selector-idioma button {
   border: 0; background: transparent; cursor: pointer;
   padding: 6px 12px; border-radius: 999px;
-  font: inherit; font-size: 0.82rem; font-weight: 600; color: var(--gris-lapiz);
+  font: inherit; font-size: 0.82rem; font-weight: 700; color: var(--gris-lapiz);
 }
 .selector-idioma button:hover { background: var(--niebla); }
 .selector-idioma button[aria-pressed="true"] { background: var(--neon-texto); color: var(--papel); }
@@ -920,7 +953,7 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--text
   content: counter(paso); position: absolute; left: 0; top: 0;
   width: 24px; height: 24px; border-radius: 50%;
   background: var(--beige); color: var(--neon-texto);
-  font-family: var(--titulos); font-weight: 600; font-size: 13px;
+  font-family: var(--titulos); font-weight: 700; font-size: 13px;
   display: flex; align-items: center; justify-content: center;
 }
 
@@ -938,7 +971,7 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--text
   .progreso-compacto {
     display: block; margin: 0 0 var(--e5); font-size: 14px; color: var(--gris-lapiz);
   }
-  .progreso-compacto strong { color: var(--tinta); font-family: var(--titulos); font-weight: 600; }
+  .progreso-compacto strong { color: var(--tinta); font-family: var(--titulos); font-weight: 700; }
   .progreso-linea {
     display: block; height: 2px; margin-top: var(--e2);
     background: var(--borde); border-radius: 1px; position: relative;
@@ -965,7 +998,7 @@ input[disabled], select[disabled] { background: var(--niebla); color: var(--text
     position: fixed; left: var(--e4); right: var(--e4); bottom: var(--e4); z-index: 35;
     padding: 14px; border-radius: var(--r-control); border: 0;
     background: var(--tinta); color: var(--papel);
-    font-family: var(--titulos); font-weight: 600; font-size: 15px;
+    font-family: var(--titulos); font-weight: 700; font-size: 15px;
   }
   .hoja { max-height: none; border: 0; box-shadow: none; border-radius: 0; padding: var(--e4) var(--e5) var(--e6); }
   .ficha dl { grid-template-columns: 1fr; gap: var(--e1); }
