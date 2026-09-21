@@ -1312,6 +1312,42 @@ var PREGUNTAS = {
     },
   }),
 
+  beneficioVariable: p({
+    paso: 'beneficio',
+    pregunta: '¿El beneficio es el mismo para todo?',
+    ayuda: 'Si cada hotel, destino o aerolínea tiene su propio porcentaje, elige la segunda.',
+    porQue: 'El documento tiene que decir qué recibe el usuario en cada caso. Si prometes un solo porcentaje y en la app hay varios, el usuario puede exigir el más alto en cualquier producto.',
+    avanzaSola: true,
+    porDefecto: 'no',
+    opciones: [
+      { valor: 'no', etiqueta: 'Es el mismo para todo', nota: 'Un porcentaje para toda la campaña. Lo más común.' },
+      { valor: 'si', etiqueta: 'Cambia según el producto', nota: 'Tú haces la lista, con el beneficio de cada uno.' },
+    ],
+    placeholders: ['TEXTO_BENEFICIO_POR_PRODUCTO'],
+    errores: { vacio: 'Dinos si el beneficio es el mismo para todo.' },
+  }),
+
+  beneficiosPorProducto: p({
+    paso: 'beneficio',
+    pregunta: '¿Cuánto da cada uno?',
+    ayuda: 'Uno por fila: el nombre como sale en la app y su porcentaje. Puedes pegarlos desde tu hoja de cálculo.',
+    porQue: 'Cada línea sale impresa en el documento. Un producto que no esté en la lista no da beneficio, y uno con el porcentaje mal escrito lo da mal.',
+    placeholders: ['TEXTO_BENEFICIO_POR_PRODUCTO'],
+    errores: {
+      minimo: 'Agrega al menos dos productos con su beneficio. Si todos dan lo mismo, vuelve atrás y elige "Es el mismo para todo".',
+      maximo: 'No puedes agregar más de 60 productos.',
+      vacio: 'Cada fila necesita el nombre del producto y su porcentaje.',
+      rango: 'El porcentaje de cada producto tiene que estar entre 1 y 100.',
+      repetida: 'Ese producto ya está en la lista.',
+    },
+    camposPorProducto: {
+      nombre: { pregunta: 'Producto', ayuda: 'El hotel, el destino o la aerolínea, como sale en la app.', ejemplo: 'Hard Rock Hotel Los Cabos' },
+      porcentaje: { pregunta: 'Porcentaje', ayuda: 'Solo el número.', ejemplo: '55' },
+      hastaCompra: { pregunta: 'Se compra hasta', ayuda: 'Opcional. Si este producto deja de venderse antes que la campaña.', ejemplo: '2026-12-18' },
+      hastaViaje: { pregunta: 'Se viaja hasta', ayuda: 'Opcional. La última fecha de viaje que cubre.', ejemplo: '2026-12-18' },
+    },
+  }),
+
   anunciaPrecio: p({
     paso: 'pieza',
     pregunta: '¿La pieza anuncia un precio o una tarifa?',
@@ -1722,6 +1758,7 @@ var NOMBRE_DEL_HUECO = {
   TEXTO_SEGMENTO_TRAVEL: 'quiénes pueden participar',
   TEXTO_METODO_PAGO_TRAVEL: 'los medios de pago',
   TEXTO_PRECIO_ANUNCIADO: 'si la pieza anuncia un precio',
+  TEXTO_BENEFICIO_POR_PRODUCTO: 'el beneficio de cada producto',
   TEXTO_BENEFICIO_TRAVEL: 'en qué consiste el cashback',
   TEXTO_BASE_CALCULO_TRAVEL: 'sobre qué valor se calcula el cashback',
   TEXTO_EJEMPLO_TOPE_TRAVEL: 'el ejemplo del tope',

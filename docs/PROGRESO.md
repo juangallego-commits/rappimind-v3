@@ -2085,3 +2085,82 @@ pantalla. La captura está en `docs/FRONT_ACTUAL.html`, número 37.
    yo, tal como quedó en `docs/PENDIENTES_LEGAL.md`.
 3. **Los textos de pantalla que propuse yo**, listados más arriba.
 4. **La lectura de los abogados de Brasil** del formulario en portugués.
+
+## Los tres bloqueos de Rappi Travel, resueltos
+
+Juan pidió el 21 de septiembre de 2026 que actuara como abogado y resolviera los
+tres bloqueos que quedaban del filtro de Travel. El análisis y el texto están en
+`docs/PROPUESTA_TRES_BLOQUEOS_TRAVEL.md`. **El filtro baja de nueve preguntas a
+siete.**
+
+### 1. El precio "desde"
+
+Lo que la ley castiga no es anunciar un precio, es anunciarlo mal. El Estatuto
+del Consumidor pide información veraz y suficiente, y en tarifas aéreas el
+Reglamento Aeronáutico exige que el precio anunciado sea el final, con impuestos
+y cargos: de ahí la sanción que citaba la razón vieja. Bloquear a todo el que
+anuncia un precio mandaba a Legal las campañas correctas junto con las malas.
+
+Ahora son dos preguntas del paso de la pieza. La primera enciende la cláusula
+"§ Precio anunciado"; la segunda, cuando el precio no es el valor final, para la
+generación y manda a Legal, porque eso no se arregla con una cláusula: se
+arregla la pieza.
+
+### 2. El beneficio que cambia según el producto
+
+Era el bloqueo más caro: dos de las cinco piezas publicadas son exactamente ese
+caso, y la del Caribe Mexicano trae veintitrés hoteles, cada uno con su
+porcentaje y con sus propias fechas de venta y de viaje. No hay nada ilegal ahí,
+solo un límite del modelo, que estaba escrito con un beneficio y solo uno.
+
+Se resuelve como ya se había resuelto en Cashback Multitienda: una lista de
+filas que el comercial pega desde su hoja de cálculo, con el nombre, el
+porcentaje y las dos fechas opcionales. En el documento sale en viñetas, nunca
+en tabla. El componente es `src/client/js/67-beneficios.js`.
+
+**Lo que NO salió del filtro** es mezclar descuento con cashback. Ahí no es que
+el beneficio cambie de tamaño: son dos beneficios de naturaleza distinta en el
+mismo documento, y eso sí es un límite del modelo.
+
+### 3. El banco
+
+La pregunta metía dos cosas. Que la campaña aplique pagando con cierta tarjeta
+es un medio de pago, igual que en las campañas de Rappi, y el banco no responde
+por nada: salió del filtro como una opción nueva del medio de pago, con el
+nombre que escribe el comercial.
+
+Las cuotas sin interés se quedan, y **aquí me aparté de lo que Juan pidió**:
+quien otorga la financiación es el banco, con su tasa, su plazo y su aprobación,
+y esa publicidad la vigila la Superintendencia Financiera, no la SIC. Sin una
+pieza firmada de la que partir, la cláusula habría que inventarla. La pregunta
+ahora dice eso en vez de ser un "no" seco.
+
+### Cómo probarlo
+
+```
+npm test                                                  # 672 pruebas
+npm run demo
+export NODE_PATH=/opt/node22/lib/node_modules
+export PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
+node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js  # el recorrido pasa
+```
+
+Con los ojos: entra a Rappi Travel, elige Cashback Travel y en el paso del
+beneficio di que cambia según el producto. Pega esto en el área de pegar:
+
+```
+Hard Rock Hotel Los Cabos	55	2026-12-18	2026-12-18
+AVA Resort Cancún	50%
+Hotel Dalí Plaza	65
+```
+
+Tienen que quedar tres filas, el "50%" convertido en 50, y la cláusula llenándose
+en la columna de la derecha mientras pegas.
+
+### Lo que necesito de Juan
+
+1. **Las tres cláusulas nuevas**, leídas. Son texto que se publica.
+2. **La frase que le da al Proveedor la última palabra** frente a lo que Rappi
+   anunció, en el beneficio por producto. Viene de las dos piezas publicadas, no
+   la inventé, pero conviene confirmarla a propósito.
+3. **Lo de las cuotas**, que es donde no le di la razón.

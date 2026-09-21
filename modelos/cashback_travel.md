@@ -42,6 +42,7 @@ El Beneficio consiste en {{TEXTO_BENEFICIO_TRAVEL}}, acreditado como Créditos e
 • Productos que no sean Productos Participantes, aunque se compren en la misma orden.
 El Beneficio obtenido en virtud de la presente Campaña no es acumulable con otras promociones.
 En los casos en que el Usuario/Consumidor realice el pago con su tarjeta RappiCard, para asegurar la correcta y automática acreditación del Beneficio, la tarjeta deberá estar registrada de forma nativa dentro de la sección de métodos de pago de la Plataforma Rappi. Aquellas transacciones realizadas con RappiCard a través de billeteras digitales de terceros (tales como Apple Pay o Google Pay) o en las que la tarjeta sea ingresada manualmente como una tarjeta de crédito externa podrían presentar demoras en la validación del Beneficio o requerir una gestión adicional por parte del usuario ante el equipo de soporte, sin que esto implique el incumplimiento de los presentes términos por parte de Rappi Travel.
+[[INCLUIR:travel_beneficio_por_producto]]
 [[INCLUIR:travel_precio_anunciado]]
 [[INCLUIR:travel_publicidad]]
 [[INCLUIR:travel_atencion]]

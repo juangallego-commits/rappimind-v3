@@ -197,7 +197,7 @@ test('el filtro va antes de la lista, no después', () => {
 
 // --- El filtro de Travel, las tres de la misma pantalla ----------------------
 
-test('el filtro de Travel tiene ocho preguntas, con la quinta partida en dos', () => {
+test('el filtro de Travel tiene siete preguntas, y la mezcla sigue aparte', () => {
   /*
    * Metía dos preguntas en una ("¿cambian las condiciones... o se mezcla
    * descuento con cashback?") y quien contestaba sí no sabía cuál había
@@ -213,16 +213,26 @@ test('el filtro de Travel tiene ocho preguntas, con la quinta partida en dos', (
    * mal: bloquear a los dos por igual mandaba a Legal campañas correctas. Solo
    * el que anuncia un precio que no es el valor final se va a Legal, y eso lo
    * decide validarTravel, no el filtro.
+   *
+   * Y el mismo día se fue la del beneficio que cambia según el producto, que
+   * ahora es una lista de filas en el formulario, como las tiendas de Cashback
+   * Multitienda. Dos de las cinco piezas publicadas que trajo Juan eran
+   * exactamente ese caso. Quedaron siete.
+   *
+   * Lo que NO se fue es la de mezclar descuento y cashback: ahí no es que el
+   * beneficio cambie de tamaño, es que son dos beneficios de naturaleza
+   * distinta en el mismo documento, y eso sí es un límite del modelo.
    */
-  assert.strictEqual(FILTRO_DE_TRAVEL.length, 8);
+  assert.strictEqual(FILTRO_DE_TRAVEL.length, 7);
 
   // Y las que se fueron no pueden volver por la puerta de atrás.
   const ids = FILTRO_DE_TRAVEL.map((p) => p.id);
   assert.strictEqual(ids.indexOf('pagaRappi'), -1, 'volvió la pregunta de quién paga');
   assert.strictEqual(ids.indexOf('anunciaPrecio'), -1,
     'la del precio volvió al filtro: ahora es una pregunta del formulario');
+  assert.strictEqual(ids.indexOf('beneficioVariable'), -1,
+    'la del beneficio variable volvió al filtro: ahora es una lista en el formulario');
   const textos = FILTRO_DE_TRAVEL.map((p) => p.texto);
-  assert.ok(textos.indexOf('¿Las condiciones cambian según destino, producto o usuario?') !== -1);
   assert.ok(textos.indexOf('¿Mezcla descuento y cashback en la misma campaña?') !== -1);
 
   // Y cada mitad dice su propia razón: mandar a Legal sin razón concreta no le

@@ -1,0 +1,4 @@
+%% Bloque compartido: beneficio que cambia segun el producto · versión 1.0 · 21 de septiembre de 2026 · base: las dos piezas de hoteles de docs/piezas_publicadas/
+[[?TEXTO_BENEFICIO_POR_PRODUCTO]]§ Beneficio por Producto Participante. El Beneficio varía según el Producto Participante seleccionado y está sujeto a disponibilidad. Participan únicamente los siguientes, con el Beneficio que se indica para cada uno:
+{{TEXTO_BENEFICIO_POR_PRODUCTO}}
+El Beneficio aplicable a cada orden será el que corresponda al Producto Participante seleccionado, conforme a la lista anterior. Los Productos Participantes no incluidos en ella no dan lugar a Beneficio alguno. La aplicación del Beneficio está sujeta a la disponibilidad, a las fechas y a las políticas de reserva, modificación y cancelación de cada Proveedor; en caso de discrepancia entre la lista anterior y la política del Proveedor, prevalecerá esta última.[[/?]]

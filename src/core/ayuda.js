@@ -223,14 +223,6 @@ var FILTRO_DE_TRAVEL = [
     razon: 'Ese beneficio lo presta un tercero con sus propias condiciones, así que necesita otro documento.',
   },
   {
-    // Eran dos preguntas en una, y quien contestaba sí no sabía cuál de las dos
-    // había contestado. Partida el 20 de septiembre de 2026 (punto F8).
-    id: 'beneficioVariable',
-    texto: '¿Las condiciones cambian según destino, producto o usuario?',
-    ayuda: 'El porcentaje, el tope o la compra mínima.',
-    razon: 'Este documento usa un solo beneficio para toda la campaña. Con condiciones distintas por destino, producto o usuario, las cláusulas se contradicen.',
-  },
-  {
     id: 'mezclaDescuentoYCashback',
     texto: '¿Mezcla descuento y cashback en la misma campaña?',
     razon: 'Cada uno tiene su propio modelo y sus propias cláusulas: en un mismo documento se contradicen.',

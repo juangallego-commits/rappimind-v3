@@ -543,6 +543,9 @@ function pantallaPasos(raiz) {
       if (campoAbierto.id === 'productosDetalle') {
         bloque = RM.productos.dibujar(function () { RM.app.dibujar(); });
       }
+      if (campoAbierto.id === 'beneficiosPorProducto') {
+        bloque = RM.beneficios.dibujar(function () { RM.app.dibujar(); });
+      }
       if (campoAbierto.id === 'tiendasEta') {
         bloque = RM.tiendasEta.dibujar(function () { RM.app.dibujar(); });
       }

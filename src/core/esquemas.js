@@ -793,6 +793,35 @@ var CAMPOS_TRAVEL_COMUNES = [
     visible: function (entrada) { return entrada.metodoPago === 'emisor'; },
   },
 
+  // --- El beneficio que cambia segun el producto ---------------------------
+  //
+  // De las cinco piezas publicadas que Juan paso el 21 de septiembre de 2026,
+  // dos son exactamente este caso: veintitres hoteles, cada uno con su
+  // porcentaje y sus fechas. No hay nada ilegal ahi, solo un limite del modelo,
+  // que estaba escrito con un beneficio y solo uno. Se resuelve como ya se
+  // resolvio en Cashback Multitienda: una lista de filas.
+  {
+    id: 'beneficioVariable',
+    etiqueta: 'El beneficio cambia según el producto',
+    tipo: 'lista',
+    paso: 'beneficio',
+    obligatorio: true,
+    opciones: [
+      { valor: 'no', etiqueta: 'Es el mismo para todo' },
+      { valor: 'si', etiqueta: 'Cambia según el producto' },
+    ],
+  },
+  {
+    id: 'beneficiosPorProducto',
+    etiqueta: 'Beneficio por producto',
+    tipo: 'repetible',
+    minimo: 2,
+    maximo: 60,
+    paso: 'beneficio',
+    obligatorio: true,
+    visible: function (entrada) { return entrada.beneficioVariable === 'si'; },
+  },
+
   // --- La pieza publicitaria ----------------------------------------------
   //
   // Anunciar un precio no es el problema: anunciarlo mal si. La ley pide que el

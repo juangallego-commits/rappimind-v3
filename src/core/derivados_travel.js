@@ -108,6 +108,43 @@ var EXCLUSION_DE_PAGOS_CON_CREDITOS =
   ' No se obtendrá el Beneficio respecto de órdenes pagadas parcial o totalmente con Créditos de la Plataforma.';
 
 /**
+ * Las vinetas del beneficio cuando cambia segun el producto.
+ *
+ * De las cinco piezas publicadas, dos son este caso: la del Caribe Mexicano
+ * trae veintitres hoteles, cada uno con su porcentaje y con sus propias fechas
+ * de venta y de viaje, distintas de la vigencia de la campana. Sin esas fechas
+ * el documento promete mas de lo que el hotel da.
+ *
+ * Van en vinetas y nunca en tabla: el sitio donde se publica no las muestra
+ * (regla 5 de CLAUDE.md).
+ *
+ * Una fila a medias devuelve vacio entero, como en los productos del concurso:
+ * un hueco que el motor anuncia es mejor que una lista con una linea sin
+ * nombre o sin porcentaje, que se publicaria rota.
+ */
+function textoBeneficioPorProducto(entrada) {
+  if (entrada.beneficioVariable !== 'si') return '';
+  var filas = entrada.beneficiosPorProducto || [];
+  if (filas.length === 0) return '';
+
+  var lineas = [];
+  for (var i = 0; i < filas.length; i++) {
+    var fila = filas[i] || {};
+    var nombre = String(fila.nombre === null || fila.nombre === undefined ? '' : fila.nombre).trim();
+    var porcentaje = Number(fila.porcentaje);
+    if (!nombre || !porcentaje || porcentaje <= 0 || porcentaje > 100) return '';
+
+    var linea = '• **' + nombre + ':** un descuento del ' + porcentajeEnLetras(porcentaje) + '.';
+    var cuando = [];
+    if (String(fila.hastaCompra || '').trim()) cuando.push('se compra hasta el ' + formatearFecha(fila.hastaCompra));
+    if (String(fila.hastaViaje || '').trim()) cuando.push('se viaja hasta el ' + formatearFecha(fila.hastaViaje));
+    if (cuando.length) linea += ' Aplica si ' + cuando.join(' y ') + '.';
+    lineas.push(linea);
+  }
+  return lineas.join('\n');
+}
+
+/**
  * ORACION: enciende la clausula del precio anunciado.
  *
  * No escribe el texto, que vive en modelos/bloques/travel_precio_anunciado.md:
@@ -596,6 +633,7 @@ function calcularDerivadosTravel(entrada, pais) {
   valores.TEXTO_SEGMENTO_TRAVEL = textoSegmentoTravel(datos);
   valores.TEXTO_METODO_PAGO_TRAVEL = textoMetodoPagoTravel(datos);
   valores.TEXTO_PRECIO_ANUNCIADO = textoPrecioAnunciado(datos);
+  valores.TEXTO_BENEFICIO_POR_PRODUCTO = textoBeneficioPorProducto(datos);
   valores.TEXTO_PRODUCTOS_TRAVEL = textoProductosTravel(datos, p);
   valores.TEXTO_AMBITO_TRAVEL = textoAmbitoTravel(datos, p);
   valores.TEXTO_DESTINOS_TRAVEL = textoDestinosTravel(datos);
@@ -699,6 +737,7 @@ if (typeof module !== 'undefined') {
     textoSegmentoTravel: textoSegmentoTravel,
     textoMetodoPagoTravel: textoMetodoPagoTravel,
     textoPrecioAnunciado: textoPrecioAnunciado,
+    textoBeneficioPorProducto: textoBeneficioPorProducto,
     textoProductosTravel: textoProductosTravel,
     textoAmbitoTravel: textoAmbitoTravel,
     textoDestinosTravel: textoDestinosTravel,

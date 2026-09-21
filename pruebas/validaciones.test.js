@@ -340,3 +340,59 @@ test('al ampliar, una fecha de inicio que ya pasó no es un error', () => {
   assert.deepStrictEqual(validarSolicitud(pasada, CO, CONTEXTO).errores.map((e) => e.campo), ['fechaInicio']);
   assert.deepStrictEqual(validarSolicitud(pasada, CO, Object.assign({ ampliacion: true }, CONTEXTO)).errores, []);
 });
+
+// --- Los tres bloqueos de Travel que salieron del filtro ---------------------
+
+test('el precio anunciado que no es el final no genera, y dice por qué', () => {
+  // Lo que la ley castiga no es anunciar un precio, es anunciarlo mal. Hasta el
+  // 21 de septiembre de 2026 el filtro bloqueaba a los dos por igual.
+  const { validarTravel } = require('../src/core/validaciones.js');
+  const pais = require('../data/paises.json').paises.find((p) => p.codigo === 'CO');
+
+  const bien = validarTravel({ anunciaPrecio: 'si', precioIncluyeTodo: 'si' }, pais, '2026-09-01', false);
+  assert.ok(!bien.some((e) => e.campo === 'precioIncluyeTodo'),
+    'un precio que sí es el final no debería bloquear');
+
+  const mal = validarTravel({ anunciaPrecio: 'si', precioIncluyeTodo: 'no' }, pais, '2026-09-01', false);
+  const suyo = mal.filter((e) => e.campo === 'precioIncluyeTodo');
+  assert.strictEqual(suyo.length, 1, 'un precio que no es el final tiene que parar la generación');
+  assert.ok(suyo[0].mensaje.indexOf('valor final') !== -1, suyo[0].mensaje);
+  assert.ok(suyo[0].mensaje.indexOf('Legal') !== -1, 'tiene que decir a dónde va: ' + suyo[0].mensaje);
+});
+
+test('el beneficio por producto sale en viñetas, nunca en tabla', () => {
+  const { textoBeneficioPorProducto } = require('../src/core/derivados_travel.js');
+
+  const texto = textoBeneficioPorProducto({
+    beneficioVariable: 'si',
+    beneficiosPorProducto: [
+      { nombre: 'Hard Rock Hotel Los Cabos', porcentaje: 55, hastaCompra: '2026-12-18', hastaViaje: '2026-12-18' },
+      { nombre: 'Hotel Dalí Plaza', porcentaje: 65 },
+    ],
+  });
+
+  assert.ok(texto.indexOf('• **Hard Rock Hotel Los Cabos:**') !== -1, texto);
+  assert.ok(texto.indexOf('cincuenta y cinco por ciento (55%)') !== -1, texto);
+  assert.ok(texto.indexOf('18 de diciembre de 2026') !== -1, 'las fechas propias del producto tienen que salir');
+  // El que no trae fechas no inventa ninguna.
+  assert.ok(texto.indexOf('• **Hotel Dalí Plaza:** un descuento del sesenta y cinco por ciento (65%).') !== -1, texto);
+  assert.strictEqual(texto.indexOf('|'), -1, 'el documento no lleva tablas: el sitio donde se publica no las muestra');
+});
+
+test('una fila a medias deja el hueco entero, no una lista rota', () => {
+  // Es la misma regla de los productos del concurso: una línea sin nombre o sin
+  // porcentaje se publicaría rota, y el motor sí sabe avisar de un hueco.
+  const { textoBeneficioPorProducto } = require('../src/core/derivados_travel.js');
+
+  for (const filas of [
+    [{ nombre: 'Hotel sin porcentaje', porcentaje: '' }, { nombre: 'Otro', porcentaje: 30 }],
+    [{ nombre: '', porcentaje: 40 }, { nombre: 'Otro', porcentaje: 30 }],
+    [{ nombre: 'Porcentaje imposible', porcentaje: 140 }],
+  ]) {
+    assert.strictEqual(textoBeneficioPorProducto({ beneficioVariable: 'si', beneficiosPorProducto: filas }), '',
+      'una fila a medias tiene que devolver vacío: ' + JSON.stringify(filas));
+  }
+
+  // Y si el beneficio es el mismo para todo, la cláusula no sale.
+  assert.strictEqual(textoBeneficioPorProducto({ beneficioVariable: 'no', beneficiosPorProducto: [] }), '');
+});
