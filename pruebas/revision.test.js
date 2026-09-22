@@ -25,6 +25,19 @@ const { ESQUEMAS } = require('../src/core/esquemas.js');
 
 const PANTALLAS = path.join(CARPETA, 'pantallas.json');
 
+/*
+ * docs/revision/ ya no se versiona.
+ *
+ * Son 322 KB que salen de `npm run front` y `npm run revision`, y que se
+ * rearman cuando se va a hacer una tanda. Las pruebas que leen el paquete se
+ * saltan solas si no esta. Lo que sigue corriendo siempre es la tabla de
+ * tandas, que es la parte que de verdad se puede romper al mover una pantalla.
+ * Ver la decision 124.
+ */
+const SIN_PAQUETE = fs.existsSync(PANTALLAS)
+  ? false
+  : 'no esta docs/revision/, que ya no se versiona: corre `npm run front` y luego `npm run revision`';
+
 // --- La tabla de tandas ------------------------------------------------------
 
 test('cada tanda dice de qué va y qué hay que mirar', () => {
@@ -111,13 +124,15 @@ test('cada pantalla apunta a campos que existen', () => {
 
 // --- Lo que quedo en el repositorio -----------------------------------------
 
-test('el paquete generado está en el repositorio, y sin capturas', () => {
+test('el recorrido no guarda capturas', () => {
   // Las fotos las toma Juan de la aplicacion cuando va a hacer la tanda, no
   // las genera el recorrido: asi son de la version que corre ese dia. Si vuelve
   // a aparecer la carpeta, es que alguien revivio el codigo que las tomaba.
   assert.ok(!fs.existsSync(path.join(CARPETA, 'capturas')),
     'volvió docs/revision/capturas: las fotos las toma Juan, no el recorrido');
+});
 
+test('el paquete generado queda completo', { skip: SIN_PAQUETE }, () => {
   for (const archivo of ['pantallas.json', 'PROMPT.md', 'LEEME.md']) {
     assert.ok(fs.existsSync(path.join(CARPETA, archivo)),
       'falta docs/revision/' + archivo + ': corre `npm run front` y luego `npm run revision`');
@@ -128,7 +143,7 @@ test('el paquete generado está en el repositorio, y sin capturas', () => {
   }
 });
 
-test('el texto de las pantallas es el de la aplicación, no una descripción', () => {
+test('el texto de las pantallas es el de la aplicación, no una descripción', { skip: SIN_PAQUETE }, () => {
   const datos = JSON.parse(fs.readFileSync(PANTALLAS, 'utf8'));
   assert.ok(datos.pantallas.length >= 40, 'muy pocas pantallas: ' + datos.pantallas.length);
 
@@ -151,7 +166,7 @@ test('el texto de las pantallas es el de la aplicación, no una descripción', (
   }
 });
 
-test('las tandas no arrastran el documento legal entero', () => {
+test('las tandas no arrastran el documento legal entero', { skip: SIN_PAQUETE }, () => {
   // El texto legal no entra en esta revision, y son veinticinco mil caracteres
   // que en una tanda se llevarian el aire de doce pantallas.
   for (let numero = 1; numero <= TANDAS.length; numero += 1) {
@@ -164,7 +179,7 @@ test('las tandas no arrastran el documento legal entero', () => {
   }
 });
 
-test('el prompt trae las reglas que no se pueden romper', () => {
+test('el prompt trae las reglas que no se pueden romper', { skip: SIN_PAQUETE }, () => {
   const prompt = fs.readFileSync(path.join(CARPETA, 'PROMPT.md'), 'utf8');
   for (const regla of [
     'Rappi nunca es el organizador',

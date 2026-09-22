@@ -9,3 +9,12 @@ insumos/
 # así son de la versión que corre ese día y no de un recorrido de hace semanas.
 # Es la misma regla que ya vale para docs/revision/, con su prueba.
 docs/capturas/
+
+# Lo generado no se versiona (decisión 124). Son 2,0 MB de salidas que se
+# rearman con un comando, y que hacían el repositorio ilegible de una sola vez.
+demo/index.html
+docs/FRONT_ACTUAL.html
+docs/revision/
+docs/PREGUNTAS_KAM.md
+docs/CONTENIDO_AYUDA.md
+docs/VALORES_POR_PAIS.md

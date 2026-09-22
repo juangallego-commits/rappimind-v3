@@ -7,7 +7,8 @@ la revisión era del fondo y el diseño es la etapa siguiente.
 Cada punto dice: en qué pantalla, qué se midió, y por qué importa. Lo que está
 medido lleva su número; lo que es una impresión lo dice.
 
-Para ver las pantallas sin abrir la aplicación: `docs/FRONT_ACTUAL.html`, 46
+Para ver las pantallas sin abrir la aplicación, `npm run front` escribe
+`docs/FRONT_ACTUAL.html` (ya no se versiona, se genera): 46
 pantallas congeladas, se abre con doble clic y no lleva JavaScript. Se regenera
 con `npm run front`.
 

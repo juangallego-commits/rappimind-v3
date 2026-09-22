@@ -1,52 +1,57 @@
 # Insumos del cambio de identidad
 
 Material de referencia, no código: nada de esta carpeta se sube a Apps Script ni
-entra en el build.
+entra en el build. Lo que la aplicación usa de verdad vive en
+`src/client/tokens/` y `src/client/assets/`.
 
-## Qué hay
+## Ojo: esta carpeta se recortó el 22 de septiembre de 2026
+
+Pesaba 6,85 MB de 11,8 MB de todo el repositorio, y con eso el repositorio no se
+podía leer de una sola vez. **Se quedó lo que el código cita y lo que registra
+una medición o una decisión. Se fue el material de entrega**, que ya está
+aplicado y que no lee ni el build ni una prueba:
+
+| Lo que se fue | Qué era |
+|---|---|
+| `pdf nuevo.pdf` | 4,38 MB, el brand book en PDF |
+| `assets/` | PP Object Sans en OTF y TTF, los PNG del logotipo y los SVG del lockup. La aplicación tiene su propia copia recortada en `src/client/assets/` |
+| `sistema/` | El RappiAds Design System navegable, con su andamiaje |
+| `RappiMind Identidad.dc.html`, `RappiMind Estados.dc.html`, `RappiMind Logo.dc.html` | El prototipo de Claude Design, y `support.js` y `styles.css`, que necesitaba para abrirse |
+| `README.md`, `README-identidad.md`, `PROMPT-identidad.md` | Los papeles del traspaso |
+
+**Nada de eso se perdió: está en el historial de git.** El último commit que lo
+contiene es `9154e24`, y cualquier archivo se recupera con
+
+```
+git show 9154e24:"docs/diseno/pdf nuevo.pdf" > "pdf nuevo.pdf"
+git show 9154e24:"docs/diseno/RappiMind Estados.dc.html" > estados.html
+```
+
+Los documentos que quedaron siguen nombrando esos archivos, porque describen lo
+que se midió sobre ellos. Eso es a propósito y no es un error: cuando un texto de
+aquí cite un `.dc.html`, un `.png` o una fuente, se recupera con el comando de
+arriba. Por lo mismo, `tokens/fonts.css` pide `../assets/fonts/` y esa carpeta ya
+no está: esa hoja es la entrega original y nadie la carga, la que sirve la
+aplicación es `src/client/tokens/fonts.css`, que pide el `woff2` que sí existe.
+
+## Qué quedó
 
 | Archivo | Qué es |
 |---|---|
-| `ESPECIFICACION_ESTADOS.md` | Los estados, los tres niveles de aviso, el progreso de 5 a 9 pasos y los contrastes ya medidos. **Es el que hay que leer primero** |
-| `readme.md` | El RappiAds Design System, derivado del Rappi Brand Book 2026. La fuente de marca |
-| `SKILL.md` | La definición de skill del design system, con las reglas de marca en corto |
-| `styles.css` | La hoja de entrada del design system. Importa los cinco archivos de `tokens/` |
-| `_ds_manifest.json`, `_ds_bundle.js`, `doc-page.js` | El andamiaje del design system. No se leen para implementar |
-| `RappiAds-Design-System.html` y su versión de impresión | El design system navegable |
-
-## Cómo está organizada
-
-```
-docs/diseno/
-  AUDITORIA_CONTRASTE.md    los 28 pares medidos y los 6 arreglos. Se reproduce con npm run contraste
-  ESPECIFICACION_ESTADOS.md los estados, los avisos y el progreso
-  styles.css                importa los cinco tokens, en orden
-  tokens/                   los cuatro del design system mas rappimind.css, que va AL FINAL
-  assets/fonts/             PP Object Sans, cuatro pesos, en OTF y TTF
-  assets/logo/              rappi-logo-220.png es el de la barra superior
-  assets/lockup/            cuatro versiones mas favicon, en SVG y PNG
-  *.dc.html                 el prototipo. Estados, Identidad y Logo
-  support.js                lo necesitan los .dc.html para abrirse
-  README.md, README-identidad.md, PROMPT-identidad.md, DECISIONES.md   del traspaso
-  sistema/                  el RappiAds Design System navegable
-```
-
-Los `.dc.html` buscan `./support.js` y `assets/` por ruta relativa, y `styles.css`
-busca `tokens/`, así que nada de esto se puede mover de sitio sin romperlo.
-
-El `readme.md` del design system está en `sistema/` y no en la raíz a propósito:
-al lado del `README.md` del traspaso chocarían en Windows, que es el sistema de
-referencia del proyecto según la decisión 0.
-
-El que hay que leer primero es `ESPECIFICACION_ESTADOS.md`.
+| `ESPECIFICACION_ESTADOS.md` | Los estados, los tres niveles de aviso, el progreso de 5 a 9 pasos y los contrastes medidos. **Es el que hay que leer primero.** Lo cita `pruebas/estilos.test.js` |
+| `AUDITORIA_CONTRASTE.md` | Los 28 pares medidos y los 6 arreglos. Se reproduce con `npm run contraste`, que la nombra en pantalla |
+| `MEDICION_FUENTES.md` | Cuánto cuesta cada peso de PP Object Sans incrustado. La cita `src/client/Index.html` |
+| `MEDICION_LOGOTIPO.md` | Por qué el logotipo de la barra es `rappi-logo-web-224.png` y no otro. Es la decisión 119 |
+| `DECISIONES.md` | Las decisiones de diseño de la entrega, tal como llegaron |
+| `RONDA3_AUDITORIAS.md` | Los cuatro informes de la ronda 3 de auditoría, con su evidencia |
+| `tokens/` | Los cinco archivos de tokens **como llegaron de Claude Design**. La decisión 103 los conserva sin tocar: `src/client/tokens/` es lo que se sirve, y estos son el original contra el que se compara |
 
 ## Cuál fuente manda cuando dos se contradicen
 
-1. **El Rappi Brand Book**, a través de `readme.md` y `SKILL.md`. Es la marca.
-2. **`ESPECIFICACION_ESTADOS.md`**, que resuelve lo que el brand book no cubre
-   y corrige al prototipo donde hace falta.
-3. **Los `.dc.html`**, para los valores exactos de lo que sí está dibujado.
-4. **El prompt original**, para entender la intención en lo que nadie dibujó.
+1. **El Rappi Brand Book**, que ya no está aquí en PDF pero sigue siendo la marca.
+2. **`ESPECIFICACION_ESTADOS.md`**, que resuelve lo que el brand book no cubre.
+3. **El prototipo**, para los valores exactos de lo que sí está dibujado. Se
+   recupera del historial.
 
 Con una excepción que ya está peleada y resuelta: **el campo con valor lleva
 borde tinta, no neón**. El prototipo los pintaba los dos en neón y no se
@@ -54,10 +59,6 @@ distinguían del campo en error.
 
 ## Lo que no se lee de aquí
 
-El texto legal, las preguntas, el recorrido y el copy. Nada de eso cambia. Está
-en `modelos/`, `src/core/preguntas.js` y `docs/PARA_EL_DISENO.md`.
-
-## Por dónde se empieza
-
-`docs/PROMPT_IDENTIDAD.md` es el encargo completo, con el reparto entre agentes
-y las rondas de auditoría. `docs/PLAN_IDENTIDAD.md` es el análisis del que sale.
+El texto legal, las preguntas, el recorrido y el copy. Nada de eso cambia con el
+diseño. Está en `modelos/`, en `src/core/preguntas.js` y en
+`docs/PARA_EL_DISENO.md`, que es donde están los intocables de accesibilidad.

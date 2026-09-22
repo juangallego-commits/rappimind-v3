@@ -26,6 +26,19 @@ const RAIZ = path.join(__dirname, '..');
 const ESTILOS = fs.readFileSync(path.join(RAIZ, 'src', 'client', 'estilos.css'), 'utf8');
 const MARCO = '.rm-pantalla';
 
+/*
+ * docs/FRONT_ACTUAL.html ya no se versiona.
+ *
+ * Son 586 KB generados, y junto con el resto de lo generado hacian que el
+ * repositorio no se pudiera leer de una sola vez. Lo escribe `npm run front`
+ * cuando hace falta. Las pruebas que lo leen se saltan solas si no esta, y
+ * dicen con que comando aparece, que es mejor que fallar como si el codigo
+ * estuviera roto. Ver la decision 124.
+ */
+const SIN_ARCHIVO = fs.existsSync(SALIDA)
+  ? false
+  : 'no esta docs/FRONT_ACTUAL.html, que ya no se versiona: corre `npm run front`';
+
 // --- El acotado de la hoja de estilos ---------------------------------------
 
 test('body y html se vuelven el marco, y * cuenta tambien el marco', () => {
@@ -104,11 +117,7 @@ test('cada pantalla tiene ficha completa y ancla propia', () => {
 
 // --- El archivo que quedo en el repositorio ---------------------------------
 
-test('el archivo generado está en el repositorio', () => {
-  assert.ok(fs.existsSync(SALIDA), 'falta docs/FRONT_ACTUAL.html: corre `npm run front`');
-});
-
-test('el archivo no lleva JavaScript y trae todas las pantallas', () => {
+test('el archivo no lleva JavaScript y trae todas las pantallas', { skip: SIN_ARCHIVO }, () => {
   const html = fs.readFileSync(SALIDA, 'utf8');
   const fichas = fichasDePantalla();
 
@@ -127,7 +136,7 @@ test('el archivo no lleva JavaScript y trae todas las pantallas', () => {
     'alguna pantalla no se alcanzó en el último recorrido: vuelve a correr `npm run front`');
 });
 
-test('el pie de página sale en las 48 pantallas, y en portugués donde toca', () => {
+test('el pie de página sale en las 48 pantallas, y en portugués donde toca', { skip: SIN_ARCHIVO }, () => {
   const html = fs.readFileSync(SALIDA, 'utf8');
   const fichas = fichasDePantalla();
 
@@ -151,7 +160,7 @@ test('el pie de página sale en las 48 pantallas, y en portugués donde toca', (
     'falta la segunda mitad del pie en portugués: quedó la primera traducida y la otra no');
 });
 
-test('el aviso de la demostración no se cuela, y la hoja de estilos va completa', () => {
+test('el aviso de la demostración no se cuela, y la hoja de estilos va completa', { skip: SIN_ARCHIVO }, () => {
   const html = fs.readFileSync(SALIDA, 'utf8');
   // La portada explica que el aviso se quitó, así que la frase existe ahí. Lo
   // que no puede pasar es que se cuele dentro de una pantalla.
@@ -165,7 +174,7 @@ test('el aviso de la demostración no se cuela, y la hoja de estilos va completa
   assert.ok(html.indexOf(trozo) !== -1, 'el anexo A no trae src/client/estilos.css literal');
 });
 
-test('el texto de la interfaz está literal, no descrito', () => {
+test('el texto de la interfaz está literal, no descrito', { skip: SIN_ARCHIVO }, () => {
   const html = fs.readFileSync(SALIDA, 'utf8');
   // Una frase de cada sitio donde vive un texto: la portada, una pregunta, la
   // ayuda de una pregunta, un tipo de campaña y la pantalla de Legal.

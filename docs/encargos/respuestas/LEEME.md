@@ -31,7 +31,8 @@ editar el archivo con el lápiz para pegar el resto.
 ## Qué pasa después
 
 Cada respuesta se trabaja en su propia sesión de Claude Code. Qué hacer con
-cada una está escrito en `docs/PROMPT_SIGUIENTE_SESION.md`, con la regla que las
+cada una está escrito en el historial de git, en `docs/PROMPT_SIGUIENTE_SESION.md`
+del commit `9154e24`, con la regla que las
 gobierna a todas: lo que Claude chat recomiende sin dar el texto exacto no lo
 redacta Claude Code, se anota en `docs/PENDIENTES_LEGAL.md` y lo decide Juan.
 

@@ -106,8 +106,14 @@ cc
 
 1. Subir la hoja a Drive y pegar el enlace en `LINK_DEL_SHEET`.
 2. Poner las menciones de los abogados de cada país y el `cc`.
-3. Confirmar el enlace de la web app. El que está en `docs/REVISION_MANANA.md` es
-   el del despliegue de esa noche: si se volvió a desplegar, es otro.
+3. Confirmar el enlace de la web app. El último que quedó anotado es
+
+   ```
+   https://script.google.com/a/macros/rappi.com/s/AKfycbwvu6ciiAzvvYFVrOznWnMp952cGe4jXTnM4Ek9MbPdyBlWDBz6fVwVeEO7QvmXx7c/exec
+   ```
+
+   y es el del despliegue del 17 de septiembre. Si se volvió a desplegar, es otro:
+   el bueno sale del despliegue vigente en el proyecto de Apps Script.
 
 ---
 

@@ -1,5 +1,9 @@
 # Progreso
 
+La tabla es el resumen. Lo que sigue es el diario, sesión por sesión, y crece
+por abajo: lo último está al final. Si buscas qué falta, la tabla y
+`docs/PENDIENTES_LEGAL.md` lo dicen sin leer el diario.
+
 | Bloque | Estado | Cómo probarlo | Qué necesito de Juan |
 |---|---|---|---|
 | 0 | cerrado | `npm test` (32 pruebas), `npm run build` y el flujo de Actions en verde | Crear el despliegue de la web app (lo hace el disparo manual) |
@@ -7,7 +11,7 @@
 | 2 | listo, falta verificar en Google | `npm test` (157 pruebas) | Correr `setup()` y completar las propiedades |
 | 3 | listo | `npm run demo` y abrir `demo/index.html` | Revisar las capturas y los textos |
 | 4 | pendiente | | Falta el despliegue versionado, que lo dispara Juan |
-| 10 · revisión legal global | listo, falta que Juan lo mande | `python3 scripts/hoja_feedback.py salida.xlsx` y abrir el archivo | Subir la hoja a Drive, pegar el enlace en el mensaje, poner las menciones y mandarlo por #legalglobal |
+| 11 · revisión legal global | listo, falta que Juan lo mande | `python3 scripts/hoja_feedback.py salida.xlsx` y abrir el archivo | Subir la hoja a Drive, pegar el enlace en el mensaje, poner las menciones y mandarlo por #legalglobal |
 | 9 · identidad | cerrado | `npm test` (681), `npm run contraste` y los dos recorridos | Mirar el titular y la píldora Publicado en pantalla, y decidir el correo, el lockup y los estados del historial |
 
 ## Bloque 0 · Repo, build y despliegue
@@ -2384,7 +2388,7 @@ pares tienen que entrar a `PARES` en `scripts/contraste.js`, o se queda fuera de
 
 ---
 
-# Bloque 10 · La revisión legal con los nueve países
+# Bloque 11 · La revisión legal con los nueve países
 
 Es la apertura a los equipos legales de los nueve países, antes de que la
 herramienta la vea un comercial. Está preparado, falta que Juan lo mande.
