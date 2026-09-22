@@ -210,7 +210,7 @@ formulario manual.
 
 ### ¿Qué empresa paga el beneficio?
 
-> Tal como sale en su RUT, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.
+> Tal como sale en {DONDE_ID_FISCAL}, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.
 
 **Por qué te preguntamos esto.** El Organizador responde por la campaña frente al usuario y frente a la autoridad. Rappi solo pone la plataforma, así que el nombre tiene que ser exacto.
 
@@ -228,9 +228,9 @@ formulario manual.
 
 - `vacio`: Escribe la razón social de la empresa que paga el beneficio. Si no la tienes, pídesela a tu contacto en la tienda.
 
-### ¿Cuál es el NIT de esa empresa?
+### ¿Cuál es el número de {ID_FISCAL} de esa empresa?
 
-> Con dígito de verificación, tal como sale en el RUT: 900.111.222-1.
+> Escríbelo completo, tal como sale en {DONDE_ID_FISCAL}: {EJEMPLO_ID_FISCAL}.
 
 **Por qué te preguntamos esto.** El documento identifica al Organizador con su número tributario. Un número mal escrito deja el documento sin un responsable identificable.
 
@@ -240,14 +240,14 @@ formulario manual.
 | Paso | Organizador |
 | Tipo de control | identificacion |
 | Obligatorio | sí, cuando se ve |
-| Ejemplo | 900.111.222-1 |
+| Ejemplo | {EJEMPLO_ID_FISCAL} |
 | Avanza sola | no |
 | Llena en el documento | `ID_ORGANIZADOR` |
 
 **Mensajes de validación:**
 
-- `vacio`: Escribe el NIT de la empresa organizadora, con el dígito de verificación.
-- `formato`: Ese número no cuadra. Revisa el dígito de verificación, que es el que va después del guion.
+- `vacio`: Escribe el número de {ID_FISCAL} de la empresa organizadora, completo.
+- `formato`: Ese número no cuadra. Revísalo en {DONDE_ID_FISCAL} y escríbelo otra vez.
 
 **Al validar bien** muestra el valor formateado seguido de "válido".
 
@@ -899,7 +899,7 @@ formulario manual.
 
 ### ¿Qué empresa paga el beneficio?
 
-> Tal como sale en su RUT, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.
+> Tal como sale en {DONDE_ID_FISCAL}, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.
 
 **Por qué te preguntamos esto.** El Organizador responde por la campaña frente al usuario y frente a la autoridad. Rappi solo pone la plataforma, así que el nombre tiene que ser exacto.
 
@@ -917,9 +917,9 @@ formulario manual.
 
 - `vacio`: Escribe la razón social de la empresa que paga el beneficio. Si no la tienes, pídesela a tu contacto en la tienda.
 
-### ¿Cuál es el NIT de esa empresa?
+### ¿Cuál es el número de {ID_FISCAL} de esa empresa?
 
-> Con dígito de verificación, tal como sale en el RUT: 900.111.222-1.
+> Escríbelo completo, tal como sale en {DONDE_ID_FISCAL}: {EJEMPLO_ID_FISCAL}.
 
 **Por qué te preguntamos esto.** El documento identifica al Organizador con su número tributario. Un número mal escrito deja el documento sin un responsable identificable.
 
@@ -929,14 +929,14 @@ formulario manual.
 | Paso | Organizador |
 | Tipo de control | identificacion |
 | Obligatorio | sí, cuando se ve |
-| Ejemplo | 900.111.222-1 |
+| Ejemplo | {EJEMPLO_ID_FISCAL} |
 | Avanza sola | no |
 | Llena en el documento | `ID_ORGANIZADOR` |
 
 **Mensajes de validación:**
 
-- `vacio`: Escribe el NIT de la empresa organizadora, con el dígito de verificación.
-- `formato`: Ese número no cuadra. Revisa el dígito de verificación, que es el que va después del guion.
+- `vacio`: Escribe el número de {ID_FISCAL} de la empresa organizadora, completo.
+- `formato`: Ese número no cuadra. Revísalo en {DONDE_ID_FISCAL} y escríbelo otra vez.
 
 **Al validar bien** muestra el valor formateado seguido de "válido".
 
@@ -1506,6 +1506,1446 @@ formulario manual.
 
 ---
 
+# Descuento
+
+La tienda baja el precio de sus productos, o regala el envío o la tarifa de servicio. El usuario ve el precio ya rebajado antes de pagar y no recibe Créditos.
+
+## Filtro de entrada
+
+Antes del formulario. Si responde **sí** a cualquiera, no se genera: se muestra
+la pantalla "Esta campaña la redacta Legal" con la razón y el enlace al
+formulario manual.
+
+- ¿La tienda o la marca exige sus propios T&C?
+
+## Paso: Campaña
+
+### ¿En qué país corre la campaña?
+
+> Si tu país no aparece en la lista, todavía no está habilitado.
+
+**Por qué te preguntamos esto.** Cada país tiene su propia entidad legal de Rappi, su moneda y su autoridad de protección al consumidor. El documento cambia completo según el país.
+
+| | |
+|---|---|
+| Campo interno | `pais` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `PAIS_LEGAL`, `ENTIDAD_LEGAL` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el país de la campaña.
+
+### ¿La campaña es de Rappi o de Rappi Travel?
+
+> Si es de vuelos, hoteles, autos o paquetes, es Rappi Travel.
+
+**Por qué te preguntamos esto.** Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.
+
+| | |
+|---|---|
+| Campo interno | `negocio` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | rappi |
+| Avanza sola | sí |
+
+**Opciones** (botones grandes, una sola):
+
+- **Rappi**: Restaurantes, supermercados, farmacias y todo lo que llega a domicilio.
+- **Rappi Travel**: Vuelos, hoteles, autos, paquetes, tours y asistencia al viajero.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si la campaña es de Rappi o de Rappi Travel.
+
+### ¿Qué tipo de campaña vas a hacer?
+
+> Elige el que se parezca a tu campaña. Cada opción dice de qué se trata.
+
+**Por qué te preguntamos esto.** Cada tipo usa un modelo legal distinto, aprobado por Legal. Elegir mal significa generar el documento equivocado.
+
+| | |
+|---|---|
+| Campo interno | `tipo` |
+| Paso | Campaña |
+| Tipo de control | tarjetas |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el tipo de campaña.
+
+### ¿En qué tienda aplica?
+
+> La marca comercial como aparece en la app. Por ejemplo: Pollo Dorado.
+
+**Por qué te preguntamos esto.** El documento nombra la tienda y la define como Tienda Participante. Si el nombre no coincide con el de la app, el usuario no la encuentra.
+
+| | |
+|---|---|
+| Campo interno | `tienda` |
+| Paso | Campaña |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | Pollo Dorado |
+| Avanza sola | no |
+| Llena en el documento | `TIENDA` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe la tienda donde aplica la campaña.
+
+### ¿En cuál de sus tiendas se gana el cashback?
+
+> Muchas marcas tienen dos tiendas en la app: la normal y la de Turbo.
+
+**Por qué te preguntamos esto.** El documento dice en cuál tienda cuenta el pedido. Si no lo dice, el usuario puede reclamar el cashback en cualquiera de las dos.
+
+| | |
+|---|---|
+| Campo interno | `tiendaTurbo` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_TIENDA_TURBO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Solo en la tienda normal**: Un pedido en su tienda de Turbo no da el cashback.
+- **Solo en la tienda de Turbo**: Un pedido en su tienda normal no da el cashback.
+- **En las dos**: Cuenta en cualquiera de las dos. Si la de Turbo la opera otra empresa, usa el Multitienda.
+- **No tiene tienda en Turbo**: Si no sabes, búscala en el botón Turbo de la app.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos en cuál de sus tiendas se gana el cashback.
+
+### ¿Dónde aplica la campaña?
+
+> Si es solo en algunas ciudades, las escribes en la siguiente pregunta.
+
+**Por qué te preguntamos esto.** La cobertura define dónde puede reclamar el usuario. Si el documento dice más de lo que la campaña cubre, el usuario tiene derecho a exigirlo.
+
+| | |
+|---|---|
+| Campo interno | `alcance` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | Nacional |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_TERRITORIO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **En todo el país**: Donde sea que Rappi tenga cobertura.
+- **Solo en algunas ciudades**: Por ejemplo: Bogotá y Medellín.
+
+**Mensajes de validación:**
+
+- `vacio`: Elige si la campaña es nacional o por ciudades.
+
+### ¿En qué ciudades?
+
+> Sepáralas con comas. Por ejemplo: Bogotá, Medellín, Cali.
+
+**Por qué te preguntamos esto.** Las ciudades salen escritas tal cual en la cláusula de cobertura. Si falta una, el usuario de esa ciudad no puede reclamar.
+
+| | |
+|---|---|
+| Campo interno | `ciudades` |
+| Paso | Campaña |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | Bogotá, Medellín, Cali |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_TERRITORIO` |
+
+**Sugerencias clicables:** Bogotá, Medellín, Cali, Barranquilla, Bucaramanga, Cúcuta
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe al menos una ciudad, o vuelve y elige cobertura nacional.
+
+## Paso: Organizador
+
+### ¿Qué empresa paga el beneficio?
+
+> Tal como sale en {DONDE_ID_FISCAL}, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.
+
+**Por qué te preguntamos esto.** El Organizador responde por la campaña frente al usuario y frente a la autoridad. Rappi solo pone la plataforma, así que el nombre tiene que ser exacto.
+
+| | |
+|---|---|
+| Campo interno | `organizadorRazonSocial` |
+| Paso | Organizador |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | Alimentos del Norte S.A.S. |
+| Avanza sola | no |
+| Llena en el documento | `ORGANIZADOR` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe la razón social de la empresa que paga el beneficio. Si no la tienes, pídesela a tu contacto en la tienda.
+
+### ¿Cuál es el número de {ID_FISCAL} de esa empresa?
+
+> Escríbelo completo, tal como sale en {DONDE_ID_FISCAL}: {EJEMPLO_ID_FISCAL}.
+
+**Por qué te preguntamos esto.** El documento identifica al Organizador con su número tributario. Un número mal escrito deja el documento sin un responsable identificable.
+
+| | |
+|---|---|
+| Campo interno | `organizadorId` |
+| Paso | Organizador |
+| Tipo de control | identificacion |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | {EJEMPLO_ID_FISCAL} |
+| Avanza sola | no |
+| Llena en el documento | `ID_ORGANIZADOR` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el número de {ID_FISCAL} de la empresa organizadora, completo.
+- `formato`: Ese número no cuadra. Revísalo en {DONDE_ID_FISCAL} y escríbelo otra vez.
+
+**Al validar bien** muestra el valor formateado seguido de "válido".
+
+## Paso: Cuándo
+
+### ¿Qué día arranca la campaña?
+
+> Puede ser hoy. Publica los T&C antes de que arranque.
+
+**Por qué te preguntamos esto.** Los Términos y Condiciones tienen que estar publicados antes de que la campaña empiece. Si arrancó ayer, ya no se pueden publicar a tiempo.
+
+| | |
+|---|---|
+| Campo interno | `fechaInicio` |
+| Paso | Cuándo |
+| Tipo de control | fecha |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `FECHA_INICIO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el día en que arranca la campaña.
+- `pasado`: Esa fecha ya pasó. Los T&C se publican antes de que la campaña empiece, así que elige hoy o un día futuro.
+
+**Aviso:** Faltan menos de 48 horas. Alcanzas, pero publica los T&C hoy mismo.
+
+### ¿A qué hora arranca?
+
+> Por defecto arranca a medianoche.
+
+**Por qué te preguntamos esto.** La hora exacta define desde cuándo un pedido cuenta para la campaña. Un pedido un minuto antes no da beneficio.
+
+| | |
+|---|---|
+| Campo interno | `horaInicio` |
+| Paso | Cuándo |
+| Tipo de control | hora |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 00:00 |
+| Avanza sola | no |
+| Llena en el documento | `HORA_INICIO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige la hora de inicio.
+
+### ¿Qué día termina?
+
+> La mayoría de los cashback duran un solo día. Te la dejamos igual a la de inicio.
+
+**Por qué te preguntamos esto.** Después de esta fecha la campaña no da beneficio. También se usa para calcular hasta cuándo sirven los Créditos.
+
+| | |
+|---|---|
+| Campo interno | `fechaFin` |
+| Paso | Cuándo |
+| Tipo de control | fecha |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `FECHA_FIN` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el día en que termina la campaña.
+- `orden`: La campaña no puede terminar antes de empezar. Revisa la fecha y la hora de fin.
+
+### ¿A qué hora termina?
+
+> Por defecto termina a las 11:59 de la noche.
+
+**Por qué te preguntamos esto.** Define hasta qué minuto cuenta un pedido. Los pedidos posteriores se procesan como pedidos normales.
+
+| | |
+|---|---|
+| Campo interno | `horaFin` |
+| Paso | Cuándo |
+| Tipo de control | hora |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 23:59 |
+| Avanza sola | no |
+| Llena en el documento | `HORA_FIN` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige la hora de fin.
+- `orden`: La hora de fin tiene que ser después de la de inicio: la campaña es de un solo día.
+
+## Paso: Beneficio
+
+### ¿Qué forma tiene el beneficio?
+
+> Un descuento sobre el precio, o el envío o la tarifa de servicio gratis.
+
+**Por qué te preguntamos esto.** De aquí sale la cláusula que dice en qué consiste el Beneficio y sobre qué valor se calcula. Un documento que diga que no cubre el envío, en una campaña cuyo beneficio es justamente el envío, se contradice solo.
+
+| | |
+|---|---|
+| Campo interno | `formaDelDescuento` |
+| Paso | Beneficio |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_BENEFICIO_DESCUENTO`, `TEXTO_BASE_DESCUENTO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Un porcentaje de descuento**: Lo más usado. Por ejemplo, 30% menos en el precio.
+- **Un monto fijo de descuento**: Se le resta siempre la misma cantidad al precio.
+- **Envío gratis**: La campaña cubre el costo de envío del pedido.
+- **Tarifa de servicio gratis**: La campaña cubre la tarifa de servicio del pedido.
+- **Envío y tarifa de servicio gratis**: La campaña cubre los dos cargos del pedido.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos qué forma tiene el beneficio de la campaña.
+
+### ¿Qué porcentaje del pedido se devuelve en Créditos?
+
+> Solo el número. Con 20, un pedido de $50.000 recibe $10.000 en Créditos.
+
+**Por qué te preguntamos esto.** Es la promesa central de la campaña. Una vez publicado, el usuario puede exigir exactamente ese porcentaje.
+
+| | |
+|---|---|
+| Campo interno | `porcentaje` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 20 |
+| Avanza sola | no |
+| Llena en el documento | `PORCENTAJE` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el porcentaje que devuelves, sin el signo de porcentaje.
+- `rango`: El porcentaje va de 1 a 100. Si necesitas varios porcentajes o un rango, eso es otra campaña: escríbele a Legal.
+
+### ¿De cuánto es el descuento?
+
+> El valor en {MONEDA} que se le resta al precio del pedido.
+
+**Por qué te preguntamos esto.** Es la promesa central de la campaña. El documento lo escribe en letras y en cifra, y una vez publicado el usuario lo puede exigir.
+
+| | |
+|---|---|
+| Campo interno | `montoDescuento` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 10000 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_BENEFICIO_DESCUENTO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe de cuánto es el descuento que se resta del precio.
+- `cero`: El descuento tiene que ser mayor que cero.
+
+### ¿Cuál es el máximo de Créditos por pedido?
+
+> Aunque el pedido sea grande, no recibe más de esto. Lo más usado es 25.000.
+
+**Por qué te preguntamos esto.** Sin tope, un pedido enorme se lleva el presupuesto entero. Con tope, un cashback alto sigue siendo viable.
+
+| | |
+|---|---|
+| Campo interno | `tope` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 25000 |
+| Avanza sola | no |
+| Llena en el documento | `TOPE` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el máximo de Créditos que recibe una persona por pedido.
+- `cero`: El tope tiene que ser mayor que cero.
+- `mayorQuePresupuesto`: El tope por pedido es mayor que el presupuesto total. Con eso, el primer pedido se lleva toda la campaña. Revisa los dos números.
+
+### ¿Qué productos participan?
+
+> Si el concurso lo paga una marca, suelen participar solo sus productos.
+
+**Por qué te preguntamos esto.** Define qué compras cuentan para el ranking. Si no queda claro, cualquier compra podría contar.
+
+| | |
+|---|---|
+| Campo interno | `productos` |
+| Paso | Concurso |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_PRODUCTOS` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Todo lo de la tienda**: Cualquier producto del catálogo.
+- **Solo los de una marca**: Los productos de un Maker.
+- **Unos productos puntuales**: Tú haces la lista.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos qué productos participan.
+
+### ¿De qué marca?
+
+> El nombre comercial de la marca. Por ejemplo: Galletas Lunaria.
+
+**Por qué te preguntamos esto.** El documento nombra la marca, así que el usuario sabe exactamente qué comprar para participar.
+
+| | |
+|---|---|
+| Campo interno | `makerMarca` |
+| Paso | Concurso |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | Galletas Lunaria |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_PRODUCTOS` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el nombre de la marca.
+
+### ¿Cuáles productos participan?
+
+> Uno por fila: el nombre como sale en la app y su EAN, el número del código de barras.
+
+**Por qué te preguntamos esto.** El EAN identifica el producto sin discusión. Si dos productos se llaman parecido, el EAN decide qué compra suma.
+
+| | |
+|---|---|
+| Campo interno | `productosDetalle` |
+| Paso | Concurso |
+| Tipo de control | repetible |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_PRODUCTOS` |
+
+**Mensajes de validación:**
+
+- `minimo`: Agrega al menos un producto participante.
+- `maximo`: No puedes agregar más de 60 productos.
+- `largo`: El EAN tiene 8, 12, 13 o 14 números. Revisa que esté completo.
+- `control`: Ese EAN no existe: el último número no cuadra. Cópialo otra vez del empaque o del catálogo.
+- `repetido`: Ese EAN ya está en la lista.
+
+### ¿Cuántas veces puede recibir el beneficio una persona?
+
+> Se cuenta por persona, durante toda la campaña.
+
+**Por qué te preguntamos esto.** Sin límite, unos pocos usuarios pueden consumir el presupuesto en horas. Con límite, el beneficio llega a más gente.
+
+| | |
+|---|---|
+| Campo interno | `maxPedidos` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 1 |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_LIMITE_PEDIDOS` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Una sola vez**: Lo más común. El segundo pedido ya no da beneficio.
+- **Varias veces**: Tú dices cuántas.
+- **Sin límite**: Solo lo frena el presupuesto.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos cuántas veces puede ganar la misma persona.
+- `cuantas`: Escribe cuántos pedidos con beneficio puede hacer una persona.
+- `rango`: Tiene que ser al menos un pedido.
+
+### sinLimite
+
+No tiene pregunta propia: se responde dentro de **maxPedidos**.
+
+### ¿Cómo termina la campaña?
+
+> Además de la fecha de fin, puede terminar antes por presupuesto o por unidades.
+
+**Por qué te preguntamos esto.** El documento dice qué agota la campaña antes de tiempo. Si no lo dice, no la puedes cortar aunque se te acabe la plata.
+
+| | |
+|---|---|
+| Campo interno | `agotamiento` |
+| Paso | Beneficio |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | fecha |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_AGOTAMIENTO`, `TEXTO_LIMITE_CAMPANA` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Cuando llegue la fecha de fin**: Sin tope de plata ni de unidades. Lo más simple.
+- **Cuando se agote el presupuesto**: Termina sola al gastarse la plata de la campaña.
+- **Cuando se agoten las unidades**: Termina sola al llegar a cierto número de pedidos.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos cómo termina la campaña.
+
+### ¿Cuánto es el presupuesto total de la campaña?
+
+> Cuando se acabe, la campaña termina sola. Lo habitual va de 5 a 40 millones.
+
+**Por qué te preguntamos esto.** El documento dice que la campaña termina al agotarse el presupuesto. Es lo que te protege si el consumo se dispara.
+
+| | |
+|---|---|
+| Campo interno | `presupuesto` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 20000000 |
+| Avanza sola | no |
+| Llena en el documento | `PRESUPUESTO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el presupuesto total de la campaña.
+- `cero`: El presupuesto tiene que ser mayor que cero.
+
+### ¿Cuántas unidades hay disponibles?
+
+> Cuántos pedidos en total pueden recibir el beneficio. Por ejemplo: 500.
+
+**Por qué te preguntamos esto.** Cuando se agoten, la campaña termina sola. El documento tiene que decir cuántas hay, porque quien llegue tarde tiene derecho a saber por qué no alcanzó.
+
+| | |
+|---|---|
+| Campo interno | `unidadesDisponibles` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 500 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_LIMITE_CAMPANA`, `TEXTO_AGOTAMIENTO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe cuántas unidades tiene la campaña en total.
+- `rango`: Tiene que haber al menos una unidad disponible.
+
+## Paso: Participantes
+
+### ¿Quiénes pueden participar?
+
+> Por ejemplo: solo Pro, o quienes no compran hace 60 días.
+
+**Por qué te preguntamos esto.** Limita quién puede reclamar el beneficio. Si el documento dice "todos", no puedes excluir a nadie después.
+
+| | |
+|---|---|
+| Campo interno | `segmento` |
+| Paso | Participantes |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_SEGMENTO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Todos los usuarios**: Cualquier persona mayor de edad.
+- **Solo Pro y Pro Black**: Con la suscripción activa.
+- **Solo usuarios nuevos**: Su primer pedido en Rappi.
+- **Usuarios que no compran hace rato**: Tú dices desde cuándo.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos quiénes pueden participar.
+
+### ¿Cuántos días sin comprar?
+
+> Se cuentan hacia atrás desde que arranca la campaña. Por ejemplo: 60.
+
+**Por qué te preguntamos esto.** Define exactamente a quién le llega. El documento lo dice en letras y en número, para que no haya discusión.
+
+| | |
+|---|---|
+| Campo interno | `diasSinCompra` |
+| Paso | Participantes |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 60 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_SEGMENTO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe cuántos días sin comprar.
+- `rango`: Los días van de 1 a 365.
+
+### ¿Con qué medio de pago aplica el beneficio?
+
+> Con "cualquier medio" entran tarjetas, billeteras y efectivo donde exista.
+
+**Por qué te preguntamos esto.** Restringir el medio de pago cambia quién puede participar. Los pedidos pagados con Créditos nunca dan beneficio.
+
+| | |
+|---|---|
+| Campo interno | `metodoPago` |
+| Paso | Participantes |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_METODO_PAGO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Con cualquier medio de pago**: Lo más común.
+- **Con todo menos efectivo**: Tarjetas y billeteras sí, efectivo no.
+- **Solo con RappiCard**: Únicamente la tarjeta de Rappi.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos con qué puede pagar el usuario.
+
+### ¿Hay que gastar un mínimo para participar?
+
+> Por ejemplo: 30.000. Si no hay mínimo, déjalo vacío.
+
+**Por qué te preguntamos esto.** Si lo exiges, tiene que quedar escrito. Si no aparece en el documento, no lo puedes aplicar después.
+
+| | |
+|---|---|
+| Campo interno | `compraMinima` |
+| Paso | Participantes |
+| Tipo de control | numero |
+| Obligatorio | no |
+| Ejemplo | 30000 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_MINIMO_COMPRA`, `TEXTO_UMBRAL` |
+
+**Mensajes de validación:**
+
+- `cero`: Si no quieres exigir un mínimo, deja el campo vacío.
+
+## Paso: Pieza
+
+### ¿Qué categoría tiene el producto de la pieza?
+
+> Casi siempre es Ninguna. Solo cambia la leyenda del arte, no tu T&C.
+
+**Por qué te preguntamos esto.** Algunas categorías tienen que llevar una advertencia por ley dentro de la pieza, como los licores o los medicamentos. La leyenda que te damos ya la trae.
+
+| | |
+|---|---|
+| Campo interno | `categoriaProducto` |
+| Paso | Pieza |
+| Tipo de control | lista |
+| Obligatorio | no |
+| Valor por defecto | ninguna |
+| Avanza sola | sí |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige una categoría, o Ninguna si el producto no es de ninguna de esas.
+- `prohibida`: No se hacen campañas de cashback, descuento ni concursos sobre medicamentos, productos fitoterapéuticos, cigarrillos, tabaco calentado (como IQOS), vapeadores ni otros productos con nicotina. Esta campaña no se puede hacer. Si tienes dudas, escríbenos a #tyc-rappi.
+
+## Paso: Revisar
+
+### Confirma que la información es correcta
+
+> Confirmo que estos datos son ciertos y son los de mi campaña.
+
+**Por qué te preguntamos esto.** El documento se genera con lo que escribiste y se publica tal cual. Nadie de Legal lo revisa antes.
+
+| | |
+|---|---|
+| Campo interno | `declaracion` |
+| Paso | Revisar |
+| Tipo de control | casilla |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+
+**Mensajes de validación:**
+
+- `vacio`: Marca la casilla para confirmar que la información es correcta.
+
+---
+
+# Cupón
+
+Lo mismo que el Descuento, pero el usuario tiene que activarlo: escribe un código o toma el cupón en la sección “Cupones”. Sirve cuando el beneficio es para unos pocos y no para todo el que compre.
+
+## Filtro de entrada
+
+Antes del formulario. Si responde **sí** a cualquiera, no se genera: se muestra
+la pantalla "Esta campaña la redacta Legal" con la razón y el enlace al
+formulario manual.
+
+- ¿La tienda o la marca exige sus propios T&C?
+
+## Paso: Campaña
+
+### ¿En qué país corre la campaña?
+
+> Si tu país no aparece en la lista, todavía no está habilitado.
+
+**Por qué te preguntamos esto.** Cada país tiene su propia entidad legal de Rappi, su moneda y su autoridad de protección al consumidor. El documento cambia completo según el país.
+
+| | |
+|---|---|
+| Campo interno | `pais` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `PAIS_LEGAL`, `ENTIDAD_LEGAL` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el país de la campaña.
+
+### ¿La campaña es de Rappi o de Rappi Travel?
+
+> Si es de vuelos, hoteles, autos o paquetes, es Rappi Travel.
+
+**Por qué te preguntamos esto.** Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.
+
+| | |
+|---|---|
+| Campo interno | `negocio` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | rappi |
+| Avanza sola | sí |
+
+**Opciones** (botones grandes, una sola):
+
+- **Rappi**: Restaurantes, supermercados, farmacias y todo lo que llega a domicilio.
+- **Rappi Travel**: Vuelos, hoteles, autos, paquetes, tours y asistencia al viajero.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si la campaña es de Rappi o de Rappi Travel.
+
+### ¿Qué tipo de campaña vas a hacer?
+
+> Elige el que se parezca a tu campaña. Cada opción dice de qué se trata.
+
+**Por qué te preguntamos esto.** Cada tipo usa un modelo legal distinto, aprobado por Legal. Elegir mal significa generar el documento equivocado.
+
+| | |
+|---|---|
+| Campo interno | `tipo` |
+| Paso | Campaña |
+| Tipo de control | tarjetas |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el tipo de campaña.
+
+### ¿En qué tienda aplica?
+
+> La marca comercial como aparece en la app. Por ejemplo: Pollo Dorado.
+
+**Por qué te preguntamos esto.** El documento nombra la tienda y la define como Tienda Participante. Si el nombre no coincide con el de la app, el usuario no la encuentra.
+
+| | |
+|---|---|
+| Campo interno | `tienda` |
+| Paso | Campaña |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | Pollo Dorado |
+| Avanza sola | no |
+| Llena en el documento | `TIENDA` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe la tienda donde aplica la campaña.
+
+### ¿En cuál de sus tiendas se gana el cashback?
+
+> Muchas marcas tienen dos tiendas en la app: la normal y la de Turbo.
+
+**Por qué te preguntamos esto.** El documento dice en cuál tienda cuenta el pedido. Si no lo dice, el usuario puede reclamar el cashback en cualquiera de las dos.
+
+| | |
+|---|---|
+| Campo interno | `tiendaTurbo` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_TIENDA_TURBO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Solo en la tienda normal**: Un pedido en su tienda de Turbo no da el cashback.
+- **Solo en la tienda de Turbo**: Un pedido en su tienda normal no da el cashback.
+- **En las dos**: Cuenta en cualquiera de las dos. Si la de Turbo la opera otra empresa, usa el Multitienda.
+- **No tiene tienda en Turbo**: Si no sabes, búscala en el botón Turbo de la app.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos en cuál de sus tiendas se gana el cashback.
+
+### ¿Dónde aplica la campaña?
+
+> Si es solo en algunas ciudades, las escribes en la siguiente pregunta.
+
+**Por qué te preguntamos esto.** La cobertura define dónde puede reclamar el usuario. Si el documento dice más de lo que la campaña cubre, el usuario tiene derecho a exigirlo.
+
+| | |
+|---|---|
+| Campo interno | `alcance` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | Nacional |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_TERRITORIO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **En todo el país**: Donde sea que Rappi tenga cobertura.
+- **Solo en algunas ciudades**: Por ejemplo: Bogotá y Medellín.
+
+**Mensajes de validación:**
+
+- `vacio`: Elige si la campaña es nacional o por ciudades.
+
+### ¿En qué ciudades?
+
+> Sepáralas con comas. Por ejemplo: Bogotá, Medellín, Cali.
+
+**Por qué te preguntamos esto.** Las ciudades salen escritas tal cual en la cláusula de cobertura. Si falta una, el usuario de esa ciudad no puede reclamar.
+
+| | |
+|---|---|
+| Campo interno | `ciudades` |
+| Paso | Campaña |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | Bogotá, Medellín, Cali |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_TERRITORIO` |
+
+**Sugerencias clicables:** Bogotá, Medellín, Cali, Barranquilla, Bucaramanga, Cúcuta
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe al menos una ciudad, o vuelve y elige cobertura nacional.
+
+## Paso: Organizador
+
+### ¿Qué empresa paga el beneficio?
+
+> Tal como sale en {DONDE_ID_FISCAL}, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.
+
+**Por qué te preguntamos esto.** El Organizador responde por la campaña frente al usuario y frente a la autoridad. Rappi solo pone la plataforma, así que el nombre tiene que ser exacto.
+
+| | |
+|---|---|
+| Campo interno | `organizadorRazonSocial` |
+| Paso | Organizador |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | Alimentos del Norte S.A.S. |
+| Avanza sola | no |
+| Llena en el documento | `ORGANIZADOR` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe la razón social de la empresa que paga el beneficio. Si no la tienes, pídesela a tu contacto en la tienda.
+
+### ¿Cuál es el número de {ID_FISCAL} de esa empresa?
+
+> Escríbelo completo, tal como sale en {DONDE_ID_FISCAL}: {EJEMPLO_ID_FISCAL}.
+
+**Por qué te preguntamos esto.** El documento identifica al Organizador con su número tributario. Un número mal escrito deja el documento sin un responsable identificable.
+
+| | |
+|---|---|
+| Campo interno | `organizadorId` |
+| Paso | Organizador |
+| Tipo de control | identificacion |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | {EJEMPLO_ID_FISCAL} |
+| Avanza sola | no |
+| Llena en el documento | `ID_ORGANIZADOR` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el número de {ID_FISCAL} de la empresa organizadora, completo.
+- `formato`: Ese número no cuadra. Revísalo en {DONDE_ID_FISCAL} y escríbelo otra vez.
+
+**Al validar bien** muestra el valor formateado seguido de "válido".
+
+## Paso: Cuándo
+
+### ¿Qué día arranca la campaña?
+
+> Puede ser hoy. Publica los T&C antes de que arranque.
+
+**Por qué te preguntamos esto.** Los Términos y Condiciones tienen que estar publicados antes de que la campaña empiece. Si arrancó ayer, ya no se pueden publicar a tiempo.
+
+| | |
+|---|---|
+| Campo interno | `fechaInicio` |
+| Paso | Cuándo |
+| Tipo de control | fecha |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `FECHA_INICIO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el día en que arranca la campaña.
+- `pasado`: Esa fecha ya pasó. Los T&C se publican antes de que la campaña empiece, así que elige hoy o un día futuro.
+
+**Aviso:** Faltan menos de 48 horas. Alcanzas, pero publica los T&C hoy mismo.
+
+### ¿A qué hora arranca?
+
+> Por defecto arranca a medianoche.
+
+**Por qué te preguntamos esto.** La hora exacta define desde cuándo un pedido cuenta para la campaña. Un pedido un minuto antes no da beneficio.
+
+| | |
+|---|---|
+| Campo interno | `horaInicio` |
+| Paso | Cuándo |
+| Tipo de control | hora |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 00:00 |
+| Avanza sola | no |
+| Llena en el documento | `HORA_INICIO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige la hora de inicio.
+
+### ¿Qué día termina?
+
+> La mayoría de los cashback duran un solo día. Te la dejamos igual a la de inicio.
+
+**Por qué te preguntamos esto.** Después de esta fecha la campaña no da beneficio. También se usa para calcular hasta cuándo sirven los Créditos.
+
+| | |
+|---|---|
+| Campo interno | `fechaFin` |
+| Paso | Cuándo |
+| Tipo de control | fecha |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `FECHA_FIN` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el día en que termina la campaña.
+- `orden`: La campaña no puede terminar antes de empezar. Revisa la fecha y la hora de fin.
+
+### ¿A qué hora termina?
+
+> Por defecto termina a las 11:59 de la noche.
+
+**Por qué te preguntamos esto.** Define hasta qué minuto cuenta un pedido. Los pedidos posteriores se procesan como pedidos normales.
+
+| | |
+|---|---|
+| Campo interno | `horaFin` |
+| Paso | Cuándo |
+| Tipo de control | hora |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 23:59 |
+| Avanza sola | no |
+| Llena en el documento | `HORA_FIN` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige la hora de fin.
+- `orden`: La hora de fin tiene que ser después de la de inicio: la campaña es de un solo día.
+
+## Paso: Beneficio
+
+### ¿Qué forma tiene el beneficio?
+
+> Un descuento sobre el precio, o el envío o la tarifa de servicio gratis.
+
+**Por qué te preguntamos esto.** De aquí sale la cláusula que dice en qué consiste el Beneficio y sobre qué valor se calcula. Un documento que diga que no cubre el envío, en una campaña cuyo beneficio es justamente el envío, se contradice solo.
+
+| | |
+|---|---|
+| Campo interno | `formaDelDescuento` |
+| Paso | Beneficio |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_BENEFICIO_DESCUENTO`, `TEXTO_BASE_DESCUENTO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Un porcentaje de descuento**: Lo más usado. Por ejemplo, 30% menos en el precio.
+- **Un monto fijo de descuento**: Se le resta siempre la misma cantidad al precio.
+- **Envío gratis**: La campaña cubre el costo de envío del pedido.
+- **Tarifa de servicio gratis**: La campaña cubre la tarifa de servicio del pedido.
+- **Envío y tarifa de servicio gratis**: La campaña cubre los dos cargos del pedido.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos qué forma tiene el beneficio de la campaña.
+
+### ¿Qué porcentaje del pedido se devuelve en Créditos?
+
+> Solo el número. Con 20, un pedido de $50.000 recibe $10.000 en Créditos.
+
+**Por qué te preguntamos esto.** Es la promesa central de la campaña. Una vez publicado, el usuario puede exigir exactamente ese porcentaje.
+
+| | |
+|---|---|
+| Campo interno | `porcentaje` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 20 |
+| Avanza sola | no |
+| Llena en el documento | `PORCENTAJE` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el porcentaje que devuelves, sin el signo de porcentaje.
+- `rango`: El porcentaje va de 1 a 100. Si necesitas varios porcentajes o un rango, eso es otra campaña: escríbele a Legal.
+
+### ¿De cuánto es el descuento?
+
+> El valor en {MONEDA} que se le resta al precio del pedido.
+
+**Por qué te preguntamos esto.** Es la promesa central de la campaña. El documento lo escribe en letras y en cifra, y una vez publicado el usuario lo puede exigir.
+
+| | |
+|---|---|
+| Campo interno | `montoDescuento` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 10000 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_BENEFICIO_DESCUENTO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe de cuánto es el descuento que se resta del precio.
+- `cero`: El descuento tiene que ser mayor que cero.
+
+### ¿Cuál es el máximo de Créditos por pedido?
+
+> Aunque el pedido sea grande, no recibe más de esto. Lo más usado es 25.000.
+
+**Por qué te preguntamos esto.** Sin tope, un pedido enorme se lleva el presupuesto entero. Con tope, un cashback alto sigue siendo viable.
+
+| | |
+|---|---|
+| Campo interno | `tope` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 25000 |
+| Avanza sola | no |
+| Llena en el documento | `TOPE` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el máximo de Créditos que recibe una persona por pedido.
+- `cero`: El tope tiene que ser mayor que cero.
+- `mayorQuePresupuesto`: El tope por pedido es mayor que el presupuesto total. Con eso, el primer pedido se lleva toda la campaña. Revisa los dos números.
+
+### ¿Qué productos participan?
+
+> Si el concurso lo paga una marca, suelen participar solo sus productos.
+
+**Por qué te preguntamos esto.** Define qué compras cuentan para el ranking. Si no queda claro, cualquier compra podría contar.
+
+| | |
+|---|---|
+| Campo interno | `productos` |
+| Paso | Concurso |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_PRODUCTOS` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Todo lo de la tienda**: Cualquier producto del catálogo.
+- **Solo los de una marca**: Los productos de un Maker.
+- **Unos productos puntuales**: Tú haces la lista.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos qué productos participan.
+
+### ¿De qué marca?
+
+> El nombre comercial de la marca. Por ejemplo: Galletas Lunaria.
+
+**Por qué te preguntamos esto.** El documento nombra la marca, así que el usuario sabe exactamente qué comprar para participar.
+
+| | |
+|---|---|
+| Campo interno | `makerMarca` |
+| Paso | Concurso |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | Galletas Lunaria |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_PRODUCTOS` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el nombre de la marca.
+
+### ¿Cuáles productos participan?
+
+> Uno por fila: el nombre como sale en la app y su EAN, el número del código de barras.
+
+**Por qué te preguntamos esto.** El EAN identifica el producto sin discusión. Si dos productos se llaman parecido, el EAN decide qué compra suma.
+
+| | |
+|---|---|
+| Campo interno | `productosDetalle` |
+| Paso | Concurso |
+| Tipo de control | repetible |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_PRODUCTOS` |
+
+**Mensajes de validación:**
+
+- `minimo`: Agrega al menos un producto participante.
+- `maximo`: No puedes agregar más de 60 productos.
+- `largo`: El EAN tiene 8, 12, 13 o 14 números. Revisa que esté completo.
+- `control`: Ese EAN no existe: el último número no cuadra. Cópialo otra vez del empaque o del catálogo.
+- `repetido`: Ese EAN ya está en la lista.
+
+### ¿Cómo activa el usuario el cupón?
+
+> Con un código que escribe, o tomándolo en la sección Cupones de la app.
+
+**Por qué te preguntamos esto.** El documento dice exactamente qué tiene que hacer el usuario para recibir el beneficio. Quien no lo haga no lo recibe, y eso solo se le puede oponer si está escrito.
+
+| | |
+|---|---|
+| Campo interno | `activacionCupon` |
+| Paso | Beneficio |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_ACTIVACION_CUPON` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Con un código que el usuario escribe**: Tú nos das el código y el documento lo imprime.
+- **Desde la sección Cupones de la app**: El cupón aparece en la app y el usuario lo toma.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos cómo activa el usuario el cupón.
+
+### ¿Cuál es el código del cupón?
+
+> Como lo va a escribir el usuario, sin espacios. Por ejemplo: RAPPI30.
+
+**Por qué te preguntamos esto.** El código va impreso en el documento. Si no coincide letra por letra con el de la app, el usuario reclama un cupón que no le funciona.
+
+| | |
+|---|---|
+| Campo interno | `codigoCupon` |
+| Paso | Beneficio |
+| Tipo de control | codigo |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | RAPPI30 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_ACTIVACION_CUPON` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el código del cupón, tal como lo va a escribir el usuario.
+- `formato`: El código solo puede llevar letras, números y guiones, sin espacios.
+- `largo`: El código no puede pasar de 24 caracteres.
+
+### ¿Cuántas veces puede recibir el beneficio una persona?
+
+> Se cuenta por persona, durante toda la campaña.
+
+**Por qué te preguntamos esto.** Sin límite, unos pocos usuarios pueden consumir el presupuesto en horas. Con límite, el beneficio llega a más gente.
+
+| | |
+|---|---|
+| Campo interno | `maxPedidos` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 1 |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_LIMITE_PEDIDOS` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Una sola vez**: Lo más común. El segundo pedido ya no da beneficio.
+- **Varias veces**: Tú dices cuántas.
+- **Sin límite**: Solo lo frena el presupuesto.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos cuántas veces puede ganar la misma persona.
+- `cuantas`: Escribe cuántos pedidos con beneficio puede hacer una persona.
+- `rango`: Tiene que ser al menos un pedido.
+
+### sinLimite
+
+No tiene pregunta propia: se responde dentro de **maxPedidos**.
+
+### ¿Cómo termina la campaña?
+
+> Además de la fecha de fin, puede terminar antes por presupuesto o por unidades.
+
+**Por qué te preguntamos esto.** El documento dice qué agota la campaña antes de tiempo. Si no lo dice, no la puedes cortar aunque se te acabe la plata.
+
+| | |
+|---|---|
+| Campo interno | `agotamiento` |
+| Paso | Beneficio |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | fecha |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_AGOTAMIENTO`, `TEXTO_LIMITE_CAMPANA` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Cuando llegue la fecha de fin**: Sin tope de plata ni de unidades. Lo más simple.
+- **Cuando se agote el presupuesto**: Termina sola al gastarse la plata de la campaña.
+- **Cuando se agoten las unidades**: Termina sola al llegar a cierto número de pedidos.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos cómo termina la campaña.
+
+### ¿Cuánto es el presupuesto total de la campaña?
+
+> Cuando se acabe, la campaña termina sola. Lo habitual va de 5 a 40 millones.
+
+**Por qué te preguntamos esto.** El documento dice que la campaña termina al agotarse el presupuesto. Es lo que te protege si el consumo se dispara.
+
+| | |
+|---|---|
+| Campo interno | `presupuesto` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 20000000 |
+| Avanza sola | no |
+| Llena en el documento | `PRESUPUESTO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el presupuesto total de la campaña.
+- `cero`: El presupuesto tiene que ser mayor que cero.
+
+### ¿Cuántas unidades hay disponibles?
+
+> Cuántos pedidos en total pueden recibir el beneficio. Por ejemplo: 500.
+
+**Por qué te preguntamos esto.** Cuando se agoten, la campaña termina sola. El documento tiene que decir cuántas hay, porque quien llegue tarde tiene derecho a saber por qué no alcanzó.
+
+| | |
+|---|---|
+| Campo interno | `unidadesDisponibles` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 500 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_LIMITE_CAMPANA`, `TEXTO_AGOTAMIENTO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe cuántas unidades tiene la campaña en total.
+- `rango`: Tiene que haber al menos una unidad disponible.
+
+## Paso: Participantes
+
+### ¿Quiénes pueden participar?
+
+> Por ejemplo: solo Pro, o quienes no compran hace 60 días.
+
+**Por qué te preguntamos esto.** Limita quién puede reclamar el beneficio. Si el documento dice "todos", no puedes excluir a nadie después.
+
+| | |
+|---|---|
+| Campo interno | `segmento` |
+| Paso | Participantes |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_SEGMENTO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Todos los usuarios**: Cualquier persona mayor de edad.
+- **Solo Pro y Pro Black**: Con la suscripción activa.
+- **Solo usuarios nuevos**: Su primer pedido en Rappi.
+- **Usuarios que no compran hace rato**: Tú dices desde cuándo.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos quiénes pueden participar.
+
+### ¿Cuántos días sin comprar?
+
+> Se cuentan hacia atrás desde que arranca la campaña. Por ejemplo: 60.
+
+**Por qué te preguntamos esto.** Define exactamente a quién le llega. El documento lo dice en letras y en número, para que no haya discusión.
+
+| | |
+|---|---|
+| Campo interno | `diasSinCompra` |
+| Paso | Participantes |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 60 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_SEGMENTO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe cuántos días sin comprar.
+- `rango`: Los días van de 1 a 365.
+
+### ¿Con qué medio de pago aplica el beneficio?
+
+> Con "cualquier medio" entran tarjetas, billeteras y efectivo donde exista.
+
+**Por qué te preguntamos esto.** Restringir el medio de pago cambia quién puede participar. Los pedidos pagados con Créditos nunca dan beneficio.
+
+| | |
+|---|---|
+| Campo interno | `metodoPago` |
+| Paso | Participantes |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_METODO_PAGO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Con cualquier medio de pago**: Lo más común.
+- **Con todo menos efectivo**: Tarjetas y billeteras sí, efectivo no.
+- **Solo con RappiCard**: Únicamente la tarjeta de Rappi.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos con qué puede pagar el usuario.
+
+### ¿Hay que gastar un mínimo para participar?
+
+> Por ejemplo: 30.000. Si no hay mínimo, déjalo vacío.
+
+**Por qué te preguntamos esto.** Si lo exiges, tiene que quedar escrito. Si no aparece en el documento, no lo puedes aplicar después.
+
+| | |
+|---|---|
+| Campo interno | `compraMinima` |
+| Paso | Participantes |
+| Tipo de control | numero |
+| Obligatorio | no |
+| Ejemplo | 30000 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_MINIMO_COMPRA`, `TEXTO_UMBRAL` |
+
+**Mensajes de validación:**
+
+- `cero`: Si no quieres exigir un mínimo, deja el campo vacío.
+
+## Paso: Pieza
+
+### ¿Qué categoría tiene el producto de la pieza?
+
+> Casi siempre es Ninguna. Solo cambia la leyenda del arte, no tu T&C.
+
+**Por qué te preguntamos esto.** Algunas categorías tienen que llevar una advertencia por ley dentro de la pieza, como los licores o los medicamentos. La leyenda que te damos ya la trae.
+
+| | |
+|---|---|
+| Campo interno | `categoriaProducto` |
+| Paso | Pieza |
+| Tipo de control | lista |
+| Obligatorio | no |
+| Valor por defecto | ninguna |
+| Avanza sola | sí |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige una categoría, o Ninguna si el producto no es de ninguna de esas.
+- `prohibida`: No se hacen campañas de cashback, descuento ni concursos sobre medicamentos, productos fitoterapéuticos, cigarrillos, tabaco calentado (como IQOS), vapeadores ni otros productos con nicotina. Esta campaña no se puede hacer. Si tienes dudas, escríbenos a #tyc-rappi.
+
+## Paso: Revisar
+
+### Confirma que la información es correcta
+
+> Confirmo que estos datos son ciertos y son los de mi campaña.
+
+**Por qué te preguntamos esto.** El documento se genera con lo que escribiste y se publica tal cual. Nadie de Legal lo revisa antes.
+
+| | |
+|---|---|
+| Campo interno | `declaracion` |
+| Paso | Revisar |
+| Tipo de control | casilla |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+
+**Mensajes de validación:**
+
+- `vacio`: Marca la casilla para confirmar que la información es correcta.
+
+---
+
 # Cashback Travel
 
 La marca aliada devuelve un porcentaje de lo que el usuario pagó por su vuelo, hotel, auto o paquete, en Créditos para su Billetera.
@@ -1584,7 +3024,7 @@ formulario manual.
 
 ### ¿Qué empresa paga el beneficio?
 
-> Tal como sale en su RUT, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.
+> Tal como sale en {DONDE_ID_FISCAL}, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.
 
 **Por qué te preguntamos esto.** El Organizador responde por la campaña frente al usuario y frente a la autoridad. Rappi solo pone la plataforma, así que el nombre tiene que ser exacto.
 
@@ -1602,9 +3042,9 @@ formulario manual.
 
 - `vacio`: Escribe la razón social de la empresa que paga el beneficio. Si no la tienes, pídesela a tu contacto en la tienda.
 
-### ¿Cuál es el NIT de esa empresa?
+### ¿Cuál es el número de {ID_FISCAL} de esa empresa?
 
-> Con dígito de verificación, tal como sale en el RUT: 900.111.222-1.
+> Escríbelo completo, tal como sale en {DONDE_ID_FISCAL}: {EJEMPLO_ID_FISCAL}.
 
 **Por qué te preguntamos esto.** El documento identifica al Organizador con su número tributario. Un número mal escrito deja el documento sin un responsable identificable.
 
@@ -1614,14 +3054,14 @@ formulario manual.
 | Paso | Organizador |
 | Tipo de control | identificacion |
 | Obligatorio | sí, cuando se ve |
-| Ejemplo | 900.111.222-1 |
+| Ejemplo | {EJEMPLO_ID_FISCAL} |
 | Avanza sola | no |
 | Llena en el documento | `ID_ORGANIZADOR` |
 
 **Mensajes de validación:**
 
-- `vacio`: Escribe el NIT de la empresa organizadora, con el dígito de verificación.
-- `formato`: Ese número no cuadra. Revisa el dígito de verificación, que es el que va después del guion.
+- `vacio`: Escribe el número de {ID_FISCAL} de la empresa organizadora, completo.
+- `formato`: Ese número no cuadra. Revísalo en {DONDE_ID_FISCAL} y escríbelo otra vez.
 
 **Al validar bien** muestra el valor formateado seguido de "válido".
 
@@ -2159,6 +3599,54 @@ No tiene pregunta propia: se responde dentro de **compraMinima**.
 - `orden`: La hora de fin tiene que ser después de la de inicio: la campaña es de un solo día.
 
 ## Paso: Beneficio
+
+### ¿El beneficio es el mismo para todo?
+
+> Si cada hotel, destino o aerolínea tiene su propio porcentaje, elige la segunda.
+
+**Por qué te preguntamos esto.** El documento tiene que decir qué recibe el usuario en cada caso. Si prometes un solo porcentaje y en la app hay varios, el usuario puede exigir el más alto en cualquier producto.
+
+| | |
+|---|---|
+| Campo interno | `beneficioVariable` |
+| Paso | Beneficio |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | no |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_BENEFICIO_POR_PRODUCTO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Es el mismo para todo**: Un porcentaje para toda la campaña. Lo más común.
+- **Cambia según el producto**: Tú haces la lista, con el beneficio de cada uno.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si el beneficio es el mismo para todo.
+
+### ¿Cuánto da cada uno?
+
+> Uno por fila: el nombre como sale en la app y su porcentaje. Puedes pegarlos desde tu hoja de cálculo.
+
+**Por qué te preguntamos esto.** Cada línea sale impresa en el documento. Un producto que no esté en la lista no da beneficio, y uno con el porcentaje mal escrito lo da mal.
+
+| | |
+|---|---|
+| Campo interno | `beneficiosPorProducto` |
+| Paso | Beneficio |
+| Tipo de control | repetible |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_BENEFICIO_POR_PRODUCTO` |
+
+**Mensajes de validación:**
+
+- `minimo`: Agrega al menos dos productos con su beneficio. Si todos dan lo mismo, vuelve atrás y elige "Es el mismo para todo".
+- `maximo`: No puedes agregar más de 60 productos.
+- `vacio`: Cada fila necesita el nombre del producto y su porcentaje.
+- `rango`: El porcentaje de cada producto tiene que estar entre 1 y 100.
+- `repetida`: Ese producto ya está en la lista.
 
 ### ¿Cómo se calcula el cashback?
 
@@ -2489,6 +3977,77 @@ No tiene pregunta propia: se responde dentro de **maxOrdenes**.
 
 - `vacio`: Dinos con qué puede pagar el usuario.
 
+### ¿Con cuál tarjeta o banco?
+
+> Como lo ve el usuario al pagar. Por ejemplo: Tarjeta de Crédito Bancolombia.
+
+**Por qué te preguntamos esto.** El nombre sale impreso en el documento, así que tiene que ser el que el usuario reconoce. Si queda impreciso, alguien con otra tarjeta del mismo banco va a creer que aplica.
+
+| | |
+|---|---|
+| Campo interno | `nombreMedioPago` |
+| Paso | Participantes |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | Tarjeta de Crédito Bancolombia |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_METODO_PAGO_TRAVEL` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe con cuál tarjeta o banco aplica el beneficio.
+
+## Paso: Pieza
+
+### ¿La pieza anuncia un precio o una tarifa?
+
+> Por ejemplo: "vuelos desde $199.000" o "hoteles desde US$50 la noche".
+
+**Por qué te preguntamos esto.** Un precio anunciado obliga a decir en el documento qué incluye y en qué condiciones se consigue. Si no queda escrito, el usuario puede exigir ese precio sin ninguna de las condiciones.
+
+| | |
+|---|---|
+| Campo interno | `anunciaPrecio` |
+| Paso | Pieza |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | no |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_PRECIO_ANUNCIADO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **No anuncia precio**: La pieza habla del descuento o del beneficio, no de un valor.
+- **Sí, anuncia un precio**: Con "desde", una tarifa o un valor concreto.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si la pieza anuncia un precio.
+
+### ¿Ese precio ya incluye impuestos, tasas y cargos?
+
+> Es el valor final que paga el usuario, sin sumas después.
+
+**Por qué te preguntamos esto.** La ley exige que el precio anunciado sea el total. Un "desde" que después crece con impuestos es el caso que ya le costó una sanción a Rappi Travel.
+
+| | |
+|---|---|
+| Campo interno | `precioIncluyeTodo` |
+| Paso | Pieza |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_PRECIO_ANUNCIADO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Sí, es el valor final**: Lo que el usuario ve es lo que paga.
+- **No, se suman después**: Esta campaña la tiene que ver Legal.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si el precio anunciado incluye impuestos, tasas y cargos.
+
 ## Paso: Revisar
 
 ### ¿Qué día sale la primera pieza?
@@ -2659,7 +4218,7 @@ formulario manual.
 
 ### ¿Qué empresa paga el beneficio?
 
-> Tal como sale en su RUT, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.
+> Tal como sale en {DONDE_ID_FISCAL}, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.
 
 **Por qué te preguntamos esto.** El Organizador responde por la campaña frente al usuario y frente a la autoridad. Rappi solo pone la plataforma, así que el nombre tiene que ser exacto.
 
@@ -2677,9 +4236,9 @@ formulario manual.
 
 - `vacio`: Escribe la razón social de la empresa que paga el beneficio. Si no la tienes, pídesela a tu contacto en la tienda.
 
-### ¿Cuál es el NIT de esa empresa?
+### ¿Cuál es el número de {ID_FISCAL} de esa empresa?
 
-> Con dígito de verificación, tal como sale en el RUT: 900.111.222-1.
+> Escríbelo completo, tal como sale en {DONDE_ID_FISCAL}: {EJEMPLO_ID_FISCAL}.
 
 **Por qué te preguntamos esto.** El documento identifica al Organizador con su número tributario. Un número mal escrito deja el documento sin un responsable identificable.
 
@@ -2689,14 +4248,14 @@ formulario manual.
 | Paso | Organizador |
 | Tipo de control | identificacion |
 | Obligatorio | sí, cuando se ve |
-| Ejemplo | 900.111.222-1 |
+| Ejemplo | {EJEMPLO_ID_FISCAL} |
 | Avanza sola | no |
 | Llena en el documento | `ID_ORGANIZADOR` |
 
 **Mensajes de validación:**
 
-- `vacio`: Escribe el NIT de la empresa organizadora, con el dígito de verificación.
-- `formato`: Ese número no cuadra. Revisa el dígito de verificación, que es el que va después del guion.
+- `vacio`: Escribe el número de {ID_FISCAL} de la empresa organizadora, completo.
+- `formato`: Ese número no cuadra. Revísalo en {DONDE_ID_FISCAL} y escríbelo otra vez.
 
 **Al validar bien** muestra el valor formateado seguido de "válido".
 
@@ -3235,6 +4794,54 @@ No tiene pregunta propia: se responde dentro de **compraMinima**.
 
 ## Paso: Beneficio
 
+### ¿El beneficio es el mismo para todo?
+
+> Si cada hotel, destino o aerolínea tiene su propio porcentaje, elige la segunda.
+
+**Por qué te preguntamos esto.** El documento tiene que decir qué recibe el usuario en cada caso. Si prometes un solo porcentaje y en la app hay varios, el usuario puede exigir el más alto en cualquier producto.
+
+| | |
+|---|---|
+| Campo interno | `beneficioVariable` |
+| Paso | Beneficio |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | no |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_BENEFICIO_POR_PRODUCTO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Es el mismo para todo**: Un porcentaje para toda la campaña. Lo más común.
+- **Cambia según el producto**: Tú haces la lista, con el beneficio de cada uno.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si el beneficio es el mismo para todo.
+
+### ¿Cuánto da cada uno?
+
+> Uno por fila: el nombre como sale en la app y su porcentaje. Puedes pegarlos desde tu hoja de cálculo.
+
+**Por qué te preguntamos esto.** Cada línea sale impresa en el documento. Un producto que no esté en la lista no da beneficio, y uno con el porcentaje mal escrito lo da mal.
+
+| | |
+|---|---|
+| Campo interno | `beneficiosPorProducto` |
+| Paso | Beneficio |
+| Tipo de control | repetible |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_BENEFICIO_POR_PRODUCTO` |
+
+**Mensajes de validación:**
+
+- `minimo`: Agrega al menos dos productos con su beneficio. Si todos dan lo mismo, vuelve atrás y elige "Es el mismo para todo".
+- `maximo`: No puedes agregar más de 60 productos.
+- `vacio`: Cada fila necesita el nombre del producto y su porcentaje.
+- `rango`: El porcentaje de cada producto tiene que estar entre 1 y 100.
+- `repetida`: Ese producto ya está en la lista.
+
 ### ¿El descuento es igual en todos los productos?
 
 > Si cambia según el hotel o el vuelo, elige la segunda opción.
@@ -3446,6 +5053,77 @@ No tiene pregunta propia: se responde dentro de **unidades**.
 
 - `vacio`: Dinos con qué puede pagar el usuario.
 
+### ¿Con cuál tarjeta o banco?
+
+> Como lo ve el usuario al pagar. Por ejemplo: Tarjeta de Crédito Bancolombia.
+
+**Por qué te preguntamos esto.** El nombre sale impreso en el documento, así que tiene que ser el que el usuario reconoce. Si queda impreciso, alguien con otra tarjeta del mismo banco va a creer que aplica.
+
+| | |
+|---|---|
+| Campo interno | `nombreMedioPago` |
+| Paso | Participantes |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | Tarjeta de Crédito Bancolombia |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_METODO_PAGO_TRAVEL` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe con cuál tarjeta o banco aplica el beneficio.
+
+## Paso: Pieza
+
+### ¿La pieza anuncia un precio o una tarifa?
+
+> Por ejemplo: "vuelos desde $199.000" o "hoteles desde US$50 la noche".
+
+**Por qué te preguntamos esto.** Un precio anunciado obliga a decir en el documento qué incluye y en qué condiciones se consigue. Si no queda escrito, el usuario puede exigir ese precio sin ninguna de las condiciones.
+
+| | |
+|---|---|
+| Campo interno | `anunciaPrecio` |
+| Paso | Pieza |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | no |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_PRECIO_ANUNCIADO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **No anuncia precio**: La pieza habla del descuento o del beneficio, no de un valor.
+- **Sí, anuncia un precio**: Con "desde", una tarifa o un valor concreto.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si la pieza anuncia un precio.
+
+### ¿Ese precio ya incluye impuestos, tasas y cargos?
+
+> Es el valor final que paga el usuario, sin sumas después.
+
+**Por qué te preguntamos esto.** La ley exige que el precio anunciado sea el total. Un "desde" que después crece con impuestos es el caso que ya le costó una sanción a Rappi Travel.
+
+| | |
+|---|---|
+| Campo interno | `precioIncluyeTodo` |
+| Paso | Pieza |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_PRECIO_ANUNCIADO` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Sí, es el valor final**: Lo que el usuario ve es lo que paga.
+- **No, se suman después**: Esta campaña la tiene que ver Legal.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si el precio anunciado incluye impuestos, tasas y cargos.
+
 ## Paso: Revisar
 
 ### ¿Qué día sale la primera pieza?
@@ -3633,6 +5311,57 @@ formulario manual.
 **Mensajes de validación:**
 
 - `vacio`: Escribe al menos una ciudad, o vuelve y elige cobertura nacional.
+
+### ¿En qué corre la campaña?
+
+> Casi todas corren en todo Turbo Restaurantes de la ciudad, que es donde están El Corral Turbo, McDonald’s Turbo y las demás marcas.
+
+**Por qué te preguntamos esto.** El documento dice quién participa. Si la campaña es de toda una categoría, la nombra y el listado es el que el usuario ve en la app. Si es de unas tiendas concretas, las nombra una por una.
+
+| | |
+|---|---|
+| Campo interno | `alcanceTurbo` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | restaurantes |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_TIENDAS_ETA` |
+
+**Opciones** (botones grandes, una sola):
+
+- **En todo Turbo Restaurantes de la ciudad**: Es como corren casi todas. Participan las marcas de restaurantes del botón Turbo.
+- **En todo Turbo de la ciudad**: Toda la categoría Turbo, no solo los restaurantes.
+- **En unas tiendas concretas de Turbo**: Las dark stores, como las de Turbo Carulla: Turbo Calleja, Turbo Chico, Turbo Laureles. El documento las nombra una por una.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos en qué corre la campaña.
+
+### ¿Cuáles tiendas de Turbo participan?
+
+> Una por fila, con el nombre como sale en el botón Turbo de la app. Por ejemplo: Turbo Calleja.
+
+**Por qué te preguntamos esto.** El documento las nombra una por una, así que el usuario sabe exactamente en cuál cuenta su orden.
+
+| | |
+|---|---|
+| Campo interno | `tiendasEta` |
+| Paso | Campaña |
+| Tipo de control | repetible |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_TIENDAS_ETA` |
+
+**Mensajes de validación:**
+
+- `minimo`: Agrega al menos una tienda de Turbo.
+- `maximo`: No puedes agregar más de 60 tiendas.
+- `repetido`: Esa tienda ya está en la lista.
+
+**Campos de cada fila:**
+
+- **Nombre de la tienda**: Como sale en el botón Turbo. Ejemplo: Turbo Calleja
 
 ## Paso: Cuándo
 
@@ -4360,6 +6089,382 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ---
 
+# Cupom Brasil
+
+La Promoção de Brasil con un código: el usuario escribe el cupom antes de cerrar el pedido y recibe el descuento, el envío gratis o la tarifa de servicio gratis. Solo para Brasil.
+
+## Filtro de entrada
+
+Antes del formulario. Si responde **sí** a cualquiera, no se genera: se muestra
+la pantalla "Esta campaña la redacta Legal" con la razón y el enlace al
+formulario manual.
+
+
+## Paso: Campaña
+
+### ¿En qué país corre la campaña?
+
+> Si tu país no aparece en la lista, todavía no está habilitado.
+
+**Por qué te preguntamos esto.** Cada país tiene su propia entidad legal de Rappi, su moneda y su autoridad de protección al consumidor. El documento cambia completo según el país.
+
+| | |
+|---|---|
+| Campo interno | `pais` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `PAIS_LEGAL`, `ENTIDAD_LEGAL` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el país de la campaña.
+
+### ¿La campaña es de Rappi o de Rappi Travel?
+
+> Si es de vuelos, hoteles, autos o paquetes, es Rappi Travel.
+
+**Por qué te preguntamos esto.** Son dos empresas distintas. Los domicilios los opera Rappi S.A.S. y los viajes Travel Moustache S.A.S., que es una agencia de viajes con registro de turismo. El documento entero cambia según cuál sea.
+
+| | |
+|---|---|
+| Campo interno | `negocio` |
+| Paso | Campaña |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | rappi |
+| Avanza sola | sí |
+
+**Opciones** (botones grandes, una sola):
+
+- **Rappi**: Restaurantes, supermercados, farmacias y todo lo que llega a domicilio.
+- **Rappi Travel**: Vuelos, hoteles, autos, paquetes, tours y asistencia al viajero.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos si la campaña es de Rappi o de Rappi Travel.
+
+### ¿Qué tipo de campaña vas a hacer?
+
+> Elige el que se parezca a tu campaña. Cada opción dice de qué se trata.
+
+**Por qué te preguntamos esto.** Cada tipo usa un modelo legal distinto, aprobado por Legal. Elegir mal significa generar el documento equivocado.
+
+| | |
+|---|---|
+| Campo interno | `tipo` |
+| Paso | Campaña |
+| Tipo de control | tarjetas |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el tipo de campaña.
+
+### ¿En qué tienda aplica?
+
+> La marca comercial como aparece en la app. Por ejemplo: Pollo Dorado.
+
+**Por qué te preguntamos esto.** El documento nombra la tienda y la define como Tienda Participante. Si el nombre no coincide con el de la app, el usuario no la encuentra.
+
+| | |
+|---|---|
+| Campo interno | `tienda` |
+| Paso | Campaña |
+| Tipo de control | texto |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | Pollo Dorado |
+| Avanza sola | no |
+| Llena en el documento | `TIENDA` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe la tienda donde aplica la campaña.
+
+## Paso: Cuándo
+
+### ¿Qué día arranca la campaña?
+
+> Puede ser hoy. Publica los T&C antes de que arranque.
+
+**Por qué te preguntamos esto.** Los Términos y Condiciones tienen que estar publicados antes de que la campaña empiece. Si arrancó ayer, ya no se pueden publicar a tiempo.
+
+| | |
+|---|---|
+| Campo interno | `fechaInicio` |
+| Paso | Cuándo |
+| Tipo de control | fecha |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `FECHA_INICIO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el día en que arranca la campaña.
+- `pasado`: Esa fecha ya pasó. Los T&C se publican antes de que la campaña empiece, así que elige hoy o un día futuro.
+
+**Aviso:** Faltan menos de 48 horas. Alcanzas, pero publica los T&C hoy mismo.
+
+### ¿A qué hora arranca?
+
+> Por defecto arranca a medianoche.
+
+**Por qué te preguntamos esto.** La hora exacta define desde cuándo un pedido cuenta para la campaña. Un pedido un minuto antes no da beneficio.
+
+| | |
+|---|---|
+| Campo interno | `horaInicio` |
+| Paso | Cuándo |
+| Tipo de control | hora |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 00:00 |
+| Avanza sola | no |
+| Llena en el documento | `HORA_INICIO` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige la hora de inicio.
+
+### ¿Qué día termina?
+
+> La mayoría de los cashback duran un solo día. Te la dejamos igual a la de inicio.
+
+**Por qué te preguntamos esto.** Después de esta fecha la campaña no da beneficio. También se usa para calcular hasta cuándo sirven los Créditos.
+
+| | |
+|---|---|
+| Campo interno | `fechaFin` |
+| Paso | Cuándo |
+| Tipo de control | fecha |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `FECHA_FIN` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige el día en que termina la campaña.
+- `orden`: La campaña no puede terminar antes de empezar. Revisa la fecha y la hora de fin.
+
+### ¿A qué hora termina?
+
+> Por defecto termina a las 11:59 de la noche.
+
+**Por qué te preguntamos esto.** Define hasta qué minuto cuenta un pedido. Los pedidos posteriores se procesan como pedidos normales.
+
+| | |
+|---|---|
+| Campo interno | `horaFin` |
+| Paso | Cuándo |
+| Tipo de control | hora |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 23:59 |
+| Avanza sola | no |
+| Llena en el documento | `HORA_FIN` |
+
+**Mensajes de validación:**
+
+- `vacio`: Elige la hora de fin.
+- `orden`: La hora de fin tiene que ser después de la de inicio: la campaña es de un solo día.
+
+## Paso: Beneficio
+
+### ¿Qué recibe el usuario?
+
+> Las cuatro formas que Legal Brasil tiene aprobadas. Cada una cambia una sola frase del documento.
+
+**Por qué te preguntamos esto.** De aquí salen el párrafo de apertura y la viñeta que describe el beneficio. Es lo único que distingue los cuatro modelos aprobados entre sí.
+
+| | |
+|---|---|
+| Campo interno | `beneficioBr` |
+| Paso | Beneficio |
+| Tipo de control | lista |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_BENEFICIO_APERTURA`, `TEXTO_BENEFICIO_REGRA` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Desconto % OFF**: Un porcentaje de descuento sobre el pedido, con tope en reales.
+- **Frete grátis**: El envío sin costo, hasta el tope que definas.
+- **Taxa de serviço grátis**: La tarifa de servicio sin costo. Los documentos aprobados no le ponen tope.
+- **Taxa de serviço e frete grátis**: Las dos cosas juntas. Es la única que los documentos aprobados usan sin mínimo de compra.
+
+**Mensajes de validación:**
+
+- `vacio`: Elige qué recibe el usuario.
+
+### ¿Cuál es el código del cupón?
+
+> Como lo va a escribir el usuario, sin espacios. Por ejemplo: RAPPI30.
+
+**Por qué te preguntamos esto.** El código va impreso en el documento. Si no coincide letra por letra con el de la app, el usuario reclama un cupón que no le funciona.
+
+| | |
+|---|---|
+| Campo interno | `codigoCupon` |
+| Paso | Beneficio |
+| Tipo de control | codigo |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | RAPPI30 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_ACTIVACION_CUPON` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el código del cupón, tal como lo va a escribir el usuario.
+- `formato`: El código solo puede llevar letras, números y guiones, sin espacios.
+- `largo`: El código no puede pasar de 24 caracteres.
+
+### ¿Qué porcentaje del pedido se devuelve en Créditos?
+
+> Solo el número. Con 20, un pedido de $50.000 recibe $10.000 en Créditos.
+
+**Por qué te preguntamos esto.** Es la promesa central de la campaña. Una vez publicado, el usuario puede exigir exactamente ese porcentaje.
+
+| | |
+|---|---|
+| Campo interno | `porcentaje` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 20 |
+| Avanza sola | no |
+| Llena en el documento | `PORCENTAJE` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el porcentaje que devuelves, sin el signo de porcentaje.
+- `rango`: El porcentaje va de 1 a 100. Si necesitas varios porcentajes o un rango, eso es otra campaña: escríbele a Legal.
+
+### ¿Cuál es el máximo de Créditos por pedido?
+
+> Aunque el pedido sea grande, no recibe más de esto. Lo más usado es 25.000.
+
+**Por qué te preguntamos esto.** Sin tope, un pedido enorme se lleva el presupuesto entero. Con tope, un cashback alto sigue siendo viable.
+
+| | |
+|---|---|
+| Campo interno | `tope` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Ejemplo | 25000 |
+| Avanza sola | no |
+| Llena en el documento | `TOPE` |
+
+**Mensajes de validación:**
+
+- `vacio`: Escribe el máximo de Créditos que recibe una persona por pedido.
+- `cero`: El tope tiene que ser mayor que cero.
+- `mayorQuePresupuesto`: El tope por pedido es mayor que el presupuesto total. Con eso, el primer pedido se lleva toda la campaña. Revisa los dos números.
+
+### ¿Cuántas veces puede recibir el beneficio una persona?
+
+> Se cuenta por persona, durante toda la campaña.
+
+**Por qué te preguntamos esto.** Sin límite, unos pocos usuarios pueden consumir el presupuesto en horas. Con límite, el beneficio llega a más gente.
+
+| | |
+|---|---|
+| Campo interno | `maxPedidos` |
+| Paso | Beneficio |
+| Tipo de control | numero |
+| Obligatorio | sí, cuando se ve |
+| Valor por defecto | 1 |
+| Avanza sola | sí |
+| Llena en el documento | `TEXTO_LIMITE_PEDIDOS` |
+
+**Opciones** (botones grandes, una sola):
+
+- **Una sola vez**: Lo más común. El segundo pedido ya no da beneficio.
+- **Varias veces**: Tú dices cuántas.
+- **Sin límite**: Solo lo frena el presupuesto.
+
+**Mensajes de validación:**
+
+- `vacio`: Dinos cuántas veces puede ganar la misma persona.
+- `cuantas`: Escribe cuántos pedidos con beneficio puede hacer una persona.
+- `rango`: Tiene que ser al menos un pedido.
+
+### sinLimite
+
+No tiene pregunta propia: se responde dentro de **maxPedidos**.
+
+### ¿Con qué medios se puede pagar?
+
+> Marca todos los que apliquen. Los cuatro documentos aprobados los enumeran uno por uno.
+
+**Por qué te preguntamos esto.** El documento lista los medios de pago válidos con su nombre. Un medio que no esté en la lista no da derecho al beneficio.
+
+| | |
+|---|---|
+| Campo interno | `metodosPagoBr` |
+| Paso | Beneficio |
+| Tipo de control | casillas |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_METODO_PAGO` |
+
+**Opciones** (casillas, se pueden marcar varias):
+
+- **Dinheiro**: Efectivo.
+- **Paypal**: La cuenta de PayPal del usuario.
+- **RappiPay**: El medio de pago propio de Rappi.
+- **Cartão de crédito Visa**: Tarjeta de crédito Visa.
+- **Cartão de crédito Mastercard**: Tarjeta de crédito Mastercard.
+- **Voucher Refeição**: Vale de comida.
+
+**Mensajes de validación:**
+
+- `vacio`: Marca al menos un medio de pago.
+
+## Paso: Participantes
+
+### ¿Hay que gastar un mínimo para participar?
+
+> Por ejemplo: 30.000. Si no hay mínimo, déjalo vacío.
+
+**Por qué te preguntamos esto.** Si lo exiges, tiene que quedar escrito. Si no aparece en el documento, no lo puedes aplicar después.
+
+| | |
+|---|---|
+| Campo interno | `compraMinima` |
+| Paso | Participantes |
+| Tipo de control | numero |
+| Obligatorio | no |
+| Ejemplo | 30000 |
+| Avanza sola | no |
+| Llena en el documento | `TEXTO_MINIMO_COMPRA`, `TEXTO_UMBRAL` |
+
+**Mensajes de validación:**
+
+- `cero`: Si no quieres exigir un mínimo, deja el campo vacío.
+
+## Paso: Revisar
+
+### Confirma que la información es correcta
+
+> Confirmo que estos datos son ciertos y son los de mi campaña.
+
+**Por qué te preguntamos esto.** El documento se genera con lo que escribiste y se publica tal cual. Nadie de Legal lo revisa antes.
+
+| | |
+|---|---|
+| Campo interno | `declaracion` |
+| Paso | Revisar |
+| Tipo de control | casilla |
+| Obligatorio | sí, cuando se ve |
+| Avanza sola | no |
+
+**Mensajes de validación:**
+
+- `vacio`: Marca la casilla para confirmar que la información es correcta.
+
+---
+
 # Cashback Multitienda
 
 Varias tiendas hacen cashback dentro de una misma jornada comercial. Cada tienda pone su porcentaje, su tope y su presupuesto, y cada una organiza lo suyo.
@@ -4778,7 +6883,7 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 
 ### ¿Qué tiendas participan?
 
-> Mínimo dos. Cada una entra con su razón social, su NIT y su presupuesto.
+> Mínimo dos. Cada una entra con su razón social, su {ID_FISCAL} y su presupuesto.
 
 **Por qué te preguntamos esto.** En un Cashback Multitienda cada tienda organiza su propio beneficio y responde por él. Por eso cada una necesita sus propios datos.
 
@@ -4800,8 +6905,8 @@ No tiene pregunta propia: se responde dentro de **maxPedidos**.
 **Campos de cada fila:**
 
 - **Marca**: Como aparece en la app. Ejemplo: Beer Station
-- **Razón social**: Como aparece en el RUT. Ejemplo: Cervecerías del Sur S.A.S.
-- **NIT**: Con dígito de verificación. Ejemplo: 900.777.888-2
+- **Razón social**: Como aparece en {DONDE_ID_FISCAL}. Ejemplo: Cervecerías del Sur S.A.S.
+- **{ID_FISCAL}**: Completo, tal como sale en {DONDE_ID_FISCAL}. Ejemplo: {EJEMPLO_ID_FISCAL}
 - **Ciudades**: Separadas por comas, o marca cobertura nacional. Ejemplo: Bogotá, Medellín
 - **Cobertura nacional**: Marca esto y no necesitas escribir ciudades.
 - **Presupuesto**: De esta tienda, no el total. Ejemplo: 5000000
@@ -4957,6 +7062,8 @@ la pregunta que lo llena. Estos son los nombres:
 | `TIENDA_TURBO` | en cuál de sus tiendas participa cada marca |
 | `TEXTO_ETA` | el tiempo de entrega prometido |
 | `TEXTO_CIUDAD_ETA` | la ciudad |
+| `TEXTO_TIENDAS_ETA` | las tiendas del botón turbo que participan |
+| `TEXTO_MODALIDAD_CONDICIONES` | la categoría del botón turbo |
 | `TEXTO_LIMITE_ORDENES` | el máximo de órdenes por persona |
 | `MODALIDAD_TURBO` | la modalidad del botón turbo |
 | `URL_TC_TURBO` | el enlace de los términos del botón turbo |
@@ -4975,6 +7082,8 @@ la pregunta que lo llena. Estos son los nombres:
 | `TEXTO_CONDICIONES_TRAVEL` | las condiciones de la compra |
 | `TEXTO_SEGMENTO_TRAVEL` | quiénes pueden participar |
 | `TEXTO_METODO_PAGO_TRAVEL` | los medios de pago |
+| `TEXTO_PRECIO_ANUNCIADO` | si la pieza anuncia un precio |
+| `TEXTO_BENEFICIO_POR_PRODUCTO` | el beneficio de cada producto |
 | `TEXTO_BENEFICIO_TRAVEL` | en qué consiste el cashback |
 | `TEXTO_BASE_CALCULO_TRAVEL` | sobre qué valor se calcula el cashback |
 | `TEXTO_EJEMPLO_TOPE_TRAVEL` | el ejemplo del tope |
@@ -5013,7 +7122,7 @@ la pregunta que lo llena. Estos son los nombres:
 | `FECHA_FIN` | el día de fin |
 | `HORA_FIN` | la hora de fin |
 | `ORGANIZADOR` | la empresa que paga |
-| `ID_ORGANIZADOR` | el NIT de esa empresa |
+| `ID_ORGANIZADOR` | la identificación tributaria de esa empresa |
 | `TEXTO_SEGMENTO` | quiénes participan |
 | `TEXTO_METODO_PAGO` | con qué puede pagar |
 | `TEXTO_MINIMO_COMPRA` | la compra mínima |
@@ -5040,6 +7149,16 @@ la pregunta que lo llena. Estos son los nombres:
 | `TEXTO_UMBRAL` | la compra mínima |
 | `TIENDA_MARCA` | la marca de la tienda |
 | `TIENDA_RAZON_SOCIAL` | la razón social |
-| `TIENDA_ID` | el NIT |
+| `TIENDA_ID` | la identificación de la tienda |
 | `TIENDA_CIUDADES` | las ciudades |
 | `TIENDA_PRESUPUESTO` | el presupuesto |
+| `TEXTO_PARENTESCO` | el grado de parentesco que no puede participar |
+| `TEXTO_PRODUCTOS_DESCUENTO` | sobre qué productos aplica |
+| `TEXTO_BENEFICIO_DESCUENTO` | en qué consiste el beneficio |
+| `TEXTO_BASE_DESCUENTO` | sobre qué valor se calcula el beneficio |
+| `TEXTO_TOPE_DESCUENTO` | el tope por pedido |
+| `TEXTO_AGOTAMIENTO` | qué agota la campaña antes de la fecha |
+| `TEXTO_LIMITE_CAMPANA` | el límite total de la campaña |
+| `TEXTO_ACTIVACION_CUPON` | cómo se activa el cupón |
+| `TEXTO_MIENTRAS_QUEDE` | qué otra cosa acaba la campaña además de la fecha |
+| `CODIGO_CUPON` | el código del cupón |

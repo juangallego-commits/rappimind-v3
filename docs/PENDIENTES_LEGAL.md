@@ -1004,3 +1004,110 @@ Bogotá" y sirve para las dos formas. Y las leyendas de la pieza, que siguen
 diciendo "en todo Turbo Restaurantes Bogotá": salen de piezas reales publicadas
 y D1 hablaba del T&C, no del arte. Con la forma 1 ya no hay inconsistencia
 ninguna; con la forma 2, la leyenda habría que mirarla.
+
+---
+
+# El Descuento, el Cupón y el concurso fuera de Colombia (21 de septiembre de 2026)
+
+Juan pidió habilitar los flujos de descuentos, cupones y concursos en todos los
+países menos Colombia, sin devolverle preguntas: "ellos se van a encargar de
+revisar cuando les mande esto para las pruebas internas". Así que lo que sigue
+**no es una lista de bloqueos**, es la lista de lo que cada abogado de país tiene
+que mirar cuando abra el documento generado, con lo que se asumió y por qué.
+
+Para verlo salir del motor: `npm run previsualizar DC01` (Descuento México),
+`DC02` (envío gratis en Argentina), `CU01` (Cupón con código en Chile), `CU02`
+(Cupón sin código en Perú), `CC06` (Carrera en México) y `BR05` (Cupom Brasil).
+
+## 1. Lo que es texto nuevo, y no viene de un documento aprobado
+
+Todo lo demás se armó con cláusulas que Legal ya había aprobado (el Cashback de
+Colombia, el Descuento Travel y los cuatro T&C de Brasil). Esto no:
+
+| Dónde | Qué dice, en una línea |
+|---|---|
+| `modelos/bloques/cupon_codigo.md` | Cómo se activa el cupón, que es personal e intransferible y que no se canjea por dinero. |
+| `modelos/descuento.md`, cláusula "Cómo se ve el Beneficio" | Que el precio ya rebajado se muestra antes de pagar y que el Beneficio no sale en efectivo ni en Créditos. |
+| `modelos/descuento.md`, cláusula "Cancelaciones, devoluciones y reembolsos" | Que el reembolso va sobre el valor efectivamente pagado y que el Beneficio no se repone. |
+| `modelos/cupon.md`, última frase de "Cómo se ve el Beneficio" | Que un pedido confirmado sin el cupón activado no da derecho al Beneficio ni a su reintegro. |
+| `modelos/bloques/fraude_descuento.md`, párrafo final | Que Rappi puede cancelar los pedidos donde el Beneficio se aplicó de forma irregular. Las tres viñetas de arriba sí son las aprobadas. |
+| `modelos/bloques/responsabilidad_rappi_descuento.md`, punto (i) | "La correcta aplicación del Beneficio sobre el valor del pedido", donde el aprobado decía "la correcta acreditación de los Créditos". |
+| `src/core/derivados_descuento.js`, `TEXTO_BASE_POR_FORMA` | Las cinco frases de base de cálculo, una por forma del beneficio. |
+| `modelos/cupom_br.md`, dos viñetas | "Para receber o benefício, o Usuário deve inserir o cupom…" y "O cupom é pessoal e intransferível…". |
+
+La cláusula de exclusiones (`exclusiones_descuento.md`) **no es texto nuevo**: son
+las viñetas del bloque aprobado menos la de propinas y envío, más la de
+"productos que no sean Productos Participantes", que ya estaba aprobada en el
+Descuento Travel. La de propinas y envío se fue porque contradice a una campaña
+cuyo beneficio es justamente el envío.
+
+## 2. Los cuatro datos por país que se escribieron por analogía
+
+Están en `data/paises.json` y se pueden corregir desde la pestaña Paises sin
+desplegar nada. Los tres primeros solo se ven en el formulario; el cuarto sale
+impreso.
+
+- **`ejemplo_id_fiscal`** y **`donde_id_fiscal`**: el ejemplo del identificador
+  tributario y dónde lo busca el comercial (el RUT de la DIAN, la constancia de
+  situación fiscal del SAT, la ficha RUC de la SUNAT, la constancia de ARCA, la
+  carpeta tributaria del SII, el certificado del RUC del SRI, la constancia de la
+  DGI, la personería del Registro Nacional, el comprobante de la Receita Federal).
+  Los ejemplos son números de prueba con dígito de verificación válido.
+- **`impuesto_indirecto`**: IVA en todos menos Perú (IGV) y Brasil (ICMS). Sale
+  impreso en la frase del valor comercial del premio, "IVA incluido".
+- **`texto_parentesco`**: el grado de parentesco de la cláusula de inhabilidades
+  del concurso. **Este es el que más conviene mirar**, porque es la única línea
+  del documento escrita con la ley civil de cada país:
+
+  | País | Dice |
+  |---|---|
+  | Colombia | hasta el segundo grado de consanguinidad, segundo de afinidad y primero civil |
+  | México | hasta el segundo grado por consanguinidad, afinidad o civil |
+  | Perú, Ecuador | hasta el segundo grado de consanguinidad y segundo de afinidad |
+  | Argentina | hasta el segundo grado de parentesco por consanguinidad o afinidad |
+  | Chile, Uruguay, Costa Rica | hasta el segundo grado de consanguinidad y de afinidad |
+
+  Colombia conserva palabra por palabra el texto que aprobó Juan el 21 de
+  septiembre; los otros ocho son una traducción del mismo concepto a la forma de
+  cada código civil, hecha sin consultar a nadie.
+
+## 3. Lo que cada abogado de país tiene que decidir
+
+1. **Si el concurso necesita algún trámite en su país.** El modelo dice en su
+   primer párrafo que los ganadores se determinan "en ningún caso por sorteo,
+   rifa, azar o cualquier otro mecanismo de suerte", que es lo que saca a la
+   Carrera de Compras del régimen de rifas y sorteos. Brasil queda fuera a
+   propósito (ver la decisión 126 de `docs/DECISIONES.md`). Si en algún otro país
+   hace falta depositar las bases, registrarlas o avisar a la autoridad, eso hoy
+   no está en el documento y no lo sabe la herramienta.
+2. **Si hay que nombrar una autoridad distinta.** El documento cita la autoridad
+   de consumo (`entidad_vigilancia`) y la de datos (`autoridad_datos`) de la fila
+   del país, que ya estaban confirmadas para el Cashback. Un concurso podría
+   tener que nombrar además a la autoridad de juegos y azar de su país.
+3. **Si la exclusión de productos de salud debe salir allí.** Hoy la frase de
+   medicamentos, fitoterapéuticos y nicotina sale **solo en Colombia**
+   (`PAISES_CON_EXCLUSION_DE_SALUD` en `src/core/derivados.js`). Cada país decide
+   si la suya la necesita, y con qué categorías.
+4. **Si el envío y la tarifa de servicio se pueden regalar como beneficio de una
+   tienda.** Dos de las cinco formas del beneficio (envío gratis y tarifa de
+   servicio gratis) hacen que el Organizador, que es la tienda, esté fondeando un
+   cargo que cobra Rappi. En Brasil eso ya está aprobado así en los cuatro T&C de
+   septiembre; fuera de Brasil nadie lo ha revisado.
+5. **La traducción de las preguntas nuevas al portugués.** `codigoCupon` es la
+   única pregunta nueva que ve un KAM de Brasil, y su traducción en
+   `src/core/preguntas_pt.js` la escribí yo, como el resto del diccionario.
+
+## 4. Una corrección aplicada, que afecta también a lo que ya existía
+
+**"tres millones DE pesos", no "tres millones pesos".** `montoConMoneda()` en
+`src/core/numeros.js` no ponía el "de" delante del nombre de la moneda cuando el
+número termina en millón o millones; `cantidadCreditos()`, su hermana para los
+Créditos, sí lo hacía desde el principio. Se veía solo con millones redondos, y
+el único monto grande de los casos dorados era 1.200.000, que no lo necesita. Al
+habilitar el Descuento salió enseguida, porque un presupuesto de 3.000.000 es un
+número de todos los días.
+
+Corregido el 21 de septiembre de 2026. **Ningún texto guardado cambió**: no había
+un solo caso dorado con un monto de millones redondos. Afecta de aquí en adelante
+a todo lo que imprima un monto: el mínimo de compra, el tope, el presupuesto y el
+valor del premio, en los nueve países.

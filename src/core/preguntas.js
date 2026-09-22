@@ -270,7 +270,7 @@ var PREGUNTAS = {
   organizadorRazonSocial: p({
     paso: 'organizador',
     pregunta: '¿Qué empresa paga el beneficio?',
-    ayuda: 'Tal como sale en su RUT, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.',
+    ayuda: 'Tal como sale en {DONDE_ID_FISCAL}, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.',
     porQue: 'El Organizador responde por la campaña frente al usuario y frente a la autoridad. Rappi solo pone la plataforma, así que el nombre tiene que ser exacto.',
     ejemplo: 'Alimentos del Norte S.A.S.',
     placeholders: ['ORGANIZADOR'],
@@ -279,16 +279,26 @@ var PREGUNTAS = {
     },
   }),
 
+  /*
+   * La identificacion tributaria del Organizador.
+   *
+   * Los marcadores los rellena conDatosDelPais() con la fila del pais elegido.
+   * Hasta el 21 de septiembre de 2026 esta pregunta decia "NIT" y ponia de
+   * ejemplo un NIT colombiano en los nueve paises: un KAM de Mexico leia que le
+   * pedian un numero que en Mexico no existe, y el unico sitio donde la
+   * herramienta sabia la respuesta correcta era el mensaje de error, que solo
+   * aparecia despues de equivocarse.
+   */
   organizadorId: p({
     paso: 'organizador',
-    pregunta: '¿Cuál es el NIT de esa empresa?',
-    ayuda: 'Con dígito de verificación, tal como sale en el RUT: 900.111.222-1.',
+    pregunta: '¿Cuál es el número de {ID_FISCAL} de esa empresa?',
+    ayuda: 'Escríbelo completo, tal como sale en {DONDE_ID_FISCAL}: {EJEMPLO_ID_FISCAL}.',
     porQue: 'El documento identifica al Organizador con su número tributario. Un número mal escrito deja el documento sin un responsable identificable.',
-    ejemplo: '900.111.222-1',
+    ejemplo: '{EJEMPLO_ID_FISCAL}',
     placeholders: ['ID_ORGANIZADOR'],
     errores: {
-      vacio: 'Escribe el NIT de la empresa organizadora, con el dígito de verificación.',
-      formato: 'Ese número no cuadra. Revisa el dígito de verificación, que es el que va después del guion.',
+      vacio: 'Escribe el número de {ID_FISCAL} de la empresa organizadora, completo.',
+      formato: 'Ese número no cuadra. Revísalo en {DONDE_ID_FISCAL} y escríbelo otra vez.',
     },
     confirmacion: 'válido',
   }),
@@ -391,6 +401,18 @@ var PREGUNTAS = {
         porQue: 'Es el descuento que ve el usuario en el precio. Si cambia según el producto, este es el máximo y el documento lo dice junto con el mínimo.',
         placeholders: ['TEXTO_DESCUENTO_TRAVEL'],
       },
+      descuento: {
+        pregunta: '¿Qué porcentaje de descuento das?',
+        ayuda: 'Solo el número. Con 30, un producto de 100 queda en 70.',
+        porQue: 'Es la promesa central de la campaña. Una vez publicado, el usuario puede exigir exactamente ese descuento.',
+        placeholders: ['TEXTO_BENEFICIO_DESCUENTO'],
+      },
+      cupon: {
+        pregunta: '¿Qué porcentaje de descuento da el cupón?',
+        ayuda: 'Solo el número. Con 30, un producto de 100 queda en 70.',
+        porQue: 'Es la promesa central de la campaña. Una vez publicado, quien active el cupón puede exigir exactamente ese descuento.',
+        placeholders: ['TEXTO_BENEFICIO_DESCUENTO'],
+      },
     },
   }),
 
@@ -435,11 +457,47 @@ var PREGUNTAS = {
         porQue: 'Sin tope, una sola reserva grande se lleva el presupuesto entero. El documento trae además un ejemplo con el valor desde el cual se recibe el tope.',
         placeholders: ['TEXTO_BENEFICIO_TRAVEL'],
       },
+      // Opcional aqui, y obligatorio en el Cashback: hay campanas de descuento
+      // sin techo, y una pregunta que parece obligatoria hace inventar numeros.
+      descuento: {
+        pregunta: '¿Hay un tope por pedido?',
+        ayuda: 'Lo máximo que la campaña cubre en un pedido, en {MONEDA}. Si no hay tope, déjalo vacío.',
+        porQue: 'Sin tope, un pedido grande se lleva buena parte del presupuesto. Si lo pones, el documento lo dice y solo así lo puedes aplicar.',
+        opcional: true,
+        placeholders: ['TEXTO_TOPE_DESCUENTO'],
+        errores: {
+          vacio: 'Escribe el tope por pedido, o déjalo vacío si la campaña no tiene.',
+          cero: 'El tope tiene que ser mayor que cero.',
+          mayorQuePresupuesto: 'El tope por pedido es mayor que el presupuesto total. Con eso, el primer pedido se lleva toda la campaña. Revisa los dos números.',
+        },
+      },
+      cupon: {
+        pregunta: '¿Hay un tope por pedido?',
+        ayuda: 'Lo máximo que el cupón cubre en un pedido, en {MONEDA}. Si no hay tope, déjalo vacío.',
+        porQue: 'Sin tope, un pedido grande se lleva buena parte del presupuesto. Si lo pones, el documento lo dice y solo así lo puedes aplicar.',
+        opcional: true,
+        placeholders: ['TEXTO_TOPE_DESCUENTO'],
+        errores: {
+          vacio: 'Escribe el tope por pedido, o déjalo vacío si la campaña no tiene.',
+          cero: 'El tope tiene que ser mayor que cero.',
+          mayorQuePresupuesto: 'El tope por pedido es mayor que el presupuesto total. Con eso, el primer pedido se lleva toda la campaña. Revisa los dos números.',
+        },
+      },
     },
   }),
 
   presupuesto: p({
     variantes: {
+      descuento: {
+        ayuda: 'Cuando se agote, la campaña termina sola aunque no llegue la fecha de fin.',
+        porQue: 'El documento dice que la campaña termina al agotarse el presupuesto. Es lo que te protege si el consumo se dispara.',
+        placeholders: ['TEXTO_LIMITE_CAMPANA', 'TEXTO_AGOTAMIENTO'],
+      },
+      cupon: {
+        ayuda: 'Cuando se agote, la campaña termina sola aunque no llegue la fecha de fin.',
+        porQue: 'El documento dice que la campaña termina al agotarse el presupuesto. Es lo que te protege si el consumo se dispara.',
+        placeholders: ['TEXTO_LIMITE_CAMPANA', 'TEXTO_AGOTAMIENTO'],
+      },
       cashback_eta: {
         pregunta: '¿Cuántos Créditos hay para toda la campaña?',
         ayuda: 'Un número entero de Créditos. Cuando se agota, la campaña termina sola aunque no se haya cumplido la hora.',
@@ -567,6 +625,30 @@ var PREGUNTAS = {
    * marcada de entrada se publicaria sin que nadie la mire.
    */
   tiendaTurbo: p({
+    variantes: {
+      // Las notas también: decían "no da el cashback" en una campaña que no da
+      // cashback ninguno. Es la trampa de heredar media variante.
+      descuento: {
+        pregunta: '¿En cuál de sus tiendas aplica el descuento?',
+        opciones: [
+          { valor: 'normal', etiqueta: 'Solo en la tienda normal', nota: 'Un pedido en su tienda de Turbo no lleva descuento.' },
+          { valor: 'turbo', etiqueta: 'Solo en la tienda de Turbo', nota: 'Un pedido en su tienda normal no lleva descuento.' },
+          { valor: 'ambas', etiqueta: 'En las dos', nota: 'Vale en cualquiera de las dos tiendas de la marca.' },
+          { valor: 'sin_turbo', etiqueta: 'No tiene tienda en Turbo', nota: 'Si no sabes, búscala en el botón Turbo de la app.' },
+        ],
+        errores: { vacio: 'Dinos en cuál de sus tiendas aplica el descuento.' },
+      },
+      cupon: {
+        pregunta: '¿En cuál de sus tiendas aplica el cupón?',
+        opciones: [
+          { valor: 'normal', etiqueta: 'Solo en la tienda normal', nota: 'El cupón no se aplica en su tienda de Turbo.' },
+          { valor: 'turbo', etiqueta: 'Solo en la tienda de Turbo', nota: 'El cupón no se aplica en su tienda normal.' },
+          { valor: 'ambas', etiqueta: 'En las dos', nota: 'Vale en cualquiera de las dos tiendas de la marca.' },
+          { valor: 'sin_turbo', etiqueta: 'No tiene tienda en Turbo', nota: 'Si no sabes, búscala en el botón Turbo de la app.' },
+        ],
+        errores: { vacio: 'Dinos en cuál de sus tiendas aplica el cupón.' },
+      },
+    },
     paso: 'campana',
     pregunta: '¿En cuál de sus tiendas se gana el cashback?',
     ayuda: 'Muchas marcas tienen dos tiendas en la app: la normal y la de Turbo.',
@@ -580,6 +662,110 @@ var PREGUNTAS = {
     ],
     placeholders: ['TEXTO_TIENDA_TURBO'],
     errores: { vacio: 'Dinos en cuál de sus tiendas se gana el cashback.' },
+  }),
+
+  // --- El Descuento y el Cupón --------------------------------------------
+
+  formaDelDescuento: p({
+    paso: 'beneficio',
+    pregunta: '¿Qué forma tiene el beneficio?',
+    ayuda: 'Un descuento sobre el precio, o el envío o la tarifa de servicio gratis.',
+    porQue: 'De aquí sale la cláusula que dice en qué consiste el Beneficio y sobre qué valor se calcula. Un documento que diga que no cubre el envío, en una campaña cuyo beneficio es justamente el envío, se contradice solo.',
+    avanzaSola: true,
+    opciones: [
+      { valor: 'porcentaje', etiqueta: 'Un porcentaje de descuento', nota: 'Lo más usado. Por ejemplo, 30% menos en el precio.' },
+      { valor: 'monto', etiqueta: 'Un monto fijo de descuento', nota: 'Se le resta siempre la misma cantidad al precio.' },
+      { valor: 'envio', etiqueta: 'Envío gratis', nota: 'La campaña cubre el costo de envío del pedido.' },
+      { valor: 'tarifa_servicio', etiqueta: 'Tarifa de servicio gratis', nota: 'La campaña cubre la tarifa de servicio del pedido.' },
+      { valor: 'envio_y_tarifa', etiqueta: 'Envío y tarifa de servicio gratis', nota: 'La campaña cubre los dos cargos del pedido.' },
+    ],
+    placeholders: ['TEXTO_BENEFICIO_DESCUENTO', 'TEXTO_BASE_DESCUENTO'],
+    errores: { vacio: 'Dinos qué forma tiene el beneficio de la campaña.' },
+  }),
+
+  montoDescuento: p({
+    paso: 'beneficio',
+    pregunta: '¿De cuánto es el descuento?',
+    ayuda: 'El valor en {MONEDA} que se le resta al precio del pedido.',
+    porQue: 'Es la promesa central de la campaña. El documento lo escribe en letras y en cifra, y una vez publicado el usuario lo puede exigir.',
+    ejemplo: '10000',
+    moneda: true,
+    placeholders: ['TEXTO_BENEFICIO_DESCUENTO'],
+    errores: {
+      vacio: 'Escribe de cuánto es el descuento que se resta del precio.',
+      cero: 'El descuento tiene que ser mayor que cero.',
+    },
+  }),
+
+  agotamiento: p({
+    paso: 'beneficio',
+    pregunta: '¿Cómo termina la campaña?',
+    ayuda: 'Además de la fecha de fin, puede terminar antes por presupuesto o por unidades.',
+    porQue: 'El documento dice qué agota la campaña antes de tiempo. Si no lo dice, no la puedes cortar aunque se te acabe la plata.',
+    avanzaSola: true,
+    porDefecto: 'fecha',
+    opciones: [
+      { valor: 'fecha', etiqueta: 'Cuando llegue la fecha de fin', nota: 'Sin tope de plata ni de unidades. Lo más simple.' },
+      { valor: 'presupuesto', etiqueta: 'Cuando se agote el presupuesto', nota: 'Termina sola al gastarse la plata de la campaña.' },
+      { valor: 'unidades', etiqueta: 'Cuando se agoten las unidades', nota: 'Termina sola al llegar a cierto número de pedidos.' },
+    ],
+    placeholders: ['TEXTO_AGOTAMIENTO', 'TEXTO_LIMITE_CAMPANA'],
+    errores: { vacio: 'Dinos cómo termina la campaña.' },
+  }),
+
+  unidadesDisponibles: p({
+    paso: 'beneficio',
+    pregunta: '¿Cuántas unidades hay disponibles?',
+    ayuda: 'Cuántos pedidos en total pueden recibir el beneficio. Por ejemplo: 500.',
+    porQue: 'Cuando se agoten, la campaña termina sola. El documento tiene que decir cuántas hay, porque quien llegue tarde tiene derecho a saber por qué no alcanzó.',
+    ejemplo: '500',
+    placeholders: ['TEXTO_LIMITE_CAMPANA', 'TEXTO_AGOTAMIENTO'],
+    errores: {
+      vacio: 'Escribe cuántas unidades tiene la campaña en total.',
+      rango: 'Tiene que haber al menos una unidad disponible.',
+    },
+  }),
+
+  activacionCupon: p({
+    paso: 'beneficio',
+    pregunta: '¿Cómo activa el usuario el cupón?',
+    ayuda: 'Con un código que escribe, o tomándolo en la sección Cupones de la app.',
+    porQue: 'El documento dice exactamente qué tiene que hacer el usuario para recibir el beneficio. Quien no lo haga no lo recibe, y eso solo se le puede oponer si está escrito.',
+    avanzaSola: true,
+    opciones: [
+      { valor: 'codigo', etiqueta: 'Con un código que el usuario escribe', nota: 'Tú nos das el código y el documento lo imprime.' },
+      { valor: 'seccion', etiqueta: 'Desde la sección Cupones de la app', nota: 'El cupón aparece en la app y el usuario lo toma.' },
+    ],
+    placeholders: ['TEXTO_ACTIVACION_CUPON'],
+    errores: { vacio: 'Dinos cómo activa el usuario el cupón.' },
+  }),
+
+  /*
+   * El codigo del cupon.
+   *
+   * Es texto libre, y la regla 6 de CLAUDE.md los limita. Este entra porque no
+   * es texto legal: es un dato de la campana, como el nombre de la tienda o una
+   * ciudad. Sale impreso tal cual, asi que se normaliza (mayusculas, sin
+   * espacios) y solo admite letras, numeros y guiones.
+   */
+  codigoCupon: p({
+    variantes: {
+      cupom_br: {
+        porQue: 'O código sai impresso duas vezes no documento. Se não coincidir letra por letra com o do aplicativo, o usuário reclama um cupom que não funciona.',
+        placeholders: ['CODIGO_CUPON'],
+      },
+    },
+    paso: 'beneficio',
+    pregunta: '¿Cuál es el código del cupón?',
+    ayuda: 'Como lo va a escribir el usuario, sin espacios. Por ejemplo: RAPPI30.',
+    porQue: 'El código va impreso en el documento. Si no coincide letra por letra con el de la app, el usuario reclama un cupón que no le funciona.',
+    ejemplo: 'RAPPI30',
+    placeholders: ['TEXTO_ACTIVACION_CUPON'],
+    errores: {
+      vacio: 'Escribe el código del cupón, tal como lo va a escribir el usuario.',
+      formato: 'El código solo puede llevar letras, números y guiones, sin espacios.',
+      largo: 'El código no puede pasar de 24 caracteres.',
+    },
   }),
 
   // --- Los Créditos -------------------------------------------------------
@@ -1399,6 +1585,24 @@ var PREGUNTAS = {
   // --- El concurso (Carrera de Compras) -----------------------------------
 
   productos: p({
+    variantes: {
+      descuento: {
+        paso: 'beneficio',
+        pregunta: '¿Sobre qué productos aplica el descuento?',
+        ayuda: 'Si el descuento lo paga una marca, suelen participar solo sus productos.',
+        porQue: 'Define en qué productos se rebaja el precio. Si no queda claro, el usuario puede exigir el descuento en todo el catálogo.',
+        placeholders: ['TEXTO_PRODUCTOS_DESCUENTO'],
+        errores: { vacio: 'Dinos sobre qué productos aplica el descuento.' },
+      },
+      cupon: {
+        paso: 'beneficio',
+        pregunta: '¿Sobre qué productos aplica el cupón?',
+        ayuda: 'Si el cupón lo paga una marca, suelen participar solo sus productos.',
+        porQue: 'Define en qué productos se rebaja el precio. Si no queda claro, el usuario puede exigir el descuento en todo el catálogo.',
+        placeholders: ['TEXTO_PRODUCTOS_DESCUENTO'],
+        errores: { vacio: 'Dinos sobre qué productos aplica el cupón.' },
+      },
+    },
     paso: 'concurso',
     pregunta: '¿Qué productos participan?',
     ayuda: 'Si el concurso lo paga una marca, suelen participar solo sus productos.',
@@ -1414,6 +1618,18 @@ var PREGUNTAS = {
   }),
 
   makerMarca: p({
+    variantes: {
+      descuento: {
+        paso: 'beneficio',
+        porQue: 'El documento nombra la marca, así que el usuario sabe exactamente en qué productos se le rebaja el precio.',
+        placeholders: ['TEXTO_PRODUCTOS_DESCUENTO'],
+      },
+      cupon: {
+        paso: 'beneficio',
+        porQue: 'El documento nombra la marca, así que el usuario sabe exactamente en qué productos se le rebaja el precio.',
+        placeholders: ['TEXTO_PRODUCTOS_DESCUENTO'],
+      },
+    },
     paso: 'concurso',
     pregunta: '¿De qué marca?',
     ayuda: 'El nombre comercial de la marca. Por ejemplo: Galletas Lunaria.',
@@ -1472,6 +1688,18 @@ var PREGUNTAS = {
   }),
 
   productosDetalle: p({
+    variantes: {
+      descuento: {
+        paso: 'beneficio',
+        porQue: 'El EAN identifica el producto sin discusión. Si dos productos se llaman parecido, el EAN decide en cuál se rebaja el precio.',
+        placeholders: ['TEXTO_PRODUCTOS_DESCUENTO'],
+      },
+      cupon: {
+        paso: 'beneficio',
+        porQue: 'El EAN identifica el producto sin discusión. Si dos productos se llaman parecido, el EAN decide en cuál se rebaja el precio.',
+        placeholders: ['TEXTO_PRODUCTOS_DESCUENTO'],
+      },
+    },
     paso: 'concurso',
     pregunta: '¿Cuáles productos participan?',
     ayuda: 'Uno por fila: el nombre como sale en la app y su EAN, el número del código de barras.',
@@ -1707,7 +1935,7 @@ var PREGUNTAS = {
   tiendas: p({
     paso: 'tiendas',
     pregunta: '¿Qué tiendas participan?',
-    ayuda: 'Mínimo dos. Cada una entra con su razón social, su NIT y su presupuesto.',
+    ayuda: 'Mínimo dos. Cada una entra con su razón social, su {ID_FISCAL} y su presupuesto.',
     porQue: 'En un Cashback Multitienda cada tienda organiza su propio beneficio y responde por él. Por eso cada una necesita sus propios datos.',
     placeholders: ['TIENDA_MARCA', 'TIENDA_RAZON_SOCIAL', 'TIENDA_ID', 'TIENDA_CIUDADES', 'TIENDA_PRESUPUESTO'],
     errores: {
@@ -1717,8 +1945,8 @@ var PREGUNTAS = {
     },
     camposPorTienda: {
       marca: { pregunta: 'Marca', ayuda: 'Como aparece en la app.', ejemplo: 'Beer Station' },
-      razonSocial: { pregunta: 'Razón social', ayuda: 'Como aparece en el RUT.', ejemplo: 'Cervecerías del Sur S.A.S.' },
-      id: { pregunta: 'NIT', ayuda: 'Con dígito de verificación.', ejemplo: '900.777.888-2' },
+      razonSocial: { pregunta: 'Razón social', ayuda: 'Como aparece en {DONDE_ID_FISCAL}.', ejemplo: 'Cervecerías del Sur S.A.S.' },
+      id: { pregunta: '{ID_FISCAL}', ayuda: 'Completo, tal como sale en {DONDE_ID_FISCAL}.', ejemplo: '{EJEMPLO_ID_FISCAL}' },
       ciudades: { pregunta: 'Ciudades', ayuda: 'Separadas por comas, o marca cobertura nacional.', ejemplo: 'Bogotá, Medellín' },
       nacional: { pregunta: 'Cobertura nacional', ayuda: 'Marca esto y no necesitas escribir ciudades.' },
       presupuesto: { pregunta: 'Presupuesto', ayuda: 'De esta tienda, no el total.', ejemplo: '5000000' },
@@ -1797,7 +2025,7 @@ var NOMBRE_DEL_HUECO = {
   FECHA_FIN: 'el día de fin',
   HORA_FIN: 'la hora de fin',
   ORGANIZADOR: 'la empresa que paga',
-  ID_ORGANIZADOR: 'el NIT de esa empresa',
+  ID_ORGANIZADOR: 'la identificación tributaria de esa empresa',
   TEXTO_SEGMENTO: 'quiénes participan',
   TEXTO_METODO_PAGO: 'con qué puede pagar',
   TEXTO_MINIMO_COMPRA: 'la compra mínima',
@@ -1824,9 +2052,113 @@ var NOMBRE_DEL_HUECO = {
   TEXTO_UMBRAL: 'la compra mínima',
   TIENDA_MARCA: 'la marca de la tienda',
   TIENDA_RAZON_SOCIAL: 'la razón social',
-  TIENDA_ID: 'el NIT',
+  TIENDA_ID: 'la identificación de la tienda',
   TIENDA_CIUDADES: 'las ciudades',
   TIENDA_PRESUPUESTO: 'el presupuesto',
+  TEXTO_PARENTESCO: 'el grado de parentesco que no puede participar',
+  TEXTO_PRODUCTOS_DESCUENTO: 'sobre qué productos aplica',
+  TEXTO_BENEFICIO_DESCUENTO: 'en qué consiste el beneficio',
+  TEXTO_BASE_DESCUENTO: 'sobre qué valor se calcula el beneficio',
+  TEXTO_TOPE_DESCUENTO: 'el tope por pedido',
+  TEXTO_AGOTAMIENTO: 'qué agota la campaña antes de la fecha',
+  TEXTO_LIMITE_CAMPANA: 'el límite total de la campaña',
+  TEXTO_ACTIVACION_CUPON: 'cómo se activa el cupón',
+  TEXTO_MIENTRAS_QUEDE: 'qué otra cosa acaba la campaña además de la fecha',
+  CODIGO_CUPON: 'el código del cupón',
+};
+
+/**
+ * Los datos de la fila del pais que se escriben dentro de una pregunta.
+ *
+ * Existe porque la pregunta del identificador del Organizador decia "NIT" en
+ * los nueve paises, con un ejemplo colombiano. El nombre, el ejemplo y donde se
+ * busca ese numero ya viven en la pestana Paises, que es de Legal: la pregunta
+ * los pide por su marcador y los rellena conDatosDelPais().
+ */
+var DATOS_DEL_PAIS_EN_LA_PREGUNTA = {
+  '{ID_FISCAL}': 'tipo_id_organizador',
+  '{EJEMPLO_ID_FISCAL}': 'ejemplo_id_fiscal',
+  '{DONDE_ID_FISCAL}': 'donde_id_fiscal',
+  '{MONEDA}': 'moneda_nombre',
+};
+
+/** Los textos de una pregunta donde puede haber un marcador de pais. */
+var TEXTOS_CON_MARCADOR = ['pregunta', 'ayuda', 'porQue', 'ejemplo', 'confirmacion', 'aviso'];
+
+function conDatosDelPaisEnElTexto(texto, pais) {
+  var salida = String(texto);
+  for (var marcador in DATOS_DEL_PAIS_EN_LA_PREGUNTA) {
+    if (!Object.prototype.hasOwnProperty.call(DATOS_DEL_PAIS_EN_LA_PREGUNTA, marcador)) continue;
+    if (salida.indexOf(marcador) === -1) continue;
+    var valor = pais[DATOS_DEL_PAIS_EN_LA_PREGUNTA[marcador]];
+    // Un pais al que todavia no le han escrito el dato deja el marcador crudo
+    // en pantalla, que es feo pero visible. Borrarlo dejaria la frase sin
+    // sujeto y nadie se enteraria de que falta un dato en la pestana Paises.
+    if (valor === null || valor === undefined || !String(valor).trim()) continue;
+    salida = salida.split(marcador).join(String(valor).trim());
+  }
+  return salida;
+}
+
+function copiaDePregunta(pregunta) {
+  var copia = {};
+  for (var llave in pregunta) {
+    if (Object.prototype.hasOwnProperty.call(pregunta, llave)) copia[llave] = pregunta[llave];
+  }
+  return copia;
+}
+
+/**
+ * La pregunta con los datos del pais ya puestos.
+ *
+ * No toca el objeto original: PREGUNTAS es compartido y una campana de Mexico
+ * dejaria "RFC" escrito para la siguiente de Colombia. Tambien entra en las
+ * subpreguntas de las listas repetibles (las tiendas del Multitienda y los
+ * productos), que son las otras que nombran el identificador.
+ */
+function conDatosDelPais(pregunta, pais) {
+  if (!pregunta || !pais) return pregunta;
+
+  var mezclada = copiaDePregunta(pregunta);
+
+  for (var t = 0; t < TEXTOS_CON_MARCADOR.length; t++) {
+    var llave = TEXTOS_CON_MARCADOR[t];
+    if (typeof mezclada[llave] === 'string') mezclada[llave] = conDatosDelPaisEnElTexto(mezclada[llave], pais);
+  }
+
+  if (mezclada.errores) {
+    var errores = {};
+    for (var e in mezclada.errores) {
+      if (!Object.prototype.hasOwnProperty.call(mezclada.errores, e)) continue;
+      errores[e] = conDatosDelPaisEnElTexto(mezclada.errores[e], pais);
+    }
+    mezclada.errores = errores;
+  }
+
+  var subListas = ['camposPorTienda', 'camposPorProducto'];
+  for (var l = 0; l < subListas.length; l++) {
+    var nombre = subListas[l];
+    if (!mezclada[nombre]) continue;
+    var sub = {};
+    for (var campo in mezclada[nombre]) {
+      if (!Object.prototype.hasOwnProperty.call(mezclada[nombre], campo)) continue;
+      sub[campo] = conDatosDelPais(mezclada[nombre][campo], pais);
+    }
+    mezclada[nombre] = sub;
+  }
+
+  return mezclada;
+}
+
+/**
+ * Tipos que leen las variantes de otro.
+ *
+ * El Cupom de Brasil es la Promocao con un codigo: comparte sus trece variantes
+ * de texto, que ya estan escritas y revisadas. Copiarlas era garantizar que el
+ * dia que alguien corrija una de las dos, la otra se quede vieja.
+ */
+var VARIANTES_HEREDADAS = {
+  cupom_br: 'promocao_br',
 };
 
 /**
@@ -1841,7 +2173,10 @@ function preguntaDe(campo, tipo) {
   if (!Object.prototype.hasOwnProperty.call(PREGUNTAS, campo)) return null;
   var pregunta = PREGUNTAS[campo];
 
-  var variante = pregunta.variantes && tipo ? pregunta.variantes[tipo] : null;
+  var variante = null;
+  if (pregunta.variantes && tipo) {
+    variante = pregunta.variantes[tipo] || pregunta.variantes[VARIANTES_HEREDADAS[tipo]] || null;
+  }
   if (!variante) return pregunta;
 
   var mezclada = {};
@@ -1875,6 +2210,9 @@ if (typeof module !== 'undefined') {
     NOMBRE_DEL_HUECO: NOMBRE_DEL_HUECO,
     CIUDADES_SUGERIDAS: CIUDADES_SUGERIDAS,
     preguntaDe: preguntaDe,
+    conDatosDelPais: conDatosDelPais,
+    DATOS_DEL_PAIS_EN_LA_PREGUNTA: DATOS_DEL_PAIS_EN_LA_PREGUNTA,
+    VARIANTES_HEREDADAS: VARIANTES_HEREDADAS,
     nombreDelHueco: nombreDelHueco,
     pasoDe: pasoDe,
   };

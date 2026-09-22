@@ -455,10 +455,259 @@ var CAMPOS_CARRERA = [
   { id: 'plazoConfirmacion', etiqueta: 'Plazo para confirmar', tipo: 'numero', minimo: 1, maximo: 30, porDefecto: 5, paso: 'premio', obligatorio: true },
 ];
 
-/** Solo Colombia y solo con premio fisico: ver el campo valorPremio. */
+/**
+ * Solo con premio fisico: ver el campo valorPremio.
+ *
+ * Hasta el 21 de septiembre de 2026 era ademas solo en Colombia, porque la frase
+ * del documento decia "pesos M/Cte." y "IVA incluido". Los dos salen hoy de la
+ * fila del pais (moneda_nombre e impuesto_indirecto), asi que la razon de
+ * limitarlo se fue con ellos, y declarar el valor comercial del premio es lo que
+ * piden las autoridades de consumo de los paises donde el concurso acaba de
+ * habilitarse.
+ */
 function pideValorDelPremio(entrada) {
-  return String(entrada.pais || '').toUpperCase() === 'CO' && entrada.tipoPremio === 'fisico';
+  return entrada.tipoPremio === 'fisico';
 }
+
+/* --- Descuento y Cupon ----------------------------------------------------
+ *
+ * Dos tipos que comparten el mismo formulario menos dos preguntas. El descuento
+ * se aplica solo sobre el precio; el cupon lo activa el Usuario/Consumidor, con
+ * un codigo o desde la seccion "Cupones" de la aplicacion.
+ *
+ * Ninguno de los dos da Creditos, asi que no llevan el paso de Creditos entero:
+ * ni carga, ni vigencia, ni redencion. A cambio traen la forma del beneficio,
+ * que decide sobre que se calcula, y como termina la campana.
+ *
+ * Habilitados fuera de Colombia el 21 de septiembre de 2026.
+ */
+
+/*
+ * Las cinco formas del beneficio.
+ *
+ * Las dos primeras bajan el precio; las tres ultimas quitan un cargo del pedido.
+ * Son las mismas cuatro que Legal Brasil tiene aprobadas, mas el monto fijo, que
+ * en delivery es la forma mas pedida despues del porcentaje.
+ */
+var OPCIONES_FORMA_DESCUENTO = [
+  { valor: 'porcentaje', etiqueta: 'Un porcentaje de descuento' },
+  { valor: 'monto', etiqueta: 'Un monto fijo de descuento' },
+  { valor: 'envio', etiqueta: 'Envío gratis' },
+  { valor: 'tarifa_servicio', etiqueta: 'Tarifa de servicio gratis' },
+  { valor: 'envio_y_tarifa', etiqueta: 'Envío y tarifa de servicio gratis' },
+];
+
+function pideElPorcentajeDelDescuento(entrada) {
+  return entrada.formaDelDescuento === 'porcentaje';
+}
+
+function pideElMontoDelDescuento(entrada) {
+  return entrada.formaDelDescuento === 'monto';
+}
+
+/*
+ * El tope solo se pregunta donde puede haber uno.
+ *
+ * Con monto fijo el tope ya es el monto, y la tarifa de servicio no lleva tope
+ * en ninguno de los documentos aprobados. Donde si cabe es en el porcentaje y en
+ * el envio, que es justo el caso que Legal Brasil ya tiene escrito ("o frete
+ * gratis esta limitado a R$20,00").
+ */
+function pideElTopeDelDescuento(entrada) {
+  return entrada.formaDelDescuento === 'porcentaje' ||
+    entrada.formaDelDescuento === 'envio' ||
+    entrada.formaDelDescuento === 'envio_y_tarifa';
+}
+
+function pideElPresupuestoDelDescuento(entrada) {
+  return entrada.agotamiento === 'presupuesto';
+}
+
+function pideLasUnidadesDelDescuento(entrada) {
+  return entrada.agotamiento === 'unidades';
+}
+
+function pideElCodigoDelCupon(entrada) {
+  return entrada.activacionCupon === 'codigo';
+}
+
+function esDeUnaMarca(entrada) {
+  return entrada.productos === 'marca';
+}
+
+function sonProductosEspecificos(entrada) {
+  return entrada.productos === 'especificos';
+}
+
+/** Sobre que productos aplica el Beneficio. Mismo reparto que en la Carrera. */
+var CAMPOS_PRODUCTOS_DEL_DESCUENTO = [
+  {
+    id: 'productos',
+    etiqueta: 'Productos que participan',
+    tipo: 'lista',
+    paso: 'beneficio',
+    obligatorio: true,
+    opciones: [
+      { valor: 'todos', etiqueta: 'Todos los de la tienda' },
+      { valor: 'marca', etiqueta: 'Los de una marca' },
+      { valor: 'especificos', etiqueta: 'Productos específicos' },
+    ],
+  },
+  {
+    id: 'makerMarca',
+    etiqueta: 'Marca',
+    tipo: 'texto',
+    paso: 'beneficio',
+    visible: esDeUnaMarca,
+    obligatorio: esDeUnaMarca,
+  },
+  {
+    id: 'productosDetalle',
+    etiqueta: 'Productos participantes',
+    tipo: 'repetible',
+    minimo: 1,
+    maximo: 60,
+    paso: 'beneficio',
+    visible: sonProductosEspecificos,
+    obligatorio: sonProductosEspecificos,
+  },
+];
+
+/** Como termina la campana: por fecha, por presupuesto o por unidades. */
+var CAMPOS_AGOTAMIENTO = [
+  {
+    id: 'agotamiento',
+    etiqueta: '¿Cómo termina la campaña?',
+    tipo: 'lista',
+    paso: 'beneficio',
+    obligatorio: true,
+    opciones: [
+      { valor: 'fecha', etiqueta: 'Cuando llegue la fecha de fin' },
+      { valor: 'presupuesto', etiqueta: 'Cuando se agote el presupuesto' },
+      { valor: 'unidades', etiqueta: 'Cuando se agoten las unidades' },
+    ],
+  },
+  {
+    id: 'presupuesto',
+    etiqueta: 'Presupuesto total',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: pideElPresupuestoDelDescuento,
+    obligatorio: pideElPresupuestoDelDescuento,
+  },
+  {
+    id: 'unidadesDisponibles',
+    etiqueta: 'Unidades disponibles',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: pideLasUnidadesDelDescuento,
+    obligatorio: pideLasUnidadesDelDescuento,
+  },
+];
+
+/** En qué consiste el beneficio: la forma, su número y su tope. */
+var CAMPOS_BENEFICIO_DESCUENTO = [
+  {
+    id: 'formaDelDescuento',
+    etiqueta: 'Forma del beneficio',
+    tipo: 'lista',
+    paso: 'beneficio',
+    obligatorio: true,
+    opciones: OPCIONES_FORMA_DESCUENTO,
+  },
+  {
+    id: 'porcentaje',
+    etiqueta: 'Porcentaje de descuento',
+    tipo: 'numero',
+    minimo: 1,
+    maximo: 100,
+    paso: 'beneficio',
+    visible: pideElPorcentajeDelDescuento,
+    obligatorio: pideElPorcentajeDelDescuento,
+  },
+  {
+    id: 'montoDescuento',
+    etiqueta: 'Monto del descuento',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: pideElMontoDelDescuento,
+    obligatorio: pideElMontoDelDescuento,
+  },
+  // Opcional: hay campanas de porcentaje sin techo, y el documento lo dice sin
+  // la vinneta. Obligarlo haria inventar un numero.
+  {
+    id: 'tope',
+    etiqueta: 'Tope por pedido',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: pideElTopeDelDescuento,
+    obligatorio: false,
+  },
+];
+
+/** Cuántas veces puede ganar la misma persona. */
+var CAMPOS_VECES_DESCUENTO = [
+  {
+    id: 'maxPedidos',
+    etiqueta: 'Máximo de pedidos con beneficio',
+    tipo: 'numero',
+    minimo: 1,
+    paso: 'beneficio',
+    visible: sinLimiteNoLoPide,
+    obligatorio: sinLimiteNoLoPide,
+  },
+  { id: 'sinLimite', etiqueta: 'Sin límite de pedidos', tipo: 'casilla', paso: 'beneficio', obligatorio: false },
+];
+
+/*
+ * El orden del paso del beneficio: en qué consiste, sobre qué productos, cuántas
+ * veces y cómo termina. El Cupón mete sus dos preguntas entre los productos y
+ * las veces, porque "cómo se activa" es parte de la mecánica y no un límite.
+ */
+var CAMPOS_DESCUENTO = unir(
+  CAMPOS_BENEFICIO_DESCUENTO,
+  CAMPOS_PRODUCTOS_DEL_DESCUENTO,
+  CAMPOS_VECES_DESCUENTO,
+  CAMPOS_AGOTAMIENTO
+);
+
+/** Las dos preguntas que el Cupon tiene y el Descuento no. */
+var CAMPOS_CUPON = [
+  {
+    id: 'activacionCupon',
+    etiqueta: '¿Cómo se activa el cupón?',
+    tipo: 'lista',
+    paso: 'beneficio',
+    obligatorio: true,
+    opciones: [
+      { valor: 'codigo', etiqueta: 'Con un código que el usuario escribe' },
+      { valor: 'seccion', etiqueta: 'Desde la sección Cupones de la app' },
+    ],
+  },
+  {
+    id: 'codigoCupon',
+    etiqueta: 'Código del cupón',
+    tipo: 'codigo',
+    maximo: 24,
+    paso: 'beneficio',
+    visible: pideElCodigoDelCupon,
+    obligatorio: pideElCodigoDelCupon,
+  },
+];
+
+/** El codigo del Cupom de Brasil, que va impreso dos veces en el documento. */
+var CAMPO_CODIGO_CUPOM_BR = {
+  id: 'codigoCupon',
+  etiqueta: 'Código del cupón',
+  tipo: 'codigo',
+  maximo: 24,
+  paso: 'beneficio',
+  obligatorio: true,
+};
 
 var CAMPOS_CASHBACK_DAY = [
   { id: 'tiendas', etiqueta: 'Tiendas participantes', tipo: 'repetible', minimo: 2, maximo: 60, paso: 'tiendas', obligatorio: true },
@@ -1318,6 +1567,43 @@ var ESQUEMAS = {
       '¿Participan varias tiendas?',
     ],
   },
+  descuento: {
+    id: 'descuento',
+    nombre: 'Descuento',
+    descripcion: 'La tienda baja el precio de sus productos, o regala el envío o la tarifa de servicio. El usuario ve el precio ya rebajado antes de pagar y no recibe Créditos.',
+    modelo: 'descuento',
+    campos: insertarDespuesDe(
+      unir(CAMPOS_COMUNES, CAMPOS_TIENDA_Y_ORGANIZADOR, CAMPOS_DESCUENTO),
+      'tienda',
+      CAMPO_TIENDA_TURBO
+    ),
+    camposPorProducto: CAMPOS_POR_PRODUCTO,
+    // El beneficio no son Creditos: se calcula distinto y se imprime distinto.
+    esDeDescuento: true,
+    filtroDeEntrada: [
+      '¿La tienda o la marca exige sus propios T&C?',
+    ],
+  },
+  cupon: {
+    id: 'cupon',
+    nombre: 'Cupón',
+    descripcion: 'Lo mismo que el Descuento, pero el usuario tiene que activarlo: escribe un código o toma el cupón en la sección “Cupones”. Sirve cuando el beneficio es para unos pocos y no para todo el que compre.',
+    modelo: 'cupon',
+    campos: insertarDespuesDe(
+      unir(
+        CAMPOS_COMUNES, CAMPOS_TIENDA_Y_ORGANIZADOR,
+        CAMPOS_BENEFICIO_DESCUENTO, CAMPOS_PRODUCTOS_DEL_DESCUENTO,
+        CAMPOS_CUPON, CAMPOS_VECES_DESCUENTO, CAMPOS_AGOTAMIENTO
+      ),
+      'tienda',
+      CAMPO_TIENDA_TURBO
+    ),
+    camposPorProducto: CAMPOS_POR_PRODUCTO,
+    esDeDescuento: true,
+    filtroDeEntrada: [
+      '¿La tienda o la marca exige sus propios T&C?',
+    ],
+  },
   cashback_travel: {
     id: 'cashback_travel',
     nombre: 'Cashback Travel',
@@ -1360,6 +1646,18 @@ var ESQUEMAS = {
     // El documento va en portugues. Si la fila del pais no lo dice, no se
     // genera: sin esto salia un T&C en portugues con las fechas y los montos
     // en espanol, sin ningun error.
+    idioma: 'pt',
+  },
+  cupom_br: {
+    id: 'cupom_br',
+    nombre: 'Cupom Brasil',
+    descripcion: 'La Promoção de Brasil con un código: el usuario escribe el cupom antes de cerrar el pedido y recibe el descuento, el envío gratis o la tarifa de servicio gratis. Solo para Brasil.',
+    modelo: 'cupom_br',
+    campos: insertarDespuesDe(CAMPOS_BRASIL, 'beneficioBr', CAMPO_CODIGO_CUPOM_BR),
+    filtroDeEntrada: [],
+    esDeBrasil: true,
+    // Igual que promocao_br: el documento va en portugues, y si la fila del
+    // pais no lo dice, no se genera.
     idioma: 'pt',
   },
   cashback_day: {
@@ -1417,6 +1715,8 @@ if (typeof module !== 'undefined') {
     OPCIONES_ALCANCE_TURBO: OPCIONES_ALCANCE_TURBO,
     CAMPOS_BRASIL: CAMPOS_BRASIL,
     CAMPOS_CASHBACK_ETA: CAMPOS_CASHBACK_ETA,
+    OPCIONES_FORMA_DESCUENTO: OPCIONES_FORMA_DESCUENTO,
+    CAMPOS_POR_PRODUCTO: CAMPOS_POR_PRODUCTO,
     categoriasDe: categoriasDe,
     hayAereasDeTravel: hayAereasDeTravel,
     hayAlojamientoDeTravel: hayAlojamientoDeTravel,

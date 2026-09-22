@@ -3,7 +3,7 @@
 Generado por `node scripts/tabla-paises.js`. No se edita a mano.
 
 Cada valor de esta tabla sale impreso en cada T&C que se publica en ese
-país. Están aquí los 18 que se midieron generando el documento de cada uno:
+país. Están aquí los 19 que se midieron generando el documento de cada uno:
 no es una lista escrita a mano, así que si mañana una cláusula empieza a usar
 una columna nueva, aparece sola.
 
@@ -134,6 +134,17 @@ Sin caso dorado de cashback: Brasil. No usa el modelo de cashback.
 - **Ecuador.** RUC
 - **Uruguay.** RUT
 - **Costa Rica.** cédula jurídica
+
+## ejemplo_id_fiscal
+
+- **Colombia.** 900.111.222-1
+- **México.** PRU200101AB5
+- **Perú.** 20512345671
+- **Argentina.** 30-71234567-1
+- **Chile.** 76.123.456-0
+- **Ecuador.** 1791234561001
+- **Uruguay.** 212345670015
+- **Costa Rica.** 3-101-123450
 
 ## separador_miles
 

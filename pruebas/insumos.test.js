@@ -15,10 +15,11 @@ const { tieneRetornoDeCarro } = require('../src/core/texto.js');
 const { modelos, bloques } = cargarModelos();
 const paises = leerJson(rutaDesdeRaiz('data', 'paises.json'));
 
-test('estan los siete modelos de campana', () => {
+test('estan los diez modelos de campana', () => {
   assert.deepStrictEqual(
     Object.keys(modelos).sort(),
-    ['carrera_compras', 'cashback', 'cashback_day', 'cashback_eta', 'cashback_travel', 'descuento_travel', 'promocao_br']
+    ['carrera_compras', 'cashback', 'cashback_day', 'cashback_eta', 'cashback_travel',
+      'cupom_br', 'cupon', 'descuento', 'descuento_travel', 'promocao_br']
   );
 });
 

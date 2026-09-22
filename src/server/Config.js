@@ -28,7 +28,15 @@ var PESTANAS = {
     'domicilio_legal', 'pais_legal', 'ley_aplicable', 'jurisdiccion', 'entidad_vigilancia',
     'autoridad_datos', 'url_tc_plataforma', 'url_privacidad', 'url_tc_creditos', 'url_tc_turbo',
     'moneda_nombre', 'politica_privacidad', 'edad_minima', 'tipo_id_organizador',
+    // Como se llama, donde se busca y como se ve el identificador tributario de
+    // cada pais. Sin esto la pregunta del Organizador decia "NIT" en los nueve
+    // paises y le pedia a un KAM de Mexico un numero que en Mexico no existe.
+    'ejemplo_id_fiscal', 'donde_id_fiscal',
     'moneda_simbolo', 'separador_miles', 'termino_dias', 'texto_persona',
+    // El impuesto indirecto que se nombra al declarar el valor de un premio, y
+    // el grado de parentesco de la clausula de inhabilidades de un concurso.
+    // Los dos cambian de pais a pais y los dos salen impresos.
+    'impuesto_indirecto', 'texto_parentesco',
     'texto_hora_local', 'texto_derechos_datos', 'por_confirmar_en_pruebas',
     // Rappi Travel tiene su propia entidad legal, su RNT y su politica de
     // datos. Van planas, una por columna, porque la pestana es una tabla.

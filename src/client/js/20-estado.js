@@ -204,12 +204,24 @@ function pregunta(campoId) {
   // El tipo va dos veces a proposito: la variante en espanol y la variante en
   // el otro idioma se eligen por separado. Sin el segundo, la interfaz en
   // portugues preguntaba "em reais" para un tope en pesos.
-  return preguntaEnIdioma(preguntaDe(campoId, entrada().tipo), campoId, idiomaInterfaz(), entrada().tipo);
+  var texto = preguntaEnIdioma(preguntaDe(campoId, entrada().tipo), campoId, idiomaInterfaz(), entrada().tipo);
+  // Y al final los datos del pais, despues de elegir idioma y variante, para
+  // que "{ID_FISCAL}" se convierta en RFC o en RUT tambien cuando la interfaz
+  // esta en portugues. Sin esto la pregunta del Organizador decia "NIT" en los
+  // nueve paises.
+  return conDatosDelPais(texto, paisDeLaEntrada());
+}
+
+/** La fila del pais elegido, o null mientras todavia no hay pais. */
+function paisDeLaEntrada() {
+  if (!estado.configuracion || !estado.configuracion.paises) return null;
+  return paisPorCodigo(estado.configuracion.paises, entrada().pais);
 }
 
 RM.estado = {
   estado: estado,
   pregunta: pregunta,
+  paisDeLaEntrada: paisDeLaEntrada,
   T: T,
   nombreDePais: nombreDePais,
   idiomaInterfaz: idiomaInterfaz,

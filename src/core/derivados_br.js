@@ -22,6 +22,10 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 
   var listaY = require('./fechas.js').listaY;
   var tieneValor = require('./texto.js').tieneValor;
+  // El codigo del Cupom se normaliza una sola vez, en el modulo del Cupon:
+  // "jumbo 30" y "JUMBO30" son el mismo cupom en la aplicacion y tienen que
+  // salir iguales en el documento, aqui y en espanol.
+  var codigoDeCupon = require('./derivados_descuento.js').codigoDeCupon;
 }
 
 /** Las cuatro formas del beneficio, tal como las nombran los documentos. */
@@ -154,6 +158,9 @@ function textoMetodoPagoBr(entrada) {
 function calcularDerivadosBr(entrada, pais) {
   return {
     PARCEIRO: String(entrada.tienda || '').trim(),
+    // Solo lo usa cupom_br. En promocao_br no hay codigo, el modelo no lo pide
+    // y un valor de mas no imprime nada.
+    CODIGO_CUPON: codigoDeCupon(entrada),
     TEXTO_MINIMO_APERTURA: textoMinimoAperturaBr(entrada, pais),
     TEXTO_BENEFICIO_APERTURA: textoBeneficioAperturaBr(entrada),
     TEXTO_BENEFICIO_REGRA: textoBeneficioRegraBr(entrada, pais),

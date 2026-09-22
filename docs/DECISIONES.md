@@ -1534,3 +1534,109 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      haría que `setup` no los encontrara y creara unos nuevos, vacíos, y el
      historial quedaría en los viejos sin que nada avisara. El nombre interno es
      un identificador, no una etiqueta.
+## Bloque 11: el Descuento, el Cupón y el concurso fuera de Colombia
+
+123. **Los tres flujos se habilitan en los ocho países que no son Colombia, y
+     Colombia se queda como estaba.** Juan lo pidió con esas palabras el 21 de
+     septiembre de 2026: "habilitar para todos los países excepto Colombia los
+     flujos para pedir T&C de descuentos, cupones y concursos". Así que
+     `descuento`, `cupon` y `carrera_compras` entran en la columna `modelos` de
+     México, Perú, Argentina, Chile, Ecuador, Uruguay y Costa Rica, y la fila de
+     Colombia no se toca: allí el Descuento y el Cupón siguen sin existir. No es
+     una limitación técnica, es lo que pidió el dueño del producto.
+
+124. **El Descuento y el Cupón son dos tipos y no uno con una casilla.** La
+     diferencia de negocio es una sola: el descuento se aplica solo, y el cupón
+     lo activa el Usuario/Consumidor. Pero esa diferencia cambia tres cláusulas
+     del documento (la mecánica, la de activación y la de cancelaciones) y, sobre
+     todo, cambia la pregunta que el comercial se hace antes de entrar. Un solo
+     tipo con una casilla "¿lleva cupón?" obliga a leer el formulario para saber
+     si sirve; dos tarjetas se eligen de un vistazo. Los dos modelos comparten
+     todos los bloques menos `cupon_codigo`.
+
+125. **Las cinco formas del beneficio se preguntan, y cada una trae su propia
+     base de cálculo.** Porcentaje, monto fijo, envío gratis, tarifa de servicio
+     gratis y las dos juntas. Las tres últimas son las que Legal Brasil ya tiene
+     aprobadas. La razón de preguntarlo es que un documento que diga "el
+     Beneficio se calcula sin incluir el costo de envío" en una campaña cuyo
+     beneficio es justamente el envío se contradice solo, y esa contradicción se
+     resuelve a favor del usuario. Por eso `exclusiones_beneficio` no se reusa:
+     su viñeta de propinas y envío es correcta para el Cashback y falsa aquí.
+     Hay un bloque nuevo, `exclusiones_descuento`, armado con las viñetas del
+     aprobado menos esa y más la de "productos que no sean Productos
+     Participantes", que ya estaba aprobada en `descuento_travel`.
+
+126. **Brasil no tiene concurso, y no es un olvido.** La Ley 5.768 de 1971 y su
+     reglamento piden autorización previa de la Secretaria de Prêmios e Apostas
+     del Ministerio de Hacienda para toda distribución gratuita de premios, y
+     nombran expresamente al "concurso" entre las modalidades que la necesitan.
+     Una herramienta que genere sola el T&C de una Carrera de Compras brasileña
+     estaría invitando a publicar una promoción sin certificado de autorización,
+     que es una infracción y no un defecto de redacción. En los ocho países de
+     habla hispana el caso es distinto: la Carrera se gana por un criterio
+     objetivo de compras y el modelo lo dice en su primer párrafo ("en ningún
+     caso por sorteo, rifa, azar o cualquier otro mecanismo de suerte"), que es
+     justamente lo que la saca del régimen de rifas y sorteos. Un KAM brasileño
+     que quiera un concurso sigue yendo a Legal, y ahí está bien que vaya.
+
+127. **Brasil sí tiene cupón, como tipo propio y en portugués.** `cupom_br` es
+     `promocao_br` con dos viñetas más: la del código y la de que el cupom es
+     personal. Las CONDIÇÕES GERAIS aprobadas ya cuentan con que haya un código
+     cuando dicen "cancelar o código", así que lo que faltaba era decirlo en el
+     articulado de arriba. Es un modelo aparte y no una casilla dentro de
+     `promocao_br` porque `tiposDelPais()` casa el catálogo contra la columna
+     `modelos` por el nombre del modelo: dos tipos con el mismo modelo se
+     encenderían y apagarían juntos.
+
+128. **Un tipo que hereda las variantes de otro, en vez de copiarlas.**
+     `VARIANTES_HEREDADAS` en `src/core/preguntas.js` dice que `cupom_br` lee las
+     variantes de `promocao_br`. Son trece bloques de texto ya escritos y
+     revisados ("o parceiro", "em reais", las 00:01 de inicio). Copiarlos era
+     garantizar que el día que alguien corrija uno de los dos, el otro se quede
+     viejo sin que nadie se entere. `preguntas_pt.js` aplica la misma herencia,
+     porque la traducción tiene el mismo problema.
+
+129. **Las preguntas que nombran el identificador tributario lo piden por
+     marcador y lo rellena la fila del país.** Hasta ahora la pregunta del
+     Organizador decía "¿Cuál es el NIT de esa empresa?" y ponía de ejemplo un
+     NIT colombiano en los nueve países. Un KAM de México leía que le pedían un
+     número que en México no existe, y el único sitio donde la herramienta sabía
+     la respuesta correcta era el mensaje de error, que solo aparece después de
+     equivocarse. Ahora la pregunta dice `{ID_FISCAL}`, `{DONDE_ID_FISCAL}` y
+     `{EJEMPLO_ID_FISCAL}`, y `conDatosDelPais()` los cambia por lo que diga la
+     pestaña Paises. Tres columnas nuevas: `ejemplo_id_fiscal` y
+     `donde_id_fiscal`, más `{MONEDA}`, que ya existía como `moneda_nombre`.
+
+     La sustitución se hace en `estado.pregunta()`, que es por donde pasa toda
+     pantalla que muestre el texto de una pregunta, y **después** de elegir
+     idioma y variante, para que funcione igual con la interfaz en portugués.
+     Nunca escribe encima de `PREGUNTAS`, que es un objeto compartido: una
+     campaña de México dejaría "RFC" escrito para la siguiente de Colombia.
+
+130. **El valor comercial del premio se pregunta en todos los países, no solo en
+     Colombia.** Estaba limitado a Colombia porque la frase decía "pesos M/Cte."
+     y "IVA incluido". La moneda ya salía de la fila del país y el impuesto entra
+     ahora como columna `impuesto_indirecto` (IVA en casi todos, IGV en Perú,
+     ICMS en Brasil), así que la razón de limitarlo se fue con ella. Declarar el
+     valor comercial del premio es además lo que piden las autoridades de consumo
+     de los países donde el concurso acaba de habilitarse. Un país sin impuesto
+     escrito imprime la frase sin la coletilla, entera y sin comas sueltas, en
+     vez de anunciar un impuesto que nadie confirmó.
+
+131. **El grado de parentesco de la cláusula de inhabilidades sale de la fila del
+     país.** "Segundo de afinidad y primero civil" es la forma del Código Civil
+     colombiano; el parentesco civil por adopción no se nombra igual en México ni
+     en el Cono Sur. Es la única línea del bloque `inhabilidades` que cambia, así
+     que se parametriza con `{{TEXTO_PARENTESCO}}` y la columna
+     `texto_parentesco`. Colombia conserva palabra por palabra el texto que
+     aprobó Juan, y hay una prueba que lo comprueba.
+
+132. **El código del cupón es texto libre, y entra pese a la regla 6.** La regla
+     6 de `CLAUDE.md` prohíbe el texto libre legal en el formulario. Un código de
+     cupón no es texto legal: es un dato de la campaña, del mismo orden que el
+     nombre de la tienda o una ciudad, que la regla sí permite. Va con tipo de
+     campo propio (`codigo`), largo máximo de 24 y validación de caracteres
+     (letras, números y guiones). Se valida sobre lo que el comercial escribió y
+     no sobre la versión normalizada: si escribe "RAPPI 30" tiene que ver el
+     error, porque en la aplicación ese cupón no existe, y aceptarlo en silencio
+     para publicar "RAPPI30" sería publicar un código que nadie aprobó.
