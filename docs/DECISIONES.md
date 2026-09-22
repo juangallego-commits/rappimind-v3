@@ -1640,3 +1640,101 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      no sobre la versión normalizada: si escribe "RAPPI 30" tiene que ver el
      error, porque en la aplicación ese cupón no existe, y aceptarlo en silencio
      para publicar "RAPPI30" sería publicar un código que nadie aprobó.
+
+133. **La hoja de feedback de la revisión legal se genera con un script, y ese
+     script está en Python.** `scripts/hoja_feedback.py` arma el libro de Excel
+     que se sube a Drive y se convierte en el Google Sheet de la ronda de pruebas
+     con los nueve países. Ver `docs/REVISION_LEGAL_GLOBAL.md`.
+
+     **Por qué un script y no una hoja escrita a mano.** La mitad de la hoja son
+     datos que ya están en el repositorio: los 194 valores legales de
+     `data/paises.json` y las 55 leyendas de `modelos/leyendas/`. Copiarlos a mano
+     una vez es tedioso; copiarlos otra vez cuando cambie uno es donde se cuelan
+     los errores, y un valor mal copiado en esa hoja se convierte en una
+     corrección equivocada en el modelo. El script los lee de la fuente.
+
+     **Por qué Python y no Node.** Escribir un `.xlsx` es escribir un zip con
+     varios XML dentro, y en Node haría falta o una dependencia nueva o unas
+     doscientas líneas de armar el zip a mano. `openpyxl` lo hace en una línea por
+     celda, incluidas las listas desplegables y las fórmulas, que son justo lo que
+     hace usable la hoja.
+
+     **No entra al build ni a las pruebas.** No lo llama `npm run build`, no lo
+     toca `dist/` y `npm test` sigue corriendo solo con `node --test`, sin
+     dependencias externas. Es una utilidad que se corre a mano cuando hace falta
+     una hoja nueva, igual que `npm run previsualizar`. La única dependencia,
+     `openpyxl`, se instala en el momento y no queda declarada en ninguna parte
+     del proyecto.
+
+134. **Lo generado y el material de entrega ya aplicado salen del repositorio.**
+     El 22 de septiembre de 2026 el repositorio pesaba 12,11 MB en 398 archivos,
+     y por eso ya no se podía cargar completo en una conversación de Claude chat,
+     que es una de las dos formas en que se trabaja este proyecto. Quedó en
+     3,38 MB y 325 archivos.
+
+     Las cifras son bytes de los archivos rastreados, contados con
+     `git ls-tree -r -l`. `du` redondea cada archivo al bloque del sistema de
+     archivos y con 384 archivos infla la cuenta casi un 20%, así que las
+     primeras mediciones de este recorte, hechas con `du`, decían 11,83 y 3,94.
+     Para esto la cuenta que importa es la de bytes, que es lo que lee un
+     conector.
+
+     **Salió lo generado, 2,08 MB**, con su ruta en `.gitignore`: `demo/index.html`
+     (`npm run demo`), `docs/FRONT_ACTUAL.html` (`npm run front`),
+     `docs/revision/` (`npm run revision`), `docs/PREGUNTAS_KAM.md`
+     (`npm run preguntas`), `docs/CONTENIDO_AYUDA.md` (`npm run ayuda`) y
+     `docs/VALORES_POR_PAIS.md` (`npm run tabla-paises`). Una salida versionada
+     miente en cuanto alguien cambia la fuente y no vuelve a correr el comando,
+     que es justo lo que le pasó a `docs/PREGUNTAS_KAM.md` en su momento.
+
+     **Salió el material de entrega del cambio de identidad, 6,53 MB**: el PDF del
+     brand book, `docs/diseno/assets/`, `docs/diseno/sistema/`, los tres
+     prototipos `.dc.html` y los papeles del traspaso. Se comprobó, archivo por
+     archivo, que ni el build, ni una prueba, ni un script, ni las skills leen
+     nada de ahí: la aplicación tiene su propia copia recortada en
+     `src/client/assets/` (26 KB: un PNG y un woff2) y `src/client/tokens/`. Se quedaron los siete
+     documentos que el código cita o que registran una medición, y `tokens/`
+     completo, que la decisión 103 conserva como la entrega original.
+
+     **Salieron 14 documentos de sesión ya cumplidos:** los ocho `PROMPT_*.md`,
+     `REVISION_MANANA.md`, `THREAD_SLACK.md`, `PAISES_EN_PILOTO.md` (que además
+     ya era falso: no queda ningún país en piloto),
+     `PROPUESTA_TRES_BLOQUEOS_TRAVEL.md` y los dos `PAQUETE_*.md`.
+
+     **Y cinco que parecían de sesión y no lo eran, así que se quedaron.** Esta
+     es la parte que importa de la decisión, porque es donde el recorte se podía
+     llevar algo por delante:
+
+     - `CORRECCIONES_BRASIL.md` y `MEJORAS_ETA.md` los citan `modelos/promocao_br.md`,
+       `modelos/bloques/br_condicoes_gerais.md` y `modelos/cashback_eta.md` en su
+       cabecera, más dos pruebas y dos derivados. Son la procedencia de un texto
+       legal, no notas de trabajo, y además Juan todavía tiene que confirmarlos.
+     - `PARA_EL_DISENO.md` lo citan `scripts/contraste.js`, `estilos.css` y
+       `rappimind.css`: ahí están los intocables de accesibilidad.
+     - `PARA_DECIDIR.md` lo cita la plantilla de issues de GitHub, y su punto D3
+       sigue sin aplicar.
+     - `PROPUESTA_NOMBRE_CAMPANA.md` espera el visto bueno de Juan.
+
+     **`docs/encargos/` completo también se queda**, aunque son 370 KB. Las 55
+     leyendas lo citan una por una en su `%% fuente:`, y `src/core/leyendas.js`,
+     `derivados.js`, `derivados_leyendas.js` y `pruebas/decisiones_legales.test.js`
+     lo nombran como el origen de su texto. Es el rastro de papel de lo que Legal
+     respondió, y eso no se borra para ahorrar espacio.
+
+     **Tres pruebas cambiaron.** `front.test.js` y `revision.test.js` exigían que
+     el archivo generado estuviera en el repositorio; ahora se saltan solas si no
+     está y dicen con qué comando aparece. `casos.test.js` comparaba la tabla de
+     países guardada contra una recién armada para que no se quedara atrás; ahora
+     la arma ella y mide lo que de verdad importaba, que traiga a los ocho países
+     con documento y las columnas que nombran a una autoridad.
+
+     **No se condensó `docs/PROGRESO.md`,** y estaba en el plan. Son 126 KB, que
+     sobre los 3,38 MB que quedaron son el 4%: no paga el riesgo. Condensarlo
+     obliga a decidir a mano cuáles de sus veinte secciones "Lo que necesito de
+     Juan" ya están resueltas, y ahí es donde se pierde un pendiente. Si algún día
+     se hace, se hace con Juan al lado.
+
+     **Nada se perdió.** Todo está en el historial de git, en el commit `b07e0cb`,
+     que es la punta de main antes de este recorte,
+     y `docs/diseno/LEEME.md` explica cómo recuperar un archivo concreto. No se
+     reescribió historial.

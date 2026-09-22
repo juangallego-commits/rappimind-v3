@@ -122,7 +122,12 @@ justo lo que pasa hoy.
 Eso convierte las leyendas de "una función más" en la continuación natural de lo
 que la herramienta ya hace.
 
-### Lo que hay que sumarle al encargo de `docs/PAQUETE_LEYENDAS.md`
+### Lo que hay que sumarle al encargo de las leyendas
+
+El encargo y su respuesta están en `docs/encargos/03-leyendas.md` y
+`docs/encargos/respuestas/03-leyendas.md`. El paquete con el que se armó,
+`docs/PAQUETE_LEYENDAS.md`, se quitó del repositorio el 22 de septiembre de 2026
+y está en el historial de git, en el commit `b07e0cb`.
 
 1. Estas cuatro transcripciones, como ejemplos de leyenda real de cashback,
    descuento en Turbo y ETA, que es justo lo que los playbooks no traían.

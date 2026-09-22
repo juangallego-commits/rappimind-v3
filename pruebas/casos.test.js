@@ -242,23 +242,29 @@ test('la cláusula de datos nombra los datos, la finalidad y la supresión', () 
  * La tabla de lo que cada país imprime.
  *
  * Juan la pidió junto con los casos dorados (punto B1): poder leer de un
- * vistazo los valores de todos los países, uno al lado del otro. Si se queda
- * atrás, engaña al que la lee, así que la prueba la vuelve a armar y compara.
- * Se pone al día con `npm run tabla-paises`.
+ * vistazo los valores de todos los países, uno al lado del otro.
+ *
+ * La tabla ya no se versiona, porque es una salida de `npm run tabla-paises` y
+ * lo generado dejó de guardarse (decisión 134). Antes esta prueba comparaba la
+ * copia guardada contra una recién armada, para que no se quedara atrás; ahora
+ * la arma ella misma y mide lo que de verdad importaba: que lo que sale del
+ * script traiga a los ocho países con documento y las columnas que nombran a
+ * una autoridad. Si la tabla se queda atrás ya no engaña a nadie, porque no
+ * hay copia guardada que leer.
  */
-test('docs/VALORES_POR_PAIS.md está al día', () => {
+function tablaDePaises() {
   const { execFileSync } = require('node:child_process');
-  const guardada = leerTexto(rutaDesdeRaiz('docs', 'VALORES_POR_PAIS.md'));
-
   execFileSync(process.execPath, [rutaDesdeRaiz('scripts', 'tabla-paises.js')], { stdio: 'pipe' });
-  const recien = leerTexto(rutaDesdeRaiz('docs', 'VALORES_POR_PAIS.md'));
+  return leerTexto(rutaDesdeRaiz('docs', 'VALORES_POR_PAIS.md'));
+}
 
-  assert.strictEqual(normalizarParaComparar(guardada), normalizarParaComparar(recien),
-    'la tabla cambió: corre "npm run tabla-paises" y revisa el resultado');
+test('el script de la tabla corre y escribe la tabla', () => {
+  const tabla = tablaDePaises();
+  assert.ok(tabla.length > 2000, 'la tabla salió vacía o a medias: ' + tabla.length + ' caracteres');
 });
 
 test('la tabla trae todos los países con documento y todas las columnas que se imprimen', () => {
-  const tabla = leerTexto(rutaDesdeRaiz('docs', 'VALORES_POR_PAIS.md'));
+  const tabla = tablaDePaises();
 
   // Los ocho que generan documento de cashback. Brasil no usa ese modelo.
   for (const nombre of ['Colombia', 'México', 'Perú', 'Argentina', 'Chile', 'Ecuador', 'Uruguay', 'Costa Rica']) {
