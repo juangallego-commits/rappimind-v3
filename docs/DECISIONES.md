@@ -1641,6 +1641,8 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      error, porque en la aplicación ese cupón no existe, y aceptarlo en silencio
      para publicar "RAPPI30" sería publicar un código que nadie aprobó.
 
+## 22 de septiembre · El recorte del repositorio y la revisión legal global
+
 133. **La hoja de feedback de la revisión legal se genera con un script, y ese
      script está en Python.** `scripts/hoja_feedback.py` arma el libro de Excel
      que se sube a Drive y se convierte en el Google Sheet de la ronda de pruebas
@@ -1738,3 +1740,35 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      que es la punta de main antes de este recorte,
      y `docs/diseno/LEEME.md` explica cómo recuperar un archivo concreto. No se
      reescribió historial.
+
+## 22 de septiembre · La pantalla de Legal ahora sabe si el país tiene formulario
+
+135. **El botón al formulario de Legal solo se ofrece cuando de verdad sirve, y
+     "país conocido" se mide por `E.respondidas.pais`, no por el valor de
+     `pais`.** Juan reportó que a cualquier comercial, sin importar el país, la
+     pantalla de Legal siempre lo mandaba al mismo formulario, que hoy es el de
+     Colombia (y sirve igual para Costa Rica). La causa real no era solo "un
+     enlace global": es que el filtro general (`pantallaFiltro`, las dos
+     preguntas de azar y T&C propios) manda a Legal **antes** de preguntar el
+     país, y `pais` ya trae a Colombia como valor por defecto desde que se pulsa
+     "Empezar" (`valoresIniciales()`), preseleccionada pero no respondida. Mirar
+     `estado.entrada().pais` ahí habría dicho "Colombia" para cualquiera.
+     `pantallaLegal()` ahora solo llama a `paisElegido()` cuando
+     `E.respondidas.pais` es `true`, que es la misma regla que ya usa
+     `tieneRespuesta()` para no confundir preseleccionado con respondido. Con
+     tres resultados:
+     - País conocido y es Colombia o Costa Rica (`PAISES_DEL_FORMULARIO_DE_LEGAL`):
+       igual que antes, botón al formulario.
+     - País conocido y es otro: se quita el botón y sale un mensaje con el
+       nombre del país, pidiendo escribirle a su equipo legal por sus canales de
+       siempre.
+     - País todavía desconocido (viene del filtro general): un mensaje neutral
+       que cubre los dos casos, con el botón etiquetado "(Colombia y Costa
+       Rica)" para que quede claro para quién es.
+
+     `PAISES_DEL_FORMULARIO_DE_LEGAL` es una lista aparte, en
+     `src/client/js/60-flujo.js`, no una columna de `data/paises.json`: es un
+     parche mientras Legal confirma, país por país, cuál es su formulario o
+     canal real (ver `docs/PENDIENTES_LEGAL.md`). Cuando eso se confirme, lo
+     natural es que cada fila de `paises.json` traiga su propio enlace o canal,
+     y esta pantalla deje de tener una lista fija de países.
