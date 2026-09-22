@@ -98,6 +98,11 @@ var TEXTOS_PT = {
   'Volver al inicio': 'Voltar ao início',
   'Falta configurar el enlace del formulario de Legal. Avísale a Juan.':
     'Falta configurar o link do formulário do Jurídico. Avise o Juan.',
+  'Si tu campaña es de Colombia o Costa Rica, usa el formulario de Legal. Si es de otro país, escríbele a tu equipo legal por los canales que ya usan hoy; estamos confirmando el canal para cada país.':
+    'Se a sua campanha é da Colômbia ou da Costa Rica, use o formulário do Jurídico. Se for de outro país, fale com o seu time jurídico pelos canais que vocês já usam hoje; estamos confirmando o canal de cada país.',
+  'Ir al formulario de Legal (Colombia y Costa Rica)': 'Ir para o formulário do Jurídico (Colômbia e Costa Rica)',
+  'Esto lo tiene que revisar el equipo legal de {pais}. Escríbeles por los canales que ya usan hoy: este formulario es solo para Colombia y Costa Rica. En cuanto confirmemos el canal para tu país, te lo vamos a mostrar aquí directamente.':
+    'Isso precisa ser revisado pelo time jurídico de {pais}. Fale com eles pelos canais que vocês já usam hoje: este formulário é só para Colômbia e Costa Rica. Assim que confirmarmos o canal do seu país, vamos mostrar isso aqui diretamente.',
 
   /* --- El formulario por pasos -------------------------------------------- */
   'Tu T&C': 'Seu T&C',

@@ -421,27 +421,68 @@ function pantallaFiltroTravel(raiz) {
   raiz.appendChild(contenido);
 }
 
+/**
+ * Los países donde el formulario de Legal configurado hoy sí sirve.
+ *
+ * Es el mismo formulario para los dos. Para el resto todavía no hay canal
+ * confirmado por país: mientras Legal lo confirma, esta pantalla les dice que
+ * escriban por sus canales de siempre en vez de mandarlos a un formulario que
+ * no es el suyo. Juan lo pidió el 22 de septiembre de 2026.
+ */
+var PAISES_DEL_FORMULARIO_DE_LEGAL = ['CO', 'CR'];
+
 function pantallaLegal(raiz) {
   var url = E.configuracion.urlFormularioLegal;
+
+  /*
+   * El país solo cuenta si de verdad se respondió esa pregunta: antes de eso
+   * "pais" trae a Colombia de valor por defecto, preseleccionada pero no
+   * respondida, y asumir Colombia ahí mandaría a cualquier otro país al
+   * formulario que no es el suyo. Esto pasa siempre que el "sí" viene del
+   * filtro general, que corre antes de preguntar el país.
+   */
+  var pais = E.respondidas.pais ? paisElegido() : null;
+  var esDelFormulario = pais && PAISES_DEL_FORMULARIO_DE_LEGAL.indexOf(pais.codigo) !== -1;
+
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
     crear('h1', { texto: estado.T('Esta campaña la redacta Legal') }),
     crear('div', { clase: 'aviso' }, [
       crear('p', { texto: E.motivoDeLegal || estado.T('Tu campaña necesita revisión legal antes de publicarse.') }),
     ]),
     crear('p', { texto: estado.T('No es un problema ni una negativa: es un caso que necesita que un abogado lo mire. Llena el formulario y el equipo legal te responde.') }),
-    crear('div', { clase: 'fila-botones' }, [
+  ]);
+
+  if (pais && !esDelFormulario) {
+    // Ya sabemos el país, y ese formulario no es el suyo.
+    contenido.appendChild(crear('p', {
+      texto: estado.T('Esto lo tiene que revisar el equipo legal de {pais}. Escríbeles por los canales que ya usan hoy: este formulario es solo para Colombia y Costa Rica. En cuanto confirmemos el canal para tu país, te lo vamos a mostrar aquí directamente.')
+        .replace('{pais}', estado.nombreDePais(pais.nombre)),
+    }));
+  } else if (!pais) {
+    // Todavía no sabemos el país: el filtro general va antes de esa pregunta.
+    contenido.appendChild(crear('p', {
+      texto: estado.T('Si tu campaña es de Colombia o Costa Rica, usa el formulario de Legal. Si es de otro país, escríbele a tu equipo legal por los canales que ya usan hoy; estamos confirmando el canal para cada país.'),
+    }));
+  }
+
+  var ofrecerFormulario = pais ? esDelFormulario : true;
+  var botones = [];
+  if (ofrecerFormulario) {
+    botones.push(
       url
         ? crear('a', { clase: 'boton', href: url, target: '_blank', rel: 'noopener' }, [
-            document.createTextNode(estado.T('Ir al formulario de Legal')), RM.util.icono('abrir', 16),
+            document.createTextNode(estado.T(pais ? 'Ir al formulario de Legal' : 'Ir al formulario de Legal (Colombia y Costa Rica)')), RM.util.icono('abrir', 16),
           ])
-        : crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Falta configurar el enlace del formulario de Legal. Avísale a Juan.') }),
-      botonDeCambiarMiRespuesta(),
-      crear('button', {
-        clase: 'boton boton-secundario', type: 'button', texto: estado.T('Volver al inicio'),
-        onclick: function () { RM.app.ir('inicio'); },
-      }),
-    ]),
-  ]);
+        : crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Falta configurar el enlace del formulario de Legal. Avísale a Juan.') })
+    );
+  }
+  botones.push(botonDeCambiarMiRespuesta());
+  botones.push(crear('button', {
+    clase: 'boton boton-secundario', type: 'button', texto: estado.T('Volver al inicio'),
+    onclick: function () { RM.app.ir('inicio'); },
+  }));
+
+  contenido.appendChild(crear('div', { clase: 'fila-botones' }, botones));
   raiz.appendChild(contenido);
 }
 

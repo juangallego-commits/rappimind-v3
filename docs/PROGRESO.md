@@ -8,6 +8,7 @@
 | 3 | listo | `npm run demo` y abrir `demo/index.html` | Revisar las capturas y los textos |
 | 4 | pendiente | | Falta el despliegue versionado, que lo dispara Juan |
 | 9 · identidad | cerrado | `npm test` (681), `npm run contraste` y los dos recorridos | Mirar el titular y la píldora Publicado en pantalla, y decidir el correo, el lockup y los estados del historial |
+| 12 · Legal por país | cerrado | `npm test` (728) y los dos recorridos | Confirmar con cada equipo legal el formulario o canal real de su país |
 
 ## Bloque 0 · Repo, build y despliegue
 
@@ -2470,3 +2471,44 @@ aquí en adelante a todo monto impreso, en los nueve países.
   hoy solo existen en la fila de Colombia.
 - **Ningún país nuevo salió a piloto ni cambió de estado.** Los nueve estaban ya
   activos desde el 20 de septiembre.
+
+## 22 de septiembre · La pantalla de Legal ya distingue el país
+
+Juan reportó que "Ir al formulario de Legal" llevaba siempre al mismo
+formulario, el de Colombia, sin importar de qué país fuera el comercial. Se lo
+mostré armado en un mockup antes de tocar código, y lo confirmó tal cual.
+
+### Qué quedó
+
+`pantallaLegal()` (`src/client/js/60-flujo.js`) ahora mira si el país ya se
+respondió de verdad (`E.respondidas.pais`, no el valor por defecto) antes de
+decidir qué mostrar:
+
+- Colombia o Costa Rica (`PAISES_DEL_FORMULARIO_DE_LEGAL`): igual que antes, el
+  botón al formulario.
+- Cualquier otro país, ya confirmado: se quita el botón y sale un mensaje con el
+  nombre del país, pidiendo escribir a su equipo legal por los canales de
+  siempre.
+- País todavía sin confirmar (el "sí" vino del filtro general, que corre antes
+  de preguntar el país): un mensaje que cubre los dos casos, con el botón
+  etiquetado "(Colombia y Costa Rica)".
+
+Los tres textos nuevos quedaron traducidos al portugués en
+`src/core/textos_interfaz.js`, y la Ayuda (`src/core/ayuda.js`) suma una
+pregunta frecuente que explica el caso. El detalle técnico de por qué "país
+conocido" se mide como se mide está en `docs/DECISIONES.md`, punto 133, y lo
+que falta confirmar por país en `docs/PENDIENTES_LEGAL.md`.
+
+### Cómo probarlo
+
+1. `npm test` (728 pruebas, ninguna nueva: el cambio es de pantalla, no de
+   motor).
+2. `npm run demo` y los dos recorridos de la skill de flujo
+   (`recorrer-flujo.js` y `recorrer-en-portugues.js`), completos.
+3. Con la demo abierta, en la consola: `RM.estado.reiniciarFormulario(Object.assign(RM.app.valoresIniciales(), {pais: 'MX'}), {pais: true}); RM.estado.estado.motivoDeLegal = 'prueba'; RM.app.ir('legal')` para ver el mensaje de otro país sin el botón, y lo mismo con `pais: 'CO'` o sin fijar `pais` para ver los otros dos casos.
+
+### Qué necesita Juan
+
+Confirmar con cada equipo legal de país cuál es su formulario o canal real, para
+reemplazar el mensaje genérico por el enlace correcto de cada uno (queda anotado
+en `docs/PENDIENTES_LEGAL.md`).

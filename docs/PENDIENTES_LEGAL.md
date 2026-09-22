@@ -1111,3 +1111,20 @@ Corregido el 21 de septiembre de 2026. **Ningún texto guardado cambió**: no ha
 un solo caso dorado con un monto de millones redondos. Afecta de aquí en adelante
 a todo lo que imprima un monto: el mínimo de compra, el tope, el presupuesto y el
 valor del premio, en los nueve países.
+
+## El canal de Legal fuera de Colombia y Costa Rica (22 de septiembre)
+
+Juan notó que la pantalla de Legal mandaba a cualquier comercial, sin importar el
+país, al mismo formulario, que hoy solo sirve para Colombia (y para Costa Rica,
+que usa el mismo). Mientras se confirma el canal real de cada país, la pantalla
+ya distingue los dos casos: a Colombia y Costa Rica les sigue ofreciendo el
+formulario, y a los otros siete países (México, Perú, Argentina, Chile, Ecuador,
+Uruguay y Brasil) les dice que escriban a su equipo legal por los canales que ya
+usan hoy, sin ofrecer un enlace que no es el suyo. El detalle técnico de cómo
+quedó armado está en `docs/DECISIONES.md`, punto 133.
+
+**Lo que falta, y es de Juan:** confirmar, con cada equipo legal de país, cuál es
+el formulario o el canal real para escalar una campaña a Legal. Cuando se sepa,
+se agrega como un dato por país (como ya existe `ACCESOS_SQUARESPACE` para quién
+publica en Squarespace) y la pantalla deja de tratar a Colombia y Costa Rica
+distinto del resto.

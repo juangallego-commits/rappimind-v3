@@ -322,6 +322,10 @@ var PREGUNTAS_FRECUENTES = [
     respuesta: 'No, y por eso importa que los datos estén bien. El texto legal ya está aprobado por Legal: lo que tú aportas son los hechos. Si tu campaña necesita revisión, la herramienta te lo dice antes de empezar.',
   },
   {
+    pregunta: '¿Y si mi campaña va a Legal y no soy de Colombia ni de Costa Rica?',
+    respuesta: 'El formulario de esa pantalla es solo para Colombia y Costa Rica. Si tu campaña es de otro país, escríbele a tu equipo legal por los canales que ya usan hoy: todavía estamos confirmando el formulario o el canal para cada país.',
+  },
+  {
     pregunta: 'Ya publiqué y necesito cambiar las fechas. ¿Puedo?',
     respuesta: 'Si es para alargarla o subir el presupuesto, sí: en Mis campañas, botón Ampliar. Para acortarla o bajar algo, habla con Legal, porque afecta a quien ya participó.',
   },
