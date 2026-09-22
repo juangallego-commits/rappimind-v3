@@ -11,7 +11,8 @@ por abajo: lo último está al final. Si buscas qué falta, la tabla y
 | 2 | listo, falta verificar en Google | `npm test` (157 pruebas) | Correr `setup()` y completar las propiedades |
 | 3 | listo | `npm run demo` y abrir `demo/index.html` | Revisar las capturas y los textos |
 | 4 | pendiente | | Falta el despliegue versionado, que lo dispara Juan |
-| 11 · revisión legal global | listo, falta que Juan lo mande | `python3 scripts/hoja_feedback.py salida.xlsx` y abrir el archivo | Subir la hoja a Drive, pegar el enlace en el mensaje, poner las menciones y mandarlo por #legalglobal |
+| 11 · descuentos, cupones y concursos fuera de Colombia | cerrado | `npm test` | Nada para seguir: lo que falta lo revisa el abogado de cada país en `docs/PENDIENTES_LEGAL.md` |
+| 12 · revisión legal global | listo, falta que Juan lo mande | `python3 scripts/hoja_feedback.py salida.xlsx` y abrir el archivo | Subir la hoja a Drive, pegar el enlace en el mensaje, poner las menciones y mandarlo por #legalglobal |
 | 9 · identidad | cerrado | `npm test` (681), `npm run contraste` y los dos recorridos | Mirar el titular y la píldora Publicado en pantalla, y decidir el correo, el lockup y los estados del historial |
 
 ## Bloque 0 · Repo, build y despliegue
@@ -2388,7 +2389,97 @@ pares tienen que entrar a `PARES` en `scripts/contraste.js`, o se queda fuera de
 
 ---
 
-# Bloque 11 · La revisión legal con los nueve países
+# Bloque 11 · Descuentos, cupones y concursos fuera de Colombia
+
+**Qué pidió Juan**, el 21 de septiembre de 2026 y con estas palabras: habilitar
+para todos los países excepto Colombia los flujos para pedir T&C de descuentos,
+cupones y concursos; construir a partir de los modelos que ya existen; ajustar
+los placeholders para que entre la data de cada país y el wording de las
+preguntas (el ejemplo que puso: "el equivalente al NIT de Colombia en MX"); y no
+devolverle preguntas, porque los equipos locales revisan en las pruebas internas.
+
+## Qué quedó
+
+**Dos tipos de campaña nuevos, en español, en siete países.** Descuento y Cupón
+en México, Perú, Argentina, Chile, Ecuador, Uruguay y Costa Rica. Los dos son el
+mismo documento menos una cláusula: el Descuento se aplica solo en el precio, y
+el Cupón lo activa el usuario con un código o desde la sección "Cupones". El
+beneficio tiene cinco formas (porcentaje, monto fijo, envío gratis, tarifa de
+servicio gratis y las dos juntas) y **cada una trae su propia base de cálculo**,
+porque un documento que diga "el Beneficio no cubre el envío" en una campaña
+cuyo beneficio es el envío se contradice solo.
+
+**La Carrera de Compras, habilitada en los mismos siete países.** El modelo ya
+existía y solo le faltaba dejar de hablar como si el mundo fuera Colombia: el
+grado de parentesco de la cláusula de inhabilidades sale ahora de la fila del
+país, y el valor comercial del premio se pregunta en todos lados, con el impuesto
+que cada uno nombra (IVA, IGV, ICMS). Colombia imprime exactamente lo mismo que
+antes, letra por letra, y hay pruebas que lo comprueban.
+
+**Un Cupom para Brasil, en portugués.** `cupom_br` es la Promoção con dos viñetas
+más: la del código y la de que el cupom es personal. No copia las trece variantes
+de texto de la Promoção, las hereda (`VARIANTES_HEREDADAS`), para que corregir
+una corrija las dos.
+
+**Brasil no tiene concurso, y es a propósito.** La Ley 5.768 de 1971 pide
+autorización previa de la Secretaria de Prêmios e Apostas para un concurso con
+premio. Generar solo ese T&C sería invitar a publicar una promoción sin
+certificado. La Ayuda lo explica y manda a Legal con tiempo, que es lo que hay
+que hacer ahí.
+
+**Las preguntas dejaron de hablar en colombiano.** "¿Cuál es el NIT de esa
+empresa?" decía NIT en los nueve países, con un ejemplo colombiano. Ahora la
+pregunta pide `{ID_FISCAL}`, `{DONDE_ID_FISCAL}` y `{EJEMPLO_ID_FISCAL}`, y los
+rellena la fila del país: un KAM de México lee "¿Cuál es el número de RFC de esa
+empresa? Escríbelo completo, tal como sale en la constancia de situación fiscal
+del SAT: PRU200101AB5". Lo mismo en la lista de tiendas del Multitienda y en la
+razón social. Funciona igual con la interfaz en portugués, porque la sustitución
+va al final, después de elegir idioma y variante.
+
+## Cómo probarlo
+
+1. `npm test`. Son 726 pruebas, 45 más que antes. Las nuevas están en
+   `pruebas/paises_habilitados.test.js` (qué ofrece cada país, y que ninguna
+   pregunta se quede con un marcador crudo en ninguno de los nueve) y
+   `pruebas/descuento_y_cupon.test.js` (lo que cambia al cambiar la forma del
+   beneficio, el código del cupón y el nombre de la campaña).
+2. `npm run previsualizar DC01` para ver el documento de un Descuento mexicano.
+   También `DC02`, `CU01`, `CU02`, `CC06` y `BR05`, que son los otros cinco casos
+   dorados nuevos. `CU03` y `DC03` son los dos que deben fallar.
+3. `npm run demo` y abrir `demo/index.html`. México → Descuento es el camino
+   corto: veinte preguntas y el documento llenándose al lado.
+4. Los dos recorridos de la skill de flujo pasan enteros, el de español y el de
+   portugués.
+
+## Qué necesita Juan, y qué necesitan los equipos de país
+
+**De Juan, nada para seguir.** Lo que hay que revisar está en
+`docs/PENDIENTES_LEGAL.md`, en la sección nueva del final, escrito para que lo
+lea el abogado de cada país y no él: qué frases son texto nuevo y no vienen de un
+documento aprobado, qué cuatro datos por país se escribieron por analogía (el
+parentesco es el que más conviene mirar) y las cinco cosas que cada país tiene
+que decidir, entre ellas si su concurso necesita algún trámite y si el envío y la
+tarifa de servicio se pueden regalar como beneficio de una tienda.
+
+**Una corrección que ya se aplicó y conviene saber:** `montoConMoneda()` escribía
+"tres millones pesos" en vez de "tres millones de pesos". Era un defecto viejo
+que solo se veía con millones redondos, y ningún caso dorado tenía uno. Afecta de
+aquí en adelante a todo monto impreso, en los nueve países.
+
+## Lo que no entró, y por qué
+
+- **Colombia no se tocó.** Juan dijo "excepto Colombia" y la fila de Colombia
+  está igual: allí el Descuento y el Cupón siguen sin existir, y los T&C
+  generales publicados siguen siendo el camino.
+- **El Cashback Multitienda, el cashback por ETA y Rappi Travel siguen siendo
+  solo de Colombia.** No estaban en el encargo, y los tres dependen de datos que
+  hoy solo existen en la fila de Colombia.
+- **Ningún país nuevo salió a piloto ni cambió de estado.** Los nueve estaban ya
+  activos desde el 20 de septiembre.
+
+---
+
+# Bloque 12 · La revisión legal con los nueve países
 
 Es la apertura a los equipos legales de los nueve países, antes de que la
 herramienta la vea un comercial. Está preparado, falta que Juan lo mande.

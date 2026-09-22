@@ -152,6 +152,23 @@ function validarFormatos(entrada, esquema, idioma) {
     } else if (campo.tipo === 'texto' && campo.maximo !== undefined && String(valor).length > campo.maximo) {
       errores.push(error(campo.id, mensajeDe(campo.id, esquema.id, 'largo', idioma,
         campo.etiqueta + ' no puede pasar de ' + campo.maximo + ' caracteres.')));
+    } else if (campo.tipo === 'codigo') {
+      /*
+       * El codigo de un cupon va impreso tal cual y el usuario lo teclea.
+       *
+       * Se valida sobre lo que el comercial escribio, no sobre la version
+       * normalizada: si escribe "RAPPI 30" tiene que ver el error, porque en la
+       * aplicacion ese cupon no existe. Aceptarlo en silencio y publicar
+       * "RAPPI30" seria publicar un codigo que el comercial nunca aprobo.
+       */
+      var codigo = String(valor).trim();
+      if (campo.maximo !== undefined && codigo.length > campo.maximo) {
+        errores.push(error(campo.id, mensajeDe(campo.id, esquema.id, 'largo', idioma,
+          campo.etiqueta + ' no puede pasar de ' + campo.maximo + ' caracteres.')));
+      } else if (!/^[A-Za-z0-9-]+$/.test(codigo)) {
+        errores.push(error(campo.id, mensajeDe(campo.id, esquema.id, 'formato', idioma,
+          campo.etiqueta + ' solo puede llevar letras, números y guiones, sin espacios.')));
+      }
     }
   }
   return errores;
@@ -359,6 +376,26 @@ function validarCreditos(entrada, esquema, idioma) {
       errores.push(error('fechaFinRedencion', mensajeDe('fechaFinRedencion', tipo, 'orden', idioma,
         'La fecha límite de redención debe ser posterior al fin de la campaña.')));
     }
+  }
+  return errores;
+}
+
+/**
+ * Cruces del Descuento y del Cupon.
+ *
+ * El mismo riesgo del Cashback y por la misma razon: con un tope mayor que el
+ * presupuesto, el primer pedido se lleva la campana entera. Aqui el tope es
+ * opcional y el presupuesto solo existe cuando la campana termina por
+ * presupuesto, asi que el cruce solo se hace cuando estan los dos.
+ */
+function validarDescuento(entrada, tipo, idioma) {
+  var errores = [];
+  var tope = Number(entrada.tope);
+  var presupuesto = Number(entrada.presupuesto);
+
+  if (tope > 0 && presupuesto > 0 && tope > presupuesto) {
+    errores.push(error('tope', mensajeDe('tope', tipo, 'mayorQuePresupuesto', idioma,
+      'El tope por pedido no puede ser mayor que el presupuesto total.')));
   }
   return errores;
 }
@@ -943,6 +980,13 @@ function validarSolicitud(entrada, pais, contexto) {
     errores = errores.concat(validarCarrera(entrada, esquema.id, idioma));
     errores = errores.concat(validarProductos(entrada, esquema));
   }
+  if (esquema.esDeDescuento) {
+    errores = errores.concat(validarDescuento(entrada, esquema.id, idioma));
+    // La lista de productos con su EAN es la misma de la Carrera, y se revisa
+    // igual: sin esto un EAN repetido o con el digito de control malo se
+    // publicaba dentro de la clausula de Productos Participantes.
+    errores = errores.concat(validarProductos(entrada, esquema));
+  }
   if (entrada.tipo === 'cashback_day') {
     errores = errores.concat(validarTiendas(entrada, pais, esquema));
   }
@@ -982,6 +1026,7 @@ if (typeof module !== 'undefined') {
     validarIdiomaDelPais: validarIdiomaDelPais,
     fechaFinDeLaCampana: fechaFinDeLaCampana,
     validarEta: validarEta,
+    validarDescuento: validarDescuento,
     validarCategoriaDeLaPieza: validarCategoriaDeLaPieza,
     validarProductos: validarProductos,
     validarTiendasEta: validarTiendasEta,

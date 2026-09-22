@@ -165,17 +165,19 @@ const TANDAS = [
     id: 'otros-tipos',
     titulo: 'Los otros tipos de campaña de Rappi',
     deQueVa:
-      'Cashback Multitienda, Carrera de Compras y 15 minutos o Cashback. Comparten casi todas ' +
-      'las preguntas con el Cashback, así que aquí van solo las suyas: las que nadie ha leído ' +
-      'con calma porque no salen en el recorrido de siempre.',
+      'Cashback Multitienda, Carrera de Compras, 15 minutos o Cashback, Descuento y Cupón. ' +
+      'Comparten casi todas las preguntas con el Cashback, así que aquí van solo las suyas: ' +
+      'las que nadie ha leído con calma porque no salen en el recorrido de siempre.',
     mirar: [
       'Cashback Multitienda: pegar una lista de tiendas desde una hoja de cálculo es lo más raro que hace el producto. ¿Se entiende qué se pega y qué pasa con lo pegado?',
       'Carrera de Compras: es un concurso con ganador y premio. El criterio del ganador y el desempate son lo que más reclamos genera. ¿Están dichos sin ambigüedad?',
       'El acuerdo de transferencia de datos: aparece solo cuando Rappi le pasa a la marca el nombre y el documento del ganador. ¿Entiende el comercial por qué se lo preguntan?',
       '15 minutos o Cashback: el beneficio depende de un tiempo de entrega. ¿Se entiende qué pasa si el pedido llega tarde?',
+      'Descuento y Cupón: son los dos tipos nuevos, habilitados fuera de Colombia. ¿Se entiende la diferencia entre los dos, y cuándo se usa cada uno?',
+      'La forma del beneficio del Descuento tiene cinco opciones, y dos de ellas no tocan el precio sino el envío y la tarifa de servicio. ¿Se distinguen?',
     ],
     pantallas: ['cashback-day', 'carrera-productos', 'eta-tiendas', 'carrera', 'acuerdo-datos'],
-    preguntasDe: ['cashback_day', 'carrera_compras', 'cashback_eta'],
+    preguntasDe: ['cashback_day', 'carrera_compras', 'cashback_eta', 'descuento', 'cupon'],
     salvoLasDe: ['cashback'],
   },
   {
@@ -207,11 +209,11 @@ const TANDAS = [
       'El portugués: ¿suena a portugués de Brasil o a español traducido?',
       'Si algún texto se quedó en español sin traducir.',
       'Si el aviso de que Brasil está en pruebas dice qué significa para quien lo lee.',
-      'Las preguntas propias de la Promoção Brasil.',
+      'Las preguntas propias de la Promoção Brasil y del Cupom, que es la misma con un código.',
       'El botón de idioma: ¿se entiende que cambia la interfaz y no el documento?',
     ],
     pantallas: ['pt-inicio', 'pt-filtro', 'pt-tipos'],
-    preguntasDe: ['promocao_br'],
+    preguntasDe: ['promocao_br', 'cupom_br'],
     salvoLasDe: ['cashback'],
     diccionarioPt: true,
   },

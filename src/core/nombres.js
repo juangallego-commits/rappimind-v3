@@ -75,13 +75,32 @@ function tramoDeBeneficio(entrada, esquema) {
   }
 
   // Brasil: el titulo dice el beneficio como lo nombran los documentos
-  // aprobados ("10% OFF", "Frete gratis"), no el nombre del tipo.
-  if (esquema.id === 'promocao_br') {
-    if (entrada.beneficioBr === 'desconto') return conPorcentaje ? porcentaje + '% OFF' : 'Desconto';
-    if (entrada.beneficioBr === 'frete_gratis') return 'Frete grátis';
-    if (entrada.beneficioBr === 'taxa_servico') return 'Taxa de serviço grátis';
-    if (entrada.beneficioBr === 'taxa_e_frete') return 'Taxa de serviço e frete grátis';
+  // aprobados ("10% OFF", "Frete gratis"), no el nombre del tipo. El Cupom lo
+  // dice ademas delante, porque el usuario tiene que hacer algo para recibirlo.
+  if (esquema.esDeBrasil) {
+    var conCupom = esquema.id === 'cupom_br' ? 'Cupom ' : '';
+    if (entrada.beneficioBr === 'desconto') return conPorcentaje ? conCupom + porcentaje + '% OFF' : conCupom + 'Desconto';
+    if (entrada.beneficioBr === 'frete_gratis') return conCupom + 'Frete grátis';
+    if (entrada.beneficioBr === 'taxa_servico') return conCupom + 'Taxa de serviço grátis';
+    if (entrada.beneficioBr === 'taxa_e_frete') return conCupom + 'Taxa de serviço e frete grátis';
     return '';
+  }
+
+  /*
+   * El Descuento y el Cupon.
+   *
+   * El titulo dice el porcentaje solo cuando la campana tiene uno, por la misma
+   * razon que el Cashback: sale del mismo dato que alimenta la clausula, asi que
+   * nunca puede prometer algo distinto. Con monto fijo no lo dice, porque un
+   * numero suelto al lado del nombre se lee como porcentaje.
+   */
+  if (esquema.esDeDescuento) {
+    var etiqueta = esquema.nombre;
+    if (entrada.formaDelDescuento === 'porcentaje') return conPorcentaje ? porcentaje + '% ' + etiqueta : etiqueta;
+    if (entrada.formaDelDescuento === 'envio') return etiqueta + ' de envío gratis';
+    if (entrada.formaDelDescuento === 'tarifa_servicio') return etiqueta + ' de tarifa de servicio gratis';
+    if (entrada.formaDelDescuento === 'envio_y_tarifa') return etiqueta + ' de envío y tarifa de servicio gratis';
+    return etiqueta;
   }
 
   if (esquema.id === 'cashback') {

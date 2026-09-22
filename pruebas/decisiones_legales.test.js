@@ -381,12 +381,17 @@ test('"Solo consumo en el local" no queda en ninguna parte', () => {
 
 // --- D3: el valor del premio en la Carrera de Compras ------------------------
 
-test('el premio físico declara su valor comercial, y solo en Colombia', () => {
+test('el premio físico declara su valor comercial, con el impuesto de cada país', () => {
   /*
    * Decisión 36 (ii) del encargo 01, confirmada por Juan el 20 de septiembre de
-   * 2026 (punto D3). Los dos textos dicen "pesos M/Cte." y "IVA incluido", que
-   * son de Colombia. Hoy la Carrera solo está habilitada allí, y cada país
-   * escribe su frase el día que se habilite.
+   * 2026 (punto D3). Los dos textos decían "pesos M/Cte." y "IVA incluido", que
+   * son de Colombia, y por eso la frase salía solo allí.
+   *
+   * El 21 de septiembre de 2026 la Carrera se habilitó en los ocho países que
+   * no son Colombia, y los dos datos pasaron a salir de la fila del país: la
+   * moneda ya venía de ahí y el impuesto entró como columna (IVA, IGV, ICMS).
+   * Colombia imprime exactamente lo mismo que antes, letra por letra, que es lo
+   * que comprueban las dos primeras comparaciones.
    */
   const { calcularDerivados } = require('../src/core/derivados.js');
   const { ESQUEMAS, camposVisibles } = require('../src/core/esquemas.js');
@@ -416,21 +421,44 @@ test('el premio físico declara su valor comercial, y solo en Colombia', () => {
     'tres millones seiscientos mil pesos M/Cte. ($3.600.000).'
   );
 
-  // Fuera de Colombia la cláusula queda como estaba, sin valor.
+  // Fuera de Colombia sale la misma frase, con la moneda y el impuesto de ese
+  // país. En México el monto lleva coma de miles y el impuesto es el IVA.
   assert.strictEqual(
     calcularDerivados(Object.assign({}, base, { pais: 'MX', numeroGanadores: 1 }), MX).LISTA_PREMIOS,
-    'El ganador recibirá el siguiente premio: Una bicicleta de montaña rodado 29.'
+    'El ganador recibirá el siguiente premio: Una bicicleta de montaña rodado 29, ' +
+    'con un valor comercial de un millón doscientos mil pesos MXN ($1,200,000), IVA incluido.'
+  );
+
+  // En Perú el impuesto se llama IGV, y el documento tiene que decirlo así.
+  const PE = paises.filter((p) => p.codigo === 'PE')[0];
+  assert.strictEqual(
+    calcularDerivados(Object.assign({}, base, { pais: 'PE', numeroGanadores: 1 }), PE).LISTA_PREMIOS,
+    'El ganador recibirá el siguiente premio: Una bicicleta de montaña rodado 29, ' +
+    'con un valor comercial de un millón doscientos mil soles (S/ 1,200,000), IGV incluido.'
+  );
+
+  // Un país sin impuesto escrito imprime la frase entera, sin coletilla y sin
+  // comas sueltas, en vez de anunciar un impuesto que nadie confirmó.
+  const sinImpuesto = Object.assign({}, MX, { impuesto_indirecto: '' });
+  assert.strictEqual(
+    calcularDerivados(Object.assign({}, base, { pais: 'MX', numeroGanadores: 1 }), sinImpuesto).LISTA_PREMIOS,
+    'El ganador recibirá el siguiente premio: Una bicicleta de montaña rodado 29, ' +
+    'con un valor comercial de un millón doscientos mil pesos MXN ($1,200,000).'
   );
 });
 
-test('la pregunta del valor sale solo en Colombia y solo con premio físico', () => {
+test('la pregunta del valor sale con premio físico, en todos los países', () => {
   const { camposVisibles } = require('../src/core/esquemas.js');
   const { PREGUNTAS } = require('../src/core/preguntas.js');
   const campos = (entrada) => camposVisibles('carrera_compras', entrada).map((c) => c.id);
 
   assert.ok(campos({ pais: 'CO', tipoPremio: 'fisico' }).indexOf('valorPremio') !== -1);
   assert.strictEqual(campos({ pais: 'CO', tipoPremio: 'creditos' }).indexOf('valorPremio'), -1);
-  assert.strictEqual(campos({ pais: 'MX', tipoPremio: 'fisico' }).indexOf('valorPremio'), -1);
+  // Desde el 21 de septiembre de 2026 también fuera de Colombia: la frase ya no
+  // tiene nada colombiano dentro y declarar el valor del premio es lo que piden
+  // las autoridades de consumo de los países donde el concurso se habilitó.
+  assert.ok(campos({ pais: 'MX', tipoPremio: 'fisico' }).indexOf('valorPremio') !== -1);
+  assert.strictEqual(campos({ pais: 'MX', tipoPremio: 'creditos' }).indexOf('valorPremio'), -1);
 
   // Donde se pregunta es obligatoria: la frase del premio la nombra, y sin
   // valor saldría a medias.

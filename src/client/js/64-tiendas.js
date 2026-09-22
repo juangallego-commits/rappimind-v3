@@ -30,11 +30,24 @@ function tiendaVacia() {
   return { marca: '', razonSocial: '', id: '', ciudades: '', nacional: false, presupuesto: null, tiendaTurbo: '' };
 }
 
+/*
+ * Los textos de las columnas de la lista, con el idioma y el pais ya puestos.
+ *
+ * estado.pregunta() y no preguntaDe(): la columna del identificador se llama
+ * "{ID_FISCAL}" hasta que alguien le pone encima la fila del pais, y llamar a
+ * preguntaDe() aqui dejaba el marcador crudo en la cabecera de la tabla. Es la
+ * misma trampa de la skill de flujo: un mecanismo que la interfaz no llama es un
+ * mecanismo que no existe.
+ */
+function textosDeLaTienda() {
+  return estado.pregunta('tiendas').camposPorTienda;
+}
+
 /** Revisa una fila y devuelve los problemas, campo por campo. */
 function revisarTienda(tienda, indice, todas) {
   var pais = RM.flujo.paisElegido();
   var problemas = {};
-  var textos = preguntaDe('tiendas').camposPorTienda;
+  var textos = textosDeLaTienda();
 
   if (!tienda.marca) problemas.marca = 'Falta ' + textos.marca.pregunta.toLowerCase() + '.';
   if (!tienda.razonSocial) problemas.razonSocial = 'Falta la razón social.';
@@ -43,7 +56,7 @@ function revisarTienda(tienda, indice, todas) {
   if (!tienda.tiendaTurbo) problemas.tiendaTurbo = 'Dinos en cuál de sus tiendas se gana el cashback.';
 
   if (!tienda.id) {
-    problemas.id = 'Falta el NIT de esta tienda.';
+    problemas.id = 'Falta ' + textos.id.pregunta.toLowerCase() + ' de esta tienda.';
   } else if (pais) {
     var revision = validarIdentificacion(pais.codigo, tienda.id);
     if (!revision.valido) {
@@ -53,7 +66,7 @@ function revisarTienda(tienda, indice, todas) {
         if (i === indice || !todas[i].id) continue;
         var otra = validarIdentificacion(pais.codigo, todas[i].id);
         if (otra.valido && otra.formateado === revision.formateado) {
-          problemas.id = preguntaDe('tiendas').errores.repetida;
+          problemas.id = estado.pregunta('tiendas').errores.repetida;
           break;
         }
       }
@@ -63,7 +76,7 @@ function revisarTienda(tienda, indice, todas) {
 }
 
 function filaDeTienda(tienda, indice, alCambiar) {
-  var textos = preguntaDe('tiendas').camposPorTienda;
+  var textos = textosDeLaTienda();
   var pais = RM.flujo.paisElegido();
   var problemas = revisarTienda(tienda, indice, tiendas());
 
@@ -239,7 +252,9 @@ function bloqueDePegar(alCambiar) {
 }
 
 function dibujar(alCambiar) {
-  var pregunta = preguntaDe('tiendas');
+  // estado.pregunta() por lo mismo que textosDeLaTienda(): la ayuda nombra el
+  // identificador tributario del pais, y con preguntaDe() salia "{ID_FISCAL}".
+  var pregunta = estado.pregunta('tiendas');
   var lista = tiendas();
 
   var bloque = crear('div', { clase: 'pregunta', 'data-campo': 'tiendas' }, [

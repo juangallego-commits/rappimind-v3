@@ -199,7 +199,17 @@ test('cada país solo ofrece los tipos que tiene habilitados', () => {
     co.map((t) => t.id).sort(),
     ['carrera_compras', 'cashback', 'cashback_day', 'cashback_eta', 'cashback_travel', 'descuento_travel']
   );
-  assert.deepStrictEqual(mx.map((t) => t.id), ['cashback']);
+  /*
+   * México, y con él los otros siete países que no son Colombia, tiene desde el
+   * 21 de septiembre de 2026 el Descuento, el Cupón y la Carrera de Compras. Lo
+   * que NO tiene es el Cashback Multitienda, el cashback por ETA ni Rappi
+   * Travel: los tres dependen de datos que solo existen en Colombia.
+   */
+  assert.deepStrictEqual(mx.map((t) => t.id).sort(),
+    ['carrera_compras', 'cashback', 'cupon', 'descuento']);
+
+  const br = tiposDelPais(paises.find((p) => p.codigo === 'BR'), catalogo);
+  assert.deepStrictEqual(br.map((t) => t.id).sort(), ['cupom_br', 'promocao_br']);
 });
 
 test('quien no está en el equipo, o está inactivo, es comercial', () => {

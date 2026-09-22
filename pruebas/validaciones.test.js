@@ -98,7 +98,14 @@ test('un país activo genera para cualquiera', () => {
 
 test('el tipo debe estar habilitado para el país', () => {
   assert.strictEqual(validarTipo('cashback', MX), null);
-  assert.ok(validarTipo('carrera_compras', MX), 'Carrera no está habilitada en México');
+  // La Carrera de Compras se habilitó fuera de Colombia el 21 de septiembre de
+  // 2026. El Cashback Multitienda no: sigue siendo solo de Colombia.
+  assert.strictEqual(validarTipo('carrera_compras', MX), null);
+  assert.strictEqual(validarTipo('descuento', MX), null);
+  assert.strictEqual(validarTipo('cupon', MX), null);
+  assert.ok(validarTipo('cashback_day', MX), 'el Multitienda no está habilitado en México');
+  // Y el Descuento en español no se ofrece en Brasil, que genera en portugués.
+  assert.ok(validarTipo('descuento', BR), 'el Descuento en español no va en Brasil');
   assert.ok(validarTipo('inventado', CO));
 });
 

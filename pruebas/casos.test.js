@@ -34,10 +34,10 @@ function salidaEsperada(caso) {
   return normalizarParaComparar(leerTexto(rutaDesdeRaiz('pruebas', 'salidas_esperadas', caso.id + '.txt')));
 }
 
-test('hay cuarenta casos, veintisiete que generan y trece que fallan', () => {
-  assert.strictEqual(casos.length, 40);
-  assert.strictEqual(generan.length, 27);
-  assert.strictEqual(fallan.length, 13);
+test('hay cuarenta y ocho casos, treinta y tres que generan y quince que fallan', () => {
+  assert.strictEqual(casos.length, 48);
+  assert.strictEqual(generan.length, 33);
+  assert.strictEqual(fallan.length, 15);
 
   /*
    * Un documento por cada país activo, con los mismos datos de campaña.
@@ -85,15 +85,33 @@ test('hay cuarenta casos, veintisiete que generan y trece que fallan', () => {
   const deEta = casos.filter((caso) => String(caso.id).indexOf('ETA') === 0);
   assert.strictEqual(deEta.length, 3);
 
-  // Los cuatro de Brasil, uno por forma del beneficio: el texto aprobado por
-  // Legal Brasil queda protegido carácter por carácter, como el de Colombia.
-  const deBrasil = casos.filter((caso) => String(caso.id).indexOf('BR') === 0);
+  // Los cuatro de la Promoção de Brasil, uno por forma del beneficio: el texto
+  // aprobado por Legal Brasil queda protegido carácter por carácter, como el de
+  // Colombia. El Cupom, que salió después, va con los tipos nuevos de abajo.
+  const deBrasil = casos.filter((caso) => caso.entrada.tipo === 'promocao_br');
   assert.strictEqual(deBrasil.length, 4);
 
   // Los catorce de Rappi Travel: siete que generan y siete que fallan.
   const deTravel = casos.filter((caso) => String(caso.id).indexOf('TV') === 0);
   assert.strictEqual(deTravel.length, 14);
   assert.strictEqual(deTravel.filter((c) => c.esperado.resultado === 'genera').length, 7);
+
+  /*
+   * Los tipos que se habilitaron fuera de Colombia el 21 de septiembre de 2026.
+   *
+   * Uno por país y por forma del beneficio, porque es ahí donde cambia la
+   * cláusula que dice sobre qué se calcula: DC01 es un porcentaje en México,
+   * DC02 el envío gratis en Argentina, CU01 un monto fijo con código en Chile y
+   * CU02 la tarifa de servicio tomada desde la sección Cupones en Perú. CC06 es
+   * la Carrera fuera de Colombia, con el impuesto y el parentesco del país, y
+   * BR05 el Cupom de Brasil, que va en portugués.
+   */
+  for (const id of ['DC01', 'DC02', 'CU01', 'CU02', 'CC06', 'BR05']) {
+    assert.strictEqual(casos.filter((caso) => caso.id === id).length, 1, 'falta el caso ' + id);
+  }
+  const formas = ['DC01', 'DC02', 'CU01', 'CU02']
+    .map((id) => casos.filter((caso) => caso.id === id)[0].entrada.formaDelDescuento);
+  assert.strictEqual(new Set(formas).size, 4, 'dos casos nuevos prueban la misma forma del beneficio');
 });
 
 for (const caso of generan) {
@@ -227,7 +245,7 @@ test('la cláusula de datos nombra los datos, la finalidad y la supresión', () 
  * vistazo los valores de todos los países, uno al lado del otro.
  *
  * La tabla ya no se versiona, porque es una salida de `npm run tabla-paises` y
- * lo generado dejó de guardarse (decisión 124). Antes esta prueba comparaba la
+ * lo generado dejó de guardarse (decisión 134). Antes esta prueba comparaba la
  * copia guardada contra una recién armada, para que no se quedara atrás; ahora
  * la arma ella misma y mide lo que de verdad importaba: que lo que sale del
  * script traiga a los ocho países con documento y las columnas que nombran a

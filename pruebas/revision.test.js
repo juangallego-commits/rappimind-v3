@@ -32,7 +32,7 @@ const PANTALLAS = path.join(CARPETA, 'pantallas.json');
  * rearman cuando se va a hacer una tanda. Las pruebas que leen el paquete se
  * saltan solas si no esta. Lo que sigue corriendo siempre es la tabla de
  * tandas, que es la parte que de verdad se puede romper al mover una pantalla.
- * Ver la decision 124.
+ * Ver la decision 134.
  */
 const SIN_PAQUETE = fs.existsSync(PANTALLAS)
   ? false

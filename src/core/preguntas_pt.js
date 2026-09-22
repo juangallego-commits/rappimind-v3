@@ -24,6 +24,15 @@
  * Anotado en docs/PENDIENTES_LEGAL.md.
  */
 
+/*
+ * VARIANTES_HEREDADAS vive en preguntas.js. En Apps Script y en el navegador ya
+ * es global (los archivos de src/core comparten ambito y preguntas.js va antes);
+ * en Node hay que pedirlo.
+ */
+if (typeof module !== 'undefined' && typeof require === 'function' && typeof VARIANTES_HEREDADAS === 'undefined') {
+  var VARIANTES_HEREDADAS = require('./preguntas.js').VARIANTES_HEREDADAS;
+}
+
 var PREGUNTAS_PT = {
   pais: {
     pregunta: 'Em qual país a campanha acontece?',
@@ -73,6 +82,17 @@ var PREGUNTAS_PT = {
         ejemplo: 'Petz',
         errores: { vacio: 'Escreva o parceiro em que a campanha vale.' },
       },
+    },
+  },
+
+  codigoCupon: {
+    pregunta: 'Qual é o código do cupom?',
+    ayuda: 'Como o usuário vai digitar, sem espaços. Por exemplo: RAPPI30.',
+    porQue: 'O código sai impresso duas vezes no documento. Se não coincidir letra por letra com o do aplicativo, o usuário reclama um cupom que não funciona.',
+    errores: {
+      vacio: 'Escreva o código do cupom, como o usuário vai digitar.',
+      formato: 'O código só pode ter letras, números e hífens, sem espaços.',
+      largo: 'O código não pode passar de 24 caracteres.',
     },
   },
 
@@ -262,7 +282,10 @@ function copiaPlana(objeto) {
  * llave, para que la variante solo tenga que escribir lo que cambia.
  */
 function traduccionPara(base, tipo) {
-  var variante = base.variantes && tipo ? base.variantes[tipo] : null;
+  // Igual que preguntaDe(): el Cupom de Brasil lee las variantes de la
+  // Promocao, que son las mismas trece ya traducidas y revisadas.
+  var heredadas = typeof VARIANTES_HEREDADAS !== 'undefined' ? VARIANTES_HEREDADAS : {};
+  var variante = base.variantes && tipo ? (base.variantes[tipo] || base.variantes[heredadas[tipo]] || null) : null;
   var mezclada = copiaPlana(base);
   delete mezclada.variantes;
   if (!variante) return mezclada;

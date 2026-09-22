@@ -25,9 +25,11 @@ var AVISO_AZAR = {
     'Cashback Multitienda: varias tiendas hacen cashback dentro de la misma jornada, cada una con su propio porcentaje, su tope y su presupuesto.',
     '15 minutos o Cashback: Rappi promete un tiempo de entrega en el botón Turbo y, si la orden llega tarde, devuelve en Créditos parte de lo que el usuario pagó.',
     'Cashback Travel y Descuento Travel: las dos formas de campaña de vuelos, hoteles, autos y paquetes.',
+    'Descuento: la tienda baja el precio, o regala el envío o la tarifa de servicio. Todos los que compran lo reciben.',
+    'Cupón: lo mismo, pero el usuario lo activa con un código o desde la sección “Cupones”. Quien lo activa lo recibe.',
     // No genera documento, pero sí se resuelve aquí: el comercial entra, pasa
     // el filtro y se lleva el enlace que va en la pieza (encargo 02).
-    'Descuentos, cupones, envío gratis y tarifa de servicio: ya tienen T&C publicados y no generas nada.',
+    'En Colombia, los descuentos, los cupones, el envío gratis y la tarifa de servicio ya tienen T&C publicados y no generas nada.',
   ],
   noValidas: [
     'Sorteo entre todos los participantes, aunque sea "entre quienes compren".',
@@ -324,8 +326,8 @@ var PREGUNTAS_FRECUENTES = [
     respuesta: 'Si es para alargarla o subir el presupuesto, sí: en Mis campañas, botón Ampliar. Para acortarla o bajar algo, habla con Legal, porque afecta a quien ya participó.',
   },
   {
-    pregunta: 'El NIT del aliado no pasa la validación.',
-    respuesta: 'Casi siempre es el dígito de verificación, el número después del guion. Pídele el RUT a tu contacto y cópialo de ahí. Si el RUT dice un número y la validación lo rechaza, avísanos en el canal de ayuda: es una falla de la herramienta.',
+    pregunta: 'La identificación del aliado no pasa la validación.',
+    respuesta: 'El número que te pedimos cambia según el país: NIT en Colombia, RFC en México, RUC en Perú y Ecuador, CUIT en Argentina, RUT en Chile y Uruguay, cédula jurídica en Costa Rica y CNPJ en Brasil. La pregunta te dice cuál es y dónde buscarlo. Casi siempre falla el dígito de verificación: pídele el documento tributario a tu contacto y cópialo de ahí. Si el documento dice un número y la validación lo rechaza, avísanos en el canal de ayuda: es una falla de la herramienta.',
   },
   {
     pregunta: '¿Puedo poner varias tiendas en una misma campaña?',
@@ -333,7 +335,7 @@ var PREGUNTAS_FRECUENTES = [
   },
   {
     pregunta: '¿Qué es un Maker y en qué cambia las cosas?',
-    respuesta: 'Es la marca que fabrica el producto, distinta de la tienda que lo vende. Si el Maker pone la plata, el Maker es el Organizador y va su razón social y su NIT, no los de la tienda.',
+    respuesta: 'Es la marca que fabrica el producto, distinta de la tienda que lo vende. Si el Maker pone la plata, el Maker es el Organizador y van su razón social y su identificación tributaria, no las de la tienda.',
   },
   {
     pregunta: '¿Por qué Rappi no puede ser el organizador?',
@@ -348,8 +350,16 @@ var PREGUNTAS_FRECUENTES = [
     respuesta: 'En una carpeta de Drive por país, nunca en una carpeta general. Tú quedas como lector del documento y el enlace te llega por correo.',
   },
   {
-    pregunta: 'Mi campaña es un descuento o un cupón y no la veo en la lista de tipos.',
-    respuesta: 'Buena noticia: para esas campañas no hay que generar nada. En Colombia, Legal ya publicó los T&C generales de los descuentos, los cupones, el envío gratis y la tarifa de servicio gratis. Debajo de la lista de tipos de campaña hay una opción que te lleva a ellos, y ahí copias el enlace que va en la pieza.',
+    pregunta: 'Mi campaña es un descuento o un cupón. ¿Qué hago?',
+    respuesta: 'Depende del país. En Colombia no hay que generar nada: Legal ya publicó los T&C generales de los descuentos, los cupones, el envío gratis y la tarifa de servicio gratis, y debajo de la lista de tipos de campaña hay una opción que te lleva a ellos para copiar el enlace que va en la pieza. En los demás países sí generas tu documento, con los tipos Descuento y Cupón.',
+  },
+  {
+    pregunta: '¿En qué se diferencian el Descuento y el Cupón?',
+    respuesta: 'En una sola cosa: quién hace algo. El Descuento se aplica solo, en el precio que el usuario ve antes de pagar. El Cupón hay que activarlo: el usuario escribe un código o lo toma en la sección “Cupones” de la app, y si no lo activa no recibe el beneficio. Si tu campaña tiene código, es Cupón.',
+  },
+  {
+    pregunta: 'Quiero hacer una Carrera de Compras en Brasil y no me aparece.',
+    respuesta: 'En Brasil un concurso con premio necesita autorización previa de la Secretaria de Prêmios e Apostas antes de lanzarse, así que esa campaña no se puede generar sola: escríbele a Legal con tiempo, porque el trámite no es inmediato. En los demás países sí la generas aquí, porque la Carrera se gana por lo que cada persona compró y no por suerte.',
   },
 ];
 

@@ -6,8 +6,8 @@ entra en el build. Lo que la aplicación usa de verdad vive en
 
 ## Ojo: esta carpeta se recortó el 22 de septiembre de 2026
 
-Pesaba 6,85 MB de 11,8 MB de todo el repositorio, y con eso el repositorio no se
-podía leer de una sola vez. **Se quedó lo que el código cita y lo que registra
+Pesaba 6,6 MB de los 12,11 MB de todo el repositorio, y con eso el repositorio
+no se podía leer de una sola vez. **Se quedó lo que el código cita y lo que registra
 una medición o una decisión. Se fue el material de entrega**, que ya está
 aplicado y que no lee ni el build ni una prueba:
 
@@ -20,11 +20,12 @@ aplicado y que no lee ni el build ni una prueba:
 | `README.md`, `README-identidad.md`, `PROMPT-identidad.md` | Los papeles del traspaso |
 
 **Nada de eso se perdió: está en el historial de git.** El último commit que lo
-contiene es `9154e24`, y cualquier archivo se recupera con
+contiene es `b07e0cb`, la punta de main antes del recorte, y cualquier archivo se
+recupera con
 
 ```
-git show 9154e24:"docs/diseno/pdf nuevo.pdf" > "pdf nuevo.pdf"
-git show 9154e24:"docs/diseno/RappiMind Estados.dc.html" > estados.html
+git show b07e0cb:"docs/diseno/pdf nuevo.pdf" > "pdf nuevo.pdf"
+git show b07e0cb:"docs/diseno/RappiMind Estados.dc.html" > estados.html
 ```
 
 Los documentos que quedaron siguen nombrando esos archivos, porque describen lo

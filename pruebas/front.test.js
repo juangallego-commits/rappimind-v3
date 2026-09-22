@@ -33,7 +33,7 @@ const MARCO = '.rm-pantalla';
  * repositorio no se pudiera leer de una sola vez. Lo escribe `npm run front`
  * cuando hace falta. Las pruebas que lo leen se saltan solas si no esta, y
  * dicen con que comando aparece, que es mejor que fallar como si el codigo
- * estuviera roto. Ver la decision 124.
+ * estuviera roto. Ver la decision 134.
  */
 const SIN_ARCHIVO = fs.existsSync(SALIDA)
   ? false

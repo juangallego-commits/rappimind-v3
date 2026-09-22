@@ -34,6 +34,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var esquemaDe = moduloEsquemas2.esquemaDe;
 
   var calcularDerivadosTravel = require('./derivados_travel.js').calcularDerivadosTravel;
+  var calcularDerivadosDescuento = require('./derivados_descuento.js').calcularDerivadosDescuento;
   var calcularDerivadosBr = require('./derivados_br.js').calcularDerivadosBr;
   var moduloEta = require('./derivados_eta.js');
   var calcularDerivadosEta = moduloEta.calcularDerivadosEta;
@@ -192,6 +193,10 @@ var VALORES_DEL_PAIS = {
   EDAD_MINIMA: 'edad_minima',
   TEXTO_PERSONA: 'texto_persona',
   TEXTO_HORA_LOCAL: 'texto_hora_local',
+  // El grado de parentesco de la clausula de inhabilidades. Sale de la fila
+  // porque el Codigo Civil de cada pais lo nombra distinto, y desde el 21 de
+  // septiembre de 2026 el concurso ya no corre solo en Colombia.
+  TEXTO_PARENTESCO: 'texto_parentesco',
 };
 
 // --- Ayudas ----------------------------------------------------------------
@@ -365,10 +370,13 @@ function textoProductos(entrada) {
  * La frase del premio fisico, con su valor comercial cuando el pais lo pide.
  *
  * Los dos textos con valor son los de la decision 36 (ii) del encargo 01, que
- * Juan confirmo el 20 de septiembre de 2026 (punto D3). Dicen "pesos M/Cte." y
- * "IVA incluido", que son de Colombia, asi que solo salen alli: la pregunta del
- * valor tampoco se hace en otro pais. En los demas la frase queda como estaba,
- * y cada pais escribe la suya el dia que la Carrera se habilite alla.
+ * Juan confirmo el 20 de septiembre de 2026 (punto D3). Decian "pesos M/Cte." y
+ * "IVA incluido", que son de Colombia, y por eso la frase salia solo alli.
+ *
+ * Desde el 21 de septiembre de 2026 sale en todos los paises: la moneda ya venia
+ * de la fila del pais y el impuesto tambien viene de ahi (IVA, IGV, ICMS). Un
+ * pais sin impuesto escrito imprime la frase sin esa coletilla, entera y sin
+ * comas sueltas, en vez de anunciar un impuesto que nadie confirmo.
  *
  * Con varios ganadores el total es el valor de un premio por el numero de
  * ganadores: es lo que el documento tiene que declarar, y calcularlo aqui evita
@@ -378,19 +386,21 @@ function fraseDelPremioFisico(entrada, pais, ganadores) {
   var quien = ganadores > 1 ? 'Cada ganador' : 'El ganador';
   var descripcion = entrada.descripcionPremio;
 
-  if (String(pais.codigo || '').toUpperCase() !== 'CO' || !tieneValor(entrada.valorPremio)) {
+  if (!tieneValor(entrada.valorPremio)) {
     return quien + ' recibirá el siguiente premio: ' + descripcion + '.';
   }
 
+  var impuesto = String(pais.impuesto_indirecto || '').trim();
+  var conImpuesto = impuesto ? ', ' + impuesto + ' incluido' : '';
   var unitario = montoConMoneda(entrada.valorPremio, pais);
   if (ganadores > 1) {
     var total = montoConMoneda(Number(entrada.valorPremio) * ganadores, pais);
     return 'Cada ganador recibirá el siguiente premio: ' + descripcion +
-      ', con un valor comercial unitario de ' + unitario + ', IVA incluido. ' +
+      ', con un valor comercial unitario de ' + unitario + conImpuesto + '. ' +
       'El valor comercial total de los premios de la Campaña es de ' + total + '.';
   }
   return 'El ganador recibirá el siguiente premio: ' + descripcion +
-    ', con un valor comercial de ' + unitario + ', IVA incluido.';
+    ', con un valor comercial de ' + unitario + conImpuesto + '.';
 }
 
 /** Derivados propios de la Carrera de Compras. */
@@ -571,6 +581,18 @@ function calcularDerivadosEnElIdiomaDelPais(entrada, pais) {
     var deEta = calcularDerivadosEta(entrada, pais);
     for (var llaveEta in deEta) {
       if (Object.prototype.hasOwnProperty.call(deEta, llaveEta)) valores[llaveEta] = deEta[llaveEta];
+    }
+  }
+
+  // El Descuento y el Cupon no dan Creditos: rebajan el precio o quitan un
+  // cargo del pedido. Mismo patron que Travel: encima, sin tocar nada del
+  // Cashback, que es el que Legal CO tiene aprobado.
+  if (esquemaActual && esquemaActual.esDeDescuento) {
+    var deDescuento = calcularDerivadosDescuento(entrada, pais);
+    for (var llaveDescuento in deDescuento) {
+      if (Object.prototype.hasOwnProperty.call(deDescuento, llaveDescuento)) {
+        valores[llaveDescuento] = deDescuento[llaveDescuento];
+      }
     }
   }
 
