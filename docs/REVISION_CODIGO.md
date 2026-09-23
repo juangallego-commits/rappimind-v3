@@ -11,6 +11,14 @@ Eso quiere decir que los defectos que queden no están donde las pruebas miran.
 Están en los cruces: lo que entra por el formulario, lo que viene del Sheet y lo
 que va de un módulo a otro.
 
+Se revisó a mano el motor, los derivados, las validaciones y el servidor, y se
+corrieron cinco auditorías mecánicas en paralelo: integridad de plantillas,
+integridad de catálogos, las cuatro fronteras de Apps Script, inventario de
+símbolos y un arnés exploratorio de 12.665 mutaciones sobre los casos base.
+
+Cada hallazgo de las auditorías se verificó antes de darlo por bueno. Varios no
+sobrevivieron, y están en la sección 2.
+
 **No se modificó ni una línea del proyecto.** Cada defecto de la sección 1 tiene
 un reproductor que corre con `node` y no toca el repositorio.
 
@@ -128,6 +136,50 @@ Alcance limitado: el CSV solo lo descarga alguien con rol `admin`, y todas las
 cuentas son `@rappi.com`. Pero cualquier comercial puede dejar el anzuelo y el
 administrador lo dispara al auditar. El arreglo es una línea en `comoCsv`.
 
+### 1.5 Un campo lleno de espacios pasa la revisión y el error habla en jerga interna
+
+**Dónde:** `src/core/validaciones.js:68` (`estaVacio`) y `src/core/generar.js:56`.
+
+`estaVacio()` trata como vacío el `''`, el `null` y la lista sin elementos, pero
+no una cadena de solo espacios. Así que si el comercial escribe `"   "` en un
+campo obligatorio de texto, la revisión lo da por respondido, el motor llega con
+el hueco, y el error que vuelve es este:
+
+```
+campo:   "documento"
+mensaje: "Falta un dato: el documento necesita "TEXTO_TERRITORIO" y quedó vacío."
+```
+
+Dos problemas encadenados. El mensaje nombra un placeholder interno que el
+comercial no ha visto nunca, y el error va asociado al campo `documento`, no al
+campo real, así que la interfaz no puede señalarle qué pregunta corregir. Se
+queda atascado sin saber dónde, que es justo lo que esta herramienta existe para
+evitar. De regalo sale un segundo error de "dos espacios seguidos".
+
+El sistema bloquea, que es lo correcto. Lo que falla es cómo lo cuenta.
+
+Salió de 2.117 mutaciones del arnés de pruebas exploratorias.
+
+### 1.6 Un número de un billón para arriba se publica como "un millón millones"
+
+**Dónde:** `src/core/numeros.js:95-122` (`numeroEnLetras`) y `src/core/esquemas.js`.
+
+`numeroEnLetras` funciona hasta 999.999.999.999, como dice su propio comentario,
+y a partir de ahí se rompe sin avisar. Ningún campo monetario declara un
+`maximo` en el esquema, así que nada lo detiene:
+
+```
+      999.999.999.999  ->  novecientos noventa y nueve mil novecientos ...   ok
+    1.000.000.000.000  ->  un millón millones                               roto
+    5.000.000.000.000  ->  cinco millones millones                          roto
+                1e+21  ->  mil millones millones millones (1e+21)           roto
+```
+
+El documento sale con `valido: true`. Un presupuesto de un billón de pesos es
+absurdo, así que la vía real es el error de tecleo: ceros de más al escribir o
+al pegar la cifra. La consecuencia es una frase sin sentido dentro de un T&C
+publicado, y la red de seguridad del motor tampoco la ve.
+
 ---
 
 ## 2. Lo que parecía defecto y no lo es
@@ -143,6 +195,19 @@ fragilidad, no como defecto: la corrección del servidor depende de que el
 navegador rellene un campo que el esquema no pregunta, y `validaciones.js:186`
 ya resolvió ese mismo problema con `fechaFinDeLaCampana()` sin propagarlo aquí.
 Reproductor, por si se quiere cerrar: `repro-3-ampliar-eta.js`.
+
+**La vista previa que revienta antes de elegir país.** El arnés exploratorio la
+marcó como lo más grave de todo, con 480 disparos: `calcularDerivados` no
+protege `pais`, así que `renderizarVistaPrevia` lanza un `TypeError` en cinco
+sitios distintos cuando el país es `null`. El crash es real y lo comprobé. Pero
+el único sitio que la llama, `src/client/js/60-flujo.js:169`, ya tiene la guarda
+`if (!pais || !modelo) return`, así que **no es alcanzable**. Lo mismo con una
+tienda `null` dentro de la lista (`derivados.js:484`, `validaciones.js:450`):
+las fichas de la interfaz no la producen. Queda como fragilidad, y con una
+contradicción que sí vale anotar: `src/core/motor.js` promete en su comentario
+que la vista previa "tiene que aguantar cualquier entrada parcial sin lanzar", y
+no lo hace. La protección vive en el navegador, no en la frontera. Un guard en
+`calcularDerivados` cerraría los cinco sitios a la vez y haría cierta la promesa.
 
 **Los "104 exportados muertos".** Falso positivo de la auditoría automática: la
 medida contaba referencias **fuera** del propio archivo, así que marcó como
@@ -265,8 +330,12 @@ Conviene decirlo, porque es la mitad del valor de una revisión.
    la frontera donde toca.
 2. **1.1**, los decimales. Una línea en la revisión numérica y una prueba por
    cada uno de los seis campos que hoy se contradicen.
-3. **1.4** y **1.3**, los dos del CSV, que van juntos y son de pocas líneas.
-4. **3.1**, que es una decisión tuya antes que código.
+3. **1.5**, los espacios en blanco, que es el único que deja al comercial
+   atascado sin saber qué corregir. Son dos arreglos pequeños: que `estaVacio`
+   recorte los espacios, y que el error del motor apunte al campo.
+4. **1.4** y **1.3**, los dos del CSV, que van juntos y son de pocas líneas.
+5. **1.6**, el techo de los números, que es un `maximo` en el esquema.
+6. **3.1**, que es una decisión tuya antes que código.
 
 ---
 
@@ -280,6 +349,12 @@ Fuera del repositorio, en la carpeta de trabajo de esta sesión:
    repro-2-hoja-vieja.js     el T&C publicado con "undefined" adentro
    repro-3-ampliar-eta.js    la campaña de un día que nunca termina
    repro-4-csv.js            la fecha del CSV que no coincide con la pantalla
+   repro-09-...js            el error que dice "TEXTO_TERRITORIO" al comercial
+   repro-10-...js            el número gigante que sale como "millones millones"
 ```
+
+Los diez reproductores del arnés exploratorio están en la misma carpeta, con el
+nombre `repro-01` a `repro-10`, y el detalle de sus 12.665 mutaciones en
+`informe-E-fuzz.md`.
 
 Cada uno corre solo con `node` y no escribe nada en el proyecto.
