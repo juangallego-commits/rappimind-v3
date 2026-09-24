@@ -358,6 +358,10 @@ var PREGUNTAS_FRECUENTES = [
     respuesta: 'Depende del país. En Colombia no hay que generar nada: Legal ya publicó los T&C generales de los descuentos, los cupones, el envío gratis y la tarifa de servicio gratis, y debajo de la lista de tipos de campaña hay una opción que te lleva a ellos para copiar el enlace que va en la pieza. En los demás países sí generas tu documento, con los tipos Descuento y Cupón.',
   },
   {
+    pregunta: 'Usé un T&C general. ¿Qué letra pequeña le pongo a la pieza?',
+    respuesta: 'La herramienta te la arma. En la pantalla del T&C que elegiste, debajo del enlace, dinos desde y hasta cuándo vale tu campaña y, si los tienes, las unidades disponibles y el máximo por usuario. Te damos la leyenda escrita y aprobada por Legal, lista para copiar, en los formatos de la pieza: letra pequeña, banner, exterior y push. Si a tu formato no le cabe, te decimos por cuánto se pasa para que lo veas antes de diseñar. En el envío gratis y en la tarifa de servicio gratis no te la damos, porque la leyenda aprobada dice que el descuento no incluye esas dos cosas y en esas campañas diría lo contrario de lo que prometes: ahí escríbele a Legal.',
+  },
+  {
     pregunta: '¿En qué se diferencian el Descuento y el Cupón?',
     respuesta: 'En una sola cosa: quién hace algo. El Descuento se aplica solo, en el precio que el usuario ve antes de pagar. El Cupón hay que activarlo: el usuario escribe un código o lo toma en la sección “Cupones” de la app, y si no lo activa no recibe el beneficio. Si tu campaña tiene código, es Cupón.',
   },

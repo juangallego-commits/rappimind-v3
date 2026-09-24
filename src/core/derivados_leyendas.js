@@ -263,6 +263,77 @@ function textoSegmentoCorto(entrada, pais) {
   return '';
 }
 
+/*
+ * Los tres datos de la letra pequena de un descuento con T&C general.
+ *
+ * Legal los dejo especificados en la tabla 7B.2 de
+ * docs/encargos/respuestas/03-leyendas.md, con su redaccion, y se quedaron sin
+ * escribir: por eso leyenda_descuento_co existia en el catalogo y no la podia
+ * armar nadie. Los textos son los del PLAYBOOK SSL y del PLAYBOOK LEGAL CO,
+ * copiados, no redactados aqui.
+ */
+
+/**
+ * ORACION: las existencias. Es obligatoria en la leyenda, no va entre
+ * corchetes, asi que siempre dice algo: el numero cuando el comercial lo sabe y
+ * "Hasta agotar existencias." cuando no.
+ *
+ * "10.000 unidades disponibles." / "1 unidad disponible." / "Hasta agotar
+ * existencias." Las tres salen del PLAYBOOK SSL, diapositiva 1, punto 5, y de
+ * las piezas reales 1 y 2.
+ */
+function textoExistencias(entrada, pais) {
+  if (!tieneValor(entrada.unidadesDisponibles)) return 'Hasta agotar existencias.';
+  var unidades = Math.trunc(Number(entrada.unidadesDisponibles));
+  if (!isFinite(unidades) || unidades <= 0) return 'Hasta agotar existencias.';
+  if (unidades === 1) return '1 unidad disponible.';
+  return formatearMiles(unidades, (pais && pais.separador_miles) || '.') + ' unidades disponibles.';
+}
+
+/**
+ * ORACION opcional: el maximo por usuario.
+ *
+ * "Maximo 1 unidad por usuario." / "Maximo 6 unidades por usuario."
+ * PLAYBOOK LEGAL CO, diapositiva 4 ("maximo 6 unidades por orden o usuario") y
+ * PIEZA REAL 2 ("1 und. por usuario"). La forma que se imprime es la que Juan
+ * cerro el 20 de septiembre de 2026 y que la pantalla ya le pedia al comercial
+ * que escribiera a mano.
+ */
+function textoUnidades(entrada) {
+  if (!tieneValor(entrada.maxPorUsuario)) return '';
+  var maximo = Math.trunc(Number(entrada.maxPorUsuario));
+  if (!isFinite(maximo) || maximo <= 0) return '';
+  if (maximo === 1) return 'Máximo 1 unidad por usuario.';
+  return 'Máximo ' + maximo + ' unidades por usuario.';
+}
+
+/**
+ * ORACION opcional: el rango, cuando el descuento no es uno solo.
+ *
+ * "Ofertas desde 10% hasta 40%." u "Ofertas entre $10.000 hasta $40.000.",
+ * segun si el rango va en porcentaje o en dinero. Las dos formas son las del
+ * PLAYBOOK SSL, diapositiva 1, copiadas tal cual, incluido el "entre ... hasta"
+ * del segundo, que suena raro y no se corrige aqui: el texto es de Legal.
+ * Anotado en docs/PENDIENTES_LEGAL.md por si lo quieren cambiar.
+ */
+function textoRango(entrada, pais) {
+  var desde = entrada.rangoDesde;
+  var hasta = entrada.rangoHasta;
+  if (!tieneValor(desde) || !tieneValor(hasta)) return '';
+
+  if (entrada.rangoEn === 'dinero') {
+    var montoDesde = cifraDeMonto(desde, pais);
+    var montoHasta = cifraDeMonto(hasta, pais);
+    if (!montoDesde || !montoHasta) return '';
+    return 'Ofertas entre ' + montoDesde + ' hasta ' + montoHasta + '.';
+  }
+
+  var porDesde = cifraDePorcentaje(desde);
+  var porHasta = cifraDePorcentaje(hasta);
+  if (!porDesde || !porHasta) return '';
+  return 'Ofertas desde ' + porDesde + ' hasta ' + porHasta + '.';
+}
+
 /** ORACION opcional: el medio de pago, solo cuando restringe. */
 function textoPagoCorto(entrada) {
   if (entrada.metodoPago === 'sin_efectivo') return 'Válido con cualquier medio de pago excepto efectivo.';
@@ -621,6 +692,11 @@ function calcularDerivadosDeLeyendas(entrada, pais, valoresDelDocumento, opcione
     TEXTO_LIMITE_CORTO: textoLimiteCorto(entrada),
     TEXTO_TERRITORIO_CORTO: textoTerritorioCorto(entrada),
     TEXTO_SEGMENTO_CORTO: textoSegmentoCorto(entrada, pais),
+    // El enlace del T&C que Legal ya publico, para el camino de los generales.
+    URL_TC_GENERAL: String(entrada.urlTycGeneral || '').trim(),
+    TEXTO_EXISTENCIAS: textoExistencias(entrada, pais),
+    TEXTO_UNIDADES: textoUnidades(entrada),
+    TEXTO_RANGO: textoRango(entrada, pais),
     TEXTO_PAGO_CORTO: textoPagoCorto(entrada),
     TEXTO_CONDICIONES_CORTO: textoCondicionesCorto(entrada),
     TEXTO_TIENDAS_SELECCIONADAS: textoTiendasSeleccionadas(entrada),

@@ -66,7 +66,7 @@ var TIPOS_DE_PIEZA = [
  * Mundial se escalan a Legal, y awareness y promociones son tipos de campana que
  * v3 no genera.
  */
-var FORMAS_DE_ELEGIR = ['pregunta', 'condicion_turbo', 'ninguna_parte_todavia', 'no_se_ofrece'];
+var FORMAS_DE_ELEGIR = ['pregunta', 'condicion_turbo', 'condicion_membresia_pro', 'ninguna_parte_todavia', 'no_se_ofrece'];
 
 /*
  * La categoria que no deja seguir, solo en Colombia.
@@ -306,13 +306,34 @@ function adelantoDe(cuerpo) {
  *
  * Turbo no se pregunta: sale de la condicion que el comercial ya respondio.
  */
-function complementosQueAplican(catalogo, codigoPais, categoriaId, esDeTurbo) {
+function complementosQueAplican(catalogo, codigoPais, categoriaId, esDeTurbo, esDeMembresiaPro) {
   var elegidos = [];
   var leyendas = comoLeyendas(catalogo);
 
   for (var t = 0; t < leyendas.length && esDeTurbo; t++) {
     if (leyendas[t].se_elige_en === 'condicion_turbo' && aplicaAlPais(leyendas[t], codigoPais)) {
       elegidos.push(leyendas[t]);
+      break;
+    }
+  }
+
+  /*
+   * Lo mismo con la membresia Pro, y con una diferencia que importa.
+   *
+   * leyenda_membresia_pro_co estaba en el catalogo sin linea se_elige_en, asi
+   * que ninguna rama la elegia nunca: escrita, aprobada y sin manera de llegar
+   * a una pieza.
+   *
+   * Va donde la campana es SOBRE la membresia, no donde la campana es solo
+   * para usuarios Pro. El texto explica que incluye la membresia, y eso le
+   * sirve a quien la va a comprar, no a quien ya la tiene. En un descuento
+   * exclusivo para Pro basta con la frase de "debes tenerla activa", que ya
+   * pone TEXTO_SEGMENTO_CORTO; poner las dos repetia el enlace de Pro dentro
+   * de la misma leyenda y la sacaba del largo del formato.
+   */
+  for (var p = 0; p < leyendas.length && esDeMembresiaPro; p++) {
+    if (leyendas[p].se_elige_en === 'condicion_membresia_pro' && aplicaAlPais(leyendas[p], codigoPais)) {
+      elegidos.push(leyendas[p]);
       break;
     }
   }
@@ -523,7 +544,7 @@ function textoDeComplementos(complementos, valores) {
  */
 function leyendasDeLaPieza(catalogo, codigoPais, tipo, valores, opciones) {
   var config = opciones || {};
-  var complementos = complementosQueAplican(catalogo, codigoPais, config.categoria, config.esDeTurbo);
+  var complementos = complementosQueAplican(catalogo, codigoPais, config.categoria, config.esDeTurbo, config.esDeMembresiaPro);
   var deComplementos = textoDeComplementos(complementos, valores);
 
   var conComplementos = {};
@@ -566,6 +587,7 @@ if (typeof module !== 'undefined') {
     leyendasDeLaCampana: leyendasDeLaCampana,
     leyendasDeLaPieza: leyendasDeLaPieza,
     armarLeyenda: armarLeyenda,
+    comoLeyendas: comoLeyendas,
     textoDeComplementos: textoDeComplementos,
     aplicarRecorte: aplicarRecorte,
     nivelesDeRecorte: nivelesDeRecorte,
