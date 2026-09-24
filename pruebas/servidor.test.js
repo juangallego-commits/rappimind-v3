@@ -568,6 +568,68 @@ test('una pestaña de Países de antes de Travel se pone al día al correr setup
   assert.deepStrictEqual(despues.modelos.slice(0, 3), ['cashback', 'carrera_compras', 'cashback_day']);
 });
 
+/*
+ * Una columna que la hoja no tiene todavía.
+ *
+ * El caso real, dos veces: Juan corrió setup cuando las columnas travel_* no
+ * existían, y otra vez con turbo_id_fiscal. encabezadosDeLaHoja() agrega la
+ * columna que falta, pero solo al ESCRIBIR: leerPaises() lee la hoja tal cual,
+ * así que la llave no llega y el valor cruza como undefined.
+ *
+ * Con separador_miles ausente el T&C salía diciendo "(1undefined000undefined000)",
+ * con generar() devolviendo válido y el documento ya creado en Drive y
+ * compartido. Ahora no se genera: la palabra la caza la red de seguridad del
+ * motor, que es donde tiene que estar.
+ */
+function hojaDePaisesSinLaColumna(columna) {
+  const hoja = hojaPorNombre('Paises');
+  const encabezados = PESTANAS.Paises.filter((c) => c !== columna);
+  const filas = [encabezados.slice()];
+  for (const semilla of PAISES_SEMILLA) {
+    const fila = paisComoFila(semilla);
+    filas.push(encabezados.map((c) => (fila[c] === undefined ? '' : fila[c])));
+  }
+  hoja.valores = filas;
+  return hoja;
+}
+
+test('una columna que le falta a la hoja no genera, y el error dice cuál es', () => {
+  conSetup();
+  hojaDePaisesSinLaColumna('separador_miles');
+
+  const resultado = generar(solicitudValida({ tienda: 'Jumbo' }));
+
+  assert.strictEqual(resultado.valido, false,
+    'se generó un documento con un dato del país que la hoja no tiene');
+  const mensaje = resultado.errores.map((e) => e.mensaje).join(' ');
+  assert.ok(mensaje.indexOf('separador_miles') !== -1,
+    'el error no nombra la columna que falta: ' + mensaje);
+  assert.ok(mensaje.indexOf('Paises') !== -1,
+    'el error no dice dónde arreglarlo: ' + mensaje);
+});
+
+test('lo mismo con las otras dos columnas de formato', () => {
+  for (const columna of ['moneda_simbolo', 'moneda_nombre']) {
+    conSetup();
+    hojaDePaisesSinLaColumna(columna);
+    const resultado = generar(solicitudValida({ tienda: 'Jumbo' }));
+    assert.strictEqual(resultado.valido, false, 'generó sin ' + columna);
+    assert.ok(resultado.errores.map((e) => e.mensaje).join(' ').indexOf(columna) !== -1,
+      'el error no nombra ' + columna);
+  }
+});
+
+test('y ningún documento se queda suelto en Drive cuando eso pasa', () => {
+  const mundo = conSetup();
+  hojaDePaisesSinLaColumna('separador_miles');
+
+  generar(solicitudValida({ tienda: 'Jumbo' }));
+
+  assert.strictEqual(Object.keys(mundo.documentos).length, 0,
+    'se creó el documento antes de descubrir que el texto estaba roto');
+  assert.strictEqual(leerSolicitudes().length, 0, 'quedó una fila de una campaña que no existe');
+});
+
 test('setup avisa lo que dejó sin tocar porque la hoja manda', () => {
   // El caso real: Brasil pasó a piloto en la semilla, Juan corrió setup, y
   // Brasil siguió sin aparecer porque la hoja decía "bloqueado" desde el primer

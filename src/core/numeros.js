@@ -170,7 +170,16 @@ function letrasYCifraFemenino(n) {
 /** Entero con el separador de miles del pais. */
 function formatearMiles(n, separador) {
   var entero = String(Math.trunc(Math.abs(Number(n))));
-  var conSeparador = entero.replace(/\B(?=(\d{3})+(?!\d))/g, separador);
+  /*
+   * Sin separador se agrupa igual, sin escribir nada entre los grupos.
+   *
+   * String.replace con undefined no falla: escribe la palabra "undefined" en
+   * el hueco. Con la columna separador_miles ausente en una pestana Paises
+   * vieja, el T&C salia con "(1undefined000undefined000)" adentro. El numero
+   * sin agrupar se lee peor, pero se lee; la palabra no.
+   */
+  var marca = separador === null || separador === undefined ? '' : String(separador);
+  var conSeparador = entero.replace(/\B(?=(\d{3})+(?!\d))/g, marca);
   return Number(n) < 0 ? '-' + conSeparador : conSeparador;
 }
 

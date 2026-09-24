@@ -167,3 +167,43 @@ test('un Cashback Day sin tiendas anuncia que faltan', () => {
   assert.ok(resultado.huecos.indexOf('TIENDA_MARCA') !== -1);
   assert.strictEqual(resultado.texto.indexOf('[[#TIENDAS]]'), -1, 'quedó el marcador del bloque repetible');
 });
+
+/*
+ * La palabra "undefined" dentro del documento.
+ *
+ * El caso real: la pestaña Paises se creó antes de que existiera una columna,
+ * así que esa llave no llega en el objeto del país y el valor cruza como
+ * undefined. formatearMiles lo concatenaba dentro de String.replace y el T&C
+ * salía diciendo "un millón (1undefined000undefined000) de Créditos", con el
+ * documento dado por bueno y ya creado en Drive.
+ *
+ * La red de seguridad miraba espacios y paréntesis, no las palabras que deja
+ * JavaScript cuando un dato no existe. Ahora las mira: es la frontera donde
+ * toca, porque cualquier dato ausente del Sheet acaba pasando por aquí.
+ */
+test('la red de seguridad caza lo que deja JavaScript cuando un dato no existe', () => {
+  const casos = [
+    ['un millón (1undefined000) de Créditos', 'la palabra undefined'],
+    ['vigente hasta null', 'la palabra null'],
+    ['un tope de NaN Créditos', 'la palabra NaN'],
+    ['el organizador [object Object] responde', 'un objeto sin convertir'],
+  ];
+  for (const [texto, nombre] of casos) {
+    assert.ok(senalesDeTextoRoto(texto).indexOf(nombre) !== -1,
+      'se coló en el documento: ' + texto);
+  }
+});
+
+test('las palabras corrientes que se parecen no disparan la señal', () => {
+  // "nulo" y "anular" son palabras normales de un texto legal, y NAN en
+  // mayúsculas puede ser parte de una razón social.
+  const limpios = [
+    'la Campaña se podrá anular por caso fortuito',
+    'el premio es nulo si la orden se cancela',
+    'COMERCIALIZADORA NAN S.A.S. responde por el Beneficio',
+  ];
+  for (const texto of limpios) {
+    assert.deepStrictEqual(senalesDeTextoRoto(texto), [],
+      'señal falsa en un texto correcto: ' + texto);
+  }
+});

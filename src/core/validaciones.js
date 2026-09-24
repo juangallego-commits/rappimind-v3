@@ -33,6 +33,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var preguntaDe = require('./preguntas.js').preguntaDe;
   var categoriaProhibida = require('./leyendas.js').categoriaProhibida;
   var preguntaEnIdioma = require('./preguntas_pt.js').preguntaEnIdioma;
+  var tieneValor = require('./texto.js').tieneValor;
 }
 
 function error(campo, mensaje) {
@@ -271,6 +272,40 @@ function tieneMarcaDeAnotacion(valor) {
  * Se revisan solo las columnas que de verdad salen impresas: las que un modelo
  * puede pedir con un placeholder.
  */
+/*
+ * Las columnas con que el pais escribe cualquier cifra.
+ *
+ * No son placeholders: nadie las pide con {{ }}, se usan como argumento dentro
+ * de formatearMiles y montoConMoneda. Por eso el motor no las ve, y un
+ * documento sin ellas salia dado por bueno con "50000" en vez de "$50.000" o
+ * con un monto que no dice de que moneda es.
+ *
+ * Pasa cuando la pestana Paises se creo antes de que la columna existiera:
+ * encabezadosDeLaHoja() la agrega al escribir, no al leer. Ya ocurrio dos veces,
+ * con las columnas travel_* y con turbo_id_fiscal.
+ */
+var COLUMNAS_DE_FORMATO = [
+  { llave: 'separador_miles', para: 'separar los miles de una cifra' },
+  { llave: 'moneda_simbolo', para: 'escribir el simbolo de la moneda' },
+  { llave: 'moneda_nombre', para: 'nombrar la moneda en letras' },
+];
+
+/** Si al pais le falta una columna de formato, no se genera. */
+function validarColumnasDelPais(pais) {
+  var errores = [];
+  if (!pais) return errores;
+
+  for (var i = 0; i < COLUMNAS_DE_FORMATO.length; i++) {
+    var columna = COLUMNAS_DE_FORMATO[i];
+    if (tieneValor(pais[columna.llave])) continue;
+    errores.push(error('pais',
+      'A la configuración de ' + (pais.nombre || pais.codigo) + ' le falta la columna "' +
+      columna.llave + '", que sirve para ' + columna.para +
+      '. Complétala en la pestaña Paises, o corre setup() para que la agregue.'));
+  }
+  return errores;
+}
+
 function validarAnotacionesDelPais(pais) {
   var errores = [];
   if (!pais) return errores;
@@ -960,6 +995,7 @@ function validarSolicitud(entrada, pais, contexto) {
   errores = errores.concat(validarCreditos(entrada, esquema, idioma));
   errores = errores.concat(validarNegocio(entrada, esquema));
 
+  errores = errores.concat(validarColumnasDelPais(pais));
   errores = errores.concat(validarAnotacionesDelPais(pais));
   errores = errores.concat(validarCategoriaDeLaPieza(entrada, pais, idioma));
 
@@ -1030,5 +1066,6 @@ if (typeof module !== 'undefined') {
     validarCategoriaDeLaPieza: validarCategoriaDeLaPieza,
     validarProductos: validarProductos,
     validarTiendasEta: validarTiendasEta,
+    validarColumnasDelPais: validarColumnasDelPais,
   };
 }
