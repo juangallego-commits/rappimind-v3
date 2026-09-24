@@ -2135,6 +2135,21 @@ function conDatosDelPais(pregunta, pais) {
     mezclada.errores = errores;
   }
 
+  // Los chips de "En que ciudades?" solo traian las seis de Colombia, en los
+  // nueve paises por igual: un KAM de Mexico veia botones para agregar Bogota
+  // o Medellin. Solo se reemplazan cuando la pregunta ya trae sugerencias
+  // (la variante del ETA las deja en null a proposito, porque es de una sola
+  // ciudad, y eso no se toca aqui) y el pais tiene su propia lista. El
+  // ejemplo del campo y la linea de ayuda citaban las mismas tres ciudades
+  // colombianas debajo de esos chips ya corregidos, lo que se veia peor que
+  // no tocarlos: se recomponen con las primeras tres del pais.
+  if (mezclada.sugerencias && pais.ciudades_sugeridas && pais.ciudades_sugeridas.length) {
+    mezclada.sugerencias = pais.ciudades_sugeridas;
+    var ejemploDeCiudades = pais.ciudades_sugeridas.slice(0, 3).join(', ');
+    mezclada.ejemplo = ejemploDeCiudades;
+    mezclada.ayuda = 'Sepáralas con comas. Por ejemplo: ' + ejemploDeCiudades + '.';
+  }
+
   var subListas = ['camposPorTienda', 'camposPorProducto'];
   for (var l = 0; l < subListas.length; l++) {
     var nombre = subListas[l];

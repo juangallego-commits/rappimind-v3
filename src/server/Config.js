@@ -55,6 +55,10 @@ var PESTANAS = {
     // vez por marca, y sin el Rappi no le puede pasar al Organizador los datos
     // del ganador de una Carrera. Chile y Costa Rica no tienen modelo.
     'url_acuerdo_datos',
+    // Los botones de ciudad de la pregunta "ciudades": antes solo existian los
+    // seis de Colombia y salian igual en los otros ocho paises. Ver la
+    // confirmacion "ciudades-sugeridas-2026-09-24" en data/paises.json.
+    'ciudades_sugeridas',
   ],
   Equipo: ['email', 'nombre', 'rol', 'pais', 'activo'],
   Solicitudes: [

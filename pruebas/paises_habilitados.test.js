@@ -29,6 +29,7 @@ const { ESQUEMAS } = require('../src/core/esquemas.js');
 const { tiposDelPais, paisDesdeFila } = require('../src/core/paises.js');
 const {
   PREGUNTAS, preguntaDe, conDatosDelPais, DATOS_DEL_PAIS_EN_LA_PREGUNTA, VARIANTES_HEREDADAS,
+  CIUDADES_SUGERIDAS,
 } = require('../src/core/preguntas.js');
 const { solicitud } = require('./dobles/solicitudes.js');
 
@@ -285,6 +286,50 @@ test('poner los datos de un país no deja al siguiente hablando de ese país', (
   const deTiendas = PREGUNTAS.tiendas.camposPorTienda.id.pregunta;
   conDatosDelPais(preguntaDe('tiendas', 'cashback_day'), porCodigo('MX'));
   assert.strictEqual(PREGUNTAS.tiendas.camposPorTienda.id.pregunta, deTiendas);
+});
+
+// --- Las ciudades sugeridas de "¿En qué ciudades?" ---------------------------
+
+test('todo país que ofrece cashback, carrera_compras, descuento o cupón trae su propia lista de ciudades sugeridas', () => {
+  // La misma trampa de siempre: un país nuevo (o uno que ya existe, si a
+  // alguien se le olvida) sin esta columna no revienta, simplemente se queda
+  // sin sugerencias propias. Esta prueba lo hace ruidoso.
+  const CON_CIUDADES = ['cashback', 'carrera_compras', 'descuento', 'cupon'];
+  for (const pais of paises) {
+    const ofrece = tiposDe(pais.codigo).some((tipo) => CON_CIUDADES.indexOf(tipo) !== -1);
+    if (!ofrece) continue;
+    assert.ok(Array.isArray(pais.ciudades_sugeridas) && pais.ciudades_sugeridas.length > 0,
+      pais.codigo + ' no tiene ciudades_sugeridas en data/paises.json');
+  }
+});
+
+test('las ciudades sugeridas de cada país no son las de Colombia', () => {
+  // El defecto que reportó Juan: los ocho países que no son Colombia veían los
+  // mismos seis botones (Bogotá, Medellín, Cali, Barranquilla, Bucaramanga,
+  // Cúcuta) sin importar dónde corriera la campaña. El ejemplo y la ayuda
+  // citaban las mismas tres ciudades colombianas justo debajo de esos chips.
+  for (const codigo of FUERA_DE_COLOMBIA) {
+    const pregunta = conDatosDelPais(preguntaDe('ciudades', 'descuento'), porCodigo(codigo));
+    assert.ok(Array.isArray(pregunta.sugerencias) && pregunta.sugerencias.length > 0,
+      codigo + ' se quedó sin chips de ciudad');
+    assert.deepStrictEqual(pregunta.sugerencias, porCodigo(codigo).ciudades_sugeridas,
+      codigo + ' no está mostrando su propia lista');
+    const textoMostrado = pregunta.sugerencias.join(' ') + ' ' + pregunta.ejemplo + ' ' + pregunta.ayuda;
+    for (const deColombia of CIUDADES_SUGERIDAS) {
+      assert.ok(textoMostrado.indexOf(deColombia) === -1,
+        codigo + ' todavía menciona ' + deColombia + ', que es de Colombia: ' + textoMostrado);
+    }
+  }
+});
+
+test('el cashback por ETA sigue sin chips de ciudad después de poner los datos del país', () => {
+  // La variante del ETA pone sugerencias: null a propósito (es de una sola
+  // ciudad; con chips se podían agregar dos). El reemplazo por país no puede
+  // pisar ese null, o vuelve el defecto real que describe preguntas.js.
+  for (const codigo of ['CO'].concat(FUERA_DE_COLOMBIA)) {
+    const pregunta = conDatosDelPais(preguntaDe('ciudades', 'cashback_eta'), porCodigo(codigo));
+    assert.ok(!pregunta.sugerencias, codigo + ': el ETA no debería ofrecer chips de ciudad');
+  }
 });
 
 // --- El Cupom de Brasil hereda las variantes de la Promoção -----------------

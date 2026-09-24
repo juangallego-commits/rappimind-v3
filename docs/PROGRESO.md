@@ -2560,3 +2560,67 @@ que falta confirmar por país en `docs/PENDIENTES_LEGAL.md`.
 Confirmar con cada equipo legal de país cuál es su formulario o canal real, para
 reemplazar el mensaje genérico por el enlace correcto de cada uno (queda anotado
 en `docs/PENDIENTES_LEGAL.md`).
+
+## 24 de septiembre · Las ciudades sugeridas ya varían por país
+
+Juan pidió revisar las ciudades que se ofrecen como opción en las campañas que
+lo requieren: sospechaba que solo estaban las de Colombia. Confirmé el
+diagnóstico con archivo y línea, y me pidió armar yo mismo la lista de las
+quince ciudades más importantes de cada uno de los siete países que no son
+Colombia.
+
+### Qué quedó
+
+- `data/paises.json`: columna nueva `ciudades_sugeridas` en Colombia (las
+  mismas seis de siempre, movidas desde `preguntas.js`) y en México, Perú,
+  Argentina, Chile, Ecuador, Uruguay y Costa Rica (quince cada uno). Brasil no
+  la necesita: su esquema no usa esta pregunta.
+- `src/core/preguntas.js`: `conDatosDelPais()` reemplaza los chips, el ejemplo
+  y la ayuda de la pregunta "¿En qué ciudades?" por los del país elegido, sin
+  tocar la variante del cashback por ETA (una sola ciudad, sin chips a
+  propósito).
+- `src/server/Config.js` y `src/core/paises.js`: la columna nueva queda
+  registrada para que llegue al Sheet y se lea de vuelta como lista, no como
+  texto suelto.
+- Tres pruebas nuevas en `pruebas/paises_habilitados.test.js`: que todo país
+  que ofrece Cashback, Carrera de Compras, Descuento o Cupón tenga su propia
+  lista de ciudades, que ninguna coincida con las de Colombia, y que el ETA se
+  quede sin chips en cualquier país después de poner los datos del país.
+- Verificado con capturas reales de la demostración (México, Costa Rica,
+  Uruguay y Colombia): los chips, el ejemplo y la ayuda muestran las ciudades
+  del país elegido, sin ningún rastro de Colombia fuera de Colombia.
+- El detalle técnico y de dónde salieron las listas queda en
+  `docs/DECISIONES.md`, punto 136.
+
+### Cómo probarlo
+
+```
+npm test
+```
+
+731 pruebas, 3 nuevas y ninguna rota.
+
+Para verlo en pantalla: `npm run demo`, abrir `demo/index.html` y en la
+consola del navegador:
+
+```js
+RM.estado.reiniciarFormulario(Object.assign(RM.app.valoresIniciales(), {
+  pais: 'MX', negocio: 'rappi', tipo: 'descuento', tienda: 'Prueba', alcance: 'Ciudades',
+}), {});
+RM.estado.estado.filtroRespondido = true;
+RM.estado.estado.respondidas = { tienda: true, alcance: true };
+RM.estado.estado.campoAbierto = 'ciudades';
+const pasos = RM.flujo.pasosDelTipo(RM.estado.entrada()).map((x) => x.id);
+RM.estado.estado.pasoActual = pasos.indexOf('campana');
+RM.app.ir('pasos');
+```
+
+Cambiando `pais` por cualquier otro código se ve la lista de ese país.
+
+### Qué necesito de Juan
+
+**Revisar las quince ciudades de cada país** en `data/paises.json`, columna
+`ciudades_sugeridas`. Las elegí por población e importancia económica, no
+contra el mapa real de operación de Rappi en cada país: si en alguno falta o
+sobra una ciudad para el negocio, se corrige directamente ahí, sin tocar
+código.
