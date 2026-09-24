@@ -1772,3 +1772,43 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      canal real (ver `docs/PENDIENTES_LEGAL.md`). Cuando eso se confirme, lo
      natural es que cada fila de `paises.json` traiga su propio enlace o canal,
      y esta pantalla deje de tener una lista fija de países.
+
+## 24 de septiembre · Las ciudades sugeridas ya varían por país
+
+136. **Los chips de "¿En qué ciudades?", su ejemplo y su ayuda solo traían las
+     seis ciudades de Colombia, en los nueve países por igual.** Juan lo notó
+     revisando el formulario: un comercial de México, Perú, Argentina, Chile,
+     Ecuador, Uruguay o Costa Rica veía los mismos botones de Bogotá, Medellín,
+     Cali, Barranquilla, Bucaramanga y Cúcuta, y el texto "Por ejemplo: Bogotá,
+     Medellín, Cali" tampoco cambiaba. La lista (`CIUDADES_SUGERIDAS` en
+     `src/core/preguntas.js`) salió en el Bloque 1 del análisis de 1.184
+     solicitudes reales, todas colombianas, y nadie la volvió a mirar cuando el
+     Bloque 11 encendió Descuento, Cupón y Carrera de Compras en los ocho
+     países que no son Colombia. Ningún documento salía mal (el campo es texto
+     libre y `TEXTO_TERRITORIO` ya arma la cláusula con cualquier ciudad que se
+     escriba), pero la ayuda que ofrece la pantalla sí estaba mal para ocho de
+     cada nueve países.
+
+     `data/paises.json` suma la columna `ciudades_sugeridas` (lista) en los
+     ocho países que usan `CAMPOS_TIENDA_Y_ORGANIZADOR`: Colombia se queda con
+     sus mismas seis ciudades de siempre, movidas ahí desde `preguntas.js`, y
+     los otros siete reciben quince cada uno. `conDatosDelPais()`
+     (`src/core/preguntas.js`) reemplaza `sugerencias`, `ejemplo` y `ayuda` de
+     la pregunta `ciudades` por los de la fila del país, pero solo cuando la
+     pregunta ya traía sugerencias: la variante del cashback por ETA las deja
+     en `null` a propósito (es de una sola ciudad; con chips se podían agregar
+     dos) y ese `null` no se toca. La columna entra también a `PESTANAS.Paises`
+     (`src/server/Config.js`) y a `COLUMNAS_DE_LISTA` (`src/core/paises.js`),
+     que es donde el Sheet la lee y la escribe de vuelta como lista y no como
+     texto suelto.
+
+     Las quince ciudades de cada país las eligió Claude a pedido explícito de
+     Juan el 24 de septiembre de 2026 ("busca las 15 ciudades más importantes
+     de cada país"), por población e importancia económica. No están
+     verificadas contra el mapa real de operación de Rappi en cada país: si
+     alguna no aplica, se corrige en `data/paises.json`, columna
+     `ciudades_sugeridas`, sin tocar código. Queda anotado en la confirmación
+     `ciudades-sugeridas-2026-09-24` del mismo archivo. Tres pruebas nuevas en
+     `pruebas/paises_habilitados.test.js` cuidan que ningún país se quede sin
+     su propia lista y que ninguno fuera de Colombia vuelva a mostrar una
+     ciudad colombiana.

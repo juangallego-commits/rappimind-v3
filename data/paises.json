@@ -55,7 +55,15 @@
       "url_tc_turbo": "https://legal.rappi.com.co/colombia/terminos-y-condiciones-del-boton-turbo/",
       "ruta_promos": "colombia",
       "url_tc_pro": "https://promos.rappi.com/colombia/prohome",
-      "url_acuerdo_datos": "https://drive.google.com/file/d/1qpV7hsIPT2HXidULMp6vjzO0M-HfMKEr/view"
+      "url_acuerdo_datos": "https://drive.google.com/file/d/1qpV7hsIPT2HXidULMp6vjzO0M-HfMKEr/view",
+      "ciudades_sugeridas": [
+        "Bogotá",
+        "Medellín",
+        "Cali",
+        "Barranquilla",
+        "Bucaramanga",
+        "Cúcuta"
+      ]
     },
     {
       "codigo": "MX",
@@ -97,7 +105,24 @@
       "url_tc_turbo": "",
       "ruta_promos": "",
       "url_tc_pro": "",
-      "url_acuerdo_datos": "https://docs.google.com/document/d/1hMNNU0lZh9LLSv-SWyAVVneaeoY0h6Q_o6jMxhP8J_c/edit"
+      "url_acuerdo_datos": "https://docs.google.com/document/d/1hMNNU0lZh9LLSv-SWyAVVneaeoY0h6Q_o6jMxhP8J_c/edit",
+      "ciudades_sugeridas": [
+        "Ciudad de México",
+        "Guadalajara",
+        "Monterrey",
+        "Puebla",
+        "Tijuana",
+        "León",
+        "Ciudad Juárez",
+        "Zapopan",
+        "Mérida",
+        "Querétaro",
+        "San Luis Potosí",
+        "Toluca",
+        "Aguascalientes",
+        "Cancún",
+        "Hermosillo"
+      ]
     },
     {
       "codigo": "PE",
@@ -139,7 +164,24 @@
       "url_tc_turbo": "",
       "ruta_promos": "",
       "url_tc_pro": "",
-      "url_acuerdo_datos": "https://drive.google.com/file/d/1M6F7SRilOTU19uGQS_bq6onGY6pJ_A2z/view"
+      "url_acuerdo_datos": "https://drive.google.com/file/d/1M6F7SRilOTU19uGQS_bq6onGY6pJ_A2z/view",
+      "ciudades_sugeridas": [
+        "Lima",
+        "Arequipa",
+        "Trujillo",
+        "Chiclayo",
+        "Piura",
+        "Iquitos",
+        "Cusco",
+        "Chimbote",
+        "Huancayo",
+        "Tacna",
+        "Ica",
+        "Juliaca",
+        "Sullana",
+        "Ayacucho",
+        "Cajamarca"
+      ]
     },
     {
       "codigo": "AR",
@@ -181,7 +223,24 @@
       "url_tc_turbo": "",
       "ruta_promos": "",
       "url_tc_pro": "",
-      "url_acuerdo_datos": "https://drive.google.com/file/d/1lgI4Fq7rCdbK-NUlYGmtNzY46pX7lbl5/view"
+      "url_acuerdo_datos": "https://drive.google.com/file/d/1lgI4Fq7rCdbK-NUlYGmtNzY46pX7lbl5/view",
+      "ciudades_sugeridas": [
+        "Buenos Aires",
+        "Córdoba",
+        "Rosario",
+        "Mendoza",
+        "La Plata",
+        "Mar del Plata",
+        "San Miguel de Tucumán",
+        "Salta",
+        "Santa Fe",
+        "San Juan",
+        "Resistencia",
+        "Neuquén",
+        "Corrientes",
+        "Bahía Blanca",
+        "San Salvador de Jujuy"
+      ]
     },
     {
       "codigo": "CL",
@@ -223,7 +282,24 @@
       "url_tc_turbo": "",
       "ruta_promos": "",
       "url_tc_pro": "",
-      "url_acuerdo_datos": ""
+      "url_acuerdo_datos": "",
+      "ciudades_sugeridas": [
+        "Santiago",
+        "Valparaíso",
+        "Concepción",
+        "La Serena",
+        "Antofagasta",
+        "Temuco",
+        "Rancagua",
+        "Talca",
+        "Arica",
+        "Chillán",
+        "Iquique",
+        "Puerto Montt",
+        "Valdivia",
+        "Copiapó",
+        "Osorno"
+      ]
     },
     {
       "codigo": "EC",
@@ -265,7 +341,24 @@
       "url_tc_turbo": "",
       "ruta_promos": "",
       "url_tc_pro": "",
-      "url_acuerdo_datos": "https://drive.google.com/file/d/19e-Zehkq6f5TNea1KjVh_OoiG6yYKpgY/view"
+      "url_acuerdo_datos": "https://drive.google.com/file/d/19e-Zehkq6f5TNea1KjVh_OoiG6yYKpgY/view",
+      "ciudades_sugeridas": [
+        "Quito",
+        "Guayaquil",
+        "Cuenca",
+        "Santo Domingo",
+        "Machala",
+        "Durán",
+        "Manta",
+        "Portoviejo",
+        "Loja",
+        "Ambato",
+        "Esmeraldas",
+        "Quevedo",
+        "Riobamba",
+        "Milagro",
+        "Ibarra"
+      ]
     },
     {
       "codigo": "UY",
@@ -307,7 +400,24 @@
       "url_tc_turbo": "",
       "ruta_promos": "",
       "url_tc_pro": "",
-      "url_acuerdo_datos": "https://drive.google.com/file/d/1k4HIOM92EZWKk_bPer7K-CojJeKc0Mzu/view"
+      "url_acuerdo_datos": "https://drive.google.com/file/d/1k4HIOM92EZWKk_bPer7K-CojJeKc0Mzu/view",
+      "ciudades_sugeridas": [
+        "Montevideo",
+        "Salto",
+        "Ciudad de la Costa",
+        "Paysandú",
+        "Las Piedras",
+        "Rivera",
+        "Maldonado",
+        "Tacuarembó",
+        "Melo",
+        "Mercedes",
+        "Artigas",
+        "Minas",
+        "San José de Mayo",
+        "Durazno",
+        "Florida"
+      ]
     },
     {
       "codigo": "CR",
@@ -349,7 +459,24 @@
       "url_tc_turbo": "",
       "ruta_promos": "",
       "url_tc_pro": "",
-      "url_acuerdo_datos": ""
+      "url_acuerdo_datos": "",
+      "ciudades_sugeridas": [
+        "San José",
+        "Alajuela",
+        "Cartago",
+        "Heredia",
+        "Liberia",
+        "Puntarenas",
+        "Limón",
+        "San Isidro de El General",
+        "Desamparados",
+        "Escazú",
+        "Nicoya",
+        "Turrialba",
+        "Grecia",
+        "Ciudad Quesada",
+        "Golfito"
+      ]
     },
     {
       "codigo": "BR",
@@ -510,6 +637,19 @@
         "BR.donde_id_fiscal",
         "BR.impuesto_indirecto",
         "BR.texto_parentesco"
+      ]
+    },
+    {
+      "id": "ciudades-sugeridas-2026-09-24",
+      "nota": "Los botones de ciudad sugerida solo traian las seis de Colombia en los ocho paises que no son Colombia, porque la lista salio del analisis de solicitudes reales (todas colombianas) y nadie la toco cuando el Bloque 11 encendio Descuento, Cupon y Carrera de Compras fuera de Colombia. Juan lo detecto revisando el formulario y pidio el 24 de septiembre de 2026 que Claude armara la lista: las quince ciudades mas importantes de cada uno de los siete paises, por poblacion e importancia economica. Colombia no se toco, sigue con las mismas seis de siempre. No estan verificadas contra el mapa real de operacion de Rappi en cada pais: si alguna ciudad de la lista no aplica, se corrige aqui mismo, en data/paises.json, columna ciudades_sugeridas.",
+      "campos": [
+        "MX.ciudades_sugeridas",
+        "PE.ciudades_sugeridas",
+        "AR.ciudades_sugeridas",
+        "CL.ciudades_sugeridas",
+        "EC.ciudades_sugeridas",
+        "UY.ciudades_sugeridas",
+        "CR.ciudades_sugeridas"
       ]
     }
   ]

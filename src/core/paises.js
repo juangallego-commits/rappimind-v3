@@ -24,7 +24,7 @@ var ESTADOS = ['activo', 'piloto', 'bloqueado'];
 var ROLES = ['comercial', 'pruebas', 'legal', 'admin'];
 
 /** Columnas que en el Sheet son una lista separada por comas. */
-var COLUMNAS_DE_LISTA = ['modelos', 'por_confirmar_en_pruebas'];
+var COLUMNAS_DE_LISTA = ['modelos', 'por_confirmar_en_pruebas', 'ciudades_sugeridas'];
 
 function comoLista(valor) {
   if (Object.prototype.toString.call(valor) === '[object Array]') return valor;
