@@ -115,6 +115,7 @@ const { nombreDelHueco } = require('../src/core/preguntas.js');
 const { leerJson: leer, rutaDesdeRaiz: raiz } = require('../scripts/lib/archivos');
 
 const modelosReales = cargar();
+const { ESQUEMAS } = require('../src/core/esquemas.js');
 const casosBase = leer(raiz('pruebas', 'casos_base.json')).casos;
 
 test('la vista previa marca un hueco por cada dato que falta', () => {
@@ -206,4 +207,35 @@ test('las palabras corrientes que se parecen no disparan la señal', () => {
     assert.deepStrictEqual(senalesDeTextoRoto(texto), [],
       'señal falsa en un texto correcto: ' + texto);
   }
+});
+
+/*
+ * La vista previa antes de elegir el país.
+ *
+ * El comentario de renderizarVistaPrevia promete que aguanta cualquier entrada
+ * parcial sin lanzar, porque es lo que pinta la columna del documento mientras
+ * el comercial va respondiendo. No era cierto: calcularDerivados no protegía el
+ * país y reventaba con un TypeError en cinco sitios distintos, según qué dato
+ * tocara primero cada tipo.
+ *
+ * Hoy la pantalla no llega ahí, porque refrescarDocumento() comprueba el país
+ * antes de llamar (src/client/js/60-flujo.js). Pero esa guarda vive en el
+ * navegador, y la promesa está escrita aquí: la protección va donde se promete.
+ */
+test('la vista previa aguanta una entrada sin país, como promete', () => {
+  for (const tipo of Object.keys(ESQUEMAS)) {
+    const esquema = ESQUEMAS[tipo];
+    for (const pais of [null, undefined, {}]) {
+      assert.doesNotThrow(
+        () => renderizarVistaPrevia(esquema.modelo, { tipo: tipo }, pais, modelosReales),
+        tipo + ' revienta con el país en ' + JSON.stringify(pais));
+    }
+  }
+});
+
+test('y una lista de tiendas con un hueco tampoco la tumba', () => {
+  assert.doesNotThrow(
+    () => renderizarVistaPrevia('cashback_day', { tipo: 'cashback_day', tiendas: [null] }, CO, modelosReales));
+  assert.doesNotThrow(
+    () => renderizar('cashback_day', { tipo: 'cashback_day', tiendas: [null] }, CO, modelosReales));
 });
