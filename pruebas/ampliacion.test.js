@@ -154,3 +154,38 @@ test('las respuestas para reusar salen sin la nota de la ampliación ni el conse
   assert.strictEqual(limpia.sufijoNombre, undefined);
   assert.strictEqual(limpia.presupuesto, 3000000, 'lo demás se conserva');
 });
+
+/*
+ * Un tipo que no pregunta la fecha de fin.
+ *
+ * El cashback por ETA es de un solo día: termina el día que empieza, y por eso
+ * su esquema no tiene fechaFin. momentoDeLaCampana leía entrada.fechaFin en
+ * crudo, así que para él esa campaña no terminaba nunca y ofrecía ampliarla
+ * años después de haber acabado. validaciones.js ya había resuelto lo mismo
+ * con fechaFinDeLaCampana(), y aquí no se había propagado.
+ *
+ * La pantalla rellena esa fecha al responder el día de inicio, así que por el
+ * camino normal no se llegaba. Por el de una solicitud guardada antes de que
+ * el navegador lo hiciera, sí.
+ */
+test('una campaña de un solo día termina ese día, aunque el tipo no pregunte el fin', () => {
+  const unDia = { tipo: 'cashback_eta', fechaInicio: '2026-10-15', horaInicio: '09:00', horaFin: '15:00' };
+
+  assert.strictEqual(momentoDeLaCampana(unDia, '2026-10-15', '12:00'), 'en_curso');
+  assert.strictEqual(momentoDeLaCampana(unDia, '2026-10-15', '16:00'), 'terminada');
+  assert.strictEqual(momentoDeLaCampana(unDia, '2026-10-16', '12:00'), 'terminada');
+  assert.strictEqual(momentoDeLaCampana(unDia, '2035-01-01', '12:00'), 'terminada');
+
+  const publicada = { link_publicado: 'https://rappi.com/x' };
+  assert.strictEqual(puedeAmpliar(publicada, unDia, '2027-06-30', '12:00').puede, false,
+    'ofreció ampliar una campaña de un día que terminó hace meses');
+});
+
+test('y un tipo que sí pregunta el fin sigue igual', () => {
+  const conFin = {
+    tipo: 'cashback', fechaInicio: '2026-10-15', horaInicio: '09:00',
+    fechaFin: '2026-10-20', horaFin: '23:59',
+  };
+  assert.strictEqual(momentoDeLaCampana(conFin, '2026-10-17', '12:00'), 'en_curso');
+  assert.strictEqual(momentoDeLaCampana(conFin, '2026-10-21', '12:00'), 'terminada');
+});

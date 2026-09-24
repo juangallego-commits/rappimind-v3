@@ -7,6 +7,12 @@ const assert = require('node:assert');
 
 const { rutaDesdeRaiz, leerJson } = require('../scripts/lib/archivos');
 const { validarSolicitud, validarPais, validarTipo } = require('../src/core/validaciones.js');
+// Las dos últimas pruebas miran el mensaje que le llega al comercial, así que
+// necesitan el documento entero y no solo la revisión.
+const { generarTexto } = require('../src/core/generar.js');
+const { cargarModelos } = require('../scripts/lib/modelos');
+const { solicitud } = require('./dobles/solicitudes.js');
+const modelos = cargarModelos();
 
 const { paises } = leerJson(rutaDesdeRaiz('data', 'paises.json'));
 const CO = paises.find((p) => p.codigo === 'CO');
@@ -402,4 +408,49 @@ test('una fila a medias deja el hueco entero, no una lista rota', () => {
 
   // Y si el beneficio es el mismo para todo, la cláusula no sale.
   assert.strictEqual(textoBeneficioPorProducto({ beneficioVariable: 'no', beneficiosPorProducto: [] }), '');
+});
+
+/*
+ * Un campo con solo espacios.
+ *
+ * estaVacio() daba por respondido un "   ", así que la revisión lo dejaba
+ * pasar, el motor llegaba con el hueco, y el error que volvía era este:
+ *
+ *   campo:   "documento"
+ *   mensaje: "Falta un dato: el documento necesita "TEXTO_TERRITORIO" y quedó vacío."
+ *
+ * Dos cosas mal a la vez. El mensaje nombra un marcador interno que el
+ * comercial no ha visto nunca, y el error va asociado al campo "documento", no
+ * al campo real, así que la pantalla no le puede señalar qué pregunta
+ * corregir: se queda atascado sin saber dónde, que es justo lo que esta
+ * herramienta existe para evitar.
+ */
+test('un campo con solo espacios se trata como vacío, y el error señala la pregunta', () => {
+  const pais = paises.find((p) => p.codigo === 'CO');
+
+  for (const campo of ['tienda', 'organizadorRazonSocial']) {
+    const entrada = solicitud('CO', 'cashback', { [campo]: '   ' });
+    const salida = generarTexto(entrada, pais, modelos, {
+      fechaReferencia: '2026-09-16',
+      usuarioEnEquipo: true,
+    });
+
+    assert.ok(!salida.valido, campo + ' con solo espacios pasó como respondido');
+    assert.ok(salida.errores.some((e) => e.campo === campo),
+      'el error no apunta a la pregunta que hay que corregir: ' + JSON.stringify(salida.errores));
+
+    // Y le habla al comercial, no le enseña los marcadores del modelo.
+    const mensajes = salida.errores.map((e) => e.mensaje).join(' | ');
+    assert.ok(!/\b[A-Z][A-Z_]{5,}\b/.test(mensajes),
+      'el error le enseña un marcador interno: ' + mensajes);
+  }
+});
+
+test('los espacios de sobra no cambian una respuesta que sí está', () => {
+  const pais = paises.find((p) => p.codigo === 'CO');
+  const salida = generarTexto(solicitud('CO', 'cashback', { ciudades: '  Bogotá  ' }), pais, modelos, {
+    fechaReferencia: '2026-09-16',
+    usuarioEnEquipo: true,
+  });
+  assert.ok(salida.valido, salida.errores.map((e) => e.mensaje).join(' | '));
 });

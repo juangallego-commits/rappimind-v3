@@ -1960,6 +1960,25 @@ var PREGUNTAS = {
  * Es lo que dice el espacio en blanco del documento: "falta el porcentaje".
  */
 var NOMBRE_DEL_HUECO = {
+  /*
+   * Datos que salen de la pestana Paises, no de una respuesta del comercial.
+   * Sin nombre propio, el aviso de un hueco los deletreaba como "url tc
+   * creditos", que no le dice nada a nadie.
+   */
+  ENTIDAD_LEGAL: 'la entidad legal del país',
+  AUTORIDAD_DATOS: 'la autoridad de protección de datos del país',
+  ENTIDAD_VIGILANCIA: 'la entidad de vigilancia del país',
+  LEY_APLICABLE: 'la ley aplicable del país',
+  JURISDICCION: 'la jurisdicción del país',
+  EDAD_MINIMA: 'la edad mínima del país',
+  POLITICA_PRIVACIDAD: 'el nombre de la política de privacidad del país',
+  URL_PRIVACIDAD: 'el enlace de la política de privacidad',
+  URL_TC_PLATAFORMA: 'el enlace de los términos de la plataforma',
+  URL_TC_CREDITOS: 'el enlace de los términos de los Créditos',
+  TEXTO_DERECHOS_DATOS: 'el texto de derechos de datos del país',
+  TEXTO_HORA_LOCAL: 'el texto de la hora local del país',
+  TEXTO_PERSONA: 'cómo nombra el país a la persona usuaria',
+
   TEXTO_TIENDA_TURBO: 'en cuál de sus tiendas se gana el cashback',
   TEXTO_EXCLUSION_SALUD: 'la exclusión de medicamentos y productos con nicotina',
   TIENDA_TURBO: 'en cuál de sus tiendas participa cada marca',

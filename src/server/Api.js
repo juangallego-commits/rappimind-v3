@@ -560,7 +560,11 @@ function adminSolicitudesCsv(busqueda) {
   for (var i = 0; i < encabezados.length; i++) {
     if (encabezados[i] !== 'datos_json') columnas.push(encabezados[i]);
   }
-  return comoCsv(buscarEnSolicitudes(leerSolicitudes(), busqueda), columnas);
+  // filasPlanas y no las filas crudas, igual que historial() y adminSolicitudes():
+  // Google Sheets convierte sola la celda "2026-09-17" en fecha, y el CSV la
+  // escribia como "Thu Sep 17 2026 00:00:00 GMT+0000" mientras la pantalla
+  // decia "2026-09-17". El mismo dato con dos caras segun donde se mirara.
+  return comoCsv(filasPlanas(buscarEnSolicitudes(leerSolicitudes(), busqueda)), columnas);
 }
 
 if (typeof module !== 'undefined') {

@@ -25,6 +25,8 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var comoNumeroFechaHora = moduloFechas.comoNumeroFechaHora;
   var comoNumeroFecha = moduloFechas.comoNumeroFecha;
   var formatearFecha = moduloFechas.formatearFecha;
+  var fechaFinDeLaCampana = require('./validaciones.js').fechaFinDeLaCampana;
+  var esquemaDe = require('./esquemas.js').esquemaDe;
 }
 
 /** Los cuatro numeros que se pueden ampliar, y como se llaman en pantalla. */
@@ -46,7 +48,14 @@ function momentoDeLaCampana(entrada, ahoraIso, ahoraHora) {
   if (ahora === null) return 'no_empezada';
 
   var inicio = comoNumeroFechaHora(datos.fechaInicio, datos.horaInicio || '00:00');
-  var fin = comoNumeroFechaHora(datos.fechaFin, datos.horaFin || '23:59');
+  /*
+   * fechaFinDeLaCampana y no datos.fechaFin: un tipo que no pregunta la fecha
+   * de fin termina el dia que empieza. El cashback por ETA es de un solo dia,
+   * asi que leyendo el dato en crudo esa campana no terminaba nunca y se
+   * ofrecia ampliarla anos despues. validaciones.js ya lo habia resuelto y
+   * aqui no se habia propagado.
+   */
+  var fin = comoNumeroFechaHora(fechaFinDeLaCampana(datos, esquemaDe(datos.tipo)), datos.horaFin || '23:59');
 
   if (inicio !== null && ahora < inicio) return 'no_empezada';
   if (fin !== null && ahora > fin) return 'terminada';

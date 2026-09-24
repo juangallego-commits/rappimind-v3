@@ -481,14 +481,17 @@ function derivadosCarrera(entrada, pais, valores) {
 
 /** Valores de una tienda del Cashback Day. */
 function valoresDeTienda(tienda, pais) {
-  var identificacion = validarIdentificacion(pais.codigo, tienda.id);
+  // Una ficha a medias deja huecos, no tumba la vista previa. Es el mismo
+  // criterio que ya usaban tiendasLegibles() y el resto de las listas.
+  var datos = tienda || {};
+  var identificacion = validarIdentificacion((pais || {}).codigo, datos.id);
   return {
-    TIENDA_MARCA: tienda.marca || '',
-    TIENDA_RAZON_SOCIAL: tienda.razonSocial || '',
+    TIENDA_MARCA: datos.marca || '',
+    TIENDA_RAZON_SOCIAL: datos.razonSocial || '',
     TIENDA_ID: identificacion.valido ? identificacion.formateado : '',
-    TIENDA_CIUDADES: tienda.nacional ? 'cobertura nacional' : listaY(separarPorComas(tienda.ciudades)),
-    TIENDA_PRESUPUESTO: tieneValor(tienda.presupuesto) ? cantidadCreditos(tienda.presupuesto, pais) : '',
-    TIENDA_TURBO: SUFIJO_TIENDA_TURBO[tiendaDelCashback(tienda)] || '',
+    TIENDA_CIUDADES: datos.nacional ? 'cobertura nacional' : listaY(separarPorComas(datos.ciudades)),
+    TIENDA_PRESUPUESTO: tieneValor(datos.presupuesto) ? cantidadCreditos(datos.presupuesto, pais || {}) : '',
+    TIENDA_TURBO: SUFIJO_TIENDA_TURBO[tiendaDelCashback(datos)] || '',
   };
 }
 
@@ -502,8 +505,23 @@ function valoresDeTienda(tienda, pais) {
  * cincuenta y cuatro llamadas a fechas y numeros que hay aqui dentro.
  */
 function calcularDerivados(entrada, pais) {
-  return conElIdiomaDe(pais, function () {
-    return calcularDerivadosEnElIdiomaDelPais(entrada, pais);
+  /*
+   * Sin pais se sigue, con los valores del pais vacios.
+   *
+   * La vista previa promete aguantar cualquier entrada parcial sin lanzar: es
+   * lo que pinta la columna del documento mientras el comercial va
+   * respondiendo, y ahi todavia falta casi todo. No era cierto: sin pais esto
+   * reventaba con un TypeError en cinco sitios distintos, segun que dato del
+   * pais tocara primero cada tipo.
+   *
+   * La pantalla hoy no llega, porque refrescarDocumento() comprueba el pais
+   * antes de llamar. Pero esa guarda vive en el navegador y la promesa esta
+   * escrita aqui, asi que la proteccion va donde se promete: un dato del pais
+   * que falta se convierte en un hueco, que es lo que el motor ya sabe contar.
+   */
+  var datos = pais || {};
+  return conElIdiomaDe(datos, function () {
+    return calcularDerivadosEnElIdiomaDelPais(entrada || {}, datos);
   });
 }
 

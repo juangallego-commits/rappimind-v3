@@ -153,3 +153,91 @@ test('todo número obligatorio de cada tipo declara su mínimo', () => {
   });
   assert.deepStrictEqual(sinMinimo, [], 'preguntas numéricas sin mínimo declarado:\n' + sinMinimo.join('\n'));
 });
+
+/*
+ * Los decimales.
+ *
+ * La revisión numérica miraba el mínimo y el máximo, nunca si el número era
+ * entero. El motor, en cambio, trunca con Math.trunc antes de escribirlo en
+ * letras, y el nombre de la campaña usa el valor crudo. Con un 50,5 el
+ * documento salía dado por bueno diciendo dos cosas distintas:
+ *
+ *   ## JUMBO MT · 50.5% CASHBACK · 17 SEP 2026
+ *   ...el cincuenta por ciento (50%) del valor de tu pedido...
+ *
+ * Y eso no es cosmético: el articulado dice que ante una discrepancia se aplica
+ * la condición más favorable para el usuario, así que el título obliga a pagar
+ * el 50,5% sobre una cláusula que concede el 50%. Es la misma razón por la que
+ * el nombre se arma solo desde las respuestas, en src/core/nombres.js.
+ *
+ * En los otros cuarenta y un campos numéricos el decimal simplemente
+ * desaparecía y el documento salía idéntico al del valor entero.
+ */
+test('un porcentaje con decimales no genera, en vez de titular una cosa y conceder otra', () => {
+  const salida = generar('CO', 'cashback', { porcentaje: 50.5 });
+  assert.ok(!salida.valido, 'generó un documento que se contradice a sí mismo');
+  assert.ok(mensajesDe(salida).includes('entero'), 'el mensaje que salió fue: ' + mensajesDe(salida));
+
+  const entero = generar('CO', 'cashback', { porcentaje: 50 });
+  assert.ok(entero.valido, mensajesDe(entero));
+  assert.ok(entero.texto.includes('cincuenta por ciento (50%)'));
+});
+
+test('ningún campo numérico de ningún tipo acepta un decimal', () => {
+  // Se recorren todos, porque el hueco era de la revisión genérica y valía
+  // para los diez tipos: 47 campos en total.
+  let revisados = 0;
+  for (const tipo of Object.keys(ESQUEMAS)) {
+    const esquema = ESQUEMAS[tipo];
+    const codigoPais = esquema.esDeBrasil ? 'BR' : 'CO';
+    if (!paises.find((p) => p.codigo === codigoPais)) continue;
+
+    for (const campo of esquema.campos || []) {
+      if (campo.tipo !== 'numero') continue;
+      const base = solicitud(codigoPais, tipo, {});
+      const original = Number(base[campo.id]);
+      if (!isFinite(original) || original === 0) continue;
+
+      const salida = generar(codigoPais, tipo, { [campo.id]: original + 0.5 });
+      assert.ok(!salida.valido,
+        tipo + '.' + campo.id + ' aceptó ' + (original + 0.5) + ' y lo truncó en silencio');
+      revisados += 1;
+    }
+  }
+  assert.ok(revisados > 30, 'la prueba no recorrió los campos que decía: solo ' + revisados);
+});
+
+test('tampoco los números de cada tienda del Multitienda', () => {
+  // Las tiendas se revisan en su propio bucle, así que el hueco estaba en dos
+  // sitios: el presupuesto de una tienda salía impreso sin su decimal.
+  const tiendas = tiendasDePrueba();
+  tiendas[0].presupuesto = Number(tiendas[0].presupuesto) + 0.5;
+
+  const salida = generar('CO', 'cashback_day', { tiendas: tiendas });
+  assert.ok(!salida.valido, 'el presupuesto de una tienda aceptó un decimal');
+  assert.ok(mensajesDe(salida).includes('enteros'), 'el mensaje que salió fue: ' + mensajesDe(salida));
+});
+
+/*
+ * El techo de los números escritos en letras.
+ *
+ * numeroEnLetras funciona hasta 999.999.999.999, como dice su comentario, y a
+ * partir de ahí repetía la palabra en vez de avisar: un billón salía como
+ * "un millón millones", y 1e21 como "mil millones millones millones (1e+21)",
+ * con el documento dado por bueno. Ningún campo monetario declara un máximo,
+ * así que nada lo detenía. La vía real es el tecleo con ceros de más.
+ */
+test('un número más grande de lo que el motor sabe escribir no genera', () => {
+  const salida = generar('CO', 'cashback', { presupuesto: 1000000000000 });
+  assert.ok(!salida.valido, 'generó un documento que dice "un millón millones"');
+  assert.ok(mensajesDe(salida).includes('grande'), 'el mensaje que salió fue: ' + mensajesDe(salida));
+
+  // El último número que sí sabe escribir sigue pasando.
+  const limite = generar('CO', 'cashback', { presupuesto: 999999999999, tope: 30000 });
+  assert.ok(limite.valido, mensajesDe(limite));
+});
+
+test('y en portugués tampoco, que tiene el mismo techo', () => {
+  const salida = generar('BR', 'promocao_br', { compraMinima: 5000000000000 });
+  assert.ok(!salida.valido, 'generó un documento que dice "cinco milhões milhões"');
+});

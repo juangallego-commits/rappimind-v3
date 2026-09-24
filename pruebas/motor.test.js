@@ -115,6 +115,7 @@ const { nombreDelHueco } = require('../src/core/preguntas.js');
 const { leerJson: leer, rutaDesdeRaiz: raiz } = require('../scripts/lib/archivos');
 
 const modelosReales = cargar();
+const { ESQUEMAS } = require('../src/core/esquemas.js');
 const casosBase = leer(raiz('pruebas', 'casos_base.json')).casos;
 
 test('la vista previa marca un hueco por cada dato que falta', () => {
@@ -166,4 +167,75 @@ test('un Cashback Day sin tiendas anuncia que faltan', () => {
   const resultado = renderizarVistaPrevia('cashback_day', { tipo: 'cashback_day', tiendas: [] }, CO, modelosReales);
   assert.ok(resultado.huecos.indexOf('TIENDA_MARCA') !== -1);
   assert.strictEqual(resultado.texto.indexOf('[[#TIENDAS]]'), -1, 'quedó el marcador del bloque repetible');
+});
+
+/*
+ * La palabra "undefined" dentro del documento.
+ *
+ * El caso real: la pestaña Paises se creó antes de que existiera una columna,
+ * así que esa llave no llega en el objeto del país y el valor cruza como
+ * undefined. formatearMiles lo concatenaba dentro de String.replace y el T&C
+ * salía diciendo "un millón (1undefined000undefined000) de Créditos", con el
+ * documento dado por bueno y ya creado en Drive.
+ *
+ * La red de seguridad miraba espacios y paréntesis, no las palabras que deja
+ * JavaScript cuando un dato no existe. Ahora las mira: es la frontera donde
+ * toca, porque cualquier dato ausente del Sheet acaba pasando por aquí.
+ */
+test('la red de seguridad caza lo que deja JavaScript cuando un dato no existe', () => {
+  const casos = [
+    ['un millón (1undefined000) de Créditos', 'la palabra undefined'],
+    ['vigente hasta null', 'la palabra null'],
+    ['un tope de NaN Créditos', 'la palabra NaN'],
+    ['el organizador [object Object] responde', 'un objeto sin convertir'],
+  ];
+  for (const [texto, nombre] of casos) {
+    assert.ok(senalesDeTextoRoto(texto).indexOf(nombre) !== -1,
+      'se coló en el documento: ' + texto);
+  }
+});
+
+test('las palabras corrientes que se parecen no disparan la señal', () => {
+  // "nulo" y "anular" son palabras normales de un texto legal, y NAN en
+  // mayúsculas puede ser parte de una razón social.
+  const limpios = [
+    'la Campaña se podrá anular por caso fortuito',
+    'el premio es nulo si la orden se cancela',
+    'COMERCIALIZADORA NAN S.A.S. responde por el Beneficio',
+  ];
+  for (const texto of limpios) {
+    assert.deepStrictEqual(senalesDeTextoRoto(texto), [],
+      'señal falsa en un texto correcto: ' + texto);
+  }
+});
+
+/*
+ * La vista previa antes de elegir el país.
+ *
+ * El comentario de renderizarVistaPrevia promete que aguanta cualquier entrada
+ * parcial sin lanzar, porque es lo que pinta la columna del documento mientras
+ * el comercial va respondiendo. No era cierto: calcularDerivados no protegía el
+ * país y reventaba con un TypeError en cinco sitios distintos, según qué dato
+ * tocara primero cada tipo.
+ *
+ * Hoy la pantalla no llega ahí, porque refrescarDocumento() comprueba el país
+ * antes de llamar (src/client/js/60-flujo.js). Pero esa guarda vive en el
+ * navegador, y la promesa está escrita aquí: la protección va donde se promete.
+ */
+test('la vista previa aguanta una entrada sin país, como promete', () => {
+  for (const tipo of Object.keys(ESQUEMAS)) {
+    const esquema = ESQUEMAS[tipo];
+    for (const pais of [null, undefined, {}]) {
+      assert.doesNotThrow(
+        () => renderizarVistaPrevia(esquema.modelo, { tipo: tipo }, pais, modelosReales),
+        tipo + ' revienta con el país en ' + JSON.stringify(pais));
+    }
+  }
+});
+
+test('y una lista de tiendas con un hueco tampoco la tumba', () => {
+  assert.doesNotThrow(
+    () => renderizarVistaPrevia('cashback_day', { tipo: 'cashback_day', tiendas: [null] }, CO, modelosReales));
+  assert.doesNotThrow(
+    () => renderizar('cashback_day', { tipo: 'cashback_day', tiendas: [null] }, CO, modelosReales));
 });

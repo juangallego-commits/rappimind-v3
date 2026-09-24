@@ -31,6 +31,20 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 /** Marcas que nunca pueden quedar en el documento final. */
 var MARCAS_SIN_RESOLVER = /\{\{|\}\}|\[\[|\]\]/;
 
+/* Las letras que pueden rodear una palabra en un texto de este repositorio. */
+var LETRAS = 'A-Za-zÁÉÍÓÚÜÑáéíóúüñÇçÃÕãõÂÊÔâêô';
+
+/**
+ * Una palabra que no lleva letras pegadas ni delante ni detras.
+ *
+ * Sirve para delatar un dato ausente sin confundirlo con una palabra del texto
+ * legal. Los digitos si valen como vecinos, porque el caso real es
+ * "1undefined000": ahi la palabra sale incrustada en medio de una cifra.
+ */
+function sinLetrasAlrededor(palabra) {
+  return new RegExp('(^|[^' + LETRAS + '])' + palabra + '([^' + LETRAS + ']|$)');
+}
+
 /**
  * Red de seguridad sobre el texto final (seccion 4.3, punto 5).
  * Cada patron delata una frase rota por un valor vacio.
@@ -42,6 +56,31 @@ var SENALES_DE_TEXTO_ROTO = [
   { nombre: 'un parentesis vacío', patron: /\(\s*\)/ },
   { nombre: 'dos espacios seguidos', patron: {} },
   { nombre: 'una coma seguida de un punto', patron: /, \./ },
+
+  /*
+   * Lo que deja JavaScript cuando un dato no existe.
+   *
+   * Paso de verdad: la pestana Paises se creo antes de que existiera la columna
+   * separador_miles, asi que esa llave no llega en el objeto del pais y cruza
+   * como undefined. formatearMiles la concatenaba dentro de String.replace y el
+   * T&C salia diciendo "un millon (1undefined000undefined000) de Creditos", con
+   * generar() devolviendo valido y el documento ya creado en Drive.
+   *
+   * Las demas senales miran la forma de la frase (espacios, parentesis) y por
+   * eso no lo veian. Esta mira las palabras, que es lo unico que delata un dato
+   * ausente. Va aqui, en la frontera, y no en cada sitio que formatea un
+   * numero: el que falte manana tambien pasa por aqui.
+   *
+   * No se usa \b: el caso real es "1undefined000", donde la palabra viene
+   * pegada a digitos y \b no marca limite entre dos caracteres de palabra. Se
+   * exige en cambio que no haya LETRAS alrededor, que es lo que distingue el
+   * dato ausente de una palabra corriente del texto legal: "anular" y "nulo"
+   * son normales, y NAN en mayusculas puede ser parte de una razon social.
+   */
+  { nombre: 'la palabra undefined', patron: sinLetrasAlrededor('undefined') },
+  { nombre: 'la palabra null', patron: sinLetrasAlrededor('null') },
+  { nombre: 'la palabra NaN', patron: sinLetrasAlrededor('NaN') },
+  { nombre: 'un objeto sin convertir', patron: /\[object \w+\]/ },
 ];
 // El patron de dos espacios se arma aparte para que no se pierda al leerlo.
 SENALES_DE_TEXTO_ROTO[4].patron = /  /;

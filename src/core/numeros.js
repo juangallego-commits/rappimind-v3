@@ -28,6 +28,9 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var letrasYCifraFemeninoPt = moduloPt.letrasYCifraFemeninoPt;
 }
 
+/* Hasta aqui llega la escritura en letras. Mas alla, ver numeroEnLetras. */
+var MAYOR_NUMERO_EN_LETRAS = 999999999999;
+
 var UNIDADES = [
   'cero', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve',
   'diez', 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete',
@@ -93,6 +96,17 @@ function apocopar(texto) {
  * Con apocope true devuelve la forma que va pegada a un sustantivo masculino.
  */
 function numeroEnLetras(n, apocope) {
+  /*
+   * Pasado el techo se devuelve vacio, y el motor lo reporta como un dato que
+   * falta. Antes se repetia la palabra: un billon salia "un millon millones" y
+   * 1e21 "mil millones millones millones (1e+21)", con el documento dado por
+   * bueno. Vale para los dos idiomas: el portugues decia "um milhao milhoes".
+   *
+   * Quien avisa de verdad es la revision numerica, que rechaza el numero con
+   * un mensaje que el comercial entiende. Esto es la red de abajo.
+   */
+  if (Math.trunc(Number(n)) > MAYOR_NUMERO_EN_LETRAS) return '';
+
   // En portugues no hay apocope: "um" va igual solo que ante sustantivo.
   if (idiomaActivo() === 'pt') return numeroEnLetrasPt(n);
 
@@ -170,7 +184,16 @@ function letrasYCifraFemenino(n) {
 /** Entero con el separador de miles del pais. */
 function formatearMiles(n, separador) {
   var entero = String(Math.trunc(Math.abs(Number(n))));
-  var conSeparador = entero.replace(/\B(?=(\d{3})+(?!\d))/g, separador);
+  /*
+   * Sin separador se agrupa igual, sin escribir nada entre los grupos.
+   *
+   * String.replace con undefined no falla: escribe la palabra "undefined" en
+   * el hueco. Con la columna separador_miles ausente en una pestana Paises
+   * vieja, el T&C salia con "(1undefined000undefined000)" adentro. El numero
+   * sin agrupar se lee peor, pero se lee; la palabra no.
+   */
+  var marca = separador === null || separador === undefined ? '' : String(separador);
+  var conSeparador = entero.replace(/\B(?=(\d{3})+(?!\d))/g, marca);
   return Number(n) < 0 ? '-' + conSeparador : conSeparador;
 }
 
@@ -247,5 +270,6 @@ if (typeof module !== 'undefined') {
     cantidadCreditos: cantidadCreditos,
     montoConMoneda: montoConMoneda,
     porcentajeEnLetras: porcentajeEnLetras,
+    MAYOR_NUMERO_EN_LETRAS: MAYOR_NUMERO_EN_LETRAS,
   };
 }
