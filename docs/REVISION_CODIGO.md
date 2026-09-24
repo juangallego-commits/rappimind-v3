@@ -26,6 +26,12 @@ un reproductor que corre con `node` y no toca el repositorio.
 
 ## 1. Defectos confirmados
 
+> **Estado, 24 de septiembre de 2026.** Los seis están arreglados, cada uno con
+> sus pruebas. Lo que sigue es el informe tal como se escribió, que explica qué
+> pasaba y por qué importaba; el detalle de cómo se cerró cada uno está en
+> `docs/PROGRESO.md`, bloque 24, y en los commits. Las dos preguntas de la
+> sección 3 siguen abiertas, porque son de negocio.
+
 ### 1.1 Un decimal entra al formulario y el documento se contradice a sí mismo
 
 **Dónde:** `src/core/validaciones.js:135-146` y `src/core/numeros.js`.
@@ -323,6 +329,9 @@ Conviene decirlo, porque es la mitad del valor de una revisión.
 ---
 
 ## 6. Por dónde empezaría
+
+*(Se siguió este orden. Los seis quedaron cerrados; las dos preguntas de
+negocio, abiertas.)*
 
 1. **1.2**, el `undefined` en el documento. Es el único que ya terminó en un Doc
    publicado, y el arreglo tiene dos mitades: defender `formatearMiles` y añadir
