@@ -31,6 +31,8 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
   var urlDelTcDeLaCampana = moduloDerivadosLeyendas.urlDelTcDeLaCampana;
   var tieneValor = require('./texto.js').tieneValor;
+  var nombreDelHueco = require('./preguntas.js').nombreDelHueco;
+  var listaY = require('./fechas.js').listaY;
 }
 
 /**
@@ -52,7 +54,45 @@ function generarTexto(entrada, pais, modelos, contexto) {
 
   if (render.errores.length > 0) {
     var errores = [];
+
+    /*
+     * Un hueco se cuenta con las palabras de la pantalla, no con el marcador.
+     *
+     * El motor no conoce las preguntas, asi que su mensaje nombra el marcador
+     * del modelo: "el documento necesita "TEXTO_TERRITORIO" y quedo vacio". El
+     * comercial no ha visto esa palabra nunca y no tiene donde corregirla.
+     * nombreDelHueco() ya traducia los 105 marcadores para la vista previa, y
+     * aqui no se estaba usando.
+     *
+     * Se junta en un solo mensaje porque los huecos suelen venir de la misma
+     * respuesta que falta, y una lista de seis errores no ayuda mas que uno.
+     */
+    if (render.placeholdersVacios.length > 0) {
+      var nombres = [];
+      for (var h = 0; h < render.placeholdersVacios.length; h++) {
+        var nombre = nombreDelHueco(render.placeholdersVacios[h]);
+        if (nombres.indexOf(nombre) === -1) nombres.push(nombre);
+      }
+      /*
+       * No se dice de quien es el dato que falta.
+       *
+       * Unos huecos vienen de una respuesta del comercial y otros de la pestana
+       * Paises, y distinguirlos desde aqui pedia una lista escrita a mano de
+       * que marcador es de que columna, justo lo que este repositorio evita.
+       * Asi que el aviso nombra el dato en palabras y deja las dos salidas
+       * abiertas, que es lo que el comercial necesita para no quedarse quieto.
+       */
+      errores.push({
+        campo: 'documento',
+        mensaje: 'Al documento le falta ' + conElIdiomaDe(pais, function () { return listaY(nombres); }) +
+          '. Si es una respuesta tuya, revísala; si no la encuentras en el formulario, ' +
+          'es un dato de la configuración del país y te lo completa Legal.',
+      });
+    }
+
     for (var i = 0; i < render.errores.length; i++) {
+      // Los mensajes de los huecos ya salieron arriba, con sus palabras.
+      if (render.errores[i].indexOf('Falta un dato:') === 0) continue;
       errores.push({ campo: 'documento', mensaje: render.errores[i] });
     }
     return { valido: false, errores: errores, texto: '' };

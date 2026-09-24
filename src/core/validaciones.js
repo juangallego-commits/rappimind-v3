@@ -33,6 +33,11 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var preguntaDe = require('./preguntas.js').preguntaDe;
   var categoriaProhibida = require('./leyendas.js').categoriaProhibida;
   var preguntaEnIdioma = require('./preguntas_pt.js').preguntaEnIdioma;
+  var tieneValor = require('./texto.js').tieneValor;
+  // El techo lo declara numeros.js, que es quien escribe los numeros en letras.
+  // Declararlo tambien aqui lo duplicaria: en Apps Script los archivos de
+  // src/core comparten un solo ambito y una var pisaria a la otra.
+  var MAYOR_NUMERO_EN_LETRAS = require('./numeros.js').MAYOR_NUMERO_EN_LETRAS;
 }
 
 function error(campo, mensaje) {
@@ -69,6 +74,16 @@ function estaVacio(valor) {
   if (valor === null || valor === undefined || valor === '') return true;
   if (typeof valor === 'boolean') return valor === false;
   if (Object.prototype.toString.call(valor) === '[object Array]') return valor.length === 0;
+  /*
+   * Una respuesta de solo espacios es una respuesta en blanco.
+   *
+   * Sin esto, un "   " se daba por respondido: la revision lo dejaba pasar, el
+   * motor llegaba con el hueco, y el comercial leia "Falta un dato: el
+   * documento necesita "TEXTO_TERRITORIO" y quedo vacio", asociado al campo
+   * "documento" y no a su pregunta. Ni sabia que era eso ni tenia donde
+   * corregirlo.
+   */
+  if (typeof valor === 'string') return valor.trim() === '';
   return false;
 }
 
@@ -136,6 +151,39 @@ function validarFormatos(entrada, esquema, idioma) {
       var numero = Number(valor);
       if (isNaN(numero)) {
         errores.push(error(campo.id, campo.etiqueta + ' debe ser un número.'));
+      } else if (numero !== Math.trunc(numero)) {
+        /*
+         * El motor trunca con Math.trunc antes de escribir un numero en letras,
+         * y el nombre de la campana usa el valor crudo. Con un 50,5 el T&C
+         * salia titulado "50.5% CASHBACK" sobre una clausula que decia
+         * "cincuenta por ciento (50%)".
+         *
+         * No es cosmetico: el articulado dice que ante una discrepancia se
+         * aplica la condicion mas favorable para el usuario, asi que ese titulo
+         * obliga a pagar el 50,5%. Es la misma razon por la que el nombre se
+         * arma solo desde las respuestas (src/core/nombres.js).
+         *
+         * Se rechaza en vez de redondear: redondear seria decidir por el
+         * comercial cuanto promete su campana. Si Legal decide algun dia que un
+         * porcentaje con decimales se puede escribir en letras, el texto lo
+         * escribe Legal y esta regla se afloja para ese campo.
+         */
+        errores.push(error(campo.id, mensajeDe(campo.id, esquema.id, 'decimal', idioma,
+          campo.etiqueta + ' va en números enteros, sin decimales.')));
+      } else if (numero > MAYOR_NUMERO_EN_LETRAS) {
+        /*
+         * numeroEnLetras llega hasta 999.999.999.999, y pasado ese punto
+         * repetia la palabra en vez de avisar: un billon salia impreso como
+         * "un millon millones", y 1e21 como "mil millones millones millones
+         * (1e+21)", con el documento dado por bueno. El portugues tiene el
+         * mismo techo ("um milhao milhoes").
+         *
+         * No es un maximo de negocio, que lo pondria Juan campo por campo:
+         * es hasta donde sabe escribir el motor. La via real es el tecleo con
+         * ceros de mas.
+         */
+        errores.push(error(campo.id, mensajeDe(campo.id, esquema.id, 'rango', idioma,
+          campo.etiqueta + ' es demasiado grande. Revisa si se te fueron ceros de más.')));
       } else if (campo.minimo !== undefined && numero < campo.minimo) {
         // Un minimo de uno es "mayor que cero": si la pregunta escribio ese
         // mensaje (errores.cero), se prefiere al de rango.
@@ -271,6 +319,40 @@ function tieneMarcaDeAnotacion(valor) {
  * Se revisan solo las columnas que de verdad salen impresas: las que un modelo
  * puede pedir con un placeholder.
  */
+/*
+ * Las columnas con que el pais escribe cualquier cifra.
+ *
+ * No son placeholders: nadie las pide con {{ }}, se usan como argumento dentro
+ * de formatearMiles y montoConMoneda. Por eso el motor no las ve, y un
+ * documento sin ellas salia dado por bueno con "50000" en vez de "$50.000" o
+ * con un monto que no dice de que moneda es.
+ *
+ * Pasa cuando la pestana Paises se creo antes de que la columna existiera:
+ * encabezadosDeLaHoja() la agrega al escribir, no al leer. Ya ocurrio dos veces,
+ * con las columnas travel_* y con turbo_id_fiscal.
+ */
+var COLUMNAS_DE_FORMATO = [
+  { llave: 'separador_miles', para: 'separar los miles de una cifra' },
+  { llave: 'moneda_simbolo', para: 'escribir el simbolo de la moneda' },
+  { llave: 'moneda_nombre', para: 'nombrar la moneda en letras' },
+];
+
+/** Si al pais le falta una columna de formato, no se genera. */
+function validarColumnasDelPais(pais) {
+  var errores = [];
+  if (!pais) return errores;
+
+  for (var i = 0; i < COLUMNAS_DE_FORMATO.length; i++) {
+    var columna = COLUMNAS_DE_FORMATO[i];
+    if (tieneValor(pais[columna.llave])) continue;
+    errores.push(error('pais',
+      'A la configuración de ' + (pais.nombre || pais.codigo) + ' le falta la columna "' +
+      columna.llave + '", que sirve para ' + columna.para +
+      '. Complétala en la pestaña Paises, o corre setup() para que la agregue.'));
+  }
+  return errores;
+}
+
 function validarAnotacionesDelPais(pais) {
   var errores = [];
   if (!pais) return errores;
@@ -462,6 +544,11 @@ function validarTiendas(entrada, pais, esquema) {
         var numeroDeTienda = Number(tienda[campo.id]);
         if (isNaN(numeroDeTienda)) {
           errores.push(error('tiendas', 'Tienda ' + fila + ': ' + campo.etiqueta.toLowerCase() + ' tiene que ser un número.'));
+        } else if (numeroDeTienda !== Math.trunc(numeroDeTienda)) {
+          // El mismo truncado silencioso que en los campos sueltos: el
+          // presupuesto de la tienda salia impreso sin su decimal.
+          errores.push(error('tiendas', 'Tienda ' + fila + ': ' + campo.etiqueta.toLowerCase() +
+            ' va en números enteros, sin decimales.'));
         } else if (campo.minimo !== undefined && numeroDeTienda < campo.minimo) {
           errores.push(error('tiendas', 'Tienda ' + fila + ': ' + campo.etiqueta.toLowerCase() +
             ' tiene que ser al menos ' + campo.minimo + '.'));
@@ -960,6 +1047,7 @@ function validarSolicitud(entrada, pais, contexto) {
   errores = errores.concat(validarCreditos(entrada, esquema, idioma));
   errores = errores.concat(validarNegocio(entrada, esquema));
 
+  errores = errores.concat(validarColumnasDelPais(pais));
   errores = errores.concat(validarAnotacionesDelPais(pais));
   errores = errores.concat(validarCategoriaDeLaPieza(entrada, pais, idioma));
 
@@ -1030,5 +1118,6 @@ if (typeof module !== 'undefined') {
     validarCategoriaDeLaPieza: validarCategoriaDeLaPieza,
     validarProductos: validarProductos,
     validarTiendasEta: validarTiendasEta,
+    validarColumnasDelPais: validarColumnasDelPais,
   };
 }

@@ -443,6 +443,53 @@ test('la exportación es un CSV sin la columna de datos crudos', () => {
   assert.ok(csv.indexOf('Jumbo MT') !== -1);
 });
 
+/*
+ * Las fechas del CSV.
+ *
+ * adminSolicitudesCsv armaba el archivo con las filas crudas del Sheet, sin
+ * pasar por filasPlanas(), que es por donde pasan todas las demás salidas de
+ * la misma tabla. Google Sheets convierte sola la celda "2026-09-17" en una
+ * fecha, así que el CSV la escribía como "Thu Sep 17 2026 00:00:00 GMT+0000"
+ * mientras la pantalla decía "2026-09-17": el mismo dato, dos caras.
+ */
+test('el CSV escribe las fechas igual que la pantalla', () => {
+  conSetup();
+  generar(solicitudValida({ tienda: 'Jumbo' }));
+
+  // Se reproduce la conversión de Sheets a mano, igual que la prueba del historial.
+  const hoja = hojaPorNombre('Solicitudes');
+  const columna = encabezadosDe('Solicitudes').indexOf('fecha_inicio');
+  hoja.valores[1][columna] = new Date(2026, 8, 17);
+
+  const enPantalla = adminSolicitudes('')[0].fecha_inicio;
+  assert.strictEqual(enPantalla, '2026-09-17');
+
+  const csv = adminSolicitudesCsv('');
+  assert.ok(csv.indexOf('2026-09-17') !== -1, 'el CSV no trae la fecha plana: ' + csv.split('\n')[1]);
+  assert.ok(csv.indexOf('GMT') === -1, 'el CSV trae la fecha cruda de JavaScript: ' + csv.split('\n')[1]);
+});
+
+/*
+ * Una fórmula dentro del CSV.
+ *
+ * El nombre de la tienda es texto libre y va al archivo tal cual. Un comercial
+ * que escriba "=HYPERLINK(...)" deja esa fórmula en el CSV, y Excel o Google
+ * Sheets la ejecutan al abrirlo: quien la dispara es el administrador que
+ * descarga el archivo para auditar.
+ */
+test('el CSV no deja que una respuesta se vuelva fórmula al abrirlo', () => {
+  conSetup();
+  generar(solicitudValida({ tienda: '=HYPERLINK("http://ejemplo.invalid","Haz clic")' }));
+
+  const csv = adminSolicitudesCsv('');
+  for (const celda of csv.split('\n').slice(1).join('\n').split(',')) {
+    const limpia = celda.replace(/^"/, '');
+    assert.ok(!/^[=+\-@\t\r]/.test(limpia) || /^-?\d/.test(limpia),
+      'una celda del CSV arranca como fórmula: ' + celda.slice(0, 60));
+  }
+  assert.ok(csv.indexOf('HYPERLINK') !== -1, 'se perdió el texto que el comercial escribió');
+});
+
 // --- registro --------------------------------------------------------------
 
 test('cada acción importante deja rastro en Registro', () => {
@@ -566,6 +613,68 @@ test('una pestaña de Países de antes de Travel se pone al día al correr setup
 
   // Y los tipos de siempre siguen ahí, en su orden.
   assert.deepStrictEqual(despues.modelos.slice(0, 3), ['cashback', 'carrera_compras', 'cashback_day']);
+});
+
+/*
+ * Una columna que la hoja no tiene todavía.
+ *
+ * El caso real, dos veces: Juan corrió setup cuando las columnas travel_* no
+ * existían, y otra vez con turbo_id_fiscal. encabezadosDeLaHoja() agrega la
+ * columna que falta, pero solo al ESCRIBIR: leerPaises() lee la hoja tal cual,
+ * así que la llave no llega y el valor cruza como undefined.
+ *
+ * Con separador_miles ausente el T&C salía diciendo "(1undefined000undefined000)",
+ * con generar() devolviendo válido y el documento ya creado en Drive y
+ * compartido. Ahora no se genera: la palabra la caza la red de seguridad del
+ * motor, que es donde tiene que estar.
+ */
+function hojaDePaisesSinLaColumna(columna) {
+  const hoja = hojaPorNombre('Paises');
+  const encabezados = PESTANAS.Paises.filter((c) => c !== columna);
+  const filas = [encabezados.slice()];
+  for (const semilla of PAISES_SEMILLA) {
+    const fila = paisComoFila(semilla);
+    filas.push(encabezados.map((c) => (fila[c] === undefined ? '' : fila[c])));
+  }
+  hoja.valores = filas;
+  return hoja;
+}
+
+test('una columna que le falta a la hoja no genera, y el error dice cuál es', () => {
+  conSetup();
+  hojaDePaisesSinLaColumna('separador_miles');
+
+  const resultado = generar(solicitudValida({ tienda: 'Jumbo' }));
+
+  assert.strictEqual(resultado.valido, false,
+    'se generó un documento con un dato del país que la hoja no tiene');
+  const mensaje = resultado.errores.map((e) => e.mensaje).join(' ');
+  assert.ok(mensaje.indexOf('separador_miles') !== -1,
+    'el error no nombra la columna que falta: ' + mensaje);
+  assert.ok(mensaje.indexOf('Paises') !== -1,
+    'el error no dice dónde arreglarlo: ' + mensaje);
+});
+
+test('lo mismo con las otras dos columnas de formato', () => {
+  for (const columna of ['moneda_simbolo', 'moneda_nombre']) {
+    conSetup();
+    hojaDePaisesSinLaColumna(columna);
+    const resultado = generar(solicitudValida({ tienda: 'Jumbo' }));
+    assert.strictEqual(resultado.valido, false, 'generó sin ' + columna);
+    assert.ok(resultado.errores.map((e) => e.mensaje).join(' ').indexOf(columna) !== -1,
+      'el error no nombra ' + columna);
+  }
+});
+
+test('y ningún documento se queda suelto en Drive cuando eso pasa', () => {
+  const mundo = conSetup();
+  hojaDePaisesSinLaColumna('separador_miles');
+
+  generar(solicitudValida({ tienda: 'Jumbo' }));
+
+  assert.strictEqual(Object.keys(mundo.documentos).length, 0,
+    'se creó el documento antes de descubrir que el texto estaba roto');
+  assert.strictEqual(leerSolicitudes().length, 0, 'quedó una fila de una campaña que no existe');
 });
 
 test('setup avisa lo que dejó sin tocar porque la hoja manda', () => {

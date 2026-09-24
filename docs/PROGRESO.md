@@ -2561,6 +2561,73 @@ Confirmar con cada equipo legal de país cuál es su formulario o canal real, pa
 reemplazar el mensaje genérico por el enlace correcto de cada uno (queda anotado
 en `docs/PENDIENTES_LEGAL.md`).
 
+## Bloque 24: la revisión general del código, y los seis arreglos que salieron de ella
+
+### Qué quedó
+
+Primero la revisión, que está entera en `docs/REVISION_CODIGO.md`: qué se buscó,
+qué se encontró, qué parecía defecto y no lo era, y las dos preguntas que son de
+negocio. Después los arreglos. Los seis son de código, ninguno toca el texto de
+`modelos/`.
+
+**Un T&C ya no se publica con "undefined" adentro.** Si a la pestaña Paises le
+falta una columna (porque se creó antes de que existiera, como pasó con
+`travel_*` y con `turbo_id_fiscal`), esa llave no llega y el valor cruzaba como
+`undefined`. El documento salía dado por bueno diciendo "un millón
+(1undefined000undefined000) de Créditos", ya creado en Drive. Ahora la red de
+seguridad del motor mira también las palabras que deja JavaScript cuando un
+dato no existe, `formatearMiles` no las fabrica, y las tres columnas con que el
+país escribe cualquier cifra se revisan antes de generar.
+
+**Los decimales no entran.** La revisión numérica miraba el mínimo y el máximo y
+nunca si el número era entero, así que un 50,5 salía titulado "50.5% CASHBACK"
+sobre una cláusula que decía "cincuenta por ciento (50%)". Eran 47 campos en los
+diez tipos, más los de cada tienda del Multitienda. Se rechaza en vez de
+redondear.
+
+**Los números gigantes tampoco.** `numeroEnLetras` llega hasta 999.999.999.999 y
+pasado ese punto repetía la palabra ("un millón millones"). Ahora se rechaza con
+un aviso que habla de ceros de más, que es la vía real.
+
+**Un campo con espacios ya no atasca al comercial.** Un "   " se daba por
+respondido y el error que volvía nombraba un marcador del modelo, asociado al
+campo "documento" y no a su pregunta. Ahora cuenta como vacío, el error apunta a
+la pregunta, y cuando un hueco llega igual por otro camino se nombra en palabras.
+
+**El CSV de administración** escribe las fechas como la pantalla y ya no deja que
+una respuesta se ejecute como fórmula al abrirlo en Excel.
+
+**Y dos protecciones que faltaban donde estaban prometidas:** la vista previa
+aguanta una entrada sin país, como dice su comentario, y la ampliación usa la
+misma fecha de fin que el resto del sistema, así que una campaña de un solo día
+ya no queda "en curso" para siempre.
+
+### Cómo probarlo
+
+1. `npm test`: 746 pruebas, 738 pasan, 0 fallan, 8 saltadas (las de siempre, que
+   dependen de artefactos que no se versionan).
+2. `npm run build`, que queda limpio y sin colisiones de nombre.
+3. Para ver los dos primeros con los ojos: en la demo, escribe 50,5 en el
+   porcentaje de un cashback, y luego un presupuesto con cinco ceros de más. Los
+   dos tienen que rebotar con un mensaje en español, no generar.
+
+### Qué necesita Juan
+
+Las dos preguntas de la sección 3 de `docs/REVISION_CODIGO.md`, que son de
+negocio y no de código:
+
+1. Tres leyendas que Legal ya aprobó (`leyenda_descuento_co`,
+   `leyenda_membresia_pro_co` y la rama de descuento de `leyenda_push_co`) están
+   escritas y no las alcanza nadie, porque el camino de los T&C generales no
+   llama a las leyendas. ¿Se conectan?
+2. En ocho países hay categorías con leyenda aprobada que el comercial nunca ve,
+   porque la pregunta depende de que el país tenga leyenda de campaña y hoy solo
+   la tiene Colombia. México tiene cinco esperando. ¿Se ofrecen igual?
+
+Y una decisión pequeña, por si algún día hace falta: hoy un porcentaje con
+decimales se rechaza. Si Legal quiere permitir un 12,5%, el texto en letras lo
+tiene que escribir Legal y la regla se afloja para ese campo.
+
 ## 24 de septiembre · Las ciudades sugeridas ya varían por país
 
 Juan pidió revisar las ciudades que se ofrecen como opción en las campañas que
