@@ -2,6 +2,7 @@
 %% pais: CO
 %% tipo_campana: descuento_tyc_general
 %% tipo_pieza: complemento
+%% se_elige_en: condicion_membresia_pro
 %% origen: playbook_legal_co, pieza_real_1, propuesta
 %% largo_max: 240
 %% minimo_irreductible: todo
