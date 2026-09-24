@@ -74,6 +74,16 @@ function estaVacio(valor) {
   if (valor === null || valor === undefined || valor === '') return true;
   if (typeof valor === 'boolean') return valor === false;
   if (Object.prototype.toString.call(valor) === '[object Array]') return valor.length === 0;
+  /*
+   * Una respuesta de solo espacios es una respuesta en blanco.
+   *
+   * Sin esto, un "   " se daba por respondido: la revision lo dejaba pasar, el
+   * motor llegaba con el hueco, y el comercial leia "Falta un dato: el
+   * documento necesita "TEXTO_TERRITORIO" y quedo vacio", asociado al campo
+   * "documento" y no a su pregunta. Ni sabia que era eso ni tenia donde
+   * corregirlo.
+   */
+  if (typeof valor === 'string') return valor.trim() === '';
   return false;
 }
 
