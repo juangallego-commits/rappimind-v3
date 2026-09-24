@@ -443,6 +443,53 @@ test('la exportación es un CSV sin la columna de datos crudos', () => {
   assert.ok(csv.indexOf('Jumbo MT') !== -1);
 });
 
+/*
+ * Las fechas del CSV.
+ *
+ * adminSolicitudesCsv armaba el archivo con las filas crudas del Sheet, sin
+ * pasar por filasPlanas(), que es por donde pasan todas las demás salidas de
+ * la misma tabla. Google Sheets convierte sola la celda "2026-09-17" en una
+ * fecha, así que el CSV la escribía como "Thu Sep 17 2026 00:00:00 GMT+0000"
+ * mientras la pantalla decía "2026-09-17": el mismo dato, dos caras.
+ */
+test('el CSV escribe las fechas igual que la pantalla', () => {
+  conSetup();
+  generar(solicitudValida({ tienda: 'Jumbo' }));
+
+  // Se reproduce la conversión de Sheets a mano, igual que la prueba del historial.
+  const hoja = hojaPorNombre('Solicitudes');
+  const columna = encabezadosDe('Solicitudes').indexOf('fecha_inicio');
+  hoja.valores[1][columna] = new Date(2026, 8, 17);
+
+  const enPantalla = adminSolicitudes('')[0].fecha_inicio;
+  assert.strictEqual(enPantalla, '2026-09-17');
+
+  const csv = adminSolicitudesCsv('');
+  assert.ok(csv.indexOf('2026-09-17') !== -1, 'el CSV no trae la fecha plana: ' + csv.split('\n')[1]);
+  assert.ok(csv.indexOf('GMT') === -1, 'el CSV trae la fecha cruda de JavaScript: ' + csv.split('\n')[1]);
+});
+
+/*
+ * Una fórmula dentro del CSV.
+ *
+ * El nombre de la tienda es texto libre y va al archivo tal cual. Un comercial
+ * que escriba "=HYPERLINK(...)" deja esa fórmula en el CSV, y Excel o Google
+ * Sheets la ejecutan al abrirlo: quien la dispara es el administrador que
+ * descarga el archivo para auditar.
+ */
+test('el CSV no deja que una respuesta se vuelva fórmula al abrirlo', () => {
+  conSetup();
+  generar(solicitudValida({ tienda: '=HYPERLINK("http://ejemplo.invalid","Haz clic")' }));
+
+  const csv = adminSolicitudesCsv('');
+  for (const celda of csv.split('\n').slice(1).join('\n').split(',')) {
+    const limpia = celda.replace(/^"/, '');
+    assert.ok(!/^[=+\-@\t\r]/.test(limpia) || /^-?\d/.test(limpia),
+      'una celda del CSV arranca como fórmula: ' + celda.slice(0, 60));
+  }
+  assert.ok(csv.indexOf('HYPERLINK') !== -1, 'se perdió el texto que el comercial escribió');
+});
+
 // --- registro --------------------------------------------------------------
 
 test('cada acción importante deja rastro en Registro', () => {

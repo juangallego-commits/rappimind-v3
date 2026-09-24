@@ -195,8 +195,24 @@ function buscarEnSolicitudes(solicitudes, texto) {
 
 /** Arma un CSV con separador de coma y comillas donde hace falta. */
 function comoCsv(objetos, encabezados) {
+  /*
+   * Una celda que arranca con = + - @ la ejecutan Excel y Google Sheets al
+   * abrir el archivo. El nombre de la tienda es texto libre, asi que un
+   * comercial podia escribir "=HYPERLINK(...)" y dejar la formula puesta; quien
+   * la disparaba era el administrador que descargaba el CSV para auditar.
+   *
+   * Se antepone una comilla simple, que es lo que las dos hojas de calculo
+   * entienden como "esto es texto": el valor se sigue leyendo igual y no
+   * corre. Los numeros negativos se dejan en paz, que son numeros de verdad.
+   */
+  function sinFormula(texto) {
+    if (!/^[=+@\t\r]/.test(texto) && !(/^-/.test(texto) && !/^-?\d/.test(texto))) return texto;
+    return "'" + texto;
+  }
+
   function escapar(valor) {
     var texto = valor === null || valor === undefined ? '' : String(valor);
+    texto = sinFormula(texto);
     if (/[",\n]/.test(texto)) return '"' + texto.replace(/"/g, '""') + '"';
     return texto;
   }
