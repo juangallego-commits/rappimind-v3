@@ -2627,3 +2627,59 @@ negocio y no de código:
 Y una decisión pequeña, por si algún día hace falta: hoy un porcentaje con
 decimales se rechaza. Si Legal quiere permitir un 12,5%, el texto en letras lo
 tiene que escribir Legal y la regla se afloja para ese campo.
+
+## Bloque 25: las tres leyendas muertas, conectadas
+
+### Qué quedó
+
+Legal había escrito y aprobado tres leyendas para las campañas que usan un T&C
+general de Colombia, y las tres estaban en el repositorio sin manera de llegar a
+una pieza. El comercial se llevaba el enlace y escribía la letra pequeña de
+memoria, con la forma de dos frases que la pantalla le mostraba.
+
+Ahora, en la pantalla del T&C que eligió, debajo del enlace, hay un bloque que
+le arma la letra pequeña. Le pide la vigencia (que la leyenda nombra) y, si los
+tiene, las unidades disponibles, el máximo por usuario y la compra mínima; y
+marca si es solo para Pro o si es de Turbo. Le devuelve la leyenda de Legal
+lista para copiar, en sus cuatro formatos, y le dice por cuántos caracteres se
+pasa cuando no cabe en uno.
+
+El enlace se sigue dando antes y sin preguntar nada. Esa es la promesa de esa
+pantalla y no se tocó: la letra pequeña es un extra.
+
+Dos decisiones de criterio, las dos anotadas en `docs/PENDIENTES_LEGAL.md`:
+
+- **Dónde no se ofrece.** La leyenda dice "El descuento no incluye tarifa de
+  servicio y costo de envío", y esa frase es obligatoria. En Envío Gratis y en
+  Tarifa de Servicio Gratis le negaría al usuario lo que la campaña le promete,
+  y en el código para eventos externos habla de cosas que ahí no existen. En los
+  tres no sale nada y se dice por qué.
+- **Dónde va el texto de la membresía.** Explica qué incluye la membresía Pro,
+  así que va en las campañas que son sobre la membresía, no en los descuentos
+  que son solo para usuarios Pro. Puestas las dos, el enlace de Pro salía
+  repetido y la leyenda se pasaba del largo del formato: 625 caracteres contra
+  620. Separadas, queda en 397 y cabe.
+
+### Cómo probarlo
+
+1. `npm test`: 762 pruebas, 754 pasan, 0 fallan, 8 saltadas.
+2. `npm run demo` y el recorrido completo de la skill de flujo, que pasa entero.
+3. Con los ojos, que es lo que importa aquí: en la demo, entra a "Descuentos,
+   cupones, envío gratis, Rappi Pro y más", pasa el filtro con seis noes, elige
+   "Descuento en Toda la Tienda" y baja hasta "La letra pequeña de tu pieza".
+   Pon 2026-10-01 y 2026-10-31, 10000 unidades y 6 por usuario, y dale a armar.
+   Después vuelve a la lista y abre "Envío Gratis": ahí no tiene que ofrecerte
+   ninguna leyenda, y tiene que decirte por qué.
+
+### Qué necesita Juan
+
+Las cuatro de `docs/PENDIENTES_LEGAL.md`, sección "La letra pequeña de los T&C
+generales", que son de Legal y no de código:
+
+1. Si Envío Gratis, Tarifa de Servicio Gratis y el código para eventos externos
+   deberían tener su propia leyenda escrita.
+2. Si "Ofertas entre $10.000 hasta $40.000" se queda así, que es como lo escribe
+   el Playbook, o pasa a "entre $10.000 y $40.000".
+3. Qué hacer cuando la leyenda no cabe en un banner corto: una versión recortada
+   o revisar el límite de 300 caracteres de ese formato.
+4. Confirmar el criterio de dónde va el texto de la membresía Pro.

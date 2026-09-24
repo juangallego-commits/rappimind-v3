@@ -434,8 +434,7 @@ function detalle(tyc) {
     crear('p', { texto: LO_QUE_LA_PIEZA_DEBE_DECIR }),
   ]));
 
-  var loDeLaPieza = loQueLaPiezaTieneQueDecir(tyc);
-  if (loDeLaPieza) contenido.appendChild(loDeLaPieza);
+  contenido.appendChild(bloqueDeLetraPequena(tyc));
 
   var ficha = crear('div', { clase: 'ficha' });
   var descripcion = descripcionSinRepetir(tyc);
@@ -448,31 +447,139 @@ function detalle(tyc) {
   return contenido;
 }
 
-/**
- * Lo que la pieza tiene que decir cuando el T&C es uno general.
+/*
+ * La letra pequeña de la pieza, armada.
  *
- * Aqui no se genera documento, asi que la herramienta no sabe los numeros de la
- * campana: dice la forma de las dos frases y el comercial pone los suyos. Juan
- * lo cerro el 20 de septiembre de 2026 (punto C5, pregunta 17).
+ * Antes aquí se le decía al comercial la FORMA de las dos frases ("Máximo 1
+ * unidad por usuario.", "10.000 unidades disponibles.") y él las escribía a
+ * mano con sus números. Legal tenía la leyenda entera escrita y aprobada
+ * (leyenda_descuento_co), y no llegaba a ninguna pieza porque este camino nunca
+ * llamaba al motor de leyendas.
  *
- * Solo en los descuentos, que son los T&C generales que llevan esos limites.
+ * El enlace se sigue dando antes y sin preguntar nada: esa es la promesa de
+ * esta pantalla y no se toca. La letra pequeña es un extra, con datos
+ * opcionales salvo la vigencia, que la leyenda nombra.
  */
-function loQueLaPiezaTieneQueDecir(tyc) {
-  if (!esDeDescuento(tyc)) return null;
-
-  return crear('div', { clase: 'aviso' }, [
-    crear('p', { texto: 'Y si tu campaña tiene esos límites, van con los números de tu campaña:' }),
-    crear('ul', {}, [
-      crear('li', { texto: '“Máximo 1 unidad por usuario.”, o “Máximo 6 unidades por usuario.” si son varias.' }),
-      crear('li', { texto: '“10.000 unidades disponibles.”, o “1 unidad disponible.” si es una sola.' }),
-    ]),
+function bloqueDeLetraPequena(tyc) {
+  var revision = sirveLaLetraPequena(tyc);
+  var caja = crear('div', { clase: 'aviso' }, [
+    crear('h3', { texto: 'La letra pequeña de tu pieza' }),
   ]);
+
+  // Donde la leyenda se contradiría con la campaña no se ofrece nada, y se dice
+  // por qué: un comercial que no entiende por qué no se lo damos vuelve a
+  // escribirle a Legal.
+  if (!revision.sirve && !esSobreLaMembresiaPro(tyc)) {
+    caja.appendChild(crear('p', { texto: revision.porQue }));
+    caja.appendChild(crear('p', {
+      clase: 'pregunta-ayuda',
+      texto: 'Para esta campaña, arriba está lo que la pieza tiene que decir. Si necesitas una leyenda escrita, escríbele a Legal.',
+    }));
+    return caja;
+  }
+
+  // Las de la membresía no preguntan nada: su texto no habla de fechas.
+  if (esSobreLaMembresiaPro(tyc)) {
+    caja.appendChild(crear('p', { texto: revision.porQue }));
+    caja.appendChild(resultadoDeLaLetra(tyc, {}));
+    return caja;
+  }
+
+  caja.appendChild(crear('p', {
+    texto: 'Legal ya aprobó cómo se escribe. Dinos cuándo vale tu campaña y te la damos lista para copiar.',
+  }));
+
+  if (!E.letraPequena) E.letraPequena = {};
+  var datos = E.letraPequena;
+  var controles = {};
+
+  function campo(id, etiqueta, tipo, ayuda) {
+    var control = crear('input', {
+      type: tipo, id: 'letra-' + id, 'aria-label': etiqueta,
+      value: datos[id] === undefined || datos[id] === null ? '' : String(datos[id]),
+    });
+    controles[id] = control;
+    caja.appendChild(crear('div', { clase: 'pregunta' }, [
+      crear('label', { clase: 'copiable-etiqueta', for: 'letra-' + id, texto: etiqueta }),
+      crear('div', { clase: 'campo-caja' }, [control]),
+      ayuda ? crear('p', { clase: 'pregunta-ayuda', texto: ayuda }) : null,
+    ]));
+  }
+
+  function casilla(id, etiqueta) {
+    var control = crear('input', { type: 'checkbox', id: 'letra-' + id });
+    if (datos[id]) control.checked = true;
+    controles[id] = control;
+    caja.appendChild(crear('div', { clase: 'pregunta' }, [
+      crear('label', { clase: 'copiable-etiqueta', for: 'letra-' + id }, [
+        control, document.createTextNode(' ' + etiqueta),
+      ]),
+    ]));
+  }
+
+  campo('fechaInicio', 'Desde qué día vale', 'date', null);
+  campo('fechaFin', 'Hasta qué día vale', 'date', 'Si es de un solo día, déjalo vacío.');
+  campo('unidadesDisponibles', 'Unidades disponibles', 'text',
+    'Opcional. Si lo dejas vacío, la leyenda dice “Hasta agotar existencias.”.');
+  campo('maxPorUsuario', 'Máximo por usuario', 'text', 'Opcional.');
+  campo('compraMinima', 'Compra mínima', 'text', 'Opcional. Solo sale en el push y en el SMS.');
+  casilla('soloPro', 'Solo para usuarios Pro o Pro Black');
+  casilla('esDeTurbo', 'La campaña es en Turbo');
+
+  var salida = crear('div');
+  var boton = crear('button', { clase: 'boton', type: 'button', texto: 'Armar la letra pequeña' });
+  boton.addEventListener('click', function () {
+    for (var id in controles) {
+      if (!Object.prototype.hasOwnProperty.call(controles, id)) continue;
+      var control = controles[id];
+      if (control.type === 'checkbox') { datos[id] = control.checked; continue; }
+      var valor = String(control.value || '').trim();
+      if (!valor) { datos[id] = ''; continue; }
+      datos[id] = control.type === 'date' ? valor : Number(RM.util.soloDigitos(valor));
+    }
+    RM.util.vaciar(salida);
+    salida.appendChild(resultadoDeLaLetra(tyc, datos));
+  });
+
+  caja.appendChild(crear('div', { clase: 'fila-botones' }, [boton]));
+  caja.appendChild(salida);
+  return caja;
 }
 
-/** Si este T&C general es de descuento. Lo dice su nombre o su beneficio. */
-function esDeDescuento(tyc) {
-  var texto = (String(tyc.nombre || '') + ' ' + String(tyc.beneficio || '')).toLowerCase();
-  return texto.indexOf('descuento') !== -1 || texto.indexOf('cupón') !== -1 || texto.indexOf('cupon') !== -1;
+/** Lo que se lleva el comercial: una caja por formato, lista para copiar. */
+function resultadoDeLaLetra(tyc, datos) {
+  var pais = RM.flujo.paisElegido();
+  var armadas = leyendasDelTycGeneral(tyc, datos, pais, typeof LEYENDAS !== 'undefined' ? LEYENDAS : {});
+  var caja = crear('div');
+
+  if (!armadas.hay) {
+    caja.appendChild(crear('p', {
+      clase: 'pregunta-ayuda',
+      texto: armadas.faltan.length > 0
+        ? 'Falta ' + armadas.faltan.join(' y ') + '. Sin eso la leyenda quedaría a medias, y a medias no sirve.'
+        : armadas.porQue,
+    }));
+    return caja;
+  }
+
+  for (var i = 0; i < armadas.leyendas.length; i++) {
+    var leyenda = armadas.leyendas[i];
+    if (leyenda.errores && leyenda.errores.length > 0) {
+      caja.appendChild(crear('div', { clase: 'aviso aviso-serio' }, [
+        crear('p', { texto: leyenda.nombre + ': ' + leyenda.errores.join(' ') }),
+      ]));
+      continue;
+    }
+
+    caja.appendChild(RM.util.paraCopiar(
+      leyenda.nombre,
+      leyenda.texto,
+      leyenda.cabe
+        ? 'Va tal cual en la pieza, sin cambiarle nada.'
+        : 'Se pasa por ' + leyenda.sobra + ' caracteres del espacio de este formato. Va tal cual: quien diseñe la pieza tiene que verlo, y si no cabe hay que cambiar de formato o hablarlo con Legal.'
+    ));
+  }
+  return caja;
 }
 
 function seccionDeFicha(titulo, texto) {

@@ -255,8 +255,10 @@ function leyendasDelTycGeneral(tyc, datos, pais, textos) {
   if (!revision.sirve && !esSobreLaMembresiaPro(tyc)) {
     return { hay: false, leyendas: [], complementos: [], faltan: [], porQue: revision.porQue, errores: [] };
   }
+  // El texto de la membresia no habla de fechas, asi que no las pide. La letra
+  // pequena de descuentos si: "Valido ..." es una de sus frases obligatorias.
   var faltan = [];
-  if (!entrada.fechaInicio) faltan.push('desde cuándo vale la campaña');
+  if (!esSobreLaMembresiaPro(tyc) && !entrada.fechaInicio) faltan.push('desde cuándo vale la campaña');
   if (faltan.length > 0) {
     return { hay: false, leyendas: [], complementos: [], faltan: faltan, porQue: '', errores: [] };
   }

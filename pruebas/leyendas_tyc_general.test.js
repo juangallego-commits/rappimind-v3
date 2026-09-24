@@ -219,3 +219,23 @@ test('y cuando no cabe en un formato corto, se dice por cuánto', () => {
 test('el tipo de leyenda es el que dice el catálogo de Legal', () => {
   assert.strictEqual(TIPO_DE_LEYENDA_GENERAL, 'descuento_tyc_general');
 });
+
+/*
+ * Y que la pantalla lo llame.
+ *
+ * Esta es la prueba que habría cazado el defecto original. Las tres leyendas
+ * estaban escritas, aprobadas y probadas en Node, y no llegaban a ninguna
+ * pieza porque ninguna pantalla llamaba al motor. Un mecanismo que la interfaz
+ * no llama es un mecanismo que no existe.
+ */
+test('la pantalla de los T&C generales llama al motor de leyendas', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const pantalla = fs.readFileSync(
+    path.join(__dirname, '..', 'src', 'client', 'js', '63-tyc-genericos.js'), 'utf8');
+
+  assert.ok(pantalla.indexOf('leyendasDelTycGeneral(') !== -1,
+    'la pantalla no arma la letra pequeña: las leyendas vuelven a quedar muertas');
+  assert.ok(pantalla.indexOf('sirveLaLetraPequena(') !== -1,
+    'la pantalla no comprueba dónde la leyenda se contradiría con la campaña');
+});
