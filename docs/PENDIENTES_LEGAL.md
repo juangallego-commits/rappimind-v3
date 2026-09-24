@@ -1128,3 +1128,54 @@ el formulario o el canal real para escalar una campaña a Legal. Cuando se sepa,
 se agrega como un dato por país (como ya existe `ACCESOS_SQUARESPACE` para quién
 publica en Squarespace) y la pantalla deja de tratar a Colombia y Costa Rica
 distinto del resto.
+
+## La letra pequeña de los T&C generales (24 de septiembre)
+
+Legal había escrito y aprobado tres leyendas para las campañas que usan un T&C
+general de Colombia, marcadas con el tipo `descuento_tyc_general`: la letra
+pequeña de la pieza, el texto de la membresía Pro y la del push. Las tres
+estaban en el repositorio sin manera de llegar a una pieza, porque ese camino
+nunca llamaba al motor de leyendas y tres de sus marcadores no los producía
+nadie. Ya están conectadas, y de ahí salen cuatro cosas que decide Legal.
+
+**1. Tres T&C generales se quedan sin letra pequeña, a propósito.** La leyenda
+aprobada dice "El descuento no incluye tarifa de servicio y costo de envío", y
+esa frase es obligatoria: no va entre corchetes. Puesta en una campaña de
+**Envío Gratis** o de **Tarifa de Servicio Gratis**, la pieza le negaría al
+usuario justo lo que la campaña le promete. Y en el **código de descuento para
+eventos externos**, el descuento se da fuera de Rappi, donde no hay envío ni
+tarifa de servicio de los que hablar. En los tres, la herramienta no ofrece nada
+y dice por qué.
+
+*Lo que falta:* si Legal quiere que esas campañas tengan leyenda, hay que
+escribir una para ellas. Mientras tanto, esos comerciales siguen viendo los tres
+requisitos de la pieza y el enlace, como hasta ahora.
+
+**2. "Ofertas entre $10.000 hasta $40.000" suena raro.** Es la forma literal del
+PLAYBOOK SSL, diapositiva 1, para el rango en dinero, y está copiada tal cual
+porque el texto es de Legal. En porcentaje la otra forma sí está bien construida
+("Ofertas desde 10% hasta 40%").
+
+*Lo que falta:* si Legal quiere "Ofertas entre $10.000 y $40.000", es cambiar una
+palabra en `textoRango`, de `src/core/derivados_leyendas.js`.
+
+**3. La leyenda completa no cabe en un banner corto.** Con el enlace de un T&C
+de Rappi Pro y los datos normales de una campaña, la letra pequeña queda en unos
+400 caracteres. Le sobra espacio en su formato (620) y se pasa del de banner
+corto y del de exterior (300). La herramienta la entrega igual, diciendo por
+cuántos caracteres se pasa, porque quien diseña la pieza tiene que verlo.
+
+*Lo que falta:* decidir si en esos dos formatos se usa una versión recortada
+(hoy la leyenda no declara niveles de recorte y su mínimo irreductible es "todo")
+o si el límite de 300 está mal medido.
+
+**4. El texto de la membresía Pro se movió de sitio, y conviene confirmarlo.**
+Explica qué incluye la membresía, así que se entrega en las dos campañas que son
+*sobre* la membresía (Descuento en la Membresía Rappi Pro y Cupones de Descuento
+para Membresía), y no en los descuentos que son *solo para* usuarios Pro, donde
+basta la frase de "debes tenerla activa" que ya ponía la leyenda. Puestas las
+dos, el enlace de Pro salía repetido dentro de la misma leyenda y se pasaba del
+largo del formato.
+
+*Lo que falta:* que Legal confirme ese criterio, que es de interpretación y no
+estaba escrito en el encargo.
