@@ -34,6 +34,10 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var categoriaProhibida = require('./leyendas.js').categoriaProhibida;
   var preguntaEnIdioma = require('./preguntas_pt.js').preguntaEnIdioma;
   var tieneValor = require('./texto.js').tieneValor;
+  // El techo lo declara numeros.js, que es quien escribe los numeros en letras.
+  // Declararlo tambien aqui lo duplicaria: en Apps Script los archivos de
+  // src/core comparten un solo ambito y una var pisaria a la otra.
+  var MAYOR_NUMERO_EN_LETRAS = require('./numeros.js').MAYOR_NUMERO_EN_LETRAS;
 }
 
 function error(campo, mensaje) {
@@ -137,6 +141,39 @@ function validarFormatos(entrada, esquema, idioma) {
       var numero = Number(valor);
       if (isNaN(numero)) {
         errores.push(error(campo.id, campo.etiqueta + ' debe ser un número.'));
+      } else if (numero !== Math.trunc(numero)) {
+        /*
+         * El motor trunca con Math.trunc antes de escribir un numero en letras,
+         * y el nombre de la campana usa el valor crudo. Con un 50,5 el T&C
+         * salia titulado "50.5% CASHBACK" sobre una clausula que decia
+         * "cincuenta por ciento (50%)".
+         *
+         * No es cosmetico: el articulado dice que ante una discrepancia se
+         * aplica la condicion mas favorable para el usuario, asi que ese titulo
+         * obliga a pagar el 50,5%. Es la misma razon por la que el nombre se
+         * arma solo desde las respuestas (src/core/nombres.js).
+         *
+         * Se rechaza en vez de redondear: redondear seria decidir por el
+         * comercial cuanto promete su campana. Si Legal decide algun dia que un
+         * porcentaje con decimales se puede escribir en letras, el texto lo
+         * escribe Legal y esta regla se afloja para ese campo.
+         */
+        errores.push(error(campo.id, mensajeDe(campo.id, esquema.id, 'decimal', idioma,
+          campo.etiqueta + ' va en números enteros, sin decimales.')));
+      } else if (numero > MAYOR_NUMERO_EN_LETRAS) {
+        /*
+         * numeroEnLetras llega hasta 999.999.999.999, y pasado ese punto
+         * repetia la palabra en vez de avisar: un billon salia impreso como
+         * "un millon millones", y 1e21 como "mil millones millones millones
+         * (1e+21)", con el documento dado por bueno. El portugues tiene el
+         * mismo techo ("um milhao milhoes").
+         *
+         * No es un maximo de negocio, que lo pondria Juan campo por campo:
+         * es hasta donde sabe escribir el motor. La via real es el tecleo con
+         * ceros de mas.
+         */
+        errores.push(error(campo.id, mensajeDe(campo.id, esquema.id, 'rango', idioma,
+          campo.etiqueta + ' es demasiado grande. Revisa si se te fueron ceros de más.')));
       } else if (campo.minimo !== undefined && numero < campo.minimo) {
         // Un minimo de uno es "mayor que cero": si la pregunta escribio ese
         // mensaje (errores.cero), se prefiere al de rango.
@@ -497,6 +534,11 @@ function validarTiendas(entrada, pais, esquema) {
         var numeroDeTienda = Number(tienda[campo.id]);
         if (isNaN(numeroDeTienda)) {
           errores.push(error('tiendas', 'Tienda ' + fila + ': ' + campo.etiqueta.toLowerCase() + ' tiene que ser un número.'));
+        } else if (numeroDeTienda !== Math.trunc(numeroDeTienda)) {
+          // El mismo truncado silencioso que en los campos sueltos: el
+          // presupuesto de la tienda salia impreso sin su decimal.
+          errores.push(error('tiendas', 'Tienda ' + fila + ': ' + campo.etiqueta.toLowerCase() +
+            ' va en números enteros, sin decimales.'));
         } else if (campo.minimo !== undefined && numeroDeTienda < campo.minimo) {
           errores.push(error('tiendas', 'Tienda ' + fila + ': ' + campo.etiqueta.toLowerCase() +
             ' tiene que ser al menos ' + campo.minimo + '.'));
