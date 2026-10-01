@@ -2747,3 +2747,73 @@ generales", que son de Legal y no de código:
 3. Qué hacer cuando la leyenda no cabe en un banner corto: una versión recortada
    o revisar el límite de 300 caracteres de ese formato.
 4. Confirmar el criterio de dónde va el texto de la membresía Pro.
+
+## 1 de octubre · El tope de ganadores de la Carrera de Compras sube a 500
+
+Juan mandó la captura de una Carrera de Compras de Mars en la que la pantalla
+rechazaba 140 ganadores con "El número de ganadores va de 1 a 100." y pidió
+quitar ese tope y dejarlo en 500. Antes de tocar nada rastreé de dónde salía el
+100 y qué más dependía de él.
+
+### Qué quedó
+
+- `src/core/esquemas.js`: el máximo de `numeroGanadores` pasa de 100 a 500.
+- `src/core/preguntas.js`: el mensaje de rango dice "El número de ganadores va
+  de 1 a 500."
+- `docs/ESPECIFICACION_V3.md`, sección 5.3: la tabla dice "número 1 a 500".
+- Cinco pruebas nuevas en `pruebas/limites_numericos.test.js`: el borde de los
+  dos lados (500 pasa, 501 y 0 no) en los ocho países con Carrera de Compras;
+  que de 100 a 500 las letras salgan bien ("cien", "ciento un", "doscientos",
+  "quinientos"); que el total de 500 premios físicos se escriba completo; que un
+  total demasiado grande para escribirse en letras no genere; y que la leyenda
+  corta diga la cifra. Comprobé que cazan el defecto quitando cada mitad del
+  cambio por separado: fallan.
+- No hizo falta tocar nada más. La validación del núcleo compara contra el
+  máximo del esquema, la interfaz solo repinta el mensaje, y ni el código del
+  servidor, ni las columnas del Sheet, ni los modelos legales tenían una copia
+  del 100. (No toqué ni miré el Sheet real de producción: solo el código que
+  arma sus columnas.)
+- El rastreo de dónde salía el 100 y las dos consecuencias que conviene tener
+  presentes quedan en `docs/DECISIONES.md`, punto 137.
+
+### Cómo probarlo
+
+```
+npm test
+```
+
+770 pruebas, 5 nuevas y ninguna rota.
+
+Para verlo en pantalla: `npm run demo`, abrir `demo/index.html` y en la
+consola del navegador:
+
+```js
+RM.estado.reiniciarFormulario(Object.assign(RM.app.valoresIniciales(), {
+  pais: 'CO', negocio: 'rappi', tipo: 'carrera_compras', tienda: 'Prueba', alcance: 'Nacional',
+  productos: 'todos', criterioGanador: 'mayor_valor',
+}), {});
+RM.estado.estado.filtroRespondido = true;
+const pasos = RM.flujo.pasosDelTipo(RM.estado.entrada()).map((x) => x.id);
+RM.estado.estado.pasoActual = pasos.indexOf('concurso');
+RM.estado.estado.campoAbierto = 'numeroGanadores';
+RM.app.ir('pasos');
+```
+
+Con 500 pasa y "Siguiente" avanza; con 501, 1000 o 0 se queda en la pregunta
+con "El número de ganadores va de 1 a 500." El recorrido completo de la skill de
+flujo (en español y en portugués) pasa entero.
+
+### Qué necesito de Juan
+
+Nada bloqueante. Dos cosas que no cambié y conviene que tengas presentes:
+
+1. **El tope es el mismo en los ocho países** que tienen Carrera de Compras
+   (Colombia, México, Perú, Argentina, Chile, Ecuador, Uruguay y Costa Rica),
+   porque el esquema es uno solo. Si en alguno debía quedarse en 100, habría
+   que construir un tope por país.
+2. **Con 500 ganadores, un premio físico de 2.000 millones o más por ganador no
+   genera**, porque el total ya no se puede escribir en letras. El comercial vería
+   "El texto quedó roto: hay dos espacios seguidos.", que no explica nada. Con
+   100 ganadores pasaba lo mismo desde 10.000 millones. Es un valor absurdo para
+   un premio físico, así que no lo toqué; si prefieres un mensaje claro para ese
+   caso, es un cambio pequeño.

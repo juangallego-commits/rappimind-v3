@@ -329,7 +329,25 @@ var CAMPOS_CARRERA = [
       { valor: 'mas_pedidos', etiqueta: 'Mayor número de pedidos' },
     ],
   },
-  { id: 'numeroGanadores', etiqueta: 'Número de ganadores', tipo: 'numero', minimo: 1, maximo: 100, paso: 'concurso', obligatorio: true },
+  {
+    /*
+     * El tope era 100, tal cual venia de la especificacion original, y Juan lo
+     * subio a 500 el 1 de octubre de 2026, cuando una Carrera de Mars pidio 140
+     * ganadores y la pantalla la rechazo. Es uno solo para los ocho paises que
+     * tienen Carrera de Compras, porque el esquema es uno solo. Decision 137.
+     *
+     * El mensaje de rango lleva el numero escrito a mano en preguntas.js
+     * (numeroGanadores.errores.rango): si este tope cambia, cambia alla tambien.
+     * pruebas/limites_numericos.test.js cuida que los dos digan lo mismo.
+     */
+    id: 'numeroGanadores',
+    etiqueta: 'Número de ganadores',
+    tipo: 'numero',
+    minimo: 1,
+    maximo: 500,
+    paso: 'concurso',
+    obligatorio: true,
+  },
   {
     id: 'desempate',
     etiqueta: 'Criterio de desempate',
