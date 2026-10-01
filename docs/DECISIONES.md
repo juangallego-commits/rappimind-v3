@@ -1812,3 +1812,58 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      `pruebas/paises_habilitados.test.js` cuidan que ningún país se quede sin
      su propia lista y que ninguno fuera de Colombia vuelva a mostrar una
      ciudad colombiana.
+
+## 1 de octubre · El tope de ganadores de la Carrera de Compras sube de 100 a 500
+
+137. **El número de ganadores de la Carrera de Compras va de 1 a 500, no de 1 a
+     100.** Juan lo pidió el 1 de octubre de 2026 con la captura de una Carrera
+     de Mars en la que la pantalla rechazaba 140 ganadores con "El número de
+     ganadores va de 1 a 100.". Es una decisión de negocio suya, no técnica, y
+     por eso se anota con su fecha.
+
+     El 100 venía de la especificación original (`docs/ESPECIFICACION_V3.md`,
+     sección 5.3: "número 1 a 100"), que el Bloque 1 copió al esquema tal cual
+     y que nadie tocó después. No encontré en el repositorio una razón de
+     negocio ni legal para ese número: ni en la especificación, ni en
+     `DECISIONES.md` ni `PENDIENTES_LEGAL.md`, ni en ningún otro documento, ni en
+     los mensajes de los commits que lo introdujeron. Parece haber sido el rango
+     del campo y nada más (lectura mía: no puedo descartar una razón que se
+     hablara fuera del repositorio).
+
+     Se cambia en tres sitios que tienen que decir lo mismo: el máximo de
+     `numeroGanadores` en `src/core/esquemas.js`, el mensaje de rango, escrito a
+     mano, en `src/core/preguntas.js` (`numeroGanadores.errores.rango`) y la
+     tabla de la sección 5.3 de la especificación. No encontré un cuarto sitio:
+     la validación del núcleo compara contra `campo.maximo`, la interfaz solo
+     repinta el mensaje que le llega, y ni el código del servidor, ni las
+     columnas del Sheet (que salen de los esquemas), ni los modelos de
+     `modelos/` mencionan el tope. Tampoco hizo falta tocar ningún derivado: el
+     motor ya sabía escribir de 101 a 500 ("ciento un", "doscientos",
+     "trescientos veintiún", "quinientos"), y las leyendas cortas usan la
+     cifra, no las letras.
+
+     Dos cosas que conviene tener presentes:
+
+     - **Es un solo tope para los ocho países** que tienen Carrera de Compras
+       (Colombia, México, Perú, Argentina, Chile, Ecuador, Uruguay y Costa
+       Rica), porque el esquema es uno solo. Brasil no tiene concurso (decisión
+       126). Si algún país necesitara un tope propio habría que construirlo: hoy
+       el máximo vive en el esquema y no se lee de la fila del país en
+       `data/paises.json`.
+     - **El total del premio físico crece con el tope.** Con varios ganadores el
+       documento declara el valor de un premio por el número de ganadores, y el
+       motor solo escribe en letras hasta 999.999.999.999. La revisión numérica
+       mira cada campo por separado, así que lo que detiene un total que no cabe
+       es la red del motor sobre el texto final, que no genera el documento (con
+       el mensaje "El texto quedó roto: hay dos espacios seguidos.", poco claro
+       para el comercial). Con 100 ganadores se activaba con un premio de 10.000
+       millones por ganador; con 500, desde 2.000 millones. Son valores
+       absurdos para un premio físico y no se tocó, pero queda dicho: si algún
+       día pasa, lo natural es una revisión cruzada con un mensaje que el
+       comercial entienda.
+
+     Cinco pruebas nuevas en `pruebas/limites_numericos.test.js` cuidan que el
+     máximo del esquema y el mensaje no se separen (el borde de los dos lados,
+     en los ocho países), que de 100 a 500 las letras salgan bien, que el total
+     de 500 premios se escriba completo, que un total que no cabe no genere y
+     que la leyenda corta diga la cifra.
