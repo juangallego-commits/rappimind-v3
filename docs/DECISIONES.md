@@ -1927,6 +1927,10 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      motor lo frena con el mismo mensaje (punto 137). Ahí el doble espacio no
      viene de ninguna respuesta, y limpiar no lo arregla ni debe.
 
-     Dieciocho pruebas nuevas en `pruebas/espacios.test.js`. Comprobé que cazan
-     el defecto: sin el arreglo fallan 14; las 4 que pasan son las que cuidan
-     que lo que ya salía bien siga igual.
+     Diecisiete pruebas nuevas en `pruebas/espacios.test.js`, y una comprobación
+     más en la prueba del navegador de `pruebas/build.test.js` (que
+     `limpiarEspacios` viaje dentro de `MotorCliente.html`). Esa última no se
+     hizo en el archivo nuevo porque las pruebas corren en paralelo y construir
+     `dist/` desde dos archivos a la vez lo borra mientras otra lo lee. Comprobé
+     que cazan el defecto: con el `src/` de antes del arreglo fallan 14; las que
+     pasan son las que cuidan que lo que ya salía bien siga igual.

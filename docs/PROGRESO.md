@@ -2848,7 +2848,8 @@ bloqueo: que se arreglara solo. Antes de decidir nada recorrí el flujo completo
   espacio entre dos palabras.
 - La red del motor sigue igual, y un campo de solo espacios o un cupón con
   espacio siguen rechazados.
-- `pruebas/espacios.test.js`: 18 pruebas. Decisión 138 en `docs/DECISIONES.md`.
+- `pruebas/espacios.test.js`: 17 pruebas, más una comprobación en la prueba del
+  navegador de `pruebas/build.test.js`. Decisión 138 en `docs/DECISIONES.md`.
 
 ### Cómo probarlo
 
@@ -2856,7 +2857,7 @@ bloqueo: que se arreglara solo. Antes de decidir nada recorrí el flujo completo
 npm test
 ```
 
-788 pruebas, 18 nuevas y ninguna rota (780 pasan, 8 saltadas como antes).
+787 pruebas, 17 nuevas y ninguna rota (779 pasan, 8 saltadas como antes).
 
 En pantalla: `npm run demo`, abrir `demo/index.html`, llegar al resumen de una
 Carrera de Compras con la tienda escrita "Mars  Incorporated" (dos espacios) y

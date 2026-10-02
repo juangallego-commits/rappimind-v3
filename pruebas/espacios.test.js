@@ -17,7 +17,6 @@
 
 const test = require('node:test');
 const assert = require('node:assert');
-const vm = require('node:vm');
 const path = require('node:path');
 
 const { rutaDesdeRaiz, leerJson } = require('../scripts/lib/archivos');
@@ -231,22 +230,10 @@ test('previsualizar también acepta los dobles espacios', () => {
 
 // --- el navegador --------------------------------------------------------------
 
-test('el navegador recibe la función y el estado la usa sin tocar lo que se teclea', () => {
-  // limpiarEspacios tiene que viajar dentro de MotorCliente.html (frontera 2),
-  // o entradaLimpia() revienta en pantalla aunque en Node todo pase.
-  const fs = require('node:fs');
-  const { execFileSync } = require('node:child_process');
-  execFileSync(process.execPath, [path.join(__dirname, '..', 'scripts', 'build.js')], { stdio: 'ignore' });
-
-  const html = fs.readFileSync(path.join(__dirname, '..', 'dist', 'MotorCliente.html'), 'utf8');
-  const guion = /<script>\n([\s\S]*)\n<\/script>/.exec(html);
-  const ambiente = { console: console };
-  ambiente.window = ambiente;
-  vm.createContext(ambiente);
-  vm.runInContext(guion[1], ambiente, { filename: 'MotorCliente.html' });
-  assert.strictEqual(typeof ambiente.limpiarEspacios, 'function', 'limpiarEspacios no llegó al navegador');
-  assert.strictEqual(ambiente.limpiarEspacios('a  b'), 'a b');
-});
+// Que limpiarEspacios llegue dentro de MotorCliente.html (frontera 2) se
+// comprueba en pruebas/build.test.js, que es la que construye dist/. Aquí no se
+// construye: las pruebas corren en paralelo y reconstruir dist/ desde dos
+// archivos a la vez borra la carpeta mientras otra prueba la lee.
 
 test('toda revisión, vista previa y envío del navegador usa la respuesta limpia', () => {
   // Una pantalla que se queda con estado.entrada() reabre el defecto: la
