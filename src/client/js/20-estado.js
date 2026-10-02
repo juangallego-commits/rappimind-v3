@@ -49,6 +49,20 @@ function entrada() {
   return estado.entrada;
 }
 
+/**
+ * Lo que respondio el comercial, sin los espacios de sobra.
+ *
+ * Es lo que se revisa, se previsualiza y se manda a generar. NO reemplaza a
+ * entrada(): los campos de texto y el borrador siguen con lo que la persona
+ * escribe, porque limpiar al teclear se come el espacio que acaba de poner
+ * entre dos palabras ("Mars " pasaria a "Mars" antes de escribir "Incorporated").
+ * El servidor limpia igual al recibir; hacerlo tambien aqui es lo que deja la
+ * revision, la hoja y el servidor viendo exactamente el mismo texto.
+ */
+function entradaLimpia() {
+  return limpiarEspacios(estado.entrada);
+}
+
 function fijar(campo, valor) {
   estado.entrada[campo] = valor;
   guardarBorrador();
@@ -227,6 +241,7 @@ RM.estado = {
   idiomaInterfaz: idiomaInterfaz,
   fijarIdiomaInterfaz: fijarIdiomaInterfaz,
   entrada: entrada,
+  entradaLimpia: entradaLimpia,
   fijar: fijar,
   fijarVarios: fijarVarios,
   reiniciarFormulario: reiniciarFormulario,

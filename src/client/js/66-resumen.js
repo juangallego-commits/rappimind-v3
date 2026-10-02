@@ -40,7 +40,7 @@ function loQueFalta() {
   var pais = flujo.paisElegido();
   if (!pais) return [estado.T('Elige el país de la campaña.')];
 
-  var revision = validarSolicitud(estado.entrada(), pais, {
+  var revision = validarSolicitud(estado.entradaLimpia(), pais, {
     fechaReferencia: E.configuracion.hoy || RM.util.hoyEnElNavegador(),
     usuarioEnEquipo: puedeVerPiloto(E.configuracion.rol),
     idioma: estado.idiomaInterfaz(),
@@ -160,7 +160,7 @@ function generar(boton) {
   boton.textContent = estado.T('Generando...');
   RM.util.anunciar(estado.T('Generando el documento.'));
 
-  RM.servidor.llamar('generar', estado.entrada()).then(function (resultado) {
+  RM.servidor.llamar('generar', estado.entradaLimpia()).then(function (resultado) {
     if (!resultado.valido) {
       boton.disabled = false;
       boton.textContent = estado.T('Generar T&C');

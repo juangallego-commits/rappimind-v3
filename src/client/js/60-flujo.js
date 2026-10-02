@@ -134,7 +134,7 @@ function erroresPorCampo() {
   var pais = paisElegido();
   if (!pais || !estado.entrada().tipo) return {};
 
-  var revision = validarSolicitud(estado.entrada(), pais, {
+  var revision = validarSolicitud(estado.entradaLimpia(), pais, {
     fechaReferencia: E.configuracion.hoy || RM.util.hoyEnElNavegador(),
     usuarioEnEquipo: puedeVerPiloto(E.configuracion.rol),
     // Los mensajes salen en el idioma de la interfaz; el documento no cambia.
@@ -176,7 +176,7 @@ function refrescarDocumento() {
     return;
   }
 
-  var resultado = renderizarVistaPrevia(modelo, estado.entrada(), pais, MODELOS);
+  var resultado = renderizarVistaPrevia(modelo, estado.entradaLimpia(), pais, MODELOS);
 
   for (var i = 0; i < contenedores.length; i++) {
     var cambiada = RM.documento.dibujar(contenedores[i], resultado.texto, E.ultimoTextoVistaPrevia);

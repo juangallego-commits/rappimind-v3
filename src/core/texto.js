@@ -29,6 +29,47 @@ function tieneValor(valor) {
   return true;
 }
 
+/**
+ * Las respuestas del comercial, sin los espacios de sobra.
+ *
+ * Devuelve una copia: junta en uno solo cada tramo de espacios, tabulaciones,
+ * saltos de linea y espacios duros (los que trae un texto pegado desde Word,
+ * Excel o una pagina web), y quita los del principio y del final. Recorre
+ * listas y objetos, porque las tiendas y los productos viajan como filas.
+ * Numeros, casillas y vacios pasan intactos.
+ *
+ * Paso de verdad: el comercial escribia "Masterfoods Colombia  Ltda" con dos
+ * espacios, o los traia pegados de otro documento. La pantalla de revision lo
+ * dejaba pasar (en HTML los espacios dobles no se ven, y la revision de datos
+ * no mira la forma del texto), el comercial tocaba Generar, y la red de
+ * seguridad del motor lo frenaba con "El texto quedo roto: hay dos espacios
+ * seguidos", sin decir en cual pregunta y sobre un error que no se alcanza a
+ * ver. Pasaba con cada campo de texto libre de cada tipo de campana y de cada
+ * pais.
+ *
+ * No es cosmetico ni decide nada por el comercial: dos espacios no son un dato
+ * distinto de uno. Por eso se arregla aqui, en el borde, y la red del motor se
+ * queda como esta para atrapar lo que no venga de una respuesta.
+ */
+function limpiarEspacios(valor) {
+  if (typeof valor === 'string') return valor.replace(/\s+/g, ' ').trim();
+  if (Object.prototype.toString.call(valor) === '[object Array]') {
+    var lista = [];
+    for (var i = 0; i < valor.length; i++) lista.push(limpiarEspacios(valor[i]));
+    return lista;
+  }
+  // Solo objetos corrientes: una fecha o cualquier otro objeto con forma propia
+  // pasa tal cual en vez de volverse un {} vacio.
+  if (Object.prototype.toString.call(valor) === '[object Object]') {
+    var copia = {};
+    for (var llave in valor) {
+      if (Object.prototype.hasOwnProperty.call(valor, llave)) copia[llave] = limpiarEspacios(valor[llave]);
+    }
+    return copia;
+  }
+  return valor;
+}
+
 function normalizarTexto(texto) {
   if (texto === null || texto === undefined) return '';
   var limpio = String(texto);
@@ -146,6 +187,7 @@ function incluyeTurbo(entrada) {
 if (typeof module !== 'undefined') {
   module.exports = {
     tieneValor: tieneValor,
+    limpiarEspacios: limpiarEspacios,
     tiendaDelCashback: tiendaDelCashback,
     incluyeTurbo: incluyeTurbo,
     normalizarTexto: normalizarTexto,
