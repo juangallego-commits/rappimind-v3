@@ -2817,3 +2817,56 @@ Nada bloqueante. Dos cosas que no cambié y conviene que tengas presentes:
    100 ganadores pasaba lo mismo desde 10.000 millones. Es un valor absurdo para
    un premio físico, así que no lo toqué; si prefieres un mensaje claro para ese
    caso, es un cambio pequeño.
+
+## 2 de octubre · Un doble espacio ya no bloquea la generación
+
+Juan mandó la captura del resumen de una Carrera de Compras de Mars con el aviso
+"El texto quedó roto: hay dos espacios seguidos." y pidió que no fuera un
+bloqueo: que se arreglara solo. Antes de decidir nada recorrí el flujo completo.
+
+### Qué encontré
+
+- Era un defecto de la herramienta, no solo del comercial. El resumen dice que
+  todo está bien y deja tocar Generar porque su revisión mira los datos pero no
+  la forma del texto. El doble espacio lo frena recién la red del motor, al
+  generar, con un mensaje que no dice en cuál pregunta, sobre algo que en
+  pantalla no se ve (en HTML dos espacios se pintan como uno).
+- Pasaba con todo campo de texto libre: 71 de 72 combinaciones de país, tipo y
+  campo (tienda, razón social, ciudades, marca aliada, filas del Cashback Day).
+- Los espacios duros de un texto pegado desde Word o Excel ni siquiera los veía
+  la red del motor: se habrían publicado.
+
+### Qué quedó
+
+- `limpiarEspacios()` en `src/core/texto.js`: copia de la solicitud con los
+  textos sin espacios de sobra.
+- Se aplica en `generarTexto()`, en `previsualizar` y `generar` del servidor
+  (así el nombre de la campaña, el título en Drive y lo guardado en el Sheet
+  salen limpios) y en el navegador por `estado.entradaLimpia()`, en los cinco
+  sitios que revisan, previsualizan o envían la respuesta.
+- Lo que el comercial teclea no se toca: limpiar al escribir se comería el
+  espacio entre dos palabras.
+- La red del motor sigue igual, y un campo de solo espacios o un cupón con
+  espacio siguen rechazados.
+- `pruebas/espacios.test.js`: 18 pruebas. Decisión 138 en `docs/DECISIONES.md`.
+
+### Cómo probarlo
+
+```
+npm test
+```
+
+788 pruebas, 18 nuevas y ninguna rota (780 pasan, 8 saltadas como antes).
+
+En pantalla: `npm run demo`, abrir `demo/index.html`, llegar al resumen de una
+Carrera de Compras con la tienda escrita "Mars  Incorporated" (dos espacios) y
+tocar Generar. Antes salía el aviso rojo; ahora pasa a "Tu T&C está listo". Lo
+comprobé en un navegador real, antes y después del arreglo, con el caso de Mars.
+
+### Qué necesito de Juan
+
+Nada bloqueante. Un pendiente que no es de este arreglo y que ya estaba anotado
+en el punto 137: un premio físico de valor enorme (2.000 millones o más por
+ganador con 500 ganadores) sigue frenando con este mismo mensaje, porque el
+total no cabe en letras. Ahí limpiar espacios no ayuda, y sigue siendo un cambio
+pequeño darle un mensaje que el comercial entienda, si lo quieres.

@@ -87,7 +87,7 @@ function previsualizar(entrada) {
   var quien = contextoDeQuienPide();
   // Una solicitud nueva nunca trae modificaciones: si un borrador viejo las
   // arrastra, no se imprimen.
-  entrada = sinRastroDeAmpliacion(entrada || {});
+  entrada = limpiarEspacios(sinRastroDeAmpliacion(entrada || {}));
   var pais = paisPorCodigo(leerPaises(), entrada.pais);
 
   var resultado = generarTexto(entrada, pais, MODELOS, {
@@ -104,7 +104,7 @@ function previsualizar(entrada) {
  */
 function generar(entrada) {
   var quien = contextoDeQuienPide();
-  entrada = sinRastroDeAmpliacion(entrada || {});
+  entrada = limpiarEspacios(sinRastroDeAmpliacion(entrada || {}));
   var paises = leerPaises();
   var pais = paisPorCodigo(paises, entrada.pais);
 
