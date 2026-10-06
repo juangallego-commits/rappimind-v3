@@ -60,6 +60,11 @@ test('solo se amplía una campaña publicada y en curso', () => {
   const despues = puedeAmpliar(PUBLICADA, campana(), '2026-11-05');
   assert.strictEqual(despues.puede, false);
   assert.ok(despues.motivo.indexOf('Usar como base') !== -1, despues.motivo);
+
+  // Retirada tampoco: ampliarla la volvería a publicar sin que nadie lo decida.
+  const retirada = puedeAmpliar(Object.assign({}, PUBLICADA, { verificacion: 'dado_de_baja' }), campana(), '2026-10-15');
+  assert.strictEqual(retirada.puede, false);
+  assert.ok(retirada.motivo.indexOf('retiró') !== -1, retirada.motivo);
 });
 
 test('la vigencia solo se mueve hacia adelante', () => {

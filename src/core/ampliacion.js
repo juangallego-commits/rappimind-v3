@@ -71,6 +71,15 @@ function momentoDeLaCampana(entrada, ahoraIso, ahoraHora) {
 function puedeAmpliar(solicitud, entrada, ahoraIso, ahoraHora) {
   var fila = solicitud || {};
 
+  // Retirada: su enlace ya no muestra el T&C. Ampliarla la volveria a
+  // publicar por la puerta de atras, sin que nadie decidiera reabrirla.
+  if (fila.verificacion === 'dado_de_baja') {
+    return {
+      puede: false,
+      motivo: 'Esta campaña se retiró y su enlace ya no muestra el T&C. Una campaña retirada no se amplía: si la necesitas, crea una nueva con "Usar como base", que queda con su propio enlace.',
+    };
+  }
+
   if (!String(fila.link_publicado || '').trim()) {
     return {
       puede: false,

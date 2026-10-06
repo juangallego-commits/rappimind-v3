@@ -120,7 +120,13 @@ function generarTexto(entrada, pais, modelos, contexto) {
  * entrada    los mismos hechos con que se genero el documento
  * pais       fila de data/paises.json
  * textos     { id: texto } de modelos/leyendas/ (en Apps Script, LEYENDAS)
- * opciones   { nombreCampana, enlacePublicado }
+ * opciones   { nombreCampana, enlacePublicado, enlacePrevisto }
+ *
+ * enlacePrevisto manda sobre el que se arma con la ruta de Squarespace del
+ * pais. Desde que RappiMind publica sola (src/core/publicacion_web.js) el
+ * enlace de la campana es el del visor, promos.rappi.com/tyc?co/..., y no el
+ * de un evento: sin esto la leyenda salia con la direccion vieja, y al
+ * confirmar el enlace la pantalla decia que la leyenda habia cambiado.
  *
  * Devuelve { hay, leyendas, complementos, faltantes, errores }. "hay" es false
  * cuando este pais todavia no tiene leyenda de campana aprobada, que hoy es todo
@@ -141,10 +147,12 @@ function generarLeyendasDeLaCampana(entrada, pais, textos, opciones) {
 
   // Con el idioma del pais, igual que el documento: los numeros y las fechas de
   // la leyenda se escriben como los del T&C o se contradicen entre si.
+  var previstoPropio = tieneValor(config.enlacePrevisto) ? String(config.enlacePrevisto).trim() : '';
+  var enlaceDeLaPieza = tieneValor(config.enlacePublicado) ? config.enlacePublicado : previstoPropio;
   var armadas = conElIdiomaDe(pais, function () {
     var valores = calcularDerivadosDeLeyendas(
       entrada, pais, calcularDerivados(entrada, pais),
-      { nombreCampana: config.nombreCampana, enlacePublicado: config.enlacePublicado }
+      { nombreCampana: config.nombreCampana, enlacePublicado: enlaceDeLaPieza }
     );
     return leyendasDeLaPieza(catalogo, pais.codigo, entrada.tipo, valores, {
       categoria: entrada.categoriaProducto,
@@ -180,7 +188,7 @@ function generarLeyendasDeLaCampana(entrada, pais, textos, opciones) {
     entregadas.push(armada);
   }
 
-  var previsto = urlDelTcDeLaCampana(entrada, pais, config.nombreCampana, '');
+  var previsto = previstoPropio || urlDelTcDeLaCampana(entrada, pais, config.nombreCampana, '');
   return {
     hay: entregadas.length > 0,
     leyendas: entregadas,

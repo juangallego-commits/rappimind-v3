@@ -44,9 +44,13 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
  *   retirado         estuvo publicada y ya no abre, con la campana vigente.
  *   sin_verificar    no se pudo leer (Squarespace fallo, o el documento).
  *   sin_enlace       no se sabe donde buscarla: falta el enlace publicado.
+ *   sin_publicar     RappiMind la tenia que publicar sola y la subida fallo; la
+ *                    corrida de cada hora lo vuelve a intentar.
+ *   dado_de_baja     la retiraron a proposito desde RappiMind. No es una alerta.
  */
 var ESTADOS_DE_VERIFICACION = [
   'verificado', 'con_diferencias', 'no_publicado', 'retirado', 'sin_verificar', 'sin_enlace',
+  'sin_publicar', 'dado_de_baja',
 ];
 
 /** Cuantas revisiones caben en una corrida automatica, con holgura de tiempo. */
@@ -415,12 +419,18 @@ function leerEventoDeSquarespace(cuerpo) {
 }
 
 function resultadoDeVerificacion(estado, detalle, avisos, evento) {
+  // Un archivo publicado por RappiMind ya trae su fecha escrita en la hora de
+  // Bogota; un evento de Squarespace la trae en milisegundos y hay que llevarla
+  // a la hora del sitio.
+  var web = !!(evento && evento.origen === 'web');
   return {
     estado: estado,
     detalle: detalle,
     avisos: avisos || [],
     urlCompleta: evento ? evento.urlCompleta : '',
-    publicadoDesde: evento ? fechaHoraDelSitio(evento.publicadoDesde, evento.desfase) : '',
+    publicadoDesde: !evento ? '' : (web ? String(evento.publicadoDesde || '') : fechaHoraDelSitio(evento.publicadoDesde, evento.desfase)),
+    origen: web ? 'web' : 'squarespace',
+    version: web ? (Number(evento.version) || 0) : 0,
   };
 }
 
@@ -502,7 +512,9 @@ function veredictoDeLaPublicacion(esperado, evento) {
   }
 
   var avisos = avisosDelEvento(esperado, evento);
-  var comparacion = compararConLoPublicado(esperado, textoDeHtmlPublicado(evento.cuerpoHtml));
+  // El archivo de RappiMind ya trae el texto; el evento de Squarespace, HTML.
+  var publicado = evento.cuerpoTexto !== undefined ? evento.cuerpoTexto : textoDeHtmlPublicado(evento.cuerpoHtml);
+  var comparacion = compararConLoPublicado(esperado, publicado);
   if (!comparacion.identico) {
     return resultadoDeVerificacion('con_diferencias', describirDiferencia(comparacion.diferencia), avisos, evento);
   }
@@ -555,7 +567,10 @@ function hayQueAvisarDeLaVerificacion(anterior, siguiente) {
 /** Lo que queda escrito en la columna detalle_verificacion. */
 function detalleParaGuardar(resultado) {
   var partes = [resultado.detalle];
-  if (resultado.estado === 'verificado' && resultado.publicadoDesde) {
+  if (resultado.estado === 'verificado' && resultado.origen === 'web') {
+    partes.push('Publicado por RappiMind' + (resultado.publicadoDesde ? ' el ' + resultado.publicadoDesde : '') +
+      ', versión ' + (resultado.version || 1) + '.');
+  } else if (resultado.estado === 'verificado' && resultado.publicadoDesde) {
     partes.push('Publicado en Squarespace desde el ' + resultado.publicadoDesde + ' (hora del sitio).');
   }
   for (var i = 0; i < (resultado.avisos || []).length; i++) partes.push(resultado.avisos[i]);
@@ -644,6 +659,15 @@ function solicitudesPorRevisar(filas, rutasPorPais, hoyIso, maximo) {
     if (!enlace) continue;
 
     var verificacion = String(fila.verificacion || '');
+    // Retirada a proposito: ya no hay nada que mirar.
+    if (verificacion === 'dado_de_baja') continue;
+    // La tenia que publicar RappiMind y la subida fallo: se reintenta en cada
+    // corrida, este como este de vieja, hasta que quede o la campana termine.
+    if (verificacion === 'sin_publicar') {
+      frecuentes.push({ fila: fila, enlace: enlace });
+      continue;
+    }
+
     var ultima = String(fila.fecha_verificacion || '').slice(0, 10);
     var generada = String(fila.fecha || '').slice(0, 10);
     var reciente = !generada || diasEntreFechas(generada, hoy) <= DIAS_DE_REVISION_FRECUENTE;
@@ -667,6 +691,8 @@ function etiquetaDePublicacion(fila) {
   if (verificacion === 'verificado') return { texto: 'Publicado y verificado', clase: 'estado-publicado' };
   if (verificacion === 'con_diferencias') return { texto: 'Publicado con diferencias', clase: 'estado-alerta' };
   if (verificacion === 'retirado') return { texto: 'Ya no está publicado', clase: 'estado-alerta' };
+  if (verificacion === 'dado_de_baja') return { texto: 'Retirado', clase: 'estado-vencido' };
+  if (verificacion === 'sin_publicar') return { texto: 'Publicando', clase: 'estado-generado' };
   if (String(fila && fila.estado || '') === 'publicado') return { texto: 'Publicado', clase: 'estado-publicado' };
   return { texto: 'Generado', clase: 'estado-generado' };
 }
@@ -737,6 +763,7 @@ if (typeof module !== 'undefined') {
     describirDiferencia: describirDiferencia,
     leerEventoDeSquarespace: leerEventoDeSquarespace,
     leerRespuestaDeSquarespace: leerRespuestaDeSquarespace,
+    resultadoDeVerificacion: resultadoDeVerificacion,
     veredictoDeLaPublicacion: veredictoDeLaPublicacion,
     verificarPublicacion: verificarPublicacion,
     estadoDeVerificacionSiguiente: estadoDeVerificacionSiguiente,
