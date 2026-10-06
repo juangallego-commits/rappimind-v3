@@ -53,6 +53,12 @@ const SERVIDOR_SIMULADO = `
     return lista;
   }
 
+  var VERIFICACION_DE_LA_DEMO = {
+    estado: 'sin_verificar',
+    detalle: 'En la demostración no se revisa Squarespace.',
+    avisos: [], enlace: '', fecha: '',
+  };
+
   window.RM = window.RM || {};
   window.RM.servidorSimulado = {
     estadoInicial: function () {
@@ -110,6 +116,7 @@ const SERVIDOR_SIMULADO = `
       return {
         valido: true, demostracion: true, texto: resultado.texto, id: id,
         nombreCampana: nombreCampana, direccionSugerida: direccionDeCampana(nombreCampana),
+        enlacePrevisto: enlaceParaRevisar({ direccion_sugerida: direccionDeCampana(nombreCampana) }, pais.ruta_promos),
         pais: pais.codigo,
         leyendas: generarLeyendasDeLaCampana(entrada, pais, LEYENDAS, { nombreCampana: nombreCampana }),
       };
@@ -133,9 +140,16 @@ const SERVIDOR_SIMULADO = `
           leyendas: paisDeLaSolicitud ? generarLeyendasDeLaCampana(deLaSolicitud, paisDeLaSolicitud, LEYENDAS, {
             nombreCampana: solicitudes[i].nombre_campana, enlacePublicado: revision.url,
           }) : null,
+          verificacion: VERIFICACION_DE_LA_DEMO,
         };
       }
       return { valido: false, errores: [{ campo: 'id', mensaje: 'No encontramos esa solicitud.' }] };
+    },
+
+    // La demostracion no sale a internet: no hay pagina que leer. Responde lo
+    // mismo que el servidor en modo demostracion (RevisionDePublicacion.js).
+    revisarPublicacion: function (id) {
+      return { valido: true, demostracion: true, id: id, verificacion: VERIFICACION_DE_LA_DEMO };
     },
 
     datosDeSolicitud: function (id) {

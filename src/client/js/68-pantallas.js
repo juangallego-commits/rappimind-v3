@@ -14,7 +14,7 @@ function pantallaHistorial(raiz) {
     crear('h1', { texto: 'Tus campañas' }),
     crear('p', {
       clase: 'pregunta-ayuda',
-      texto: 'Abre tus documentos, márcalos como publicados o usa uno como base para una campaña nueva.',
+      texto: 'Abre tus documentos, revisa si ya quedaron publicados o usa uno como base para una campaña nueva. RappiMind revisa sola cada hora las que tienen la dirección que te propuso.',
     }),
   ]);
 
@@ -68,7 +68,7 @@ function pantallaHistorial(raiz) {
       var cuerpo = crear('tbody');
       for (var i = 0; i < filas.length; i++) {
         (function (fila) {
-          var publicado = String(fila.estado) === 'publicado';
+          var etiqueta = etiquetaDePublicacion(fila);
           cuerpo.appendChild(crear('tr', {}, [
             crear('td', {}, [
               crear('strong', { texto: fila.nombre_campana || '(sin nombre)' }),
@@ -77,10 +77,11 @@ function pantallaHistorial(raiz) {
             crear('td', { texto: fila.pais || '' }),
             crear('td', { texto: String(fila.fecha || '').slice(0, 10) }),
             crear('td', {}, [
-              crear('span', { clase: 'estado ' + (publicado ? 'estado-publicado' : 'estado-generado') }, [
+              crear('span', { clase: 'estado ' + etiqueta.clase }, [
                 crear('span', { clase: 'punto' }),
-                document.createTextNode(publicado ? 'Publicado' : 'Generado'),
+                document.createTextNode(etiqueta.texto),
               ]),
+              detalleDeLaRevision(fila),
             ]),
             crear('td', {}, [
               fila.link_doc ? crear('a', { clase: 'boton-texto', href: fila.link_doc, target: '_blank', rel: 'noopener', texto: 'Abrir' }) : null,
@@ -90,6 +91,8 @@ function pantallaHistorial(raiz) {
                 onclick: function () { usarComoBase(fila.id); },
               }),
               botonDeAmpliar(fila, destino),
+              document.createTextNode(' '),
+              botonDeRevisar(fila, function () { cargar(buscador.value); }),
             ]),
           ]));
         })(filas[i]);
@@ -103,6 +106,61 @@ function pantallaHistorial(raiz) {
   }
 
   cargar('');
+}
+
+/**
+ * Lo que vio la ultima revision, debajo del estado. Solo cuando hay algo que
+ * hacer: una pagina con diferencias o una que ya no abre. Que todavia no este
+ * publicada no es noticia, y repetirlo en cada fila tapaba lo que si lo es.
+ * La que se acaba de revisar con el boton lo muestra siempre.
+ */
+var ultimaRevisada = '';
+
+function detalleDeLaRevision(fila) {
+  var verificacion = String(fila.verificacion || '');
+  var importa = verificacion === 'con_diferencias' || verificacion === 'retirado';
+  if (!fila.detalle_verificacion || (!importa && fila.id !== ultimaRevisada)) return null;
+  return crear('small', { clase: importa ? 'detalle-revision detalle-revision-alerta' : 'detalle-revision', texto: fila.detalle_verificacion });
+}
+
+/**
+ * Revisar ya mismo una campana que todavia no esta verificada.
+ *
+ * No sale en una que ya termino: ahi no hay nada que publicar. Tampoco en una
+ * verificada: la corrida diaria la sigue mirando mientras este vigente.
+ */
+function botonDeRevisar(fila, alTerminar) {
+  if (String(fila.verificacion || '') === 'verificado') return null;
+  var hoy = E.configuracion.hoy || RM.util.hoyEnElNavegador();
+  var fin = String(fila.fecha_fin || '').slice(0, 10);
+  if (fin && fin < hoy) return null;
+
+  // Sin enlace pegado y en un pais sin ruta de Squarespace no hay donde
+  // buscarla: un boton que siempre responde "no sabemos donde" no ayuda.
+  var pais = paisPorCodigo(E.configuracion.paises || [], fila.pais);
+  if (!enlaceParaRevisar(fila, pais ? pais.ruta_promos : '')) return null;
+
+  var boton = crear('button', { clase: 'boton-texto', type: 'button', texto: estado.T('Revisar') });
+  boton.addEventListener('click', function () {
+    boton.disabled = true;
+    boton.textContent = estado.T('Revisando...');
+    RM.servidor.llamar('revisarPublicacion', fila.id).then(function (respuesta) {
+      if (!respuesta || !respuesta.valido) {
+        boton.disabled = false;
+        boton.textContent = estado.T('Revisar');
+        RM.app.mostrarError(respuesta && respuesta.errores ? respuesta.errores[0].mensaje : 'No pudimos revisar la página.');
+        return;
+      }
+      ultimaRevisada = fila.id;
+      if (respuesta.verificacion) RM.util.anunciar(respuesta.verificacion.detalle);
+      alTerminar();
+    }).catch(function (error) {
+      boton.disabled = false;
+      boton.textContent = estado.T('Revisar');
+      RM.app.mostrarError('No pudimos revisar la página: ' + error.message);
+    });
+  });
+  return boton;
 }
 
 /**

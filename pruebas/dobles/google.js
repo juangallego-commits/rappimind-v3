@@ -201,6 +201,7 @@ Parrafo.prototype.setFontFamily = function (f) { this.fuente = f; return this; }
 Parrafo.prototype.setFontSize = function (t) { this.tamano = t; return this; };
 Parrafo.prototype.setLineSpacing = function (i) { this.interlineado = i; return this; };
 Parrafo.prototype.setGlyphType = function (g) { this.vineta = g; return this; };
+Parrafo.prototype.getAlignment = function () { return this.alineacion; };
 Parrafo.prototype.getType = function () { return this.tipo; };
 Parrafo.prototype.asParagraph = function () { return this; };
 
@@ -217,6 +218,8 @@ Cuerpo.prototype.appendListItem = function () {
   return p;
 };
 Cuerpo.prototype.getNumChildren = function () { return this.hijos.length; };
+// Como en DocumentApp: los parrafos de la seccion, incluidas las vinetas.
+Cuerpo.prototype.getParagraphs = function () { return this.hijos.slice(); };
 Cuerpo.prototype.getChild = function (i) { return this.hijos[i]; };
 Cuerpo.prototype.removeChild = function (hijo) {
   this.hijos = this.hijos.filter(function (h) { return h !== hijo; });
@@ -237,7 +240,7 @@ Documento.prototype.saveAndClose = function () { this.cerrado = true; };
 
 var GLOBALES = [
   'PropertiesService', 'Session', 'Utilities', 'SpreadsheetApp', 'DriveApp',
-  'DocumentApp', 'MailApp', 'LockService', 'ScriptApp', 'Logger',
+  'DocumentApp', 'MailApp', 'LockService', 'ScriptApp', 'Logger', 'UrlFetchApp',
 ];
 
 /**
@@ -273,7 +276,17 @@ function instalarDobles(opciones) {
       bloqueo: null, documento: null, correo: null,
       hoja: null, hojaSolo: null,
       escritura: null, escrituraSolo: null,
+      // La red al pedir una pagina, y abrir un documento ya creado.
+      red: null, abrirDocumento: null,
     },
+    /*
+     * Las paginas publicadas, por la URL exacta que pide el servidor (con su
+     * ?format=json). Cada una es { codigo, cuerpo }. La que no este, da 404,
+     * que es lo que responde Squarespace cuando un evento no existe.
+     */
+    paginas: {},
+    pedidos: [],
+    disparadores: [],
   };
 
   mundoActivo = mundo;
@@ -352,6 +365,11 @@ function instalarDobles(opciones) {
   };
 
   globalThis.DocumentApp = {
+    openById: function (id) {
+      reventarSiToca('abrirDocumento');
+      if (!mundo.documentos[id]) throw new Error('No existe el documento ' + id);
+      return mundo.documentos[id];
+    },
     create: function (titulo) {
       reventarSiToca('documento');
       var documento = new Documento(nuevoId('doc'), titulo);
@@ -378,13 +396,60 @@ function instalarDobles(opciones) {
           reventarSiToca('bloqueo');
           mundo.registroDeBloqueos += 1;
         },
+        tryLock: function () {
+          if (mundo.fallar.bloqueo) return false;
+          mundo.registroDeBloqueos += 1;
+          return true;
+        },
         releaseLock: function () {},
       };
     },
   };
 
+  globalThis.UrlFetchApp = {
+    fetch: function (url, opciones) {
+      reventarSiToca('red');
+      mundo.pedidos.push({ url: url, opciones: opciones || {} });
+      var pagina = mundo.paginas[url];
+      if (typeof pagina === 'function') pagina = pagina(url);
+      var codigo = pagina ? pagina.codigo : 404;
+      var cuerpo = pagina ? pagina.cuerpo : '<!DOCTYPE html><html><body>404</body></html>';
+      // Sin muteHttpExceptions, Google lanza ante un 4xx o 5xx.
+      if (codigo >= 400 && !(opciones && opciones.muteHttpExceptions)) {
+        throw new Error('Request failed for ' + url + ' returned code ' + codigo);
+      }
+      return {
+        getResponseCode: function () { return codigo; },
+        getContentText: function () { return cuerpo; },
+      };
+    },
+  };
+
+  var siguienteDisparador = 0;
   globalThis.ScriptApp = {
     getService: function () { return { getUrl: function () { return 'https://script.google.com/a/macros/rappi.com/s/demo/exec'; } }; },
+    getProjectTriggers: function () { return mundo.disparadores.slice(); },
+    deleteTrigger: function (disparador) {
+      mundo.disparadores = mundo.disparadores.filter(function (d) { return d !== disparador; });
+    },
+    newTrigger: function (funcion) {
+      var config = { funcion: funcion, cadaHoras: null };
+      var constructor = {
+        timeBased: function () { return constructor; },
+        everyHours: function (horas) { config.cadaHoras = horas; return constructor; },
+        create: function () {
+          siguienteDisparador += 1;
+          var disparador = {
+            config: config,
+            getHandlerFunction: function () { return config.funcion; },
+            getUniqueId: function () { return 'disparador-' + siguienteDisparador; },
+          };
+          mundo.disparadores.push(disparador);
+          return disparador;
+        },
+      };
+      return constructor;
+    },
   };
 
   globalThis.Logger = { log: function () {} };

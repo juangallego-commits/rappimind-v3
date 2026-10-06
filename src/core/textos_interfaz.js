@@ -190,6 +190,37 @@ var TEXTOS_PT = {
   '¿Quién puede publicar?': 'Quem pode publicar?',
   'Abrir el documento': 'Abrir o documento',
   'Cuando ya esté publicado': 'Quando já estiver publicado',
+  // La revision de lo publicado y el texto para pegar (6 de octubre de 2026).
+  'Texto del T&C': 'Texto dos T&C',
+  'Copiar el texto': 'Copiar o texto',
+  'Copiado': 'Copiado',
+  'Texto del T&C copiado.': 'Texto dos T&C copiado.',
+  'Lo copia con sus negrillas, cláusulas y viñetas. Pégalo en el cuerpo del evento, sin cambiarle nada.':
+    'Copia com os negritos, as cláusulas e os marcadores. Cole no corpo do evento, sem mudar nada.',
+  'Tu navegador no nos dejó copiarlo. Quedó seleccionado: cópialo con Ctrl+C, o Cmd+C en Mac.':
+    'Seu navegador não deixou copiar. O texto ficou selecionado: copie com Ctrl+C, ou Cmd+C no Mac.',
+  'No tienes que volver a pegar el enlace. Cuando la publiques en esta dirección, RappiMind la revisa sola cada hora: confirma que el texto quedó idéntico al documento, marca tu campaña como publicada y te avisa por correo.':
+    'Você não precisa voltar para colar o link. Quando publicar neste endereço, o RappiMind verifica sozinho a cada hora: confirma que o texto ficou idêntico ao documento, marca sua campanha como publicada e avisa você por e-mail.',
+  'Revisar ahora': 'Verificar agora',
+  'Revisando...': 'Verificando...',
+  '¿La publicaste con otra dirección?': 'Você publicou com outro endereço?',
+  'Pega el enlace de la página que publicaste. Lo revisamos en el acto.':
+    'Cole o link da página que você publicou. Nós verificamos na hora.',
+  'Marcar como publicado': 'Marcar como publicado',
+  'Listo: tu campaña quedó marcada como publicada.': 'Pronto: sua campanha ficou marcada como publicada.',
+  'No pudimos guardarlo: ': 'Não conseguimos salvar: ',
+  'No pudimos revisar la página.': 'Não conseguimos verificar a página.',
+  'No pudimos revisar la página: ': 'Não conseguimos verificar a página: ',
+  'Publicada y verificada: el texto es idéntico al documento.': 'Publicada e verificada: o texto é idêntico ao documento.',
+  'La página ya no abre': 'A página não abre mais',
+  'La página publicada no coincide con el documento': 'A página publicada não coincide com o documento',
+  'Vuelve a publicarla en la misma dirección, para que el enlace de tus piezas siga funcionando.':
+    'Publique de novo no mesmo endereço, para que o link das suas peças continue funcionando.',
+  'Copia otra vez el texto y reemplaza todo el cuerpo del evento, sin editarlo a mano. Después dale Revisar ahora.':
+    'Copie o texto de novo e substitua todo o corpo do evento, sem editar à mão. Depois clique em Verificar agora.',
+  'Además, revisa esto en el evento': 'Além disso, revise isto no evento',
+  'Enlace por confirmar. Cuando RappiMind encuentre la página publicada, comparamos su enlace con el de la leyenda y te avisamos aquí si cambia.':
+    'Link a confirmar. Quando o RappiMind encontrar a página publicada, comparamos o link dela com o da legenda e avisamos aqui se mudar.',
   'Hacer otra campaña': 'Fazer outra campanha',
   'Ver mis campañas': 'Ver minhas campanhas',
   'Te llega por correo en un par de minutos, con los pasos para publicarlo o a quién pasárselo.':

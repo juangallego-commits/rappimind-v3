@@ -136,6 +136,15 @@ test('MotorCliente.html corre solo en el navegador y arma la vista previa', () =
   assert.strictEqual(typeof ambiente.limpiarEspacios, 'function', 'limpiarEspacios no llego al navegador');
   assert.strictEqual(ambiente.limpiarEspacios('a  b'), 'a b');
 
+  // La pantalla final copia el texto para Squarespace y el historial pinta el
+  // estado de la publicacion con funciones de src/core/publicacion.js. La
+  // direccion prevista depende de PREFIJO_PUBLICACION, que declara otro archivo
+  // (validaciones.js): sin el, el enlace saldria "undefinedcolombia/...".
+  assert.strictEqual(ambiente.htmlParaSquarespace('**1. Uno.** a\n• b'),
+    '<p><strong>1. Uno.</strong> a</p>\n<ul>\n<li>b</li>\n</ul>');
+  assert.strictEqual(ambiente.etiquetaDePublicacion({ verificacion: 'verificado' }).texto, 'Publicado y verificado');
+  assert.strictEqual(ambiente.enlaceParaRevisar({ direccion_sugerida: 'x' }, 'colombia'), 'https://promos.rappi.com/colombia/x');
+
   // Con la campana a medio llenar la vista previa tiene que salir igual, con
   // huecos marcados donde falta el dato. Esto es lo que ve el comercial.
   const pais = ambiente.paisDesdeFila(ambiente.PAISES_SEMILLA.find((fila) => fila.codigo === 'CO'));

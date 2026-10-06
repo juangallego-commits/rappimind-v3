@@ -295,6 +295,8 @@ function bloqueDePublicacion(resultado) {
     estado.T('Va tal cual en el título del evento. No lo cambies: es el mismo nombre que quedó en el documento.')
   ));
 
+  agregarSiHay(contenido, bloqueDelTextoParaPegar(resultado));
+
   var pais = flujo.paisElegido();
   var rutaDelPais = (pais && pais.nombre ? pais.nombre : '').toLowerCase();
   contenido.appendChild(RM.util.paraCopiar(
@@ -327,6 +329,239 @@ function bloqueDePublicacion(resultado) {
   ]));
 
   return contenido;
+}
+
+/**
+ * El documento dibujado con crear(), sin los estilos de la app.
+ *
+ * Es lo que se copia por seleccion cuando el navegador no deja escribir HTML
+ * en el portapapeles. Va fuera de la vista: no es para leerlo aqui, para eso
+ * esta el documento.
+ */
+function documentoParaCopiar(texto) {
+  var caja = crear('div', { clase: 'copia-oculta', 'aria-hidden': 'true' });
+  var bloques = estructuraDelDocumento(texto);
+  var lista = null;
+
+  for (var i = 0; i < bloques.length; i++) {
+    var bloque = bloques[i];
+    var destino;
+    if (bloque.tipo === 'vineta') {
+      if (!lista) { lista = crear('ul'); caja.appendChild(lista); }
+      destino = crear('li');
+      lista.appendChild(destino);
+    } else {
+      lista = null;
+      destino = crear('p');
+      caja.appendChild(destino);
+    }
+    var esTitulo = bloque.tipo === 'titulo' || bloque.tipo === 'subtitulo';
+    for (var p = 0; p < bloque.partes.length; p++) {
+      var parte = bloque.partes[p];
+      destino.appendChild(parte.negrita || esTitulo
+        ? crear('strong', { texto: parte.texto })
+        : document.createTextNode(parte.texto));
+    }
+  }
+  return caja;
+}
+
+/**
+ * El texto del T&C, listo para pegar en el cuerpo del evento.
+ *
+ * Antes habia que abrir el documento, seleccionarlo todo, pegarlo y arreglar
+ * las vinetas a mano, o pegar "sin formato". Ahora un boton lo copia ya
+ * formateado, y lo que se pega es exactamente lo que RappiMind revisa despues
+ * (htmlParaSquarespace, en src/core/publicacion.js).
+ */
+function bloqueDelTextoParaPegar(resultado) {
+  if (!resultado || !resultado.texto) return null;
+
+  var html = htmlParaSquarespace(resultado.texto);
+  var plano = textoPlanoParaSquarespace(resultado.texto);
+  var oculto = documentoParaCopiar(resultado.texto);
+
+  var nota = crear('p', {
+    clase: 'pregunta-ayuda',
+    texto: estado.T('Lo copia con sus negrillas, cláusulas y viñetas. Pégalo en el cuerpo del evento, sin cambiarle nada.'),
+  });
+  var boton = crear('button', { clase: 'boton boton-secundario boton-chico', type: 'button', texto: estado.T('Copiar el texto') });
+  boton.addEventListener('click', function () {
+    RM.util.copiarConFormato(html, plano, oculto).then(function (como) {
+      if (como === 'copiado') {
+        boton.textContent = estado.T('Copiado');
+        RM.util.anunciar(estado.T('Texto del T&C copiado.'));
+        setTimeout(function () { boton.textContent = estado.T('Copiar el texto'); }, 1600);
+        return;
+      }
+      nota.textContent = estado.T('Tu navegador no nos dejó copiarlo. Quedó seleccionado: cópialo con Ctrl+C, o Cmd+C en Mac.');
+    });
+  });
+
+  return crear('div', { clase: 'copiable' }, [
+    crear('div', { clase: 'copiable-encabezado' }, [
+      crear('span', { clase: 'copiable-etiqueta', texto: estado.T('Texto del T&C') }),
+      boton,
+    ]),
+    nota,
+    oculto,
+  ]);
+}
+
+/**
+ * El veredicto de la revision de lo publicado, en palabras.
+ *
+ * respuesta: lo que devuelven revisarPublicacion o marcarPublicado. Se pinta
+ * dentro de `destino`, que se vacia antes.
+ */
+function mostrarVeredicto(destino, respuesta) {
+  RM.util.vaciar(destino);
+  if (!respuesta || !respuesta.valido) {
+    destino.appendChild(crear('p', {
+      clase: 'mensaje-error',
+      texto: respuesta && respuesta.errores ? respuesta.errores[0].mensaje : estado.T('No pudimos revisar la página.'),
+    }));
+    return;
+  }
+
+  var verificacion = respuesta.verificacion;
+  if (!verificacion) return;
+
+  if (verificacion.estado === 'verificado') {
+    destino.appendChild(crear('p', { clase: 'mensaje-ok' }, [
+      RM.util.icono('visto', 16),
+      document.createTextNode(estado.T('Publicada y verificada: el texto es idéntico al documento.')),
+    ]));
+  } else if (verificacion.estado === 'con_diferencias' || verificacion.estado === 'retirado') {
+    destino.appendChild(crear('div', { clase: 'aviso aviso-serio' }, [
+      crear('h3', {
+        texto: verificacion.estado === 'retirado'
+          ? estado.T('La página ya no abre')
+          : estado.T('La página publicada no coincide con el documento'),
+      }),
+      crear('p', { texto: verificacion.detalle }),
+      crear('p', {
+        texto: verificacion.estado === 'retirado'
+          ? estado.T('Vuelve a publicarla en la misma dirección, para que el enlace de tus piezas siga funcionando.')
+          : estado.T('Copia otra vez el texto y reemplaza todo el cuerpo del evento, sin editarlo a mano. Después dale Revisar ahora.'),
+      }),
+    ]));
+  } else {
+    destino.appendChild(crear('p', { clase: 'pregunta-ayuda', texto: verificacion.detalle }));
+  }
+
+  var avisos = verificacion.avisos || [];
+  if (avisos.length > 0) {
+    var lista = crear('ul');
+    for (var i = 0; i < avisos.length; i++) lista.appendChild(crear('li', { texto: avisos[i] }));
+    destino.appendChild(crear('div', { clase: 'aviso' }, [
+      crear('h3', { texto: estado.T('Además, revisa esto en el evento') }),
+      lista,
+    ]));
+  }
+}
+
+/**
+ * Pegar el enlace a mano: para un pais sin ruta de Squarespace, o para quien
+ * publico con otra direccion. Al guardarlo, el servidor lo revisa en el acto.
+ */
+function formularioDeEnlace(resultado, veredicto, alConfirmar) {
+  var campo = crear('input', {
+    type: 'text', id: 'link-publicado',
+    placeholder: 'https://promos.rappi.com/',
+    'aria-label': 'Enlace de la página publicada',
+  });
+  var mensaje = crear('p', { clase: 'pregunta-ayuda', texto: estado.T('Pega el enlace de la página que publicaste. Lo revisamos en el acto.') });
+
+  var guardar = crear('button', {
+    clase: 'boton', type: 'button', texto: estado.T('Marcar como publicado'),
+    onclick: function () {
+      var revision = validarLinkPublicado(campo.value);
+      if (!revision.valido) {
+        mensaje.className = 'mensaje-error';
+        mensaje.textContent = revision.mensaje;
+        campo.focus();
+        return;
+      }
+      guardar.disabled = true;
+      guardar.textContent = estado.T('Revisando...');
+      RM.servidor.llamar('marcarPublicado', resultado.id, revision.url).then(function (respuesta) {
+        guardar.disabled = false;
+        guardar.textContent = estado.T('Marcar como publicado');
+        if (!respuesta.valido) {
+          mensaje.className = 'mensaje-error';
+          mensaje.textContent = respuesta.errores[0].mensaje;
+          return;
+        }
+        mensaje.className = 'mensaje-ok';
+        mensaje.textContent = estado.T('Listo: tu campaña quedó marcada como publicada.');
+        campo.disabled = true;
+        guardar.disabled = true;
+        mostrarVeredicto(veredicto, respuesta);
+        if (respuesta.leyendas && alConfirmar) alConfirmar(respuesta.leyendas);
+      }).catch(function (error) {
+        guardar.disabled = false;
+        guardar.textContent = estado.T('Marcar como publicado');
+        mensaje.className = 'mensaje-error';
+        mensaje.textContent = estado.T('No pudimos guardarlo: ') + error.message;
+      });
+    },
+  });
+
+  return crear('div', { clase: 'pregunta' }, [
+    crear('div', { clase: 'campo-caja' }, [campo]),
+    mensaje,
+    crear('div', { clase: 'fila-botones' }, [guardar]),
+  ]);
+}
+
+/**
+ * Lo que pasa despues de publicar.
+ *
+ * Con la direccion prevista (Colombia, hoy), RappiMind revisa sola cada hora y
+ * el comercial no tiene que volver: pegar el enlace era el paso 10 de 10, y el
+ * que mas se olvidaba. Sin ella (un pais sin ruta de Squarespace), hay que
+ * pegar el enlace, y al pegarlo se revisa en el acto. En los dos casos lo que
+ * se ve es el veredicto en palabras, no un "guardado".
+ */
+function bloqueDeRevision(resultado, alConfirmar) {
+  var caja = crear('div', {}, [crear('h2', { texto: estado.T('Cuando ya esté publicado') })]);
+  var veredicto = crear('div', { 'aria-live': 'polite' });
+
+  if (!resultado.enlacePrevisto) {
+    caja.appendChild(formularioDeEnlace(resultado, veredicto, alConfirmar));
+    caja.appendChild(veredicto);
+    return caja;
+  }
+
+  caja.appendChild(crear('p', {
+    texto: estado.T('No tienes que volver a pegar el enlace. Cuando la publiques en esta dirección, RappiMind la revisa sola cada hora: confirma que el texto quedó idéntico al documento, marca tu campaña como publicada y te avisa por correo.'),
+  }));
+  caja.appendChild(crear('code', { clase: 'copiable-valor', texto: resultado.enlacePrevisto }));
+
+  var revisar = crear('button', { clase: 'boton', type: 'button', texto: estado.T('Revisar ahora') });
+  revisar.addEventListener('click', function () {
+    revisar.disabled = true;
+    revisar.textContent = estado.T('Revisando...');
+    RM.servidor.llamar('revisarPublicacion', resultado.id).then(function (respuesta) {
+      revisar.disabled = false;
+      revisar.textContent = estado.T('Revisar ahora');
+      mostrarVeredicto(veredicto, respuesta);
+      if (respuesta && respuesta.valido && respuesta.leyendas && alConfirmar) alConfirmar(respuesta.leyendas);
+    }).catch(function (error) {
+      revisar.disabled = false;
+      revisar.textContent = estado.T('Revisar ahora');
+      mostrarVeredicto(veredicto, { valido: false, errores: [{ mensaje: estado.T('No pudimos revisar la página: ') + error.message }] });
+    });
+  });
+
+  caja.appendChild(crear('div', { clase: 'fila-botones' }, [revisar]));
+  caja.appendChild(veredicto);
+  caja.appendChild(crear('details', { clase: 'por-que' }, [
+    crear('summary', { texto: estado.T('¿La publicaste con otra dirección?') }),
+    formularioDeEnlace(resultado, veredicto, alConfirmar),
+  ]));
+  return caja;
 }
 
 /**
@@ -383,7 +618,7 @@ function bloqueDeLeyendas(leyendas) {
   } else {
     caja.appendChild(crear('p', {
       clase: 'pregunta-ayuda',
-      texto: estado.T('Enlace por confirmar. Cuando publiques la página y pegues el enlace aquí abajo, comparamos y te avisamos si la leyenda cambia.'),
+      texto: estado.T('Enlace por confirmar. Cuando RappiMind encuentre la página publicada, comparamos su enlace con el de la leyenda y te avisamos aquí si cambia.'),
     }));
   }
 
@@ -554,65 +789,19 @@ function pantallaListo(raiz) {
   var cajaDeLeyendas = bloqueDeLeyendas(resultado.leyendas);
   agregarSiHay(contenido, cajaDeLeyendas);
 
-  // Link publicado.
-  contenido.appendChild(crear('h2', { texto: estado.T('Cuando ya esté publicado') }));
-  var campo = crear('input', {
-    type: 'text', id: 'link-publicado',
-    placeholder: 'https://promos.rappi.com/',
-    'aria-label': 'Enlace de la página publicada',
-  });
-  var mensaje = crear('p', { clase: 'pregunta-ayuda', texto: 'Pega el enlace de la página que publicaste.' });
-
-  var guardar = crear('button', {
-    clase: 'boton', type: 'button', texto: 'Marcar como publicado',
-    onclick: function () {
-      var revision = validarLinkPublicado(campo.value);
-      if (!revision.valido) {
-        mensaje.className = 'mensaje-error';
-        mensaje.textContent = revision.mensaje;
-        campo.focus();
-        return;
-      }
-      guardar.disabled = true;
-      guardar.textContent = 'Guardando...';
-      RM.servidor.llamar('marcarPublicado', resultado.id, revision.url).then(function (respuesta) {
-        guardar.disabled = false;
-        guardar.textContent = 'Marcar como publicado';
-        if (!respuesta.valido) {
-          mensaje.className = 'mensaje-error';
-          mensaje.textContent = respuesta.errores[0].mensaje;
-          return;
-        }
-        mensaje.className = 'mensaje-ok';
-        mensaje.textContent = 'Listo: tu campaña quedó marcada como publicada.';
-        campo.disabled = true;
-        guardar.disabled = true;
-
-        // Paso 3 del camino 4: con el enlace real, las leyendas se rehacen y
-        // el bloque se cambia entero. Si el enlace resulto distinto, el aviso
-        // rojo aparece ahi mismo, no en un correo que nadie abre.
-        if (respuesta.leyendas && cajaDeLeyendas && cajaDeLeyendas.parentNode) {
-          var rehecho = bloqueDeLeyendas(respuesta.leyendas);
-          if (rehecho) {
-            cajaDeLeyendas.parentNode.replaceChild(rehecho, cajaDeLeyendas);
-            cajaDeLeyendas = rehecho;
-            rehecho.scrollIntoView({ block: 'nearest' });
-          }
-        }
-      }).catch(function (error) {
-        guardar.disabled = false;
-        guardar.textContent = 'Marcar como publicado';
-        mensaje.className = 'mensaje-error';
-        mensaje.textContent = 'No pudimos guardarlo: ' + error.message;
-      });
-    },
-  });
-
-  contenido.appendChild(crear('div', { clase: 'pregunta' }, [
-    crear('div', { clase: 'campo-caja' }, [campo]),
-    mensaje,
-    crear('div', { clase: 'fila-botones' }, [guardar]),
-  ]));
+  // Despues de publicar: la revision, o el enlace a mano donde no se puede
+  // prever. Cuando el enlace queda confirmado, las leyendas se rehacen con el
+  // real y el bloque se cambia entero: si resulto distinto al previsto, el
+  // aviso rojo aparece ahi mismo, no en un correo que nadie abre (paso 3 del
+  // camino 4).
+  contenido.appendChild(bloqueDeRevision(resultado, function (leyendas) {
+    if (!cajaDeLeyendas || !cajaDeLeyendas.parentNode) return;
+    var rehecho = bloqueDeLeyendas(leyendas);
+    if (!rehecho) return;
+    cajaDeLeyendas.parentNode.replaceChild(rehecho, cajaDeLeyendas);
+    cajaDeLeyendas = rehecho;
+    rehecho.scrollIntoView({ block: 'nearest' });
+  }));
 
   contenido.appendChild(crear('div', { clase: 'fila-botones' }, [
     crear('button', {

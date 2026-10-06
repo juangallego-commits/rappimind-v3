@@ -268,8 +268,10 @@ var PASOS_SQUARESPACE = [
     ve: 'Las dos fechas debajo del título.',
   },
   {
-    hace: 'Selecciona todo el documento, cópialo y pégalo en el cuerpo del evento. Revisa que las cláusulas numeradas y las viñetas se vean bien.',
-    ve: 'El texto completo, con todas sus cláusulas numeradas.',
+    // Desde el 6 de octubre de 2026 el texto se copia con un boton, ya con su
+    // formato, y no hace falta abrir el documento ni arreglar las vinetas.
+    hace: 'Copia el texto con el botón "Copiar el texto" de RappiMind y pégalo en el cuerpo del evento. Si no tienes RappiMind abierto, selecciona todo el documento y cópialo de ahí.',
+    ve: 'El texto completo, con todas sus cláusulas numeradas y sus viñetas.',
   },
   {
     hace: 'Entra a la pestaña Opciones y reemplaza la dirección del evento por la que te dio RappiMind. La parte del país no se toca: Squarespace la pone sola.',
@@ -280,12 +282,14 @@ var PASOS_SQUARESPACE = [
     ve: 'El evento en el calendario, sin la etiqueta de borrador.',
   },
   {
-    hace: 'Abre el enlace en el navegador para confirmar que carga, y cópialo.',
+    hace: 'Abre el enlace en el navegador para confirmar que carga.',
     ve: 'Tu documento publicado, en una dirección que empieza por https://promos.rappi.com/',
   },
   {
-    hace: 'Vuelve a RappiMind, pega el enlace abajo y marca la campaña como publicada.',
-    ve: 'Tu campaña en verde en el historial, con su enlace guardado.',
+    // Antes el paso 10 era volver y pegar el enlace. RappiMind ahora revisa
+    // sola la direccion que propuso (src/server/RevisionDePublicacion.js).
+    hace: 'Listo. Si usaste la dirección que te dio RappiMind, no tienes que volver: cada hora revisa que el texto publicado sea idéntico al documento, marca la campaña como publicada y le avisa por correo a quien la generó. Si usaste otra dirección, pégala en RappiMind.',
+    ve: 'Tu campaña en Mis campañas como "Publicado y verificado".',
   },
 ];
 
@@ -294,7 +298,8 @@ var SI_ALGO_SALE_MAL = [
   { problema: 'El texto se ve corrido o sin viñetas.', solucion: 'Pégalo otra vez usando Pegar sin formato y deja que Squarespace le aplique el estilo de la página.' },
   { problema: 'El enlace no empieza por promos.rappi.com.', solucion: 'Creaste la página en otro sitio. Tiene que estar dentro de promos.rappi.com para que RappiMind la acepte.' },
   { problema: 'No tengo usuario de Squarespace.', solucion: 'Es normal: la cuenta la tienen unas pocas personas por país. Pide la publicación en #tyc-rappi y pasa el documento y la dirección que te dio RappiMind.' },
-  { problema: 'La dirección que puse quedó distinta a la que me dio la herramienta.', solucion: 'Vuelve a Opciones, corrígela y publica otra vez. Si ya la publicaste con otra dirección, pega en RappiMind el enlace real, no el que te propusimos.' },
+  { problema: 'La dirección que puse quedó distinta a la que me dio la herramienta.', solucion: 'Vuelve a Opciones, corrígela y publica otra vez. Si ya la publicaste con otra dirección, pega en RappiMind el enlace real, no el que te propusimos: si no, RappiMind no la encuentra para revisarla.' },
+  { problema: 'RappiMind dice que la página publicada no coincide con el documento.', solucion: 'El aviso dice dónde está la diferencia. Copia otra vez el texto con el botón de RappiMind, reemplaza todo el cuerpo del evento sin editarlo a mano y dale Revisar en Mis campañas.' },
   // "Me equivoque en un dato" estaba aqui y en Preguntas frecuentes, con la
   // misma respuesta escrita dos veces. Se queda alla, que es donde el comercial
   // la busca. Punto F8, 20 de septiembre de 2026.

@@ -66,6 +66,10 @@ var PESTANAS = {
     'direccion_sugerida', 'tienda',
     'organizador', 'id_organizador', 'fecha_inicio', 'fecha_fin', 'link_doc', 'estado',
     'link_publicado', 'fecha_publicacion', 'datos_json',
+    // La revision de lo publicado (src/server/RevisionDePublicacion.js): que
+    // encontro RappiMind en la pagina, cuando lo miro por ultima vez y que vio.
+    // En una hoja vieja se agregan solas al final (encabezadosDeLaHoja).
+    'verificacion', 'fecha_verificacion', 'detalle_verificacion',
   ],
   Registro: ['fecha', 'email', 'accion', 'detalle'],
 };

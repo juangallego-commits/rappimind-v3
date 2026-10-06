@@ -22,6 +22,7 @@ function setup() {
   aplicarConfirmaciones(pasos);
   asegurarCarpetasPorPais(raiz, pasos);
   asegurarAdministradores(pasos);
+  asegurarRevisionAutomatica(pasos);
 
   registrar('setup', pasos.join(' | '));
 
@@ -34,6 +35,19 @@ function setup() {
   };
   Logger.log(JSON.stringify(resumen, null, 2));
   return resumen;
+}
+
+/**
+ * La revision de cada hora de lo publicado en Squarespace
+ * (src/server/RevisionDePublicacion.js). Si Google no deja crear el
+ * disparador, setup sigue: lo demas no depende de el, y el paso dice por que.
+ */
+function asegurarRevisionAutomatica(pasos) {
+  try {
+    pasos.push(instalarRevisionAutomatica());
+  } catch (error) {
+    pasos.push('no se pudo instalar la revisión automática: ' + String(error));
+  }
 }
 
 function asegurarBase(pasos) {

@@ -75,6 +75,52 @@ function paraCopiar(etiqueta, valor, ayuda) {
   return caja;
 }
 
+/**
+ * Copia un documento con su formato: parrafos, negrillas y vinetas.
+ *
+ * html y plano van al portapapeles como text/html y text/plain, y quien pega
+ * en Squarespace recibe el documento ya formateado. El HTML nunca entra al DOM
+ * (la regla de arriba): solo viaja en el portapapeles.
+ *
+ * Si el navegador no deja escribir HTML en el portapapeles (pasa dentro del
+ * iframe de Apps Script si no tiene el permiso), se selecciona `nodo`, que es
+ * el mismo documento dibujado con crear(), y se copia esa seleccion, que
+ * tambien lleva el formato. Si tampoco se puede, queda seleccionado para
+ * copiarlo con el teclado.
+ *
+ * Devuelve una promesa con 'copiado' o 'seleccionado'.
+ */
+function copiarConFormato(html, plano, nodo) {
+  return new Promise(function (resolver) {
+    function porSeleccion() {
+      var copiado = false;
+      try {
+        seleccionar(nodo);
+        copiado = !!(document.execCommand && document.execCommand('copy'));
+      } catch (error) {
+        copiado = false;
+      }
+      // Copiado ya no hace falta la seleccion, que esta fuera de la vista.
+      if (copiado) window.getSelection().removeAllRanges();
+      resolver(copiado ? 'copiado' : 'seleccionado');
+    }
+
+    if (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
+      try {
+        var item = new window.ClipboardItem({
+          'text/html': new Blob([html], { type: 'text/html' }),
+          'text/plain': new Blob([plano], { type: 'text/plain' }),
+        });
+        navigator.clipboard.write([item]).then(function () { resolver('copiado'); }, porSeleccion);
+        return;
+      } catch (error) {
+        // Un navegador con ClipboardItem a medias: se sigue por la seleccion.
+      }
+    }
+    porSeleccion();
+  });
+}
+
 /** Deja el texto seleccionado para que se pueda copiar con el teclado. */
 function seleccionar(elemento) {
   var rango = document.createRange();
@@ -216,6 +262,7 @@ function conMayusculaInicial(texto) {
 RM.util = {
   conMayusculaInicial: conMayusculaInicial,
   paraCopiar: paraCopiar,
+  copiarConFormato: copiarConFormato,
   seleccionar: seleccionar,
   crear: crear,
   vaciar: vaciar,

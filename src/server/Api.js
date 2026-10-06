@@ -119,13 +119,15 @@ function generar(entrada) {
 
   if (quien.demostracion) {
     var esquemaDemo = esquemaDe(entrada.tipo);
+    var nombreDemo = nombreDeCampana(entrada, esquemaDemo, pais);
     return {
       valido: true,
       demostracion: true,
       texto: resultado.texto,
       mensaje: 'Modo demostración: no se creó ningún documento.',
+      enlacePrevisto: enlaceParaRevisar({ direccion_sugerida: direccionDeCampana(nombreDemo) }, pais.ruta_promos),
       leyendas: generarLeyendasDeLaCampana(entrada, pais, LEYENDAS, {
-        nombreCampana: nombreDeCampana(entrada, esquemaDemo, pais),
+        nombreCampana: nombreDemo,
       }),
     };
   }
@@ -160,6 +162,10 @@ function generar(entrada) {
 
     var nombreCampana = nombreDeCampana(entrada, esquema, pais);
     var direccion = direccionDeCampana(nombreCampana);
+    // Donde va a quedar publicada si se siguen los pasos. Con ella RappiMind
+    // revisa sola si ya existe, y nadie tiene que volver a pegar el enlace.
+    // Vacia en un pais sin ruta de Squarespace: ahi si hay que pegarlo.
+    var enlacePrevisto = enlaceParaRevisar({ direccion_sugerida: direccion }, pais.ruta_promos);
     var titulo = tituloDelDocumento(nombreCampana, pais.nombre, id);
     var carpeta = carpetaDelPais(pais.codigo, pais.nombre);
 
@@ -175,7 +181,7 @@ function generar(entrada) {
     try {
       escribirLaSolicitud(id, documento, {
         quien: quien, pais: pais, esquema: esquema, entrada: entrada,
-        nombreCampana: nombreCampana, direccion: direccion,
+        nombreCampana: nombreCampana, direccion: direccion, enlacePrevisto: enlacePrevisto,
       });
     } catch (error) {
       descartarDocumento(documento.id);
@@ -192,6 +198,11 @@ function generar(entrada) {
       titulo: titulo,
       nombreCampana: nombreCampana,
       direccionSugerida: direccion,
+      enlacePrevisto: enlacePrevisto,
+      // El texto final, el mismo del documento. La pantalla final arma con el
+      // el HTML que se pega en Squarespace, sin abrir el Doc ni arreglar el
+      // formato a mano (htmlParaSquarespace, src/core/publicacion.js).
+      texto: resultado.texto,
       pais: pais.codigo,
       // Las leyendas de las piezas, con el enlace previsto. Salen aqui y no en
       // otra llamada porque el comercial las necesita en el mismo momento en
@@ -241,6 +252,7 @@ function escribirLaSolicitud(id, documento, datos) {
     linkDoc: documento.url,
     urlApp: ScriptApp.getService().getUrl(),
     urlAyuda: leerPropiedad(PROPIEDADES.CANAL_AYUDA_URL),
+    enlacePrevisto: datos.enlacePrevisto || '',
   });
 }
 
@@ -273,32 +285,33 @@ function marcarPublicado(id, url) {
     return { valido: false, errores: [{ campo: 'id', mensaje: 'Esa solicitud no es tuya.' }] };
   }
 
+  var fechaPublicacion = ahoraTexto();
   actualizarFila('Solicitudes', solicitud._fila, {
     link_publicado: revision.url,
-    fecha_publicacion: ahoraTexto(),
+    fecha_publicacion: fechaPublicacion,
     estado: 'publicado',
   });
   registrar('publicar', id + ' · ' + revision.url);
 
-  // Paso 3 del camino 4: se comparan las leyendas contra el enlace real. Si es
-  // distinto al previsto, se rehacen y el comercial tiene que cambiar el arte.
-  var leyendas = null;
+  // Y se revisa ya mismo que el texto de esa pagina sea el del documento. Si la
+  // revision falla, el enlace queda guardado igual: la corrida de cada hora
+  // vuelve a intentarlo. Ver src/server/RevisionDePublicacion.js.
+  var verificacion = null;
   try {
-    var entradaGuardada = JSON.parse(solicitud.datos_json || '{}');
-    var paisDeLaSolicitud = paisPorCodigo(leerPaises(), solicitud.pais);
-    if (paisDeLaSolicitud) {
-      leyendas = generarLeyendasDeLaCampana(entradaGuardada, paisDeLaSolicitud, LEYENDAS, {
-        nombreCampana: solicitud.nombre_campana,
-        enlacePublicado: revision.url,
-      });
-    }
+    asegurarColumnasDeLaRevision();
+    var publicada = unirObjetos(filasPlanas([solicitud])[0], {
+      link_publicado: revision.url, fecha_publicacion: fechaPublicacion, estado: 'publicado',
+    });
+    verificacion = revisarYGuardar(publicada, revision.url).verificacion;
   } catch (error) {
-    // Una solicitud vieja puede no tener datos_json legible. Marcarla como
-    // publicada sigue funcionando: lo que no hay es leyenda que rehacer.
-    leyendas = null;
+    registrar('verificar_fallido', id + ' · ' + String(error));
   }
 
-  return { valido: true, id: id, linkPublicado: revision.url, leyendas: leyendas };
+  // Paso 3 del camino 4: se comparan las leyendas contra el enlace real. Si es
+  // distinto al previsto, se rehacen y el comercial tiene que cambiar el arte.
+  var leyendas = leyendasConElEnlace(solicitud, revision.url);
+
+  return { valido: true, id: id, linkPublicado: revision.url, leyendas: leyendas, verificacion: verificacion };
 }
 
 /**

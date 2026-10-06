@@ -131,8 +131,28 @@ function descartarDocumento(id) {
   }
 }
 
+/**
+ * Los parrafos de un documento ya generado: [{ texto, centrado }].
+ *
+ * Es lo que la revision de lo publicado compara contra la pagina de
+ * Squarespace. El centrado dice cual es la cabecera: titulo y subtitulo son
+ * los unicos parrafos que escribirCuerpo centra.
+ */
+function parrafosDelDocumento(idDocumento) {
+  var parrafos = DocumentApp.openById(idDocumento).getBody().getParagraphs();
+  var salida = [];
+  for (var i = 0; i < parrafos.length; i++) {
+    salida.push({
+      texto: parrafos[i].getText(),
+      centrado: parrafos[i].getAlignment() === DocumentApp.HorizontalAlignment.CENTER,
+    });
+  }
+  return salida;
+}
+
 if (typeof module !== 'undefined') {
   module.exports = {
+    parrafosDelDocumento: parrafosDelDocumento,
     descartarDocumento: descartarDocumento,
     escribirCuerpo: escribirCuerpo,
     escribirPartes: escribirPartes,

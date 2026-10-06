@@ -1015,6 +1015,28 @@ async function recorrer() {
     mensajeArmado.indexOf('El Corral') !== -1,
     mensajeArmado.replace(/\n+/g, ' | ').slice(0, 300));
 
+  // --- 6a ter. El texto para pegar, con su formato -------------------------
+  //
+  // Desde el 6 de octubre de 2026 el texto se copia con un boton, ya con
+  // negrillas y vinetas, y es justo lo que RappiMind revisa despues en la
+  // pagina publicada. Se intercepta el portapapeles para ver que deja.
+  const copiado = await pagina.evaluate(() => new Promise((listo) => {
+    if (!navigator.clipboard) return listo({ error: 'sin portapapeles' });
+    navigator.clipboard.write = function (items) {
+      items[0].getType('text/html').then((b) => b.text()).then((html) => listo({ html: html }));
+      return Promise.resolve();
+    };
+    const boton = [].slice.call(document.querySelectorAll('button'))
+      .filter((b) => b.textContent.trim() === 'Copiar el texto')[0];
+    if (!boton) return listo({ error: 'no está el botón Copiar el texto' });
+    boton.click();
+    setTimeout(() => listo({ error: 'el botón no escribió en el portapapeles' }), 2000);
+  }));
+  revisar('el texto del T&C se copia con sus cláusulas en negrilla y sus viñetas',
+    copiado.html && copiado.html.indexOf('<p><strong>1. ') !== -1 && copiado.html.indexOf('<ul>') !== -1 &&
+    copiado.html.indexOf('**') === -1,
+    copiado.error || String(copiado.html || '').slice(0, 300));
+
   // --- 6b. El acuerdo de transferencia de datos ----------------------------
   //
   // Solo sale en Carrera de Compras, con premio fisico que entrega el

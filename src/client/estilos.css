@@ -972,6 +972,18 @@ input[disabled], select[disabled] {
 .estado-publicado { background: var(--rm-estado-publicado-bg); color: var(--rm-estado-publicado-fg); }
 .estado-borrador { background: var(--rm-estado-borrador-bg); color: var(--rm-estado-borrador-fg); }
 .estado-vencido { background: transparent; border: 1.5px solid var(--rm-estado-vencido-borde); color: var(--rm-estado-vencido-fg); }
+/* Publicado con diferencias, o que ya no abre: hay algo que hacer. Mismo molde
+   que Vencido, con el color del error de campo, para no inventar uno nuevo. */
+.estado-alerta { background: transparent; border: 1.5px solid var(--rm-aviso-error-color); color: var(--rm-aviso-error-color); }
+
+/* Lo que encontro la ultima revision de la pagina publicada, bajo el estado. */
+.detalle-revision { display: block; max-width: 34ch; margin-top: var(--e1); color: var(--gris-lapiz); font-size: 12.5px; line-height: 1.4; }
+.detalle-revision-alerta { color: var(--neon-texto); }
+
+/* El documento que se copia por seleccion cuando el portapapeles no deja
+   escribir HTML. Fuera de la vista pero seleccionable: display none no se
+   puede seleccionar ni copiar. */
+.copia-oculta { position: fixed; left: -10000px; top: 0; width: 600px; }
 
 /* El punto se dibujaba con currentColor al lado del texto. Con la pildora
    sobra, y encima del gradiente de Publicado quedaria un lunar blanco. Sigue
