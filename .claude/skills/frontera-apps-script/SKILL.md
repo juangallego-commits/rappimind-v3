@@ -119,6 +119,25 @@ Y dos cosas más del mismo mundo:
 Si agregas un archivo a `src/core/`, no hace falta tocar nada más: el build y
 `pruebas/dobles/entorno.js` leen la carpeta.
 
+## Una frontera de afuera: la página publicada en Squarespace
+
+Desde el 6 de octubre de 2026 el servidor lee la página publicada de cada
+campaña (`src/server/RevisionDePublicacion.js`) con el JSON que Squarespace
+documenta (`?format=json`), y Squarespace avisa que su forma puede cambiar. Tres
+reglas, por la misma razón que las otras cuatro fronteras:
+
+- **Un fallo de lectura nunca es un veredicto.** Si el JSON no se entiende, no
+  responde o da un error, el estado es "sin verificar" y se reintenta. Nunca
+  "verificado" ni "con diferencias".
+- **Solo promos.rappi.com.** `urlDeLecturaDeSquarespace()` no arma otra
+  dirección, venga de donde venga el enlace.
+- **Lo esperado sale del Google Doc, no de volver a generar.** Y la fila pasa
+  por `filasPlanas` antes de comparar: una fecha del Sheet sin aplanar inventaba
+  avisos de fechas (la prueba está en `pruebas/revision_publicacion.test.js`).
+
+Las pruebas de esta frontera son `pruebas/publicacion.test.js` (lo que decide)
+y `pruebas/revision_publicacion.test.js` (contra los dobles, con UrlFetchApp).
+
 ## Cómo trabajar un defecto de estos
 
 1. **Reprodúcelo en Node antes de tocar el arreglo.** Escribe la prueba primero,

@@ -1934,3 +1934,132 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      `dist/` desde dos archivos a la vez lo borra mientras otra lo lee. Comprobé
      que cazan el defecto: con el `src/` de antes del arreglo fallan 14; las que
      pasan son las que cuidan que lo que ya salía bien siga igual.
+
+## 6 de octubre · La publicación en Squarespace: lo que se automatiza y lo que no
+
+139. **RappiMind no publica en Squarespace: deja todo listo para pegar y
+     después verifica lo publicado.** Juan pidió el 6 de octubre de 2026
+     quitarle el trabajo manual a quien sube los T&C, "directamente desde mi
+     usuario de Squarespace" si hacía falta. Antes de construir nada se revisó
+     qué permite Squarespace, en sus fuentes:
+
+     - **No hay API para crear páginas, entradas ni eventos.** La lista oficial
+       de APIs de Squarespace (developers.squarespace.com, "Overview of
+       Commerce APIs", leída el 6 de octubre de 2026) trae Analytics, Contacts,
+       Discounts, Inventory, Orders, Products, Profiles, Transactions y Webhook
+       Subscriptions. Ninguna sirve para el contenido del sitio.
+     - **Su política de uso prohíbe las dos formas de hacerlo sin API.** La
+       Acceptable Use Policy (actualizada el 24 de febrero de 2020) dice, en el
+       punto 1.6: "Don't access, search or create accounts for the Services by
+       any means other than our publicly supported interfaces (for example,
+       scraping, spidering or crawling)", y en el 1.8: "Don't provide your
+       password to any other person, use any other person's username and
+       password, or otherwise manage the Services through shared credentials."
+       Un robot que entra con el usuario de una persona choca con los dos
+       puntos. Usar la API interna del editor sería además, en nuestra lectura,
+       usar partes no públicas del servicio (punto 1.3).
+     - **La sanción no es para la herramienta, es para el sitio.** La misma
+       política dice que Squarespace puede "remove any content or suspend or
+       terminate your Account or Your Sites" sin aviso. promos.rappi.com es uno
+       solo: se caerían los T&C publicados de todos los países a la vez.
+
+     Por eso quedaron descartados, como técnica, el robot con usuario y
+     contraseña (Playwright o parecido) y la API interna del editor. Lo que sí
+     se construyó está en las decisiones 140 a 142. La ruta para publicar sin
+     que nadie toque Squarespace existe, pero cambia dónde vive el texto del
+     T&C y necesita a TI: es de negocio y legal, y está planteada para Juan en
+     `docs/PARA_DECIDIR.md`, punto I1.
+
+140. **Lo publicado se revisa leyendo el JSON público del evento.** Squarespace
+     documenta que agregando `?format=json` a cualquier dirección del sitio se
+     leen los datos de esa página ("View JSON Data", developers.squarespace.com),
+     con una advertencia: esa forma "is not static and should not be used as an
+     alternative to our APIs". Se usa así, y solo así:
+
+     - **Solo lee, y solo promos.rappi.com.** `urlDeLecturaDeSquarespace()`
+       (`src/core/publicacion.js`) no arma ninguna dirección que no empiece por
+       `https://promos.rappi.com/`, venga de donde venga el enlace. El servidor
+       no le pide nada a ningún otro sitio. Hay prueba de eso.
+     - **Poco.** Una lectura por campaña y por revisión (decisión 141).
+     - **A la defensiva.** Si el JSON cambia de forma, no se entiende o no
+       responde, el resultado es "sin verificar" y se reintenta. Nunca
+       "verificado" ni "con diferencias" por un fallo de lectura.
+
+     Del evento se usan `item.body` (el texto), `item.title`,
+     `item.startDate`, `item.endDate`, `item.publishOn` y
+     `website.timeZoneOffset`, que se comprobaron en el evento real
+     `promos.rappi.com/colombia/2026/descuentoprodselecc` el 6 de octubre de
+     2026. Las fechas se leen en la hora del sitio (Bogotá), no en UTC: el
+     11:59 p. m. del último día ya es el día siguiente en UTC.
+
+     **Qué es "idéntico".** Se compara el texto, no el formato: se quitan las
+     etiquetas, los espacios duros, los caracteres invisibles de un pegado y la
+     marca de viñeta. Todo lo demás cuenta: una coma, una tilde, una mayúscula
+     o una cifra distinta es una diferencia, porque es texto legal. El cuerpo
+     tiene que estar completo y sin nada de más; la cabecera (los dos renglones
+     centrados del principio) puede faltar o venir con otras mayúsculas, porque
+     el evento ya lleva el nombre como título. El título y las fechas del
+     evento se avisan, pero no cambian el veredicto: lo que obliga es el texto.
+
+     **Contra qué se compara.** Contra el Google Doc que recibió el comercial,
+     leído párrafo por párrafo, no contra un texto armado otra vez desde las
+     respuestas: si un modelo cambió después de generar, el texto de hoy ya no
+     es el que se publicó, y la revisión vería diferencias que nadie cometió.
+
+     **La prueba que más importa.** Cada caso de `pruebas/casos_base.json` que
+     genera, pegado con el botón de copiar, se revisa como idéntico (los nueve
+     países, Travel y Brasil incluidos). Si eso fallara, RappiMind le diría
+     "tiene diferencias" a quien hizo todo bien.
+
+141. **La revisión corre sola cada hora y avisa solo los cambios.** Vive en
+     `src/server/RevisionDePublicacion.js`. No se llama `Publicacion.js` a
+     propósito: Apps Script no distingue mayúsculas en los nombres de archivo y
+     pisaría a `src/core/publicacion.js` (frontera 4).
+
+     - **Dónde busca.** En el enlace pegado y, si no hay, en la dirección que la
+       herramienta propuso (`ruta_promos` del país más `direccion_sugerida`).
+       En `data/paises.json` solo Colombia tiene ruta (`colombia`): en los
+       demás países hay que pegar el enlace, y al pegarlo se revisa en el acto.
+       Cuando un país tenga su ruta en la pestaña Paises, entra solo.
+     - **Cuándo.** Recién generada y sin verificar: en cada corrida, durante tres
+       días. Verificada, o más vieja: una vez al día mientras la campaña esté
+       vigente, para enterarse si alguien la cambia o la quita. Una campaña que
+       terminó no se revisa. Máximo 40 por corrida, y la corrida se corta a los
+       cuatro minutos y medio.
+     - **Qué escribe.** Tres columnas nuevas en `Solicitudes`: `verificacion`,
+       `fecha_verificacion` y `detalle_verificacion`. Se agregan solas al final
+       en una hoja vieja. Si queda verificada y no estaba publicada, pasa a
+       `publicado` con su enlace y su fecha: nadie tiene que volver a pegar
+       nada. Con diferencias no se marca publicada.
+     - **Los estados.** verificado, con diferencias, no publicado, retirado
+       (estaba y ya no abre), sin verificar y sin enlace.
+     - **A quién avisa.** Solo cuando el estado cambia. Verificado: al
+       comercial. Con diferencias o retirado: al comercial, con
+       `CORREO_COPIA_LEGAL` en copia. En el Registro queda cada cambio de
+       estado, no cada revisión.
+     - **Pegar el enlace a mano sigue marcando publicado**, como antes: es la
+       palabra de quien publicó. Además se revisa en ese momento, y si el texto
+       no coincide queda publicado pero "con diferencias", y llega el aviso.
+     - **El disparador lo instala `setup()`**, una sola vez: si ya hay uno no
+       crea otro, y si hay dos borra el sobrante (dos disparadores mandarían dos
+       correos por cada cambio). `quitarRevisionAutomatica()` lo apaga sin
+       desplegar nada.
+     - **Dos permisos nuevos** en `appsscript.json`:
+       `script.external_request` (leer la página) y `script.scriptapp` (el
+       disparador). Juan tiene que autorizarlos una vez.
+
+     Después de una ampliación el documento cambia y la página tiene que
+     cambiar con él. Si nadie la actualiza, la revisión diaria la encuentra con
+     diferencias y avisa. No se adelanta ese aviso a propósito: el comercial
+     acaba de recibir la instrucción de reemplazar el texto, y avisarle a Legal
+     una hora después sería ruido.
+
+142. **El texto se copia con su formato desde la pantalla final.** El botón
+     "Copiar el texto" pone en el portapapeles el documento como HTML (párrafos,
+     negrillas y viñetas, sin tablas) y como texto plano. Es el mismo HTML que
+     la revisión da por idéntico (`htmlParaSquarespace`). Si el navegador no
+     deja escribir HTML en el portapapeles, que puede pasar dentro del iframe de
+     Apps Script, se copia por selección un documento armado con `crear()`, sin
+     `innerHTML`: la regla de seguridad de `src/client/js/10-util.js` se
+     mantiene. Para eso `generar` devuelve ahora también el texto final y la
+     dirección prevista.

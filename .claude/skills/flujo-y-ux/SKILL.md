@@ -34,6 +34,8 @@ inicio
                                           └─ última pregunta ──► resumen
                                                                    └─ Generar ──► listo
                                                                                     └─ publicar en Squarespace
+                                                                                         └─ RappiMind revisa la página
+                                                                                            sola, cada hora
 historial ("Mis campañas")
   ├─ Usar como base ──► pasos con las respuestas copiadas y las fechas en blanco
   └─ Ampliar ──► solo si está publicada y en curso

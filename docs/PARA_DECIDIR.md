@@ -7,7 +7,8 @@ bloque G con su fecha y no vuelve a aparecer como pregunta.
 `docs/PENDIENTES_LEGAL.md` se queda como historia: ahí está cómo llegó cada cosa.
 
 El 20 de septiembre se cerraron **31 de los 41 puntos** y el 21 los **diez que
-quedaban**, D1 incluido. **No queda ninguna pregunta abierta.**
+quedaban**, D1 incluido. El 6 de octubre se abrió **uno nuevo, el I1**: cómo
+publicar en Squarespace sin que nadie toque Squarespace.
 
 Lo que sí queda es **un bloque de tareas de ejecución**, que ya no dependen de
 ninguna decisión: alguien tiene que hacerlas fuera del repositorio.
@@ -30,6 +31,7 @@ a alguien concreto.
 
 Los bloques que quedan:
 
+- **I.** Abierto: la publicación sin manos.
 - **H.** Tareas de ejecución fuera del repositorio. Sin decisión pendiente.
 - **G.** Cerrado, con su fecha. No vuelve a aparecer como pregunta.
 
@@ -38,6 +40,79 @@ un documento, usar un país, entregar una leyenda o recorrer una pantalla.
 
 Todo lo que un punto necesita está escrito adentro: las cláusulas van copiadas,
 las pantallas descritas. No hace falta abrir el repositorio.
+
+---
+
+# I. Abierto
+
+## I1. Publicar en Squarespace sin que nadie toque Squarespace
+
+**Qué hay que decidir.** Si los T&C se siguen publicando como hoy, con una
+persona que pega el texto en un evento de Squarespace, o si se cambia dónde
+vive el texto para que RappiMind lo publique solo.
+
+**Por qué existe la duda.** Desde el 6 de octubre RappiMind deja todo listo
+para pegar (título, texto con formato, dirección y fechas) y después revisa
+solo, cada hora, que la página publicada sea idéntica al documento. Ya nadie
+tiene que volver a pegar el enlace ni marcar nada. Pero los clics dentro de
+Squarespace siguen siendo de una persona, porque:
+
+- Squarespace no tiene API para crear eventos ni páginas: las que documenta son
+  de comercio y contactos.
+- Su política de uso prohíbe entrar por medios distintos a sus interfaces
+  públicas (punto 1.6, "scraping, spidering or crawling") y manejar el servicio
+  con credenciales compartidas (punto 1.8). Un robot con el usuario de una
+  persona choca con los dos.
+- La sanción que se reserva es suspender la cuenta o el sitio. promos.rappi.com
+  es uno solo: se caerían los T&C de todos los países a la vez. Para dar una
+  idea del tamaño, la colección de Colombia tenía 9.987 eventos el 6 de octubre
+  de 2026, todos subidos a mano.
+
+Las citas y el detalle están en `docs/DECISIONES.md`, decisión 139.
+
+**Las opciones.**
+
+1. **Quedarse como quedó el 6 de octubre.** Una persona con usuario de
+   Squarespace hace los clics: evento nuevo, pegar título, texto y dirección,
+   poner las fechas y publicar. Un par de minutos por campaña. RappiMind hace lo
+   demás.
+2. **Una página fija por país en Squarespace que muestra el T&C desde un
+   almacenamiento de Rappi.** Squarespace permite poner código propio en una
+   página (bloque de código), según el plan del sitio. Esa página lee el T&C
+   de un archivo público que RappiMind escribe al generar, por ejemplo en
+   Google Cloud Storage o en un sitio estático de Rappi. Nadie toca Squarespace
+   nunca más. Es la única ruta sin manos que respeta la política de
+   Squarespace.
+3. **Claude en Chrome, manejado por quien publica, en su propia sesión.** No se
+   comparte ninguna contraseña y la persona está mirando, pero los clics los
+   hace un agente. Si eso cuenta como "publicly supported interface" del punto
+   1.6 es una lectura legal, no técnica.
+4. **Descartada: un robot con usuario y contraseña.** Es lo que prohíben los
+   puntos 1.6 y 1.8, y el riesgo es el sitio entero.
+
+**Qué pasa con la herramienta con cada una.**
+
+1. Nada: ya está construido y probado. Solo falta que Juan autorice los dos
+   permisos nuevos y corra `setup()` (ver `docs/PROGRESO.md`, 6 de octubre).
+2. Hay que pedirle a TI dónde vive el archivo público y que lo apruebe
+   seguridad. Hay que confirmar que el plan del sitio deja poner código. El
+   enlace cambia de forma (por ejemplo `promos.rappi.com/colombia/tyc?c=...`),
+   así que cambian las leyendas y la validación del enlace. Legalmente el texto
+   que ve el usuario sale del archivo de Rappi y no de Squarespace: eso da un
+   historial de versiones que hoy no existe, pero si ese archivo no carga la
+   página sale vacía, así que hay que dejarle un enlace de respaldo. Con todo
+   eso decidido, calculo que el trabajo en RappiMind es de unos días.
+3. RappiMind no cambia: la revisión de cada hora sirve igual para confirmar lo
+   que hizo el agente. Hay que confirmar que Rappi tiene la extensión
+   habilitada, y si se quiere certeza, preguntarle a Squarespace por escrito.
+
+**Recomendación.** La 1 ya está andando. Si el volumen justifica que nadie toque
+Squarespace, la 2 es la única que no depende de una lectura discutible de la
+política. La 3 solo como puente, y solo si tu lectura del punto 1.6 lo aguanta.
+
+**Quién decide.** Juan. Para la 2, con TI y con quien sea el propietario de la
+cuenta de Squarespace de promos.rappi.com, que conviene confirmar antes de
+cambiar nada del sitio.
 
 ---
 

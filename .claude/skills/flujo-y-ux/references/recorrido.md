@@ -126,6 +126,18 @@ donde el comercial deja la herramienta y se va a publicar, así que lo que
 necesita tiene que estar ahí, copiable, sin volver a buscar. En un país en
 pruebas lleva arriba el mismo aviso de "no publiques" del formulario.
 
+Lo que se pega va así: el título, el **texto del T&C**
+(botón "Copiar el texto", que lo copia con negrillas y viñetas,
+`bloqueDelTextoParaPegar`), la dirección y las fechas.
+
+Abajo, **"Cuando ya esté publicado"** (`bloqueDeRevision`). Con dirección
+prevista (un país con `ruta_promos`, hoy Colombia) dice que no hay que volver:
+RappiMind revisa sola cada hora y ofrece "Revisar ahora". Sin ella, pide pegar
+el enlace, y al pegarlo se revisa en el acto. El veredicto se dice en palabras
+(`mostrarVeredicto`): verificada, con diferencias (y dónde), ya no abre, o
+todavía no está. Cuando el enlace queda confirmado, las leyendas se rehacen con
+el enlace real.
+
 ## historial ("Mis campañas")
 
 Las campañas del comercial, con lo que puede hacer con cada una:
@@ -139,7 +151,13 @@ Las campañas del comercial, con lo que puede hacer con cada una:
   `src/core/ampliacion.js`: la vigencia solo se mueve hacia adelante y los
   números solo suben, porque bajarlos cambiaría las condiciones de quien ya
   compró. Cuando no se puede, el historial dice en palabras por qué.
-- **Marcar como publicada**, con el enlace de Squarespace.
+- **El estado de la publicación**, como lo dejó la última revisión
+  (`etiquetaDePublicacion`): Publicado y verificado, Publicado con diferencias
+  (con la diferencia escrita debajo), Ya no está publicado, Publicado o
+  Generado.
+- **Revisar**: revisa ya mismo una campaña que todavía no está verificada. No
+  sale si la campaña terminó ni si no hay dónde buscarla (sin enlace pegado y
+  en un país sin ruta de Squarespace).
 
 ## ayuda
 

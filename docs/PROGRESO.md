@@ -15,6 +15,7 @@ por abajo: lo último está al final. Si buscas qué falta, la tabla y
 | 12 · revisión legal global | listo, falta que Juan lo mande | `python3 scripts/hoja_feedback.py salida.xlsx` y abrir el archivo | Subir la hoja a Drive, pegar el enlace en el mensaje, poner las menciones y mandarlo por #legalglobal |
 | 9 · identidad | cerrado | `npm test` (681), `npm run contraste` y los dos recorridos | Mirar el titular y la píldora Publicado en pantalla, y decidir el correo, el lockup y los estados del historial |
 | 13 · Legal por país | cerrado | `npm test` (728) y los dos recorridos | Confirmar con cada equipo legal el formulario o canal real de su país |
+| 26 · publicación verificada | listo, falta autorizar en Google | `npm test` (846), `npm run demo` y los dos recorridos | Autorizar los dos permisos nuevos, correr `setup()` una vez y decidir el I1 de `docs/PARA_DECIDIR.md` |
 
 ## Bloque 0 · Repo, build y despliegue
 
@@ -2871,3 +2872,107 @@ en el punto 137: un premio físico de valor enorme (2.000 millones o más por
 ganador con 500 ganadores) sigue frenando con este mismo mensaje, porque el
 total no cabe en letras. Ahí limpiar espacios no ayuda, y sigue siendo un cambio
 pequeño darle un mensaje que el comercial entienda, si lo quieres.
+
+## 6 de octubre · La publicación en Squarespace: RappiMind deja todo listo y verifica sola
+
+Juan pidió quitarle el trabajo manual a quien sube los T&C a Squarespace, "que lo
+hagas tú o automáticamente", incluso desde su propio usuario. Antes de construir
+revisé qué permite Squarespace, en sus fuentes.
+
+### Qué encontré
+
+- **Squarespace no tiene API para crear eventos, páginas ni entradas.** Las que
+  documenta son de comercio y contactos.
+- **Su política de uso prohíbe hacerlo con un robot o con un usuario
+  compartido** (puntos 1.6 y 1.8), y la sanción es suspender la cuenta o el
+  sitio: promos.rappi.com entero, con los T&C de todos los países. Por eso no
+  construí un robot con el usuario de nadie. Las citas están en la decisión 139
+  de `docs/DECISIONES.md`.
+- **promos.rappi.com es una colección de eventos por país**, y cada evento
+  publica sus datos en un JSON público que Squarespace documenta. Ahí está el
+  texto publicado, el título, las fechas y desde cuándo está publicado. Eso sí
+  se puede leer, y es lo que usa la revisión.
+
+### Qué quedó
+
+- **El texto se copia con un botón, ya con formato.** En la pantalla final,
+  debajo del título del evento, está "Texto del T&C" con "Copiar el texto". Se
+  pega en el cuerpo del evento con sus negrillas, cláusulas y viñetas. Ya no hay
+  que abrir el documento, seleccionarlo todo ni pegar "sin formato".
+- **Nadie tiene que volver a pegar el enlace.** En Colombia RappiMind sabe en qué
+  dirección va a quedar la página (la que propone). Cada hora mira si ya existe y
+  si su texto es idéntico al documento generado. Si lo es, marca la campaña como
+  publicada, con su enlace y su fecha, y le escribe al comercial "Tus T&C
+  quedaron publicados".
+- **Si el texto no coincide, avisa dónde.** El correo dice, por ejemplo:
+  "Después de '…sin que puedas recibir más de', el documento dice 'treinta mil
+  (30.000) Créditos…' y la página dice 'cuarenta mil (40.000) Créditos…'". Va al
+  comercial con `CORREO_COPIA_LEGAL` en copia. Una coma o una tilde cuentan; el
+  formato no.
+- **Si la quitan con la campaña vigente, también avisa**, con Legal en copia.
+  Las publicadas se siguen mirando una vez al día hasta que la campaña termina.
+- **"Revisar ahora"** en la pantalla final y **"Revisar"** en Mis campañas, para
+  no esperar la hora.
+- **Mis campañas dice el estado real:** Publicado y verificado, Publicado con
+  diferencias (con la diferencia escrita debajo), Ya no está publicado o
+  Generado.
+- **En los demás países** todavía no hay ruta de Squarespace en
+  `data/paises.json`, así que ahí se sigue pegando el enlace. Al pegarlo, se
+  revisa en el acto.
+- Los pasos de Squarespace, "Si algo sale mal" y el correo de generación ya
+  cuentan el flujo nuevo. Los textos nuevos de pantalla tienen su portugués.
+
+Código: `src/core/publicacion.js` (lo que decide, sin Google),
+`src/server/RevisionDePublicacion.js` (la lectura, el Sheet, los correos y el
+disparador), y los cambios en `Api.js`, `Setup.js`, la pantalla final y el
+historial. Decisiones 139 a 142.
+
+### Cómo probarlo
+
+```
+npm test
+```
+
+846 pruebas, 59 nuevas y ninguna rota (838 pasan, 8 saltadas como antes). La que
+más importa: cada caso de `pruebas/casos_base.json`, pegado con el botón de
+copiar, se revisa como idéntico, en los nueve países. Las del servidor corren
+contra los dobles de Google, incluida una con las fechas que el Sheet convierte
+solo (comprobé que falla si se quita el arreglo).
+
+En pantalla: `npm run demo`, generar un cashback de Colombia y mirar la pantalla
+final. La demostración no sale a internet, así que "Revisar ahora" dice que ahí
+no se revisa Squarespace. Recorrí el flujo completo en un navegador real con
+`recorrer-flujo.js` (ahora revisa también que el botón copie el texto con
+formato) y con `recorrer-en-portugues.js`. Los dos pasan, sin errores de
+JavaScript.
+
+Lo que **no** pude probar desde aquí, porque este entorno no llega a Google ni a
+promos.rappi.com: la lectura real desde Apps Script, abrir un Doc real párrafo
+por párrafo y el portapapeles dentro del iframe de Apps Script. La forma del JSON
+sí la comprobé contra un evento real publicado
+(`/colombia/2026/descuentoprodselecc`), leído con un servicio externo.
+
+### Qué necesito de Juan
+
+1. **Después de que esto llegue a `main`, correr `setup()` una vez** desde el
+   editor de Apps Script. Google va a pedir dos permisos nuevos: conectarse a un
+   servicio externo (leer la página publicada) y administrar disparadores (la
+   revisión de cada hora). `setup()` agrega las tres columnas nuevas y deja
+   instalada la revisión; en el registro debe decir "revisión automática
+   instalada: corre cada hora". Si dice que no se pudo, mándame el mensaje.
+2. **Desplegar la versión** (Actions > Run workflow) para que los comerciales
+   vean la pantalla nueva. **Siempre después del paso 1**: la web app corre con
+   tu cuenta, y si la versión nueva pide permisos que no has autorizado, Google
+   puede frenarla con un aviso de autorización para todos. El push a `main`
+   solo sube el código; la versión que usan los comerciales no cambia hasta
+   este paso.
+3. **Confirmar quién recibe las alertas**: la propiedad `CORREO_COPIA_LEGAL`.
+   Si está vacía, las diferencias le llegan solo al comercial.
+4. **Probarlo con una campaña real**: generar un cashback de Colombia,
+   publicarlo con la dirección que da RappiMind y tocar "Revisar ahora". Debe
+   decir "Publicada y verificada".
+5. **Decidir el punto I1 de `docs/PARA_DECIDIR.md`**: si se queda así o si se
+   arma la ruta en la que nadie toca Squarespace, que necesita a TI.
+
+Si en algún momento hay que apagar la revisión automática, se corre
+`quitarRevisionAutomatica()` en el editor. No hace falta desplegar nada.
