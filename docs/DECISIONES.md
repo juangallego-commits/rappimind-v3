@@ -2063,3 +2063,151 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      `innerHTML`: la regla de seguridad de `src/client/js/10-util.js` se
      mantiene. Para eso `generar` devuelve ahora también el texto final y la
      dirección prevista.
+
+## 5 y 6 de octubre · RappiMind publica sola, sin Squarespace
+
+143. **Los T&C se publican en una página fija de promos.rappi.com que lee el
+     texto de un archivo de Rappi.** El 5 de octubre de 2026 Juan pidió, con sus
+     palabras, "yo necesito si o si matar esa parte manual que sigue viviendo.
+     Ya tengo todas las autorizaciones, no te preocupes por eso". De las rutas
+     del punto I1 eligió la página fija ("Sí, arranca"), que publique sola al
+     generar ("Sola al generar") y Google Cloud Storage para el archivo. Lo que
+     eso significa:
+
+     - **Cada campaña conserva su propio T&C y su propio enlace:**
+       `promos.rappi.com/tyc?co/<dirección>`. La dirección es la misma que ya se
+       armaba para el evento (`direccion_sugerida`), y es única porque dos
+       campañas nunca se llaman igual (`sufijoLibreDeNombre`).
+     - **Un "?" y no una ruta.** Una página de Squarespace responde en una sola
+       dirección, así que `/tyc/co/...` no existiría. Lo que va después del "?"
+       llega a la página `/tyc`, y el visor lo lee.
+     - **Los eventos que ya existen se quedan.** Solo cambia la forma del enlace
+       de las campañas nuevas de los países que publican solos (decisión 145).
+     - **Sin `PUBLICACION_BUCKET` todo sigue como antes.** Así el código puede
+       llegar a producción antes que el bucket.
+
+     La guía de montaje para TI, Squarespace y Juan está en
+     `docs/PUBLICACION_WEB.md`.
+
+144. **El archivo es texto por bloques, nunca HTML, y el visor lo pinta con
+     `createElement` y `createTextNode`.** El visor (`src/visor/visor.js`) vive
+     en un bloque de código de la página `/tyc` y es lo único que corre en
+     promos.rappi.com. Por eso:
+
+     - El archivo lleva los bloques del documento (título, cláusula, párrafo,
+       viñeta) con sus partes en negrilla, como texto. Ni con el bucket
+       comprometido se le puede meter código a promos.rappi.com: lo peor es un
+       texto cambiado, y eso lo ve la revisión (decisión 147).
+     - Se escribe en ASCII (las tildes como `á`), igual que el bloque que
+       se pega en Squarespace: ninguna codificación lo puede cambiar.
+     - Cada publicación escribe dos archivos iguales: el de la versión
+       (`co/<dirección>/v2.json`), que no cambia nunca y queda como constancia,
+       y el vigente (`co/<dirección>.json`), que es el que abre el enlace. El
+       vigente se puede guardar en caché un minuto (`max-age=60`, lo que Google
+       recomienda para un archivo que cambia); las versiones, un día.
+     - Una versión anterior se abre con su enlace directo
+       (`tyc?co/<dirección>/v1`) y dice que no es la vigente, con el enlace a
+       la vigente. La página vigente no las lista (pregunta I4).
+     - El visor reintenta lo pasajero (red, 5xx) dos veces y después ofrece
+       intentar de nuevo. Un 403 es "no lo encontramos": sin permiso de listar,
+       Cloud Storage contesta 403 por un archivo que no existe.
+     - Muestra exactamente lo que antes se pegaba en el evento: una prueba lo
+       compara caso por caso con `htmlParaSquarespace`.
+
+145. **Publican solos los países que hoy publican en promos.rappi.com.** Sin
+     lista, son los que tienen `ruta_promos` en la pestaña Países. En los datos
+     del repositorio (`data/paises.json`) solo la tiene Colombia. La propiedad `PUBLICACION_PAISES` la cambia sin tocar código
+     (por ejemplo `CO, MX`). Además el país tiene que estar activo: uno en
+     pruebas lleva el aviso de "no publiques". No se encendió en todos los
+     países porque la herramienta no sabe dónde publica hoy cada uno, y Brasil
+     tiene su excepción del organizador. Queda planteado en el I2.
+
+146. **Generar es publicar, pero un bucket caído no tumba la generación.**
+
+     - La fila nace con su enlace definitivo en `link_publicado` y en
+       `sin_publicar`. Si el script se corta después, la revisión de cada hora
+       la encuentra y la publica.
+     - Se publica fuera del bloqueo del script: si Cloud Storage tarda, nadie
+       más se queda esperando para generar.
+     - Después de subir, se lee **la versión** sin iniciar sesión, como la leería
+       cualquier persona, y se compara con el texto generado. La versión y no el
+       vigente: el vigente puede estar un minuto en caché con el texto anterior,
+       y eso no es una diferencia. Si es idéntica, la campaña queda publicada.
+       Si no se pudo, queda en `sin_publicar` con la razón, en palabras de quien
+       la tiene que arreglar (permiso, API, bucket inexistente).
+     - Las leyendas salen con el enlace web, ya confirmado si quedó publicado.
+       El enlace no va a cambiar aunque la publicación siga pendiente.
+     - El correo de la generación dice "Ya están publicados" con el enlace, o
+       "Los estamos publicando". No lleva los pasos de Squarespace.
+     - A una campaña que publicó RappiMind no se le puede pegar otro enlace: sus
+       piezas ya llevan el suyo.
+     - Ampliar publica la versión nueva en el mismo enlace, también fuera del
+       bloqueo. Si la publicación web está apagada, una campaña que publicó
+       RappiMind no se deja ampliar: el enlace seguiría mostrando la versión
+       anterior mientras el documento dice otra cosa.
+     - La demostración lo simula en Colombia, sin bucket; con `?squarespace` en
+       la dirección se ve el camino de siempre.
+
+147. **Cada hora: reponer lo que falta, avisar lo que no coincide y vigilar la
+     página `/tyc`.**
+
+     - **El archivo no está** (404, o 403 sin permiso de listar): se vuelve a
+       publicar. El texto se rehace con el motor, con la fecha en que se armó
+       (la de la última ampliación, o la de la generación: con la de hoy, una
+       campaña que ya empezó no pasaría la validación) y **solo se publica si es
+       idéntico al Google Doc** que recibió el comercial. Si los modelos
+       cambiaron o alguien editó el documento, no se publica nada y lo mira
+       Legal. Cada reposición queda en el Registro.
+     - **Está, pero es una versión anterior** a la de la fila (una ampliación
+       cuya subida falló): se publica la que va.
+     - **No coincide con el documento:** se avisa al comercial con Legal en
+       copia, y no se pisa. Alguien tiene que mirar qué cambió.
+     - **Dice que se retiró:** queda retirada. Nunca se vuelve a publicar sola.
+     - **No se pudo leer:** "sin verificar", y se mira en la próxima hora.
+     - Una verificada se mira una vez al día mientras está vigente; una
+       pendiente, cada hora.
+     - Los correos salen solo cuando alguien tiene que saber algo
+       (`hayQueAvisarDeLaPublicacionWeb`): quedó publicada después de
+       reintentar, ya no coincide, o dejó de verse y no se pudo reponer. El
+       primer intento lo cuenta el correo de la generación.
+     - **La página `/tyc`** es el único punto del que dependen todos los
+       enlaces nuevos. La revisión busca una marca que solo existe dentro del
+       `<script>` del bloque: si alguien borra el bloque, o Squarespace deja de
+       correrlo, la marca desaparece. Avisa a `CORREO_COPIA_LEGAL` (o a los
+       administradores) cuando se cae y cuando vuelve, una vez cada cosa.
+       `prepararPublicacionWeb` la revisa sin guardar el estado, para no
+       taparle el cambio a la corrida.
+
+148. **Retirar: solo lo que publicó RappiMind, y solo antes de que arranque.**
+     Lo puede hacer quien la generó, Legal o un administrador, desde Mis
+     campañas, con confirmación. El enlace queda diciendo que se retiró, con la
+     fecha, y las versiones se quedan en el bucket como constancia. Una campaña
+     retirada no se amplía ni se vuelve a publicar sola. La corregida se genera
+     de nuevo: como el nombre ya existe, sale con su consecutivo y su propio
+     enlace, y las piezas se cambian. Después de que arranca nadie la puede
+     retirar desde RappiMind (pregunta I3).
+
+149. **Lo que escribe con la cuenta de quien despliega no se puede llamar desde
+     el navegador.** La ayuda de Apps Script dice: "Private functions in Apps
+     Script (ending with an underscore) cannot be called by google.script.run
+     and are invisible to the client." Y la web app corre como quien la
+     despliega. Sin el "_", cualquier cuenta @rappi.com podría publicar un texto
+     propio en promos.rappi.com/tyc, leer un Doc por su identificador o mandar
+     un correo como RappiMind desde la consola del navegador. Por eso:
+
+     - Las funciones que suben, leen con token, guardan en la fila o mandan
+       correo terminan en "_", incluidas cuatro de la revisión del 5 de octubre
+       (`revisarYGuardar_`, `solicitudPlanaPorId_`, `esperadoDeLaSolicitud_`,
+       `parrafosDelDocumento_`) y `enviarCorreoDeVerificacion_`. Una prueba
+       revisa que no vuelvan a perder el "_".
+     - `prepararPublicacionWeb` y `quitarRevisionAutomatica` se corren desde el
+       editor, así que no pueden ser privadas: exigen administrador.
+     - Nunca se pisa el archivo de otra solicitud.
+     - En el bucket, la lectura pública va con *Storage Legacy Object Reader*,
+       que no deja listar: con *Storage Object Viewer*, que es el que trae la
+       guía de Google, cualquiera vería los nombres de las campañas que todavía
+       no arrancan. La escritura va con *Storage Object User*, solo sobre ese
+       bucket.
+     - Las funciones más viejas de `Datos.js`, `AdaptadorDocumento.js` y
+       `EnvioCorreo.js` tienen el mismo problema y no se tocaron aquí: quedó
+       anotado como pendiente en `docs/PROGRESO.md`.

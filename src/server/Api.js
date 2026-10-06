@@ -428,6 +428,18 @@ function ampliarCampana(id, cambios) {
   var disponible = puedeAmpliar(solicitud, entrada, hoyIso(), horaAhora());
   if (!disponible.puede) return { valido: false, errores: [{ campo: 'id', mensaje: disponible.motivo }] };
 
+  // La publico RappiMind y la publicacion web esta apagada: la version nueva no
+  // tendria donde publicarse, y el enlace seguiria mostrando la anterior
+  // mientras el documento dice otra cosa.
+  var web = configuracionWeb();
+  var esWeb = esEnlaceDelVisor(web, solicitud.link_publicado);
+  if (esWeb && !web.activa) {
+    return {
+      valido: false,
+      errores: [{ campo: 'id', mensaje: 'Esta campaña la publicó RappiMind y la publicación sin Squarespace está apagada. Mientras tanto no se puede ampliar: la versión nueva no tendría dónde publicarse.' }],
+    };
+  }
+
   var revision = validarAmpliacion(entrada, cambios, hoyIso(), horaAhora());
   if (!revision.valido) return { valido: false, errores: revision.errores };
 
@@ -474,13 +486,9 @@ function ampliarCampana(id, cambios) {
 
   // Si la publico RappiMind, la version nueva queda en el mismo enlace, fuera
   // del bloqueo como al generar. Las anteriores se quedan en el bucket.
-  var web = configuracionWeb();
-  var publicacion = null;
-  if (esEnlaceDelVisor(web, solicitud.link_publicado)) {
-    publicacion = web.activa
-      ? publicarRecienGenerada_({ id: id, enlaceWeb: solicitud.link_publicado }, resultado.texto, version, web)
-      : { modo: 'web', estado: 'sin_publicar', detalle: web.problema, enlace: solicitud.link_publicado, version: version, fecha: '' };
-  }
+  var publicacion = esWeb
+    ? publicarRecienGenerada_({ id: id, enlaceWeb: solicitud.link_publicado }, resultado.texto, version, web)
+    : null;
 
   return {
     valido: true,

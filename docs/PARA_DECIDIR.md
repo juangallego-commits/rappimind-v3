@@ -1,6 +1,6 @@
 # Lo que depende de Juan
 
-Actualizado el 21 de septiembre de 2026, al cerrar D1.
+Actualizado el 6 de octubre de 2026, al cerrar I1.
 
 Este es el documento de trabajo: **lo que sigue pendiente**. Lo decidido pasó al
 bloque G con su fecha y no vuelve a aparecer como pregunta.
@@ -8,7 +8,10 @@ bloque G con su fecha y no vuelve a aparecer como pregunta.
 
 El 20 de septiembre se cerraron **31 de los 41 puntos** y el 21 los **diez que
 quedaban**, D1 incluido. El 5 de octubre se abrió **uno nuevo, el I1**: cómo
-publicar en Squarespace sin que nadie toque Squarespace.
+publicar en Squarespace sin que nadie toque Squarespace. Se cerró ese mismo día:
+RappiMind publica sola en una página fija de promos.rappi.com. De ahí salen
+**cuatro preguntas nuevas, I2 a I5**. Ninguna frena el montaje: cada una ya tiene
+un comportamiento por defecto, que es el que dice.
 
 Lo que sí queda es **un bloque de tareas de ejecución**, que ya no dependen de
 ninguna decisión: alguien tiene que hacerlas fuera del repositorio.
@@ -31,7 +34,7 @@ a alguien concreto.
 
 Los bloques que quedan:
 
-- **I.** Abierto: la publicación sin manos.
+- **I.** Abierto: cuatro detalles de la publicación sin manos.
 - **H.** Tareas de ejecución fuera del repositorio. Sin decisión pendiente.
 - **G.** Cerrado, con su fecha. No vuelve a aparecer como pregunta.
 
@@ -45,74 +48,98 @@ las pantallas descritas. No hace falta abrir el repositorio.
 
 # I. Abierto
 
-## I1. Publicar en Squarespace sin que nadie toque Squarespace
+## I2. Qué países publican solos
 
-**Qué hay que decidir.** Si los T&C se siguen publicando como hoy, con una
-persona que pega el texto en un evento de Squarespace, o si se cambia dónde
-vive el texto para que RappiMind lo publique solo.
+**Qué hay que decidir.** En qué países RappiMind publica sola al generar.
 
-**Por qué existe la duda.** Desde el 5 de octubre RappiMind deja todo listo
-para pegar (título, texto con formato, dirección y fechas) y después revisa
-solo, cada hora, que la página publicada sea idéntica al documento. Ya nadie
-tiene que volver a pegar el enlace ni marcar nada. Pero los clics dentro de
-Squarespace siguen siendo de una persona, porque:
-
-- Squarespace no tiene API para crear eventos ni páginas: las que documenta son
-  de comercio y contactos.
-- Su política de uso prohíbe entrar por medios distintos a sus interfaces
-  públicas (punto 1.6, "scraping, spidering or crawling") y manejar el servicio
-  con credenciales compartidas (punto 1.8). Un robot con el usuario de una
-  persona choca con los dos.
-- La sanción que se reserva es suspender la cuenta o el sitio. promos.rappi.com
-  es uno solo: se caerían los T&C de todos los países a la vez. Para dar una
-  idea del tamaño, la colección de Colombia tenía 9.987 eventos el 5 de octubre
-  de 2026.
-
-Las citas y el detalle están en `docs/DECISIONES.md`, decisión 139.
+**Por qué existe la duda.** La herramienta solo sabe que un país publica en
+promos.rappi.com si tiene ruta en la pestaña Países (`ruta_promos`). En los
+datos del repositorio (`data/paises.json`, de donde sale esa pestaña) solo la
+tiene Colombia. Dónde publica cada uno de los demás no está escrito en ningún
+lado. Brasil, además, tiene su excepción del organizador y su T&C en
+portugués.
 
 **Las opciones.**
 
-1. **Quedarse como quedó el 5 de octubre.** Una persona con usuario de
-   Squarespace hace los clics: evento nuevo, pegar título, texto y dirección,
-   poner las fechas y publicar. Un par de minutos por campaña. RappiMind hace lo
-   demás.
-2. **Una página fija por país en Squarespace que muestra el T&C desde un
-   almacenamiento de Rappi.** Squarespace permite poner código propio en una
-   página (bloque de código), según el plan del sitio. Esa página lee el T&C
-   de un archivo público que RappiMind escribe al generar, por ejemplo en
-   Google Cloud Storage o en un sitio estático de Rappi. Nadie toca Squarespace
-   nunca más. Es la única ruta sin manos que respeta la política de
-   Squarespace.
-3. **Claude en Chrome, manejado por quien publica, en su propia sesión.** No se
-   comparte ninguna contraseña y la persona está mirando, pero los clics los
-   hace un agente. Si eso cuenta como "publicly supported interface" del punto
-   1.6 es una lectura legal, no técnica.
-4. **Descartada: un robot con usuario y contraseña.** Es lo que prohíben los
-   puntos 1.6 y 1.8, y el riesgo es el sitio entero.
+1. **Solo Colombia.** Es lo que queda si no se hace nada.
+2. **Colombia y los países que hoy también publican en promos.rappi.com.** Tú
+   sabes cuáles son.
+3. **Todos los países activos.**
 
-**Qué pasa con la herramienta con cada una.**
+**Qué pasa con la herramienta con cada una.** Ninguna toca código: se escribe
+la lista en la propiedad `PUBLICACION_PAISES` (por ejemplo `CO, MX, CR`). Los
+países de la lista dejan de ver los pasos de Squarespace y sus enlaces nuevos
+pasan a ser `promos.rappi.com/tyc?mx/...`.
 
-1. Nada: ya está construido y probado. Solo falta que Juan autorice los dos
-   permisos nuevos y corra `setup()` (ver `docs/PROGRESO.md`, 5 de octubre).
-2. Hay que pedirle a TI dónde vive el archivo público y que lo apruebe
-   seguridad. Hay que confirmar que el plan del sitio deja poner código. El
-   enlace cambia de forma (por ejemplo `promos.rappi.com/colombia/tyc?c=...`),
-   así que cambian las leyendas y la validación del enlace. Legalmente el texto
-   que ve el usuario sale del archivo de Rappi y no de Squarespace: eso da un
-   historial de versiones que hoy no existe, pero si ese archivo no carga la
-   página sale vacía, así que hay que dejarle un enlace de respaldo. Con todo
-   eso decidido, calculo que el trabajo en RappiMind es de unos días.
-3. RappiMind no cambia: la revisión de cada hora sirve igual para confirmar lo
-   que hizo el agente. Hay que confirmar que Rappi tiene la extensión
-   habilitada, y si se quiere certeza, preguntarle a Squarespace por escrito.
+**Quién decide.** Juan, con el Legal de cada país que entre.
 
-**Recomendación.** La 1 ya está andando. Si el volumen justifica que nadie toque
-Squarespace, la 2 es la única que no depende de una lectura discutible de la
-política. La 3 solo como puente, y solo si tu lectura del punto 1.6 lo aguanta.
+## I3. Si una campaña que ya arrancó se puede retirar
 
-**Quién decide.** Juan. Para la 2, con TI y con quien sea el propietario de la
-cuenta de Squarespace de promos.rappi.com, que conviene confirmar antes de
-cambiar nada del sitio.
+**Qué hay que decidir.** Si alguien puede retirar el T&C de una campaña en
+curso.
+
+**Por qué existe la duda.** Lo que aprobaste el 5 de octubre fue un botón
+Retirar para un error "mientras la campaña no haya arrancado". Hoy nadie, ni
+Legal, puede retirar una campaña que ya empezó. Si aparece un error grave o una
+orden de una autoridad, el único camino es pedirle a TI que toque el archivo a
+mano. Si TI lo cambia, la revisión de cada hora lo vería como "con diferencias"
+y avisaría. Si lo borra, la revisión lo volvería a publicar: para RappiMind, un
+archivo que falta en una campaña vigente es algo que reponer.
+
+**Las opciones.**
+
+1. **Se queda así.** Mientras la campaña esté vigente, su T&C se ve.
+2. **Legal y los administradores pueden retirar una campaña en curso,** con
+   confirmación y el motivo escrito, que queda en el Registro.
+
+**Qué pasa con la herramienta con cada una.** La 2 es poco trabajo: es el mismo
+retiro con otra regla de quién puede.
+
+**Quién decide.** Juan.
+
+## I4. Si la página muestra las versiones anteriores
+
+**Qué hay que decidir.** Si la página de una campaña ampliada muestra, al pie,
+la lista de sus versiones anteriores.
+
+**Por qué existe la duda.** Cada versión queda guardada con su fecha y se abre
+con su propio enlace (`tyc?co/<dirección>/v1`), con un aviso de que no es la
+vigente y el enlace a la vigente. La página vigente no las lista: así se veía
+un evento de Squarespace después de reemplazar el texto. Listarlas da
+transparencia a quien participó antes de la ampliación, pero también es un
+texto más en la página.
+
+**Las opciones.**
+
+1. **Se queda así:** las versiones existen y se abren con su enlace, pero no se
+   listan.
+2. **Al pie, "Versiones anteriores",** con el número y la fecha de cada una.
+
+**Qué pasa con la herramienta con cada una.** La 2 es un cambio pequeño en el
+visor, y hay que volver a pegar el bloque en Squarespace una vez.
+
+**Quién decide.** Juan.
+
+## I5. Los textos que ve cualquier usuario en la página `/tyc`
+
+**Qué hay que decidir.** Si estos textos quedan así. No son cláusulas, pero los
+lee cualquier usuario de Rappi:
+
+- Mientras carga: "Cargando los términos y condiciones..."
+- Enlace incompleto o que no existe: "No encontramos estos términos y
+  condiciones. Revisa que el enlace esté completo."
+- Si no carga: "No pudimos cargar los términos y condiciones. Revisa tu conexión
+  e intenta de nuevo.", con el botón "Intentar de nuevo".
+- Retirado: "Estos términos y condiciones fueron retirados el {fecha}.", con
+  la fecha en que se retiró.
+- Versión anterior: "Esta es una versión anterior de estos términos y
+  condiciones, publicada el {fecha}." y "Ver la versión vigente".
+- Arriba va el nombre de la campaña, como en el título del evento de
+  Squarespace.
+
+En Brasil salen en portugués. Están en `src/visor/visor.js`.
+
+**Quién decide.** Juan.
 
 ---
 
@@ -181,8 +208,20 @@ Los demás países sí lo tienen y la herramienta abre el suyo con un botón.
 Costa Rica hasta que ese modelo exista. Hoy no le pasa a nadie, porque Carrera
 solo está habilitada en Colombia.
 
----
+## H6. El montaje de la publicación sin Squarespace
 
+Tres cosas, una sola vez, explicadas paso a paso en `docs/PUBLICACION_WEB.md`:
+
+1. **TI:** el bucket de Cloud Storage, con lectura pública sin listar, permiso
+   de escritura para la cuenta con la que corre RappiMind y permiso para que
+   promos.rappi.com lo lea (CORS). Devuelve el nombre del bucket.
+2. **Quien administra Squarespace:** la página `/tyc` con el bloque de código de
+   RappiMind. El bloque se arma con el nombre del bucket.
+3. **Juan:** la propiedad `PUBLICACION_BUCKET`, el despliegue y autorizar el
+   permiso nuevo de Cloud Storage corriendo `prepararPublicacionWeb`.
+
+**Mientras tanto:** todo sigue como el 5 de octubre. Las campañas se publican en
+Squarespace con el texto listo para pegar, y RappiMind las revisa sola.
 
 ---
 
@@ -227,6 +266,7 @@ No vuelve a aparecer como pregunta abierta.
 | **E1.** El mensaje a Legal Brasil | **No se manda.** La excepción del organizador vive de tu autorización del 17 de septiembre y la ratifican los abogados de Brasil cuando prueben la herramienta | 20 sep |
 | **E3.** Las descripciones de los dos cupones | Aplicadas las cuatro frases de la decisión 46 | 20 sep |
 | **F1.** La coma del operador logístico | La etiqueta dice "Rappi, como operador logístico", con coma | 20 sep |
+| **I1.** Publicar sin que nadie toque Squarespace | Una página fija, `/tyc`, que muestra el T&C de cada campaña desde un archivo de Rappi en Cloud Storage. Publica sola al generar, con Retirar mientras la campaña no arranca (decisiones 143 a 149) | 5 oct |
 | **F2.** Los nombres de los países en portugués | Colômbia, Peru, Equador y Uruguai, solo en la pantalla | 20 sep |
 | **F3.** Los dos nombres con guion | "Cupón de descuento de valor fijo" y "Cupón de descuento en toda la tienda" | 20 sep |
 | **F4.** Las diez correcciones de ortografía | Aplicadas las diez, los tres grupos | 20 sep |

@@ -289,6 +289,18 @@ test('si la subida de la ampliación falla, la corrida publica la versión que v
   assert.strictEqual(fila(generado.id).verificacion, 'verificado');
 });
 
+test('con la publicación web apagada, una campaña que publicó RappiMind no se amplía', () => {
+  const mundo = conBucket();
+  const generado = generar(solicitudValida());
+  delete mundo.propiedades.PUBLICACION_BUCKET;
+  enCurso(mundo);
+  const documentosAntes = Object.keys(mundo.documentos).length;
+  const ampliada = ampliarCampana(generado.id, { fechaFin: '2026-09-25', horaFin: '23:59' });
+  assert.strictEqual(ampliada.valido, false);
+  assert.ok(ampliada.errores[0].mensaje.indexOf('no tendría dónde publicarse') !== -1);
+  assert.strictEqual(Object.keys(mundo.documentos).length, documentosAntes, 'no se creó un documento que nadie iba a ver');
+});
+
 // --- La corrida de cada hora ---------------------------------------------------------------
 
 test('si el archivo desaparece, la corrida lo repone y lo deja escrito', () => {
@@ -389,6 +401,21 @@ test('retirar deja el enlace diciendo que se retiró, y ya no se publica sola', 
   assert.ok(ampliar.errores[0].mensaje.indexOf('retiró') !== -1);
 });
 
+test('un archivo retirado no se vuelve a publicar, aunque la fila no lo sepa todavía', () => {
+  // El retiro escribe el archivo y después la fila. Si un reintento se cruza en
+  // medio, el archivo manda.
+  const mundo = conBucket();
+  mundo.gcs.subida = { codigo: 403, cuerpo: '' };
+  const generado = generar(solicitudValida());
+  mundo.gcs.subida = null;
+  mundo.bucket[VIGENTE] = { contenido: jsonEnAscii(documentoWebRetirado({ id: generado.id }, { fecha: '2026-09-16 11:00:00' })), cache: 'public, max-age=60' };
+  mundo.gcs.publico = false; // la lectura pública falla: va por el camino de volver a publicar
+
+  revisarPublicacionesPendientes();
+  assert.strictEqual(archivo(mundo).retirado, true);
+  assert.strictEqual(fila(generado.id).verificacion, 'dado_de_baja');
+});
+
 test('una campaña que ya arrancó no se retira', () => {
   const mundo = conBucket();
   const generado = generar(solicitudValida());
@@ -451,6 +478,7 @@ test('prepararPublicacionWeb publica la prueba, revisa la página y dice qué ab
   assert.ok(informe.indexOf('1. La prueba quedó escrita en el bucket y se lee en público.') !== -1, informe);
   assert.ok(informe.indexOf('2. La página https://promos.rappi.com/tyc tiene el bloque de RappiMind.') !== -1, informe);
   assert.ok(informe.indexOf('https://promos.rappi.com/tyc?zz/prueba-de-rappimind') !== -1, informe);
+  assert.ok(informe.indexOf('Corre con la cuenta juan.gallego@rappi.com.') !== -1, 'dice qué cuenta necesita el permiso de escritura');
   assert.ok(archivo(mundo, 'tyc/zz/prueba-de-rappimind.json'));
   assert.strictEqual(mundo.correos.length, 0);
 });

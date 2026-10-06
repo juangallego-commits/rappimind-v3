@@ -41,6 +41,7 @@ pruebas/            casos de prueba con resultado esperado
 src/core/           lógica pura compartida por Node (tests) y Apps Script (motor, derivados, validaciones)
 src/server/         código de Apps Script (web app, Sheet, Drive, Docs, correo)
 src/client/         interfaz (HTML, CSS, JS)
+src/visor/          visor de la página /tyc de promos.rappi.com (se pega una vez en Squarespace)
 scripts/            build y utilidades (generar dist/, previsualizar casos)
 dist/               salida del build que se sube con clasp (no editar a mano)
 docs/               especificación, progreso, decisiones y pendientes legales
@@ -53,4 +54,5 @@ npm test                        corre las pruebas (node:test, sin dependencias e
 npm run build                   genera dist/ (copia core y server, convierte modelos a Modelos.js, arma los HTML)
 npm run previsualizar           imprime el texto final de cada caso de pruebas/casos_base.json
 npm run push                    build + clasp push (pedir aprobación a Juan)
+npm run visor -- --bucket X     arma el bloque del visor para pegar en Squarespace (docs/PUBLICACION_WEB.md)
 ```

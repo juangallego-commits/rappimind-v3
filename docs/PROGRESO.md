@@ -16,6 +16,7 @@ por abajo: lo último está al final. Si buscas qué falta, la tabla y
 | 9 · identidad | cerrado | `npm test` (681), `npm run contraste` y los dos recorridos | Mirar el titular y la píldora Publicado en pantalla, y decidir el correo, el lockup y los estados del historial |
 | 13 · Legal por país | cerrado | `npm test` (728) y los dos recorridos | Confirmar con cada equipo legal el formulario o canal real de su país |
 | 26 · publicación verificada | listo, falta autorizar en Google | `npm test` (846), `npm run demo` y los dos recorridos | Autorizar los dos permisos nuevos, correr `setup()` una vez y decidir el I1 de `docs/PARA_DECIDIR.md` |
+| 27 · publicación sin Squarespace | listo, falta el montaje (bucket y página `/tyc`) | `npm test` (925), `npm run demo` y los dos recorridos | Pedirle el bucket a TI, la página `/tyc` a quien administra Squarespace, poner `PUBLICACION_BUCKET` y autorizar (H6 de `docs/PARA_DECIDIR.md`), y decidir I2 a I5 |
 
 ## Bloque 0 · Repo, build y despliegue
 
@@ -2976,3 +2977,109 @@ sí la comprobé contra un evento real publicado
 
 Si en algún momento hay que apagar la revisión automática, se corre
 `quitarRevisionAutomatica()` en el editor. No hace falta desplegar nada.
+
+## 6 de octubre · RappiMind publica sola, sin que nadie entre a Squarespace
+
+Juan pidió matar la parte manual "si o si". Eligió la página fija, que publique
+sola al generar y Google Cloud Storage. Quedó construido y probado; falta el
+montaje de una sola vez (bucket, página `/tyc` y una propiedad).
+
+### Lo que va a ver el comercial
+
+- **Genera y ya quedó publicado.** La pantalla final dice "Tu T&C está
+  publicado" y le da su enlace, por ejemplo
+  `https://promos.rappi.com/tyc?co/el-corral-20-cashback-1-dic-2026`, listo para
+  copiar. Es el definitivo: va en las piezas, y las leyendas ya salen con él. No
+  hay nada que pegar ni nadie a quién pasárselo.
+- **Si la publicación falla** (por ejemplo, un permiso del bucket), la campaña
+  se genera igual. La pantalla dice "Lo estamos publicando", por qué, y ofrece
+  "Publicar ahora". El enlace igual es el definitivo. RappiMind reintenta sola
+  cada hora y le avisa por correo cuando queda.
+- **Ampliar** publica la versión nueva en el mismo enlace. La anterior queda
+  guardada con su fecha.
+- **Un error antes de que arranque** se retira en Mis campañas, con
+  confirmación. El enlace queda diciendo que se retiró, y la corregida se genera
+  de nuevo con su propio enlace.
+- El correo de la generación, el inicio y la Ayuda ya cuentan el camino nuevo.
+  Todo tiene su portugués.
+
+### Lo que hace sola cada hora
+
+- Revisa que la página `/tyc` siga mostrando los T&C. Si se cae, le escribe a
+  Legal; cuando vuelve, también.
+- Vuelve a publicar lo que no quedó o lo que desapareció del bucket, pero solo
+  si el texto que rehace es idéntico al Google Doc del comercial.
+- Si lo publicado no coincide con el documento, avisa con Legal en copia y no
+  lo toca.
+
+### Lo que sigue igual
+
+- Los eventos que ya están en Squarespace.
+- Los países que no publican solos. Hoy publica sola solo Colombia, que en los
+  datos del repositorio es el único país con ruta en promos.rappi.com (I2).
+- Sin `PUBLICACION_BUCKET`, todo funciona como el 5 de octubre. Se puede
+  desplegar ya, antes de que exista el bucket.
+
+### Seguridad
+
+- La página pinta el T&C como texto, nunca como HTML: ni con el bucket
+  comprometido se le puede meter código a promos.rappi.com.
+- Las funciones que escriben con la cuenta de quien despliega ya no se pueden
+  llamar desde el navegador (decisión 149). Al revisarlo encontré que **las más
+  viejas** (escribir filas del Sheet, crear o borrar documentos, mandar el
+  correo de la generación, `setup()`) tienen el mismo problema: cualquier
+  cuenta @rappi.com las puede llamar desde la consola del navegador y corren
+  como quien despliega. No es de este cambio y no lo toqué; quedó propuesto como
+  una tarea aparte.
+
+Código: `src/core/publicacion_web.js`, `src/visor/visor.js`,
+`scripts/visor.js`, `src/server/PublicadorWeb.js` y los cambios en `Api.js`,
+`RevisionDePublicacion.js`, la pantalla final, el historial, la Ayuda y la
+demostración. Decisiones 143 a 149. Guía de montaje: `docs/PUBLICACION_WEB.md`.
+
+### Cómo probarlo
+
+```
+npm test
+```
+
+925 pruebas: 917 pasan, 0 fallan y 8 se saltan, como antes. Las nuevas son
+`pruebas/publicacion_web.test.js` (el enlace, el archivo, las versiones),
+`pruebas/visor.test.js` (el visor contra un navegador falso que revienta si
+alguien usa `innerHTML`, y el bloque armado corriendo solo) y
+`pruebas/publicacion_web_servidor.test.js` (de punta a punta contra los dobles
+de Google, con Cloud Storage simulado).
+
+```
+npm run demo
+```
+
+Abre `demo/index.html` y genera un cashback de Colombia: la pantalla final dice
+"Tu T&C está publicado". En Mis campañas sale Retirar. Con `?squarespace` al
+final de la dirección se ve el camino de antes.
+
+Y los dos recorridos de la skill de flujo, que ahora recorren los dos caminos:
+
+```
+node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js
+node .claude/skills/flujo-y-ux/scripts/recorrer-en-portugues.js
+```
+
+El visor también lo probé en un Chromium de verdad, con promos.rappi.com y el
+bucket simulados: pinta el T&C igual que el evento, en escritorio y en celular,
+y sin dejar nada suelto en la página. Lo que no pude probar desde aquí es el
+bucket de verdad ni el CORS: eso lo dice `prepararPublicacionWeb` el día del
+montaje.
+
+### Qué necesito de Juan
+
+1. **Pedirle el bucket a TI** con `docs/PUBLICACION_WEB.md`, paso 1. Lo que
+   vuelve es su nombre.
+2. **Con el nombre, armar el bloque** (`npm run visor -- --bucket NOMBRE`; te lo
+   entrego yo) y **pedirle la página `/tyc`** a quien administra Squarespace,
+   paso 3.
+3. **Poner `PUBLICACION_BUCKET`**, desplegar y correr `prepararPublicacionWeb`
+   desde el editor para autorizar el permiso nuevo de Cloud Storage, paso 2.
+   Después, la prueba de punta a punta del paso 4.
+4. **Decidir I2 a I5** de `docs/PARA_DECIDIR.md`. Ninguna frena el montaje.
+

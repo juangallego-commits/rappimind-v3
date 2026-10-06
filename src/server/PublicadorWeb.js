@@ -134,6 +134,11 @@ function publicarVersionWeb_(config, datos) {
       return resultadoDeVerificacion('sin_publicar',
         'En esa dirección ya hay un T&C de otra solicitud (' + previo.id + '). RappiMind no lo reemplaza.');
     }
+    // Retirada es para siempre: ni un reintento que se cruce con el retiro la
+    // vuelve a publicar.
+    if (previo && previo.retirado === true) {
+      return resultadoDeVerificacion('dado_de_baja', 'Esta campaña se retiró. RappiMind no la vuelve a publicar.');
+    }
     versionesAnteriores = versionesDelArchivoWeb(previo);
   } else if (anterior.falla || anterior.codigo !== 404) {
     return resultadoDeVerificacion('sin_publicar', anterior.falla
@@ -496,6 +501,17 @@ function prepararPublicacionWeb() {
   } else {
     lineas.push('Bucket: ' + config.bucket + ' · carpeta: ' + config.carpeta + ' · página: ' + config.visor);
     lineas.push('Países que publican solos: ' + (config.paises.length ? config.paises.join(', ') : 'los que tienen ruta_promos'));
+    // La cuenta que escribe en el bucket es la de quien corre: aqui, quien abrio
+    // el editor; en la web app, quien la desplego; cada hora, quien instalo el
+    // disparador. Normalmente es la misma, y es la que TI tiene que autorizar.
+    var cuenta = '';
+    try {
+      cuenta = String(Session.getEffectiveUser().getEmail() || '');
+    } catch (error) {
+      cuenta = '';
+    }
+    lineas.push('Corre con la cuenta ' + (cuenta || 'que Google no nos dijo') +
+      '. Esa cuenta, y la que despliega la web app si es otra, necesitan escribir en el bucket (Storage Object User).');
 
     var hoy = hoyIso();
     var prueba = publicarVersionWeb_(config, {
