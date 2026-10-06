@@ -196,6 +196,19 @@ function refrescarDocumento() {
 
 // --- Pantalla de inicio ------------------------------------------------------
 
+/**
+ * Lo que la pantalla de inicio promete del ultimo paso. Donde RappiMind publica
+ * sola, prometer "los pasos para publicarlo" es prometer un trabajo que ya no
+ * existe.
+ */
+function detalleDePublicar() {
+  var web = E.configuracion && E.configuracion.publicacionWeb;
+  if (web && web.activa && web.paises && web.paises.length > 0) {
+    return estado.T('Donde RappiMind publica sola, queda publicado en el momento en que lo generas. En los demás países te llega por correo con los pasos para publicarlo.');
+  }
+  return estado.T('Te llega por correo en un par de minutos, con los pasos para publicarlo o a quién pasárselo.');
+}
+
 function pantallaInicio(raiz) {
   var pasos = [
     {
@@ -208,7 +221,7 @@ function pantallaInicio(raiz) {
     },
     {
       titulo: estado.T('Publica los T&C'),
-      detalle: estado.T('Te llega por correo en un par de minutos, con los pasos para publicarlo o a quién pasárselo.'),
+      detalle: detalleDePublicar(),
     },
   ];
 

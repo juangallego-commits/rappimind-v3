@@ -120,7 +120,18 @@ al lado.
 
 ## listo
 
-El resultado: el enlace del documento, el paso a paso de Squarespace y quién
+**Donde RappiMind publica sola** (desde el 6 de octubre de 2026: los países de
+`PUBLICACION_PAISES` o, sin lista, los que tienen `ruta_promos`, hoy Colombia),
+generar es publicar. La pantalla dice "Tu T&C está publicado" y da el enlace
+definitivo (`promos.rappi.com/tyc?co/...`), copiable, con "Ver la página
+publicada" (`bloqueDePublicacionWeb`). No hay nada de Squarespace: ni qué pegar,
+ni quién puede publicar, ni "Cuando ya esté publicado". Si la publicación quedó
+pendiente, dice "Lo estamos publicando", por qué, que RappiMind reintenta cada
+hora, y ofrece "Publicar ahora"; el enlace igual es el definitivo. Las leyendas
+salen con ese enlace. Abajo recuerda que un error antes de que arranque se
+retira desde Mis campañas.
+
+**En los demás países**, el resultado es el enlace del documento, el paso a paso de Squarespace y quién
 tiene usuario para publicar en ese país (`bloqueDeQuienPublica`). Es la pantalla
 donde el comercial deja la herramienta y se va a publicar, así que lo que
 necesita tiene que estar ahí, copiable, sin volver a buscar. En un país en
@@ -157,13 +168,27 @@ Las campañas del comercial, con lo que puede hacer con cada una:
   Generado.
 - **Revisar**: revisa ya mismo una campaña que todavía no está verificada. No
   sale si la campaña terminó ni si no hay dónde buscarla (sin enlace pegado y
-  en un país sin ruta de Squarespace).
+  en un país sin ruta de Squarespace). En una que publica RappiMind y quedó
+  pendiente dice **Publicar ahora**, porque eso es lo que hace.
+- **Retirar**: solo en una campaña que publicó RappiMind, que no esté retirada
+  y que no haya arrancado. Pide confirmación debajo de la tabla y dice antes qué
+  pasa: el enlace queda diciendo que se retiró, y la campaña no se vuelve a
+  publicar ni se amplía. La corregida se genera con "Usar como base" y sale con
+  su propio enlace. La etiqueta queda en **Retirado**.
 
 ## ayuda
 
-Qué es cada sección, cómo se publica en Squarespace paso a paso, quién puede
-publicar en cada país y el canal de Legal. Cuando cambie el flujo, cambia aquí
-también.
+Qué es cada sección, cómo se publica (primero "RappiMind publica sola" con los
+países que lo tienen, después Squarespace paso a paso para los demás), quién
+puede publicar en cada país y el canal de Legal. Cuando cambie el flujo, cambia
+aquí también.
+
+## La demostración
+
+Simula que RappiMind publica sola en Colombia, sin bucket: nada se publica de
+verdad y la pantalla final lo dice. Para ver el camino de Squarespace se abre
+con `?squarespace` al final de la dirección (`recorrer-flujo.js` recorre los
+dos).
 
 ## admin
 

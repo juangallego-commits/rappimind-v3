@@ -293,6 +293,22 @@ var PASOS_SQUARESPACE = [
   },
 ];
 
+/*
+ * Donde RappiMind publica sola (src/server/PublicadorWeb.js, desde el 6 de
+ * octubre de 2026). La pantalla de Ayuda lo muestra antes de la guia de
+ * Squarespace, con los paises que lo tienen encendido.
+ */
+var PUBLICACION_AUTOMATICA = {
+  titulo: 'RappiMind publica sola',
+  entrada: 'En {paises}, al generar tu T&C RappiMind lo publica en promos.rappi.com en ese mismo momento, en su propio enlace. No tienes que entrar a Squarespace ni pasárselo a nadie.',
+  puntos: [
+    'El enlace sale en la pantalla final y en el correo. Es el definitivo: úsalo en tus piezas.',
+    'Si amplías la campaña, la versión nueva queda en el mismo enlace y la anterior queda guardada.',
+    'Si encuentras un error antes de que la campaña arranque, retírala en Mis campañas y genera una nueva con los datos corregidos.',
+    'Si la publicación falla, RappiMind lo vuelve a intentar sola cada hora y te avisa por correo cuando quede.',
+  ],
+};
+
 var SI_ALGO_SALE_MAL = [
   { problema: 'El enlace no abre o da error 404.', solucion: 'La página quedó en borrador. Vuelve a Squarespace y dale Publicar, no solo Guardar.' },
   { problema: 'El texto se ve corrido o sin viñetas.', solucion: 'Pégalo otra vez usando Pegar sin formato y deja que Squarespace le aplique el estilo de la página.' },
@@ -300,6 +316,7 @@ var SI_ALGO_SALE_MAL = [
   { problema: 'No tengo usuario de Squarespace.', solucion: 'Es normal: la cuenta la tienen unas pocas personas por país. Pide la publicación en #tyc-rappi y pasa el documento y la dirección que te dio RappiMind.' },
   { problema: 'La dirección que puse quedó distinta a la que me dio la herramienta.', solucion: 'Vuelve a Opciones, corrígela y publica otra vez. Si ya la publicaste con otra dirección, pega en RappiMind el enlace real, no el que te propusimos: si no, RappiMind no la encuentra para revisarla.' },
   { problema: 'RappiMind dice que la página publicada no coincide con el documento.', solucion: 'El aviso dice dónde está la diferencia. Copia otra vez el texto con el botón de RappiMind, reemplaza todo el cuerpo del evento sin editarlo a mano y dale Revisar en Mis campañas.' },
+  { problema: 'Mi campaña dice "Publicando" y no termina.', solucion: 'RappiMind lo vuelve a intentar sola cada hora y te avisa por correo cuando quede. El enlace ya es el definitivo, así que puedes seguir con tus piezas. Si pasa de un día, escríbele a Legal en el canal de ayuda.' },
   // "Me equivoque en un dato" estaba aqui y en Preguntas frecuentes, con la
   // misma respuesta escrita dos veces. Se queda alla, que es donde el comercial
   // la busca. Punto F8, 20 de septiembre de 2026.
@@ -308,7 +325,7 @@ var SI_ALGO_SALE_MAL = [
 var PREGUNTAS_FRECUENTES = [
   {
     pregunta: 'Me equivoqué en un dato y ya generé el documento. ¿Qué hago?',
-    respuesta: 'Genera uno nuevo con los datos corregidos y publica ese. No edites el documento a mano: lo que se publica tiene que ser exactamente lo que generó la herramienta, porque es lo que Legal aprobó.',
+    respuesta: 'Genera uno nuevo con los datos corregidos y publica ese. Si RappiMind ya publicó el primero, retíralo en Mis campañas: se puede mientras la campaña no haya arrancado. No edites el documento a mano: lo que se publica tiene que ser exactamente lo que generó la herramienta, porque es lo que Legal aprobó.',
   },
   {
     pregunta: '¿Puedo participar yo en la campaña?',
@@ -320,7 +337,7 @@ var PREGUNTAS_FRECUENTES = [
   },
   {
     pregunta: '¿Cuánto tarda en llegarme el documento?',
-    respuesta: 'Un par de minutos. Te llega por correo con el enlace y los pasos para publicar. También queda en tu historial dentro de RappiMind.',
+    respuesta: 'Un par de minutos. Te llega por correo con el enlace del documento y, según el país, el enlace donde RappiMind ya lo publicó o los pasos para publicarlo. También queda en tu historial dentro de RappiMind.',
   },
   {
     pregunta: '¿Alguien de Legal revisa mi documento antes?',
@@ -387,6 +404,7 @@ if (typeof module !== 'undefined') {
     ACCESOS_SQUARESPACE: ACCESOS_SQUARESPACE,
     CANAL_TC: CANAL_TC,
     PASOS_SQUARESPACE: PASOS_SQUARESPACE,
+    PUBLICACION_AUTOMATICA: PUBLICACION_AUTOMATICA,
     SI_ALGO_SALE_MAL: SI_ALGO_SALE_MAL,
     PREGUNTAS_FRECUENTES: PREGUNTAS_FRECUENTES,
   };

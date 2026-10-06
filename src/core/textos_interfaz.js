@@ -239,6 +239,40 @@ var TEXTOS_PT = {
 
   /* --- Historial ----------------------------------------------------------- */
   'Cargando...': 'Carregando...',
+
+  /* --- Cuando RappiMind publica sola (6 de octubre de 2026) ------------------- */
+  'Tu T&C está publicado': 'Seu T&C está publicado',
+  'Ya está publicado': 'Já está publicado',
+  'Lo estamos publicando': 'Estamos publicando',
+  'En la demostración no se publica nada de verdad: así se ve cuando RappiMind publica tu T&C.':
+    'Na demonstração nada é publicado de verdade: é assim que fica quando o RappiMind publica o seu T&C.',
+  'RappiMind lo publicó y revisó que el texto publicado sea idéntico al documento.':
+    'O RappiMind publicou e conferiu que o texto publicado é idêntico ao documento.',
+  'RappiMind lo vuelve a intentar sola cada hora y te avisa por correo cuando quede publicado.':
+    'O RappiMind tenta de novo sozinho a cada hora e avisa você por e-mail quando estiver publicado.',
+  'Enlace de tus T&C': 'Link dos seus T&C',
+  'Es el definitivo: úsalo en tus piezas. No tienes que entrar a Squarespace.':
+    'É o definitivo: use nas suas peças. Você não precisa entrar no Squarespace.',
+  'Ver la página publicada': 'Ver a página publicada',
+  'Publicar ahora': 'Publicar agora',
+  'Publicando...': 'Publicando...',
+  'Si encuentras un error antes de que la campaña arranque, la puedes retirar desde Mis campañas y generar una nueva con los datos corregidos.':
+    'Se encontrar um erro antes de a campanha começar, você pode retirá-la em Minhas campanhas e gerar uma nova com os dados corrigidos.',
+  'Estas leyendas ya llevan el enlace definitivo de tus T&C: no va a cambiar.':
+    'Estas legendas já levam o link definitivo dos seus T&C: ele não vai mudar.',
+  'Lo publicado no coincide con el documento': 'O que está publicado não coincide com o documento',
+  'Escríbele a Legal en el canal de ayuda: RappiMind no reemplaza lo publicado por su cuenta.':
+    'Escreva para o Jurídico no canal de ajuda: o RappiMind não substitui o que está publicado por conta própria.',
+  'Retirar': 'Retirar',
+  'Retirando...': 'Retirando...',
+  '¿Retirar el T&C de {nombre}?': 'Retirar o T&C de {nombre}?',
+  'Su enlace va a decir que se retiró, y esta campaña ya no se puede volver a publicar ni ampliar. Para corregirla, genera una nueva con "Usar como base": queda con su propio enlace.':
+    'O link vai dizer que foi retirado, e esta campanha não pode mais ser publicada nem ampliada. Para corrigi-la, gere uma nova com "Usar como base": ela fica com o seu próprio link.',
+  'Sí, retirarlo': 'Sim, retirar',
+  'Cancelar': 'Cancelar',
+  'Listo: el enlace ya dice que se retiró.': 'Pronto: o link já diz que foi retirado.',
+  'Donde RappiMind publica sola, queda publicado en el momento en que lo generas. En los demás países te llega por correo con los pasos para publicarlo.':
+    'Onde o RappiMind publica sozinho, fica publicado no momento em que você gera. Nos demais países você recebe por e-mail o passo a passo para publicar.',
 };
 
 var DICCIONARIOS = { pt: TEXTOS_PT };

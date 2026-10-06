@@ -93,6 +93,8 @@ function pantallaHistorial(raiz) {
               botonDeAmpliar(fila, destino),
               document.createTextNode(' '),
               botonDeRevisar(fila, function () { cargar(buscador.value); }),
+              document.createTextNode(' '),
+              botonDeRetirar(fila, destino, function () { cargar(buscador.value); }),
             ]),
           ]));
         })(filas[i]);
@@ -119,8 +121,17 @@ var ultimaRevisada = '';
 function detalleDeLaRevision(fila) {
   var verificacion = String(fila.verificacion || '');
   var importa = verificacion === 'con_diferencias' || verificacion === 'retirado';
-  if (!fila.detalle_verificacion || (!importa && fila.id !== ultimaRevisada)) return null;
+  // Una publicacion de RappiMind pendiente o retirada tambien se cuenta: es lo
+  // primero que el comercial va a preguntar al ver la etiqueta.
+  var cuenta = importa || verificacion === 'sin_publicar' || verificacion === 'dado_de_baja';
+  if (!fila.detalle_verificacion || (!cuenta && fila.id !== ultimaRevisada)) return null;
   return crear('small', { clase: importa ? 'detalle-revision detalle-revision-alerta' : 'detalle-revision', texto: fila.detalle_verificacion });
+}
+
+/** Si esta campana la publico RappiMind, en la pagina /tyc (src/server/PublicadorWeb.js). */
+function esDeLaWeb(fila) {
+  var web = E.configuracion.publicacionWeb || {};
+  return !!(web.visor && rutaDesdeEnlaceWeb({ visor: web.visor }, fila.link_publicado));
 }
 
 /**
@@ -130,7 +141,8 @@ function detalleDeLaRevision(fila) {
  * verificada: la corrida diaria la sigue mirando mientras este vigente.
  */
 function botonDeRevisar(fila, alTerminar) {
-  if (String(fila.verificacion || '') === 'verificado') return null;
+  var verificacion = String(fila.verificacion || '');
+  if (verificacion === 'verificado' || verificacion === 'dado_de_baja') return null;
   var hoy = E.configuracion.hoy || RM.util.hoyEnElNavegador();
   var fin = String(fila.fecha_fin || '').slice(0, 10);
   if (fin && fin < hoy) return null;
@@ -140,14 +152,17 @@ function botonDeRevisar(fila, alTerminar) {
   var pais = paisPorCodigo(E.configuracion.paises || [], fila.pais);
   if (!enlaceParaRevisar(fila, pais ? pais.ruta_promos : '')) return null;
 
-  var boton = crear('button', { clase: 'boton-texto', type: 'button', texto: estado.T('Revisar') });
+  // En una que publica RappiMind y quedo pendiente, el boton publica: es lo
+  // mismo que hace la corrida de cada hora, ya mismo.
+  var etiqueta = verificacion === 'sin_publicar' && esDeLaWeb(fila) ? estado.T('Publicar ahora') : estado.T('Revisar');
+  var boton = crear('button', { clase: 'boton-texto', type: 'button', texto: etiqueta });
   boton.addEventListener('click', function () {
     boton.disabled = true;
     boton.textContent = estado.T('Revisando...');
     RM.servidor.llamar('revisarPublicacion', fila.id).then(function (respuesta) {
       if (!respuesta || !respuesta.valido) {
         boton.disabled = false;
-        boton.textContent = estado.T('Revisar');
+        boton.textContent = etiqueta;
         RM.app.mostrarError(respuesta && respuesta.errores ? respuesta.errores[0].mensaje : 'No pudimos revisar la página.');
         return;
       }
@@ -156,11 +171,78 @@ function botonDeRevisar(fila, alTerminar) {
       alTerminar();
     }).catch(function (error) {
       boton.disabled = false;
-      boton.textContent = estado.T('Revisar');
+      boton.textContent = etiqueta;
       RM.app.mostrarError('No pudimos revisar la página: ' + error.message);
     });
   });
   return boton;
+}
+
+/**
+ * Retirar el T&C de una campana que publico RappiMind, por un error, mientras
+ * no haya arrancado. Es lo unico que no se puede deshacer de esta pantalla, asi
+ * que pide confirmacion debajo de la tabla, como la ampliacion, y dice antes que
+ * pasa despues.
+ */
+function botonDeRetirar(fila, destino, alTerminar) {
+  if (!esDeLaWeb(fila) || String(fila.verificacion || '') === 'dado_de_baja') return null;
+  var entrada = datosDeLaFila(fila);
+  if (!entrada) return null;
+  var hoy = E.configuracion.hoy || RM.util.hoyEnElNavegador();
+  if (momentoDeLaCampana(entrada, hoy, RM.util.horaEnElNavegador()) !== 'no_empezada') return null;
+
+  return crear('button', {
+    clase: 'boton-texto', type: 'button', texto: estado.T('Retirar'),
+    onclick: function () { abrirRetiro(fila, destino, alTerminar); },
+  });
+}
+
+function abrirRetiro(fila, destino, alTerminar) {
+  var viejo = document.getElementById('caja-ampliacion');
+  if (viejo) viejo.parentNode.removeChild(viejo);
+
+  var mensaje = crear('p', {
+    clase: 'pregunta-ayuda',
+    texto: estado.T('Su enlace va a decir que se retiró, y esta campaña ya no se puede volver a publicar ni ampliar. Para corregirla, genera una nueva con "Usar como base": queda con su propio enlace.'),
+  });
+  var confirmar = crear('button', { clase: 'boton', type: 'button', texto: estado.T('Sí, retirarlo') });
+  var cancelar = crear('button', { clase: 'boton boton-secundario', type: 'button', texto: estado.T('Cancelar') });
+  var caja = crear('div', { clase: 'ficha', id: 'caja-ampliacion' }, [
+    crear('div', { clase: 'ficha-seccion' }, [
+      crear('h3', { texto: estado.T('¿Retirar el T&C de {nombre}?').replace('{nombre}', fila.nombre_campana || fila.id) }),
+      mensaje,
+      crear('div', { clase: 'fila-botones' }, [confirmar, cancelar]),
+    ]),
+  ]);
+
+  cancelar.addEventListener('click', function () { caja.parentNode.removeChild(caja); });
+  confirmar.addEventListener('click', function () {
+    confirmar.disabled = true;
+    cancelar.disabled = true;
+    confirmar.textContent = estado.T('Retirando...');
+    RM.servidor.llamar('retirarPublicacion', fila.id).then(function (respuesta) {
+      if (!respuesta || !respuesta.valido) {
+        confirmar.disabled = false;
+        cancelar.disabled = false;
+        confirmar.textContent = estado.T('Sí, retirarlo');
+        mensaje.className = 'mensaje-error';
+        mensaje.textContent = respuesta && respuesta.errores ? respuesta.errores[0].mensaje : 'No pudimos retirarla.';
+        return;
+      }
+      ultimaRevisada = fila.id;
+      RM.util.anunciar(estado.T('Listo: el enlace ya dice que se retiró.'));
+      alTerminar();
+    }).catch(function (error) {
+      confirmar.disabled = false;
+      cancelar.disabled = false;
+      confirmar.textContent = estado.T('Sí, retirarlo');
+      mensaje.className = 'mensaje-error';
+      mensaje.textContent = 'No pudimos retirarla: ' + error.message;
+    });
+  });
+
+  destino.appendChild(caja);
+  caja.scrollIntoView({ block: 'nearest' });
 }
 
 /**
@@ -246,17 +328,33 @@ function abrirAmpliacion(fila, entrada, destino) {
       }
       RM.util.vaciar(seccion);
       seccion.appendChild(crear('h3', { texto: 'Listo: versión ' + respuesta.version }));
-      seccion.appendChild(crear('p', {
-        texto: 'Abre el documento nuevo, cópialo completo y reemplaza el texto en la misma página de Squarespace. El enlace no cambia: la gente ya lo tiene.',
-      }));
-      if (respuesta.linkPublicado) {
-        seccion.appendChild(RM.util.paraCopiar('La página que hay que actualizar', respuesta.linkPublicado, ''));
+      var publicacion = respuesta.publicacion;
+      if (publicacion && publicacion.modo === 'web') {
+        // La publico RappiMind: la version nueva queda sola en el mismo enlace.
+        seccion.appendChild(crear('p', {
+          texto: publicacion.estado === 'verificado'
+            ? 'RappiMind publicó la versión nueva en el mismo enlace, y la versión anterior queda guardada. No tienes que entrar a Squarespace.'
+            : 'La versión nueva quedó generada y RappiMind la está publicando en el mismo enlace. Lo vuelve a intentar sola cada hora y te avisa por correo cuando quede.',
+        }));
+        if (publicacion.estado !== 'verificado' && publicacion.detalle) {
+          seccion.appendChild(crear('p', { clase: 'pregunta-ayuda', texto: publicacion.detalle }));
+        }
+        seccion.appendChild(RM.util.paraCopiar(estado.T('Enlace de tus T&C'), publicacion.enlace || respuesta.linkPublicado || '', ''));
+      } else {
+        seccion.appendChild(crear('p', {
+          texto: 'Abre el documento nuevo, cópialo completo y reemplaza el texto en la misma página de Squarespace. El enlace no cambia: la gente ya lo tiene.',
+        }));
+        if (respuesta.linkPublicado) {
+          seccion.appendChild(RM.util.paraCopiar('La página que hay que actualizar', respuesta.linkPublicado, ''));
+        }
       }
-      seccion.appendChild(crear('div', { clase: 'fila-botones' }, [
-        crear('a', { clase: 'boton', href: respuesta.linkDoc, target: '_blank', rel: 'noopener' }, [
-          document.createTextNode('Abrir el documento nuevo'), RM.util.icono('abrir', 16),
-        ]),
-      ]));
+      if (respuesta.linkDoc) {
+        seccion.appendChild(crear('div', { clase: 'fila-botones' }, [
+          crear('a', { clase: 'boton', href: respuesta.linkDoc, target: '_blank', rel: 'noopener' }, [
+            document.createTextNode('Abrir el documento nuevo'), RM.util.icono('abrir', 16),
+          ]),
+        ]));
+      }
     }).catch(function (error) {
       guardar.disabled = false;
       guardar.textContent = 'Ampliar la campaña';
@@ -346,6 +444,21 @@ function fichaDeAccesos() {
   return ficha;
 }
 
+/** Los nombres de los paises cuyas campanas publica RappiMind sola. */
+function paisesQuePublicanSolos() {
+  var web = E.configuracion.publicacionWeb || {};
+  var codigos = web.activa ? web.paises || [] : [];
+  var nombres = [];
+  for (var i = 0; i < codigos.length; i++) nombres.push(nombreDelPais(codigos[i]));
+  return nombres;
+}
+
+/** "Colombia", "Colombia y México", "Colombia, México y Perú". */
+function unaLista(nombres) {
+  if (nombres.length <= 1) return nombres.join('');
+  return nombres.slice(0, -1).join(', ') + ' y ' + nombres[nombres.length - 1];
+}
+
 /** El nombre del país tal como lo trae el servidor, o su código. */
 function nombreDelPais(codigo) {
   var paises = E.configuracion.paises || [];
@@ -385,9 +498,18 @@ function pantallaAyuda(raiz) {
     contenido.appendChild(crear('p', { texto: descuentos.respuesta }));
   }
 
-  // 2. Guía de Squarespace. Es la misma lista que la pantalla final, para que
+  // 2. Como se publica. Donde RappiMind publica sola, eso va primero: para
+  // esos paises la guia de Squarespace ya no aplica.
+  var solos = paisesQuePublicanSolos();
+  if (solos.length > 0) {
+    contenido.appendChild(crear('h2', { texto: PUBLICACION_AUTOMATICA.titulo }));
+    contenido.appendChild(crear('p', { texto: PUBLICACION_AUTOMATICA.entrada.replace('{paises}', unaLista(solos)) }));
+    contenido.appendChild(listaSimple(PUBLICACION_AUTOMATICA.puntos));
+  }
+
+  // La guia de Squarespace. Es la misma lista que la pantalla final, para que
   // las dos digan exactamente lo mismo.
-  contenido.appendChild(crear('h2', { texto: 'Publicar en Squarespace' }));
+  contenido.appendChild(crear('h2', { texto: solos.length > 0 ? 'En los demás países: publicar en Squarespace' : 'Publicar en Squarespace' }));
   contenido.appendChild(crear('p', {
     clase: 'pregunta-ayuda',
     texto: 'Cuando generes una campaña, al final te damos el título y la dirección ya armados, listos para copiar. Esto es el paso a paso.',

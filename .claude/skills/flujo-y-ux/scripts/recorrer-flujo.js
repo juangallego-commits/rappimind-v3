@@ -23,6 +23,9 @@ const path = require('path');
 
 const RAIZ = path.resolve(__dirname, '..', '..', '..', '..');
 const DEMO = 'file://' + path.join(RAIZ, 'demo', 'index.html');
+// La demostracion simula que RappiMind publica sola en Colombia. Con
+// ?squarespace se ve el camino de siempre, el de pegar en Squarespace.
+const DEMO_SQUARESPACE = DEMO + '?squarespace';
 
 const resultados = [];
 function revisar(nombre, condicion, detalle) {
@@ -604,9 +607,24 @@ async function recorrer() {
   }));
   revisar('la Ayuda abre por la pregunta de descuentos y cupones',
     /descuento o un cupón/.test(laAyuda.titulos[0] || ''), laAyuda.titulos.join(' | '));
-  revisar('y después van Publicar en Squarespace y Quién puede publicar',
-    laAyuda.titulos[1] === 'Publicar en Squarespace' && laAyuda.titulos[2] === '¿Quién puede publicar?',
+  // Donde RappiMind publica sola (la demostracion lo simula en Colombia), eso
+  // va primero: para esos paises la guia de Squarespace ya no aplica.
+  revisar('y después va cómo se publica: primero lo que RappiMind publica sola, después Squarespace',
+    laAyuda.titulos[1] === 'RappiMind publica sola' &&
+    laAyuda.titulos[2] === 'En los demás países: publicar en Squarespace' &&
+    laAyuda.titulos[3] === '¿Quién puede publicar?' &&
+    laAyuda.texto.indexOf('En Colombia, al generar tu T&C RappiMind lo publica en promos.rappi.com') !== -1,
     laAyuda.titulos.join(' | '));
+
+  await pagina.goto(DEMO_SQUARESPACE);
+  await pagina.waitForTimeout(800);
+  await pagina.evaluate(() => RM.app.ir('ayuda'));
+  await pagina.waitForTimeout(500);
+  const laAyudaSinWeb = await pagina.evaluate(() =>
+    [].map.call(document.querySelectorAll('.pagina h2'), (h) => h.textContent.trim()));
+  revisar('sin la publicación web, después van Publicar en Squarespace y Quién puede publicar',
+    laAyudaSinWeb[1] === 'Publicar en Squarespace' && laAyudaSinWeb[2] === '¿Quién puede publicar?',
+    laAyudaSinWeb.join(' | '));
   revisar('"Me equivoqué en un dato" no se repite',
     (laAyuda.texto.match(/Me equivoqué en un dato/g) || []).length === 1,
     String((laAyuda.texto.match(/Me equivoqué en un dato/g) || []).length));
@@ -922,8 +940,8 @@ async function recorrer() {
     porcentaje: 20, tope: 200, presupuesto: 100000, maxPedidos: 1, sinLimite: false,
     carga: 'inmediata', vigencia: 'dias', diasVigencia: 30, redencion: 'tienda', tiendaTurbo: 'sin_turbo',
   };
-  async function irAlResumenCon(unaPagina, campana) {
-    await unaPagina.goto(DEMO);
+  async function irAlResumenCon(unaPagina, campana, direccion) {
+    await unaPagina.goto(direccion || DEMO);
     await unaPagina.waitForTimeout(800);
     await unaPagina.evaluate((datos) => {
       RM.estado.reiniciarFormulario(Object.assign(RM.app.valoresIniciales(), datos), {});
@@ -958,7 +976,7 @@ async function recorrer() {
     carga: 'dia_siguiente', vigencia: 'dias', diasVigencia: 30, redencion: 'tienda',
     tiendaTurbo: 'sin_turbo', compraMinima: 30000, categoriaProducto: 'licores',
   };
-  await irAlResumenCon(pagina, campanaConLeyendas);
+  await irAlResumenCon(pagina, campanaConLeyendas, DEMO_SQUARESPACE);
   await pagina.click('#declaracion');
   await pagina.waitForTimeout(400);
   await clic('Generar T&C');
@@ -1036,6 +1054,53 @@ async function recorrer() {
     copiado.html && copiado.html.indexOf('<p><strong>1. ') !== -1 && copiado.html.indexOf('<ul>') !== -1 &&
     copiado.html.indexOf('**') === -1,
     copiado.error || String(copiado.html || '').slice(0, 300));
+
+  // --- 6a quater. Donde RappiMind publica sola ------------------------------
+  //
+  // Desde el 6 de octubre de 2026, en los paises que publican en
+  // promos.rappi.com, generar es publicar. La pantalla final da el enlace y ya
+  // no dice nada de pegar en Squarespace ni de a quien pasarselo.
+  await irAlResumenCon(pagina, campanaConLeyendas);
+  await pagina.click('#declaracion');
+  await pagina.waitForTimeout(400);
+  await clic('Generar T&C');
+  await pagina.waitForTimeout(1200);
+  const publicadaSola = await texto();
+  revisar('donde RappiMind publica sola, la pantalla final da el enlace publicado',
+    publicadaSola.indexOf('Ya está publicado') !== -1 &&
+    publicadaSola.indexOf('Enlace de tus T&C') !== -1 &&
+    publicadaSola.indexOf('https://promos.rappi.com/tyc?co/el-corral-20-cashback-1-dic-2026') !== -1,
+    publicadaSola.replace(/\n+/g, ' | ').slice(0, 600));
+  revisar('y no dice nada de pegar en Squarespace ni de a quién pasárselo',
+    publicadaSola.indexOf('Lo que vas a pegar en Squarespace') === -1 &&
+    publicadaSola.indexOf('¿Quién puede publicar?') === -1 &&
+    publicadaSola.indexOf('Cuando ya esté publicado') === -1,
+    publicadaSola.replace(/\n+/g, ' | ').slice(0, 600));
+  revisar('las leyendas ya salen con el enlace publicado, confirmado',
+    publicadaSola.indexOf('Enlace confirmado: estas leyendas ya llevan la dirección publicada.') !== -1 &&
+    (publicadaSola.match(/promos\.rappi\.com\/tyc\?co\/el-corral/g) || []).length >= 2,
+    publicadaSola.replace(/\n+/g, ' | ').slice(-600));
+
+  // En Mis campanas queda publicada, y como no ha arrancado se puede retirar.
+  await pagina.evaluate(() => RM.app.ir('historial'));
+  await pagina.waitForTimeout(700);
+  const enElHistorial = await texto();
+  revisar('en Mis campañas queda "Publicado y verificado", con Retirar',
+    enElHistorial.indexOf('Publicado y verificado') !== -1 && enElHistorial.indexOf('Retirar') !== -1,
+    enElHistorial.replace(/\n+/g, ' | ').slice(0, 400));
+  await clic('Retirar');
+  await pagina.waitForTimeout(300);
+  const confirmacion = await texto();
+  revisar('retirar pide confirmación y dice antes qué pasa',
+    confirmacion.indexOf('¿Retirar el T&C de El Corral') !== -1 &&
+    confirmacion.indexOf('ya no se puede volver a publicar ni ampliar') !== -1,
+    confirmacion.replace(/\n+/g, ' | ').slice(-400));
+  await clic('Sí, retirarlo');
+  await pagina.waitForTimeout(900);
+  const retirada = await texto();
+  revisar('retirada, dice Retirado y ya no ofrece retirarla ni revisarla',
+    retirada.indexOf('Retirado') !== -1 && retirada.indexOf('Retirar') === -1 && retirada.indexOf('Revisar') === -1,
+    retirada.replace(/\n+/g, ' | ').slice(0, 400));
 
   // --- 6b. El acuerdo de transferencia de datos ----------------------------
   //

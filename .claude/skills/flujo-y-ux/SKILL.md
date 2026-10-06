@@ -33,12 +33,16 @@ inicio
                                        llenándose al lado
                                           └─ última pregunta ──► resumen
                                                                    └─ Generar ──► listo
-                                                                                    └─ publicar en Squarespace
-                                                                                         └─ RappiMind revisa la página
-                                                                                            sola, cada hora
+                                                                                    ├─ país que publica solo: ya
+                                                                                    │  quedó publicado en su enlace
+                                                                                    │  (promos.rappi.com/tyc?co/...)
+                                                                                    └─ los demás: publicar en
+                                                                                       Squarespace, y RappiMind revisa
+                                                                                       la página sola, cada hora
 historial ("Mis campañas")
   ├─ Usar como base ──► pasos con las respuestas copiadas y las fechas en blanco
-  └─ Ampliar ──► solo si está publicada y en curso
+  ├─ Ampliar ──► solo si está publicada y en curso
+  └─ Retirar ──► solo si la publicó RappiMind y no ha arrancado
 ```
 
 `references/recorrido.md` tiene el detalle pantalla por pantalla: qué se

@@ -331,6 +331,96 @@ function bloqueDePublicacion(resultado) {
   return contenido;
 }
 
+/** Si RappiMind publico sola esta campana (src/server/PublicadorWeb.js). */
+function esPublicacionWeb(resultado) {
+  return !!(resultado && resultado.publicacion && resultado.publicacion.modo === 'web');
+}
+
+/**
+ * Lo que ve el comercial cuando RappiMind publico sola.
+ *
+ * Desde el 6 de octubre de 2026, en los paises que publican en
+ * promos.rappi.com, generar es publicar: ya no hay nada que pegar ni a quien
+ * pasarselo. Lo unico que el comercial se lleva es el enlace, que es el
+ * definitivo aunque la publicacion haya quedado pendiente.
+ */
+function bloqueDePublicacionWeb(resultado) {
+  var publicacion = resultado.publicacion;
+  var publicada = publicacion.estado === 'verificado';
+  // pagina-seccion: sin su margen, el titulo quedaba pegado al boton de abrir
+  // el documento, que es lo que va justo antes.
+  var caja = crear('div', { clase: 'pagina-seccion' }, [
+    crear('h2', { texto: publicada ? estado.T('Ya está publicado') : estado.T('Lo estamos publicando') }),
+  ]);
+
+  if (resultado.demostracion) {
+    caja.appendChild(crear('p', {
+      clase: 'pregunta-ayuda',
+      texto: estado.T('En la demostración no se publica nada de verdad: así se ve cuando RappiMind publica tu T&C.'),
+    }));
+  } else if (publicada) {
+    caja.appendChild(crear('p', { clase: 'mensaje-ok' }, [
+      RM.util.icono('visto', 16),
+      document.createTextNode(estado.T('RappiMind lo publicó y revisó que el texto publicado sea idéntico al documento.')),
+    ]));
+  } else {
+    caja.appendChild(crear('div', { clase: 'aviso' }, [
+      crear('p', { texto: publicacion.detalle || '' }),
+      crear('p', { texto: estado.T('RappiMind lo vuelve a intentar sola cada hora y te avisa por correo cuando quede publicado.') }),
+    ]));
+  }
+
+  caja.appendChild(RM.util.paraCopiar(
+    estado.T('Enlace de tus T&C'),
+    publicacion.enlace || '',
+    estado.T('Es el definitivo: úsalo en tus piezas. No tienes que entrar a Squarespace.')
+  ));
+
+  var veredicto = crear('div', { 'aria-live': 'polite' });
+  var botones = crear('div', { clase: 'fila-botones' });
+  if (publicada && !resultado.demostracion) {
+    botones.appendChild(crear('a', { clase: 'boton boton-secundario', href: publicacion.enlace, target: '_blank', rel: 'noopener' }, [
+      document.createTextNode(estado.T('Ver la página publicada')), RM.util.icono('abrir', 16),
+    ]));
+  }
+  if (!publicada && !resultado.demostracion) {
+    // Lo mismo que hace la corrida de cada hora, ya mismo: si falta, se
+    // publica; si ya esta, se revisa.
+    var publicar = crear('button', { clase: 'boton', type: 'button', texto: estado.T('Publicar ahora') });
+    publicar.addEventListener('click', function () {
+      publicar.disabled = true;
+      publicar.textContent = estado.T('Publicando...');
+      RM.servidor.llamar('revisarPublicacion', resultado.id).then(function (respuesta) {
+        publicar.disabled = false;
+        publicar.textContent = estado.T('Publicar ahora');
+        if (respuesta && respuesta.valido && respuesta.verificacion && respuesta.verificacion.estado === 'verificado') {
+          // Quedo: la pantalla se vuelve a pintar como publicada, con las
+          // leyendas ya confirmadas.
+          E.resultado.publicacion.estado = 'verificado';
+          E.resultado.publicacion.detalle = respuesta.verificacion.detalle;
+          if (respuesta.leyendas) E.resultado.leyendas = respuesta.leyendas;
+          RM.app.ir('listo');
+          return;
+        }
+        mostrarVeredicto(veredicto, respuesta, true);
+      }).catch(function (error) {
+        publicar.disabled = false;
+        publicar.textContent = estado.T('Publicar ahora');
+        mostrarVeredicto(veredicto, { valido: false, errores: [{ mensaje: estado.T('No pudimos revisar la página: ') + error.message }] }, true);
+      });
+    });
+    botones.appendChild(publicar);
+  }
+  if (botones.childNodes.length > 0) caja.appendChild(botones);
+  caja.appendChild(veredicto);
+
+  caja.appendChild(crear('p', {
+    clase: 'nota',
+    texto: estado.T('Si encuentras un error antes de que la campaña arranque, la puedes retirar desde Mis campañas y generar una nueva con los datos corregidos.'),
+  }));
+  return caja;
+}
+
 /**
  * El documento dibujado con crear(), sin los estilos de la app.
  *
@@ -414,7 +504,7 @@ function bloqueDelTextoParaPegar(resultado) {
  * respuesta: lo que devuelven revisarPublicacion o marcarPublicado. Se pinta
  * dentro de `destino`, que se vacia antes.
  */
-function mostrarVeredicto(destino, respuesta) {
+function mostrarVeredicto(destino, respuesta, web) {
   RM.util.vaciar(destino);
   if (!respuesta || !respuesta.valido) {
     destino.appendChild(crear('p', {
@@ -431,6 +521,13 @@ function mostrarVeredicto(destino, respuesta) {
     destino.appendChild(crear('p', { clase: 'mensaje-ok' }, [
       RM.util.icono('visto', 16),
       document.createTextNode(estado.T('Publicada y verificada: el texto es idéntico al documento.')),
+    ]));
+  } else if (web && verificacion.estado === 'con_diferencias') {
+    // Lo publico RappiMind: no hay evento que corregir. Lo mira Legal.
+    destino.appendChild(crear('div', { clase: 'aviso aviso-serio' }, [
+      crear('h3', { texto: estado.T('Lo publicado no coincide con el documento') }),
+      crear('p', { texto: verificacion.detalle }),
+      crear('p', { texto: estado.T('Escríbele a Legal en el canal de ayuda: RappiMind no reemplaza lo publicado por su cuenta.') }),
     ]));
   } else if (verificacion.estado === 'con_diferencias' || verificacion.estado === 'retirado') {
     destino.appendChild(crear('div', { clase: 'aviso aviso-serio' }, [
@@ -575,7 +672,7 @@ function bloqueDeRevision(resultado, alConfirmar) {
  * No se pregunta en que pieza va: se entregan las cuatro y el comercial copia la
  * que necesite (seccion 7B.4 de la respuesta).
  */
-function bloqueDeLeyendas(leyendas) {
+function bloqueDeLeyendas(leyendas, web) {
   if (!leyendas) return null;
 
   var caja = crear('div', { clase: 'pagina-seccion' }, [
@@ -615,6 +712,13 @@ function bloqueDeLeyendas(leyendas) {
     ]));
   } else if (leyendas.enlaceConfirmado) {
     caja.appendChild(crear('p', { clase: 'mensaje-ok', texto: estado.T('Enlace confirmado: estas leyendas ya llevan la dirección publicada.') }));
+  } else if (web) {
+    // Lo publica RappiMind: el enlace ya es el definitivo aunque la
+    // publicacion siga pendiente. No hay nada que confirmar.
+    caja.appendChild(crear('p', {
+      clase: 'pregunta-ayuda',
+      texto: estado.T('Estas leyendas ya llevan el enlace definitivo de tus T&C: no va a cambiar.'),
+    }));
   } else {
     caja.appendChild(crear('p', {
       clase: 'pregunta-ayuda',
@@ -739,8 +843,10 @@ function agregarSiHay(destino, bloque) {
 
 function pantallaListo(raiz) {
   var resultado = E.resultado || {};
+  var web = esPublicacionWeb(resultado);
+  var publicada = web && resultado.publicacion.estado === 'verificado' && !resultado.demostracion;
   var contenido = crear('div', { clase: 'pagina pagina-angosta' }, [
-    crear('h1', { texto: estado.T('Tu T&C está listo') }),
+    crear('h1', { texto: publicada ? estado.T('Tu T&C está publicado') : estado.T('Tu T&C está listo') }),
     // En un pais en pruebas el aviso de "no publiques" tiene que estar en la
     // pantalla que explica como publicar, no solo en las de antes.
     RM.pasos.avisoDePaisEnPruebas(),
@@ -754,9 +860,9 @@ function pantallaListo(raiz) {
     var hoja = crear('div', { clase: 'hoja' });
     RM.documento.dibujar(hoja, resultado.texto, '');
     contenido.appendChild(hoja);
-    contenido.appendChild(bloqueDePublicacion(resultado));
+    contenido.appendChild(web ? bloqueDePublicacionWeb(resultado) : bloqueDePublicacion(resultado));
     agregarSiHay(contenido, avisoDeAcuerdoDeDatos());
-    agregarSiHay(contenido, bloqueDeLeyendas(resultado.leyendas));
+    agregarSiHay(contenido, bloqueDeLeyendas(resultado.leyendas, web));
     contenido.appendChild(crear('div', { clase: 'fila-botones' }, [
       crear('button', {
         clase: 'boton boton-secundario', type: 'button', texto: estado.T('Hacer otra campaña'),
@@ -780,21 +886,21 @@ function pantallaListo(raiz) {
       : null,
   ]));
 
-  contenido.appendChild(bloqueDePublicacion(resultado));
+  contenido.appendChild(web ? bloqueDePublicacionWeb(resultado) : bloqueDePublicacion(resultado));
   agregarSiHay(contenido, avisoDeAcuerdoDeDatos());
 
   // Las leyendas van aqui, entre como publicar y el campo del enlace: el
   // comercial las copia en el mismo momento en que se lleva el documento, y
   // justo debajo esta el campo que las confirma.
-  var cajaDeLeyendas = bloqueDeLeyendas(resultado.leyendas);
+  var cajaDeLeyendas = bloqueDeLeyendas(resultado.leyendas, web);
   agregarSiHay(contenido, cajaDeLeyendas);
 
   // Despues de publicar: la revision, o el enlace a mano donde no se puede
   // prever. Cuando el enlace queda confirmado, las leyendas se rehacen con el
   // real y el bloque se cambia entero: si resulto distinto al previsto, el
   // aviso rojo aparece ahi mismo, no en un correo que nadie abre (paso 3 del
-  // camino 4).
-  contenido.appendChild(bloqueDeRevision(resultado, function (leyendas) {
+  // camino 4). Si la publico RappiMind no hay nada de esto: ya se dijo arriba.
+  if (!web) contenido.appendChild(bloqueDeRevision(resultado, function (leyendas) {
     if (!cajaDeLeyendas || !cajaDeLeyendas.parentNode) return;
     var rehecho = bloqueDeLeyendas(leyendas);
     if (!rehecho) return;

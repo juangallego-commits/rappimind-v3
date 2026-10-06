@@ -71,6 +71,17 @@ const SERVIDOR_SIMULADO = `
     return codigos;
   }
 
+  var DETALLE_WEB_DE_LA_DEMO = 'Demostración: así queda cuando RappiMind publica sola. No se publicó nada de verdad.';
+
+  /** Lo que la pantalla recibe de una publicacion simulada, como en PublicadorWeb.js. */
+  function publicacionSimulada(enlace, version) {
+    return { modo: 'web', estado: 'verificado', detalle: DETALLE_WEB_DE_LA_DEMO, enlace: enlace, version: version, fecha: hoy() + ' 10:00:00' };
+  }
+
+  function esDeLaWebEnLaDemo(fila) {
+    return esEnlaceDelVisor(WEB_DE_LA_DEMO, fila.link_publicado);
+  }
+
   var VERIFICACION_DE_LA_DEMO = {
     estado: 'sin_verificar',
     detalle: 'En la demostración no se revisa Squarespace.',
@@ -120,6 +131,8 @@ const SERVIDOR_SIMULADO = `
       // campana de Brasil decia "1 oct 2026" y el documento "1 OUT 2026".
       entrada.sufijoNombre = sufijoLibreDeNombre(nombreDeCampana(entrada, esquema, pais), usados);
       var nombreCampana = nombreDeCampana(entrada, esquema, pais);
+      var enlaceWeb = publicacionWebAplica(WEB_DE_LA_DEMO, pais)
+        ? enlaceWebDeLaCampana(WEB_DE_LA_DEMO, pais.codigo, direccionDeCampana(nombreCampana)) : '';
       solicitudes.push({
         id: id, fecha: hoy() + ' 10:00:00', email: 'demostracion@rappi.com',
         pais: pais.codigo, tipo: entrada.tipo,
@@ -128,16 +141,22 @@ const SERVIDOR_SIMULADO = `
         tienda: tieneCampo(esquema, 'tienda') ? (entrada.tienda || '') : '',
         organizador: entrada.organizadorRazonSocial || '', id_organizador: entrada.organizadorId || '',
         fecha_inicio: entrada.fechaInicio || '', fecha_fin: fechaFinDeLaCampana(entrada, esquema) || '',
-        link_doc: '', estado: 'generado', link_publicado: '', fecha_publicacion: '',
+        link_doc: '', estado: enlaceWeb ? 'publicado' : 'generado', link_publicado: enlaceWeb,
+        fecha_publicacion: enlaceWeb ? hoy() + ' 10:00:00' : '',
+        verificacion: enlaceWeb ? 'verificado' : '',
+        detalle_verificacion: enlaceWeb ? DETALLE_WEB_DE_LA_DEMO : '',
         datos_json: JSON.stringify(entrada), _fila: solicitudes.length + 2,
       });
 
       return {
         valido: true, demostracion: true, texto: resultado.texto, id: id,
         nombreCampana: nombreCampana, direccionSugerida: direccionDeCampana(nombreCampana),
-        enlacePrevisto: enlaceParaRevisar({ direccion_sugerida: direccionDeCampana(nombreCampana) }, pais.ruta_promos),
+        enlacePrevisto: enlaceWeb || enlaceParaRevisar({ direccion_sugerida: direccionDeCampana(nombreCampana) }, pais.ruta_promos),
+        publicacion: enlaceWeb ? publicacionSimulada(enlaceWeb, 1) : null,
         pais: pais.codigo,
-        leyendas: generarLeyendasDeLaCampana(entrada, pais, LEYENDAS, { nombreCampana: nombreCampana }),
+        leyendas: generarLeyendasDeLaCampana(entrada, pais, LEYENDAS, {
+          nombreCampana: nombreCampana, enlacePrevisto: enlaceWeb, enlacePublicado: enlaceWeb,
+        }),
       };
     },
 
@@ -150,6 +169,9 @@ const SERVIDOR_SIMULADO = `
       if (!revision.valido) return { valido: false, errores: [{ campo: 'linkPublicado', mensaje: revision.mensaje }] };
       for (var i = 0; i < solicitudes.length; i++) {
         if (solicitudes[i].id !== id) continue;
+        if (esDeLaWebEnLaDemo(solicitudes[i])) {
+          return { valido: false, errores: [{ campo: 'linkPublicado', mensaje: 'RappiMind publicó esta campaña en su propio enlace. No hace falta pegar otro.' }] };
+        }
         solicitudes[i].estado = 'publicado';
         solicitudes[i].link_publicado = revision.url;
         var deLaSolicitud = JSON.parse(solicitudes[i].datos_json || '{}');
@@ -168,7 +190,41 @@ const SERVIDOR_SIMULADO = `
     // La demostracion no sale a internet: no hay pagina que leer. Responde lo
     // mismo que el servidor en modo demostracion (RevisionDePublicacion.js).
     revisarPublicacion: function (id) {
+      for (var i = 0; i < solicitudes.length; i++) {
+        if (solicitudes[i].id !== id || !esDeLaWebEnLaDemo(solicitudes[i])) continue;
+        return {
+          valido: true, demostracion: true, id: id, linkPublicado: solicitudes[i].link_publicado,
+          verificacion: {
+            estado: solicitudes[i].verificacion, detalle: solicitudes[i].detalle_verificacion,
+            avisos: [], enlace: solicitudes[i].link_publicado, fecha: '',
+          },
+        };
+      }
       return { valido: true, demostracion: true, id: id, verificacion: VERIFICACION_DE_LA_DEMO };
+    },
+
+    // Como retirarPublicacion de Api.js: solo lo que publico RappiMind, y solo
+    // antes de que la campana arranque.
+    retirarPublicacion: function (id) {
+      for (var i = 0; i < solicitudes.length; i++) {
+        if (solicitudes[i].id !== id) continue;
+        if (!esDeLaWebEnLaDemo(solicitudes[i])) {
+          return { valido: false, errores: [{ campo: 'id', mensaje: 'Esta campaña no la publicó RappiMind. Si hay que quitarla, se quita en Squarespace.' }] };
+        }
+        if (solicitudes[i].verificacion === 'dado_de_baja') {
+          return { valido: false, errores: [{ campo: 'id', mensaje: 'Esta campaña ya está retirada.' }] };
+        }
+        if (momentoDeLaCampana(JSON.parse(solicitudes[i].datos_json), hoy(), '12:00') !== 'no_empezada') {
+          return { valido: false, errores: [{ campo: 'id', mensaje: 'La campaña ya arrancó: su T&C tiene que seguir publicado mientras esté vigente. Si hay un error, escríbele a Legal.' }] };
+        }
+        solicitudes[i].verificacion = 'dado_de_baja';
+        solicitudes[i].detalle_verificacion = 'Retirada por demostracion@rappi.com. El enlace ya no muestra el T&C.';
+        return {
+          valido: true, id: id,
+          verificacion: { estado: 'dado_de_baja', detalle: solicitudes[i].detalle_verificacion, avisos: [], enlace: solicitudes[i].link_publicado, fecha: '' },
+        };
+      }
+      return { valido: false, errores: [{ campo: 'id', mensaje: 'No encontramos esa solicitud.' }] };
     },
 
     datosDeSolicitud: function (id) {
@@ -191,10 +247,12 @@ const SERVIDOR_SIMULADO = `
         var ampliada = aplicarAmpliacion(entrada, revision.cambios, hoy());
         solicitudes[i].datos_json = JSON.stringify(ampliada);
         solicitudes[i].fecha_fin = ampliada.fechaFin || '';
+        var version = ampliada.modificaciones.length + 1;
         return {
           valido: true, demostracion: true, id: id,
-          version: ampliada.modificaciones.length + 1,
+          version: version,
           linkDoc: '', linkPublicado: solicitudes[i].link_publicado,
+          publicacion: esDeLaWebEnLaDemo(solicitudes[i]) ? publicacionSimulada(solicitudes[i].link_publicado, version) : null,
         };
       }
       return { valido: false, errores: [{ campo: 'id', mensaje: 'No encontramos esa solicitud.' }] };
