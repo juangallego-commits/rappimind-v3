@@ -3,7 +3,7 @@
 /**
  * La revision de lo publicado en Squarespace.
  *
- * RappiMind no publica: Squarespace no tiene API para crear eventos y su
+ * En Squarespace RappiMind no publica: no tiene API para crear eventos y su
  * politica de uso prohibe los robots y las credenciales compartidas (ver
  * src/core/publicacion.js y docs/DECISIONES.md). Lo que hace es leer la pagina
  * publica de cada campana y compararla con su documento, en tres momentos:
@@ -14,6 +14,11 @@
  *
  * Si la pagina es identica, la campana queda publicada sin que nadie vuelva a
  * pegar nada. Si tiene diferencias o la quitaron, se avisa por correo.
+ *
+ * Las campanas que publica RappiMind (enlace promos.rappi.com/tyc?...) se
+ * revisan contra su archivo del bucket, en src/server/PublicadorWeb.js, y si
+ * falta se vuelve a publicar. La corrida de cada hora tambien revisa que la
+ * pagina /tyc siga en pie.
  *
  * Este archivo no se llama Publicacion.js a proposito: Apps Script no
  * distingue mayusculas en los nombres, y pisaria a src/core/publicacion.js.
@@ -45,11 +50,11 @@ function leerPaginaPublicada(enlace) {
  * Lo esperado: el documento que recibio el comercial, leido del Google Doc.
  * Devuelve null si no se puede abrir; la revision queda "sin verificar".
  */
-function esperadoDeLaSolicitud(solicitud) {
+function esperadoDeLaSolicitud_(solicitud) {
   var idDocumento = idDeDocumentoDeGoogle(solicitud.link_doc);
   if (!idDocumento) return null;
   try {
-    return esperadoDesdeParrafos(parrafosDelDocumento(idDocumento), {
+    return esperadoDesdeParrafos(parrafosDelDocumento_(idDocumento), {
       titulo: solicitud.nombre_campana,
       fechaInicio: solicitud.fecha_inicio,
       fechaFin: solicitud.fecha_fin,
@@ -78,7 +83,7 @@ function asegurarColumnasDeLaRevision() {
 }
 
 /** Le escribe a quien genero la campana, y a Legal si hay algo que mirar. */
-function avisarDeLaVerificacion(solicitud, resultado, enlace) {
+function avisarDeLaVerificacion_(solicitud, resultado, enlace) {
   var mensaje = correoDeVerificacion({
     estado: resultado.estado,
     nombreCampana: solicitud.nombre_campana,
@@ -88,7 +93,7 @@ function avisarDeLaVerificacion(solicitud, resultado, enlace) {
     detalle: resultado.detalle,
     avisos: resultado.avisos,
   });
-  return enviarCorreoDeVerificacion(String(solicitud.email || ''), mensaje, resultado.estado !== 'verificado');
+  return enviarCorreoDeVerificacion_(String(solicitud.email || ''), mensaje, resultado.estado !== 'verificado');
 }
 
 /**
@@ -97,11 +102,14 @@ function avisarDeLaVerificacion(solicitud, resultado, enlace) {
  * solicitud: la fila ya plana (filasPlanas), con su _fila.
  * Devuelve lo que la pantalla necesita, sin fechas de verdad (frontera 1).
  */
-function revisarYGuardar(solicitud, enlace) {
+function revisarYGuardar_(solicitud, enlace) {
+  var web = configuracionWeb();
+  if (esEnlaceDelVisor(web, enlace)) return revisarYGuardarWeb_(solicitud, enlace, web);
+
   var lectura = leerRespuestaDeSquarespace(leerPaginaPublicada(enlace));
   var resultado = lectura.listo
     ? lectura.resultado
-    : veredictoDeLaPublicacion(esperadoDeLaSolicitud(solicitud), lectura.evento);
+    : veredictoDeLaPublicacion(esperadoDeLaSolicitud_(solicitud), lectura.evento);
 
   var anterior = String(solicitud.verificacion || '');
   resultado = conElEstadoAnterior(resultado, anterior);
@@ -132,7 +140,7 @@ function revisarYGuardar(solicitud, enlace) {
   if (anterior !== resultado.estado) {
     registrar('verificar', solicitud.id + ' · ' + (anterior || 'sin revisar') + ' -> ' + resultado.estado + ' · ' + enlace);
   }
-  if (hayQueAvisarDeLaVerificacion(anterior, resultado.estado)) avisarDeLaVerificacion(solicitud, resultado, enlace);
+  if (hayQueAvisarDeLaVerificacion(anterior, resultado.estado)) avisarDeLaVerificacion_(solicitud, resultado, enlace);
 
   return {
     verificacion: {
@@ -150,7 +158,7 @@ function revisarYGuardar(solicitud, enlace) {
 }
 
 /** La fila de una solicitud por su identificador, ya plana. null si no esta. */
-function solicitudPlanaPorId(id) {
+function solicitudPlanaPorId_(id) {
   var solicitudes = leerSolicitudes();
   for (var i = 0; i < solicitudes.length; i++) {
     if (solicitudes[i].id === id) return filasPlanas([solicitudes[i]])[0];
@@ -163,8 +171,12 @@ function leyendasConElEnlace(solicitud, enlace) {
   try {
     var pais = paisPorCodigo(leerPaises(), solicitud.pais);
     if (!pais) return null;
+    // Una campana publicada por RappiMind ya tenia ese enlace previsto desde que
+    // se genero: confirmarlo no es un cambio que obligue a rehacer las piezas.
+    var previsto = esEnlaceDelVisor(configuracionWeb(), enlace) ? enlace : '';
     return generarLeyendasDeLaCampana(JSON.parse(solicitud.datos_json || '{}'), pais, LEYENDAS, {
       nombreCampana: solicitud.nombre_campana,
+      enlacePrevisto: previsto,
       enlacePublicado: enlace,
     });
   } catch (error) {
@@ -195,7 +207,7 @@ function revisarPublicacion(id) {
     };
   }
 
-  var solicitud = solicitudPlanaPorId(id);
+  var solicitud = solicitudPlanaPorId_(id);
   if (!solicitud) return { valido: false, errores: [{ campo: 'id', mensaje: 'No encontramos esa solicitud.' }] };
 
   var propia = String(solicitud.email).toLowerCase() === quien.correo;
@@ -218,7 +230,7 @@ function revisarPublicacion(id) {
   }
 
   asegurarColumnasDeLaRevision();
-  var revision = revisarYGuardar(solicitud, enlace);
+  var revision = revisarYGuardar_(solicitud, enlace);
   return {
     valido: true,
     id: id,
@@ -239,6 +251,15 @@ function revisarPublicacion(id) {
 function revisarPublicacionesPendientes() {
   if (enModoDemostracion()) return { revisadas: 0, cambios: 0 };
 
+  // Primero la pagina /tyc: si esta caida, ningun T&C publicado por RappiMind
+  // se ve, y eso pesa mas que cualquier campana sola.
+  var visor = null;
+  try {
+    visor = revisarVisorWeb_(configuracionWeb());
+  } catch (error) {
+    registrar('visor_fallido', String(error));
+  }
+
   asegurarColumnasDeLaRevision();
   var paises = leerPaises();
   var lote = solicitudesPorRevisar(filasPlanas(leerSolicitudes()), rutasDePublicacion(paises), hoyIso(), REVISIONES_POR_CORRIDA);
@@ -249,14 +270,14 @@ function revisarPublicacionesPendientes() {
   for (var i = 0; i < lote.length; i++) {
     if (Date.now() - inicio > TIEMPO_MAXIMO_DE_LA_CORRIDA) break;
     try {
-      var revision = revisarYGuardar(lote[i].fila, lote[i].enlace);
+      var revision = revisarYGuardar_(lote[i].fila, lote[i].enlace);
       revisadas += 1;
       if (revision.cambio) cambios += 1;
     } catch (error) {
       registrar('verificar_fallido', lote[i].fila.id + ' · ' + String(error));
     }
   }
-  return { revisadas: revisadas, cambios: cambios, pendientes: lote.length - revisadas };
+  return { revisadas: revisadas, cambios: cambios, pendientes: lote.length - revisadas, visor: visor ? visor.estado : '' };
 }
 
 /**
@@ -280,8 +301,13 @@ function instalarRevisionAutomatica() {
   return 'revisión automática instalada: corre cada hora';
 }
 
-/** El interruptor para apagarla, sin desplegar nada. */
+/**
+ * El interruptor para apagarla, sin desplegar nada. Solo un administrador:
+ * google.script.run deja llamar cualquier funcion global desde el navegador, y
+ * apagar la revision deja sin vigilancia todo lo publicado.
+ */
 function quitarRevisionAutomatica() {
+  exigirAdministrador();
   var disparadores = ScriptApp.getProjectTriggers();
   var quitados = 0;
   for (var i = 0; i < disparadores.length; i++) {
@@ -296,10 +322,10 @@ if (typeof module !== 'undefined') {
   module.exports = {
     FUNCION_DE_LA_REVISION: FUNCION_DE_LA_REVISION,
     leerPaginaPublicada: leerPaginaPublicada,
-    esperadoDeLaSolicitud: esperadoDeLaSolicitud,
+    esperadoDeLaSolicitud_: esperadoDeLaSolicitud_,
     asegurarColumnasDeLaRevision: asegurarColumnasDeLaRevision,
-    revisarYGuardar: revisarYGuardar,
-    solicitudPlanaPorId: solicitudPlanaPorId,
+    revisarYGuardar_: revisarYGuardar_,
+    solicitudPlanaPorId_: solicitudPlanaPorId_,
     leyendasConElEnlace: leyendasConElEnlace,
     revisarPublicacion: revisarPublicacion,
     revisarPublicacionesPendientes: revisarPublicacionesPendientes,

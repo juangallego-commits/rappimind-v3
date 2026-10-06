@@ -69,15 +69,24 @@ var PATRON_DE_LA_CARPETA = /^[a-z0-9][a-z0-9_-]*(?:\/[a-z0-9][a-z0-9_-]*)*$/;
 /**
  * La configuracion de la publicacion web, a partir de las propiedades del script.
  *
- * valores: { bucket, carpeta, visor }. Sin bucket la publicacion web esta
- * apagada y RappiMind sigue con el camino de Squarespace de siempre: asi el
- * codigo puede llegar a produccion antes de que exista el bucket.
+ * valores: { bucket, carpeta, visor, paises }. Sin bucket la publicacion web
+ * esta apagada y RappiMind sigue con el camino de Squarespace de siempre: asi
+ * el codigo puede llegar a produccion antes de que exista el bucket.
+ *
+ * paises: "CO, MX" o una lista. Vacio, publican solos los paises que hoy
+ * publican en promos.rappi.com, que son los que tienen ruta_promos (decision 145).
  */
 function configuracionDePublicacionWeb(valores) {
   var v = valores || {};
   var bucket = String(v.bucket || '').trim();
   var carpeta = String(v.carpeta || '').trim().replace(/^\/+/, '').replace(/\/+$/, '') || CARPETA_PREDETERMINADA;
   var visor = String(v.visor || '').trim().replace(/\/+$/, '') || VISOR_PREDETERMINADO;
+  var paises = [];
+  var lista = Object.prototype.toString.call(v.paises) === '[object Array]' ? v.paises : String(v.paises || '').split(/[\s,;]+/);
+  for (var i = 0; i < lista.length; i++) {
+    var codigo = String(lista[i] || '').trim().toUpperCase();
+    if (codigo && paises.indexOf(codigo) === -1) paises.push(codigo);
+  }
 
   var problema = '';
   if (!bucket) problema = 'Falta PUBLICACION_BUCKET: sin bucket, RappiMind no publica sola.';
@@ -87,15 +96,25 @@ function configuracionDePublicacionWeb(valores) {
     problema = 'La página del visor tiene que ser una dirección de ' + PREFIJO_PUBLICACION + ' sin "?" ni "#".';
   }
 
-  return { activa: !problema, bucket: bucket, carpeta: carpeta, visor: visor, problema: problema };
+  for (var p = 0; p < paises.length && !problema; p++) {
+    if (!/^[A-Z]{2}$/.test(paises[p])) problema = 'En PUBLICACION_PAISES, "' + paises[p] + '" no es un código de país de dos letras.';
+  }
+
+  return { activa: !problema, bucket: bucket, carpeta: carpeta, visor: visor, paises: paises, problema: problema };
 }
 
 /**
- * Si esta campana se publica sola. Solo en un pais activo: uno en pruebas lleva
- * el aviso de "no publiques" en todas sus pantallas.
+ * Si esta campana se publica sola.
+ *
+ * Solo en un pais activo: uno en pruebas lleva el aviso de "no publiques" en
+ * todas sus pantallas. Y solo en los paises que publican en promos.rappi.com:
+ * los de la lista, o si no hay lista, los que tienen ruta_promos.
  */
 function publicacionWebAplica(config, pais) {
-  return !!(config && config.activa && pais && pais.estado === 'activo');
+  if (!config || !config.activa || !pais || pais.estado !== 'activo') return false;
+  var codigo = String(pais.codigo || '').toUpperCase();
+  if (config.paises && config.paises.length) return config.paises.indexOf(codigo) !== -1;
+  return !!String(pais.ruta_promos || '').trim();
 }
 
 // --- El enlace y el archivo -------------------------------------------------------
@@ -170,6 +189,15 @@ function urlPublicaDelObjetoWeb(config, nombre) {
   return 'https://storage.googleapis.com/' + config.bucket + '/' + partes.join('/');
 }
 
+/**
+ * La direccion para leer un objeto con la cuenta de RappiMind (API JSON). No
+ * pasa por la cache publica: devuelve lo que hay escrito en este momento.
+ */
+function urlDeLecturaPrivadaWeb(config, nombre) {
+  return 'https://storage.googleapis.com/storage/v1/b/' + encodeURIComponent(config.bucket) + '/o/' +
+    encodeURIComponent(String(nombre || '')) + '?alt=media';
+}
+
 /** La direccion para subir un objeto con sus metadatos (API JSON, multipart). */
 function urlDeSubidaWeb(config) {
   return 'https://storage.googleapis.com/upload/storage/v1/b/' + encodeURIComponent(config.bucket) + '/o?uploadType=multipart';
@@ -198,6 +226,76 @@ function cuerpoDeSubidaWeb(metadatos, contenido, limite) {
     contenido + '\r\n' +
     '--' + limite + '--';
 }
+
+/**
+ * Lo que respondio Cloud Storage al subir o leer con la cuenta de RappiMind,
+ * dicho para quien tiene que arreglarlo. Vacio si salio bien.
+ */
+function problemaDeCloudStorage(config, codigo, cuerpo) {
+  var numero = Number(codigo);
+  var texto = String(cuerpo || '');
+  if (numero === 200) return '';
+  if (numero === 401) {
+    return 'Cloud Storage no aceptó la autorización de RappiMind. Hay que volver a autorizar el proyecto de Apps Script con el permiso de Cloud Storage.';
+  }
+  if (numero === 403) {
+    if (/accessNotConfigured|has not been used|is disabled|SERVICE_DISABLED/i.test(texto)) {
+      return 'La API de Cloud Storage no está habilitada en el proyecto de Google Cloud de RappiMind.';
+    }
+    return 'La cuenta con la que corre RappiMind no tiene permiso para escribir en el bucket "' + config.bucket + '".';
+  }
+  if (numero === 404) return 'El bucket "' + config.bucket + '" no existe, o la cuenta de RappiMind no lo puede ver.';
+  if (numero === 429 || numero >= 500 || !numero) {
+    return 'Cloud Storage no respondió bien (' + (numero || 'sin respuesta') + '). Se vuelve a intentar en la próxima revisión.';
+  }
+  return 'Cloud Storage respondió con un error (' + numero + ').';
+}
+
+/** La version que le toca a una campana: 1, y una mas por cada ampliacion. */
+function versionDeLaEntrada(entrada) {
+  var modificaciones = entrada && Object.prototype.toString.call(entrada.modificaciones) === '[object Array]' ? entrada.modificaciones : [];
+  return modificaciones.length + 1;
+}
+
+/**
+ * La fecha con la que se vuelve a armar el texto de una campana: la de su
+ * ultima ampliacion, o la del dia en que se genero. Con la de hoy, una campana
+ * generada ayer para empezar hoy no pasaria la validacion de "empieza en el
+ * pasado", y el reintento nunca podria publicarla.
+ */
+function fechaParaRehacerElTexto(fila, entrada) {
+  var modificaciones = entrada && Object.prototype.toString.call(entrada.modificaciones) === '[object Array]' ? entrada.modificaciones : [];
+  if (modificaciones.length) {
+    var ultima = String(modificaciones[modificaciones.length - 1] && modificaciones[modificaciones.length - 1].fecha || '').slice(0, 10);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(ultima)) return ultima;
+  }
+  var generada = String(fila && fila.fecha || '').slice(0, 10);
+  return /^\d{4}-\d{2}-\d{2}$/.test(generada) ? generada : '';
+}
+
+/**
+ * Si un cambio de estado de una campana publicada por RappiMind merece correo.
+ *
+ * Distinto del de Squarespace: aqui nadie tiene que ir a pegar nada, asi que no
+ * se avisa cada paso. Se avisa cuando algo que estaba mal quedo bien (una
+ * publicacion que se habia caido y RappiMind repuso), cuando lo publicado ya no
+ * es el documento, y cuando un T&C que se veia dejo de verse y RappiMind no lo
+ * pudo reponer. El primer intento, al generar, lo cuenta el correo de la
+ * generacion.
+ */
+function hayQueAvisarDeLaPublicacionWeb(anterior, siguiente) {
+  var antes = String(anterior || '');
+  if (antes === siguiente) return false;
+  if (siguiente === 'verificado') return antes === 'sin_publicar' || antes === 'con_diferencias' || antes === 'retirado' || antes === 'no_publicado';
+  if (siguiente === 'con_diferencias') return true;
+  if (siguiente === 'sin_publicar') return antes === 'verificado' || antes === 'con_diferencias';
+  return false;
+}
+
+/** El texto de la prueba que publica prepararPublicacionWeb(), en la direccion zz/prueba-de-rappimind. */
+var TEXTO_DE_LA_PRUEBA_WEB = '**Prueba.** Si ves este texto en promos.rappi.com, la página del visor ya muestra los T&C que publica RappiMind.';
+var DIRECCION_DE_LA_PRUEBA_WEB = 'prueba-de-rappimind';
+var CODIGO_DE_LA_PRUEBA_WEB = 'ZZ';
 
 // --- El documento publicado ---------------------------------------------------------
 
@@ -405,7 +503,15 @@ if (typeof module !== 'undefined') {
     esEnlaceDelVisor: esEnlaceDelVisor,
     nombreDelObjetoWeb: nombreDelObjetoWeb,
     urlPublicaDelObjetoWeb: urlPublicaDelObjetoWeb,
+    urlDeLecturaPrivadaWeb: urlDeLecturaPrivadaWeb,
     urlDeSubidaWeb: urlDeSubidaWeb,
+    problemaDeCloudStorage: problemaDeCloudStorage,
+    versionDeLaEntrada: versionDeLaEntrada,
+    fechaParaRehacerElTexto: fechaParaRehacerElTexto,
+    hayQueAvisarDeLaPublicacionWeb: hayQueAvisarDeLaPublicacionWeb,
+    TEXTO_DE_LA_PRUEBA_WEB: TEXTO_DE_LA_PRUEBA_WEB,
+    DIRECCION_DE_LA_PRUEBA_WEB: DIRECCION_DE_LA_PRUEBA_WEB,
+    CODIGO_DE_LA_PRUEBA_WEB: CODIGO_DE_LA_PRUEBA_WEB,
     jsonEnAscii: jsonEnAscii,
     cuerpoDeSubidaWeb: cuerpoDeSubidaWeb,
     bloquesParaLaWeb: bloquesParaLaWeb,

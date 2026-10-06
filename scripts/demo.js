@@ -53,6 +53,24 @@ const SERVIDOR_SIMULADO = `
     return lista;
   }
 
+  /*
+   * La publicacion sin Squarespace, simulada: en la demostracion no hay bucket,
+   * asi que nada se publica de verdad, pero las pantallas se ven como cuando
+   * RappiMind publica sola. Con ?squarespace en la direccion se ve el camino de
+   * siempre, el de pegar en Squarespace.
+   */
+  var WEB_DE_LA_DEMO = configuracionDePublicacionWeb({
+    bucket: /squarespace/.test(String(window.location && window.location.search || '')) ? '' : 'demostracion',
+  });
+
+  function paisesQuePublicanSolos() {
+    var codigos = [];
+    for (var i = 0; i < paises.length; i++) {
+      if (publicacionWebAplica(WEB_DE_LA_DEMO, paises[i])) codigos.push(paises[i].codigo);
+    }
+    return codigos;
+  }
+
   var VERIFICACION_DE_LA_DEMO = {
     estado: 'sin_verificar',
     detalle: 'En la demostración no se revisa Squarespace.',
@@ -76,6 +94,7 @@ const SERVIDOR_SIMULADO = `
         urlFormularioLegal: 'https://forms.gle/ejemplo-de-la-demostracion',
         urlCanalAyuda: 'https://rappi.slack.com/ejemplo-de-la-demostracion',
         hoy: hoy(),
+        publicacionWeb: { activa: WEB_DE_LA_DEMO.activa, visor: WEB_DE_LA_DEMO.visor, paises: paisesQuePublicanSolos() },
       };
     },
 

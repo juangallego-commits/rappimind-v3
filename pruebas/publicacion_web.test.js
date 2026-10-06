@@ -54,7 +54,7 @@ test('sin bucket la publicación web está apagada, y dice por qué', () => {
 
 test('con bucket queda encendida, con la página /tyc y la carpeta tyc', () => {
   assert.deepStrictEqual(CONFIG, {
-    activa: true, bucket: 'tyc-rappi', carpeta: 'tyc', visor: 'https://promos.rappi.com/tyc', problema: '',
+    activa: true, bucket: 'tyc-rappi', carpeta: 'tyc', visor: 'https://promos.rappi.com/tyc', paises: [], problema: '',
   });
 });
 
@@ -68,9 +68,23 @@ test('un bucket, una carpeta o una página del visor mal escritos la dejan apaga
 });
 
 test('solo se publica sola en un país activo: uno en pruebas dice "no publiques"', () => {
-  assert.strictEqual(W.publicacionWebAplica(CONFIG, { estado: 'activo' }), true);
-  assert.strictEqual(W.publicacionWebAplica(CONFIG, { estado: 'piloto' }), false);
-  assert.strictEqual(W.publicacionWebAplica(W.configuracionDePublicacionWeb({}), { estado: 'activo' }), false);
+  const colombia = { codigo: 'CO', estado: 'activo', ruta_promos: 'colombia' };
+  assert.strictEqual(W.publicacionWebAplica(CONFIG, colombia), true);
+  assert.strictEqual(W.publicacionWebAplica(CONFIG, Object.assign({}, colombia, { estado: 'piloto' })), false);
+  assert.strictEqual(W.publicacionWebAplica(W.configuracionDePublicacionWeb({}), colombia), false);
+});
+
+test('sin lista, publican solos los países que hoy publican en promos.rappi.com', () => {
+  const porCodigo = (codigo) => paises.find((p) => p.codigo === codigo);
+  assert.strictEqual(W.publicacionWebAplica(CONFIG, porCodigo('CO')), true);
+  assert.strictEqual(W.publicacionWebAplica(CONFIG, porCodigo('MX')), false, 'México no tiene ruta en promos.rappi.com');
+  assert.strictEqual(W.publicacionWebAplica(CONFIG, porCodigo('BR')), false);
+
+  const conLista = W.configuracionDePublicacionWeb({ bucket: 'tyc-rappi', paises: 'co, MX;cr' });
+  assert.deepStrictEqual(conLista.paises, ['CO', 'MX', 'CR']);
+  assert.strictEqual(W.publicacionWebAplica(conLista, porCodigo('MX')), true);
+  assert.strictEqual(W.publicacionWebAplica(conLista, porCodigo('PE')), false);
+  assert.strictEqual(W.configuracionDePublicacionWeb({ bucket: 'tyc-rappi', paises: 'Colombia' }).activa, false);
 });
 
 // --- El enlace -----------------------------------------------------------------------
@@ -139,6 +153,41 @@ test('el archivo se escribe en ASCII y se lee igual, con tildes, eñes y comilla
   const ascii = W.jsonEnAscii(original);
   assert.ok(/^[\x00-\x7e]*$/.test(ascii), 'quedó algo fuera de ASCII');
   assert.deepStrictEqual(JSON.parse(ascii), original);
+});
+
+test('RappiMind lee lo que escribió por la API, sin pasar por la caché pública', () => {
+  assert.strictEqual(W.urlDeLecturaPrivadaWeb(CONFIG, 'tyc/co/farmatodo.json'),
+    'https://storage.googleapis.com/storage/v1/b/tyc-rappi/o/tyc%2Fco%2Ffarmatodo.json?alt=media');
+});
+
+test('lo que responde Cloud Storage al escribir se dice para quien lo tiene que arreglar', () => {
+  assert.strictEqual(W.problemaDeCloudStorage(CONFIG, 200, ''), '');
+  assert.ok(W.problemaDeCloudStorage(CONFIG, 401, '').indexOf('volver a autorizar') !== -1);
+  assert.ok(W.problemaDeCloudStorage(CONFIG, 403, '{"error":{"message":"x does not have storage.objects.create access"}}').indexOf('no tiene permiso para escribir en el bucket "tyc-rappi"') !== -1);
+  assert.ok(W.problemaDeCloudStorage(CONFIG, 403, '{"error":{"errors":[{"reason":"accessNotConfigured"}]}}').indexOf('no está habilitada') !== -1);
+  assert.ok(W.problemaDeCloudStorage(CONFIG, 404, '').indexOf('no existe') !== -1);
+  assert.ok(W.problemaDeCloudStorage(CONFIG, 503, '').indexOf('Se vuelve a intentar') !== -1);
+});
+
+test('la versión sale de las ampliaciones, y el texto se rehace con la fecha en que se armó', () => {
+  assert.strictEqual(W.versionDeLaEntrada({}), 1);
+  assert.strictEqual(W.versionDeLaEntrada({ modificaciones: [{ fecha: '2026-10-09' }, { fecha: '2026-10-12' }] }), 3);
+  assert.strictEqual(W.fechaParaRehacerElTexto({ fecha: '2026-10-05 23:40:00' }, {}), '2026-10-05');
+  assert.strictEqual(W.fechaParaRehacerElTexto({ fecha: '2026-10-05 23:40:00' }, { modificaciones: [{ fecha: '2026-10-09' }] }), '2026-10-09');
+  assert.strictEqual(W.fechaParaRehacerElTexto({ fecha: '' }, {}), '');
+});
+
+test('de una publicación web solo se avisa lo que alguien tiene que saber', () => {
+  const avisa = W.hayQueAvisarDeLaPublicacionWeb;
+  assert.strictEqual(avisa('', 'verificado'), false, 'al generar avisa el correo de la generación');
+  assert.strictEqual(avisa('', 'sin_publicar'), false);
+  assert.strictEqual(avisa('sin_publicar', 'sin_publicar'), false, 'cada hora que sigue igual no es noticia');
+  assert.strictEqual(avisa('sin_publicar', 'verificado'), true, 'quedó publicada después de reintentar');
+  assert.strictEqual(avisa('sin_verificar', 'verificado'), false, 'una lectura que falló no era un problema');
+  assert.strictEqual(avisa('verificado', 'con_diferencias'), true);
+  assert.strictEqual(avisa('verificado', 'sin_publicar'), true, 'se dejó de ver y no se pudo reponer');
+  assert.strictEqual(avisa('verificado', 'sin_verificar'), false);
+  assert.strictEqual(avisa('verificado', 'dado_de_baja'), false);
 });
 
 test('la subida lleva los metadatos y el contenido en dos partes', () => {

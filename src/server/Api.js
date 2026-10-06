@@ -53,6 +53,16 @@ function catalogoDeTipos() {
   return catalogo;
 }
 
+/** Los paises cuyas campanas publica RappiMind sola, para la interfaz. */
+function publicacionWebParaLaInterfaz(paises) {
+  var web = configuracionWeb();
+  var codigos = [];
+  for (var i = 0; i < (paises || []).length; i++) {
+    if (publicacionWebAplica(web, paises[i])) codigos.push(String(paises[i].codigo));
+  }
+  return { activa: web.activa, visor: web.visor, paises: codigos };
+}
+
 /** Todo lo que la interfaz necesita al abrir. */
 function estadoInicial() {
   var quien = contextoDeQuienPide();
@@ -79,6 +89,7 @@ function estadoInicial() {
     urlFormularioLegal: leerPropiedad(PROPIEDADES.URL_FORMULARIO_LEGAL),
     urlCanalAyuda: leerPropiedad(PROPIEDADES.CANAL_AYUDA_URL),
     hoy: enModoDemostracion() ? '' : hoyIso(),
+    publicacionWeb: publicacionWebParaLaInterfaz(paises),
   };
 }
 
@@ -132,9 +143,14 @@ function generar(entrada) {
     };
   }
 
+  // Si esta campana la publica RappiMind sola (src/server/PublicadorWeb.js).
+  var web = configuracionWeb();
+  var publicaSola = publicacionWebAplica(web, pais);
+
   var bloqueo = LockService.getScriptLock();
   bloqueo.waitLock(30000);
 
+  var creada;
   try {
     var hoy = hoyIso();
     var solicitudes = leerSolicitudes();
@@ -162,10 +178,13 @@ function generar(entrada) {
 
     var nombreCampana = nombreDeCampana(entrada, esquema, pais);
     var direccion = direccionDeCampana(nombreCampana);
-    // Donde va a quedar publicada si se siguen los pasos. Con ella RappiMind
-    // revisa sola si ya existe, y nadie tiene que volver a pegar el enlace.
-    // Vacia en un pais sin ruta de Squarespace: ahi si hay que pegarlo.
-    var enlacePrevisto = enlaceParaRevisar({ direccion_sugerida: direccion }, pais.ruta_promos);
+    // Si RappiMind la publica sola, su enlace es el de la pagina /tyc y ya es
+    // el definitivo. Si no, donde va a quedar publicada si se siguen los pasos
+    // de Squarespace: con ella RappiMind revisa sola si ya existe, y nadie tiene
+    // que volver a pegar el enlace. Vacia en un pais sin ruta de Squarespace:
+    // ahi si hay que pegarlo.
+    var enlaceWeb = publicaSola ? enlaceWebDeLaCampana(web, pais.codigo, direccion) : '';
+    var enlacePrevisto = enlaceWeb || enlaceParaRevisar({ direccion_sugerida: direccion }, pais.ruta_promos);
     var titulo = tituloDelDocumento(nombreCampana, pais.nombre, id);
     var carpeta = carpetaDelPais(pais.codigo, pais.nombre);
 
@@ -181,7 +200,7 @@ function generar(entrada) {
     try {
       escribirLaSolicitud(id, documento, {
         quien: quien, pais: pais, esquema: esquema, entrada: entrada,
-        nombreCampana: nombreCampana, direccion: direccion, enlacePrevisto: enlacePrevisto,
+        nombreCampana: nombreCampana, direccion: direccion, enlaceWeb: enlaceWeb,
       });
     } catch (error) {
       descartarDocumento(documento.id);
@@ -190,42 +209,102 @@ function generar(entrada) {
     }
 
     registrar('generar', id + ' · ' + pais.codigo + ' · ' + entrada.tipo);
-
-    return {
-      valido: true,
-      id: id,
-      linkDoc: documento.url,
-      titulo: titulo,
-      nombreCampana: nombreCampana,
-      direccionSugerida: direccion,
-      enlacePrevisto: enlacePrevisto,
-      // El texto final, el mismo del documento. La pantalla final arma con el
-      // el HTML que se pega en Squarespace, sin abrir el Doc ni arreglar el
-      // formato a mano (htmlParaSquarespace, src/core/publicacion.js).
-      texto: resultado.texto,
-      pais: pais.codigo,
-      // Las leyendas de las piezas, con el enlace previsto. Salen aqui y no en
-      // otra llamada porque el comercial las necesita en el mismo momento en
-      // que se lleva el documento, y una llamada mas es una pantalla que se
-      // puede quedar a medio pintar.
-      leyendas: generarLeyendasDeLaCampana(entrada, pais, LEYENDAS, { nombreCampana: nombreCampana }),
+    creada = {
+      id: id, documento: documento, titulo: titulo, nombreCampana: nombreCampana,
+      direccion: direccion, enlaceWeb: enlaceWeb, enlacePrevisto: enlacePrevisto,
     };
   } finally {
     bloqueo.releaseLock();
   }
+
+  // Fuera del bloqueo: si Cloud Storage tarda, nadie mas se queda esperando
+  // para generar. Lo que falle aqui no deshace nada: la fila ya quedo en
+  // "sin_publicar" y la revision de cada hora reintenta.
+  var publicacion = creada.enlaceWeb ? publicarRecienGenerada_(creada, resultado.texto, 1, web) : null;
+
+  enviarCorreoDeGeneracion(quien.correo, {
+    nombreCampana: creada.nombreCampana,
+    pais: pais.nombre,
+    id: creada.id,
+    linkDoc: creada.documento.url,
+    urlApp: ScriptApp.getService().getUrl(),
+    urlAyuda: leerPropiedad(PROPIEDADES.CANAL_AYUDA_URL),
+    enlacePrevisto: creada.enlacePrevisto || '',
+    publicacion: publicacion,
+  });
+
+  return {
+    valido: true,
+    id: creada.id,
+    linkDoc: creada.documento.url,
+    titulo: creada.titulo,
+    nombreCampana: creada.nombreCampana,
+    direccionSugerida: creada.direccion,
+    enlacePrevisto: creada.enlacePrevisto,
+    // null si va por Squarespace. Si la publico RappiMind: { modo: 'web',
+    // estado, detalle, enlace, version, fecha }.
+    publicacion: publicacion,
+    // El texto final, el mismo del documento. La pantalla final arma con el
+    // el HTML que se pega en Squarespace, sin abrir el Doc ni arreglar el
+    // formato a mano (htmlParaSquarespace, src/core/publicacion.js).
+    texto: resultado.texto,
+    pais: pais.codigo,
+    // Las leyendas de las piezas, con el enlace previsto. Salen aqui y no en
+    // otra llamada porque el comercial las necesita en el mismo momento en
+    // que se lleva el documento, y una llamada mas es una pantalla que se
+    // puede quedar a medio pintar. Con el enlace web ya publicado, salen
+    // confirmadas: ese enlace no va a cambiar.
+    leyendas: generarLeyendasDeLaCampana(entrada, pais, LEYENDAS, {
+      nombreCampana: creada.nombreCampana,
+      enlacePrevisto: creada.enlaceWeb,
+      enlacePublicado: publicacion && publicacion.estado === 'verificado' ? creada.enlaceWeb : '',
+    }),
+  };
 }
 
-/** La fila del Sheet y el correo, que es lo que va despues de crear el Doc. */
+/**
+ * Publica la campana recien generada o ampliada. Nunca lanza: si algo se cae,
+ * la pantalla recibe "sin_publicar" con el enlace, que igual es el definitivo.
+ */
+function publicarRecienGenerada_(creada, texto, version, web) {
+  var publicacion = null;
+  try {
+    publicacion = publicarAlGenerar_(creada.id, texto, version, web, { avisar: false });
+  } catch (error) {
+    registrar('publicar_web_fallido', creada.id + ' · ' + String(error));
+  }
+  return publicacion || {
+    modo: 'web',
+    estado: 'sin_publicar',
+    detalle: 'No alcanzamos a publicarla. RappiMind lo vuelve a intentar sola cada hora.',
+    enlace: creada.enlaceWeb,
+    version: version,
+    fecha: '',
+  };
+}
+
+/**
+ * La fila del Sheet, que es lo que va despues de crear el Doc.
+ *
+ * Si RappiMind la publica sola, la fila nace con su enlace definitivo y en
+ * "sin_publicar": si la publicacion se cae a la mitad, o el script se corta
+ * despues de esta linea, la revision de cada hora la encuentra y la publica.
+ */
 function escribirLaSolicitud(id, documento, datos) {
-  var quien = datos.quien;
   var pais = datos.pais;
   var esquema = datos.esquema;
   var entrada = datos.entrada;
+  var web = datos.enlaceWeb ? {
+    link_publicado: datos.enlaceWeb,
+    verificacion: 'sin_publicar',
+    fecha_verificacion: ahoraTexto(),
+    detalle_verificacion: 'RappiMind la está publicando.',
+  } : {};
 
-  agregarFila('Solicitudes', unirObjetos({
+  agregarFila('Solicitudes', unirObjetos(unirObjetos({
     id: id,
     fecha: ahoraTexto(),
-    email: quien.correo,
+    email: datos.quien.correo,
     pais: pais.codigo,
     tipo: entrada.tipo,
     version_modelo: MODELOS.versiones[esquema.modelo] || '',
@@ -243,17 +322,7 @@ function escribirLaSolicitud(id, documento, datos) {
     link_publicado: '',
     fecha_publicacion: '',
     datos_json: JSON.stringify(entrada),
-  }, respuestasParaElSheet(entrada)));
-
-  enviarCorreoDeGeneracion(quien.correo, {
-    nombreCampana: datos.nombreCampana,
-    pais: pais.nombre,
-    id: id,
-    linkDoc: documento.url,
-    urlApp: ScriptApp.getService().getUrl(),
-    urlAyuda: leerPropiedad(PROPIEDADES.CANAL_AYUDA_URL),
-    enlacePrevisto: datos.enlacePrevisto || '',
-  });
+  }, web), respuestasParaElSheet(entrada)));
 }
 
 /** Las solicitudes que puede ver quien pide, con busqueda opcional. */
@@ -285,6 +354,15 @@ function marcarPublicado(id, url) {
     return { valido: false, errores: [{ campo: 'id', mensaje: 'Esa solicitud no es tuya.' }] };
   }
 
+  // La publico RappiMind: sus piezas ya llevan ese enlace, y pegar otro la
+  // dejaria con dos direcciones y la revision mirando la equivocada.
+  if (esEnlaceDelVisor(configuracionWeb(), solicitud.link_publicado)) {
+    return {
+      valido: false,
+      errores: [{ campo: 'linkPublicado', mensaje: 'RappiMind publicó esta campaña en su propio enlace. No hace falta pegar otro.' }],
+    };
+  }
+
   var fechaPublicacion = ahoraTexto();
   actualizarFila('Solicitudes', solicitud._fila, {
     link_publicado: revision.url,
@@ -302,7 +380,7 @@ function marcarPublicado(id, url) {
     var publicada = unirObjetos(filasPlanas([solicitud])[0], {
       link_publicado: revision.url, fecha_publicacion: fechaPublicacion, estado: 'publicado',
     });
-    verificacion = revisarYGuardar(publicada, revision.url).verificacion;
+    verificacion = revisarYGuardar_(publicada, revision.url).verificacion;
   } catch (error) {
     registrar('verificar_fallido', id + ' · ' + String(error));
   }
@@ -390,19 +468,98 @@ function ampliarCampana(id, cambios) {
     }
 
     registrar('ampliar', id + ' · versión ' + version + ' · ' + JSON.stringify(revision.cambios));
-
-    return {
-      valido: true,
-      id: id,
-      version: version,
-      linkDoc: documento.url,
-      linkPublicado: solicitud.link_publicado,
-      titulo: titulo,
-      cambios: revision.cambios,
-    };
   } finally {
     bloqueo.releaseLock();
   }
+
+  // Si la publico RappiMind, la version nueva queda en el mismo enlace, fuera
+  // del bloqueo como al generar. Las anteriores se quedan en el bucket.
+  var web = configuracionWeb();
+  var publicacion = null;
+  if (esEnlaceDelVisor(web, solicitud.link_publicado)) {
+    publicacion = web.activa
+      ? publicarRecienGenerada_({ id: id, enlaceWeb: solicitud.link_publicado }, resultado.texto, version, web)
+      : { modo: 'web', estado: 'sin_publicar', detalle: web.problema, enlace: solicitud.link_publicado, version: version, fecha: '' };
+  }
+
+  return {
+    valido: true,
+    id: id,
+    version: version,
+    linkDoc: documento.url,
+    linkPublicado: solicitud.link_publicado,
+    titulo: titulo,
+    cambios: revision.cambios,
+    publicacion: publicacion,
+  };
+}
+
+/**
+ * Retira el T&C de una campana que publico RappiMind, por un error, mientras
+ * la campana no haya arrancado (decision de Juan del 5 de octubre de 2026).
+ *
+ * El enlace queda diciendo que se retiro, y las versiones se quedan en el
+ * bucket como constancia. Una campana retirada no se amplia ni se vuelve a
+ * publicar sola: la corregida se genera de nuevo, con su propio enlace.
+ */
+function retirarPublicacion(id) {
+  var quien = contextoDeQuienPide();
+  if (quien.demostracion) {
+    return { valido: false, errores: [{ campo: 'id', mensaje: 'En modo demostración no hay campañas publicadas que retirar.' }] };
+  }
+
+  var solicitud = solicitudPlanaPorId_(id);
+  if (!solicitud) return { valido: false, errores: [{ campo: 'id', mensaje: 'No encontramos esa solicitud.' }] };
+
+  var propia = String(solicitud.email).toLowerCase() === quien.correo;
+  if (!propia && quien.rol !== 'admin' && quien.rol !== 'legal') {
+    return { valido: false, errores: [{ campo: 'id', mensaje: 'Esa solicitud no es tuya.' }] };
+  }
+
+  var web = configuracionWeb();
+  var ruta = rutaDesdeEnlaceWeb(web, solicitud.link_publicado);
+  if (!ruta) {
+    return { valido: false, errores: [{ campo: 'id', mensaje: 'Esta campaña no la publicó RappiMind. Si hay que quitarla, se quita en Squarespace.' }] };
+  }
+  if (String(solicitud.verificacion || '') === 'dado_de_baja') {
+    return { valido: false, errores: [{ campo: 'id', mensaje: 'Esta campaña ya está retirada.' }] };
+  }
+
+  var entrada;
+  try {
+    entrada = JSON.parse(solicitud.datos_json || '{}');
+  } catch (error) {
+    return { valido: false, errores: [{ campo: 'id', mensaje: 'Los datos guardados de esa solicitud no se pueden leer.' }] };
+  }
+  if (momentoDeLaCampana(entrada, hoyIso(), horaAhora()) !== 'no_empezada') {
+    return {
+      valido: false,
+      errores: [{
+        campo: 'id',
+        mensaje: 'La campaña ya arrancó: su T&C tiene que seguir publicado mientras esté vigente. Si hay un error, escríbele a Legal.',
+      }],
+    };
+  }
+  if (!web.activa) return { valido: false, errores: [{ campo: 'id', mensaje: web.problema }] };
+
+  var retiro = retirarArchivoWeb_(web, solicitud, ruta);
+  if (!retiro.ok) return { valido: false, errores: [{ campo: 'id', mensaje: 'No pudimos retirarla: ' + retiro.detalle }] };
+
+  var ahora = ahoraTexto();
+  var detalle = 'Retirada por ' + quien.correo + ' el ' + ahora + '. El enlace ya no muestra el T&C.';
+  asegurarColumnasDeLaRevision();
+  actualizarFila('Solicitudes', solicitud._fila, {
+    verificacion: 'dado_de_baja',
+    fecha_verificacion: ahora,
+    detalle_verificacion: detalle,
+  });
+  registrar('retirar_web', id + ' · ' + solicitud.link_publicado);
+
+  return {
+    valido: true,
+    id: id,
+    verificacion: { estado: 'dado_de_baja', detalle: detalle, avisos: [], enlace: solicitud.link_publicado, fecha: ahora },
+  };
 }
 
 /** Los datos de una solicitud para reusarla como base. */
@@ -590,7 +747,10 @@ if (typeof module !== 'undefined') {
     historial: historial,
     marcarPublicado: marcarPublicado,
     ampliarCampana: ampliarCampana,
+    retirarPublicacion: retirarPublicacion,
+    publicacionWebParaLaInterfaz: publicacionWebParaLaInterfaz,
     datosDeSolicitud: datosDeSolicitud,
+    exigirAdministrador: exigirAdministrador,
     adminEstado: adminEstado,
     adminGuardarEstadoDePais: adminGuardarEstadoDePais,
     adminGuardarMiembro: adminGuardarMiembro,

@@ -21,7 +21,7 @@ const { cargarModelos, versionDelModelo } = require('../../scripts/lib/modelos')
 const ARCHIVOS_CORE = listarArchivos(rutaDesdeRaiz('src', 'core'), '.js').map((n) => n.replace(/\.js$/, ''));
 
 // El orden del servidor sí importa: Api usa lo que Config y Datos publican.
-const ARCHIVOS_SERVIDOR = ['Config', 'Datos', 'AdaptadorDocumento', 'EnvioCorreo', 'Setup', 'Api', 'RevisionDePublicacion'];
+const ARCHIVOS_SERVIDOR = ['Config', 'Datos', 'AdaptadorDocumento', 'EnvioCorreo', 'Setup', 'Api', 'RevisionDePublicacion', 'PublicadorWeb'];
 
 /** Lo que el build deja en dist/Modelos.js. */
 function constanteDeModelos() {

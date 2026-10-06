@@ -57,7 +57,44 @@ function pasosParaPublicar(enlacePrevisto) {
 }
 
 /**
- * datos: { nombreCampana, pais, id, linkDoc, urlApp, urlAyuda, enlacePrevisto }
+ * Lo que dice el correo de la generacion cuando RappiMind publica sola
+ * (src/core/publicacion_web.js): ya no hay pasos que seguir, solo el enlace.
+ * null si la campana va por Squarespace.
+ */
+function bloqueDePublicacionWeb(publicacion) {
+  if (!publicacion || publicacion.modo !== 'web' || !urlSegura(publicacion.enlace)) return null;
+  if (publicacion.estado === 'verificado') {
+    return {
+      titulo: 'Ya están publicados',
+      lineas: [
+        'RappiMind los publicó en su enlace definitivo y revisó que el texto publicado sea idéntico al documento.',
+        'Usa este enlace en tus piezas. No tienes que entrar a Squarespace.',
+      ],
+    };
+  }
+  return {
+    titulo: 'Los estamos publicando',
+    lineas: [
+      'RappiMind no alcanzó a terminar de publicarlos y lo vuelve a intentar sola cada hora. Te avisamos por correo cuando queden publicados.',
+      'El enlace ya es el definitivo: puedes usarlo en tus piezas desde ya. No tienes que entrar a Squarespace.',
+    ],
+  };
+}
+
+function seccionWebHtml(web, enlace) {
+  var parrafos = '';
+  for (var i = 0; i < web.lineas.length; i++) {
+    parrafos += '<p style="margin:0 0 10px;color:' + TINTA + ';font-size:15px;line-height:1.5;">' + escaparHtml(web.lineas[i]) + '</p>';
+  }
+  var seguro = urlSegura(enlace);
+  return '<h2 style="margin:28px 0 10px;font-size:17px;color:' + TINTA + ';">' + escaparHtml(web.titulo) + '</h2>' +
+    '<p style="margin:0 0 12px;font-size:15px;"><a href="' + seguro + '" style="color:' + NARANJA + ';font-weight:600;word-break:break-all;">' +
+    escaparHtml(enlace) + '</a></p>' + parrafos;
+}
+
+/**
+ * datos: { nombreCampana, pais, id, linkDoc, urlApp, urlAyuda, enlacePrevisto, publicacion }
+ * publicacion: { modo: 'web', estado, enlace } cuando RappiMind publica sola.
  * Devuelve { asunto, html, texto }.
  */
 function correoDeGeneracion(datos) {
@@ -70,7 +107,11 @@ function correoDeGeneracion(datos) {
   var enlacePrevisto = urlSegura(datos.enlacePrevisto) ? String(datos.enlacePrevisto).trim() : '';
   var pasos = pasosParaPublicar(enlacePrevisto);
 
-  var asunto = 'Tus T&C están listos · ' + String(datos.nombreCampana || '');
+  var web = bloqueDePublicacionWeb(datos.publicacion);
+  var enlaceWeb = web ? String(datos.publicacion.enlace).trim() : '';
+
+  var asunto = (web && datos.publicacion.estado === 'verificado' ? 'Tus T&C están publicados · ' : 'Tus T&C están listos · ') +
+    String(datos.nombreCampana || '');
 
   var pasosHtml = '';
   for (var i = 0; i < pasos.length; i++) {
@@ -89,7 +130,7 @@ function correoDeGeneracion(datos) {
     : '';
 
   // Con la direccion prevista no hay que volver: RappiMind la revisa sola.
-  var volver = urlApp && !enlacePrevisto
+  var volver = urlApp && !enlacePrevisto && !web
     ? '<p style="margin:10px 0 0;color:' + GRIS + ';font-size:14px;">Cuando publiques, vuelve a <a href="' +
       urlApp + '" style="color:' + NARANJA + ';">RappiMind</a> y pega el enlace.</p>'
     : '';
@@ -106,8 +147,9 @@ function correoDeGeneracion(datos) {
     '<p style="margin:0 0 20px;color:' + TINTA + ';font-size:16px;line-height:1.5;">Generamos los Términos y Condiciones de <strong>' +
     nombre + '</strong> para ' + pais + '.</p>' +
     botonDoc +
-    '<h2 style="margin:28px 0 10px;font-size:17px;color:' + TINTA + ';">Para publicarlos</h2>' +
-    '<ol style="margin:0;padding-left:20px;font-size:15px;line-height:1.5;">' + pasosHtml + '</ol>' +
+    (web ? seccionWebHtml(web, enlaceWeb)
+      : '<h2 style="margin:28px 0 10px;font-size:17px;color:' + TINTA + ';">Para publicarlos</h2>' +
+        '<ol style="margin:0;padding-left:20px;font-size:15px;line-height:1.5;">' + pasosHtml + '</ol>') +
     volver +
     pieAyuda +
     '<p style="margin:24px 0 0;padding-top:16px;border-top:1px solid ' + BORDE + ';color:' + GRIS +
@@ -121,9 +163,14 @@ function correoDeGeneracion(datos) {
     '',
   ];
   if (datos.linkDoc) lineas.push('Documento: ' + String(datos.linkDoc), '');
-  lineas.push('Para publicarlos:');
-  for (var p = 0; p < pasos.length; p++) {
-    lineas.push('  ' + (p + 1) + '. ' + pasos[p]);
+  if (web) {
+    lineas.push(web.titulo + ':', 'Enlace: ' + enlaceWeb);
+    for (var w = 0; w < web.lineas.length; w++) lineas.push(web.lineas[w]);
+  } else {
+    lineas.push('Para publicarlos:');
+    for (var p = 0; p < pasos.length; p++) {
+      lineas.push('  ' + (p + 1) + '. ' + pasos[p]);
+    }
   }
   lineas.push('', 'Solicitud ' + String(datos.id || '') + '.');
 
@@ -159,12 +206,38 @@ var CORREOS_DE_VERIFICACION = {
   },
 };
 
+/*
+ * Los mismos correos para una campana que publico RappiMind. Aqui nadie tiene
+ * que ir a Squarespace: lo que se cuenta es lo que paso y lo que RappiMind ya
+ * esta haciendo (hayQueAvisarDeLaPublicacionWeb, src/core/publicacion_web.js).
+ */
+var CORREOS_DE_VERIFICACION_WEB = {
+  verificado: {
+    asunto: 'Tus T&C ya están publicados',
+    titulo: 'Tus T&C ya están publicados',
+    intro: 'RappiMind terminó de publicar los T&C de {nombre} y revisó que el texto publicado sea idéntico al documento generado.',
+    queHacer: '',
+  },
+  con_diferencias: {
+    asunto: 'Revisa tus T&C publicados',
+    titulo: 'Lo publicado no coincide con el documento',
+    intro: 'RappiMind revisó lo que muestra el enlace de {nombre} y no es el texto del documento generado.',
+    queHacer: 'Escríbele a Legal en el canal de ayuda. RappiMind no reemplaza lo publicado por su cuenta, porque alguien tiene que revisar qué cambió: si el documento se editó después de generarlo, ese cambio no está aprobado.',
+  },
+  sin_publicar: {
+    asunto: 'Tus T&C dejaron de verse',
+    titulo: 'El enlace de tus T&C ya no muestra el texto',
+    intro: 'El enlace de {nombre} dejó de mostrar sus T&C y RappiMind no los pudo volver a publicar.',
+    queHacer: 'RappiMind lo vuelve a intentar sola cada hora. Si en unas horas sigue igual, escríbele a Legal en el canal de ayuda: mientras la campaña esté vigente, su T&C tiene que poder consultarse.',
+  },
+};
+
 /**
- * datos: { estado, nombreCampana, id, enlace, linkDoc, detalle, avisos }
+ * datos: { estado, nombreCampana, id, enlace, linkDoc, detalle, avisos, origen }
  * Devuelve { asunto, html, texto }, o null si ese estado no lleva correo.
  */
 function correoDeVerificacion(datos) {
-  var textos = CORREOS_DE_VERIFICACION[datos.estado];
+  var textos = (datos.origen === 'web' ? CORREOS_DE_VERIFICACION_WEB : CORREOS_DE_VERIFICACION)[datos.estado];
   if (!textos) return null;
 
   var nombreTexto = String(datos.nombreCampana || '');
@@ -233,8 +306,71 @@ function correoDeVerificacion(datos) {
   };
 }
 
+/*
+ * El correo de la pagina /tyc, la que muestra todos los T&C que publica
+ * RappiMind. Sale solo cuando cambia: cuando deja de mostrarlos y cuando
+ * vuelve. Va a Legal, porque de esa pagina dependen todos los enlaces nuevos.
+ */
+var CORREOS_DEL_VISOR = {
+  caido: {
+    asunto: 'La página de los T&C no los está mostrando',
+    titulo: 'La página de los T&C no los está mostrando',
+    intro: 'RappiMind revisó {visor} y los T&C que publica no se están viendo.',
+    queHacer: 'Revisa en Squarespace que la página siga publicada y que conserve, sin cambios, el bloque de código de RappiMind. Si lo borraron, hay que volver a pegarlo: docs/PUBLICACION_WEB.md dice cómo. RappiMind la vuelve a revisar cada hora.',
+  },
+  en_pie: {
+    asunto: 'La página de los T&C volvió a funcionar',
+    titulo: 'La página de los T&C volvió a funcionar',
+    intro: 'RappiMind revisó {visor} y otra vez muestra los T&C que publica.',
+    queHacer: '',
+  },
+};
+
+/**
+ * datos: { estado: 'caido' | 'en_pie', visor, detalle }
+ * Devuelve { asunto, html, texto }, o null si ese estado no lleva correo.
+ */
+function correoDelVisor(datos) {
+  var textos = CORREOS_DEL_VISOR[datos.estado];
+  if (!textos) return null;
+  var visor = String(datos.visor || '');
+  var intro = escaparHtml(textos.intro).replace('{visor}', '<strong>' + escaparHtml(visor) + '</strong>');
+  var detalle = datos.detalle && datos.estado === 'caido'
+    ? '<p style="margin:0 0 16px;padding:12px 14px;background:#FFF0DD;border-radius:8px;color:' + TINTA +
+      ';font-size:15px;line-height:1.5;">' + escaparHtml(datos.detalle) + '</p>'
+    : '';
+  var queHacer = textos.queHacer
+    ? '<p style="margin:0 0 20px;color:' + TINTA + ';font-size:15px;line-height:1.5;"><strong>Qué hacer:</strong> ' + escaparHtml(textos.queHacer) + '</p>'
+    : '';
+  var enlace = urlSegura(visor);
+  var boton = enlace
+    ? '<a href="' + enlace + '" style="display:inline-block;background:' + NARANJA +
+      ';color:#FFFFFF;text-decoration:none;font-weight:600;padding:13px 22px;border-radius:8px;">Abrir la página</a>'
+    : '';
+
+  var html =
+    '<!DOCTYPE html><html lang="es"><body style="margin:0;padding:0;background:#F7F8FA;">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F7F8FA;padding:32px 12px;">' +
+    '<tr><td align="center">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#FFFFFF;border:1px solid ' +
+    BORDE + ';border-radius:14px;padding:32px;font-family:Lato,Helvetica,Arial,sans-serif;">' +
+    '<tr><td>' +
+    '<p style="margin:0 0 4px;color:' + NARANJA + ';font-weight:600;font-size:14px;">RappiMind</p>' +
+    '<h1 style="margin:0 0 16px;font-size:24px;line-height:1.25;color:' + TINTA + ';">' + escaparHtml(textos.titulo) + '</h1>' +
+    '<p style="margin:0 0 16px;color:' + TINTA + ';font-size:16px;line-height:1.5;">' + intro + '</p>' +
+    detalle + queHacer + boton +
+    '</td></tr></table></td></tr></table></body></html>';
+
+  var lineas = [textos.titulo, '', textos.intro.replace('{visor}', visor), ''];
+  if (datos.detalle && datos.estado === 'caido') lineas.push(String(datos.detalle), '');
+  if (textos.queHacer) lineas.push('Qué hacer: ' + textos.queHacer, '');
+  return { asunto: textos.asunto, html: html, texto: lineas.join('\n') };
+}
+
 if (typeof module !== 'undefined') {
   module.exports = {
+    correoDelVisor: correoDelVisor,
+    CORREOS_DE_VERIFICACION_WEB: CORREOS_DE_VERIFICACION_WEB,
     correoDeGeneracion: correoDeGeneracion,
     correoDeVerificacion: correoDeVerificacion,
     pasosParaPublicar: pasosParaPublicar,

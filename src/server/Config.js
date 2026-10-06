@@ -19,6 +19,16 @@ var PROPIEDADES = {
   CORREO_COPIA_LEGAL: 'CORREO_COPIA_LEGAL',
   CORREOS_ADMIN: 'CORREOS_ADMIN',
   CONFIRMACIONES_APLICADAS: 'CONFIRMACIONES_APLICADAS',
+  // La publicacion sin Squarespace (src/server/PublicadorWeb.js). Sin bucket
+  // esta apagada. Las otras tres son opcionales: carpeta "tyc", pagina
+  // https://promos.rappi.com/tyc y, sin lista, los paises con ruta_promos.
+  PUBLICACION_BUCKET: 'PUBLICACION_BUCKET',
+  PUBLICACION_CARPETA: 'PUBLICACION_CARPETA',
+  PUBLICACION_VISOR: 'PUBLICACION_VISOR',
+  PUBLICACION_PAISES: 'PUBLICACION_PAISES',
+  // Lo que encontro la ultima revision de la pagina /tyc. La escribe RappiMind,
+  // para avisar solo cuando cambia.
+  VISOR_ESTADO: 'VISOR_ESTADO',
 };
 
 /** Pestanas de la base y sus encabezados, en orden. */

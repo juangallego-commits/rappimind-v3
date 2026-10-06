@@ -34,7 +34,7 @@ function enviarCorreoDeGeneracion(destinatario, datos) {
  * Legal va en copia cuando hay algo que mirar: una diferencia o una pagina que
  * ya no abre. El de "quedo publicada" es solo para el comercial.
  */
-function enviarCorreoDeVerificacion(destinatario, mensaje, conCopiaALegal) {
+function enviarCorreoDeVerificacion_(destinatario, mensaje, conCopiaALegal) {
   if (!destinatario || !mensaje) return false;
 
   var opciones = {
@@ -60,6 +60,6 @@ function enviarCorreoDeVerificacion(destinatario, mensaje, conCopiaALegal) {
 if (typeof module !== 'undefined') {
   module.exports = {
     enviarCorreoDeGeneracion: enviarCorreoDeGeneracion,
-    enviarCorreoDeVerificacion: enviarCorreoDeVerificacion,
+    enviarCorreoDeVerificacion_: enviarCorreoDeVerificacion_,
   };
 }

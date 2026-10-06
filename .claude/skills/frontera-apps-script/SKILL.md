@@ -119,6 +119,27 @@ Y dos cosas más del mismo mundo:
 Si agregas un archivo a `src/core/`, no hace falta tocar nada más: el build y
 `pruebas/dobles/entorno.js` leen la carpeta.
 
+## Lo que el navegador puede llamar (`google.script.run`)
+
+`google.script.run` deja llamar desde el navegador **cualquier función global
+del servidor que no termine en `_`**, no solo las de `Api.js`. Y la web app
+corre como quien la despliega (`executeAs: USER_DEPLOYING`): lo que esa función
+haga, lo hace con la cuenta de Juan.
+
+**La regla.** Una función que escribe en el Sheet, en el bucket o en Drive, que
+lee un documento por su identificador o que manda un correo, y que no revisa
+quién pide, termina en `_`. Las que sí se llaman desde la interfaz
+(`generar`, `ampliarCampana`, `retirarPublicacion`, `revisarPublicacion`, …)
+empiezan por `contextoDeQuienPide()` y revisan permisos. Las que se corren a
+mano desde el editor (`prepararPublicacionWeb`, `quitarRevisionAutomatica`)
+empiezan por `exigirAdministrador()`.
+
+Prueba que lo cuida: `lo que escribe, lee o escribe correos con la cuenta de
+quien despliega no se llama desde el navegador`
+(`pruebas/publicacion_web_servidor.test.js`). Las funciones más viejas de
+`Datos.js`, `AdaptadorDocumento.js` y `EnvioCorreo.js` todavía no siguen esta
+regla; está anotado como pendiente en `docs/PROGRESO.md`.
+
 ## Una frontera de afuera: la página publicada en Squarespace
 
 Desde el 5 de octubre de 2026 el servidor lee la página publicada de cada

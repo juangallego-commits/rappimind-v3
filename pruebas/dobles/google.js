@@ -287,6 +287,18 @@ function instalarDobles(opciones) {
     paginas: {},
     pedidos: [],
     disparadores: [],
+    /*
+     * El bucket de Cloud Storage de la publicacion web, por nombre de objeto:
+     * { contenido, cache, tipo }. Lo escribe la subida y lo leen las dos
+     * lecturas, la de RappiMind (con su token) y la publica (sin sesion).
+     *
+     * gcs.publico en false es un bucket sin lectura publica. gcs.listaPublica
+     * en false (lo que se le pide a TI) hace que un archivo que no esta
+     * responda 403 y no 404, como Cloud Storage cuando no se puede listar.
+     * gcs.subida y gcs.lecturaPrivada fuerzan una respuesta: { codigo, cuerpo }.
+     */
+    bucket: {},
+    gcs: { nombre: null, publico: true, listaPublica: false, subida: null, lecturaPrivada: null, token: 'token-de-prueba' },
   };
 
   mundoActivo = mundo;
@@ -325,6 +337,10 @@ function instalarDobles(opciones) {
       return dia + ' ' + hora;
     },
     sleep: function () {},
+    getUuid: function () {
+      contador += 1;
+      return '00000000-0000-4000-8000-' + ('000000000000' + contador).slice(-12);
+    },
   };
 
   globalThis.SpreadsheetApp = {
@@ -406,11 +422,51 @@ function instalarDobles(opciones) {
     },
   };
 
+  /** Lo que responde Cloud Storage, o null si la URL no es de Cloud Storage. */
+  function respuestaDeCloudStorage(url, opciones) {
+    var gcs = mundo.gcs;
+    var autorizado = !!(opciones && opciones.headers && opciones.headers.Authorization === 'Bearer ' + gcs.token);
+
+    var subida = /^https:\/\/storage\.googleapis\.com\/upload\/storage\/v1\/b\/([^/]+)\/o\?uploadType=multipart$/.exec(url);
+    if (subida) {
+      if (gcs.subida) return gcs.subida;
+      if (!autorizado) return { codigo: 401, cuerpo: '{"error":{"code":401}}' };
+      if (gcs.nombre && decodeURIComponent(subida[1]) !== gcs.nombre) return { codigo: 404, cuerpo: '{"error":{"code":404}}' };
+      var limite = /boundary=(.+)$/.exec(String(opciones.contentType || ''));
+      if (!limite || (opciones.method || '').toLowerCase() !== 'post') return { codigo: 400, cuerpo: 'subida mal armada' };
+      var partes = String(opciones.payload).split('--' + limite[1]);
+      // ['', metadatos, contenido, '--']
+      if (partes.length !== 4 || partes[3] !== '--') return { codigo: 400, cuerpo: 'multipart mal armado' };
+      var cuerpoDe = function (parte) { return parte.slice(parte.indexOf('\r\n\r\n') + 4, -2); };
+      var metadatos = JSON.parse(cuerpoDe(partes[1]));
+      mundo.bucket[metadatos.name] = { contenido: cuerpoDe(partes[2]), cache: metadatos.cacheControl, tipo: metadatos.contentType };
+      return { codigo: 200, cuerpo: JSON.stringify({ kind: 'storage#object', name: metadatos.name }) };
+    }
+
+    var privada = /^https:\/\/storage\.googleapis\.com\/storage\/v1\/b\/([^/]+)\/o\/([^?]+)\?alt=media$/.exec(url);
+    if (privada) {
+      if (gcs.lecturaPrivada) return gcs.lecturaPrivada;
+      if (!autorizado) return { codigo: 401, cuerpo: '' };
+      var guardado = mundo.bucket[decodeURIComponent(privada[2])];
+      return guardado ? { codigo: 200, cuerpo: guardado.contenido } : { codigo: 404, cuerpo: 'No such object' };
+    }
+
+    var publica = /^https:\/\/storage\.googleapis\.com\/([^/]+)\/(.+)$/.exec(url);
+    if (publica) {
+      if (!gcs.publico) return { codigo: 403, cuerpo: '<Error><Code>AccessDenied</Code></Error>' };
+      var objeto = mundo.bucket[decodeURIComponent(publica[2])];
+      if (objeto) return { codigo: 200, cuerpo: objeto.contenido };
+      return gcs.listaPublica ? { codigo: 404, cuerpo: '<Error><Code>NoSuchKey</Code></Error>' }
+        : { codigo: 403, cuerpo: '<Error><Code>AccessDenied</Code></Error>' };
+    }
+    return null;
+  }
+
   globalThis.UrlFetchApp = {
     fetch: function (url, opciones) {
       reventarSiToca('red');
       mundo.pedidos.push({ url: url, opciones: opciones || {} });
-      var pagina = mundo.paginas[url];
+      var pagina = respuestaDeCloudStorage(url, opciones) || mundo.paginas[url];
       if (typeof pagina === 'function') pagina = pagina(url);
       var codigo = pagina ? pagina.codigo : 404;
       var cuerpo = pagina ? pagina.cuerpo : '<!DOCTYPE html><html><body>404</body></html>';
@@ -428,6 +484,7 @@ function instalarDobles(opciones) {
   var siguienteDisparador = 0;
   globalThis.ScriptApp = {
     getService: function () { return { getUrl: function () { return 'https://script.google.com/a/macros/rappi.com/s/demo/exec'; } }; },
+    getOAuthToken: function () { return mundo.gcs.token; },
     getProjectTriggers: function () { return mundo.disparadores.slice(); },
     deleteTrigger: function (disparador) {
       mundo.disparadores = mundo.disparadores.filter(function (d) { return d !== disparador; });
