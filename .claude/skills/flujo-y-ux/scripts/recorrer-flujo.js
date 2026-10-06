@@ -1017,7 +1017,7 @@ async function recorrer() {
 
   // --- 6a ter. El texto para pegar, con su formato -------------------------
   //
-  // Desde el 6 de octubre de 2026 el texto se copia con un boton, ya con
+  // Desde el 5 de octubre de 2026 el texto se copia con un boton, ya con
   // negrillas y vinetas, y es justo lo que RappiMind revisa despues en la
   // pagina publicada. Se intercepta el portapapeles para ver que deja.
   const copiado = await pagina.evaluate(() => new Promise((listo) => {

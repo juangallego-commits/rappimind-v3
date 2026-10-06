@@ -268,7 +268,7 @@ var PASOS_SQUARESPACE = [
     ve: 'Las dos fechas debajo del título.',
   },
   {
-    // Desde el 6 de octubre de 2026 el texto se copia con un boton, ya con su
+    // Desde el 5 de octubre de 2026 el texto se copia con un boton, ya con su
     // formato, y no hace falta abrir el documento ni arreglar las vinetas.
     hace: 'Copia el texto con el botón "Copiar el texto" de RappiMind y pégalo en el cuerpo del evento. Si no tienes RappiMind abierto, selecciona todo el documento y cópialo de ahí.',
     ve: 'El texto completo, con todas sus cláusulas numeradas y sus viñetas.',

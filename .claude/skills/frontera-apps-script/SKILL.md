@@ -121,7 +121,7 @@ Si agregas un archivo a `src/core/`, no hace falta tocar nada más: el build y
 
 ## Una frontera de afuera: la página publicada en Squarespace
 
-Desde el 6 de octubre de 2026 el servidor lee la página publicada de cada
+Desde el 5 de octubre de 2026 el servidor lee la página publicada de cada
 campaña (`src/server/RevisionDePublicacion.js`) con el JSON que Squarespace
 documenta (`?format=json`), y Squarespace avisa que su forma puede cambiar. Tres
 reglas, por la misma razón que las otras cuatro fronteras:

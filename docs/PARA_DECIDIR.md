@@ -7,7 +7,7 @@ bloque G con su fecha y no vuelve a aparecer como pregunta.
 `docs/PENDIENTES_LEGAL.md` se queda como historia: ahí está cómo llegó cada cosa.
 
 El 20 de septiembre se cerraron **31 de los 41 puntos** y el 21 los **diez que
-quedaban**, D1 incluido. El 6 de octubre se abrió **uno nuevo, el I1**: cómo
+quedaban**, D1 incluido. El 5 de octubre se abrió **uno nuevo, el I1**: cómo
 publicar en Squarespace sin que nadie toque Squarespace.
 
 Lo que sí queda es **un bloque de tareas de ejecución**, que ya no dependen de
@@ -51,7 +51,7 @@ las pantallas descritas. No hace falta abrir el repositorio.
 persona que pega el texto en un evento de Squarespace, o si se cambia dónde
 vive el texto para que RappiMind lo publique solo.
 
-**Por qué existe la duda.** Desde el 6 de octubre RappiMind deja todo listo
+**Por qué existe la duda.** Desde el 5 de octubre RappiMind deja todo listo
 para pegar (título, texto con formato, dirección y fechas) y después revisa
 solo, cada hora, que la página publicada sea idéntica al documento. Ya nadie
 tiene que volver a pegar el enlace ni marcar nada. Pero los clics dentro de
@@ -65,14 +65,14 @@ Squarespace siguen siendo de una persona, porque:
   persona choca con los dos.
 - La sanción que se reserva es suspender la cuenta o el sitio. promos.rappi.com
   es uno solo: se caerían los T&C de todos los países a la vez. Para dar una
-  idea del tamaño, la colección de Colombia tenía 9.987 eventos el 6 de octubre
-  de 2026, todos subidos a mano.
+  idea del tamaño, la colección de Colombia tenía 9.987 eventos el 5 de octubre
+  de 2026.
 
 Las citas y el detalle están en `docs/DECISIONES.md`, decisión 139.
 
 **Las opciones.**
 
-1. **Quedarse como quedó el 6 de octubre.** Una persona con usuario de
+1. **Quedarse como quedó el 5 de octubre.** Una persona con usuario de
    Squarespace hace los clics: evento nuevo, pegar título, texto y dirección,
    poner las fechas y publicar. Un par de minutos por campaña. RappiMind hace lo
    demás.
@@ -93,7 +93,7 @@ Las citas y el detalle están en `docs/DECISIONES.md`, decisión 139.
 **Qué pasa con la herramienta con cada una.**
 
 1. Nada: ya está construido y probado. Solo falta que Juan autorice los dos
-   permisos nuevos y corra `setup()` (ver `docs/PROGRESO.md`, 6 de octubre).
+   permisos nuevos y corra `setup()` (ver `docs/PROGRESO.md`, 5 de octubre).
 2. Hay que pedirle a TI dónde vive el archivo público y que lo apruebe
    seguridad. Hay que confirmar que el plan del sitio deja poner código. El
    enlace cambia de forma (por ejemplo `promos.rappi.com/colombia/tyc?c=...`),

@@ -41,7 +41,7 @@ var PASOS_PARA_PUBLICAR = [
 /**
  * Los pasos cuando RappiMind ya sabe en que direccion va a quedar publicada.
  *
- * Desde el 6 de octubre de 2026 la herramienta revisa sola, cada hora, si la
+ * Desde el 5 de octubre de 2026 la herramienta revisa sola, cada hora, si la
  * pagina ya existe en esa direccion y si su texto es el del documento. Ahi el
  * comercial no tiene que volver a pegar nada: decirle que vuelva era decirle
  * que hiciera un trabajo que ya no hace falta.

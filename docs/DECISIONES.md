@@ -1935,25 +1935,25 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      que cazan el defecto: con el `src/` de antes del arreglo fallan 14; las que
      pasan son las que cuidan que lo que ya salía bien siga igual.
 
-## 6 de octubre · La publicación en Squarespace: lo que se automatiza y lo que no
+## 5 de octubre · La publicación en Squarespace: lo que se automatiza y lo que no
 
 139. **RappiMind no publica en Squarespace: deja todo listo para pegar y
-     después verifica lo publicado.** Juan pidió el 6 de octubre de 2026
+     después verifica lo publicado.** Juan pidió el 5 de octubre de 2026
      quitarle el trabajo manual a quien sube los T&C, "directamente desde mi
      usuario de Squarespace" si hacía falta. Antes de construir nada se revisó
      qué permite Squarespace, en sus fuentes:
 
      - **No hay API para crear páginas, entradas ni eventos.** La lista oficial
        de APIs de Squarespace (developers.squarespace.com, "Overview of
-       Commerce APIs", leída el 6 de octubre de 2026) trae Analytics, Contacts,
+       Commerce APIs", leída el 5 de octubre de 2026) trae Analytics, Contacts,
        Discounts, Inventory, Orders, Products, Profiles, Transactions y Webhook
        Subscriptions. Ninguna sirve para el contenido del sitio.
      - **Su política de uso prohíbe las dos formas de hacerlo sin API.** La
        Acceptable Use Policy (actualizada el 24 de febrero de 2020) dice, en el
-       punto 1.6: "Don't access, search or create accounts for the Services by
+       punto 1.6: "Don’t access, search or create accounts for the Services by
        any means other than our publicly supported interfaces (for example,
-       scraping, spidering or crawling)", y en el 1.8: "Don't provide your
-       password to any other person, use any other person's username and
+       scraping, spidering or crawling)", y en el 1.8: "Don’t provide your
+       password to any other person, use any other person’s username and
        password, or otherwise manage the Services through shared credentials."
        Un robot que entra con el usuario de una persona choca con los dos
        puntos. Usar la API interna del editor sería además, en nuestra lectura,
@@ -1988,7 +1988,7 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      Del evento se usan `item.body` (el texto), `item.title`,
      `item.startDate`, `item.endDate`, `item.publishOn` y
      `website.timeZoneOffset`, que se comprobaron en el evento real
-     `promos.rappi.com/colombia/2026/descuentoprodselecc` el 6 de octubre de
+     `promos.rappi.com/colombia/2026/descuentoprodselecc` el 5 de octubre de
      2026. Las fechas se leen en la hora del sitio (Bogotá), no en UTC: el
      11:59 p. m. del último día ya es el día siguiente en UTC.
 

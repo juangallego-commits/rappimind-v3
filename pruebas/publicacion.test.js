@@ -251,7 +251,7 @@ test('sin documento para comparar no hay veredicto', () => {
 
 test('lee el evento con la forma real del JSON de promos.rappi.com', () => {
   // Recortado de https://promos.rappi.com/colombia/2026/descuentoprodselecc?format=json-pretty,
-  // leido el 6 de octubre de 2026. Solo las llaves que usa la revision.
+  // leido el 5 de octubre de 2026. Solo las llaves que usa la revision.
   const real = {
     website: { primaryDomain: 'promos.rappi.com', timeZone: 'America/Bogota', timeZoneOffset: -18000000 },
     item: {

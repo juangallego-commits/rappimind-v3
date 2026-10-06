@@ -2873,7 +2873,7 @@ ganador con 500 ganadores) sigue frenando con este mismo mensaje, porque el
 total no cabe en letras. Ahí limpiar espacios no ayuda, y sigue siendo un cambio
 pequeño darle un mensaje que el comercial entienda, si lo quieres.
 
-## 6 de octubre · La publicación en Squarespace: RappiMind deja todo listo y verifica sola
+## 5 de octubre · La publicación en Squarespace: RappiMind deja todo listo y verifica sola
 
 Juan pidió quitarle el trabajo manual a quien sube los T&C a Squarespace, "que lo
 hagas tú o automáticamente", incluso desde su propio usuario. Antes de construir

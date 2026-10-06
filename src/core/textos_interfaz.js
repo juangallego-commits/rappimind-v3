@@ -190,7 +190,7 @@ var TEXTOS_PT = {
   '¿Quién puede publicar?': 'Quem pode publicar?',
   'Abrir el documento': 'Abrir o documento',
   'Cuando ya esté publicado': 'Quando já estiver publicado',
-  // La revision de lo publicado y el texto para pegar (6 de octubre de 2026).
+  // La revision de lo publicado y el texto para pegar (5 de octubre de 2026).
   'Texto del T&C': 'Texto dos T&C',
   'Copiar el texto': 'Copiar o texto',
   'Copiado': 'Copiado',
