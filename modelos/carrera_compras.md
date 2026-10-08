@@ -1,5 +1,5 @@
 %% Modelo: Carrera de Compras (concurso mayor comprador) · versión 3.1 · base: modelo v2 y decisiones de Legal CO (julio 2026) · revisar en punto de control A
-%% v3.1 (8 de octubre de 2026): revisión de la Carrera de Compras (Kenvue), decisiones de Juan del 8/10/2026. Informe en docs/revisiones/2026-09-29_carrera_compras_kenvue.md. K1: varias Tiendas Participantes con un solo ranking, Turbo por tienda y Cobertura propia. H2: papel operativo de Rappi en el bloque organizador. H3: naturaleza del premio físico que entrega Rappi y cláusula de responsabilidades frente al premio. K9: reemplazo obligatorio del ganador con identidad y mayoría de edad, intentos de contacto y plazo para declarar desierto que pone el KAM. H8: el participante es titular de la cuenta desde la que compra. K8 y H13: cómo se avisa al ganador (en la Plataforma Rappi; la llamada se confirma por escrito).
+%% v3.1 (8 de octubre de 2026): revisión de la Carrera de Compras (Kenvue), decisiones de Juan del 8/10/2026. Informe en docs/revisiones/2026-09-29_carrera_compras_kenvue.md. K1: varias Tiendas Participantes con un solo ranking, Turbo por tienda y Cobertura propia. H2: papel operativo de Rappi en el bloque organizador. H3: naturaleza del premio físico que entrega Rappi y cláusula de responsabilidades frente al premio. K9: reemplazo obligatorio del ganador con identidad y mayoría de edad, intentos de contacto y plazo para declarar desierto que pone el KAM. H8: el participante es titular de la cuenta desde la que compra. K8 y H13: cómo se avisa al ganador (en la Plataforma Rappi; la llamada se confirma por escrito). K11 y H10: bloque propio de modificaciones para concursos (el Organizador modifica de común acuerdo con Rappi; una vez iniciada la vigencia no se reduce el premio ni se adelanta el cierre).
 # TÉRMINOS Y CONDICIONES
 ## {{NOMBRE_CAMPANA_MAYUS}}
 Por medio del presente documento se dan a conocer los términos y condiciones de la campaña promocional denominada “**{{NOMBRE_CAMPANA}}**”, estructurada bajo la modalidad de concurso por carrera de compras. La participación en esta campaña implica la aceptación total de los presentes Términos y Condiciones. Los ganadores se determinan exclusivamente con base en un criterio objetivo, medible y verificable de compras efectivamente realizadas durante la vigencia, y en ningún caso por sorteo, rifa, azar o cualquier otro mecanismo de suerte.
@@ -37,7 +37,7 @@ Antes de declarar a los ganadores, Rappi verificará la elegibilidad de cada par
 § Impuestos. Los impuestos que se generen con ocasión del premio estarán a cargo de quien corresponda conforme a la legislación tributaria aplicable. Cuando haya lugar a retenciones o tributos a cargo del ganador, estos se aplicarán en los términos de la ley.
 [[INCLUIR:publicidad]]
 [[INCLUIR:atencion]]
-[[INCLUIR:modificaciones]]
+[[INCLUIR:modificaciones_concurso]]
 [[INCLUIR:fraude]]
 [[INCLUIR:tyc_plataforma]]
 [[INCLUIR:responsabilidad]]

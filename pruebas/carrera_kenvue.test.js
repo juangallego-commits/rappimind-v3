@@ -461,11 +461,42 @@ test('H8: el participante es titular de la cuenta y hace los pedidos desde ella'
 test('K8 y H13: el aviso nombra la cuenta en la Plataforma Rappi, y la llamada se confirma por escrito', () => {
   const aviso = (medioNotificacion) => documento({ medioNotificacion });
   assert.ok(aviso('correo').includes(
-    'Rappi contactará al ganador mediante el correo electrónico registrado en la cuenta del ganador en la Plataforma Rappi, a más tardar el'.replace('al ganador', 'a cada ganador')
-  ) || aviso('correo').includes('mediante el correo electrónico registrado en la cuenta del ganador en la Plataforma Rappi, a más tardar el'));
+    'mediante el correo electrónico registrado en la cuenta del ganador en la Plataforma Rappi, a más tardar el'));
   assert.ok(aviso('llamada').includes(
     'mediante una llamada telefónica al número registrado en la cuenta del ganador en la Plataforma Rappi, ' +
     'que se confirmará por escrito al correo electrónico registrado en esa cuenta, a más tardar el'));
   // La notificación dentro de la Plataforma no cambia.
   assert.ok(aviso('plataforma').includes('mediante una notificación dentro de la Plataforma Rappi, a más tardar el'));
+});
+
+// --- K11 y H10: modificar un concurso ya iniciado ---------------------------------------
+
+test('K11 y H10: la Carrera lleva su propio bloque de modificaciones', () => {
+  const texto = documento({});
+  assert.ok(texto.includes(
+    'Modificaciones. El Organizador, de común acuerdo con Rappi, podrá modificar los presentes Términos y Condiciones siempre que se cumplan las siguientes condiciones:'));
+  assert.ok(texto.includes('• Las modificaciones no afectarán los premios ya asignados con anterioridad a la modificación.'));
+  assert.ok(texto.includes('• Una vez iniciada la vigencia, no se reducirán el premio ni el número de ganadores, no se retirarán Productos Participantes ni Tiendas Participantes, ' +
+    'no se agregarán requisitos para participar o para sumar al acumulado, no se cambiará el criterio del ranking y no se anticipará la fecha de finalización de la Campaña.'));
+  assert.ok(texto.includes('Si las modificaciones implican un cambio sustancial en las condiciones de la Campaña, Rappi hará esfuerzos razonables para informarte a través de los canales disponibles en la Plataforma Rappi.'));
+  // La voz sigue siendo de tú, como el resto del documento.
+  assert.ok(texto.includes('menos favorables para ti'));
+  assert.ok(!texto.includes('como la reducción del beneficio o del premio'));
+  assertSinRestos(texto, 'carrera');
+});
+
+test('K11 y H10: el bloque nuevo es solo de la Carrera y el compartido no cambia', () => {
+  const { inclusionesDe } = require('../scripts/lib/modelos');
+  const quienes = (bloque) => Object.keys(modelos.modelos).filter((m) => inclusionesDe(modelos.modelos[m]).includes(bloque)).sort();
+  assert.deepStrictEqual(quienes('modificaciones_concurso'), ['carrera_compras']);
+  assert.deepStrictEqual(quienes('modificaciones'), ['cashback', 'cashback_day', 'cupon', 'descuento']);
+
+  const viejo = 'Rappi podrá modificar los presentes Términos y Condiciones siempre que se cumplan las siguientes condiciones:';
+  for (const [codigoPais, tipo] of [['CO', 'cashback'], ['CO', 'cashback_day'], ['MX', 'descuento'], ['MX', 'cupon']]) {
+    const salida = generarTexto(solicitud(codigoPais, tipo, {}), pais(codigoPais), modelos, CONTEXTO);
+    assert.ok(salida.valido, tipo);
+    const plano = textoPlano(salida.texto);
+    assert.ok(plano.includes(viejo), tipo);
+    assert.ok(plano.includes('como la reducción del beneficio o del premio, la modificación de los comercios o productos participantes o la anticipación de la fecha de finalización'), tipo);
+  }
 });
