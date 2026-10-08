@@ -534,6 +534,49 @@ function fraseDelPremioFisico(entrada, pais, ganadores) {
 }
 
 /**
+ * ORACION: lo que el premio puede y no puede canjearse.
+ *
+ * Con Creditos el premio no se canjea por dinero, pero si se gasta en bienes y
+ * servicios de la Plataforma: ese es el uso de los Creditos. La frase de antes,
+ * "ni por otros bienes o servicios", era falsa para ellos. H11 parte 1.
+ */
+function textoCanjeDelPremio(entrada) {
+  if (entrada.tipoPremio === 'creditos') {
+    return 'El premio es personal e intransferible y no podrá canjearse por dinero en efectivo.';
+  }
+  if (entrada.tipoPremio === 'fisico') {
+    return 'El premio es personal e intransferible y no podrá canjearse por dinero en efectivo ni por otros bienes o servicios.';
+  }
+  return '';
+}
+
+/**
+ * FRAGMENTO que se pega al final de la naturaleza del premio en Creditos: hasta
+ * cuando valen y donde se gastan. Va con su espacio de separacion. Si falta
+ * alguna de las dos respuestas no agrega nada, para no dejar una frase a medias
+ * en la vista previa (la validacion no deja generar sin ellas). H11 parte 2.
+ */
+function textoVigenciaYLugarDelPremio(valores) {
+  var vigencia = valores.TEXTO_VIGENCIA_CREDITOS;
+  var lugar = valores.TEXTO_LUGAR_REDENCION;
+  if (!vigencia || !lugar) return '';
+  return ' Los Créditos del premio ' + vigencia + '. ' + lugar;
+}
+
+/**
+ * ORACION: cuando se acreditan los Creditos del premio.
+ *
+ * El plazo sale de la pregunta plazoEntrega, que aplica a los dos tipos de
+ * premio. Va de 2 a 30, asi que "dias habiles" va siempre en plural. H11 parte 2.
+ */
+function textoAcreditacionDelPremio(entrada) {
+  var dias = Number(entrada.plazoEntrega);
+  if (!dias || dias < 2) return '';
+  return 'Los Créditos serán acreditados por Rappi en la Billetera de Créditos del ganador, por cuenta del Organizador, ' +
+    'a más tardar dentro de los ' + letrasYCifra(dias) + ' días hábiles siguientes a la aceptación del premio.';
+}
+
+/**
  * ORACION: el plazo, el costo y el lugar de entrega del premio fisico.
  *
  * Solo con premio fisico. Con Creditos el plazo va dentro de TEXTO_ENTREGA, que
@@ -615,7 +658,8 @@ function derivadosCarrera(entrada, pais, valores) {
     valores.TEXTO_NATURALEZA_PREMIO =
       'El premio consiste en Créditos acreditados en la Billetera de Créditos de la Plataforma Rappi, los cuales son intangibles, ' +
       'no constituyen dinero en efectivo, no son transferibles a terceros y se rigen por los Términos y Condiciones de Funcionamiento ' +
-      'de los Créditos de la Plataforma Rappi, disponibles en: ' + pais.url_tc_creditos + '.';
+      'de los Créditos de la Plataforma Rappi, disponibles en: ' + pais.url_tc_creditos + '.' +
+      textoVigenciaYLugarDelPremio(valores);
   } else if (entrada.tipoPremio === 'fisico' && tieneValor(entrada.descripcionPremio)) {
     valores.LISTA_PREMIOS = fraseDelPremioFisico(entrada, pais, ganadores);
     /*
@@ -644,9 +688,9 @@ function derivadosCarrera(entrada, pais, valores) {
    * 36, y que Juan aprobo el 18 de septiembre.
    */
   valores.TEXTO_ENTREGA = entrada.tipoPremio === 'creditos'
-    ? 'Los Créditos serán acreditados por Rappi en la Billetera de Créditos del ganador, ' +
-      'por cuenta del Organizador, una vez aceptado el premio.'
+    ? textoAcreditacionDelPremio(entrada)
     : (TEXTO_ENTREGA_POR_OPCION[entrada.entregaPor] || '');
+  valores.TEXTO_CANJE_PREMIO = textoCanjeDelPremio(entrada);
 
   /*
    * Los datos del ganador solo se transfieren cuando hay algo fisico que llevar
@@ -855,6 +899,8 @@ if (typeof module !== 'undefined') {
     textoProductos: textoProductos,
     textoRolOperativo: textoRolOperativo,
     textoPlazoEntrega: textoPlazoEntrega,
+    textoCanjeDelPremio: textoCanjeDelPremio,
+    textoAcreditacionDelPremio: textoAcreditacionDelPremio,
     TEXTO_DESEMPATE_POR_OPCION: TEXTO_DESEMPATE_POR_OPCION,
     ganadorObjeto: ganadorObjeto,
     textoIntentosContacto: textoIntentosContacto,

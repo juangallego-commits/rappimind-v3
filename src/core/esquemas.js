@@ -743,6 +743,56 @@ var CAMPOS_CASHBACK_DAY = [
   { id: 'tiendas', etiqueta: 'Tiendas participantes', tipo: 'repetible', minimo: 2, maximo: 60, paso: 'tiendas', obligatorio: true },
 ];
 
+/**
+ * Los Creditos del premio de la Carrera: hasta cuando valen y donde se gastan.
+ *
+ * El Cashback ya pregunta las dos cosas; la Carrera no, y solo remitia a los T&C
+ * de Creditos. El ganador no sabia hasta cuando podia usarlos. Se reusan las
+ * mismas preguntas, solo con premio en Creditos y dentro del paso del premio.
+ * De la redencion solo quedan "en secciones especificas" y "en cualquier
+ * seccion": la frase de "solo en la tienda" dice "donde se origino el
+ * Beneficio", y en la Carrera no hay Beneficio. H11 de la revision de la
+ * Carrera (Kenvue), aprobado el 8 de octubre de 2026.
+ */
+function camposDeCreditosDelPremio() {
+  var ids = ['vigencia', 'diasVigencia', 'fechaFinRedencion', 'redencion', 'secciones', 'exclusionesRedencion'];
+  var salida = [];
+  for (var i = 0; i < CAMPOS_CREDITOS.length; i++) {
+    var original = CAMPOS_CREDITOS[i];
+    if (ids.indexOf(original.id) === -1) continue;
+    salida.push(conCreditosComoPremio(original));
+  }
+  return salida;
+}
+
+function conCreditosComoPremio(original) {
+  var copia = {};
+  for (var llave in original) {
+    if (Object.prototype.hasOwnProperty.call(original, llave)) copia[llave] = original[llave];
+  }
+  copia.paso = 'premio';
+  copia.visible = function (entrada) {
+    return entrada.tipoPremio === 'creditos' && resolverAtributo(original.visible, entrada, true);
+  };
+  copia.obligatorio = function (entrada) {
+    return entrada.tipoPremio === 'creditos' && resolverAtributo(original.obligatorio, entrada, false);
+  };
+  if (original.id === 'redencion') {
+    copia.opciones = original.opciones.filter(function (opcion) { return opcion.valor !== 'tienda'; });
+  }
+  return copia;
+}
+
+/** Inserta varios campos justo despues de otro, por identificador. */
+function insertarVariosDespuesDe(campos, id, nuevos) {
+  var salida = [];
+  for (var i = 0; i < campos.length; i++) {
+    salida.push(campos[i]);
+    if (campos[i].id === id) salida = salida.concat(nuevos);
+  }
+  return salida;
+}
+
 /** Campos de cada fila del repetible de tiendas. */
 var CAMPOS_POR_TIENDA = [
   { id: 'marca', etiqueta: 'Marca', tipo: 'texto', obligatorio: true },
@@ -1624,7 +1674,7 @@ var ESQUEMAS = {
         paso: 'campana',
         obligatorio: true,
       }),
-      CAMPOS_CARRERA
+      insertarVariosDespuesDe(CAMPOS_CARRERA, 'creditosPremio', camposDeCreditosDelPremio())
     ),
     camposPorProducto: CAMPOS_POR_PRODUCTO,
     camposPorTiendaCarrera: CAMPOS_POR_TIENDA_CARRERA,

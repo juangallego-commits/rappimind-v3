@@ -440,6 +440,16 @@ function validarCashback(entrada, tipo, idioma) {
   return errores;
 }
 
+/** Si el tipo le hace esa pregunta al comercial con las respuestas que lleva. */
+function preguntaVisible(esquema, entrada, campoId) {
+  if (!esquema) return true;
+  var visibles = camposVisibles(esquema.id, entrada);
+  for (var i = 0; i < visibles.length; i++) {
+    if (visibles[i].id === campoId) return true;
+  }
+  return false;
+}
+
 /** Cruces de los Creditos: carga y redencion frente a la vigencia. */
 function validarCreditos(entrada, esquema, idioma) {
   var errores = [];
@@ -455,7 +465,10 @@ function validarCreditos(entrada, esquema, idioma) {
     }
   }
 
-  if (entrada.vigencia === 'fecha') {
+  // Solo si la pregunta se hizo: en la Carrera, la vigencia de los Creditos
+  // existe solo con premio en Creditos, y una respuesta vieja de antes de
+  // cambiar a premio fisico no puede frenar una campana sin Creditos.
+  if (entrada.vigencia === 'fecha' && preguntaVisible(esquema, entrada, 'fechaFinRedencion')) {
     var redencion = comoNumeroFecha(entrada.fechaFinRedencion);
     if (redencion !== null && fin !== null && redencion <= fin) {
       errores.push(error('fechaFinRedencion', mensajeDe('fechaFinRedencion', tipo, 'orden', idioma,

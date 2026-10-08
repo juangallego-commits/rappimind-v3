@@ -807,6 +807,8 @@ var PREGUNTAS = {
   }),
 
   vigencia: p({
+    // En la Carrera es del paso del premio (H11).
+    variantes: { carrera_compras: { paso: 'premio' } },
     paso: 'creditos',
     pregunta: '¿Hasta cuándo puede usar esos Créditos?',
     ayuda: 'Por ejemplo: hasta el 31 de diciembre, o 30 días desde que le llegan.',
@@ -832,6 +834,7 @@ var PREGUNTAS = {
       rango: 'Los días van de 1 a 365.',
     },
     variantes: {
+      carrera_compras: { paso: 'premio' },
       cashback_travel: {
         ayuda: 'En las campañas de Travel lo más usado son 15 o 30 días.',
         placeholders: ['TEXTO_VIGENCIA_CREDITOS'],
@@ -840,6 +843,8 @@ var PREGUNTAS = {
   }),
 
   fechaFinRedencion: p({
+    // En la Carrera es del paso del premio (H11).
+    variantes: { carrera_compras: { paso: 'premio' } },
     paso: 'creditos',
     pregunta: '¿Qué día se vencen los Créditos?',
     ayuda: 'Tiene que ser después de que termine la campaña.',
@@ -875,6 +880,18 @@ var PREGUNTAS = {
      */
     razonSinSecciones: 'Todavía no tenemos la lista de secciones de la app en {pais}, y el documento tiene que nombrarlas igual que la app. Si tu campaña las necesita, escríbenos a #tyc-rappi.',
     variantes: {
+      // Sin "solo en esta tienda": en la Carrera los Creditos son un premio, no
+      // un beneficio que se gane en una tienda (H11).
+      carrera_compras: {
+        paso: 'premio',
+        pregunta: '¿Dónde puede gastar el ganador los Créditos?',
+        ayuda: 'Por ejemplo: en cualquier parte de Rappi, que es lo más común.',
+        porQue: 'Define dónde vale el saldo del premio. En todo caso, estos Créditos casi nunca aplican a RappiFavor, Cajero ATM ni Rappi Travel.',
+        opciones: [
+          { valor: 'secciones', etiqueta: 'En ciertas secciones de Rappi', nota: 'Tú eliges cuáles.' },
+          { valor: 'general', etiqueta: 'En cualquier parte de Rappi', nota: 'Donde sea que se acepten Créditos.' },
+        ],
+      },
       cashback_travel: {
         pregunta: '¿Dónde puede gastar los Créditos?',
         ayuda: 'Lo normal es limitarlos a algunas categorías de Travel.',
@@ -926,6 +943,8 @@ var PREGUNTAS = {
    * respondida, la pregunta se muestra igual y alguien tiene que confirmarla.
    */
   exclusionesRedencion: p({
+    // En la Carrera es del paso del premio (H11).
+    variantes: { carrera_compras: { paso: 'premio' } },
     paso: 'creditos',
     pregunta: '¿En qué secciones NO se pueden redimir los Créditos?',
     ayuda: 'Vienen marcadas las de siempre. Desmarca una solo si esa campaña sí la permite.',
@@ -938,6 +957,8 @@ var PREGUNTAS = {
   }),
 
   secciones: p({
+    // En la Carrera es del paso del premio (H11).
+    variantes: { carrera_compras: { paso: 'premio' } },
     paso: 'creditos',
     pregunta: '¿En qué secciones?',
     ayuda: 'Puedes marcar varias.',
@@ -2149,6 +2170,7 @@ var NOMBRE_DEL_HUECO = {
   TEXTO_ROL_OPERATIVO: 'el papel de la plataforma en el concurso',
   GANADOR_OBJETO: 'cuántas personas ganan',
   TEXTO_PLAZO_ENTREGA: 'en cuántos días se entrega el premio',
+  TEXTO_CANJE_PREMIO: 'qué puede hacerse con el premio',
   TEXTO_INTENTOS_CONTACTO: 'cuántas veces se intenta contactar al ganador',
   DIAS_DESIERTO: 'en cuántos días se declara desierto el premio',
   TEXTO_TERRITORIO: 'dónde aplica',

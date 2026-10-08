@@ -615,3 +615,77 @@ test('H12: el plazo de entrega va de 2 a 30 días hábiles, y con uno no se gene
   delete sin.plazoEntrega;
   assert.ok(validarSolicitud(sin, co, CONTEXTO).errores.some((e) => e.campo === 'plazoEntrega'));
 });
+
+// --- H11: el premio en Créditos se gasta, vale hasta cuándo y se acredita en un plazo ------------------
+
+const CREDITOS = { tipoPremio: 'creditos', creditosPremio: 500000, vigencia: 'dias', diasVigencia: 30, redencion: 'general', plazoEntrega: 10 };
+
+test('H11: el premio en Créditos no se canjea por dinero, pero sí se gasta en la Plataforma', () => {
+  const creditos = documento(CREDITOS);
+  assert.ok(creditos.includes('El premio es personal e intransferible y no podrá canjearse por dinero en efectivo. La cantidad de premios'));
+  assert.ok(!creditos.includes('ni por otros bienes o servicios'));
+
+  const fisico = documento({ tipoPremio: 'fisico', descripcionPremio: 'Una bicicleta', valorPremio: 1200000, entregaPor: 'organizador' });
+  assert.ok(fisico.includes('El premio es personal e intransferible y no podrá canjearse por dinero en efectivo ni por otros bienes o servicios. La cantidad de premios'));
+});
+
+test('H11: la naturaleza de los Créditos dice hasta cuándo valen y dónde se gastan', () => {
+  const porDias = documento(CREDITOS);
+  assert.ok(porDias.includes('disponibles en: https://legal.rappi.com.co/colombia/terminos-y-condiciones-funcionamiento-de-los-creditos-de-la-plataforma-rappi-2/. ' +
+    'Los Créditos del premio tendrán una vigencia de treinta (30) días calendario contados a partir de su carga. ' +
+    'Los Créditos podrán redimirse en cualquier sección de la Plataforma Rappi habilitada para el uso de Créditos, dentro del Territorio.'));
+
+  const porFecha = documento(Object.assign({}, CREDITOS, { vigencia: 'fecha', fechaFinRedencion: '2026-12-31', redencion: 'secciones', secciones: ['Restaurantes'] }));
+  assert.ok(porFecha.includes('Los Créditos del premio podrán redimirse hasta las 11:59 p. m. del 31 de diciembre de 2026. ' +
+    'Los Créditos podrán redimirse en cualquier tienda de la sección “Restaurantes” de la Plataforma Rappi, dentro del Territorio.'));
+
+  const conExclusiones = documento(Object.assign({}, CREDITOS, { exclusionesRedencion: ['travel', 'atm'] }));
+  assert.ok(conExclusiones.includes('a excepción de'), 'las secciones excluidas se nombran');
+  assertSinRestos(porDias, 'dias');
+  assertSinRestos(porFecha, 'fecha');
+});
+
+test('H11: la acreditación de los Créditos tiene su plazo, sin "una vez aceptado el premio"', () => {
+  const texto = documento(CREDITOS);
+  assert.ok(texto.includes('• Entrega: Los Créditos serán acreditados por Rappi en la Billetera de Créditos del ganador, por cuenta del Organizador, a más tardar dentro de los diez (10) días hábiles siguientes a la aceptación del premio.'));
+  assert.ok(!texto.includes('una vez aceptado el premio'));
+  assert.ok(!texto.includes('sin costo para el ganador'), 'la frase del premio físico no sale con Créditos');
+});
+
+test('H11: el México de la Carrera en Créditos no trae nada colombiano', () => {
+  const texto = documento(CREDITOS, 'MX');
+  const viñetaDeEntrega = texto.split('\n').filter((l) => l.startsWith('• Entrega:'))[0];
+  assert.ok(viñetaDeEntrega.includes('diez (10) días hábiles'));
+  assert.ok(texto.includes('tendrán una vigencia de treinta (30) días naturales contados a partir de su carga'));
+  assert.ok(!/días calendario/.test(texto));
+});
+
+test('H11: con Créditos se piden vigencia, lugar y plazo; con premio físico no se piden', () => {
+  const co = pais('CO');
+  const faltan = (respuestas, borrar) => {
+    const entrada = carrera(respuestas);
+    borrar.forEach((c) => delete entrada[c]);
+    return validarSolicitud(entrada, co, CONTEXTO).errores.map((e) => e.campo);
+  };
+  const sinNada = faltan(CREDITOS, ['vigencia', 'diasVigencia', 'redencion', 'plazoEntrega']);
+  assert.ok(sinNada.includes('vigencia') && sinNada.includes('redencion') && sinNada.includes('plazoEntrega'), sinNada.join(','));
+
+  // Con premio físico, una vigencia vieja de antes de cambiar el premio no estorba.
+  const fisico = { tipoPremio: 'fisico', descripcionPremio: 'Una bicicleta', valorPremio: 1200000, entregaPor: 'organizador' };
+  const viejo = validarSolicitud(carrera(Object.assign({ vigencia: 'fecha', fechaFinRedencion: '2026-10-02', redencion: 'tienda' }, fisico)), co, CONTEXTO);
+  assert.ok(viejo.valido, JSON.stringify(viejo.errores));
+
+  // Y con Créditos, la fecha límite sigue teniendo que ser posterior al fin de la campaña.
+  const temprano = validarSolicitud(carrera(Object.assign({}, CREDITOS, { vigencia: 'fecha', fechaFinRedencion: '2026-10-02' })), co, CONTEXTO);
+  assert.ok(temprano.errores.some((e) => e.campo === 'fechaFinRedencion'), JSON.stringify(temprano.errores));
+});
+
+test('H11: la redención del premio no ofrece "solo en la tienda"', () => {
+  const { preguntaDe } = require('../src/core/preguntas.js');
+  const { esquemaDe: esquema } = require('../src/core/esquemas.js');
+  assert.deepStrictEqual(preguntaDe('redencion', 'carrera_compras').opciones.map((o) => o.valor), ['secciones', 'general']);
+  const campo = esquema('carrera_compras').campos.filter((c) => c.id === 'redencion')[0];
+  assert.deepStrictEqual(campo.opciones.map((o) => o.valor), ['secciones', 'general']);
+  // El Cashback conserva sus tres opciones.
+  assert.deepStrictEqual(preguntaDe('redencion', 'cashback').opciones.map((o) => o.valor), ['tienda', 'secciones', 'general']);
+});
