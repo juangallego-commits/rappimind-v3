@@ -761,8 +761,16 @@ function derivadosCarrera(entrada, pais, valores) {
   var plazo = Number(entrada.plazoConfirmacion);
   valores.PLAZO_CONFIRMACION = plazo ? letrasYCifra(plazo) + ' ' + (plazo === 1 ? 'día hábil' : 'días hábiles') : '';
 
+  /*
+   * El minimo se mide sobre los Productos Participantes del pedido, sin envio,
+   * tarifa de servicio ni propinas, igual que en el Cashback. La frase de antes
+   * decia "los pedidos cuyo valor sea igual o superior a", sin decir si era el
+   * pedido completo o lo que participa, ni si entraban el envio y la tarifa.
+   * H17 de la revision de la Carrera (Kenvue), 8 de octubre de 2026.
+   */
   valores.TEXTO_UMBRAL = tieneValor(entrada.compraMinima)
-    ? 'Únicamente contabilizarán para el concurso los pedidos cuyo valor sea igual o superior a ' + montoConMoneda(entrada.compraMinima, pais) + '.'
+    ? 'Únicamente suman al acumulado los pedidos en los que el valor de los Productos Participantes, sin incluir el costo de envío, ' +
+      'la tarifa de servicio ni las propinas, sea igual o superior a ' + montoConMoneda(entrada.compraMinima, pais) + '.'
     : 'No se exige un valor mínimo de compra por pedido para participar en la Campaña.';
 }
 

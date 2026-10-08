@@ -914,3 +914,15 @@ test('H16: el campo de marca avisa, sin frenar, si trae una "y" y ninguna coma',
   const salida = generarTexto(carrera({ productos: 'marca', makerMarca: 'Ramo y Marinela' }), pais('CO'), modelos, CONTEXTO);
   assert.ok(salida.valido);
 });
+
+// --- H17: la compra mínima se mide sobre los Productos Participantes ---------------------------------
+
+test('H17: la compra mínima dice sobre qué valor se mide', () => {
+  const con = documento({ compraMinima: 30000 });
+  assert.ok(con.includes('Únicamente suman al acumulado los pedidos en los que el valor de los Productos Participantes, sin incluir el costo de envío, la tarifa de servicio ni las propinas, sea igual o superior a treinta mil pesos M/Cte. ($30.000).'));
+  assert.ok(!con.includes('los pedidos cuyo valor sea igual o superior'));
+  const mx = documento({ compraMinima: 300 }, 'MX');
+  assert.ok(mx.includes('sea igual o superior a trescientos pesos MXN ($300).'));
+  // Sin mínimo, la frase de siempre.
+  assert.ok(documento({ compraMinima: null }).includes('No se exige un valor mínimo de compra por pedido para participar en la Campaña.'));
+});
