@@ -471,6 +471,12 @@ var CAMPOS_CARRERA = [
   },
   { id: 'fechaNotificacion', etiqueta: 'Fecha de notificación', tipo: 'fecha', paso: 'premio', obligatorio: true },
   { id: 'plazoConfirmacion', etiqueta: 'Plazo para confirmar', tipo: 'numero', minimo: 1, maximo: 30, porDefecto: 5, paso: 'premio', obligatorio: true },
+  // Sin valor por defecto a proposito: son promesas al ganador (cuantas veces se
+  // intenta contactarlo y en cuantos dias se declara desierto el premio), y las
+  // pone el KAM con lo que de verdad se va a hacer. K9 de la revision de la
+  // Carrera (Kenvue), instruccion de Juan del 8 de octubre de 2026.
+  { id: 'intentosContacto', etiqueta: 'Intentos de contacto', tipo: 'numero', minimo: 1, maximo: 5, paso: 'premio', obligatorio: true },
+  { id: 'diasDesierto', etiqueta: 'Días para declarar desierto el premio', tipo: 'numero', minimo: 15, maximo: 90, paso: 'premio', obligatorio: true },
 ];
 
 /**

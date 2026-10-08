@@ -1033,7 +1033,7 @@ async function recorrer() {
     productos: 'marca', makerMarca: 'Bimbo', criterioGanador: 'mayor_valor', numeroGanadores: 1,
     desempate: 'primero', tipoPremio: 'fisico', descripcionPremio: 'Una bicicleta de montaña',
     entregaPor: 'organizador', medioNotificacion: 'correo', fechaNotificacion: '2026-12-05',
-    plazoConfirmacion: 5, compraMinima: 30000,
+    plazoConfirmacion: 5, intentosContacto: 3, diasDesierto: 30, compraMinima: 30000,
   };
 
   async function abrirEnElAcuerdo(datos) {

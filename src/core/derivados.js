@@ -511,6 +511,33 @@ function fraseDelPremioFisico(entrada, pais, ganadores) {
     ', con un valor comercial de ' + unitario + conImpuesto + '.';
 }
 
+/**
+ * FRAGMENTO: cuantas veces se intenta contactar al ganador.
+ *
+ * Con varios intentos, cada uno en un dia habil distinto: asi quedan separados
+ * y no se cuentan tres llamadas seguidas como tres intentos. Vacio si el KAM no
+ * lo ha respondido.
+ */
+function textoIntentosContacto(entrada) {
+  var intentos = Number(entrada.intentosContacto);
+  if (!intentos || intentos < 1) return '';
+  if (intentos === 1) return 'al menos un (1) intento de contacto';
+  return 'al menos ' + letrasYCifra(intentos) + ' intentos realizados en días hábiles distintos';
+}
+
+/**
+ * FRAGMENTO: los dias para declarar desierto el premio, con el termino del pais.
+ *
+ * "treinta (30) dias calendario" en Colombia, "dias naturales" en Mexico y
+ * "dias corridos" en Argentina: el termino sale de la fila del pais, como el de
+ * la vigencia de los Creditos, porque la Carrera corre en los nueve paises.
+ */
+function diasDesierto(entrada, pais) {
+  var dias = Number(entrada.diasDesierto);
+  if (!dias || dias < 1) return '';
+  return letrasYCifra(dias) + ' ' + terminoDeDias(pais, dias);
+}
+
 /** Derivados propios de la Carrera de Compras. */
 function derivadosCarrera(entrada, pais, valores) {
   valores.TEXTO_PRODUCTOS = textoProductos(entrada);
@@ -598,6 +625,9 @@ function derivadosCarrera(entrada, pais, valores) {
 
   valores.MEDIO_NOTIFICACION = MEDIO_NOTIFICACION_POR_OPCION[entrada.medioNotificacion] || '';
   valores.FECHA_NOTIFICACION = entrada.fechaNotificacion ? formatearFecha(entrada.fechaNotificacion) : '';
+
+  valores.TEXTO_INTENTOS_CONTACTO = textoIntentosContacto(entrada);
+  valores.DIAS_DESIERTO = diasDesierto(entrada, pais);
 
   var plazo = Number(entrada.plazoConfirmacion);
   valores.PLAZO_CONFIRMACION = plazo ? letrasYCifra(plazo) + ' ' + (plazo === 1 ? 'día hábil' : 'días hábiles') : '';
@@ -772,6 +802,8 @@ if (typeof module !== 'undefined') {
     textoLugarRedencion: textoLugarRedencion,
     textoProductos: textoProductos,
     textoRolOperativo: textoRolOperativo,
+    textoIntentosContacto: textoIntentosContacto,
+    diasDesierto: diasDesierto,
     TEXTO_NATURALEZA_FISICO_ENTREGA_ORGANIZADOR: TEXTO_NATURALEZA_FISICO_ENTREGA_ORGANIZADOR,
     TEXTO_NATURALEZA_FISICO_ENTREGA_RAPPI: TEXTO_NATURALEZA_FISICO_ENTREGA_RAPPI,
     textoTiendasParticipantes: textoTiendasParticipantes,

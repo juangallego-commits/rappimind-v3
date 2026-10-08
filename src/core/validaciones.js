@@ -1035,6 +1035,23 @@ function validarTiendasCarrera(entrada, esquema, idioma) {
 }
 
 /**
+ * El aviso suave de los dias para declarar desierto el premio.
+ *
+ * No bloquea: el comercial puede querer un plazo corto. Pero si es menor que
+ * tres veces el plazo para aceptar, casi no alcanza a pasar el premio al
+ * siguiente del ranking, que tiene su propio plazo. Devuelve la frase del aviso
+ * o cadena vacia. K9 de la revision de la Carrera (Kenvue).
+ */
+function avisoDeDiasDesierto(entrada) {
+  var dias = Number((entrada || {}).diasDesierto);
+  var plazo = Number((entrada || {}).plazoConfirmacion);
+  if (!dias || !plazo) return '';
+  if (dias >= plazo * 3) return '';
+  var pregunta = preguntaDe('diasDesierto', 'carrera_compras');
+  return pregunta && pregunta.aviso ? pregunta.aviso : '';
+}
+
+/**
  * Las tiendas de Turbo del cashback por ETA.
  *
  * Una fila sin nombre deja el documento sin la vinneta, y el mismo nombre dos
@@ -1206,6 +1223,7 @@ if (typeof module !== 'undefined') {
     validarProductos: validarProductos,
     validarTiendasEta: validarTiendasEta,
     validarTiendasCarrera: validarTiendasCarrera,
+    avisoDeDiasDesierto: avisoDeDiasDesierto,
     parecenVariasTiendas: parecenVariasTiendas,
     validarColumnasDelPais: validarColumnasDelPais,
   };

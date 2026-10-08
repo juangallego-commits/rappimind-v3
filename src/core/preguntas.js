@@ -1973,6 +1973,44 @@ var PREGUNTAS = {
     },
   }),
 
+  /*
+   * Cuantas veces se intenta contactar al ganador, y cuanto tarda en declararse
+   * desierto el premio.
+   *
+   * Antes el documento decia "tras intentos razonables", sin numero, y que el
+   * premio "podra asignarse" al siguiente, sin final. Lo legal queda fijo en el
+   * modelo (el premio pasa al siguiente del ranking de manera obligatoria, el
+   * reemplazo cumple los requisitos, tiene el mismo plazo y la cadena tiene un
+   * final); los dos numeros los pone el KAM, como el plazo para aceptar. K9 de
+   * la revision de la Carrera (Kenvue), 8 de octubre de 2026.
+   */
+  intentosContacto: p({
+    paso: 'premio',
+    pregunta: '¿Cuántas veces se intenta contactar al ganador antes de pasar al siguiente del ranking?',
+    ayuda: 'Lo que de verdad se va a hacer. Con varios intentos, cada uno va en un día hábil distinto.',
+    porQue: 'Si el ganador dice que nunca lo contactaron, el documento muestra cuántas veces había que intentarlo.',
+    ejemplo: '3',
+    placeholders: ['TEXTO_INTENTOS_CONTACTO'],
+    errores: {
+      vacio: 'Escribe cuántas veces se intenta contactar al ganador.',
+      rango: 'Los intentos de contacto van de 1 a 5.',
+    },
+  }),
+
+  diasDesierto: p({
+    paso: 'premio',
+    pregunta: 'Si nadie acepta el premio, ¿en cuántos días, contados desde la fecha de aviso, se declara desierto?',
+    ayuda: 'Deja tiempo para que el premio pase a los siguientes del ranking.',
+    porQue: 'La cadena de reemplazos necesita un final; si no lo tiene, el premio queda en el aire.',
+    ejemplo: '30',
+    aviso: 'Con ese plazo casi no alcanza a pasar el premio al siguiente del ranking.',
+    placeholders: ['DIAS_DESIERTO'],
+    errores: {
+      vacio: 'Escribe en cuántos días se declara desierto el premio si nadie lo acepta.',
+      rango: 'El plazo para declarar desierto el premio va de 15 a 90 días.',
+    },
+  }),
+
   // --- Las tiendas (Cashback Day) -----------------------------------------
 
   tiendas: p({
@@ -2086,6 +2124,8 @@ var NOMBRE_DEL_HUECO = {
   EN_LA_TIENDA: 'las tiendas donde suman las compras',
   TEXTO_ACUMULADO_TIENDAS: 'si las compras de varias tiendas suman juntas',
   TEXTO_ROL_OPERATIVO: 'el papel de la plataforma en el concurso',
+  TEXTO_INTENTOS_CONTACTO: 'cuántas veces se intenta contactar al ganador',
+  DIAS_DESIERTO: 'en cuántos días se declara desierto el premio',
   TEXTO_TERRITORIO: 'dónde aplica',
   FECHA_INICIO: 'el día de inicio',
   HORA_INICIO: 'la hora de inicio',

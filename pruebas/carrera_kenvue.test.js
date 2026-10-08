@@ -375,3 +375,73 @@ test('H3: la cláusula de responsabilidades separa el bien del Organizador de la
     assert.ok(documento(respuestas).includes('Responsabilidades frente al premio. ' + esperado), JSON.stringify(respuestas));
   }
 });
+
+// --- K9: el premio pasa al siguiente del ranking, con requisitos y con final ---------------
+
+test('K9: la viñeta de Aceptación dice lo que el informe aprobó, con los números del KAM', () => {
+  const texto = documento({ intentosContacto: 3, diasDesierto: 30, plazoConfirmacion: 8 });
+  assert.ok(texto.includes(
+    '• Aceptación: el ganador deberá aceptar el premio, confirmar sus datos y su dirección de entrega cuando corresponda, ' +
+    'y acreditar su identidad y su mayoría de edad con su documento de identidad, dentro de un plazo de ocho (8) días hábiles a partir de la notificación. ' +
+    'Al aceptar el premio, el ganador declara que cumple los requisitos para participar y que no se encuentra en ninguno de los casos de la cláusula “Quiénes no pueden participar”. ' +
+    'Si Rappi no logra contactarlo después de al menos tres (3) intentos realizados en días hábiles distintos, o si no acepta el premio, no confirma sus datos o no acredita su identidad dentro de ese plazo, ' +
+    'perderá el derecho al premio, y este se asignará al siguiente participante del ranking que cumpla los requisitos de la Campaña, de forma sucesiva y con el mismo plazo para aceptarlo. ' +
+    'Si dentro de los treinta (30) días calendario siguientes a la fecha de notificación indicada en esta cláusula ningún participante acepta el premio, este se declarará desierto.'
+  ), texto.slice(texto.indexOf('Aceptación'), texto.indexOf('Aceptación') + 1500));
+  assert.ok(!texto.includes('intentos razonables') && !texto.includes('podrá asignarse'));
+});
+
+test('K9: los intentos de contacto con uno y con varios', () => {
+  const co = pais('CO');
+  const con = (intentosContacto) => calcularDerivados(carrera({ intentosContacto }), co).TEXTO_INTENTOS_CONTACTO;
+  assert.strictEqual(con(1), 'al menos un (1) intento de contacto');
+  assert.strictEqual(con(2), 'al menos dos (2) intentos realizados en días hábiles distintos');
+  assert.strictEqual(con(3), 'al menos tres (3) intentos realizados en días hábiles distintos');
+  assert.strictEqual(con(5), 'al menos cinco (5) intentos realizados en días hábiles distintos');
+
+  const uno = documento({ intentosContacto: 1 });
+  assert.ok(uno.includes('Si Rappi no logra contactarlo después de al menos un (1) intento de contacto, o si no acepta'));
+});
+
+test('K9: los días para declarar desierto llevan el término de días de cada país', () => {
+  const dias = (codigoPais, n) => calcularDerivados(carrera({ diasDesierto: n }, codigoPais), pais(codigoPais)).DIAS_DESIERTO;
+  assert.strictEqual(dias('CO', 30), 'treinta (30) días calendario');
+  assert.strictEqual(dias('MX', 30), 'treinta (30) días naturales');
+  assert.strictEqual(dias('AR', 30), 'treinta (30) días corridos');
+  assert.strictEqual(dias('CO', 15), 'quince (15) días calendario');
+  assert.strictEqual(dias('MX', 90), 'noventa (90) días naturales');
+
+  // El documento de México no trae nada colombiano en la viñeta nueva.
+  const mx = documento({ diasDesierto: 45 }, 'MX');
+  assert.ok(mx.includes('Si dentro de los cuarenta y cinco (45) días naturales siguientes a la fecha de notificación'));
+  assert.ok(!/días calendario/.test(mx.slice(mx.indexOf('Aceptación'), mx.indexOf('Aceptación') + 1800)));
+});
+
+test('K9: las dos preguntas nuevas son obligatorias y tienen su rango', () => {
+  const co = pais('CO');
+  const errores = (cambios) => validarSolicitud(carrera(cambios), co, CONTEXTO).errores.map((e) => e.campo + ': ' + e.mensaje);
+  const sin = carrera({});
+  delete sin.intentosContacto;
+  delete sin.diasDesierto;
+  const faltan = validarSolicitud(sin, co, CONTEXTO).errores.map((e) => e.campo);
+  assert.ok(faltan.includes('intentosContacto') && faltan.includes('diasDesierto'), faltan.join(','));
+
+  assert.ok(errores({ intentosContacto: 0 }).some((e) => e.startsWith('intentosContacto')));
+  assert.ok(errores({ intentosContacto: 6 }).some((e) => e.startsWith('intentosContacto: Los intentos de contacto van de 1 a 5.')));
+  assert.ok(errores({ diasDesierto: 14 }).some((e) => e.startsWith('diasDesierto: El plazo para declarar desierto el premio va de 15 a 90 días.')));
+  assert.ok(errores({ diasDesierto: 91 }).some((e) => e.startsWith('diasDesierto')));
+  assert.ok(!errores({ intentosContacto: 5, diasDesierto: 90 }).some((e) => /^(intentosContacto|diasDesierto)/.test(e)));
+});
+
+test('K9: avisa, sin bloquear, si el plazo para declarar desierto es menor que tres veces el de aceptar', () => {
+  const { avisoDeDiasDesierto } = require('../src/core/validaciones.js');
+  const frase = 'Con ese plazo casi no alcanza a pasar el premio al siguiente del ranking.';
+  assert.strictEqual(avisoDeDiasDesierto({ plazoConfirmacion: 8, diasDesierto: 20 }), frase);
+  assert.strictEqual(avisoDeDiasDesierto({ plazoConfirmacion: 8, diasDesierto: 24 }), '');
+  assert.strictEqual(avisoDeDiasDesierto({ plazoConfirmacion: 5, diasDesierto: 30 }), '');
+  assert.strictEqual(avisoDeDiasDesierto({ plazoConfirmacion: 5 }), '');
+
+  // No es un error: la campaña con ese plazo genera igual.
+  const salida = generarTexto(carrera({ plazoConfirmacion: 10, diasDesierto: 20 }), pais('CO'), modelos, CONTEXTO);
+  assert.ok(salida.valido, JSON.stringify(salida.errores));
+});

@@ -299,6 +299,8 @@ function botonDelModeloDeAcuerdo(pais) {
 function avisoDe(campo) {
   // El panel del acuerdo cuelga de la misma pregunta, debajo de las opciones.
   if (campo.id === 'acuerdoDatos') return panelDeAcuerdoDeDatos();
+  // No bloquea: avisa que el plazo casi no alcanza a pasar el premio al siguiente.
+  if (campo.id === 'diasDesierto') return avisoDeDiasDesierto(estado.entrada()) || null;
   if (campo.id !== 'fechaInicio') return null;
   var inicio = estado.entrada().fechaInicio;
   if (!inicio) return null;
