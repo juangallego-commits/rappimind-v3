@@ -1781,7 +1781,7 @@ var PREGUNTAS = {
     ayuda: 'Los primeros del ranking. Por ejemplo: 3.',
     porQue: 'El documento dice cuántos ganan y en qué posiciones. Cambiarlo después de publicado no se puede.',
     ejemplo: '3',
-    placeholders: ['FRASE_GANADORES'],
+    placeholders: ['FRASE_GANADORES', 'GANADOR_OBJETO'],
     errores: {
       vacio: 'Escribe cuántas personas ganan.',
       rango: 'El número de ganadores va de 1 a 500.',
@@ -2124,6 +2124,7 @@ var NOMBRE_DEL_HUECO = {
   EN_LA_TIENDA: 'las tiendas donde suman las compras',
   TEXTO_ACUMULADO_TIENDAS: 'si las compras de varias tiendas suman juntas',
   TEXTO_ROL_OPERATIVO: 'el papel de la plataforma en el concurso',
+  GANADOR_OBJETO: 'cuántas personas ganan',
   TEXTO_INTENTOS_CONTACTO: 'cuántas veces se intenta contactar al ganador',
   DIAS_DESIERTO: 'en cuántos días se declara desierto el premio',
   TEXTO_TERRITORIO: 'dónde aplica',

@@ -172,7 +172,7 @@ var REDENCION_GENERAL_SIN_EXCLUSIONES =
 
 var CRITERIO_GANADOR_POR_OPCION = {
   mayor_valor: 'el mayor valor total en compras de Productos Participantes',
-  mas_pedidos: 'el mayor número de pedidos válidos con Productos Participantes',
+  mas_pedidos: 'el mayor número de Pedidos Válidos con Productos Participantes',
 };
 
 var TEXTO_DESEMPATE_POR_OPCION = {
@@ -548,10 +548,22 @@ function diasDesierto(entrada, pais) {
   return letrasYCifra(dias) + ' ' + terminoDeDias(pais, dias);
 }
 
+/**
+ * FRAGMENTO: el objeto de "Antes de declarar ...", en singular o plural.
+ *
+ * La clausula de verificacion decia siempre "a los ganadores", tambien con un
+ * solo ganador (K5 de la revision de la Carrera). Sin numero de ganadores sale
+ * en plural, que es lo que decia el modelo.
+ */
+function ganadorObjeto(entrada) {
+  return Number(entrada.numeroGanadores) === 1 ? 'al ganador' : 'a los ganadores';
+}
+
 /** Derivados propios de la Carrera de Compras. */
 function derivadosCarrera(entrada, pais, valores) {
   valores.TEXTO_PRODUCTOS = textoProductos(entrada);
   valores.TEXTO_ROL_OPERATIVO = textoRolOperativo(entrada);
+  valores.GANADOR_OBJETO = ganadorObjeto(entrada);
   // Las Tiendas Participantes (K1): una o varias, con un solo ranking.
   valores.TEXTO_TIENDAS_PARTICIPANTES = textoTiendasParticipantes(entrada);
   valores.LA_TIENDA = laTiendaDeLaCarrera(entrada);
@@ -812,6 +824,7 @@ if (typeof module !== 'undefined') {
     textoLugarRedencion: textoLugarRedencion,
     textoProductos: textoProductos,
     textoRolOperativo: textoRolOperativo,
+    ganadorObjeto: ganadorObjeto,
     textoIntentosContacto: textoIntentosContacto,
     diasDesierto: diasDesierto,
     TEXTO_NATURALEZA_FISICO_ENTREGA_ORGANIZADOR: TEXTO_NATURALEZA_FISICO_ENTREGA_ORGANIZADOR,

@@ -521,3 +521,29 @@ test('H5: con varias tiendas la frase del acumulado va después de la del pedido
   assert.ok(texto.includes('y cuenta como pedido siempre que incluya al menos uno de ellos. Los pedidos de Productos Participantes realizados en cualquiera de las Tiendas Participantes suman a un mismo acumulado por participante.'));
   assertSinRestos(texto, 'varias tiendas');
 });
+
+// --- H7: Pedido Válido definido, y la verificación descuenta en vez de descartar ---------------------
+
+test('H7: "Pedidos Válidos" se define al final de la Mecánica y el criterio de más pedidos lo usa', () => {
+  const texto = documento({ criterioGanador: 'mas_pedidos', desempate: 'mayor_valor' });
+  assert.ok(texto.includes('Para efectos del concurso, se entiende por “Pedidos Válidos” los pedidos que cumplan las condiciones de esta cláusula y no estén comprendidos en la cláusula de exclusiones.'));
+  assert.ok(texto.includes('acumular el mayor número de Pedidos Válidos con Productos Participantes durante la vigencia de la Campaña.'));
+  assert.ok(!texto.includes('pedidos válidos'), 'quedó "pedidos válidos" en minúscula');
+  // La definición va después del párrafo del acumulado, dentro de la misma cláusula.
+  assert.ok(texto.indexOf('se entiende por “Pedidos Válidos”') > texto.indexOf('Selección de ganadores') - 600);
+  assert.ok(texto.indexOf('se entiende por “Pedidos Válidos”') < texto.indexOf('Selección de ganadores'));
+});
+
+test('H7: la verificación descuenta el pedido inválido y reserva la descalificación para quien no cumple o comete fraude', () => {
+  const uno = documento({ numeroGanadores: 1 });
+  assert.ok(uno.includes(
+    'Antes de declarar al ganador, Rappi verificará la elegibilidad de cada participante y de cada pedido. ' +
+    'Los pedidos que no sean Pedidos Válidos se descontarán del acumulado y el ranking se recalculará. ' +
+    'Si la verificación determina que un participante no cumple los requisitos para participar o incurrió en alguna de las conductas de la cláusula de fraude, abuso y descalificación, ' +
+    'no será considerado ganador y se le informará a través de la Plataforma Rappi. ' +
+    'En todos los casos en que un participante no sea declarado ganador o pierda el derecho al premio, ocupará su lugar el siguiente participante del ranking que cumpla los requisitos de la Campaña.'));
+  assert.ok(!uno.includes('o sus pedidos no cumplen las condiciones de la Campaña'));
+
+  const varios = documento({ numeroGanadores: 3 });
+  assert.ok(varios.includes('Antes de declarar a los ganadores, Rappi verificará'));
+});
