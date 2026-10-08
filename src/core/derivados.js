@@ -181,6 +181,35 @@ var TEXTO_DESEMPATE_POR_OPCION = {
   mayor_valor: 'En caso de empate, ganará el participante con el mayor valor total en compras durante la vigencia.',
 };
 
+/*
+ * Lo que Rappi hace en la Carrera, dicho "por cuenta del Organizador".
+ *
+ * El bloque organizador decia que Rappi actua "unicamente como plataforma y
+ * como medio de difusion", y en la Carrera el mismo documento dice que Rappi
+ * arma el ranking, verifica la elegibilidad, contacta a los ganadores y, a
+ * veces, entrega el premio: una contradiccion sobre el papel de Rappi es el
+ * hilo del que tiraria una autoridad para decir que es coorganizador. La
+ * regla 1 de CLAUDE.md dice que operar la mecanica no vuelve a Rappi
+ * organizador; el documento lo dice asi, con "por cuenta del Organizador".
+ * H2 de la revision de la Carrera (Kenvue), aprobado el 8 de octubre de 2026.
+ *
+ * FRAGMENTO: va pegado a "medio de difusion de la Campana", por eso arranca con
+ * la coma. Solo la Carrera lo llena; en los demas modelos el marcador queda
+ * vacio y el bloque sale igual que antes.
+ */
+var TEXTO_ROL_OPERATIVO_POR_OPCION = {
+  creditos: ', y, por cuenta del Organizador, como operador de la mecánica del concurso y de la acreditación del premio',
+  organizador: ', y, por cuenta del Organizador, como operador de la mecánica del concurso',
+  rappi: ', y, por cuenta del Organizador, como operador de la mecánica del concurso y de la entrega del premio',
+};
+
+/** FRAGMENTO: el papel operativo de Rappi en la Carrera, segun el premio y quien lo entrega. */
+function textoRolOperativo(entrada) {
+  if (entrada.tipoPremio === 'creditos') return TEXTO_ROL_OPERATIVO_POR_OPCION.creditos;
+  if (entrada.tipoPremio === 'fisico') return TEXTO_ROL_OPERATIVO_POR_OPCION[entrada.entregaPor] || '';
+  return '';
+}
+
 var TEXTO_ENTREGA_POR_OPCION = {
   organizador: 'La entrega del premio estará a cargo exclusivamente del Organizador, quien coordinará directamente con el ganador las condiciones de tiempo, modo y lugar de entrega, siendo el único responsable de la misma.',
   rappi: 'La entrega del premio será gestionada por Rappi en su calidad de operador logístico y por cuenta del Organizador, quien conserva la calidad de responsable del premio; Rappi coordinará con el ganador las condiciones de tiempo, modo y lugar de entrega.',
@@ -474,6 +503,7 @@ function fraseDelPremioFisico(entrada, pais, ganadores) {
 /** Derivados propios de la Carrera de Compras. */
 function derivadosCarrera(entrada, pais, valores) {
   valores.TEXTO_PRODUCTOS = textoProductos(entrada);
+  valores.TEXTO_ROL_OPERATIVO = textoRolOperativo(entrada);
   // Las Tiendas Participantes (K1): una o varias, con un solo ranking.
   valores.TEXTO_TIENDAS_PARTICIPANTES = textoTiendasParticipantes(entrada);
   valores.LA_TIENDA = laTiendaDeLaCarrera(entrada);
@@ -718,6 +748,7 @@ if (typeof module !== 'undefined') {
     textoLimitePedidos: textoLimitePedidos,
     textoLugarRedencion: textoLugarRedencion,
     textoProductos: textoProductos,
+    textoRolOperativo: textoRolOperativo,
     textoTiendasParticipantes: textoTiendasParticipantes,
     textoAcumuladoTiendas: textoAcumuladoTiendas,
     textoTiendaTurboCarrera: textoTiendaTurboCarrera,

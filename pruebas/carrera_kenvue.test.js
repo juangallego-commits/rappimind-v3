@@ -304,3 +304,40 @@ test('K1.a: el servidor genera una Carrera con dos tiendas y guarda sus nombres 
     bajarEntorno();
   }
 });
+
+/** Un documento sin restos de marcadores vacíos: espacios dobles, espacios antes de signo o viñetas vacías. */
+function assertSinRestos(texto, etiqueta) {
+  assert.ok(!/ {2}/.test(texto), etiqueta + ': hay dos espacios seguidos');
+  assert.ok(!/ [.,;:]/.test(texto), etiqueta + ': hay un espacio antes de un signo');
+  assert.ok(!/^•\s*$/m.test(texto), etiqueta + ': hay una viñeta vacía');
+  assert.ok(!texto.includes('{{') && !texto.includes('[['), etiqueta + ': quedó una marca sin resolver');
+}
+
+// --- H2: lo que Rappi hace en la Carrera, "por cuenta del Organizador" --------------
+
+test('H2: el papel de Rappi en la Carrera según el premio y quién lo entrega', () => {
+  const abre = 'actúa únicamente como plataforma de contacto e intermediación tecnológica y como medio de difusión de la Campaña';
+  const cierra = '; Rappi no es el organizador de la Campaña.';
+  const casos = [
+    [{ tipoPremio: 'creditos', creditosPremio: 500000 },
+      ', y, por cuenta del Organizador, como operador de la mecánica del concurso y de la acreditación del premio'],
+    [{ tipoPremio: 'fisico', descripcionPremio: 'Una bicicleta', valorPremio: 1200000, entregaPor: 'organizador' },
+      ', y, por cuenta del Organizador, como operador de la mecánica del concurso'],
+    [{ tipoPremio: 'fisico', descripcionPremio: 'Una bicicleta', valorPremio: 1200000, entregaPor: 'rappi' },
+      ', y, por cuenta del Organizador, como operador de la mecánica del concurso y de la entrega del premio'],
+  ];
+  for (const [respuestas, rol] of casos) {
+    const texto = documento(respuestas);
+    assert.ok(texto.includes(abre + rol + cierra), JSON.stringify(respuestas) + ': ' + texto.slice(0, 900));
+    assertSinRestos(texto, JSON.stringify(respuestas));
+  }
+});
+
+test('H2: Cashback, Descuento y Cupón siguen diciendo lo mismo de Rappi', () => {
+  const igual = 'actúa únicamente como plataforma de contacto e intermediación tecnológica y como medio de difusión de la Campaña; Rappi no es el organizador de la Campaña.';
+  for (const [codigoPais, tipo] of [['CO', 'cashback'], ['MX', 'descuento'], ['MX', 'cupon']]) {
+    const salida = generarTexto(solicitud(codigoPais, tipo, {}), pais(codigoPais), modelos, CONTEXTO);
+    assert.ok(salida.valido, tipo);
+    assert.ok(textoPlano(salida.texto).includes(igual), tipo);
+  }
+});

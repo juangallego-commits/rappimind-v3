@@ -1881,7 +1881,7 @@ var PREGUNTAS = {
       { valor: 'organizador', etiqueta: 'El Organizador', nota: 'Coordina directo con el ganador.' },
       { valor: 'rappi', etiqueta: 'Rappi, como operador logístico', nota: 'Por cuenta del Organizador, que sigue siendo el responsable.' },
     ],
-    placeholders: ['TEXTO_ENTREGA', 'TEXTO_DATOS_ENTREGA'],
+    placeholders: ['TEXTO_ENTREGA', 'TEXTO_DATOS_ENTREGA', 'TEXTO_ROL_OPERATIVO'],
     errores: { vacio: 'Dinos quién entrega el premio.' },
   }),
 
@@ -2085,6 +2085,7 @@ var NOMBRE_DEL_HUECO = {
   LA_TIENDA: 'las tiendas donde suman las compras',
   EN_LA_TIENDA: 'las tiendas donde suman las compras',
   TEXTO_ACUMULADO_TIENDAS: 'si las compras de varias tiendas suman juntas',
+  TEXTO_ROL_OPERATIVO: 'el papel de la plataforma en el concurso',
   TEXTO_TERRITORIO: 'dónde aplica',
   FECHA_INICIO: 'el día de inicio',
   HORA_INICIO: 'la hora de inicio',
