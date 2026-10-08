@@ -965,3 +965,11 @@ test('H19: el Cashback conserva la frase de segmento de siempre', () => {
     assert.ok(!plano.includes('Suman al acumulado') && !plano.includes('Solo suman al acumulado'), segmento);
   }
 });
+
+// --- H21: la participación no es "gratuita" si hay que comprar -----------------------------------------
+
+test('H21: la inscripción no cuesta, pero hay que realizar pedidos', () => {
+  const texto = documento({});
+  assert.ok(texto.includes('La participación no tiene costo de inscripción; solo exige realizar pedidos de Productos Participantes en los términos de la mecánica.'));
+  assert.ok(!texto.includes('La participación es gratuita'));
+});
