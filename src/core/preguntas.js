@@ -2000,6 +2000,7 @@ var PREGUNTAS = {
     errores: {
       vacio: 'Elige el día en que le avisas al ganador.',
       orden: 'Tiene que ser después de que termine la campaña: antes todavía no sabes quién ganó.',
+      tope: 'No puede pasar de 30 días calendario después de que termine la campaña: es un compromiso con el ganador y tiene que poder cumplirse.',
     },
   }),
 

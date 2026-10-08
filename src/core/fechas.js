@@ -101,6 +101,18 @@ function comoNumeroFecha(iso) {
   return p.anio * 10000 + p.mes * 100 + p.dia;
 }
 
+/**
+ * Los dias de calendario entre dos fechas ISO (la segunda menos la primera), o
+ * null si alguna no es una fecha. Sin Date local: se cuenta en UTC para que un
+ * cambio de hora no mueva un dia.
+ */
+function diasEntreFechas(desde, hasta) {
+  var a = partesDeFecha(desde);
+  var b = partesDeFecha(hasta);
+  if (!a || !b) return null;
+  return Math.round((Date.UTC(b.anio, b.mes - 1, b.dia) - Date.UTC(a.anio, a.mes - 1, a.dia)) / 86400000);
+}
+
 /** Comparable para fecha + hora juntas. */
 function comoNumeroFechaHora(iso, hora) {
   var f = comoNumeroFecha(iso);
@@ -142,6 +154,7 @@ if (typeof module !== 'undefined') {
     formatearFechaDelPais: formatearFechaDelPais,
     formatearHoraDelPais: formatearHoraDelPais,
     comoNumeroFecha: comoNumeroFecha,
+    diasEntreFechas: diasEntreFechas,
     comoNumeroFechaHora: comoNumeroFechaHora,
     listaY: listaY,
     separarPorComas: separarPorComas,

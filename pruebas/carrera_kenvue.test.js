@@ -973,3 +973,30 @@ test('H21: la inscripción no cuesta, pero hay que realizar pedidos', () => {
   assert.ok(texto.includes('La participación no tiene costo de inscripción; solo exige realizar pedidos de Productos Participantes en los términos de la mecánica.'));
   assert.ok(!texto.includes('La participación es gratuita'));
 });
+
+// --- H23: la fecha de aviso al ganador tiene tope --------------------------------------------------------
+
+test('H23: la fecha de notificación no pasa de 30 días calendario después del fin', () => {
+  const { diasEntreFechas } = require('../src/core/fechas.js');
+  assert.strictEqual(diasEntreFechas('2026-10-31', '2026-11-30'), 30);
+  assert.strictEqual(diasEntreFechas('2026-12-20', '2027-01-19'), 30);
+  assert.strictEqual(diasEntreFechas('2026-10-31', 'no es fecha'), null);
+
+  const co = pais('CO');
+  const errores = (fechaNotificacion) => validarSolicitud(carrera({ fechaInicio: '2026-10-01', fechaFin: '2026-10-31', fechaNotificacion }), co, CONTEXTO).errores
+    .filter((e) => e.campo === 'fechaNotificacion').map((e) => e.mensaje);
+
+  assert.deepStrictEqual(errores('2026-11-01'), []);
+  assert.deepStrictEqual(errores('2026-11-30'), []);
+  assert.strictEqual(errores('2026-12-01').length, 1);
+  assert.ok(errores('2026-12-01')[0].includes('No puede pasar de 30 días calendario después de que termine la campaña'), errores('2026-12-01')[0]);
+  assert.ok(errores('2027-04-30')[0].includes('30 días calendario'));
+  // El error de siempre sigue: no puede ser antes ni el mismo día del fin.
+  assert.ok(errores('2026-10-31')[0].includes('posterior'));
+  assert.ok(errores('2026-10-15')[0].includes('posterior'));
+});
+
+test('H23: la fecha del caso de Kenvue (25 de noviembre, fin el 15) cabe en el tope', () => {
+  const entrada = carrera({ fechaInicio: '2026-10-15', fechaFin: '2026-11-15', fechaNotificacion: '2026-11-25' });
+  assert.deepStrictEqual(validarSolicitud(entrada, pais('CO'), CONTEXTO).errores.filter((e) => e.campo === 'fechaNotificacion'), []);
+});

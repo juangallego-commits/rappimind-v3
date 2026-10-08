@@ -22,6 +22,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var comoNumeroFechaHora = moduloFechas.comoNumeroFechaHora;
   var partesDeFecha = moduloFechas.partesDeFecha;
   var partesDeHora = moduloFechas.partesDeHora;
+  var diasEntreFechas = moduloFechas.diasEntreFechas;
 
   var moduloIdentificaciones = require('./identificaciones.js');
   var validarIdentificacion = moduloIdentificaciones.validarIdentificacion;
@@ -567,6 +568,18 @@ function validarCarrera(entrada, tipo, idioma) {
   if (fin !== null && notificacion !== null && notificacion <= fin) {
     errores.push(error('fechaNotificacion', mensajeDe('fechaNotificacion', tipo, 'orden', idioma,
       'La fecha de notificación debe ser posterior al fin de la campaña.')));
+  }
+
+  /*
+   * La fecha de aviso al ganador tiene tope: 30 dias de calendario despues del
+   * fin. Hoy solo se pedia que fuera posterior al fin, y podia ser seis meses
+   * despues: un compromiso con el ganador que nadie puede sostener. H23 de la
+   * revision de la Carrera (Kenvue), aprobado el 8 de octubre de 2026.
+   */
+  var diasDespues = diasEntreFechas(entrada.fechaFin, entrada.fechaNotificacion);
+  if (notificacion !== null && fin !== null && notificacion > fin && diasDespues !== null && diasDespues > 30) {
+    errores.push(error('fechaNotificacion', mensajeDe('fechaNotificacion', tipo, 'tope', idioma,
+      'La fecha de aviso no puede pasar de 30 días calendario después del fin de la campaña.')));
   }
   return errores;
 }
