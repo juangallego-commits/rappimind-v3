@@ -936,3 +936,32 @@ test('H18: las exclusiones no restan impuestos, que el participante no ve en la 
   // La cláusula de Impuestos del premio se queda palabra por palabra (H15 en No).
   assert.ok(texto.includes('Impuestos. Los impuestos que se generen con ocasión del premio estarán a cargo de quien corresponda conforme a la legislación tributaria aplicable. Cuando haya lugar a retenciones o tributos a cargo del ganador, estos se aplicarán en los términos de la ley.'));
 });
+
+// --- H19: Nuevos y Pro dicen qué pedidos suman en un acumulado -----------------------------------------
+
+test('H19: Nuevos y Pro llevan una frase de concurso, y Todos y Reactivados quedan igual', () => {
+  const nuevos = documento({ segmento: 'nuevos' });
+  assert.ok(nuevos.includes('Pueden participar únicamente los Usuarios/Consumidores mayores de edad que realicen su primer pedido en la Plataforma Rappi durante la vigencia de la Campaña. Suman al acumulado ese primer pedido y los demás pedidos que realicen durante la vigencia. Además, cada participante debe:'));
+
+  const pro = documento({ segmento: 'pro' });
+  assert.ok(pro.includes('Pueden participar los Usuarios/Consumidores que tengan activa la suscripción RappiPro y/o RappiPro Black. Solo suman al acumulado los pedidos realizados mientras la suscripción esté activa. Además, cada participante debe:'));
+
+  const todos = documento({ segmento: 'todos' });
+  assert.ok(todos.includes('Pueden participar todos los Usuarios/Consumidores de la Plataforma Rappi que sean mayores de edad. Además, cada participante debe:'));
+
+  const reactivados = documento({ segmento: 'reactivados', diasSinCompra: 60 });
+  assert.ok(reactivados.includes('no hayan realizado pedidos en la Plataforma Rappi durante los sesenta (60) días calendario anteriores al inicio de la Campaña. Además, cada participante debe:'));
+});
+
+test('H19: el Cashback conserva la frase de segmento de siempre', () => {
+  for (const [segmento, frase] of [
+    ['nuevos', 'que realicen su primer pedido en la Plataforma Rappi durante la vigencia de la Campaña.'],
+    ['pro', 'que tengan activa la suscripción RappiPro y/o RappiPro Black.'],
+  ]) {
+    const salida = generarTexto(solicitud('CO', 'cashback', { segmento }), pais('CO'), modelos, CONTEXTO);
+    assert.ok(salida.valido, segmento);
+    const plano = textoPlano(salida.texto);
+    assert.ok(plano.includes(frase), segmento);
+    assert.ok(!plano.includes('Suman al acumulado') && !plano.includes('Solo suman al acumulado'), segmento);
+  }
+});

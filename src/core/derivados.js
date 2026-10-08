@@ -56,6 +56,23 @@ var TEXTO_SEGMENTO_POR_OPCION = {
   nuevos: 'Pueden participar únicamente los Usuarios/Consumidores mayores de edad que realicen su primer pedido en la Plataforma Rappi durante la vigencia de la Campaña.',
 };
 
+/*
+ * Lo que los segmentos Nuevos y Pro dicen de mas en la Carrera.
+ *
+ * Las frases de segmento estan pensadas para un beneficio de un pedido. En un
+ * acumulado de un mes, "primer pedido" no decia si contaba solo ese pedido o
+ * todos los que vinieran despues, y "tengan activa la suscripcion" no decia si
+ * tenia que estarlo en cada pedido o al final. Una duda asi se resuelve a favor
+ * del participante (Ley 1480 de 2011, art. 34), asi que se dice. Reactivados no
+ * tiene el problema: su frase fija quien puede participar antes del inicio.
+ * Solo la Carrera; el Cashback conserva la frase de siempre. H19 de la revision
+ * (Kenvue), aprobado el 8 de octubre de 2026: no se bloquea ningun segmento.
+ */
+var TEXTO_SEGMENTO_EXTRA_CARRERA = {
+  nuevos: 'Suman al acumulado ese primer pedido y los demás pedidos que realicen durante la vigencia.',
+  pro: 'Solo suman al acumulado los pedidos realizados mientras la suscripción esté activa.',
+};
+
 var TEXTO_METODO_PAGO_POR_OPCION = {
   todos: 'Campaña válida para pedidos pagados con cualquiera de los medios de pago habilitados en la Plataforma Rappi. Los pedidos pagados total o parcialmente con Créditos no son válidos para la Campaña.',
   sin_efectivo: 'Campaña válida para pedidos pagados con todos los medios de pago habilitados en la Plataforma Rappi, excepto efectivo. Los pedidos pagados en efectivo, o total o parcialmente con Créditos, no son válidos para la Campaña.',
@@ -664,6 +681,9 @@ function ganadorObjeto(entrada) {
 /** Derivados propios de la Carrera de Compras. */
 function derivadosCarrera(entrada, pais, valores) {
   valores.TEXTO_PRODUCTOS = textoProductos(entrada);
+  if (valores.TEXTO_SEGMENTO && TEXTO_SEGMENTO_EXTRA_CARRERA[entrada.segmento]) {
+    valores.TEXTO_SEGMENTO += ' ' + TEXTO_SEGMENTO_EXTRA_CARRERA[entrada.segmento];
+  }
   valores.TEXTO_ROL_OPERATIVO = textoRolOperativo(entrada);
   valores.GANADOR_OBJETO = ganadorObjeto(entrada);
   valores.A_CADA_GANADOR = aCadaGanador(entrada);
@@ -945,6 +965,7 @@ if (typeof module !== 'undefined') {
     textoLugarRedencion: textoLugarRedencion,
     textoProductos: textoProductos,
     textoRolOperativo: textoRolOperativo,
+    TEXTO_SEGMENTO_EXTRA_CARRERA: TEXTO_SEGMENTO_EXTRA_CARRERA,
     textoPlazoEntrega: textoPlazoEntrega,
     textoCanjeDelPremio: textoCanjeDelPremio,
     textoAcreditacionDelPremio: textoAcreditacionDelPremio,
