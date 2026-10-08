@@ -233,9 +233,13 @@ Validaciones cruzadas: tope y presupuesto mayores que cero; tope menor o igual a
 | medioNotificacion | lista: Correo electrónico, Llamada telefónica, Notificación en la Plataforma Rappi | sí | MEDIO_NOTIFICACION |
 | fechaNotificacion | fecha | sí | FECHA_NOTIFICACION |
 | plazoConfirmacion | número 1 a 30 (5 por defecto) | sí | PLAZO_CONFIRMACION |
+| plazoEntrega | número 2 a 30 (días hábiles), para los dos tipos de premio (H12, 8 de octubre de 2026) | sí | TEXTO_PLAZO_ENTREGA (premio físico), TEXTO_ENTREGA (Créditos) |
+| intentosContacto | número 1 a 5, sin valor por defecto (K9) | sí | TEXTO_INTENTOS_CONTACTO |
+| diasDesierto | número 15 a 90, sin valor por defecto (K9) | sí | DIAS_DESIERTO |
+| vigencia, diasVigencia, fechaFinRedencion, redencion, secciones, exclusionesRedencion | las del Cashback, solo con premio en Créditos y sin la opción "solo en la tienda" (H11) | si tipoPremio = Créditos | TEXTO_NATURALEZA_PREMIO (vigencia y lugar de uso) |
 | compraMinima | número (opcional) | no | TEXTO_UMBRAL |
 
-Validaciones cruzadas: el desempate no puede ser el mismo criterio del ganador; la fecha de notificación debe ser posterior al fin de la campaña.
+Validaciones cruzadas: el desempate no puede ser el mismo criterio del ganador; la fecha de notificación debe ser posterior al fin de la campaña y no pasar de 30 días calendario después de él (H23); cada tienda de la lista tiene su respuesta de Turbo y un nombre que no parezca dos tiendas, salvo confirmación (K1). Aviso suave si los días para declarar desierto el premio son menos que tres veces el plazo para aceptar.
 
 **Filtro de entrada:** ¿hay azar (sorteo, rifa, raspa y gana)? ¿hay premios distintos por puesto o tabla de puntos? ¿el premio es una boleta, una experiencia o está ligado a un evento? ¿la tienda o la marca exige sus propios T&C? Si alguna es sí, va a Legal. Ya no se pregunta si participan varias tiendas: la Carrera las acepta (una fila por tienda, un solo ranking).
 

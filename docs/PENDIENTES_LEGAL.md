@@ -1179,3 +1179,53 @@ largo del formato.
 
 *Lo que falta:* que Legal confirme ese criterio, que es de interpretación y no
 estaba escrito en el encargo.
+
+## Revisión de la Carrera de Compras (Kenvue), lo que queda abierto (8 de octubre de 2026)
+
+Viene del informe `docs/revisiones/2026-09-29_carrera_compras_kenvue.md`. Todo lo
+aprobado está implementado; esto es lo que quedó por fuera o lo que me pareció
+raro al implementarlo. No lo cambié.
+
+**1. H22 · "Rappi se compromete a que la publicidad de la Campaña sea veraz".**
+El bloque `publicidad` pone a Rappi como garante de lo que diga la marca. Juan
+dijo que no en esta ronda: el riesgo es bajo y el cambio toca el bloque de cinco
+modelos (y el Cashback Multitienda, que no tiene un Organizador único).
+
+*Lo que falta:* revisarlo en la próxima revisión de bloques compartidos.
+
+**2. Llevar el bloque de modificaciones de concurso a Cashback, Descuento y
+Cupón.** `modificaciones_concurso.md` solo lo usa la Carrera (pregunta 4 del
+informe). Los otros tres siguen con `modificaciones.md`, que deja a Rappi
+reducir el beneficio o adelantar el cierre.
+
+*Lo que falta:* decidir si el Descuento y el Cupón, que sí tienen un
+Organizador, usan el bloque nuevo o uno propio.
+
+**3. Textos que me parecieron raros y no toqué.**
+
+- La cláusula 19 (bloque `responsabilidad`) sigue diciendo que los productos
+  los comercializan "los Aliados Comerciales", mientras la cláusula 6 de la
+  Carrera ahora dice "las Tiendas Participantes, y no por Rappi". Dicen lo mismo
+  con otras palabras; el bloque es compartido y no estaba en el informe.
+- La cláusula 5 (bloque `inhabilidades`) termina con "se seleccionará a un nuevo
+  ganador", y la cláusula 8 y la Aceptación dicen que ocupa su lugar "el
+  siguiente participante del ranking". El informe pidió una sola regla de
+  reemplazo y la dejó en la cláusula 8, pero esa frase final de la cláusula 5 no
+  estaba en el informe.
+- Con el premio físico que entrega Rappi, la viñeta de Entrega dice que Rappi
+  "coordinará con el ganador las condiciones de tiempo, modo y lugar de entrega"
+  y a continuación fija el plazo, el costo y la dirección. No se contradicen,
+  pero la primera frase queda floja ahora que la segunda existe.
+- Los enunciados de `intentosContacto`, `diasDesierto` y `plazoEntrega` pasan de
+  diez palabras (14, 17 y 17), tal como los escribió el informe. La prueba de
+  "máximo diez palabras" tiene una excepción escrita para esos tres.
+- El plazo de entrega va de 2 a 30 días hábiles y no de 1 a 30 (decisión de
+  Juan durante la implementación): con un día la frase fija salía "los un (1)
+  días hábiles".
+
+**4. La traducción al portugués de la pregunta del nombre comercial.** Para que
+Brasil tenga la pregunta en su idioma escribí `nombreComercial` en
+`src/core/preguntas_pt.js`. Es traducción de producto, no de Legal, y conviene
+que la lea alguien que hable portugués antes de que la usen los KAM de Brasil
+(igual que el resto de ese archivo).
+

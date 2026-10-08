@@ -1934,3 +1934,197 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      `dist/` desde dos archivos a la vez lo borra mientras otra lo lee. Comprobé
      que cazan el defecto: con el `src/` de antes del arreglo fallan 14; las que
      pasan son las que cuidan que lo que ya salía bien siga igual.
+
+## 8 de octubre · La revisión de la Carrera de Compras (campaña Skindays de Kenvue)
+
+Fuente de todos los puntos de esta sección: el informe de Legal
+`docs/revisiones/2026-09-29_carrera_compras_kenvue.md`, con las decisiones que
+Juan delegó y aprobó el 8 de octubre de 2026 ("revisión Carrera de Compras,
+Kenvue, decisiones del 8/10/2026"). Cada punto lleva su código del informe. El
+texto legal se copió del informe letra por letra; las decisiones técnicas que
+tomé por mi cuenta van marcadas como tales. Un commit por punto. Versiones:
+`carrera_compras.md` 3.0 a 3.1, `cobertura_tienda.md` 3.0 a 3.1,
+`organizador.md` 3.0 a 3.1, `inhabilidades.md` 1.1 a 1.2, la leyenda de la
+Carrera a 1.1 y el bloque nuevo `modificaciones_concurso.md` en 1.0.
+
+139. **H1 · La leyenda de la Carrera nombra al Organizador, no a la tienda.**
+     `Concurso organizado por {{TIENDA}}` pasa a `{{ORGANIZADOR}}`. Con una
+     marca que fondea en la tienda de otro (Kenvue en Turbo y Éxito, Bimbo en
+     Carulla) la pieza habría dicho que organiza la tienda, y en Turbo, un
+     negocio de Rappi: lo que la regla 1 prohíbe. El texto de la leyenda está en
+     `CAMBIADAS_POR_JUAN` de `pruebas/leyendas.test.js`, que es donde van las
+     diferencias frente a la respuesta de Legal. La revisión de las Carreras ya
+     generadas (`RM-20261002-0001`, Mars) es una acción operativa de Juan, no de
+     código.
+
+140. **K1 · La Carrera acepta una o varias Tiendas Participantes con un solo
+     ranking, con Turbo tienda por tienda y su propia Cobertura (K1.a, K1.b y
+     K1.c).** Texto del informe. Decisiones técnicas mías:
+     - **Dónde vive la lista.** En `entrada.tiendasCarrera`, una lista de filas
+       `{ nombre, tiendaTurbo, unaSola }` (de 1 a 10), y no en `entrada.tienda`:
+       así no se confunde con el texto que guardan los demás tipos y la
+       Carrera vieja se sigue leyendo. `tiendasDeLaCarrera()` en
+       `src/core/texto.js` es el único que la lee.
+     - **Lo guardado antes.** Una Carrera con `tienda` como texto se lee como
+       una lista de una fila con "No tiene tienda en Turbo": el documento de
+       entonces no decía nada de Turbo, y esa respuesta no imprime nada. Así
+       Ampliar y el historial siguen funcionando. En "Usar como base" la fila
+       se abre con el nombre escrito y Turbo en blanco, a propósito: esa
+       campaña nunca respondió Turbo y marcar una opción sería publicar un dato
+       que nadie confirmó (`paraUsarComoBase`).
+     - **El aviso de "Turbo y Éxito" en una fila frena hasta que el comercial
+       confirme.** El informe lo llama aviso suave con un botón para seguir. Lo
+       implementé como un error de validación que desaparece con el botón "Es
+       una sola tienda, se llama así" (`unaSola`), porque un aviso que no frena
+       es justo lo que dejó pasar la campaña de Kenvue. El servidor lo exige
+       igual que la pantalla. Se activa con " y ", coma, barra, más o punto y
+       coma, y con la palabra Turbo junto a otro nombre.
+     - **El nombre de registro** con varias tiendas las nombra todas en el
+       orden de la lista: "Éxito y Carulla · Carrera de Compras · 15 oct 2026".
+       Con una no cambia.
+     - **La columna `tienda` de Solicitudes** guarda los nombres separados por
+       coma; la respuesta legible va en `resp_tiendasCarrera`, una tienda por
+       línea con su respuesta de Turbo. `datos_json` guarda la lista cruda.
+     - Se quitó "¿Participan varias tiendas?" del filtro de la Carrera y de la
+       ayuda, y la pregunta frecuente de las varias tiendas ahora lo explica.
+       Se agregó la prueba del recorrido completo al script de la skill
+       `flujo-y-ux` (`recorrer-flujo.js`).
+     - K1.d (volver a generar la campaña de Kenvue con dos filas) es de Juan y
+       del KAM, no de código.
+
+141. **H2 · El bloque organizador dice lo que Rappi hace en la Carrera, "por
+     cuenta del Organizador".** Marcador opcional `TEXTO_ROL_OPERATIVO`, que
+     solo la Carrera llena (tres frases según el premio y quién lo entrega).
+     En Cashback, Descuento y Cupón el marcador queda vacío y el texto sale
+     igual: comparado con las salidas anteriores, sin una letra de diferencia.
+
+142. **H3 · Premio físico que entrega Rappi: la naturaleza del premio y las
+     responsabilidades ya no se contradicen.** Dos textos de naturaleza según
+     quién entrega, y la cláusula "Responsabilidades frente al premio" con el
+     punto (iv).
+
+143. **K9 · El premio pasa al siguiente del ranking de manera obligatoria, con
+     identidad y mayoría de edad, y la cadena tiene un final.** Texto del
+     informe tal cual. Dos preguntas nuevas obligatorias, sin valor por defecto
+     (son promesas al ganador): `intentosContacto` (1 a 5) y `diasDesierto` (15
+     a 90), con aviso suave si el plazo es menor que tres veces el de aceptar.
+     `DIAS_DESIERTO` toma `termino_dias` del país (probado en Colombia, México
+     y Argentina). **Decisión técnica:** los enunciados de esas dos preguntas,
+     y el de `plazoEntrega` (punto 151), pasan de diez palabras porque el
+     informe los escribió completos y Juan los aprobó así; la prueba de "máximo
+     diez palabras" tiene una excepción escrita con los tres nombres.
+
+144. **H8 · Quien participa es el titular de la cuenta.** La viñeta pasa a "Ser
+     titular de una cuenta activa en la Plataforma Rappi y realizar los pedidos
+     desde esa cuenta". La verificación de identidad y de edad va dentro del
+     texto de K9. Operación (de Juan): el ganador exhibe su documento por el
+     canal con que lo contactan; si llega una imagen, se borra una vez
+     verificada y solo queda constancia. No se guarda copia.
+
+145. **K8 y H13 · El aviso al ganador nombra la cuenta "en la Plataforma Rappi"
+     y la llamada se confirma por escrito al correo de la cuenta.**
+     `MEDIO_NOTIFICACION_POR_OPCION`. Cambian las salidas de CC01, CC03, CC04 y
+     CC06, como anunciaba el informe.
+
+146. **K11 y H10 · Bloque propio de modificaciones para concursos.** Bloque
+     nuevo `modificaciones_concurso.md`, que solo incluye la Carrera: el
+     Organizador modifica de común acuerdo con Rappi y, una vez iniciada la
+     vigencia, no se reduce el premio ni el número de ganadores, no se retiran
+     Productos ni Tiendas Participantes, no se agregan requisitos, no se cambia
+     el criterio ni se adelanta el cierre. `modificaciones.md` no cambia (lo
+     siguen usando Cashback, Cashback Multitienda, Descuento y Cupón). Llevar el
+     bloque nuevo a Cashback, Descuento y Cupón queda en
+     `docs/PENDIENTES_LEGAL.md`.
+
+147. **H4 · El desempate dice "de Productos Participantes", resuelve el empate
+     que persiste y cuenta la hora de entrega.** `TEXTO_DESEMPATE_POR_OPCION`.
+
+148. **H5 · Un pedido entregado de manera parcial suma al acumulado por lo
+     entregado.** Se quita "sin cancelaciones totales ni parciales", solo cuenta
+     como cancelado el pedido cancelado en su totalidad, y la exclusión se
+     reescribe igual.
+
+149. **H7 · "Pedidos Válidos" definido, el pedido inválido se descuenta y hay una
+     sola regla de reemplazo.** Con mayúscula en el criterio de más pedidos y en
+     el desempate. Incluye `GANADOR_OBJETO` ("al ganador" o "a los ganadores").
+     No se agregó la frase opcional del Centro de Ayuda (decisión de Juan).
+
+150. **H6 · Devoluciones y reversiones de pago después de armado el ranking.**
+     Última frase del párrafo de H7.
+
+151. **H12 · El premio físico tiene plazo, costo y lugar de entrega.** Pregunta
+     nueva `plazoEntrega` para los dos tipos de premio. **Decisión de Juan del 8
+     de octubre, tomada durante la implementación:** va de 2 a 30 días hábiles
+     y no de 1 a 30, porque el texto fijo dice "dentro de los {N} días hábiles"
+     y con un día salía "los un (1) días hábiles", una frase rota. Un plazo
+     mayor a 30 días es una campaña para Legal. El mensaje de rango dice las
+     dos cosas en una sola frase, porque la validación solo tiene un mensaje
+     para el rango.
+
+152. **H11 · El premio en Créditos se puede gastar, tiene vigencia, lugar de uso
+     y plazo de acreditación.** Frase de canje según el tipo de premio. La
+     Carrera reusa las preguntas de vigencia y de redención del Cashback solo
+     con premio en Créditos, dentro del paso del premio y sin la opción "solo
+     en la tienda". **Decisión técnica:** la validación de la fecha límite de
+     redención ahora solo corre si esa pregunta se hizo (una vigencia vieja de
+     antes de cambiar el premio a físico no frena la campaña).
+
+153. **K5 y K7 · El documento dice cuántos ganadores y cuántos premios hay.**
+     `TEXTO_CANTIDAD_PREMIOS`, `A_CADA_GANADOR` y la introducción sin plural.
+     K6 es solo la ayuda de la descripción del premio (punto 163).
+
+154. **H20 · El nombre comercial de la campaña, opcional.** Complementa la
+     decisión del 16 de septiembre sin reversarla: la etiqueta libre sigue
+     fuera del nombre de registro (título del Doc, dirección de Squarespace,
+     `nombre_campana` y consecutivo no cambian) y el riesgo que la motivó lo
+     cubre la validación (3 a 60 caracteres, sin cifras salvo un año, sin
+     palabras de azar en español y portugués, sin anotaciones internas). Lo
+     agregué a los campos de texto libre permitidos de la especificación.
+     **Decisiones técnicas:** la pregunta está en todos los tipos, al final de
+     la pregunta de la campaña; la columna `nombre_comercial` queda al final de
+     Solicitudes (una hoja vieja la agrega sola); el historial la muestra junto
+     al nombre de registro y se busca por los dos; la traducción de la pregunta
+     al portugués la escribí yo y hay que revisarla (queda en
+     `docs/PENDIENTES_LEGAL.md`). Sin nombre comercial no cambia ninguna salida
+     de los casos existentes.
+
+155. **H9 · Los empleados de la Tienda Participante tampoco pueden participar.**
+     `inhabilidades.md` 1.2, con `{{LA_TIENDA}}`.
+
+156. **H16 · El campo de marca acepta varias marcas separadas por coma.** "De la
+     marca X" con una y "de las marcas X y Y" con varias, en la Carrera, el
+     Descuento y el Cupón. La Carrera devuelve vacía la frase si no hay marca.
+
+157. **H17 y H18 · La compra mínima se mide sobre los Productos Participantes,
+     sin envío, tarifa ni propinas, y la base del acumulado es el precio con
+     IVA que el participante ve (opción A).**
+
+158. **H19 · Nuevos y Pro dicen qué pedidos suman en el acumulado.** Solo en la
+     Carrera. Reactivados queda igual, por corrección del informe del 8 de
+     octubre. No se bloquea ningún segmento.
+
+159. **H21, H24 y H26 · La participación no se anuncia gratuita, cuenta el
+     pedido hecho en la vigencia y entregado después, y las cuentas y medios de
+     pago empresariales no suman.** La reventa se deja a la cláusula de fraude.
+
+160. **H23 · La fecha de notificación no pasa de 30 días calendario después del
+     fin.** Función nueva `diasEntreFechas` (en UTC, para que un cambio de hora
+     no mueva un día).
+
+161. **K3 · La viñeta de pago de la Carrera dice "efectivamente".** La frase de
+     la marca sobre todos los medios de pago no se toma porque el medio de pago
+     es variable.
+
+162. **H14 · Sustitución del premio físico que deja de existir.**
+
+163. **K6 · La ayuda de la descripción del premio pide escribirlo como lo nombra
+     la marca, con ® si lo lleva.** El texto legal no cambia.
+
+164. **Lo que no se tocó, por decisión de Juan del 8 de octubre.** K2 y K10
+     (no proceden). **H15:** este tipo de T&C no lleva nada de impuestos; la
+     cláusula de Impuestos se queda palabra por palabra y no se agrega ninguna
+     pregunta (hay una prueba que la cuida). H22 (la veracidad de la
+     publicidad) va a `docs/PENDIENTES_LEGAL.md`. Regenerar sigue creando una
+     versión nueva con consecutivo y no reemplaza la anterior. K4 no existe y no
+     se tocó nada de descuentos ni de valor neto. H25 (razón social del RUT,
+     "Kenvue Colombia S.A.", con punto) es operativo, sin código.

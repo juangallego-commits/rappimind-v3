@@ -2871,3 +2871,73 @@ en el punto 137: un premio físico de valor enorme (2.000 millones o más por
 ganador con 500 ganadores) sigue frenando con este mismo mensaje, porque el
 total no cabe en letras. Ahí limpiar espacios no ayuda, y sigue siendo un cambio
 pequeño darle un mensaje que el comercial entienda, si lo quieres.
+
+## 8 de octubre · La revisión de la Carrera de Compras (campaña Skindays de Kenvue)
+
+Viene del informe de Legal `docs/revisiones/2026-09-29_carrera_compras_kenvue.md`
+y de las decisiones que Juan delegó el 8 de octubre de 2026. Trabajo en la rama
+`claude/admiring-mccarthy-xrx8ex` (no en `main`), con un commit por punto. Nada
+se ha subido a `main` ni a Apps Script: espera el visto bueno de Juan.
+
+### Qué quedó
+
+Los 31 puntos aprobados del informe que llevan código: H1, K1 (a, b y c), H2, H3, K9, H8, K8
+y H13, K11 y H10, H4, H5, H7, H6, H12, H11, K5 y K7, H20, H9, H16, H17, H18,
+H19, H21, H23, H24, H26, K3, H14 y K6. Cada uno tiene su entrada en
+`docs/DECISIONES.md` (puntos 139 a 164).
+
+Lo que cambia para el comercial:
+
+- La Carrera pregunta **en qué tiendas suman las compras** como una lista (una
+  fila por tienda, con su respuesta de Turbo) y un solo ranking. "Turbo y Éxito"
+  en una sola fila no deja avanzar hasta que confirme que es una tienda.
+- Preguntas nuevas de la Carrera: plazo de entrega (2 a 30 días hábiles, ambos
+  premios), intentos de contacto (1 a 5), días para declarar desierto el premio
+  (15 a 90) y, con premio en Créditos, hasta cuándo valen y dónde se gastan.
+- En **todos los tipos**, al final de la pregunta de la campaña, una pregunta
+  opcional: el nombre comercial ("Skindays"). Se pasa con Siguiente.
+- El campo de marca acepta varias marcas separadas por coma (también en
+  Descuento y Cupón).
+- La leyenda de la pieza nombra al Organizador y no a la tienda.
+
+Lo que cambia en el documento de la Carrera: ver el texto completo de `CC07` en
+la entrega, o `npm run previsualizar`.
+
+### Cómo probarlo
+
+```
+npm test
+npm run previsualizar
+```
+
+865 pruebas, 857 pasan y 8 siguen saltadas como antes. Las pruebas de esta
+revisión están en `pruebas/carrera_kenvue.test.js` (una por punto), más los
+casos nuevos `CC07` (Skindays de Kenvue, dos tiendas, premio físico que entrega
+Rappi) y `CC08` (una tienda, premio en Créditos) en `pruebas/casos_base.json`.
+
+Los bloques compartidos se compararon antes y después con `npm run
+previsualizar`: Cashback, Descuento y Cupón cambian solo en la frase de los
+horarios (K1.c); el Cashback Multitienda, Travel, ETA y Brasil, en nada.
+
+En pantalla: `npm run demo`, abrir `demo/index.html` y recorrer una Carrera de
+Compras. También `node .claude/skills/flujo-y-ux/scripts/recorrer-flujo.js` y
+`recorrer-en-portugues.js` (necesitan Playwright; ya cubren la lista de tiendas
+y el nombre comercial).
+
+### Qué necesito de Juan
+
+1. **El visto bueno para el push.** No hice `clasp push` ni `npm run push`, ni
+   push a `main`. Cada push a `main` dispara `clasp push` y queda en producción.
+2. **Volver a generar la campaña de Kenvue** (K1.d, H20 y H25): el KAM la genera
+   con dos filas (Éxito, "Solo en la tienda normal"; Carulla, "Solo en la
+   tienda de Turbo"), la razón social del RUT ("Kenvue Colombia S.A.", con
+   punto), el nombre comercial "Skindays" y los números de contacto y de
+   entrega que la marca confirme. El documento actual no se publica.
+3. **Revisar la Carrera `RM-20261002-0001` (Mars)**: su Organizador son dos
+   sociedades escritas juntas con un solo NIT, y su pieza diría "organizado por
+   Mars Incorporated". Es operativo (H1), no de código.
+4. **Leer `docs/PENDIENTES_LEGAL.md`** (sección del 8 de octubre): H22 y el bloque
+   de modificaciones para Cashback, Descuento y Cupón, más cuatro cosas que me
+   parecieron raras y no toqué.
+5. Alguien que hable portugués que lea la traducción de la pregunta del nombre
+   comercial para Brasil.

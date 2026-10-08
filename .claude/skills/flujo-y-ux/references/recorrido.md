@@ -86,6 +86,16 @@ Detalles que ya están resueltos y conviene no romper:
   documento, no como se escribió.
 - El error de un campo se refresca sin redibujar la pantalla entera
   (`actualizarValidacionEnVivo`), para que no salte el foco.
+- La Carrera de Compras pregunta sus tiendas como una lista (`67-tiendas-carrera.js`):
+  una fila por tienda con su respuesta de Turbo, y un solo ranking para todas.
+  Un nombre que parece dos tiendas ("Turbo y Éxito") no deja avanzar hasta que
+  el comercial confirma con "Es una sola tienda, se llama así". Ya no existe la
+  pregunta "¿Participan varias tiendas?" del filtro.
+- Todo tipo pregunta, al final de la pregunta de la campaña, el nombre comercial
+  ("¿Con qué nombre sale la campaña al público?"). Es opcional y se pasa con
+  Siguiente; sin él el documento usa el nombre de siempre.
+- Los avisos que no frenan (los días para declarar desierto el premio, dos
+  marcas escritas sin coma) salen debajo de la pregunta, por `avisoDe()`.
 
 Sale a: `resumen` (última pregunta del último paso), `filtro` (Atrás desde la
 primera), `legal` o `filtroTravel` (por el negocio).

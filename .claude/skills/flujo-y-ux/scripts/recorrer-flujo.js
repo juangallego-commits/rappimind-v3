@@ -92,6 +92,21 @@ async function recorrer() {
   const titulos = () => pagina.evaluate(() =>
     [].map.call(document.querySelectorAll('.pregunta .pregunta-titulo'), (t) => t.textContent.trim()));
 
+  /*
+   * Desde el 8 de octubre de 2026 (H20) todo tipo pregunta, al final de la
+   * pregunta de la campana, "¿Con que nombre sale la campana al publico?". Es
+   * opcional y se deja vacia con Siguiente. Este atajo la revisa y la pasa, para
+   * que cada recorrido siga su camino sin repetir la comprobacion.
+   */
+  const NOMBRE_COMERCIAL = '¿Con qué nombre sale la campaña al público?';
+  async function pasarElNombreComercial() {
+    const abierta = await titulos();
+    // El titulo lleva dentro la marca "Opcional", asi que se busca por el principio.
+    const estaba = abierta.some((titulo) => titulo.indexOf(NOMBRE_COMERCIAL) === 0);
+    if (estaba) await clic('Siguiente');
+    return estaba;
+  }
+
   async function clic(etiqueta) {
     await pagina.evaluate((t) => {
       const boton = [].slice.call(document.querySelectorAll('button, a'))
@@ -238,6 +253,9 @@ async function recorrer() {
     tiposDeTravel.replace(/\n+/g, ' | ').slice(0, 250));
 
   await clic('Cashback Travel');
+  revisar('el nombre comercial es opcional y se pasa con Siguiente, también en Travel',
+    (await titulos()).some((titulo) => titulo.indexOf(NOMBRE_COMERCIAL) === 0) && (await texto()).toLowerCase().indexOf('opcional') !== -1);
+  await pasarElNombreComercial();
   const enFormularioTravel = await texto();
   revisar('elegir el tipo sigue al formulario, no al resumen',
     enFormularioTravel.indexOf('Revisa antes de generar') === -1 &&
@@ -297,6 +315,8 @@ async function recorrer() {
     textoDelAlcance.replace(/\n+/g, ' | ').slice(0, 300));
 
   await clic('En todo Turbo Restaurantes de la ciudad');
+  revisar('después de la categoría se pregunta el nombre comercial, opcional',
+    await pasarElNombreComercial());
   const trasLaCategoria = await titulos();
   revisar('con una categoría no se pide ninguna lista de tiendas',
     trasLaCategoria.length === 1 && trasLaCategoria[0].indexOf('día arranca') !== -1,
@@ -309,6 +329,8 @@ async function recorrer() {
     documentoDeCategoria.replace(/\n+/g, ' | ').slice(0, 300));
 
   // Y ahora la otra forma: unas tiendas concretas, que el documento lista.
+  await clic('Atrás');
+  // Una vuelta mas: entre la fecha y el alcance esta el nombre comercial.
   await clic('Atrás');
   await clic('En unas tiendas concretas de Turbo');
 
@@ -341,6 +363,7 @@ async function recorrer() {
   await pagina.fill('[data-tienda-eta="1"] input[type=text]', 'Turbo Chico');
   await pagina.waitForTimeout(250);
   await clic('Siguiente');
+  await pasarElNombreComercial();
 
   const trasLaCiudad = await titulos();
   revisar('responder y avanzar lleva al paso siguiente',

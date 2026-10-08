@@ -105,6 +105,10 @@ ok('el mensaje de campo vacío sale en portugués', conError.indexOf('Escreva o 
 
 // Las fechas respondidas se escriben como el documento, en portugués.
 await p.fill('.pregunta input[type=text]', 'Petz'); await clic('Avançar'); await p.waitForTimeout(400);
+// La pregunta opcional del nombre comercial (H20) viene antes de las fechas; se deja vacia.
+const nombrePt=await txt();
+ok('el nombre comercial también se pregunta en portugués, y es opcional', nombrePt.indexOf('Com que nome a campanha é divulgada ao público?')!==-1 && nombrePt.toLowerCase().indexOf('opcional')!==-1, nombrePt.replace(/\n+/g,' | ').slice(0,300));
+await clic('Avançar'); await p.waitForTimeout(400);
 await p.fill('.pregunta input[type=date]', '2026-10-01'); await clic('Avançar'); await p.waitForTimeout(400);
 const conFecha=await txt();
 ok('la fecha respondida sale en portugués', conFecha.indexOf('1 de outubro de 2026')!==-1 && conFecha.indexOf('1 de octubre de 2026')===-1, conFecha.replace(/\n+/g,' | ').slice(0,400));
