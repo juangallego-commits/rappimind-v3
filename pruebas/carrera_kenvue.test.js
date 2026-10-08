@@ -1000,3 +1000,14 @@ test('H23: la fecha del caso de Kenvue (25 de noviembre, fin el 15) cabe en el t
   const entrada = carrera({ fechaInicio: '2026-10-15', fechaFin: '2026-11-15', fechaNotificacion: '2026-11-25' });
   assert.deepStrictEqual(validarSolicitud(entrada, pais('CO'), CONTEXTO).errores.filter((e) => e.campo === 'fechaNotificacion'), []);
 });
+
+// --- H24: el pedido hecho antes del cierre y entregado después cuenta -----------------------------------
+
+test('H24: cuenta el momento en que se hace el pedido; la entrega solo confirma que fue exitoso', () => {
+  const texto = documento({});
+  assert.ok(texto.includes('Únicamente se tendrán en cuenta para el concurso los pedidos realizados dentro de este periodo y entregados de manera exitosa.'));
+  assert.ok(!texto.includes('realizados y recibidos de manera exitosa dentro de este periodo'));
+  // La vigencia sigue diciendo sus horas, y México conserva su texto de hora local.
+  assert.ok(texto.includes('La Campaña estará vigente desde las 12:00 a. m. del 1 de octubre de 2026 hasta las 11:59 p. m. del 31 de octubre de 2026 (hora local de la República de Colombia).'));
+  assert.ok(documento({}, 'MX').includes('Únicamente se tendrán en cuenta para el concurso los pedidos realizados dentro de este periodo y entregados de manera exitosa.'));
+});
