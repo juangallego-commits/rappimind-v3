@@ -175,10 +175,22 @@ var CRITERIO_GANADOR_POR_OPCION = {
   mas_pedidos: 'el mayor número de Pedidos Válidos con Productos Participantes',
 };
 
+/*
+ * El desempate de la Carrera.
+ *
+ * H4 de la revision (Kenvue), aprobado el 8 de octubre de 2026. Tres arreglos:
+ * dos de los tres desempates no decian "de Productos Participantes" y se podian
+ * leer como todos los pedidos y compras del participante en la Plataforma; si el
+ * empate persistia despues del desempate no habia regla, y resolverlo entonces
+ * seria discrecional o, peor, al azar; y "fecha y hora de su ultimo pedido" no
+ * decia si de hecho o de entrega. Cuenta la entrega, que es cuando el pedido
+ * empieza a sumar. El segundo desempate es quien llego primero: el registro
+ * llega al segundo, asi que no necesita un tercero.
+ */
 var TEXTO_DESEMPATE_POR_OPCION = {
-  primero: 'En caso de empate, ganará el participante que haya alcanzado primero el resultado empatado, según la fecha y hora de su último pedido válido.',
-  mas_pedidos: 'En caso de empate, ganará el participante con el mayor número de pedidos válidos durante la vigencia.',
-  mayor_valor: 'En caso de empate, ganará el participante con el mayor valor total en compras durante la vigencia.',
+  primero: 'En caso de empate, ganará el participante que haya alcanzado primero el resultado empatado, según la fecha y hora de entrega de su último Pedido Válido registradas en la Plataforma Rappi.',
+  mas_pedidos: 'En caso de empate, ganará el participante con el mayor número de Pedidos Válidos con Productos Participantes durante la vigencia. Si el empate persiste, ganará el participante que haya alcanzado primero el resultado empatado, según la fecha y hora de entrega de su último Pedido Válido registradas en la Plataforma Rappi.',
+  mayor_valor: 'En caso de empate, ganará el participante con el mayor valor total en compras de Productos Participantes durante la vigencia. Si el empate persiste, ganará el participante que haya alcanzado primero el resultado empatado, según la fecha y hora de entrega de su último Pedido Válido registradas en la Plataforma Rappi.',
 };
 
 /*
@@ -824,6 +836,7 @@ if (typeof module !== 'undefined') {
     textoLugarRedencion: textoLugarRedencion,
     textoProductos: textoProductos,
     textoRolOperativo: textoRolOperativo,
+    TEXTO_DESEMPATE_POR_OPCION: TEXTO_DESEMPATE_POR_OPCION,
     ganadorObjeto: ganadorObjeto,
     textoIntentosContacto: textoIntentosContacto,
     diasDesierto: diasDesierto,

@@ -547,3 +547,25 @@ test('H7: la verificación descuenta el pedido inválido y reserva la descalific
   const varios = documento({ numeroGanadores: 3 });
   assert.ok(varios.includes('Antes de declarar a los ganadores, Rappi verificará'));
 });
+
+// --- H4: el desempate dice de qué, qué pasa si persiste y qué hora cuenta ----------------------
+
+test('H4: los tres desempates dicen "de Productos Participantes", cierran el empate y cuentan la entrega', () => {
+  const persiste = 'Si el empate persiste, ganará el participante que haya alcanzado primero el resultado empatado, según la fecha y hora de entrega de su último Pedido Válido registradas en la Plataforma Rappi.';
+  const primero = 'En caso de empate, ganará el participante que haya alcanzado primero el resultado empatado, según la fecha y hora de entrega de su último Pedido Válido registradas en la Plataforma Rappi.';
+
+  const porPedidos = documento({ criterioGanador: 'mayor_valor', desempate: 'mas_pedidos' });
+  assert.ok(porPedidos.includes('En caso de empate, ganará el participante con el mayor número de Pedidos Válidos con Productos Participantes durante la vigencia. ' + persiste));
+
+  const porValor = documento({ criterioGanador: 'mas_pedidos', desempate: 'mayor_valor' });
+  assert.ok(porValor.includes('En caso de empate, ganará el participante con el mayor valor total en compras de Productos Participantes durante la vigencia. ' + persiste));
+
+  const alFinal = documento({ criterioGanador: 'mayor_valor', desempate: 'primero' });
+  assert.ok(alFinal.includes(primero));
+
+  for (const texto of [porPedidos, porValor, alFinal]) {
+    assert.ok(!texto.includes('último pedido válido'), 'quedó "pedido válido" en minúscula');
+    assert.ok(!texto.includes('durante la vigencia.') || texto.includes('Productos Participantes durante la vigencia.'));
+    assertSinRestos(texto, 'desempate');
+  }
+});
