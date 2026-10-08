@@ -1025,3 +1025,20 @@ test('H26: las cuentas y los medios de pago empresariales no suman al acumulado'
   // La reventa se deja a la cláusula de fraude: no hay regla propia ni tope de unidades.
   assert.ok(!/reventa|unidades por pedido/i.test(texto));
 });
+
+// --- K3: se paga efectivamente, con el medio de pago de la campaña ---------------------------------------
+
+test('K3: la viñeta de pago dice efectivamente, y la frase de los medios de pago sigue siendo la variable', () => {
+  const todos = documento({ metodoPago: 'todos' });
+  assert.ok(todos.includes('• Pagar efectivamente los pedidos con un medio de pago válido para la Campaña, según se indica a continuación.\nCampaña válida para pedidos pagados con cualquiera de los medios de pago habilitados en la Plataforma Rappi.'));
+  assert.ok(!todos.includes('*'), 'no hay asteriscos impresos');
+
+  const sinEfectivo = documento({ metodoPago: 'sin_efectivo' });
+  assert.ok(sinEfectivo.includes('según se indica a continuación.\nCampaña válida para pedidos pagados con todos los medios de pago habilitados en la Plataforma Rappi, excepto efectivo.'));
+  const rappicard = documento({ metodoPago: 'rappicard' });
+  assert.ok(rappicard.includes('según se indica a continuación.\nCampaña válida únicamente para pedidos pagados con RappiCard.'));
+
+  // La viñeta del Cashback es otra y no se toca.
+  const cb = generarTexto(solicitud('CO', 'cashback', {}), pais('CO'), modelos, CONTEXTO);
+  assert.ok(!textoPlano(cb.texto).includes('Pagar efectivamente'));
+});
