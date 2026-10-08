@@ -471,6 +471,12 @@ var CAMPOS_CARRERA = [
   },
   { id: 'fechaNotificacion', etiqueta: 'Fecha de notificación', tipo: 'fecha', paso: 'premio', obligatorio: true },
   { id: 'plazoConfirmacion', etiqueta: 'Plazo para confirmar', tipo: 'numero', minimo: 1, maximo: 30, porDefecto: 5, paso: 'premio', obligatorio: true },
+  // El plazo maximo de entrega, para los dos tipos de premio. Va de 2 a 30 y no
+  // de 1 a 30 porque la frase de Legal dice "dentro de los {N} dias habiles" y
+  // con un dia saldria "los un (1) dias habiles": Juan eligio el minimo de 2
+  // el 8 de octubre de 2026 (H12 de la revision de la Carrera, Kenvue). Mas de
+  // 30 dias es una campana que tiene que mirar Legal.
+  { id: 'plazoEntrega', etiqueta: 'Plazo de entrega del premio', tipo: 'numero', minimo: 2, maximo: 30, paso: 'premio', obligatorio: true },
   // Sin valor por defecto a proposito: son promesas al ganador (cuantas veces se
   // intenta contactarlo y en cuantos dias se declara desierto el premio), y las
   // pone el KAM con lo que de verdad se va a hacer. K9 de la revision de la

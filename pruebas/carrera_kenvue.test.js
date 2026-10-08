@@ -580,3 +580,38 @@ test('H6: lo que se devuelve o se reversa después del ranking se recalcula', ()
     'el acumulado se recalculará y, si el participante deja de ocupar una posición ganadora, perderá el derecho al premio.'));
   assertSinRestos(texto, 'carrera');
 });
+
+// --- H12: el premio físico tiene plazo, costo y lugar de entrega ------------------------------------
+
+test('H12: el premio físico dice cuánto tarda, que no cuesta y dónde se entrega', () => {
+  const fisico = { tipoPremio: 'fisico', descripcionPremio: 'Una máscara facial', valorPremio: 1599900 };
+  const frase = (dias) => 'El premio se entregará sin costo para el ganador, en la dirección que confirme dentro del Territorio, a más tardar dentro de los ' + dias + ' días hábiles siguientes a su aceptación.';
+
+  for (const [n, letras] of [[2, 'dos (2)'], [15, 'quince (15)'], [30, 'treinta (30)']]) {
+    for (const entregaPor of ['rappi', 'organizador']) {
+      const texto = documento(Object.assign({ entregaPor, plazoEntrega: n }, fisico));
+      assert.ok(texto.includes(frase(letras)), entregaPor + ' ' + n);
+      // Va en la misma viñeta de Entrega, detrás de la frase de quién entrega.
+      const viñeta = texto.split('\n').filter((l) => l.startsWith('• Entrega:'))[0];
+      assert.ok(viñeta.endsWith(frase(letras)), viñeta);
+      assertSinRestos(texto, entregaPor + ' ' + n);
+    }
+  }
+});
+
+test('H12: el plazo de entrega va de 2 a 30 días hábiles, y con uno no se genera una frase rota', () => {
+  const co = pais('CO');
+  const errores = (plazoEntrega) => validarSolicitud(carrera({ plazoEntrega }), co, CONTEXTO).errores
+    .filter((e) => e.campo === 'plazoEntrega').map((e) => e.mensaje);
+  assert.deepStrictEqual(errores(15), []);
+  assert.deepStrictEqual(errores(2), []);
+  assert.deepStrictEqual(errores(30), []);
+  const rango = 'El plazo va de 2 a 30 días hábiles. Si la marca necesita más de 30, la campaña va a Legal.';
+  assert.deepStrictEqual(errores(1), [rango]);
+  assert.deepStrictEqual(errores(31), [rango]);
+  assert.deepStrictEqual(errores(0), [rango]);
+
+  const sin = carrera({});
+  delete sin.plazoEntrega;
+  assert.ok(validarSolicitud(sin, co, CONTEXTO).errores.some((e) => e.campo === 'plazoEntrega'));
+});

@@ -534,6 +534,22 @@ function fraseDelPremioFisico(entrada, pais, ganadores) {
 }
 
 /**
+ * ORACION: el plazo, el costo y el lugar de entrega del premio fisico.
+ *
+ * Solo con premio fisico. Con Creditos el plazo va dentro de TEXTO_ENTREGA, que
+ * es donde cuenta (H11 parte 2). La pregunta va de 2 a 30 dias habiles, asi que
+ * "dias habiles" va siempre en plural. Vacia si falta el plazo o el premio no
+ * es fisico.
+ */
+function textoPlazoEntrega(entrada) {
+  if (entrada.tipoPremio !== 'fisico') return '';
+  var dias = Number(entrada.plazoEntrega);
+  if (!dias || dias < 2) return '';
+  return 'El premio se entregará sin costo para el ganador, en la dirección que confirme dentro del Territorio, ' +
+    'a más tardar dentro de los ' + letrasYCifra(dias) + ' días hábiles siguientes a su aceptación.';
+}
+
+/**
  * FRAGMENTO: cuantas veces se intenta contactar al ganador.
  *
  * Con varios intentos, cada uno en un dia habil distinto: asi quedan separados
@@ -656,6 +672,8 @@ function derivadosCarrera(entrada, pais, valores) {
         'El Organizador solo podrá usar esos datos para entregarte el premio, coordinar la entrega, verificar ' +
         'tu identidad al recibirlo y atender los reclamos sobre ella, y deberá suprimirlos una vez cumplida esa finalidad.'
       : '';
+
+  valores.TEXTO_PLAZO_ENTREGA = textoPlazoEntrega(entrada, pais);
 
   valores.MEDIO_NOTIFICACION = MEDIO_NOTIFICACION_POR_OPCION[entrada.medioNotificacion] || '';
   valores.FECHA_NOTIFICACION = entrada.fechaNotificacion ? formatearFecha(entrada.fechaNotificacion) : '';
@@ -836,6 +854,7 @@ if (typeof module !== 'undefined') {
     textoLugarRedencion: textoLugarRedencion,
     textoProductos: textoProductos,
     textoRolOperativo: textoRolOperativo,
+    textoPlazoEntrega: textoPlazoEntrega,
     TEXTO_DESEMPATE_POR_OPCION: TEXTO_DESEMPATE_POR_OPCION,
     ganadorObjeto: ganadorObjeto,
     textoIntentosContacto: textoIntentosContacto,

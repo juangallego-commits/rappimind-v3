@@ -1974,6 +1974,29 @@ var PREGUNTAS = {
   }),
 
   /*
+   * Cuanto tarda el premio en llegar.
+   *
+   * Las frases de entrega decian que se coordinarian "las condiciones de tiempo,
+   * modo y lugar", pero no fijaban ninguna. En una promocion esas condiciones
+   * son las que hay que informar (Ley 1480 de 2011, art. 33), y el premio que no
+   * llega nunca es de los reclamos que mas terminan en la SIC. La pregunta
+   * aplica a los dos tipos de premio: con Creditos es el plazo de acreditacion.
+   * H12 y H11 de la revision de la Carrera (Kenvue), 8 de octubre de 2026.
+   */
+  plazoEntrega: p({
+    paso: 'premio',
+    pregunta: '¿En cuántos días hábiles, como máximo, se entrega el premio después de que el ganador lo acepta?',
+    ayuda: 'Si son Créditos, los acredita Rappi; si es un premio físico, lo entrega quien elegiste. Pon un plazo que se pueda cumplir.',
+    porQue: 'El documento le promete al ganador un plazo. Si no se cumple, reclama con el documento en la mano.',
+    ejemplo: '15',
+    placeholders: ['TEXTO_PLAZO_ENTREGA', 'TEXTO_ENTREGA'],
+    errores: {
+      vacio: 'Escribe en cuántos días hábiles se entrega el premio.',
+      rango: 'El plazo va de 2 a 30 días hábiles. Si la marca necesita más de 30, la campaña va a Legal.',
+    },
+  }),
+
+  /*
    * Cuantas veces se intenta contactar al ganador, y cuanto tarda en declararse
    * desierto el premio.
    *
@@ -2125,6 +2148,7 @@ var NOMBRE_DEL_HUECO = {
   TEXTO_ACUMULADO_TIENDAS: 'si las compras de varias tiendas suman juntas',
   TEXTO_ROL_OPERATIVO: 'el papel de la plataforma en el concurso',
   GANADOR_OBJETO: 'cuántas personas ganan',
+  TEXTO_PLAZO_ENTREGA: 'en cuántos días se entrega el premio',
   TEXTO_INTENTOS_CONTACTO: 'cuántas veces se intenta contactar al ganador',
   DIAS_DESIERTO: 'en cuántos días se declara desierto el premio',
   TEXTO_TERRITORIO: 'dónde aplica',

@@ -42,14 +42,14 @@ test('todo campo de todo esquema tiene pregunta, o se responde dentro de otra', 
 });
 
 /*
- * Los dos enunciados que el informe de la Carrera de Compras (Kenvue, K9) escribió
+ * Los tres enunciados que el informe de la Carrera de Compras (Kenvue, K9 y H12) escribió
  * completos y que Juan aprobó el 8 de octubre de 2026 tal cual. Son más largos
  * que diez palabras porque cada uno lleva su condición ("antes de pasar al
  * siguiente del ranking", "contados desde la fecha de aviso"): acortarlos
  * cambiaba lo que le preguntan al comercial. Cualquier otra pregunta sigue en
  * diez.
  */
-const ENUNCIADOS_LARGOS_POR_DECISION = { intentosContacto: 14, diasDesierto: 17 };
+const ENUNCIADOS_LARGOS_POR_DECISION = { intentosContacto: 14, diasDesierto: 17, plazoEntrega: 17 };
 
 test('cada pregunta tiene máximo 10 palabras', () => {
   for (const id of preguntasVisibles()) {

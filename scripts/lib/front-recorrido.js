@@ -700,7 +700,7 @@ async function recorrer(rutaDeLaDemo, fichas, marcas) {
         numeroGanadores: 1, desempate: 'primero',
         tipoPremio: 'fisico', descripcionPremio: 'Una bicicleta de montaña rodado 29',
         entregaPor: 'organizador', acuerdoDatos: 'no_o_no_se',
-        medioNotificacion: 'correo', fechaNotificacion: '2026-12-05', plazoConfirmacion: 5, intentosContacto: 3, diasDesierto: 30,
+        medioNotificacion: 'correo', fechaNotificacion: '2026-12-05', plazoConfirmacion: 5, plazoEntrega: 15, intentosContacto: 3, diasDesierto: 30,
       }), {});
       RM.estado.estado.filtroRespondido = true;
       var pasos = RM.flujo.pasosDelTipo(RM.estado.entrada()).map(function (p) { return p.id; });
