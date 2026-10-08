@@ -858,3 +858,18 @@ test('H20: una hoja vieja agrega nombre_comercial al final sin mover ninguna col
     bajarEntorno();
   }
 });
+
+// --- H9: los empleados de la Tienda Participante tampoco participan --------------------------------------
+
+test('H9: la inhabilidad incluye a los empleados de la Tienda Participante, una o varias', () => {
+  const una = documento({ tiendasCarrera: [{ nombre: 'Carulla', tiendaTurbo: 'sin_turbo' }] });
+  assert.ok(una.includes('• Los empleados, directivos, contratistas y colaboradores de Rappi, del Organizador y de la Tienda Participante, incluidas sus filiales, subsidiarias, sucursales, agencias de publicidad y demás proveedores logísticos o de ejecución de la Campaña.'));
+
+  const varias = documento({ tiendasCarrera: EXITO_Y_CARULLA });
+  assert.ok(varias.includes('• Los empleados, directivos, contratistas y colaboradores de Rappi, del Organizador y de las Tiendas Participantes, incluidas sus filiales'));
+  assert.ok(!varias.includes('de Rappi y del Organizador, incluidas'));
+  assertSinRestos(varias, 'varias');
+
+  // Y el resto del bloque no cambia.
+  assert.ok(varias.includes('• Sus cónyuges y compañeros o compañeras permanentes.'));
+});
