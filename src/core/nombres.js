@@ -28,9 +28,13 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var moduloIdiomas = require('./idiomas.js');
   var textosDelIdioma = moduloIdiomas.textosDelIdioma;
   var conElIdiomaDe = moduloIdiomas.conElIdiomaDe;
-  var partesDeFecha = require('./fechas.js').partesDeFecha;
+  var moduloFechasNombres = require('./fechas.js');
+  var partesDeFecha = moduloFechasNombres.partesDeFecha;
+  var listaY = moduloFechasNombres.listaY;
   var modalidadTurbo = require('./derivados_eta.js').modalidadTurbo;
-  var tiendaDelCashback = require('./texto.js').tiendaDelCashback;
+  var moduloTextoNombres = require('./texto.js');
+  var tiendaDelCashback = moduloTextoNombres.tiendaDelCashback;
+  var tiendasDeLaCarrera = moduloTextoNombres.tiendasDeLaCarrera;
 }
 
 var SEPARADOR_NOMBRE = ' · ';
@@ -163,6 +167,16 @@ function nombreDeCampanaEnElIdioma(entrada, esquema) {
     // corre en unas tiendas concretas no hay categoria, asi que queda la ciudad.
     var categoria = modalidadTurbo(datos);
     tienda = ciudad ? (categoria ? categoria + ' ' + ciudad : ciudad) : '';
+  }
+  // La Carrera de Compras puede sumar las compras de varias tiendas. El nombre
+  // de registro las nombra todas, en el orden de la lista: "Éxito y Carulla ·
+  // Carrera de Compras · 15 oct 2026". Con una sola tienda no cambia nada. Lo
+  // decidió Claude Code el 8 de octubre de 2026 (K1.a, docs/DECISIONES.md).
+  if (esquema && esquema.id === 'carrera_compras') {
+    var nombresDeTiendas = [];
+    var tiendasDeLaLista = tiendasDeLaCarrera(datos);
+    for (var n = 0; n < tiendasDeLaLista.length; n++) nombresDeTiendas.push(tiendasDeLaLista[n].nombre);
+    tienda = listaY(nombresDeTiendas);
   }
   // Muchas marcas tienen dos tiendas en la app. Cuando el cashback se gana solo
   // en la de Turbo, el nombre lo dice: "El Corral Turbo". Juan lo decidio el 20

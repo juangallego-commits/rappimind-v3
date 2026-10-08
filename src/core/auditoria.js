@@ -21,6 +21,10 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
 
   var moduloPreguntas = require('./preguntas.js');
   var preguntaDe = moduloPreguntas.preguntaDe;
+
+  var tieneCampo = moduloEsquemas.tieneCampo;
+  var CAMPOS_POR_TIENDA_CARRERA = moduloEsquemas.CAMPOS_POR_TIENDA_CARRERA;
+  var tiendasDeLaCarrera = require('./texto.js').tiendasDeLaCarrera;
 }
 
 /** Prefijo de las columnas de respuesta. Evita chocar con id, pais o tipo. */
@@ -149,6 +153,45 @@ function tiendasEtaLegibles(tiendas) {
 }
 
 /**
+ * Las tiendas de la Carrera de Compras, una por linea, con su respuesta de Turbo.
+ *
+ * Es una lista de filas: sin esto, la celda guardaba "[object Object]". Lee
+ * tambien la tienda guardada como texto, de antes de que fueran varias.
+ */
+function tiendasCarreraLegibles(entrada) {
+  var etiquetas = {};
+  var opciones = CAMPOS_POR_TIENDA_CARRERA[1].opciones || [];
+  for (var o = 0; o < opciones.length; o++) etiquetas[opciones[o].valor] = opciones[o].etiqueta;
+
+  var tiendas = tiendasDeLaCarrera(entrada);
+  var lineas = [];
+  for (var i = 0; i < tiendas.length; i++) {
+    var partes = [tiendas[i].nombre];
+    if (tiendas[i].tiendaTurbo) partes.push(etiquetas[tiendas[i].tiendaTurbo] || tiendas[i].tiendaTurbo);
+    lineas.push(partes.join(' · '));
+  }
+  return lineas.join('\n');
+}
+
+/**
+ * Lo que va en la columna tienda de Solicitudes.
+ *
+ * Solo lo que el tipo pregunta: una tienda que quedo de otro tipo no es de esta
+ * campana. En la Carrera son los nombres separados por coma, en el orden de la
+ * lista; una Carrera guardada antes, con la tienda como texto, da ese texto.
+ */
+function tiendaParaElSheet(entrada, esquema) {
+  var datos = entrada || {};
+  if (esquema && esquema.camposPorTiendaCarrera) {
+    var nombres = [];
+    var tiendas = tiendasDeLaCarrera(datos);
+    for (var i = 0; i < tiendas.length; i++) nombres.push(tiendas[i].nombre);
+    return nombres.join(', ');
+  }
+  return tieneCampo(esquema, 'tienda') ? (datos.tienda || '') : '';
+}
+
+/**
  * Las respuestas de una solicitud, listas para escribir en el Sheet.
  *
  * Solo se llenan las columnas del tipo de campana que se generó. Las demas
@@ -178,6 +221,9 @@ function respuestasParaElSheet(entrada) {
   if (esquema.camposPorTiendaEta) {
     fila[PREFIJO_RESPUESTA + 'tiendasEta'] = tiendasEtaLegibles(datos.tiendasEta);
   }
+  if (esquema.camposPorTiendaCarrera) {
+    fila[PREFIJO_RESPUESTA + 'tiendasCarrera'] = tiendasCarreraLegibles(datos);
+  }
   return fila;
 }
 
@@ -188,6 +234,8 @@ if (typeof module !== 'undefined') {
     valorLegible: valorLegible,
     tiendasLegibles: tiendasLegibles,
     tiendasEtaLegibles: tiendasEtaLegibles,
+    tiendasCarreraLegibles: tiendasCarreraLegibles,
+    tiendaParaElSheet: tiendaParaElSheet,
     productosLegibles: productosLegibles,
     respuestasParaElSheet: respuestasParaElSheet,
   };

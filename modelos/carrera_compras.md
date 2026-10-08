@@ -1,9 +1,10 @@
-%% Modelo: Carrera de Compras (concurso mayor comprador) · versión 3.0 · base: modelo v2 y decisiones de Legal CO (julio 2026) · revisar en punto de control A
+%% Modelo: Carrera de Compras (concurso mayor comprador) · versión 3.1 · base: modelo v2 y decisiones de Legal CO (julio 2026) · revisar en punto de control A
+%% v3.1 (8 de octubre de 2026): revisión de la Carrera de Compras (Kenvue), decisiones de Juan del 8/10/2026. Informe en docs/revisiones/2026-09-29_carrera_compras_kenvue.md. K1: varias Tiendas Participantes con un solo ranking, Turbo por tienda y Cobertura propia.
 # TÉRMINOS Y CONDICIONES
 ## {{NOMBRE_CAMPANA_MAYUS}}
 Por medio del presente documento se dan a conocer los términos y condiciones de la campaña promocional denominada “**{{NOMBRE_CAMPANA}}**”, estructurada bajo la modalidad de concurso por carrera de compras. La participación en esta campaña implica la aceptación total de los presentes Términos y Condiciones. Los ganadores se determinan exclusivamente con base en un criterio objetivo, medible y verificable de compras efectivamente realizadas durante la vigencia, y en ningún caso por sorteo, rifa, azar o cualquier otro mecanismo de suerte.
 [[INCLUIR:organizador]]
-[[INCLUIR:cobertura_tienda]]
+§ Cobertura. La Campaña es válida exclusivamente en **{{TEXTO_TERRITORIO}}** (en adelante, el “Territorio”), dentro de las zonas de cobertura de {{TEXTO_TIENDAS_PARTICIPANTES}} en la Plataforma Rappi. La disponibilidad puede variar según tu ubicación y los horarios de operación de {{LA_TIENDA}}.
 § Vigencia. La Campaña estará vigente desde las **{{HORA_INICIO}}** del **{{FECHA_INICIO}}** hasta las **{{HORA_FIN}}** del **{{FECHA_FIN}}** ({{TEXTO_HORA_LOCAL}}). Únicamente los pedidos realizados y recibidos de manera exitosa dentro de este periodo se tendrán en cuenta para el concurso.
 § Quiénes pueden participar. {{TEXTO_SEGMENTO}} Además, cada participante debe:
 • Ser {{TEXTO_PERSONA}} y tener al menos {{EDAD_MINIMA}} de edad.
@@ -11,14 +12,14 @@ Por medio del presente documento se dan a conocer los términos y condiciones de
 • Cumplir la mecánica descrita en los presentes Términos y Condiciones.
 La participación es gratuita y no exige pago alguno por concepto de inscripción.
 [[INCLUIR:inhabilidades]]
-§ Productos participantes. {{TEXTO_PRODUCTOS}} Los productos son ofrecidos y comercializados directamente por los Aliados Comerciales.
+§ Productos participantes. {{TEXTO_PRODUCTOS}}[[?TEXTO_TIENDA_TURBO]] {{TEXTO_TIENDA_TURBO}}[[/?]] Los Productos Participantes son ofrecidos y comercializados directamente por {{LA_TIENDA}}, y no por Rappi.
 § Mecánica del concurso. Para participar debes:
-• Realizar uno o más pedidos de Productos Participantes en la Tienda Participante a través de la Plataforma Rappi durante la vigencia de la Campaña.
+• Realizar uno o más pedidos de Productos Participantes {{EN_LA_TIENDA}} a través de la Plataforma Rappi durante la vigencia de la Campaña.
 • Recibir los pedidos de manera exitosa, sin cancelaciones totales ni parciales.
 • Pagar los pedidos con un medio de pago válido para la Campaña.
 {{TEXTO_METODO_PAGO}}
 {{TEXTO_UMBRAL}}
-El concurso consiste en acumular {{CRITERIO_GANADOR}} durante la vigencia de la Campaña. Los pedidos cancelados total o parcialmente, ya sea por el Usuario/Consumidor, por el Aliado Comercial o por el Repartidor Independiente, no suman al acumulado.
+El concurso consiste en acumular {{CRITERIO_GANADOR}} durante la vigencia de la Campaña. Los pedidos cancelados total o parcialmente, ya sea por el Usuario/Consumidor, por el Aliado Comercial o por el Repartidor Independiente, no suman al acumulado.[[?TEXTO_ACUMULADO_TIENDAS]] {{TEXTO_ACUMULADO_TIENDAS}}[[/?]]
 § Selección de ganadores y desempate. Al finalizar la vigencia se elaborará un ranking de participantes con base en el criterio anterior. {{FRASE_GANADORES}} {{TEXTO_DESEMPATE}}
 Antes de declarar a los ganadores, Rappi verificará la elegibilidad de cada participante y de cada pedido. Si la verificación determina que un participante o sus pedidos no cumplen las condiciones de la Campaña, dicho participante no será considerado ganador y se le informará a través de la Plataforma Rappi.
 § Premio. {{LISTA_PREMIOS}} El premio es personal e intransferible y no podrá canjearse por dinero en efectivo ni por otros bienes o servicios. La cantidad de premios es limitada y corresponde a la indicada en esta cláusula.

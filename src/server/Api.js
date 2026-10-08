@@ -221,8 +221,9 @@ function escribirLaSolicitud(id, documento, datos) {
     nombre_campana: datos.nombreCampana,
     direccion_sugerida: datos.direccion,
     // Solo lo que el tipo pregunta: una tienda que quedo de otro tipo no es
-    // de esta campana, y un tipo de un solo dia termina el dia que empieza.
-    tienda: tieneCampo(esquema, 'tienda') ? (entrada.tienda || '') : '',
+    // de esta campana, y un tipo de un solo dia termina el dia que empieza. En
+    // la Carrera son los nombres de sus tiendas, separados por coma.
+    tienda: tiendaParaElSheet(entrada, esquema),
     organizador: entrada.organizadorRazonSocial || '',
     id_organizador: entrada.organizadorId || '',
     fecha_inicio: entrada.fechaInicio || '',
@@ -400,8 +401,9 @@ function datosDeSolicitud(id) {
     if (visibles[i].id !== id) continue;
     try {
       // Sin la nota de la ampliacion vieja ni su consecutivo: la campana nueva
-      // arranca limpia, en version 1.
-      return { valido: true, entrada: sinRastroDeAmpliacion(JSON.parse(visibles[i].datos_json || '{}')) };
+      // arranca limpia, en version 1. Una Carrera guardada con la tienda como
+      // texto se abre como una lista de una fila.
+      return { valido: true, entrada: paraUsarComoBase(JSON.parse(visibles[i].datos_json || '{}')) };
     } catch (error) {
       return { valido: false, errores: [{ campo: 'id', mensaje: 'Los datos guardados de esa solicitud no se pueden leer.' }] };
     }

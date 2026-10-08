@@ -1,2 +1,3 @@
-%% Bloque compartido: cobertura_tienda · versión 3.0
-§ Cobertura. La Campaña es válida exclusivamente en **{{TEXTO_TERRITORIO}}** (en adelante, el “Territorio”), dentro de las zonas de cobertura de **{{TIENDA}}** (en adelante, la “Tienda Participante”) en la Plataforma Rappi. La disponibilidad puede variar según tu ubicación y los horarios de operación de los Aliados Comerciales.
+%% Bloque compartido: cobertura_tienda · versión 3.1
+%% v3.1 (8 de octubre de 2026): "los horarios de operación de los Aliados Comerciales" pasa a "la Tienda Participante" (K1.c, revisión de la Carrera de Compras). La Carrera ya no incluye este bloque: lleva su propia cláusula de Cobertura, porque acepta varias tiendas.
+§ Cobertura. La Campaña es válida exclusivamente en **{{TEXTO_TERRITORIO}}** (en adelante, el “Territorio”), dentro de las zonas de cobertura de **{{TIENDA}}** (en adelante, la “Tienda Participante”) en la Plataforma Rappi. La disponibilidad puede variar según tu ubicación y los horarios de operación de la Tienda Participante.

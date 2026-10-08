@@ -33,7 +33,10 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var preguntaDe = require('./preguntas.js').preguntaDe;
   var categoriaProhibida = require('./leyendas.js').categoriaProhibida;
   var preguntaEnIdioma = require('./preguntas_pt.js').preguntaEnIdioma;
-  var tieneValor = require('./texto.js').tieneValor;
+  var moduloTexto = require('./texto.js');
+  var tieneValor = moduloTexto.tieneValor;
+  var tiendasDeLaCarrera = moduloTexto.tiendasDeLaCarrera;
+  var sinTildes = require('./nombres.js').sinTildes;
   // El techo lo declara numeros.js, que es quien escribe los numeros en letras.
   // Declararlo tambien aqui lo duplicaria: en Apps Script los archivos de
   // src/core comparten un solo ambito y una var pisaria a la otra.
@@ -949,6 +952,89 @@ function validarProductos(entrada, esquema) {
 }
 
 /**
+ * Si el nombre de una fila de tienda parece dos tiendas en una.
+ *
+ * Paso de verdad (campaña de Kenvue, septiembre de 2026): el comercial escribió
+ * "Turbo y Éxito" en un solo campo. Se avisa con " y ", coma, barra, más o punto
+ * y coma, y con la palabra Turbo junto a otro nombre, porque la respuesta de
+ * Turbo se da en su propia pregunta. No se prohíbe: hay marcas con "y" en el
+ * nombre, así que la fila se puede confirmar como una sola tienda (unaSola).
+ */
+function parecenVariasTiendas(nombre) {
+  var texto = ' ' + sinTildes(String(nombre === null || nombre === undefined ? '' : nombre))
+    .toLowerCase().replace(/\s+/g, ' ').trim() + ' ';
+  if (/[,\/+;]/.test(texto)) return true;
+  if (texto.indexOf(' y ') !== -1) return true;
+  var palabras = texto.trim().split(' ');
+  return palabras.length > 1 && palabras.indexOf('turbo') !== -1;
+}
+
+var RESPUESTAS_DE_TURBO = ['normal', 'turbo', 'ambas', 'sin_turbo'];
+
+/**
+ * Las tiendas donde suman las compras de la Carrera (K1.a, 8 de octubre de 2026).
+ *
+ * Una fila sin nombre deja el documento sin tienda; una sin respuesta de Turbo
+ * lo deja sin decir en cuál de sus tiendas cuentan los pedidos (en la campaña
+ * de Kenvue, la diferencia entre Éxito y Carulla); el mismo nombre dos veces
+ * nombra la tienda dos veces; y un nombre que parece dos tiendas se frena hasta
+ * que el comercial confirme que es una sola.
+ *
+ * Una campaña guardada antes, con la tienda como texto, se lee como una fila
+ * (tiendasDeLaCarrera) y pasa.
+ */
+function validarTiendasCarrera(entrada, esquema, idioma) {
+  var tipo = esquema ? esquema.id : 'carrera_compras';
+  var definicion = null;
+  var campos = (esquema && esquema.campos) || [];
+  for (var i = 0; i < campos.length; i++) {
+    if (campos[i].id === 'tiendasCarrera') definicion = campos[i];
+  }
+  var minimo = definicion && definicion.minimo !== undefined ? definicion.minimo : 1;
+  var maximo = definicion && definicion.maximo !== undefined ? definicion.maximo : 10;
+
+  var mensajeMinimo = mensajeDe('tiendasCarrera', tipo, 'minimo', idioma, 'Agrega al menos una tienda.');
+  var lista = entrada.tiendasCarrera;
+  if (Object.prototype.toString.call(lista) !== '[object Array]') {
+    return tiendasDeLaCarrera(entrada).length < minimo ? [error('tiendasCarrera', mensajeMinimo)] : [];
+  }
+
+  if (tiendasDeLaCarrera(entrada).length < minimo) return [error('tiendasCarrera', mensajeMinimo)];
+  if (lista.length > maximo) {
+    return [error('tiendasCarrera', mensajeDe('tiendasCarrera', tipo, 'maximo', idioma,
+      'No puedes agregar más de ' + maximo + ' tiendas.'))];
+  }
+
+  var errores = [];
+  var vistas = {};
+  for (var t = 0; t < lista.length; t++) {
+    var fila = lista[t] || {};
+    var numero = t + 1;
+    var nombre = String(fila.nombre === null || fila.nombre === undefined ? '' : fila.nombre).trim();
+    if (!nombre) {
+      errores.push(error('tiendasCarrera', 'Tienda ' + numero + ': falta el nombre.'));
+      continue;
+    }
+    var llave = sinTildes(nombre).toLowerCase().replace(/\s+/g, ' ');
+    if (vistas[llave]) {
+      errores.push(error('tiendasCarrera', 'Tienda ' + numero + ': ' + mensajeDe('tiendasCarrera', tipo, 'repetido', idioma,
+        'Esa tienda ya está en la lista.')));
+    }
+    vistas[llave] = true;
+
+    if (RESPUESTAS_DE_TURBO.indexOf(String(fila.tiendaTurbo || '')) === -1) {
+      errores.push(error('tiendasCarrera', 'Tienda ' + numero + ': ' + mensajeDe('tiendasCarrera', tipo, 'turbo', idioma,
+        'Dinos en cuál de sus tiendas cuentan los pedidos.')));
+    }
+    if (fila.unaSola !== true && parecenVariasTiendas(nombre)) {
+      errores.push(error('tiendasCarrera', 'Tienda ' + numero + ': ' + mensajeDe('tiendasCarrera', tipo, 'varias', idioma,
+        'Parece que escribiste más de una tienda en la misma fila. Agrega cada tienda en su propia fila.')));
+    }
+  }
+  return errores;
+}
+
+/**
  * Las tiendas de Turbo del cashback por ETA.
  *
  * Una fila sin nombre deja el documento sin la vinneta, y el mismo nombre dos
@@ -1066,6 +1152,7 @@ function validarSolicitud(entrada, pais, contexto) {
   }
   if (entrada.tipo === 'carrera_compras') {
     errores = errores.concat(validarCarrera(entrada, esquema.id, idioma));
+    errores = errores.concat(validarTiendasCarrera(entrada, esquema, idioma));
     errores = errores.concat(validarProductos(entrada, esquema));
   }
   if (esquema.esDeDescuento) {
@@ -1118,6 +1205,8 @@ if (typeof module !== 'undefined') {
     validarCategoriaDeLaPieza: validarCategoriaDeLaPieza,
     validarProductos: validarProductos,
     validarTiendasEta: validarTiendasEta,
+    validarTiendasCarrera: validarTiendasCarrera,
+    parecenVariasTiendas: parecenVariasTiendas,
     validarColumnasDelPais: validarColumnasDelPais,
   };
 }

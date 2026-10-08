@@ -1687,6 +1687,49 @@ var PREGUNTAS = {
     },
   }),
 
+  /*
+   * Las tiendas donde suman las compras de la Carrera de Compras.
+   *
+   * Reemplaza a "En qué tienda aplica" en este tipo. Paso de verdad (campaña de
+   * Kenvue, septiembre de 2026): el comercial escribió "Turbo y Éxito" en un
+   * campo hecho para una tienda, y el documento declaró como Tienda
+   * Participante algo que no es una tienda y no dijo si las compras de las dos
+   * se suman. En una Carrera es normal fijar uno o más comercios con un solo
+   * ranking, así que la herramienta lo soporta: una fila por tienda, cada una
+   * con su respuesta de Turbo (K1 de la revisión, 8 de octubre de 2026).
+   */
+  tiendasCarrera: p({
+    paso: 'campana',
+    pregunta: '¿En qué tiendas suman las compras?',
+    ayuda: 'Una fila por tienda. Las compras hechas en todas las tiendas de la lista suman a un mismo ranking.',
+    porQue: 'El documento nombra cada tienda y dice en cuál de sus tiendas cuentan los pedidos. Si una tienda falta, sus pedidos no suman; y si sobra, el ranking se mide donde la campaña no corre.',
+    placeholders: ['TEXTO_TIENDAS_PARTICIPANTES', 'LA_TIENDA', 'EN_LA_TIENDA', 'TEXTO_TIENDA_TURBO', 'TEXTO_ACUMULADO_TIENDAS'],
+    errores: {
+      minimo: 'Agrega al menos una tienda.',
+      maximo: 'No puedes agregar más de 10 tiendas.',
+      repetido: 'Esa tienda ya está en la lista.',
+      varias: 'Parece que escribiste más de una tienda en la misma fila. Agrega cada tienda en su propia fila.',
+      turbo: 'Dinos en cuál de sus tiendas cuentan los pedidos.',
+    },
+    camposPorTienda: {
+      nombre: {
+        pregunta: 'Tienda',
+        ayuda: 'Como aparece en la app, sin la palabra Turbo. Por ejemplo: Éxito o Carulla. Si son varias, agrega una fila por tienda.',
+        ejemplo: 'Éxito',
+      },
+      tiendaTurbo: {
+        pregunta: 'En cuál de sus tiendas',
+        ayuda: 'Muchas marcas tienen dos tiendas en la app, la normal y la de Turbo. Elige en cuál cuentan los pedidos.',
+        opciones: [
+          { valor: 'normal', etiqueta: 'Solo en la tienda normal', nota: 'Un pedido en su tienda de Turbo no suma.' },
+          { valor: 'turbo', etiqueta: 'Solo en la tienda de Turbo', nota: 'Un pedido en su tienda normal no suma.' },
+          { valor: 'ambas', etiqueta: 'En las dos', nota: 'Suma en cualquiera de las dos tiendas de la marca.' },
+          { valor: 'sin_turbo', etiqueta: 'No tiene tienda en Turbo', nota: 'Si no sabes, búscala en el botón Turbo de la app.' },
+        ],
+      },
+    },
+  }),
+
   productosDetalle: p({
     variantes: {
       descuento: {
@@ -2038,6 +2081,10 @@ var NOMBRE_DEL_HUECO = {
   NOMBRE_CAMPANA: 'el nombre, que sale de la tienda o la marca, el porcentaje y el día de inicio',
   NOMBRE_CAMPANA_MAYUS: 'el nombre, que sale de la tienda o la marca, el porcentaje y el día de inicio',
   TIENDA: 'la tienda',
+  TEXTO_TIENDAS_PARTICIPANTES: 'las tiendas donde suman las compras',
+  LA_TIENDA: 'las tiendas donde suman las compras',
+  EN_LA_TIENDA: 'las tiendas donde suman las compras',
+  TEXTO_ACUMULADO_TIENDAS: 'si las compras de varias tiendas suman juntas',
   TEXTO_TERRITORIO: 'dónde aplica',
   FECHA_INICIO: 'el día de inicio',
   HORA_INICIO: 'la hora de inicio',

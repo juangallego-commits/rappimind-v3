@@ -99,6 +99,11 @@ function tiendasEtaDePrueba() {
   return [{ nombre: 'Turbo Calleja' }, { nombre: 'Turbo Chico' }];
 }
 
+/** La tienda de la Carrera de Compras, con su respuesta de Turbo. */
+function tiendasCarreraDePrueba() {
+  return [{ nombre: 'Texto de prueba', tiendaTurbo: 'sin_turbo' }];
+}
+
 /** Dos tiendas válidas para el Cashback Multitienda. */
 function tiendasDePrueba(codigoPais) {
   return [
@@ -128,6 +133,7 @@ function solicitud(codigoPais, tipo, respuestas) {
   }
   if (esquema.camposPorTienda) entrada.tiendas = tiendasDePrueba(codigoPais);
   if (esquema.camposPorTiendaEta) entrada.tiendasEta = tiendasEtaDePrueba();
+  if (esquema.camposPorTiendaCarrera) entrada.tiendasCarrera = tiendasCarreraDePrueba();
 
   // Varias vueltas: la visibilidad de un campo depende de lo que se respondió antes.
   for (let vuelta = 0; vuelta < 4; vuelta += 1) {
@@ -146,4 +152,4 @@ function solicitud(codigoPais, tipo, respuestas) {
   return entrada;
 }
 
-module.exports = { solicitud, tiendasDePrueba, tiendasEtaDePrueba, IDENTIFICACIONES };
+module.exports = { solicitud, tiendasDePrueba, tiendasEtaDePrueba, tiendasCarreraDePrueba, IDENTIFICACIONES };

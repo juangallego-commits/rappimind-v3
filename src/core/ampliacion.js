@@ -209,6 +209,27 @@ function sinRastroDeAmpliacion(entrada) {
   return limpia;
 }
 
+/**
+ * Las respuestas de una campana para abrirla con "Usar como base".
+ *
+ * Igual que sinRastroDeAmpliacion, y ademas: una Carrera de Compras guardada
+ * antes de que fueran varias tiendas trae la tienda como texto. Se abre como
+ * una lista de una fila, para que la pregunta de las tiendas aparezca con su
+ * nombre ya escrito. La respuesta de Turbo queda en blanco a proposito: esa
+ * campana nunca la contesto, y marcar una por el comercial seria publicar un
+ * dato que nadie confirmo. Tampoco se da por confirmada como "una sola tienda":
+ * si el texto viejo eran dos, el aviso tiene que volver a salir.
+ */
+function paraUsarComoBase(entrada) {
+  var base = sinRastroDeAmpliacion(entrada || {});
+  var yaEsLista = Object.prototype.toString.call(base.tiendasCarrera) === '[object Array]';
+  var antigua = String(base.tienda === null || base.tienda === undefined ? '' : base.tienda).trim();
+  if (base.tipo === 'carrera_compras' && !yaEsLista && antigua) {
+    base.tiendasCarrera = [{ nombre: antigua, tiendaTurbo: '', unaSola: false }];
+  }
+  return base;
+}
+
 /** Lo que el comercial lee en el historial cuando no puede ampliar. */
 function textoDeAmpliacion(solicitud, entrada, ahoraIso, ahoraHora) {
   var estado = puedeAmpliar(solicitud, entrada, ahoraIso, ahoraHora);
@@ -227,5 +248,6 @@ if (typeof module !== 'undefined') {
     aplicarAmpliacion: aplicarAmpliacion,
     textoDeAmpliacion: textoDeAmpliacion,
     sinRastroDeAmpliacion: sinRastroDeAmpliacion,
+    paraUsarComoBase: paraUsarComoBase,
   };
 }

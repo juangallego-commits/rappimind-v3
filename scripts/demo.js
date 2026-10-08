@@ -140,7 +140,7 @@ const SERVIDOR_SIMULADO = `
 
     datosDeSolicitud: function (id) {
       for (var i = 0; i < solicitudes.length; i++) {
-        if (solicitudes[i].id === id) return { valido: true, entrada: sinRastroDeAmpliacion(JSON.parse(solicitudes[i].datos_json)) };
+        if (solicitudes[i].id === id) return { valido: true, entrada: paraUsarComoBase(JSON.parse(solicitudes[i].datos_json)) };
       }
       return { valido: false, errores: [{ campo: 'id', mensaje: 'No encontramos esa solicitud.' }] };
     },

@@ -44,6 +44,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var tieneValor = moduloTextoDerivados.tieneValor;
   var tiendaDelCashback = moduloTextoDerivados.tiendaDelCashback;
   var terminoDeDias = moduloTextoDerivados.terminoDeDias;
+  var tiendasDeLaCarrera = moduloTextoDerivados.tiendasDeLaCarrera;
 }
 
 // --- Textos fijos de Legal -------------------------------------------------
@@ -76,6 +77,23 @@ var TEXTO_TIENDA_TURBO_POR_OPCION = {
   normal: 'El Beneficio aplica únicamente para pedidos realizados en la Tienda Participante por fuera del botón “Turbo” de la Plataforma Rappi. Los pedidos realizados en la Tienda Participante dentro del botón “Turbo” no generan el Beneficio.',
   turbo: 'El Beneficio aplica únicamente para pedidos realizados en la Tienda Participante dentro del botón “Turbo” de la Plataforma Rappi. Los pedidos realizados en la Tienda Participante por fuera de ese botón no generan el Beneficio.',
   ambas: 'El Beneficio aplica para pedidos realizados en la Tienda Participante, tanto dentro como por fuera del botón “Turbo” de la Plataforma Rappi.',
+};
+
+/*
+ * En cual de sus tiendas cuentan los pedidos de la Carrera, tienda por tienda.
+ *
+ * Las frases del Cashback hablan del "Beneficio", que en la Carrera no existe,
+ * asi que estas son propias. Tres frases de la revision de la Carrera de
+ * Compras (K1.b), aprobadas por Juan el 8 de octubre de 2026. "No tiene tienda
+ * en Turbo" no imprime nada.
+ *
+ * {referencia} es "la Tienda Participante" con una tienda y el nombre de la
+ * tienda, en negrilla, con varias.
+ */
+var TEXTO_TIENDA_TURBO_CARRERA_POR_OPCION = {
+  normal: 'En {referencia}, solo suman al acumulado los pedidos realizados por fuera del botón “Turbo” de la Plataforma Rappi.',
+  turbo: 'En {referencia}, solo suman al acumulado los pedidos realizados dentro del botón “Turbo” de la Plataforma Rappi.',
+  ambas: 'En {referencia}, suman al acumulado los pedidos realizados tanto dentro como por fuera del botón “Turbo” de la Plataforma Rappi.',
 };
 
 /*
@@ -328,15 +346,65 @@ function textoLugarRedencion(entrada, pais) {
   );
 }
 
+/** FRAGMENTO: "la Tienda Participante" o "las Tiendas Participantes". */
+function laTiendaDeLaCarrera(entrada) {
+  return tiendasDeLaCarrera(entrada).length > 1 ? 'las Tiendas Participantes' : 'la Tienda Participante';
+}
+
+/** FRAGMENTO: "en la Tienda Participante" o "en cualquiera de las Tiendas Participantes". */
+function enLaTiendaDeLaCarrera(entrada) {
+  return tiendasDeLaCarrera(entrada).length > 1
+    ? 'en cualquiera de las Tiendas Participantes'
+    : 'en la Tienda Participante';
+}
+
+/**
+ * FRAGMENTO: las tiendas, con su nombre en negrilla y su definicion.
+ *
+ * Con una tienda sale letra por letra como el bloque cobertura_tienda de antes.
+ * Sin ninguna tienda queda vacio y el motor anuncia el hueco.
+ */
+function textoTiendasParticipantes(entrada) {
+  var tiendas = tiendasDeLaCarrera(entrada);
+  if (tiendas.length === 0) return '';
+  if (tiendas.length === 1) return '**' + tiendas[0].nombre + '** (en adelante, la “Tienda Participante”)';
+  var nombres = [];
+  for (var i = 0; i < tiendas.length; i++) nombres.push('**' + tiendas[i].nombre + '**');
+  return 'las tiendas ' + listaY(nombres) +
+    ' (en adelante, cada una, una “Tienda Participante” y, en conjunto, las “Tiendas Participantes”)';
+}
+
+/** ORACION: solo con varias tiendas, que todas suman a un mismo acumulado. Con una, vacio. */
+function textoAcumuladoTiendas(entrada) {
+  if (tiendasDeLaCarrera(entrada).length < 2) return '';
+  return 'Los pedidos de Productos Participantes realizados en cualquiera de las Tiendas Participantes suman a un mismo acumulado por participante.';
+}
+
+/**
+ * ORACION (una por tienda con respuesta, separadas por un espacio): en cual de
+ * sus tiendas cuentan los pedidos. Vacio si ninguna tiene respuesta de Turbo.
+ */
+function textoTiendaTurboCarrera(entrada) {
+  var tiendas = tiendasDeLaCarrera(entrada);
+  var oraciones = [];
+  for (var i = 0; i < tiendas.length; i++) {
+    var frase = TEXTO_TIENDA_TURBO_CARRERA_POR_OPCION[tiendas[i].tiendaTurbo];
+    if (!frase) continue;
+    var referencia = tiendas.length > 1 ? '**' + tiendas[i].nombre + '**' : 'la Tienda Participante';
+    oraciones.push(frase.replace('{referencia}', referencia));
+  }
+  return oraciones.join(' ');
+}
+
 /** ORACION: que productos participan en la Carrera. */
 function textoProductos(entrada) {
   if (entrada.productos === 'todos') {
-    return 'Participan en el concurso todos los productos del catálogo de la Tienda Participante en la Plataforma Rappi (en adelante, los “Productos Participantes”).';
+    return 'Participan en el concurso todos los productos del catálogo de ' + laTiendaDeLaCarrera(entrada) + ' en la Plataforma Rappi (en adelante, los “Productos Participantes”).';
   }
   if (entrada.productos === 'marca') {
     return (
       'Participan en el concurso únicamente los productos de la marca ' + (entrada.makerMarca || '') +
-      ' disponibles en la Tienda Participante a través de la Plataforma Rappi (en adelante, los “Productos Participantes”).'
+      ' disponibles ' + enLaTiendaDeLaCarrera(entrada) + ' a través de la Plataforma Rappi (en adelante, los “Productos Participantes”).'
     );
   }
   if (entrada.productos === 'especificos') {
@@ -350,7 +418,7 @@ function textoProductos(entrada) {
     var productos = entrada.productosDetalle || [];
     if (productos.length === 0) return '';
 
-    var lineas = ['Participan en el concurso únicamente los siguientes productos de la Tienda Participante, ' +
+    var lineas = ['Participan en el concurso únicamente los siguientes productos de ' + laTiendaDeLaCarrera(entrada) + ', ' +
       'identificados con su nombre y su código de barras EAN (en adelante, los “Productos Participantes”):'];
     for (var i = 0; i < productos.length; i++) {
       var nombre = String((productos[i] || {}).nombre || '').trim();
@@ -406,6 +474,13 @@ function fraseDelPremioFisico(entrada, pais, ganadores) {
 /** Derivados propios de la Carrera de Compras. */
 function derivadosCarrera(entrada, pais, valores) {
   valores.TEXTO_PRODUCTOS = textoProductos(entrada);
+  // Las Tiendas Participantes (K1): una o varias, con un solo ranking.
+  valores.TEXTO_TIENDAS_PARTICIPANTES = textoTiendasParticipantes(entrada);
+  valores.LA_TIENDA = laTiendaDeLaCarrera(entrada);
+  valores.EN_LA_TIENDA = enLaTiendaDeLaCarrera(entrada);
+  valores.TEXTO_ACUMULADO_TIENDAS = textoAcumuladoTiendas(entrada);
+  // Pisa la frase del Cashback: la Carrera no tiene Beneficio.
+  valores.TEXTO_TIENDA_TURBO = textoTiendaTurboCarrera(entrada);
   valores.CRITERIO_GANADOR = CRITERIO_GANADOR_POR_OPCION[entrada.criterioGanador] || '';
   valores.TEXTO_DESEMPATE = TEXTO_DESEMPATE_POR_OPCION[entrada.desempate] || '';
 
@@ -533,6 +608,13 @@ function calcularDerivadosEnElIdiomaDelPais(entrada, pais) {
   valores.NOMBRE_CAMPANA = nombreDeCampana(entrada, esquemaDe(entrada.tipo));
   valores.NOMBRE_CAMPANA_MAYUS = valores.NOMBRE_CAMPANA.toUpperCase();
   valores.TIENDA = entrada.tienda || '';
+  if (entrada.tipo === 'carrera_compras') {
+    // La Carrera ya no guarda la tienda como texto: son una o varias.
+    var nombresDeTiendas = [];
+    var tiendasDeLaLista = tiendasDeLaCarrera(entrada);
+    for (var nt = 0; nt < tiendasDeLaLista.length; nt++) nombresDeTiendas.push(tiendasDeLaLista[nt].nombre);
+    valores.TIENDA = listaY(nombresDeTiendas);
+  }
   valores.TEXTO_TERRITORIO = textoTerritorio(entrada, pais);
 
   valores.FECHA_INICIO = entrada.fechaInicio ? formatearFecha(entrada.fechaInicio) : '';
@@ -636,6 +718,12 @@ if (typeof module !== 'undefined') {
     textoLimitePedidos: textoLimitePedidos,
     textoLugarRedencion: textoLugarRedencion,
     textoProductos: textoProductos,
+    textoTiendasParticipantes: textoTiendasParticipantes,
+    textoAcumuladoTiendas: textoAcumuladoTiendas,
+    textoTiendaTurboCarrera: textoTiendaTurboCarrera,
+    laTiendaDeLaCarrera: laTiendaDeLaCarrera,
+    enLaTiendaDeLaCarrera: enLaTiendaDeLaCarrera,
+    TEXTO_TIENDA_TURBO_CARRERA_POR_OPCION: TEXTO_TIENDA_TURBO_CARRERA_POR_OPCION,
     TEXTO_SEGMENTO_POR_OPCION: TEXTO_SEGMENTO_POR_OPCION,
     TEXTO_METODO_PAGO_POR_OPCION: TEXTO_METODO_PAGO_POR_OPCION,
     TEXTO_TIENDA_TURBO_POR_OPCION: TEXTO_TIENDA_TURBO_POR_OPCION,

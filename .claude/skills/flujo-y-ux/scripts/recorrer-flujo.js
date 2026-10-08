@@ -1081,6 +1081,51 @@ async function recorrer() {
     acuerdoEnCreditos.indexOf('acuerdo de transferencia de datos') === -1,
     acuerdoEnCreditos.replace(/\n+/g, ' | ').slice(0, 300));
 
+  // --- 6b. Las tiendas de la Carrera ----------------------------------------
+  //
+  // K1 de la revision de la Carrera (8 de octubre de 2026): son una lista de
+  // filas, y un nombre que parece dos tiendas se frena hasta que el comercial
+  // confirma que es una. El defecto de Kenvue fue justo "Turbo y Exito" en una
+  // sola fila, y que el asistente lo dejara pasar.
+  await pagina.goto(DEMO);
+  await pagina.waitForTimeout(800);
+  await pagina.evaluate(function () {
+    RM.estado.reiniciarFormulario(Object.assign(RM.app.valoresIniciales(),
+      { pais: 'CO', negocio: 'rappi', tipo: 'carrera_compras' }), { pais: true, negocio: true, tipo: true });
+    RM.estado.estado.filtroRespondido = true;
+    RM.estado.estado.pasoActual = 0;
+    RM.estado.estado.campoAbierto = 'tiendasCarrera';
+    RM.app.ir('pasos');
+  });
+  await pagina.waitForTimeout(450);
+  const tiendasSinResponder = await texto();
+  revisar('la Carrera pregunta por sus tiendas, con una fila lista para escribir',
+    tiendasSinResponder.indexOf('¿En qué tiendas suman las compras?') !== -1 &&
+    (await pagina.$('[data-tienda-carrera="0"] input[type=text]')) !== null &&
+    (await pagina.$('[data-tienda-carrera="0"] select')) !== null,
+    tiendasSinResponder.replace(/\n+/g, ' | ').slice(-300));
+  revisar('y ya no pregunta "¿Participan varias tiendas?" en ningún sitio',
+    tiendasSinResponder.indexOf('¿Participan varias tiendas?') === -1);
+
+  await pagina.fill('[data-tienda-carrera="0"] input[type=text]', 'Turbo y Éxito');
+  await pagina.selectOption('[data-tienda-carrera="0"] select', 'ambas');
+  await clic('Siguiente');
+  const tiendasJuntas = await texto();
+  revisar('"Turbo y Éxito" en una sola fila no deja avanzar y dice qué hacer',
+    tiendasJuntas.indexOf('Parece que escribiste más de una tienda en la misma fila. Agrega cada tienda en su propia fila.') !== -1 &&
+    tiendasJuntas.indexOf('Es una sola tienda, se llama así') !== -1 &&
+    tiendasJuntas.indexOf('Tienda 1: Turbo y Éxito') !== -1,
+    tiendasJuntas.replace(/\n+/g, ' | ').slice(-500));
+
+  await clic('Es una sola tienda');
+  await clic('Siguiente');
+  // Se mira la pregunta que quedo abierta y no el texto de toda la pagina: el
+  // aviso de error se anuncia en una zona aria-live que conserva su ultimo texto.
+  const tituloSiguiente = await titulos();
+  revisar('confirmar que es una sola tienda deja seguir a la pregunta siguiente',
+    tituloSiguiente.indexOf('¿Dónde aplica la campaña?') !== -1,
+    tituloSiguiente.join(' | '));
+
   // --- 7. En celular, nada queda debajo del selector de idioma --------------
   //
   // El selector ES/BR es fijo abajo a la derecha. Con poco espacio reservado

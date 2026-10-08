@@ -92,7 +92,12 @@ test('limpiar dos veces da lo mismo que limpiar una', () => {
 
 /** Un doble espacio en cada campo de texto libre del tipo, de a uno. */
 function conDobleEspacio(codigoPais, tipo, campo, valor) {
-  return generarTexto(solicitud(codigoPais, tipo, { [campo]: valor }), pais(codigoPais), modelos, CONTEXTO);
+  // La tienda de la Carrera ya no es un texto sino una lista de filas (K1 de la
+  // revisión de Kenvue): el valor de prueba va en el nombre de la primera fila.
+  const respuestas = campo === 'tienda' && tipo === 'carrera_compras'
+    ? { tiendasCarrera: [{ nombre: valor, tiendaTurbo: 'sin_turbo' }] }
+    : { [campo]: valor };
+  return generarTexto(solicitud(codigoPais, tipo, respuestas), pais(codigoPais), modelos, CONTEXTO);
 }
 
 test('la Carrera de Compras de Colombia genera con dobles espacios en la tienda y en la razón social', () => {
@@ -153,7 +158,7 @@ test('un campo que solo tiene espacios sigue siendo un campo vacío', () => {
   // Limpiar no puede esconder lo que falta: "   " queda en "" y se pide igual.
   const salida = conDobleEspacio('CO', 'carrera_compras', 'tienda', '     ');
   assert.ok(!salida.valido);
-  assert.ok(salida.errores.some((e) => e.campo === 'tienda'), JSON.stringify(salida.errores));
+  assert.ok(salida.errores.some((e) => e.campo === 'tiendasCarrera'), JSON.stringify(salida.errores));
 });
 
 test('la limpieza no esconde una respuesta mala: el código de un cupón con espacio sigue rechazado', () => {

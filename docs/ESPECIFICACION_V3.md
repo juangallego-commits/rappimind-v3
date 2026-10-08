@@ -218,6 +218,7 @@ Validaciones cruzadas: tope y presupuesto mayores que cero; tope menor o igual a
 
 | Campo | Tipo | Obligatorio | Placeholder |
 |---|---|---|---|
+| tiendasCarrera | lista de 1 a 10 filas: nombre de la tienda y en cuál de sus tiendas cuentan los pedidos (normal, Turbo, las dos o sin Turbo). Todas suman a un solo ranking (revisión Kenvue, K1, 8 de octubre de 2026) | sí | TEXTO_TIENDAS_PARTICIPANTES, LA_TIENDA, EN_LA_TIENDA, TEXTO_ACUMULADO_TIENDAS, TEXTO_TIENDA_TURBO |
 | productos | lista: Todos los de la tienda, Los de una marca, Productos específicos | sí | TEXTO_PRODUCTOS |
 | makerMarca | texto | si productos = marca | TEXTO_PRODUCTOS |
 | productosLista | texto, separado por comas | si productos = específicos | TEXTO_PRODUCTOS |
@@ -235,7 +236,7 @@ Validaciones cruzadas: tope y presupuesto mayores que cero; tope menor o igual a
 
 Validaciones cruzadas: el desempate no puede ser el mismo criterio del ganador; la fecha de notificación debe ser posterior al fin de la campaña.
 
-**Filtro de entrada:** ¿hay azar (sorteo, rifa, raspa y gana)? ¿hay premios distintos por puesto o tabla de puntos? ¿el premio es una boleta, una experiencia o está ligado a un evento? ¿la tienda o la marca exige sus propios T&C? ¿participan varias tiendas? Si alguna es sí, va a Legal.
+**Filtro de entrada:** ¿hay azar (sorteo, rifa, raspa y gana)? ¿hay premios distintos por puesto o tabla de puntos? ¿el premio es una boleta, una experiencia o está ligado a un evento? ¿la tienda o la marca exige sus propios T&C? Si alguna es sí, va a Legal. Ya no se pregunta si participan varias tiendas: la Carrera las acepta (una fila por tienda, un solo ranking).
 
 **Derivados (textos de Legal, julio de 2026, con ajustes marcados):**
 

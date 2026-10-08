@@ -42,7 +42,6 @@ var AVISO_AZAR = {
     'Premios distintos por puesto en un ranking, o tabla de puntos: consúltalo.',
     'El premio es una boleta, una experiencia o algo atado a un evento con fecha: consúltalo.',
     'Hay un jurado que decide, o un criterio de "el más creativo": consúltalo.',
-    'Participan varias tiendas en un mismo concurso: consúltalo.',
   ],
   regla: 'La prueba más simple: si dos personas hacen exactamente lo mismo y una puede ganar y la otra no, hay azar. Consulta antes de lanzar.',
 };
@@ -335,7 +334,7 @@ var PREGUNTAS_FRECUENTES = [
   },
   {
     pregunta: '¿Puedo poner varias tiendas en una misma campaña?',
-    respuesta: 'Sí, con el tipo Cashback Multitienda. Cada tienda entra con su razón social, su NIT y su presupuesto, porque cada una organiza su propio beneficio y responde por él.',
+    respuesta: 'Sí. En la Carrera de Compras agregas una fila por tienda: las compras en todas suman a un mismo ranking, y en cada fila dices en cuál de sus tiendas cuentan los pedidos (la normal, la de Turbo o las dos). Con el tipo Cashback Multitienda, cada tienda entra con su razón social, su NIT y su presupuesto, porque cada una organiza su propio beneficio y responde por él.',
   },
   {
     pregunta: '¿Qué es un Maker y en qué cambia las cosas?',

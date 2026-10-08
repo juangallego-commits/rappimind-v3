@@ -184,11 +184,54 @@ function incluyeTurbo(entrada) {
   return cual === 'turbo' || cual === 'ambas';
 }
 
+/**
+ * Las tiendas donde suman las compras de una Carrera de Compras.
+ *
+ * Desde el 8 de octubre de 2026 (K1 de la revisión de la Carrera de Kenvue) la
+ * Carrera acepta una o varias Tiendas Participantes con un solo ranking. Cada
+ * fila trae el nombre y en cuál de sus tiendas cuentan los pedidos (la normal,
+ * la de Turbo o las dos), y vive en entrada.tiendasCarrera.
+ *
+ * Lo guardado antes sigue sirviendo: una campaña con la tienda escrita como
+ * texto en entrada.tienda se lee como una lista de una fila. No tenía respuesta
+ * de Turbo, y el documento de entonces no decía nada de Turbo, así que se lee
+ * como "No tiene tienda en Turbo", que no imprime nada. Sin esto, Ampliar y el
+ * historial de toda Carrera ya generada se quedaban sin tienda.
+ *
+ * Una fila vacía no cuenta: la vista previa se pinta mientras se escribe.
+ * unaSola es la confirmación de "es una sola tienda, se llama así" para un
+ * nombre que parece dos; la tienda guardada como texto se da por confirmada.
+ */
+function tiendasDeLaCarrera(entrada) {
+  var datos = entrada || {};
+  var lista = datos.tiendasCarrera;
+  var salida = [];
+
+  if (Object.prototype.toString.call(lista) === '[object Array]') {
+    for (var i = 0; i < lista.length; i++) {
+      var fila = lista[i] || {};
+      var nombre = String(fila.nombre === null || fila.nombre === undefined ? '' : fila.nombre).trim();
+      if (!nombre) continue;
+      salida.push({
+        nombre: nombre,
+        tiendaTurbo: String(fila.tiendaTurbo === null || fila.tiendaTurbo === undefined ? '' : fila.tiendaTurbo).trim(),
+        unaSola: fila.unaSola === true,
+      });
+    }
+    return salida;
+  }
+
+  var antigua = String(datos.tienda === null || datos.tienda === undefined ? '' : datos.tienda).trim();
+  if (antigua) salida.push({ nombre: antigua, tiendaTurbo: 'sin_turbo', unaSola: true });
+  return salida;
+}
+
 if (typeof module !== 'undefined') {
   module.exports = {
     tieneValor: tieneValor,
     limpiarEspacios: limpiarEspacios,
     tiendaDelCashback: tiendaDelCashback,
+    tiendasDeLaCarrera: tiendasDeLaCarrera,
     incluyeTurbo: incluyeTurbo,
     normalizarTexto: normalizarTexto,
     lineasDe: lineasDe,

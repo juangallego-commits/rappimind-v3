@@ -754,6 +754,19 @@ var CAMPOS_POR_TIENDA_ETA = [
   { id: 'nombre', etiqueta: 'Nombre de la tienda', tipo: 'texto', obligatorio: true },
 ];
 
+/**
+ * Campos de cada fila de la lista de tiendas de la Carrera de Compras.
+ *
+ * Mismas cuatro opciones de Turbo que el Cashback de una tienda: en una Carrera
+ * que suma las compras de Éxito y de Turbo Carulla, la diferencia entre las dos
+ * filas es justo en cuál de sus tiendas cuentan los pedidos (K1.a y K1.b de la
+ * revisión de la Carrera de Kenvue, 8 de octubre de 2026).
+ */
+var CAMPOS_POR_TIENDA_CARRERA = [
+  { id: 'nombre', etiqueta: 'Tienda', tipo: 'texto', obligatorio: true },
+  { id: 'tiendaTurbo', etiqueta: 'En cuál de sus tiendas', tipo: 'lista', obligatorio: true, opciones: OPCIONES_TIENDA_TURBO },
+];
+
 /** Campos de cada fila de la lista de productos de la Carrera. */
 var CAMPOS_POR_PRODUCTO = [
   { id: 'nombre', etiqueta: 'Nombre', tipo: 'texto', obligatorio: true },
@@ -766,6 +779,15 @@ function insertarDespuesDe(campos, id, nuevo) {
   for (var i = 0; i < campos.length; i++) {
     salida.push(campos[i]);
     if (campos[i].id === id) salida.push(nuevo);
+  }
+  return salida;
+}
+
+/** Cambia un campo por otro en el mismo sitio, por identificador. */
+function reemplazarCampo(campos, id, nuevo) {
+  var salida = [];
+  for (var i = 0; i < campos.length; i++) {
+    salida.push(campos[i].id === id ? nuevo : campos[i]);
   }
   return salida;
 }
@@ -1575,14 +1597,30 @@ var ESQUEMAS = {
     nombre: 'Carrera de Compras',
     descripcion: 'Un concurso con premio: durante unas fechas gana quien más compre en la tienda. No hay azar, gana por lo que compró.',
     modelo: 'carrera_compras',
-    campos: unir(CAMPOS_COMUNES, CAMPOS_TIENDA_Y_ORGANIZADOR, CAMPOS_CARRERA),
+    // La tienda deja de ser un texto: son una o varias Tiendas Participantes
+    // con un solo ranking, cada una con su respuesta de Turbo. Por eso ya no se
+    // pregunta en el filtro "¿Participan varias tiendas?": la herramienta lo
+    // hace (K1.a).
+    campos: unir(
+      CAMPOS_COMUNES,
+      reemplazarCampo(CAMPOS_TIENDA_Y_ORGANIZADOR, 'tienda', {
+        id: 'tiendasCarrera',
+        etiqueta: 'Tiendas participantes',
+        tipo: 'repetible',
+        minimo: 1,
+        maximo: 10,
+        paso: 'campana',
+        obligatorio: true,
+      }),
+      CAMPOS_CARRERA
+    ),
     camposPorProducto: CAMPOS_POR_PRODUCTO,
+    camposPorTiendaCarrera: CAMPOS_POR_TIENDA_CARRERA,
     filtroDeEntrada: [
       '¿Hay azar (sorteo, rifa, raspa y gana)?',
       '¿Hay premios distintos por puesto o tabla de puntos?',
       '¿El premio es una boleta, una experiencia o está ligado a un evento?',
       '¿La tienda o la marca exige sus propios T&C?',
-      '¿Participan varias tiendas?',
     ],
   },
   descuento: {
@@ -1730,6 +1768,7 @@ if (typeof module !== 'undefined') {
     ESQUEMAS: ESQUEMAS,
     CAMPOS_POR_TIENDA: CAMPOS_POR_TIENDA,
     CAMPOS_POR_TIENDA_ETA: CAMPOS_POR_TIENDA_ETA,
+    CAMPOS_POR_TIENDA_CARRERA: CAMPOS_POR_TIENDA_CARRERA,
     OPCIONES_ALCANCE_TURBO: OPCIONES_ALCANCE_TURBO,
     CAMPOS_BRASIL: CAMPOS_BRASIL,
     CAMPOS_CASHBACK_ETA: CAMPOS_CASHBACK_ETA,
