@@ -341,3 +341,37 @@ test('H2: Cashback, Descuento y Cupón siguen diciendo lo mismo de Rappi', () =>
     assert.ok(textoPlano(salida.texto).includes(igual), tipo);
   }
 });
+
+// --- H3: premio físico que entrega Rappi, sin cláusulas que se contradigan -------------
+
+test('H3: la naturaleza del premio físico dice quién responde del bien y quién de la logística', () => {
+  const fisico = { tipoPremio: 'fisico', descripcionPremio: 'Una máscara facial', valorPremio: 1599900 };
+
+  const rappi = documento(Object.assign({ entregaPor: 'rappi' }, fisico));
+  assert.ok(rappi.includes(
+    'El premio consiste en un bien de carácter físico, cuya existencia, calidad y garantía son responsabilidad exclusiva del Organizador. ' +
+    'Rappi no fabrica, comercializa ni garantiza dicho bien, y gestiona su entrega únicamente como operador logístico por cuenta del Organizador, en los términos de la cláusula siguiente.'));
+  assert.ok(!rappi.includes('garantía y entrega son responsabilidad exclusiva del Organizador'),
+    'la entrega que gestiona Rappi no puede ser "responsabilidad exclusiva del Organizador"');
+
+  const organizador = documento(Object.assign({ entregaPor: 'organizador' }, fisico));
+  assert.ok(organizador.includes(
+    'El premio consiste en un bien de carácter físico, cuya existencia, calidad, garantía y entrega son responsabilidad exclusiva del Organizador. Rappi no fabrica, comercializa ni garantiza dicho bien.'));
+  assert.ok(!organizador.includes('gestiona su entrega únicamente como operador logístico'));
+});
+
+test('H3: la cláusula de responsabilidades separa el bien del Organizador de la logística de Rappi', () => {
+  const esperado =
+    'La existencia, calidad, idoneidad y garantía del premio corresponden al Organizador, y Rappi no responde por ellas ni por la entrega del premio cuando esta esté a cargo del Organizador. ' +
+    'Rappi es responsable de: (i) la aplicación del criterio de selección de ganadores con base en la información transaccional de la Plataforma Rappi; ' +
+    '(ii) la publicación veraz y completa de los presentes Términos y Condiciones; ' +
+    '(iii) la atención oportuna de tus peticiones, quejas y reclamos relacionados con la Campaña; ' +
+    'y (iv) la acreditación del premio en Créditos o la gestión logística de la entrega del premio físico, cuando Rappi las realice por cuenta del Organizador.';
+  for (const respuestas of [
+    { tipoPremio: 'creditos', creditosPremio: 500000 },
+    { tipoPremio: 'fisico', descripcionPremio: 'Una bicicleta', valorPremio: 1200000, entregaPor: 'rappi' },
+    { tipoPremio: 'fisico', descripcionPremio: 'Una bicicleta', valorPremio: 1200000, entregaPor: 'organizador' },
+  ]) {
+    assert.ok(documento(respuestas).includes('Responsabilidades frente al premio. ' + esperado), JSON.stringify(respuestas));
+  }
+});

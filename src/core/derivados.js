@@ -210,6 +210,17 @@ function textoRolOperativo(entrada) {
   return '';
 }
 
+/** La naturaleza del premio fisico cuando lo entrega el Organizador. */
+var TEXTO_NATURALEZA_FISICO_ENTREGA_ORGANIZADOR =
+  'El premio consiste en un bien de carácter físico, cuya existencia, calidad, garantía y entrega son responsabilidad exclusiva ' +
+  'del Organizador. Rappi no fabrica, comercializa ni garantiza dicho bien.';
+
+/** La naturaleza del premio fisico cuando Rappi gestiona la entrega como operador logistico. */
+var TEXTO_NATURALEZA_FISICO_ENTREGA_RAPPI =
+  'El premio consiste en un bien de carácter físico, cuya existencia, calidad y garantía son responsabilidad exclusiva ' +
+  'del Organizador. Rappi no fabrica, comercializa ni garantiza dicho bien, y gestiona su entrega únicamente como operador ' +
+  'logístico por cuenta del Organizador, en los términos de la cláusula siguiente.';
+
 var TEXTO_ENTREGA_POR_OPCION = {
   organizador: 'La entrega del premio estará a cargo exclusivamente del Organizador, quien coordinará directamente con el ganador las condiciones de tiempo, modo y lugar de entrega, siendo el único responsable de la misma.',
   rappi: 'La entrega del premio será gestionada por Rappi en su calidad de operador logístico y por cuenta del Organizador, quien conserva la calidad de responsable del premio; Rappi coordinará con el ganador las condiciones de tiempo, modo y lugar de entrega.',
@@ -530,9 +541,21 @@ function derivadosCarrera(entrada, pais, valores) {
       'de los Créditos de la Plataforma Rappi, disponibles en: ' + pais.url_tc_creditos + '.';
   } else if (entrada.tipoPremio === 'fisico' && tieneValor(entrada.descripcionPremio)) {
     valores.LISTA_PREMIOS = fraseDelPremioFisico(entrada, pais, ganadores);
-    valores.TEXTO_NATURALEZA_PREMIO =
-      'El premio consiste en un bien de carácter físico, cuya existencia, calidad, garantía y entrega son responsabilidad exclusiva ' +
-      'del Organizador. Rappi no fabrica, comercializa ni garantiza dicho bien.';
+    /*
+     * Quien entrega cambia de quien es la entrega, no del bien.
+     *
+     * Con el premio fisico que entrega Rappi como operador logistico, la
+     * naturaleza decia que la entrega era "responsabilidad exclusiva del
+     * Organizador", la clausula de entrega que la gestionaba Rappi, y la de
+     * responsabilidades que Rappi respondia por todo cuando la entrega estaba a
+     * su cargo. Tres cosas distintas sobre quien responde. Ahora el bien
+     * (existencia, calidad, garantia) es del Organizador y la logistica la
+     * gestiona Rappi por su cuenta. H3 de la revision de la Carrera (Kenvue),
+     * aprobado el 8 de octubre de 2026.
+     */
+    valores.TEXTO_NATURALEZA_PREMIO = entrada.entregaPor === 'rappi'
+      ? TEXTO_NATURALEZA_FISICO_ENTREGA_RAPPI
+      : TEXTO_NATURALEZA_FISICO_ENTREGA_ORGANIZADOR;
   }
 
   /*
@@ -749,6 +772,8 @@ if (typeof module !== 'undefined') {
     textoLugarRedencion: textoLugarRedencion,
     textoProductos: textoProductos,
     textoRolOperativo: textoRolOperativo,
+    TEXTO_NATURALEZA_FISICO_ENTREGA_ORGANIZADOR: TEXTO_NATURALEZA_FISICO_ENTREGA_ORGANIZADOR,
+    TEXTO_NATURALEZA_FISICO_ENTREGA_RAPPI: TEXTO_NATURALEZA_FISICO_ENTREGA_RAPPI,
     textoTiendasParticipantes: textoTiendasParticipantes,
     textoAcumuladoTiendas: textoAcumuladoTiendas,
     textoTiendaTurboCarrera: textoTiendaTurboCarrera,

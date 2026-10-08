@@ -1,5 +1,5 @@
 %% Modelo: Carrera de Compras (concurso mayor comprador) · versión 3.1 · base: modelo v2 y decisiones de Legal CO (julio 2026) · revisar en punto de control A
-%% v3.1 (8 de octubre de 2026): revisión de la Carrera de Compras (Kenvue), decisiones de Juan del 8/10/2026. Informe en docs/revisiones/2026-09-29_carrera_compras_kenvue.md. K1: varias Tiendas Participantes con un solo ranking, Turbo por tienda y Cobertura propia.
+%% v3.1 (8 de octubre de 2026): revisión de la Carrera de Compras (Kenvue), decisiones de Juan del 8/10/2026. Informe en docs/revisiones/2026-09-29_carrera_compras_kenvue.md. K1: varias Tiendas Participantes con un solo ranking, Turbo por tienda y Cobertura propia. H2: papel operativo de Rappi en el bloque organizador. H3: naturaleza del premio físico que entrega Rappi y cláusula de responsabilidades frente al premio.
 # TÉRMINOS Y CONDICIONES
 ## {{NOMBRE_CAMPANA_MAYUS}}
 Por medio del presente documento se dan a conocer los términos y condiciones de la campaña promocional denominada “**{{NOMBRE_CAMPANA}}**”, estructurada bajo la modalidad de concurso por carrera de compras. La participación en esta campaña implica la aceptación total de los presentes Términos y Condiciones. Los ganadores se determinan exclusivamente con base en un criterio objetivo, medible y verificable de compras efectivamente realizadas durante la vigencia, y en ningún caso por sorteo, rifa, azar o cualquier otro mecanismo de suerte.
@@ -41,7 +41,7 @@ Antes de declarar a los ganadores, Rappi verificará la elegibilidad de cada par
 [[INCLUIR:fraude]]
 [[INCLUIR:tyc_plataforma]]
 [[INCLUIR:responsabilidad]]
-§ Responsabilidades frente al premio. Rappi no será responsable por la existencia, calidad, idoneidad o entrega del premio cuando la entrega esté a cargo del Organizador. Rappi es responsable de: (i) la aplicación del criterio de selección de ganadores con base en la información transaccional de la Plataforma Rappi; (ii) la publicación veraz y completa de los presentes Términos y Condiciones; y (iii) la atención oportuna de tus peticiones, quejas y reclamos relacionados con la Campaña.
+§ Responsabilidades frente al premio. La existencia, calidad, idoneidad y garantía del premio corresponden al Organizador, y Rappi no responde por ellas ni por la entrega del premio cuando esta esté a cargo del Organizador. Rappi es responsable de: (i) la aplicación del criterio de selección de ganadores con base en la información transaccional de la Plataforma Rappi; (ii) la publicación veraz y completa de los presentes Términos y Condiciones; (iii) la atención oportuna de tus peticiones, quejas y reclamos relacionados con la Campaña; y (iv) la acreditación del premio en Créditos o la gestión logística de la entrega del premio físico, cuando Rappi las realice por cuenta del Organizador.
 [[INCLUIR:datos]]
 [[?TEXTO_DATOS_ENTREGA]]{{TEXTO_DATOS_ENTREGA}}[[/?]]
 [[INCLUIR:ley]]
