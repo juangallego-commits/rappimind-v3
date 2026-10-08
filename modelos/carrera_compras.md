@@ -1,5 +1,5 @@
 %% Modelo: Carrera de Compras (concurso mayor comprador) · versión 3.1 · base: modelo v2 y decisiones de Legal CO (julio 2026) · revisar en punto de control A
-%% v3.1 (8 de octubre de 2026): revisión de la Carrera de Compras (Kenvue), decisiones de Juan del 8/10/2026. Informe en docs/revisiones/2026-09-29_carrera_compras_kenvue.md. K1: varias Tiendas Participantes con un solo ranking, Turbo por tienda y Cobertura propia. H2: papel operativo de Rappi en el bloque organizador. H3: naturaleza del premio físico que entrega Rappi y cláusula de responsabilidades frente al premio. K9: reemplazo obligatorio del ganador con identidad y mayoría de edad, intentos de contacto y plazo para declarar desierto que pone el KAM.
+%% v3.1 (8 de octubre de 2026): revisión de la Carrera de Compras (Kenvue), decisiones de Juan del 8/10/2026. Informe en docs/revisiones/2026-09-29_carrera_compras_kenvue.md. K1: varias Tiendas Participantes con un solo ranking, Turbo por tienda y Cobertura propia. H2: papel operativo de Rappi en el bloque organizador. H3: naturaleza del premio físico que entrega Rappi y cláusula de responsabilidades frente al premio. K9: reemplazo obligatorio del ganador con identidad y mayoría de edad, intentos de contacto y plazo para declarar desierto que pone el KAM. H8: el participante es titular de la cuenta desde la que compra.
 # TÉRMINOS Y CONDICIONES
 ## {{NOMBRE_CAMPANA_MAYUS}}
 Por medio del presente documento se dan a conocer los términos y condiciones de la campaña promocional denominada “**{{NOMBRE_CAMPANA}}**”, estructurada bajo la modalidad de concurso por carrera de compras. La participación en esta campaña implica la aceptación total de los presentes Términos y Condiciones. Los ganadores se determinan exclusivamente con base en un criterio objetivo, medible y verificable de compras efectivamente realizadas durante la vigencia, y en ningún caso por sorteo, rifa, azar o cualquier otro mecanismo de suerte.
@@ -8,7 +8,7 @@ Por medio del presente documento se dan a conocer los términos y condiciones de
 § Vigencia. La Campaña estará vigente desde las **{{HORA_INICIO}}** del **{{FECHA_INICIO}}** hasta las **{{HORA_FIN}}** del **{{FECHA_FIN}}** ({{TEXTO_HORA_LOCAL}}). Únicamente los pedidos realizados y recibidos de manera exitosa dentro de este periodo se tendrán en cuenta para el concurso.
 § Quiénes pueden participar. {{TEXTO_SEGMENTO}} Además, cada participante debe:
 • Ser {{TEXTO_PERSONA}} y tener al menos {{EDAD_MINIMA}} de edad.
-• Tener una cuenta activa en la Plataforma Rappi.
+• Ser titular de una cuenta activa en la Plataforma Rappi y realizar los pedidos desde esa cuenta.
 • Cumplir la mecánica descrita en los presentes Términos y Condiciones.
 La participación es gratuita y no exige pago alguno por concepto de inscripción.
 [[INCLUIR:inhabilidades]]

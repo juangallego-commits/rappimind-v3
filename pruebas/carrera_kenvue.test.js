@@ -445,3 +445,13 @@ test('K9: avisa, sin bloquear, si el plazo para declarar desierto es menor que t
   const salida = generarTexto(carrera({ plazoConfirmacion: 10, diasDesierto: 20 }), pais('CO'), modelos, CONTEXTO);
   assert.ok(salida.valido, JSON.stringify(salida.errores));
 });
+
+// --- H8: quien participa es el titular de la cuenta ---------------------------------
+
+test('H8: el participante es titular de la cuenta y hace los pedidos desde ella', () => {
+  const texto = documento({});
+  assert.ok(texto.includes('• Ser titular de una cuenta activa en la Plataforma Rappi y realizar los pedidos desde esa cuenta.'));
+  assert.ok(!texto.includes('• Tener una cuenta activa en la Plataforma Rappi.'));
+  // En México la viñeta no cambia de país: es la misma, no trae nada colombiano.
+  assert.ok(documento({}, 'MX').includes('• Ser titular de una cuenta activa en la Plataforma Rappi y realizar los pedidos desde esa cuenta.'));
+});
