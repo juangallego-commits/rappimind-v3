@@ -179,7 +179,7 @@ function buscarEnSolicitudes(solicitudes, texto) {
   if (!buscado) return solicitudes;
 
   var encontradas = [];
-  var campos = ['id', 'nombre_campana', 'tienda', 'organizador', 'pais', 'tipo', 'estado'];
+  var campos = ['id', 'nombre_campana', 'nombre_comercial', 'tienda', 'organizador', 'pais', 'tipo', 'estado'];
 
   for (var i = 0; i < solicitudes.length; i++) {
     for (var c = 0; c < campos.length; c++) {

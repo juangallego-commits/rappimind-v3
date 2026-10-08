@@ -72,6 +72,8 @@ function pantallaHistorial(raiz) {
           cuerpo.appendChild(crear('tr', {}, [
             crear('td', {}, [
               crear('strong', { texto: fila.nombre_campana || '(sin nombre)' }),
+              // El nombre con que sale al publico, para encontrar la campana por los dos.
+              fila.nombre_comercial ? crear('small', { clase: 'pregunta-ayuda', texto: ' \u201C' + fila.nombre_comercial + '\u201D' }) : null,
               fila.tienda ? crear('small', { clase: 'pregunta-ayuda', texto: ' ' + fila.tienda }) : null,
             ]),
             crear('td', { texto: fila.pais || '' }),

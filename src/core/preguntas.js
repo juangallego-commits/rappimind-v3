@@ -224,6 +224,27 @@ var PREGUNTAS = {
     errores: { vacio: 'Escribe la tienda donde aplica la campaña.' },
   }),
 
+  /*
+   * El nombre con el que la campana sale al publico. Opcional: sin el, el
+   * documento usa el nombre de registro de siempre. Ver el campo en esquemas.js
+   * (H20 de la revision de la Carrera, Kenvue, 8 de octubre de 2026).
+   */
+  nombreComercial: p({
+    paso: 'campana',
+    pregunta: '¿Con qué nombre sale la campaña al público?',
+    ayuda: 'El nombre que va en la pieza, por ejemplo Skindays. Sin porcentajes, precios ni cifras: el beneficio lo dice el documento.',
+    porQue: 'El documento dice cómo se llama la campaña. Si la pieza usa otro nombre, el usuario no sabe cuáles son sus condiciones.',
+    ejemplo: 'Skindays',
+    opcional: true,
+    placeholders: ['NOMBRE_CAMPANA', 'NOMBRE_CAMPANA_MAYUS'],
+    errores: {
+      largo: 'El nombre tiene que tener entre 3 y 60 caracteres, en una sola línea.',
+      cifras: 'El nombre no puede llevar porcentajes, precios ni cifras, salvo el año. El beneficio lo dice el documento.',
+      azar: 'El nombre no puede hablar de sorteo, rifa, lotería, azar ni suerte. Esta campaña no es un juego de azar.',
+      anotacion: 'El nombre lleva una nota interna (como “confirmar”, “TODO” o “??”). Quítala: saldría publicada en el documento.',
+    },
+  }),
+
   alcance: p({
     paso: 'campana',
     pregunta: '¿Dónde aplica la campaña?',

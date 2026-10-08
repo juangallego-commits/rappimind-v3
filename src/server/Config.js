@@ -66,6 +66,9 @@ var PESTANAS = {
     'direccion_sugerida', 'tienda',
     'organizador', 'id_organizador', 'fecha_inicio', 'fecha_fin', 'link_doc', 'estado',
     'link_publicado', 'fecha_publicacion', 'datos_json',
+    // Al final: una hoja vieja la agrega sola (encabezadosDeLaHoja) sin mover ninguna
+    // columna. Es el nombre con que la campana sale al publico (H20).
+    'nombre_comercial',
   ],
   Registro: ['fecha', 'email', 'accion', 'detalle'],
 };

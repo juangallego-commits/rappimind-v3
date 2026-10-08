@@ -727,3 +727,134 @@ test('K5 y K7: con varios ganadores el documento dice cuántos son', () => {
   assert.ok(!tres.includes('La cantidad de premios es limitada y corresponde a la indicada en esta cláusula'));
   assertSinRestos(tres, 'tres');
 });
+
+// --- H20: el nombre comercial de la campaña ----------------------------------------------------------
+
+test('H20: nombres que pasan y nombres que no, regla por regla', () => {
+  const co = pais('CO');
+  const errores = (nombreComercial) => validarSolicitud(carrera({ nombreComercial }), co, CONTEXTO).errores
+    .filter((e) => e.campo === 'nombreComercial').map((e) => e.mensaje);
+
+  // Pasan: opcional, con letras, con tildes y ñ, y con un año de cuatro cifras.
+  for (const bueno of [undefined, '', '   ', 'Skindays', 'Mundial 2026', 'Día del Niño', 'Ñandú Fest', 'Black Friday 2025', 'Rappi2026', 'Johnson & Johnson']) {
+    assert.deepStrictEqual(errores(bueno), [], JSON.stringify(bueno));
+  }
+
+  // Regla 1: entre 3 y 60 caracteres, una línea, sin emojis.
+  const largo = 'El nombre tiene que tener entre 3 y 60 caracteres, en una sola línea.';
+  assert.deepStrictEqual(errores('Sk'), [largo]);
+  assert.deepStrictEqual(errores('S'.repeat(61)), [largo]);
+  assert.deepStrictEqual(errores('S'.repeat(60)), []);
+  assert.deepStrictEqual(errores('Skin\ndays'), [largo]);
+  assert.deepStrictEqual(errores('Skindays 🎉'), [largo]);
+  assert.deepStrictEqual(errores('Skindays ❤'), [largo]);
+
+  // Regla 2: ni porcentajes, ni precios, ni cifras, salvo un año.
+  const cifras = 'El nombre no puede llevar porcentajes, precios ni cifras, salvo el año. El beneficio lo dice el documento.';
+  for (const malo of ['Skindays 50%', '3x2', 'Skindays $10', 'Skindays 10', 'Black Friday 1234', 'Mundial 20266', 'Skindays €5', '50 Skindays']) {
+    assert.deepStrictEqual(errores(malo), [cifras], malo);
+  }
+
+  // Regla 3: sin palabras de azar, en español y en portugués.
+  const azar = 'El nombre no puede hablar de sorteo, rifa, lotería, azar ni suerte. Esta campaña no es un juego de azar.';
+  for (const malo of ['Gran Sorteo Skindays', 'Rifa', 'Lotería de Navidad', 'loteria', 'Buena suerte', 'Juego de azar', 'Sorteio de verão', 'Sorte grande', 'Sorteos Skin']) {
+    assert.deepStrictEqual(errores(malo), [azar], malo);
+  }
+  // Una palabra que solo se parece no se frena.
+  for (const bueno of ['Sortilegio', 'Rifael', 'Azares']) assert.deepStrictEqual(errores(bueno), [], bueno);
+
+  // Regla 4: sin anotaciones internas.
+  for (const malo of ['Skindays (confirmar)', 'Skindays ??', 'TODO Skindays', 'Skindays {{X}}', 'Skindays [[X]]']) {
+    assert.ok(errores(malo).some((m) => m.includes('nota interna')), malo);
+  }
+});
+
+test('H20: con nombre comercial el articulado dice ese nombre, en el título y en la apertura', () => {
+  const sin = documento({});
+  const con = documento({ nombreComercial: 'Skindays' });
+  assert.ok(con.includes('campaña promocional denominada “Skindays”'), con.slice(0, 600));
+  assert.ok(con.startsWith('TÉRMINOS Y CONDICIONES\nSKINDAYS\n') || con.includes('SKINDAYS'));
+  assert.ok(!con.includes('Carrera de Compras ·'), 'el nombre de registro no sale en el texto legal');
+
+  // Sin nombre comercial sale el nombre de registro, como hoy.
+  assert.ok(sin.includes('campaña promocional denominada “Texto de prueba · Carrera de Compras · 1 oct 2026”'));
+  assert.ok(sin.includes('TEXTO DE PRUEBA · CARRERA DE COMPRAS · 1 OCT 2026'));
+});
+
+test('H20: con nombre comercial el consecutivo no llega al texto legal, y sin él sigue como hoy', () => {
+  const entrada = (extra) => Object.assign(carrera({}), { sufijoNombre: 2 }, extra);
+  const texto = (e) => textoPlano(generarTexto(e, pais('CO'), modelos, CONTEXTO).texto);
+
+  assert.ok(texto(entrada({})).includes('Carrera de Compras · 1 oct 2026 · 2”'), 'sin nombre comercial el "· 2" sigue dentro del texto');
+  const con = texto(entrada({ nombreComercial: 'Skindays' }));
+  assert.ok(con.includes('denominada “Skindays”'));
+  assert.ok(!/· 2/.test(con.split('\n').slice(0, 4).join('\n')), 'con nombre comercial el consecutivo no llega al texto legal');
+});
+
+test('H20: sirve en todos los tipos de campaña y en Brasil el documento sigue en portugués', () => {
+  const { ESQUEMAS } = require('../src/core/esquemas.js');
+  for (const tipo of Object.keys(ESQUEMAS)) {
+    assert.ok(ESQUEMAS[tipo].campos.some((c) => c.id === 'nombreComercial' && c.obligatorio === false), tipo);
+  }
+  const br = generarTexto(solicitud('BR', 'promocao_br', { nombreComercial: 'Skindays' }), pais('BR'), modelos, CONTEXTO);
+  assert.ok(br.valido, JSON.stringify(br.errores));
+  assert.ok(textoPlano(br.texto).includes('campanha “Skindays”'));
+  const cb = generarTexto(solicitud('CO', 'cashback', { nombreComercial: 'Skindays' }), pais('CO'), modelos, CONTEXTO);
+  assert.ok(cb.valido, JSON.stringify(cb.errores));
+  // El Cashback solo imprime el nombre en el título del documento.
+  assert.ok(textoPlano(cb.texto).includes('SKINDAYS'));
+  assert.ok(!textoPlano(cb.texto).includes('Jumbo · 20% Cashback'));
+});
+
+test('H20: el servidor guarda el nombre comercial y el título del Doc sigue saliendo del nombre de registro', () => {
+  const { levantarEntorno, bajarEntorno } = require('./dobles/entorno.js');
+  const mundo = levantarEntorno({});
+  try {
+    setup();
+    const primera = generar(carrera({ tiendasCarrera: EXITO_Y_CARULLA, nombreComercial: 'Skindays' }));
+    assert.ok(primera.valido, JSON.stringify(primera.errores));
+    const segunda = generar(carrera({ tiendasCarrera: EXITO_Y_CARULLA, nombreComercial: 'Skindays' }));
+
+    // El nombre de registro, el título, la dirección y el consecutivo no cambian por el nombre comercial.
+    assert.strictEqual(primera.nombreCampana, 'Éxito y Carulla · Carrera de Compras · 1 oct 2026');
+    assert.strictEqual(segunda.nombreCampana, 'Éxito y Carulla · Carrera de Compras · 1 oct 2026 · 2');
+    assert.ok(primera.titulo.startsWith('T&C · Éxito y Carulla · Carrera de Compras · 1 oct 2026 · Colombia'), primera.titulo);
+    assert.ok(segunda.titulo.includes('· 2 ·'), segunda.titulo);
+    assert.ok(primera.direccionSugerida.includes('exito-y-carulla-carrera-de-compras'), primera.direccionSugerida);
+    assert.ok(!primera.titulo.includes('Skindays') && !primera.direccionSugerida.includes('skindays'));
+
+    // El articulado dice el nombre comercial, sin el consecutivo.
+    const cuerpo = mundo.documentos[Object.keys(mundo.documentos)[1]].getBody();
+    const textos = cuerpo.hijos.map((h) => h.getText()).join('\n');
+    assert.ok(textos.includes('denominada “Skindays”'), textos.slice(0, 500));
+    assert.ok(!/Carrera de Compras · 1 oct 2026 · 2/.test(textos));
+
+    // La fila guarda el nombre comercial en su propia columna, al final.
+    const fila = leerSolicitudes()[0];
+    assert.strictEqual(fila.nombre_comercial, 'Skindays');
+    assert.strictEqual(fila.resp_nombreComercial, 'Skindays');
+    assert.strictEqual(fila.nombre_campana, 'Éxito y Carulla · Carrera de Compras · 1 oct 2026');
+
+    // Y la campaña se encuentra por los dos nombres.
+    assert.strictEqual(historial('skindays').length, 2);
+    assert.strictEqual(historial('Éxito y Carulla').length, 2);
+  } finally {
+    bajarEntorno();
+  }
+});
+
+test('H20: una hoja vieja agrega nombre_comercial al final sin mover ninguna columna', () => {
+  const { levantarEntorno, bajarEntorno } = require('./dobles/entorno.js');
+  levantarEntorno({});
+  try {
+    setup();
+    generar(carrera({ tiendasCarrera: EXITO_Y_CARULLA }));
+    const sin = leerSolicitudes()[0];
+    // Sin nombre comercial la columna existe y queda vacía; nada se movió de sitio.
+    assert.strictEqual(sin.nombre_comercial, '');
+    assert.strictEqual(sin.nombre_campana, 'Éxito y Carulla · Carrera de Compras · 1 oct 2026');
+    assert.ok(sin.datos_json.length > 10);
+  } finally {
+    bajarEntorno();
+  }
+});

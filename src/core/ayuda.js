@@ -333,6 +333,10 @@ var PREGUNTAS_FRECUENTES = [
     respuesta: 'El número que te pedimos cambia según el país: NIT en Colombia, RFC en México, RUC en Perú y Ecuador, CUIT en Argentina, RUT en Chile y Uruguay, cédula jurídica en Costa Rica y CNPJ en Brasil. La pregunta te dice cuál es y dónde buscarlo. Casi siempre falla el dígito de verificación: pídele el documento tributario a tu contacto y cópialo de ahí. Si el documento dice un número y la validación lo rechaza, avísanos en el canal de ayuda: es una falla de la herramienta.',
   },
   {
+    pregunta: '¿Puedo ponerle a la campaña el nombre que usa la marca?',
+    respuesta: 'Sí, y es opcional. Casi al final de la pregunta de la campaña te pedimos el nombre con el que sale al público, por ejemplo Skindays. Es el que dice el documento. Sin él, el documento usa el nombre de siempre (la tienda, el beneficio y la fecha). El título del archivo y la dirección de la página no cambian: siguen saliendo del nombre de siempre. El nombre no puede llevar porcentajes, precios ni cifras (salvo un año), ni hablar de sorteo, rifa, lotería, azar o suerte, porque el beneficio lo dice el documento y esta herramienta no hace juegos de azar.',
+  },
+  {
     pregunta: '¿Puedo poner varias tiendas en una misma campaña?',
     respuesta: 'Sí. En la Carrera de Compras agregas una fila por tienda: las compras en todas suman a un mismo ranking, y en cada fila dices en cuál de sus tiendas cuentan los pedidos (la normal, la de Turbo o las dos). Con el tipo Cashback Multitienda, cada tienda entra con su razón social, su NIT y su presupuesto, porque cada una organiza su propio beneficio y responde por él.',
   },

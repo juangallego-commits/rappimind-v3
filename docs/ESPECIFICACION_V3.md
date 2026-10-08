@@ -139,6 +139,7 @@ Cada tipo se define en `src/core/esquemas.js`: pasos, campos, reglas de visibili
 | pais | lista (países habilitados) | sí | datos del país |
 | tipo | tarjetas | sí | modelo |
 | nombreCampana | texto (máx. 80) | sí | NOMBRE_CAMPANA, NOMBRE_CAMPANA_MAYUS |
+| nombreComercial | texto opcional, de 3 a 60 caracteres, sin porcentajes, precios ni cifras (salvo un año de cuatro cifras), sin palabras de azar y sin anotaciones internas. Es un campo de texto libre permitido; el nombre de registro (título del Doc, dirección y consecutivo) sigue saliendo de las respuestas (H20, 8 de octubre de 2026) | no (todos los tipos) | NOMBRE_CAMPANA, NOMBRE_CAMPANA_MAYUS |
 | tienda | texto (marca comercial) | sí (Cashback y Carrera) | TIENDA |
 | alcance | lista: Nacional, Ciudades | sí (Cashback y Carrera) | TEXTO_TERRITORIO |
 | ciudades | texto, separado por comas | si alcance = Ciudades | TEXTO_TERRITORIO |

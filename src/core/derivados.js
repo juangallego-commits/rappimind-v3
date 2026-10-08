@@ -810,7 +810,13 @@ function calcularDerivadosEnElIdiomaDelPais(entrada, pais) {
 
   // El nombre no lo escribe nadie: sale de las respuestas, asi que el titulo
   // del documento no puede contradecir el articulado. Ver src/core/nombres.js.
-  valores.NOMBRE_CAMPANA = nombreDeCampana(entrada, esquemaDe(entrada.tipo));
+  //
+  // Con nombre comercial (H20) el articulado dice ese nombre, y sin el, el de
+  // siempre. El titulo del Doc, la direccion de Squarespace y el consecutivo
+  // salen del nombre de registro (src/server/Api.js), no de aqui.
+  var nombreComercial = String(entrada.nombreComercial === null || entrada.nombreComercial === undefined
+    ? '' : entrada.nombreComercial).trim();
+  valores.NOMBRE_CAMPANA = nombreComercial || nombreDeCampana(entrada, esquemaDe(entrada.tipo));
   valores.NOMBRE_CAMPANA_MAYUS = valores.NOMBRE_CAMPANA.toUpperCase();
   valores.TIENDA = entrada.tienda || '';
   if (entrada.tipo === 'carrera_compras') {

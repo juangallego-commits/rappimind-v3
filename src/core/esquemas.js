@@ -1801,6 +1801,50 @@ function tieneCampo(esquema, id) {
   return false;
 }
 
+/*
+ * El nombre comercial de la campana, en todos los tipos.
+ *
+ * El nombre de registro lo arma la herramienta con la tienda, el beneficio y la
+ * fecha, por decision de Juan del 16 de septiembre de 2026 (no hay etiqueta
+ * libre): asi el nombre no puede contradecir el articulado, dos campanas nunca
+ * se llaman igual y el titulo del Doc, la fila de Solicitudes y la direccion de
+ * Squarespace hablan de lo mismo. Lo que no deja es poner el nombre con el que
+ * la marca sale al publico ("Skindays"), y por eso se editaba a mano el Word.
+ *
+ * Esta pregunta complementa esa decision sin reversarla: el nombre de registro
+ * no cambia, y el nombre comercial es opcional y solo se imprime en el
+ * articulado (NOMBRE_CAMPANA y NOMBRE_CAMPANA_MAYUS). El riesgo que llevo a
+ * quitar la etiqueta libre lo cubre la validacion (validarNombreComercial).
+ * H20 de la revision de la Carrera (Kenvue), 8 de octubre de 2026.
+ *
+ * Va al final de la pregunta de la campana de cada tipo, junto a la tienda.
+ */
+var CAMPO_NOMBRE_COMERCIAL = {
+  id: 'nombreComercial',
+  etiqueta: 'Nombre comercial de la campaña',
+  tipo: 'texto',
+  paso: 'campana',
+  obligatorio: false,
+};
+
+/** Inserta un campo despues del ultimo que pertenece a un paso. */
+function insertarDespuesDelUltimoDelPaso(campos, paso, nuevo) {
+  var ultimo = -1;
+  for (var i = 0; i < campos.length; i++) {
+    if (campos[i].paso === paso) ultimo = i;
+  }
+  if (ultimo === -1) return campos.concat([nuevo]);
+  return campos.slice(0, ultimo + 1).concat([nuevo], campos.slice(ultimo + 1));
+}
+
+for (var tipoConNombre in ESQUEMAS) {
+  if (Object.prototype.hasOwnProperty.call(ESQUEMAS, tipoConNombre)) {
+    ESQUEMAS[tipoConNombre].campos = insertarDespuesDelUltimoDelPaso(
+      ESQUEMAS[tipoConNombre].campos, 'campana', CAMPO_NOMBRE_COMERCIAL
+    );
+  }
+}
+
 /** Devuelve el esquema de un tipo, o null. */
 function esquemaDe(tipo) {
   return Object.prototype.hasOwnProperty.call(ESQUEMAS, tipo) ? ESQUEMAS[tipo] : null;

@@ -51,6 +51,20 @@ var PREGUNTAS_PT = {
     errores: { vacio: 'Escolha uma categoria, ou Nenhuma se o produto não for de nenhuma delas.' },
   },
 
+  // El nombre con que la campana sale al publico (H20). Opcional; en Brasil el
+  // documento tambien lo imprime en el titulo y en la apertura.
+  nombreComercial: {
+    pregunta: 'Com que nome a campanha é divulgada ao público?',
+    ayuda: 'O nome que vai na peça, por exemplo Skindays. Sem porcentagens, preços nem números: o benefício quem diz é o documento.',
+    porQue: 'O documento diz como a campanha se chama. Se a peça usar outro nome, o usuário não sabe quais são as condições.',
+    errores: {
+      largo: 'O nome precisa ter entre 3 e 60 caracteres, em uma só linha.',
+      cifras: 'O nome não pode ter porcentagens, preços nem números, exceto o ano. O benefício quem diz é o documento.',
+      azar: 'O nome não pode falar de sorteio, rifa, loteria, azar nem sorte. Esta campanha não é um jogo de azar.',
+      anotacion: 'O nome tem uma nota interna (como “confirmar”, “TODO” ou “??”). Tire-a: sairia publicada no documento.',
+    },
+  },
+
   negocio: {
     pregunta: 'A campanha é da Rappi ou da Rappi Travel?',
     ayuda: 'Se for de voos, hotéis, carros ou pacotes, é Rappi Travel.',

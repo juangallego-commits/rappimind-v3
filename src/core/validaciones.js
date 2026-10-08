@@ -440,6 +440,61 @@ function validarCashback(entrada, tipo, idioma) {
   return errores;
 }
 
+/*
+ * Las palabras de azar que el nombre comercial no puede llevar, ya sin tildes y
+ * en minuscula: en espanol sorteo, rifa, loteria, azar y suerte; en portugues
+ * (Brasil) sorteio, rifa, loteria y sorte. Un "Gran Sorteo Skindays" le quita a
+ * la Carrera su defensa frente al regimen de juegos de suerte y azar: el
+ * concurso se define por lo comprado, no por la suerte (A.0 de la revision).
+ */
+var PALABRAS_DE_AZAR_EN_EL_NOMBRE = /\b(sorteos?|sorteios?|rifas?|loterias?|azar|suerte|sorte)\b/;
+
+/**
+ * El nombre comercial de la campana, cuando el KAM lo escribe (H20).
+ *
+ * Opcional: vacio no se revisa. Las cuatro reglas existen para no revivir el
+ * riesgo que llevo a Juan a quitar la etiqueta libre el 16 de septiembre de 2026
+ * (un titulo que prometa 99% sobre un articulado que dice 50%):
+ *   1. Entre 3 y 60 caracteres, en una sola linea y sin emojis.
+ *   2. Sin porcentajes, signos de moneda ni cifras, salvo un ano de cuatro
+ *      cifras: pasa "Mundial 2026", no pasan "Skindays 50%" ni "3x2".
+ *   3. Sin palabras de azar.
+ *   4. Sin anotaciones internas, con la misma revision de los valores del pais.
+ * Cada regla tiene su mensaje en la pregunta nombreComercial.
+ */
+function validarNombreComercial(entrada, esquema, idioma) {
+  var valor = entrada.nombreComercial;
+  if (valor === null || valor === undefined || String(valor).trim() === '') return [];
+
+  var tipo = esquema ? esquema.id : undefined;
+  var nombre = String(valor);
+  var errores = [];
+  var mensaje = function (clave, generico) { return mensajeDe('nombreComercial', tipo, clave, idioma, generico); };
+
+  var recortado = nombre.trim();
+  var variasLineas = /[\r\n]/.test(nombre);
+  var conEmoji = /[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u2190-\u21FF\u2300-\u23FF\u2600-\u27BF\u2B00-\u2BFF\uFE0F\u200D]/.test(nombre);
+  if (recortado.length < 3 || recortado.length > 60 || variasLineas || conEmoji) {
+    errores.push(error('nombreComercial', mensaje('largo', 'El nombre tiene que tener entre 3 y 60 caracteres, en una sola línea.')));
+  }
+
+  // El ano de cuatro cifras (19xx o 20xx) pasa; cualquier otra cifra, porcentaje
+  // o signo de moneda no.
+  var sinAno = recortado.replace(/(^|[^0-9])(19|20)[0-9]{2}(?![0-9])/g, '$1');
+  if (/[0-9%$\u20AC\u00A3\u00A5]/.test(sinAno)) {
+    errores.push(error('nombreComercial', mensaje('cifras', 'El nombre no puede llevar porcentajes, precios ni cifras, salvo el año.')));
+  }
+
+  if (PALABRAS_DE_AZAR_EN_EL_NOMBRE.test(sinTildes(recortado).toLowerCase())) {
+    errores.push(error('nombreComercial', mensaje('azar', 'El nombre no puede hablar de sorteo, rifa, lotería, azar ni suerte.')));
+  }
+
+  if (tieneMarcaDeAnotacion(recortado)) {
+    errores.push(error('nombreComercial', mensaje('anotacion', 'El nombre lleva una nota interna.')));
+  }
+  return errores;
+}
+
 /** Si el tipo le hace esa pregunta al comercial con las respuestas que lleva. */
 function preguntaVisible(esquema, entrada, campoId) {
   if (!esquema) return true;
@@ -1162,6 +1217,7 @@ function validarSolicitud(entrada, pais, contexto) {
   errores = errores.concat(validarOrganizador(entrada, pais));
   errores = errores.concat(validarCreditos(entrada, esquema, idioma));
   errores = errores.concat(validarNegocio(entrada, esquema));
+  errores = errores.concat(validarNombreComercial(entrada, esquema, idioma));
 
   errores = errores.concat(validarColumnasDelPais(pais));
   errores = errores.concat(validarAnotacionesDelPais(pais));
@@ -1236,6 +1292,7 @@ if (typeof module !== 'undefined') {
     validarProductos: validarProductos,
     validarTiendasEta: validarTiendasEta,
     validarTiendasCarrera: validarTiendasCarrera,
+    validarNombreComercial: validarNombreComercial,
     avisoDeDiasDesierto: avisoDeDiasDesierto,
     parecenVariasTiendas: parecenVariasTiendas,
     validarColumnasDelPais: validarColumnasDelPais,

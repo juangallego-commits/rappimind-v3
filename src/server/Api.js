@@ -233,6 +233,7 @@ function escribirLaSolicitud(id, documento, datos) {
     link_publicado: '',
     fecha_publicacion: '',
     datos_json: JSON.stringify(entrada),
+    nombre_comercial: entrada.nombreComercial || '',
   }, respuestasParaElSheet(entrada)));
 
   enviarCorreoDeGeneracion(quien.correo, {
