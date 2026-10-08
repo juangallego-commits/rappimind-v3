@@ -873,3 +873,44 @@ test('H9: la inhabilidad incluye a los empleados de la Tienda Participante, una 
   // Y el resto del bloque no cambia.
   assert.ok(varias.includes('• Sus cónyuges y compañeros o compañeras permanentes.'));
 });
+
+// --- H16: dos marcas en el campo de marca -------------------------------------------------------------
+
+test('H16: una marca sale igual que antes, y varias salen en plural', () => {
+  const frase = (makerMarca) => documento({ productos: 'marca', makerMarca });
+  assert.ok(frase('Bimbo').includes('únicamente los productos de la marca Bimbo disponibles en la Tienda Participante a través de la Plataforma Rappi'));
+  assert.ok(frase('NEUTROGENA®, LUBRIDERM®').includes('únicamente los productos de las marcas NEUTROGENA® y LUBRIDERM® disponibles en la Tienda Participante a través de la Plataforma Rappi'));
+  assert.ok(frase('NEUTROGENA®, LUBRIDERM®, AVEENO®').includes('de las marcas NEUTROGENA®, LUBRIDERM® y AVEENO® disponibles'));
+  // Comas de más y espacios de sobra no dejan huecos.
+  assert.ok(frase(' Bimbo ,, Ramo ,').includes('de las marcas Bimbo y Ramo disponibles'));
+  assert.ok(!frase('NEUTROGENA®, LUBRIDERM®').includes('de la marca NEUTROGENA® y'));
+});
+
+test('H16: la Carrera devuelve vacía la frase si la marca está vacía, como el Descuento', () => {
+  const { textoProductos } = require('../src/core/derivados.js');
+  const { textoProductosDescuento } = require('../src/core/derivados_descuento.js');
+  assert.strictEqual(textoProductos({ productos: 'marca', makerMarca: '' }), '');
+  assert.strictEqual(textoProductos({ productos: 'marca', makerMarca: ' , ' }), '');
+  assert.strictEqual(textoProductosDescuento({ productos: 'marca', makerMarca: '' }), '');
+});
+
+test('H16: Descuento y Cupón dicen "de las marcas" cuando son varias', () => {
+  for (const tipo of ['descuento', 'cupon']) {
+    const una = generarTexto(solicitud('MX', tipo, { productos: 'marca', makerMarca: 'Bimbo' }), pais('MX'), modelos, CONTEXTO);
+    const dos = generarTexto(solicitud('MX', tipo, { productos: 'marca', makerMarca: 'Bimbo, Marinela' }), pais('MX'), modelos, CONTEXTO);
+    assert.ok(una.valido && dos.valido, tipo + ' ' + JSON.stringify(una.errores.concat(dos.errores)));
+    assert.ok(textoPlano(una.texto).includes('únicamente para los productos de la marca Bimbo disponibles'), tipo);
+    assert.ok(textoPlano(dos.texto).includes('únicamente para los productos de las marcas Bimbo y Marinela disponibles'), tipo);
+  }
+});
+
+test('H16: el campo de marca avisa, sin frenar, si trae una "y" y ninguna coma', () => {
+  const { avisoDeMarcas } = require('../src/core/validaciones.js');
+  assert.strictEqual(avisoDeMarcas({ tipo: 'carrera_compras', makerMarca: 'NEUTROGENA y LUBRIDERM' }), '¿Son dos marcas? Sepáralas con coma.');
+  assert.strictEqual(avisoDeMarcas({ tipo: 'carrera_compras', makerMarca: 'NEUTROGENA, LUBRIDERM' }), '');
+  assert.strictEqual(avisoDeMarcas({ tipo: 'carrera_compras', makerMarca: 'Pollo Dorado' }), '');
+  assert.strictEqual(avisoDeMarcas({ tipo: 'carrera_compras', makerMarca: 'Johnson y Johnson, Aveeno' }), '');
+  // No frena: la campaña con "A y B" sigue generando.
+  const salida = generarTexto(carrera({ productos: 'marca', makerMarca: 'Ramo y Marinela' }), pais('CO'), modelos, CONTEXTO);
+  assert.ok(salida.valido);
+});

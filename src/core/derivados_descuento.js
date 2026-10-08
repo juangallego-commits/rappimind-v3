@@ -23,7 +23,10 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var letrasYCifra = moduloNumerosDescuento.letrasYCifra;
   var formatearMiles = moduloNumerosDescuento.formatearMiles;
 
-  var tieneValor = require('./texto.js').tieneValor;
+  var moduloTextoDescuento = require('./texto.js');
+  var tieneValor = moduloTextoDescuento.tieneValor;
+  var marcasDeLaCampana = moduloTextoDescuento.marcasDeLaCampana;
+  var listaY = require('./fechas.js').listaY;
 }
 
 /**
@@ -117,9 +120,11 @@ function textoProductosDescuento(entrada) {
     return 'La Campaña aplica para todos los productos del catálogo de la Tienda Participante en la Plataforma Rappi (en adelante, los “Productos Participantes”).';
   }
   if (entrada.productos === 'marca') {
-    var marca = String(entrada.makerMarca || '').trim();
-    if (!marca) return '';
-    return 'La Campaña aplica únicamente para los productos de la marca ' + marca +
+    // Una marca o varias (H16): "de la marca X" o "de las marcas X y Y".
+    var marcas = marcasDeLaCampana(entrada.makerMarca);
+    if (marcas.length === 0) return '';
+    return 'La Campaña aplica únicamente para los productos de ' +
+      (marcas.length === 1 ? 'la marca ' + marcas[0] : 'las marcas ' + listaY(marcas)) +
       ' disponibles en la Tienda Participante a través de la Plataforma Rappi (en adelante, los “Productos Participantes”).';
   }
   if (entrada.productos !== 'especificos') return '';

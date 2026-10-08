@@ -1674,9 +1674,11 @@ var PREGUNTAS = {
     },
     paso: 'concurso',
     pregunta: '¿De qué marca?',
-    ayuda: 'El nombre comercial de la marca. Por ejemplo: Galletas Lunaria.',
+    ayuda: 'El nombre comercial de la marca. Por ejemplo: Galletas Lunaria. Si son varias marcas del mismo Organizador, sepáralas con comas.',
     porQue: 'El documento nombra la marca, así que el usuario sabe exactamente qué comprar para participar.',
     ejemplo: 'Galletas Lunaria',
+    // Hay marcas con "y" en el nombre, asi que no se frena: solo se pregunta.
+    aviso: '¿Son dos marcas? Sepáralas con coma.',
     placeholders: ['TEXTO_PRODUCTOS'],
     errores: { vacio: 'Escribe el nombre de la marca.' },
   }),

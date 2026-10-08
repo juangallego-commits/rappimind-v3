@@ -45,6 +45,7 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var tiendaDelCashback = moduloTextoDerivados.tiendaDelCashback;
   var terminoDeDias = moduloTextoDerivados.terminoDeDias;
   var tiendasDeLaCarrera = moduloTextoDerivados.tiendasDeLaCarrera;
+  var marcasDeLaCampana = moduloTextoDerivados.marcasDeLaCampana;
 }
 
 // --- Textos fijos de Legal -------------------------------------------------
@@ -464,8 +465,14 @@ function textoProductos(entrada) {
     return 'Participan en el concurso todos los productos del catálogo de ' + laTiendaDeLaCarrera(entrada) + ' en la Plataforma Rappi (en adelante, los “Productos Participantes”).';
   }
   if (entrada.productos === 'marca') {
+    // Una marca o varias: "de la marca X" o "de las marcas X y Y" (H16). Sin
+    // marca devuelve vacio, y el motor anuncia el hueco en vez de imprimir una
+    // frase con un espacio donde iba el nombre.
+    var marcas = marcasDeLaCampana(entrada.makerMarca);
+    if (marcas.length === 0) return '';
     return (
-      'Participan en el concurso únicamente los productos de la marca ' + (entrada.makerMarca || '') +
+      'Participan en el concurso únicamente los productos de ' +
+      (marcas.length === 1 ? 'la marca ' + marcas[0] : 'las marcas ' + listaY(marcas)) +
       ' disponibles ' + enLaTiendaDeLaCarrera(entrada) + ' a través de la Plataforma Rappi (en adelante, los “Productos Participantes”).'
     );
   }

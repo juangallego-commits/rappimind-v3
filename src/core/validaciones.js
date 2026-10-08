@@ -1103,6 +1103,20 @@ function validarTiendasCarrera(entrada, esquema, idioma) {
 }
 
 /**
+ * El aviso suave del campo de marca: "NEUTROGENA y LUBRIDERM" sin comas.
+ *
+ * No bloquea: hay marcas con "y" en el nombre. Devuelve la pregunta o cadena
+ * vacia. H16 de la revision de la Carrera (Kenvue).
+ */
+function avisoDeMarcas(entrada) {
+  var texto = String((entrada || {}).makerMarca || '');
+  if (texto.indexOf(',') !== -1) return '';
+  if (!/\sy\s/i.test(texto)) return '';
+  var pregunta = preguntaDe('makerMarca', (entrada || {}).tipo);
+  return pregunta && pregunta.aviso ? pregunta.aviso : '';
+}
+
+/**
  * El aviso suave de los dias para declarar desierto el premio.
  *
  * No bloquea: el comercial puede querer un plazo corto. Pero si es menor que
@@ -1294,6 +1308,7 @@ if (typeof module !== 'undefined') {
     validarTiendasCarrera: validarTiendasCarrera,
     validarNombreComercial: validarNombreComercial,
     avisoDeDiasDesierto: avisoDeDiasDesierto,
+    avisoDeMarcas: avisoDeMarcas,
     parecenVariasTiendas: parecenVariasTiendas,
     validarColumnasDelPais: validarColumnasDelPais,
   };

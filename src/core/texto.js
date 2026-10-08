@@ -185,6 +185,26 @@ function incluyeTurbo(entrada) {
 }
 
 /**
+ * Las marcas que escribio el comercial en el campo de marca, una por coma.
+ *
+ * El campo era para una marca y el comercial de Kenvue escribio "NEUTROGENA® y
+ * LUBRIDERM®": el documento decia "los productos de la marca NEUTROGENA® y
+ * LUBRIDERM®", una frase rota. Ahora las marcas se separan por comas y el
+ * documento dice "de la marca X" con una y "de las marcas X y Y" con varias.
+ * H16 de la revision de la Carrera (Kenvue), 8 de octubre de 2026. Sirve igual
+ * en Descuento y Cupon, que usan la misma frase.
+ */
+function marcasDeLaCampana(texto) {
+  var partes = String(texto === null || texto === undefined ? '' : texto).split(',');
+  var marcas = [];
+  for (var i = 0; i < partes.length; i++) {
+    var marca = partes[i].replace(/\s+/g, ' ').trim();
+    if (marca) marcas.push(marca);
+  }
+  return marcas;
+}
+
+/**
  * Las tiendas donde suman las compras de una Carrera de Compras.
  *
  * Desde el 8 de octubre de 2026 (K1 de la revisión de la Carrera de Kenvue) la
@@ -232,6 +252,7 @@ if (typeof module !== 'undefined') {
     limpiarEspacios: limpiarEspacios,
     tiendaDelCashback: tiendaDelCashback,
     tiendasDeLaCarrera: tiendasDeLaCarrera,
+    marcasDeLaCampana: marcasDeLaCampana,
     incluyeTurbo: incluyeTurbo,
     normalizarTexto: normalizarTexto,
     lineasDe: lineasDe,
