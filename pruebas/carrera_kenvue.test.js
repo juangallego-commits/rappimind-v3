@@ -569,3 +569,14 @@ test('H4: los tres desempates dicen "de Productos Participantes", cierran el emp
     assertSinRestos(texto, 'desempate');
   }
 });
+
+// --- H6: devoluciones y reversiones después de armado el ranking -------------------------------------
+
+test('H6: lo que se devuelve o se reversa después del ranking se recalcula', () => {
+  const texto = documento({});
+  assert.ok(texto.includes(
+    'ocupará su lugar el siguiente participante del ranking que cumpla los requisitos de la Campaña. ' +
+    'Si antes de la entrega del premio se cancela o se devuelve un pedido que sumó al acumulado de un ganador, o se reversa su pago, ' +
+    'el acumulado se recalculará y, si el participante deja de ocupar una posición ganadora, perderá el derecho al premio.'));
+  assertSinRestos(texto, 'carrera');
+});
