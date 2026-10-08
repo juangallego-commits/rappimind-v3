@@ -1011,3 +1011,17 @@ test('H24: cuenta el momento en que se hace el pedido; la entrega solo confirma 
   assert.ok(texto.includes('La Campaña estará vigente desde las 12:00 a. m. del 1 de octubre de 2026 hasta las 11:59 p. m. del 31 de octubre de 2026 (hora local de la República de Colombia).'));
   assert.ok(documento({}, 'MX').includes('Únicamente se tendrán en cuenta para el concurso los pedidos realizados dentro de este periodo y entregados de manera exitosa.'));
 });
+
+// --- H26: cuentas y medios de pago empresariales fuera del acumulado -------------------------------------
+
+test('H26: las cuentas y los medios de pago empresariales no suman al acumulado', () => {
+  const texto = documento({});
+  const lista = texto.split('\n');
+  const medios = lista.indexOf('• Los pedidos pagados con medios de pago diferentes a los aplicables para la Campaña.');
+  assert.ok(medios > 0);
+  assert.strictEqual(lista[medios + 1], '• Los pedidos realizados desde cuentas empresariales o corporativas de la Plataforma Rappi, o pagados con medios de pago empresariales o corporativos.');
+  assert.strictEqual(lista[medios + 2], '• Los pedidos realizados fuera de la vigencia de la Campaña.');
+  assertSinRestos(texto, 'exclusiones');
+  // La reventa se deja a la cláusula de fraude: no hay regla propia ni tope de unidades.
+  assert.ok(!/reventa|unidades por pedido/i.test(texto));
+});

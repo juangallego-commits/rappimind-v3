@@ -35,6 +35,7 @@ Antes de declarar a los ganadores, Rappi verificará la elegibilidad de cada par
 **12. Exclusiones.** No suman al acumulado del concurso:
 • Los pedidos cancelados en su totalidad, los productos devueltos y los pedidos que no se entreguen por cualquier causa.
 • Los pedidos pagados con medios de pago diferentes a los aplicables para la Campaña.
+• Los pedidos realizados desde cuentas empresariales o corporativas de la Plataforma Rappi, o pagados con medios de pago empresariales o corporativos.
 • Los pedidos realizados fuera de la vigencia de la Campaña.
 • El valor de propinas, costos de envío y tarifas de servicio.
 **13. Impuestos.** Los impuestos que se generen con ocasión del premio estarán a cargo de quien corresponda conforme a la legislación tributaria aplicable. Cuando haya lugar a retenciones o tributos a cargo del ganador, estos se aplicarán en los términos de la ley.
