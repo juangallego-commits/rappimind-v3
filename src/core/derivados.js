@@ -226,9 +226,19 @@ var TEXTO_ENTREGA_POR_OPCION = {
   rappi: 'La entrega del premio será gestionada por Rappi en su calidad de operador logístico y por cuenta del Organizador, quien conserva la calidad de responsable del premio; Rappi coordinará con el ganador las condiciones de tiempo, modo y lugar de entrega.',
 };
 
+/*
+ * Como se avisa al ganador.
+ *
+ * K8 de la revision de la Carrera (Kenvue): "la cuenta del ganador" no decia de
+ * que cuenta, asi que lleva "en la Plataforma Rappi", el termino que el
+ * documento si define. H13: una llamada no deja soporte, y si el primer puesto
+ * dice que nunca lo llamaron la duda se resuelve a su favor; por eso la llamada
+ * se confirma siempre por escrito al correo de la cuenta. Aprobados por Juan el
+ * 8 de octubre de 2026.
+ */
 var MEDIO_NOTIFICACION_POR_OPCION = {
-  correo: 'el correo electrónico registrado en la cuenta del ganador',
-  llamada: 'una llamada telefónica al número registrado en la cuenta del ganador',
+  correo: 'el correo electrónico registrado en la cuenta del ganador en la Plataforma Rappi',
+  llamada: 'una llamada telefónica al número registrado en la cuenta del ganador en la Plataforma Rappi, que se confirmará por escrito al correo electrónico registrado en esa cuenta',
   plataforma: 'una notificación dentro de la Plataforma Rappi',
 };
 

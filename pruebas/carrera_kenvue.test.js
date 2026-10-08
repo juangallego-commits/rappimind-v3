@@ -455,3 +455,17 @@ test('H8: el participante es titular de la cuenta y hace los pedidos desde ella'
   // En México la viñeta no cambia de país: es la misma, no trae nada colombiano.
   assert.ok(documento({}, 'MX').includes('• Ser titular de una cuenta activa en la Plataforma Rappi y realizar los pedidos desde esa cuenta.'));
 });
+
+// --- K8 y H13: cómo se avisa al ganador ---------------------------------------------
+
+test('K8 y H13: el aviso nombra la cuenta en la Plataforma Rappi, y la llamada se confirma por escrito', () => {
+  const aviso = (medioNotificacion) => documento({ medioNotificacion });
+  assert.ok(aviso('correo').includes(
+    'Rappi contactará al ganador mediante el correo electrónico registrado en la cuenta del ganador en la Plataforma Rappi, a más tardar el'.replace('al ganador', 'a cada ganador')
+  ) || aviso('correo').includes('mediante el correo electrónico registrado en la cuenta del ganador en la Plataforma Rappi, a más tardar el'));
+  assert.ok(aviso('llamada').includes(
+    'mediante una llamada telefónica al número registrado en la cuenta del ganador en la Plataforma Rappi, ' +
+    'que se confirmará por escrito al correo electrónico registrado en esa cuenta, a más tardar el'));
+  // La notificación dentro de la Plataforma no cambia.
+  assert.ok(aviso('plataforma').includes('mediante una notificación dentro de la Plataforma Rappi, a más tardar el'));
+});
