@@ -1058,3 +1058,12 @@ test('H14: el premio físico que deja de estar disponible se reemplaza por otro 
   const creditos = documento(CREDITOS);
   assert.ok(!creditos.includes('deja de estar disponible'));
 });
+
+// --- K6: el premio se escribe como lo nombra la marca -------------------------------------------------------
+
+test('K6: la ayuda del premio pide escribirlo como lo nombra la marca, y el texto legal no cambia', () => {
+  const { preguntaDe } = require('../src/core/preguntas.js');
+  assert.ok(preguntaDe('descripcionPremio', 'carrera_compras').ayuda.endsWith('Escríbelo como lo nombra la marca, con ® si lo lleva.'));
+  const texto = documento({ numeroGanadores: 1, tipoPremio: 'fisico', descripcionPremio: 'Máscara Facial de luz led CryoGlow Shark®', valorPremio: 1599900, entregaPor: 'rappi' });
+  assert.ok(texto.includes('El ganador recibirá el siguiente premio: Máscara Facial de luz led CryoGlow Shark®, con un valor comercial de un millón quinientos noventa y nueve mil novecientos pesos M/Cte. ($1.599.900), IVA incluido.'));
+});

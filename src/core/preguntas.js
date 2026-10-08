@@ -1884,7 +1884,8 @@ var PREGUNTAS = {
   descripcionPremio: p({
     paso: 'premio',
     pregunta: '¿Qué es exactamente el premio?',
-    ayuda: 'Descríbelo como para que nadie pregunte. Por ejemplo: una bicicleta de montaña marca Andes, rin 29.',
+    // K6 de la revision de la Carrera (Kenvue): la marca pidio "Shark®". Es texto del comercial, no del modelo.
+    ayuda: 'Descríbelo como para que nadie pregunte. Por ejemplo: una bicicleta de montaña marca Andes, rin 29. Escríbelo como lo nombra la marca, con ® si lo lleva.',
     porQue: 'El Organizador responde por lo que diga esta línea. Descripciones vagas terminan en reclamos.',
     ejemplo: 'Una bicicleta de montaña marca Andes, rin 29',
     placeholders: ['LISTA_PREMIOS'],
