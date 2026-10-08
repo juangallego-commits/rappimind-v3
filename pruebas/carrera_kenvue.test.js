@@ -926,3 +926,13 @@ test('H17: la compra mínima dice sobre qué valor se mide', () => {
   // Sin mínimo, la frase de siempre.
   assert.ok(documento({ compraMinima: null }).includes('No se exige un valor mínimo de compra por pedido para participar en la Campaña.'));
 });
+
+// --- H18: la base del acumulado es lo que el participante ve ---------------------------------------------
+
+test('H18: las exclusiones no restan impuestos, que el participante no ve en la app', () => {
+  const texto = documento({});
+  assert.ok(texto.includes('• El valor de propinas, costos de envío y tarifas de servicio.'));
+  assert.ok(!texto.includes('tarifas de servicio e impuestos'));
+  // La cláusula de Impuestos del premio se queda palabra por palabra (H15 en No).
+  assert.ok(texto.includes('Impuestos. Los impuestos que se generen con ocasión del premio estarán a cargo de quien corresponda conforme a la legislación tributaria aplicable. Cuando haya lugar a retenciones o tributos a cargo del ganador, estos se aplicarán en los términos de la ley.'));
+});
