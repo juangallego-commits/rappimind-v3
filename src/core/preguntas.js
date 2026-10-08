@@ -1741,7 +1741,7 @@ var PREGUNTAS = {
     placeholders: ['FRASE_GANADORES'],
     errores: {
       vacio: 'Escribe cuántas personas ganan.',
-      rango: 'El número de ganadores va de 1 a 100.',
+      rango: 'El número de ganadores va de 1 a 500.',
     },
   }),
 

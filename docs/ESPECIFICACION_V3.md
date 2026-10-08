@@ -222,7 +222,7 @@ Validaciones cruzadas: tope y presupuesto mayores que cero; tope menor o igual a
 | makerMarca | texto | si productos = marca | TEXTO_PRODUCTOS |
 | productosLista | texto, separado por comas | si productos = específicos | TEXTO_PRODUCTOS |
 | criterioGanador | lista: Mayor valor en compras, Mayor número de pedidos | sí | CRITERIO_GANADOR |
-| numeroGanadores | número 1 a 100 | sí | FRASE_GANADORES |
+| numeroGanadores | número 1 a 500 | sí | FRASE_GANADORES |
 | desempate | lista: Quien llegó primero, Mayor número de pedidos, Mayor valor en compras | sí | TEXTO_DESEMPATE |
 | tipoPremio | lista: Créditos, Premio físico | sí | LISTA_PREMIOS, TEXTO_NATURALEZA_PREMIO |
 | creditosPremio | número | si tipoPremio = Créditos | LISTA_PREMIOS |

@@ -130,6 +130,12 @@ test('MotorCliente.html corre solo en el navegador y arma la vista previa', () =
   }
   assert.ok(Object.keys(ambiente.MODELOS.modelos).length > 0, 'los textos legales no viajaron al navegador');
 
+  // limpiarEspacios la usa estado.entradaLimpia() en cada revision, vista previa
+  // y envio. Si no viaja dentro del HTML, la pantalla revienta al primer clic
+  // aunque en Node todo pase.
+  assert.strictEqual(typeof ambiente.limpiarEspacios, 'function', 'limpiarEspacios no llego al navegador');
+  assert.strictEqual(ambiente.limpiarEspacios('a  b'), 'a b');
+
   // Con la campana a medio llenar la vista previa tiene que salir igual, con
   // huecos marcados donde falta el dato. Esto es lo que ve el comercial.
   const pais = ambiente.paisDesdeFila(ambiente.PAISES_SEMILLA.find((fila) => fila.codigo === 'CO'));

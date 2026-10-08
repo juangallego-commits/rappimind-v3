@@ -83,7 +83,7 @@ function asiQueda(campoId, pais) {
   var pregunta = RM.estado.pregunta(campoId);
   if (!pregunta || !pregunta.placeholders || pregunta.placeholders.length === 0) return null;
 
-  var valores = calcularDerivados(estado.entrada(), pais);
+  var valores = calcularDerivados(estado.entradaLimpia(), pais);
   var frases = [];
   for (var i = 0; i < pregunta.placeholders.length; i++) {
     var valor = valores[pregunta.placeholders[i]];

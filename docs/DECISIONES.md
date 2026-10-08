@@ -1812,3 +1812,125 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      `pruebas/paises_habilitados.test.js` cuidan que ningún país se quede sin
      su propia lista y que ninguno fuera de Colombia vuelva a mostrar una
      ciudad colombiana.
+
+## 1 de octubre · El tope de ganadores de la Carrera de Compras sube de 100 a 500
+
+137. **El número de ganadores de la Carrera de Compras va de 1 a 500, no de 1 a
+     100.** Juan lo pidió el 1 de octubre de 2026 con la captura de una Carrera
+     de Mars en la que la pantalla rechazaba 140 ganadores con "El número de
+     ganadores va de 1 a 100.". Es una decisión de negocio suya, no técnica, y
+     por eso se anota con su fecha.
+
+     El 100 venía de la especificación original (`docs/ESPECIFICACION_V3.md`,
+     sección 5.3: "número 1 a 100"), que el Bloque 1 copió al esquema tal cual
+     y que nadie tocó después. No encontré en el repositorio una razón de
+     negocio ni legal para ese número: ni en la especificación, ni en
+     `DECISIONES.md` ni `PENDIENTES_LEGAL.md`, ni en ningún otro documento, ni en
+     los mensajes de los commits que lo introdujeron. Parece haber sido el rango
+     del campo y nada más (lectura mía: no puedo descartar una razón que se
+     hablara fuera del repositorio).
+
+     Se cambia en tres sitios que tienen que decir lo mismo: el máximo de
+     `numeroGanadores` en `src/core/esquemas.js`, el mensaje de rango, escrito a
+     mano, en `src/core/preguntas.js` (`numeroGanadores.errores.rango`) y la
+     tabla de la sección 5.3 de la especificación. No encontré un cuarto sitio:
+     la validación del núcleo compara contra `campo.maximo`, la interfaz solo
+     repinta el mensaje que le llega, y ni el código del servidor, ni las
+     columnas del Sheet (que salen de los esquemas), ni los modelos de
+     `modelos/` mencionan el tope. Tampoco hizo falta tocar ningún derivado: el
+     motor ya sabía escribir de 101 a 500 ("ciento un", "doscientos",
+     "trescientos veintiún", "quinientos"), y las leyendas cortas usan la
+     cifra, no las letras.
+
+     Dos cosas que conviene tener presentes:
+
+     - **Es un solo tope para los ocho países** que tienen Carrera de Compras
+       (Colombia, México, Perú, Argentina, Chile, Ecuador, Uruguay y Costa
+       Rica), porque el esquema es uno solo. Brasil no tiene concurso (decisión
+       126). Si algún país necesitara un tope propio habría que construirlo: hoy
+       el máximo vive en el esquema y no se lee de la fila del país en
+       `data/paises.json`.
+     - **El total del premio físico crece con el tope.** Con varios ganadores el
+       documento declara el valor de un premio por el número de ganadores, y el
+       motor solo escribe en letras hasta 999.999.999.999. La revisión numérica
+       mira cada campo por separado, así que lo que detiene un total que no cabe
+       es la red del motor sobre el texto final, que no genera el documento (con
+       el mensaje "El texto quedó roto: hay dos espacios seguidos.", poco claro
+       para el comercial). Con 100 ganadores se activaba con un premio de 10.000
+       millones por ganador; con 500, desde 2.000 millones. Son valores
+       absurdos para un premio físico y no se tocó, pero queda dicho: si algún
+       día pasa, lo natural es una revisión cruzada con un mensaje que el
+       comercial entienda.
+
+     Cinco pruebas nuevas en `pruebas/limites_numericos.test.js` cuidan que el
+     máximo del esquema y el mensaje no se separen (el borde de los dos lados,
+     en los ocho países), que de 100 a 500 las letras salgan bien, que el total
+     de 500 premios se escriba completo, que un total que no cabe no genere y
+     que la leyenda corta diga la cifra.
+
+## 2 de octubre · Los espacios de sobra en las respuestas se limpian solos
+
+138. **Un doble espacio en una respuesta de texto ya no bloquea al comercial:
+     se junta en uno solo, sin preguntarle.** Juan lo pidió el 2 de octubre de
+     2026 con la captura del resumen de una Carrera de Compras de Mars, que al
+     tocar Generar mostraba "El texto quedó roto: hay dos espacios seguidos."
+     Es una decisión técnica (dos espacios no son un dato distinto de uno) y no
+     toca ningún texto legal, así que se decide y se deja escrita aquí.
+
+     **Qué pasaba.** El resumen y el botón de Generar se apoyan en
+     `validarSolicitud`, que revisa los datos (que estén, el formato, los
+     rangos) pero no la forma del texto. La única revisión de espacios es la red
+     de seguridad del motor (`SENALES_DE_TEXTO_ROTO`, especificación 4.3 punto
+     5), que corre al renderizar, o sea al generar. Resultado: el resumen decía
+     que todo estaba bien, el botón estaba activo, y el error salía recién al
+     final, sin decir en cuál pregunta y sobre algo que no se ve en pantalla,
+     porque en HTML dos espacios se pintan como uno. Sin forma de arreglarlo.
+     Reproducido en Node y en el navegador: 71 de 72 combinaciones de país, tipo
+     y campo de texto fallaban (tienda, razón social, ciudades, marca aliada, y
+     las filas de tiendas del Cashback Day), no solo la Carrera de Compras.
+
+     **Por qué no es solo del comercial.** Lo habitual es que el doble espacio
+     venga de pegar un nombre desde Word, Excel o una página, que además trae
+     espacios duros (U+00A0). Esos ni siquiera los detecta la red del motor,
+     que solo mira el espacio normal, y se habrían publicado tal cual.
+
+     **El arreglo, en el borde y no en la pantalla.** `limpiarEspacios()` en
+     `src/core/texto.js` devuelve una copia de la solicitud con cada texto sin
+     espacios de sobra (junta los tramos de espacios, tabulaciones, saltos y
+     espacios duros en un solo espacio y quita los de las puntas), recorriendo
+     listas y objetos. No toca números, casillas ni vacíos. Se aplica en:
+
+     - `generarTexto()` (`src/core/generar.js`): el único sitio por el que pasan
+       la vista previa, generar y ampliar.
+     - `previsualizar` y `generar` de `src/server/Api.js`, al recibir, para que
+       el nombre de la campaña, el título del documento en Drive y lo que se
+       guarda en el Sheet salgan con un solo espacio, igual que el texto.
+     - Cinco sitios del navegador, por `estado.entradaLimpia()`: la revisión
+       por campo, la vista previa, la lista "Te falta", el "Así queda en tu T&C"
+       y lo que se manda a generar. Así la pantalla y el servidor ven el mismo
+       texto.
+
+     **Lo que no se hizo, a propósito.**
+
+     - **No se limpia lo que se teclea.** El campo de texto y el borrador siguen
+       con lo que la persona escribe (`estado.entrada()`): limpiar al teclear se
+       come el espacio entre dos palabras antes de escribir la segunda.
+     - **La red del motor no se toca.** Sigue frenando un doble espacio que no
+       venga de una respuesta (un texto de `modelos/` o un derivado mal armado).
+       Hay una prueba que lo cuida.
+     - **No se esconde lo que falta ni lo que está mal.** Un campo de solo
+       espacios sigue siendo un campo vacío, y el código de un cupón con un
+       espacio sigue rechazado: limpiar no decide por el comercial.
+
+     Hay un caso que no cambia y que conviene no confundir con este: con un
+     premio físico de valor enorme, el total no cabe en letras y la red del
+     motor lo frena con el mismo mensaje (punto 137). Ahí el doble espacio no
+     viene de ninguna respuesta, y limpiar no lo arregla ni debe.
+
+     Diecisiete pruebas nuevas en `pruebas/espacios.test.js`, y una comprobación
+     más en la prueba del navegador de `pruebas/build.test.js` (que
+     `limpiarEspacios` viaje dentro de `MotorCliente.html`). Esa última no se
+     hizo en el archivo nuevo porque las pruebas corren en paralelo y construir
+     `dist/` desde dos archivos a la vez lo borra mientras otra lo lee. Comprobé
+     que cazan el defecto: con el `src/` de antes del arreglo fallan 14; las que
+     pasan son las que cuidan que lo que ya salía bien siga igual.

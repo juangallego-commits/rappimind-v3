@@ -30,7 +30,9 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
   var PENDIENTES_POR_MARCADOR = moduloDerivadosLeyendas.PENDIENTES_POR_MARCADOR;
   var conElIdiomaDe = require('./idiomas.js').conElIdiomaDe;
   var urlDelTcDeLaCampana = moduloDerivadosLeyendas.urlDelTcDeLaCampana;
-  var tieneValor = require('./texto.js').tieneValor;
+  var moduloTextoGenerar = require('./texto.js');
+  var tieneValor = moduloTextoGenerar.tieneValor;
+  var limpiarEspacios = moduloTextoGenerar.limpiarEspacios;
   var nombreDelHueco = require('./preguntas.js').nombreDelHueco;
   var listaY = require('./fechas.js').listaY;
 }
@@ -44,6 +46,13 @@ if (typeof module !== 'undefined' && typeof require === 'function') {
  * Devuelve { valido, errores: [{campo, mensaje}], texto }.
  */
 function generarTexto(entrada, pais, modelos, contexto) {
+  // Los espacios de sobra de las respuestas no cambian lo que dicen, y sin
+  // quitarlos la red del motor frenaba el documento por "dos espacios
+  // seguidos". Se limpia aqui, en el unico sitio por donde pasan todos los
+  // caminos (vista previa, generar y ampliar); el servidor ademas limpia al
+  // recibir, para que el nombre y lo que se guarda salgan igual.
+  entrada = limpiarEspacios(entrada);
+
   var revision = validarSolicitud(entrada, pais, contexto);
   if (!revision.valido) {
     return { valido: false, errores: revision.errores, texto: '' };

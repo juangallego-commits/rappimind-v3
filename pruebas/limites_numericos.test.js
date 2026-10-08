@@ -25,6 +25,7 @@ const assert = require('node:assert');
 const { rutaDesdeRaiz, leerJson } = require('../scripts/lib/archivos');
 const { cargarModelos } = require('../scripts/lib/modelos');
 const { generarTexto } = require('../src/core/generar.js');
+const { textoGanadoresCorto } = require('../src/core/derivados_leyendas.js');
 const { ESQUEMAS, camposVisibles } = require('../src/core/esquemas.js');
 const { solicitud, tiendasDePrueba } = require('./dobles/solicitudes.js');
 
@@ -240,4 +241,98 @@ test('un número más grande de lo que el motor sabe escribir no genera', () => 
 test('y en portugués tampoco, que tiene el mismo techo', () => {
   const salida = generar('BR', 'promocao_br', { compraMinima: 5000000000000 });
   assert.ok(!salida.valido, 'generó un documento que dice "cinco milhões milhões"');
+});
+
+/*
+ * El tope de ganadores de la Carrera de Compras.
+ *
+ * Era 100, tal cual venía de la especificación original, y Juan lo subió a 500
+ * el 1 de octubre de 2026 (decisión 137), cuando una Carrera de Mars pidió 140
+ * ganadores y la pantalla la rechazó.
+ *
+ * El número vive en dos sitios que no se hablan: el máximo del esquema decide
+ * quién pasa, y el mensaje de rango, escrito a mano en preguntas.js, es lo que
+ * lee el comercial. Si cambia uno y no el otro, la pantalla dice "va de 1 a 100"
+ * mientras acepta 300, o rechaza con un número que no es el que anuncia. Por eso
+ * se prueba el borde de los dos lados y el texto exacto del mensaje.
+ *
+ * Subir el tope también abre números que el motor casi no había escrito en
+ * letras: de 101 a 500 entran "ciento", los demás cientos y "quinientos".
+ */
+const PAISES_CON_CARRERA = paises.filter(
+  (p) => p.estado !== 'bloqueado' && (p.modelos || []).includes('carrera_compras'));
+
+test('la Carrera de Compras acepta hasta 500 ganadores en todos sus países, y el 501 no genera', () => {
+  assert.ok(PAISES_CON_CARRERA.length > 0, 'ningún país tiene Carrera de Compras: la prueba no recorrió nada');
+  PAISES_CON_CARRERA.forEach((pais) => {
+    [1, 100, 101, 140, 500].forEach((cuantos) => {
+      const salida = generar(pais.codigo, 'carrera_compras', { numeroGanadores: cuantos });
+      assert.ok(salida.valido, pais.codigo + ' con ' + cuantos + ' ganadores no generó: ' + mensajesDe(salida));
+    });
+    [0, 501, 1000].forEach((cuantos) => {
+      const salida = generar(pais.codigo, 'carrera_compras', { numeroGanadores: cuantos });
+      assert.ok(!salida.valido, pais.codigo + ' generó con ' + cuantos + ' ganadores');
+      assert.ok(mensajesDe(salida).includes('El número de ganadores va de 1 a 500.'),
+        pais.codigo + ' con ' + cuantos + ': el mensaje que salió fue: ' + mensajesDe(salida));
+    });
+  });
+});
+
+test('los ganadores de tres cifras se escriben bien en letras: cien, ciento un, quinientos', () => {
+  const esperado = {
+    100: 'los cien (100)',
+    101: 'los ciento un (101)',
+    140: 'los ciento cuarenta (140)',
+    200: 'los doscientos (200)',
+    321: 'los trescientos veintiún (321)',
+    500: 'los quinientos (500)',
+  };
+  Object.keys(esperado).forEach((cuantos) => {
+    const salida = generar('CO', 'carrera_compras', { numeroGanadores: Number(cuantos) });
+    assert.ok(salida.valido, cuantos + ' ganadores no generó: ' + mensajesDe(salida));
+    assert.ok(
+      salida.texto.includes('Resultarán ganadores ' + esperado[cuantos] +
+        ' participantes que ocupen las primeras posiciones del ranking.'),
+      'con ' + cuantos + ' ganadores el documento no dice "' + esperado[cuantos] + '"');
+  });
+});
+
+test('con 500 ganadores el total de un premio físico se escribe completo', () => {
+  const salida = generar('CO', 'carrera_compras', {
+    numeroGanadores: 500, tipoPremio: 'fisico', descripcionPremio: 'Una bicicleta', valorPremio: 800000,
+  });
+  assert.ok(salida.valido, mensajesDe(salida));
+  assert.ok(
+    salida.texto.includes('El valor comercial total de los premios de la Campaña es de ' +
+      'cuatrocientos millones de pesos M/Cte. ($400.000.000).'),
+    'el total de 500 premios de $800.000 no salió como cuatrocientos millones');
+});
+
+test('con 500 ganadores, un premio cuyo total no cabe en letras no genera, en vez de salir roto', () => {
+  /*
+   * 2.000 millones por cada uno de 500 ganadores son un billón: un paso más allá
+   * de 999.999.999.999, lo último que el motor sabe escribir. La revisión
+   * numérica mira cada campo por separado y el valor del premio, solo, sí cabe,
+   * así que lo que detiene el documento es la red del motor sobre el texto
+   * final. Esa red ya existía (con 100 ganadores el límite era un premio de
+   * 10.000 millones); el tope nuevo la acerca cinco veces, y aquí queda fijado
+   * que sigue cerrando.
+   *
+   * Va con su par: un peso menos por ganador sí genera. Sin él, la prueba
+   * pasaría por cualquier otra causa y no diría que es el total lo que frena.
+   */
+  const premio = { numeroGanadores: 500, tipoPremio: 'fisico', descripcionPremio: 'Un apartamento' };
+
+  const alLimite = generar('CO', 'carrera_compras', Object.assign({}, premio, { valorPremio: 1999999999 }));
+  assert.ok(alLimite.valido, 'el total más grande que cabe en letras debía generar: ' + mensajesDe(alLimite));
+
+  const pasado = generar('CO', 'carrera_compras', Object.assign({}, premio, { valorPremio: 2000000000 }));
+  assert.ok(!pasado.valido, 'generó un total del premio sin escribirlo en letras');
+});
+
+test('la leyenda corta de la Carrera dice la cifra con 500 ganadores, en los dos criterios', () => {
+  assert.strictEqual(textoGanadoresCorto({ criterioGanador: 'mayor_valor', numeroGanadores: 500 }),
+    'Ganan los 500 usuarios con el mayor valor en compras de los productos participantes.');
+  assert.strictEqual(textoGanadoresCorto({ criterioGanador: 'mas_pedidos', numeroGanadores: 500 }),
+    'Ganan los 500 usuarios con el mayor número de pedidos válidos con productos participantes.');
 });
