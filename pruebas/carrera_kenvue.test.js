@@ -992,8 +992,8 @@ test('H23: la fecha de notificación no pasa de 30 días calendario después del
   assert.ok(errores('2026-12-01')[0].includes('No puede pasar de 30 días calendario después de que termine la campaña'), errores('2026-12-01')[0]);
   assert.ok(errores('2027-04-30')[0].includes('30 días calendario'));
   // El error de siempre sigue: no puede ser antes ni el mismo día del fin.
-  assert.ok(errores('2026-10-31')[0].includes('posterior'));
-  assert.ok(errores('2026-10-15')[0].includes('posterior'));
+  assert.ok(errores('2026-10-31')[0].includes('después de que termine la campaña'));
+  assert.ok(errores('2026-10-15')[0].includes('después de que termine la campaña'));
 });
 
 test('H23: la fecha del caso de Kenvue (25 de noviembre, fin el 15) cabe en el tope', () => {
