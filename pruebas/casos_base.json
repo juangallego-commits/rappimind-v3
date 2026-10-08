@@ -2504,6 +2504,146 @@
           "tipo"
         ]
       }
+    },
+    {
+      "id": "CC07",
+      "descripcion": "Carrera CO de la campaña Skindays de Kenvue (revisión del 8 de octubre de 2026): dos tiendas con Turbo por tienda, nombre comercial, un ganador, premio físico que entrega Rappi",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "CO",
+        "negocio": "rappi",
+        "tipo": "carrera_compras",
+        "alcance": "Nacional",
+        "ciudades": "",
+        "segmento": "todos",
+        "metodoPago": "todos",
+        "declaracion": true,
+        "organizadorRazonSocial": "Kenvue Colombia S.A.",
+        "organizadorId": "890.101.815-9",
+        "fechaInicio": "2026-10-15",
+        "horaInicio": "00:00",
+        "fechaFin": "2026-11-15",
+        "horaFin": "23:59",
+        "productos": "marca",
+        "makerMarca": "NEUTROGENA®, LUBRIDERM®",
+        "criterioGanador": "mayor_valor",
+        "numeroGanadores": 1,
+        "desempate": "mas_pedidos",
+        "medioNotificacion": "llamada",
+        "fechaNotificacion": "2026-11-25",
+        "plazoConfirmacion": 8,
+        "plazoEntrega": 15,
+        "intentosContacto": 3,
+        "diasDesierto": 30,
+        "tiendasCarrera": [
+          {
+            "nombre": "Éxito",
+            "tiendaTurbo": "normal"
+          },
+          {
+            "nombre": "Carulla",
+            "tiendaTurbo": "turbo"
+          }
+        ],
+        "nombreComercial": "Skindays",
+        "tipoPremio": "fisico",
+        "descripcionPremio": "Máscara Facial de luz led CryoGlow Shark",
+        "valorPremio": 1599900,
+        "entregaPor": "rappi"
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "campaña promocional denominada “Skindays”",
+          "organizada por Kenvue Colombia S.A., identificada con NIT 890.101.815-9",
+          "dentro de las zonas de cobertura de las tiendas Éxito y Carulla",
+          "En Éxito, solo suman al acumulado los pedidos realizados por fuera del botón “Turbo”",
+          "En Carulla, solo suman al acumulado los pedidos realizados dentro del botón “Turbo”",
+          "Los Productos Participantes son ofrecidos y comercializados directamente por las Tiendas Participantes, y no por Rappi.",
+          "los productos de las marcas NEUTROGENA® y LUBRIDERM®",
+          "Los pedidos de Productos Participantes realizados en cualquiera de las Tiendas Participantes suman a un mismo acumulado por participante.",
+          "La Campaña tiene un (1) solo ganador y entrega un (1) solo premio.",
+          "Máscara Facial de luz led CryoGlow Shark, con un valor comercial de un millón quinientos noventa y nueve mil novecientos pesos M/Cte. ($1.599.900), IVA incluido",
+          "como operador de la mecánica del concurso y de la entrega del premio",
+          "Rappi contactará al ganador mediante una llamada telefónica",
+          "que se confirmará por escrito al correo electrónico registrado en esa cuenta",
+          "ocho (8) días hábiles",
+          "al menos tres (3) intentos realizados en días hábiles distintos",
+          "Si dentro de los treinta (30) días calendario siguientes a la fecha de notificación",
+          "a más tardar dentro de los quince (15) días hábiles siguientes a su aceptación"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          "..",
+          "Turbo y Éxito",
+          "Carrera de Compras ·"
+        ]
+      }
+    },
+    {
+      "id": "CC08",
+      "descripcion": "Carrera CO con una sola tienda, sin nombre comercial y con premio en Créditos con vigencia en días y redención en cualquier sección: el camino corto de la revisión de Kenvue",
+      "fecha_referencia": "2026-09-16",
+      "entrada": {
+        "pais": "CO",
+        "negocio": "rappi",
+        "tipo": "carrera_compras",
+        "alcance": "Nacional",
+        "ciudades": "",
+        "segmento": "todos",
+        "metodoPago": "todos",
+        "declaracion": true,
+        "organizadorRazonSocial": "Kenvue Colombia S.A.",
+        "organizadorId": "890.101.815-9",
+        "fechaInicio": "2026-10-15",
+        "horaInicio": "00:00",
+        "fechaFin": "2026-11-15",
+        "horaFin": "23:59",
+        "productos": "marca",
+        "makerMarca": "NEUTROGENA®, LUBRIDERM®",
+        "criterioGanador": "mayor_valor",
+        "numeroGanadores": 1,
+        "desempate": "mas_pedidos",
+        "medioNotificacion": "llamada",
+        "fechaNotificacion": "2026-11-25",
+        "plazoConfirmacion": 8,
+        "plazoEntrega": 15,
+        "intentosContacto": 3,
+        "diasDesierto": 30,
+        "tiendasCarrera": [
+          {
+            "nombre": "Éxito",
+            "tiendaTurbo": "sin_turbo"
+          }
+        ],
+        "tipoPremio": "creditos",
+        "creditosPremio": 500000,
+        "vigencia": "dias",
+        "diasVigencia": 30,
+        "redencion": "general"
+      },
+      "esperado": {
+        "resultado": "genera",
+        "contiene": [
+          "campaña promocional denominada “Éxito · Carrera de Compras · 15 oct 2026”",
+          "dentro de las zonas de cobertura de Éxito (en adelante, la “Tienda Participante”)",
+          "en la Tienda Participante a través de la Plataforma Rappi",
+          "Los Créditos del premio tendrán una vigencia de treinta (30) días calendario contados a partir de su carga.",
+          "Los Créditos podrán redimirse en cualquier sección de la Plataforma Rappi habilitada para el uso de Créditos, dentro del Territorio.",
+          "Los Créditos serán acreditados por Rappi en la Billetera de Créditos del ganador, por cuenta del Organizador, a más tardar dentro de los quince (15) días hábiles siguientes a la aceptación del premio.",
+          "como operador de la mecánica del concurso y de la acreditación del premio",
+          "El premio es personal e intransferible y no podrá canjearse por dinero en efectivo. La Campaña tiene un (1) solo ganador"
+        ],
+        "no_contiene": [
+          "{{",
+          "[[",
+          "..",
+          "botón “Turbo”",
+          "sin costo para el ganador",
+          "Skindays"
+        ]
+      }
     }
   ]
 }

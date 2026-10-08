@@ -1067,3 +1067,30 @@ test('K6: la ayuda del premio pide escribirlo como lo nombra la marca, y el text
   const texto = documento({ numeroGanadores: 1, tipoPremio: 'fisico', descripcionPremio: 'Máscara Facial de luz led CryoGlow Shark®', valorPremio: 1599900, entregaPor: 'rappi' });
   assert.ok(texto.includes('El ganador recibirá el siguiente premio: Máscara Facial de luz led CryoGlow Shark®, con un valor comercial de un millón quinientos noventa y nueve mil novecientos pesos M/Cte. ($1.599.900), IVA incluido.'));
 });
+
+// --- Los casos CC07 y CC08, de punta a punta ---------------------------------------------------------------
+
+const { generarLeyendasDeLaCampana } = require('../src/core/generar.js');
+const { cargarLeyendas } = require('../scripts/lib/modelos');
+const CASOS = require('./casos_base.json').casos;
+const casoDe = (id) => CASOS.filter((c) => c.id === id)[0];
+
+test('H1 con CC07: la leyenda de la campaña de Kenvue nombra a Kenvue, no a Éxito, a Carulla ni a Turbo', () => {
+  const entrada = casoDe('CC07').entrada;
+  const resultado = generarLeyendasDeLaCampana(entrada, pais('CO'), cargarLeyendas(), { nombreCampana: 'Éxito y Carulla · Carrera de Compras · 15 oct 2026' });
+  assert.deepStrictEqual(resultado.errores, [], resultado.errores.join(' | '));
+  assert.ok(resultado.leyendas.length > 0);
+  for (const leyenda of resultado.leyendas) {
+    assert.ok(!/organizado por (Éxito|Carulla|Turbo|Éxito y Carulla)/.test(leyenda.texto), leyenda.texto);
+    if (/organizado por/.test(leyenda.texto)) assert.ok(leyenda.texto.includes('organizado por Kenvue Colombia S.A.'), leyenda.texto);
+  }
+});
+
+test('CC07 y CC08 generan sin errores y sin una sola marca sin resolver', () => {
+  for (const id of ['CC07', 'CC08']) {
+    const caso = casoDe(id);
+    const salida = generarTexto(caso.entrada, pais('CO'), modelos, { fechaReferencia: caso.fecha_referencia, usuarioEnEquipo: false });
+    assert.ok(salida.valido, id + ': ' + JSON.stringify(salida.errores));
+    assertSinRestos(textoPlano(salida.texto), id);
+  }
+});

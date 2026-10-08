@@ -34,9 +34,9 @@ function salidaEsperada(caso) {
   return normalizarParaComparar(leerTexto(rutaDesdeRaiz('pruebas', 'salidas_esperadas', caso.id + '.txt')));
 }
 
-test('hay cuarenta y ocho casos, treinta y tres que generan y quince que fallan', () => {
-  assert.strictEqual(casos.length, 48);
-  assert.strictEqual(generan.length, 33);
+test('hay cincuenta casos, treinta y cinco que generan y quince que fallan', () => {
+  assert.strictEqual(casos.length, 50);
+  assert.strictEqual(generan.length, 35);
   assert.strictEqual(fallan.length, 15);
 
   /*
