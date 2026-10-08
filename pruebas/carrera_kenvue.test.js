@@ -104,7 +104,7 @@ test('K1.a: la primera viñeta de la Mecánica y el párrafo del acumulado habla
 
   const varias = documento({ tiendasCarrera: EXITO_Y_CARULLA });
   assert.ok(varias.includes('• Realizar uno o más pedidos de Productos Participantes en cualquiera de las Tiendas Participantes a través de la Plataforma Rappi durante la vigencia de la Campaña.'));
-  assert.ok(varias.includes('no suman al acumulado. Los pedidos de Productos Participantes realizados en cualquiera de las Tiendas Participantes suman a un mismo acumulado por participante.'));
+  assert.ok(varias.includes('Los pedidos de Productos Participantes realizados en cualquiera de las Tiendas Participantes suman a un mismo acumulado por participante.'));
 });
 
 test('K1.a: la frase de los productos usa la forma de una o de varias tiendas', () => {
@@ -499,4 +499,25 @@ test('K11 y H10: el bloque nuevo es solo de la Carrera y el compartido no cambia
     assert.ok(plano.includes(viejo), tipo);
     assert.ok(plano.includes('como la reducción del beneficio o del premio, la modificación de los comercios o productos participantes o la anticipación de la fecha de finalización'), tipo);
   }
+});
+
+// --- H5: un pedido entregado de manera parcial suma por lo entregado ----------------------
+
+test('H5: la cancelación parcial ya no saca el pedido entero del acumulado', () => {
+  const texto = documento({});
+  assert.ok(texto.includes('• Recibir los pedidos de manera exitosa.\n'));
+  assert.ok(!texto.includes('sin cancelaciones totales ni parciales'));
+  assert.ok(texto.includes(
+    'El concurso consiste en acumular el mayor valor total en compras de Productos Participantes durante la vigencia de la Campaña. ' +
+    'Los pedidos cancelados en su totalidad, ya sea por el Usuario/Consumidor, por el Aliado Comercial o por el Repartidor Independiente, no suman al acumulado. ' +
+    'Si un pedido se entrega de manera parcial, suma al acumulado solo por los Productos Participantes efectivamente entregados y pagados, y cuenta como pedido siempre que incluya al menos uno de ellos.'));
+  assert.ok(texto.includes('• Los pedidos cancelados en su totalidad, los productos devueltos y los pedidos que no se entreguen por cualquier causa.'));
+  assert.ok(!texto.includes('cancelados total o parcialmente'));
+  assertSinRestos(texto, 'carrera');
+});
+
+test('H5: con varias tiendas la frase del acumulado va después de la del pedido parcial', () => {
+  const texto = documento({ tiendasCarrera: EXITO_Y_CARULLA });
+  assert.ok(texto.includes('y cuenta como pedido siempre que incluya al menos uno de ellos. Los pedidos de Productos Participantes realizados en cualquiera de las Tiendas Participantes suman a un mismo acumulado por participante.'));
+  assertSinRestos(texto, 'varias tiendas');
 });
