@@ -69,6 +69,11 @@ const CAMBIADAS_POR_JUAN = {
   // leyenda nunca cabía; el push lleva al usuario a la campaña dentro de la
   // app, y ahí está el enlace al T&C.
   leyenda_push_co: '[[?TOPE_CIFRA]]Máx. {{TOPE_CIFRA}} en Créditos. [[/?]][[?MINIMO_CIFRA]]Compra mínima {{MINIMO_CIFRA}}. [[/?]]Aplican TyC',
+  // H1 de la revisión de la Carrera de Compras (Kenvue), 8 de octubre de 2026:
+  // la leyenda nombra al Organizador y no a la tienda. La respuesta decía
+  // {{TIENDA}}; con una marca que fondea en la tienda de otro (o en Turbo, que
+  // opera una empresa de Rappi) la pieza contradecía al T&C en quién organiza.
+  leyenda_carrera_compras_co: 'Aplican términos y condiciones: {{URL_TC_CAMPANA}}. Concurso sin azar válido {{TEXTO_VIGENCIA_CORTA}}. {{TEXTO_GANADORES_CORTO}} Premio: {{TEXTO_PREMIO_CORTO}}.[[R1]] Concurso organizado por {{ORGANIZADOR}}.[[/R]][[?TEXTO_COMPLEMENTOS]] {{TEXTO_COMPLEMENTOS}}[[/?]] Imágenes de referencia.',
 };
 
 /**

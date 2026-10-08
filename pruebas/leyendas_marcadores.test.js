@@ -566,3 +566,37 @@ test('en Argentina la leyenda lleva el enlace de la campaña, no el general', ()
   assert.ok(r.enlacePrevisto.indexOf('/argentina/') !== -1, r.enlacePrevisto);
   assert.ok(textos.indexOf(r.enlacePrevisto) !== -1, textos);
 });
+
+/*
+ * H1 de la revisión de la Carrera de Compras (Kenvue), 8 de octubre de 2026.
+ *
+ * La leyenda decía "Concurso organizado por {{TIENDA}}". TIENDA es el nombre de
+ * la tienda, no el del Organizador: en una Carrera que fondea una marca en la
+ * tienda de otro (Kenvue en Turbo y Éxito, Bimbo en Carulla), la pieza habría
+ * dicho que organiza la tienda, y el T&C dice que organiza la marca. En Turbo
+ * habría nombrado como organizador a un negocio de Rappi, que es lo que la
+ * regla 1 de CLAUDE.md prohíbe.
+ */
+test('H1: la leyenda de la Carrera nombra al Organizador y no a la tienda', () => {
+  const entrada = caso('CC01');
+  assert.notStrictEqual(entrada.tienda, entrada.organizadorRazonSocial);
+  const r = leyendasDe(entrada, CO, { nombreCampana: 'Carrera de Compras Bimbo 30' });
+  assert.deepStrictEqual(r.errores, [], r.errores.join(' | '));
+  const pequena = porFormato(r, 'letra_pequena').texto;
+  // La razón social termina en punto y el del cierre de la frase se junta con él.
+  assert.ok(pequena.indexOf('Concurso organizado por ' + entrada.organizadorRazonSocial) !== -1, pequena);
+  assert.strictEqual(pequena.indexOf('organizado por ' + entrada.tienda), -1, pequena);
+});
+
+test('H1: ninguna leyenda de la Carrera imprime como organizadora a una entidad de Rappi', () => {
+  const entidades = PAISES.map((p) => p.entidad_legal).filter(Boolean);
+  const entrada = Object.assign({}, caso('CC01'), { tienda: 'Turbo' });
+  for (const r of [leyendasDe(entrada, CO, { nombreCampana: 'Carrera Turbo' })]) {
+    for (const leyenda of r.leyendas) {
+      for (const entidad of entidades) {
+        assert.strictEqual(leyenda.texto.indexOf('organizado por ' + entidad), -1, leyenda.texto);
+      }
+      assert.strictEqual(/organizado por (Turbo|Moustache)/i.test(leyenda.texto), false, leyenda.texto);
+    }
+  }
+});
