@@ -1042,3 +1042,19 @@ test('K3: la viñeta de pago dice efectivamente, y la frase de los medios de pag
   const cb = generarTexto(solicitud('CO', 'cashback', {}), pais('CO'), modelos, CONTEXTO);
   assert.ok(!textoPlano(cb.texto).includes('Pagar efectivamente'));
 });
+
+// --- H14: si el premio físico deja de existir --------------------------------------------------------------
+
+test('H14: el premio físico que deja de estar disponible se reemplaza por otro igual o mejor', () => {
+  const regla = 'Si por causas ajenas al Organizador el premio deja de estar disponible, el Organizador lo reemplazará por otro de características similares y de igual o mayor valor comercial, y se le informará al ganador antes de la entrega.';
+  const fisico = { tipoPremio: 'fisico', descripcionPremio: 'Una máscara facial', valorPremio: 1599900 };
+  for (const entregaPor of ['rappi', 'organizador']) {
+    const texto = documento(Object.assign({ entregaPor, plazoEntrega: 10 }, fisico));
+    const naturaleza = texto.split('\n').filter((l) => l.startsWith('10. Naturaleza del premio.'))[0];
+    assert.ok(naturaleza.endsWith(regla), entregaPor + ': ' + naturaleza);
+    assertSinRestos(texto, entregaPor);
+  }
+  // Con Créditos no hay bien que reemplazar.
+  const creditos = documento(CREDITOS);
+  assert.ok(!creditos.includes('deja de estar disponible'));
+});

@@ -240,16 +240,28 @@ function textoRolOperativo(entrada) {
   return '';
 }
 
+/*
+ * Si el premio fisico deja de existir antes de la entrega.
+ *
+ * Sin regla para cuando el producto se descontinua o se agota, el Organizador
+ * incumple o entrega lo que quiera. Va al final de las dos naturalezas del
+ * premio fisico. H14 de la revision de la Carrera (Kenvue), aprobado el 8 de
+ * octubre de 2026.
+ */
+var TEXTO_PREMIO_FISICO_NO_DISPONIBLE =
+  'Si por causas ajenas al Organizador el premio deja de estar disponible, el Organizador lo reemplazará por otro de ' +
+  'características similares y de igual o mayor valor comercial, y se le informará al ganador antes de la entrega.';
+
 /** La naturaleza del premio fisico cuando lo entrega el Organizador. */
 var TEXTO_NATURALEZA_FISICO_ENTREGA_ORGANIZADOR =
   'El premio consiste en un bien de carácter físico, cuya existencia, calidad, garantía y entrega son responsabilidad exclusiva ' +
-  'del Organizador. Rappi no fabrica, comercializa ni garantiza dicho bien.';
+  'del Organizador. Rappi no fabrica, comercializa ni garantiza dicho bien. ' + TEXTO_PREMIO_FISICO_NO_DISPONIBLE;
 
 /** La naturaleza del premio fisico cuando Rappi gestiona la entrega como operador logistico. */
 var TEXTO_NATURALEZA_FISICO_ENTREGA_RAPPI =
   'El premio consiste en un bien de carácter físico, cuya existencia, calidad y garantía son responsabilidad exclusiva ' +
   'del Organizador. Rappi no fabrica, comercializa ni garantiza dicho bien, y gestiona su entrega únicamente como operador ' +
-  'logístico por cuenta del Organizador, en los términos de la cláusula siguiente.';
+  'logístico por cuenta del Organizador, en los términos de la cláusula siguiente. ' + TEXTO_PREMIO_FISICO_NO_DISPONIBLE;
 
 var TEXTO_ENTREGA_POR_OPCION = {
   organizador: 'La entrega del premio estará a cargo exclusivamente del Organizador, quien coordinará directamente con el ganador las condiciones de tiempo, modo y lugar de entrega, siendo el único responsable de la misma.',
