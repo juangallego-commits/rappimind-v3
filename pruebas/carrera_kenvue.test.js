@@ -622,11 +622,11 @@ const CREDITOS = { tipoPremio: 'creditos', creditosPremio: 500000, vigencia: 'di
 
 test('H11: el premio en Créditos no se canjea por dinero, pero sí se gasta en la Plataforma', () => {
   const creditos = documento(CREDITOS);
-  assert.ok(creditos.includes('El premio es personal e intransferible y no podrá canjearse por dinero en efectivo. La cantidad de premios'));
+  assert.ok(creditos.includes('El premio es personal e intransferible y no podrá canjearse por dinero en efectivo. La Campaña tiene'));
   assert.ok(!creditos.includes('ni por otros bienes o servicios'));
 
   const fisico = documento({ tipoPremio: 'fisico', descripcionPremio: 'Una bicicleta', valorPremio: 1200000, entregaPor: 'organizador' });
-  assert.ok(fisico.includes('El premio es personal e intransferible y no podrá canjearse por dinero en efectivo ni por otros bienes o servicios. La cantidad de premios'));
+  assert.ok(fisico.includes('El premio es personal e intransferible y no podrá canjearse por dinero en efectivo ni por otros bienes o servicios. La Campaña tiene'));
 });
 
 test('H11: la naturaleza de los Créditos dice hasta cuándo valen y dónde se gastan', () => {
@@ -688,4 +688,42 @@ test('H11: la redención del premio no ofrece "solo en la tienda"', () => {
   assert.deepStrictEqual(campo.opciones.map((o) => o.valor), ['secciones', 'general']);
   // El Cashback conserva sus tres opciones.
   assert.deepStrictEqual(preguntaDe('redencion', 'cashback').opciones.map((o) => o.valor), ['tienda', 'secciones', 'general']);
+});
+
+// --- K5 y K7: cuántos ganadores y cuántos premios hay ---------------------------------------------------
+
+test('K5 y K7: el documento dice cuántos ganadores y premios hay, con uno y con varios', () => {
+  const co = pais('CO');
+  const derivados = (numeroGanadores) => calcularDerivados(carrera({ numeroGanadores }), co);
+
+  assert.strictEqual(derivados(1).GANADOR_OBJETO, 'al ganador');
+  assert.strictEqual(derivados(3).GANADOR_OBJETO, 'a los ganadores');
+  assert.strictEqual(derivados(1).A_CADA_GANADOR, 'al ganador');
+  assert.strictEqual(derivados(3).A_CADA_GANADOR, 'a cada ganador');
+  assert.strictEqual(derivados(1).TEXTO_CANTIDAD_PREMIOS, 'La Campaña tiene un (1) solo ganador y entrega un (1) solo premio.');
+  assert.strictEqual(derivados(3).TEXTO_CANTIDAD_PREMIOS, 'La Campaña tiene tres (3) ganadores y entrega tres (3) premios iguales, uno para cada ganador.');
+  assert.strictEqual(derivados(101).TEXTO_CANTIDAD_PREMIOS, 'La Campaña tiene ciento un (101) ganadores y entrega ciento un (101) premios iguales, uno para cada ganador.');
+  assert.strictEqual(derivados(500).TEXTO_CANTIDAD_PREMIOS, 'La Campaña tiene quinientos (500) ganadores y entrega quinientos (500) premios iguales, uno para cada ganador.');
+});
+
+test('K5 y K7: con un ganador, ninguna frase fija queda en plural', () => {
+  const uno = documento({ numeroGanadores: 1 });
+  assert.ok(uno.includes('El resultado del concurso se define exclusivamente con base en un criterio objetivo, medible y verificable de compras efectivamente realizadas durante la vigencia, y en ningún caso por sorteo, rifa, azar o cualquier otro mecanismo de suerte.'));
+  assert.ok(uno.includes('La Campaña tiene un (1) solo ganador y entrega un (1) solo premio.'));
+  assert.ok(uno.includes('Rappi contactará al ganador mediante'));
+  assert.ok(uno.includes('Antes de declarar al ganador, Rappi'));
+  assert.ok(uno.includes('Resultará ganador el participante que ocupe la primera posición del ranking.'));
+  for (const plural of ['Los ganadores se determinan', 'a cada ganador mediante', 'a los ganadores, Rappi', 'La cantidad de premios es limitada']) {
+    assert.ok(!uno.includes(plural), 'con un ganador no puede decir "' + plural + '"');
+  }
+});
+
+test('K5 y K7: con varios ganadores el documento dice cuántos son', () => {
+  const tres = documento({ numeroGanadores: 3 });
+  assert.ok(tres.includes('La Campaña tiene tres (3) ganadores y entrega tres (3) premios iguales, uno para cada ganador.'));
+  assert.ok(tres.includes('Rappi contactará a cada ganador mediante'));
+  assert.ok(tres.includes('Antes de declarar a los ganadores, Rappi'));
+  assert.ok(tres.includes('Resultarán ganadores los tres (3) participantes que ocupen las primeras posiciones del ranking.'));
+  assert.ok(!tres.includes('La cantidad de premios es limitada y corresponde a la indicada en esta cláusula'));
+  assertSinRestos(tres, 'tres');
 });

@@ -620,6 +620,30 @@ function diasDesierto(entrada, pais) {
 }
 
 /**
+ * ORACION: cuantos ganadores y cuantos premios hay.
+ *
+ * Reemplaza a "La cantidad de premios es limitada y corresponde a la indicada
+ * en esta clausula", que remitia a una clausula que no indicaba ningun numero.
+ * La promocion tiene que informar con claridad cuantos premios hay (Ley 1480 de
+ * 2011, art. 33), y una duda en eso se lee a favor del consumidor (art. 34).
+ * K5 y K7 de la revision de la Carrera (Kenvue), 8 de octubre de 2026. Cada
+ * ganador recibe un premio igual al de los demas: el segundo puesto con otro
+ * premio es un caso que el filtro manda a Legal.
+ */
+function textoCantidadPremios(entrada) {
+  var ganadores = Number(entrada.numeroGanadores);
+  if (!ganadores || ganadores < 1) return '';
+  if (ganadores === 1) return 'La Campaña tiene un (1) solo ganador y entrega un (1) solo premio.';
+  return 'La Campaña tiene ' + letrasYCifra(ganadores) + ' ganadores y entrega ' + letrasYCifra(ganadores) +
+    ' premios iguales, uno para cada ganador.';
+}
+
+/** FRAGMENTO: a quien contacta Rappi, "al ganador" o "a cada ganador". */
+function aCadaGanador(entrada) {
+  return Number(entrada.numeroGanadores) === 1 ? 'al ganador' : 'a cada ganador';
+}
+
+/**
  * FRAGMENTO: el objeto de "Antes de declarar ...", en singular o plural.
  *
  * La clausula de verificacion decia siempre "a los ganadores", tambien con un
@@ -635,6 +659,8 @@ function derivadosCarrera(entrada, pais, valores) {
   valores.TEXTO_PRODUCTOS = textoProductos(entrada);
   valores.TEXTO_ROL_OPERATIVO = textoRolOperativo(entrada);
   valores.GANADOR_OBJETO = ganadorObjeto(entrada);
+  valores.A_CADA_GANADOR = aCadaGanador(entrada);
+  valores.TEXTO_CANTIDAD_PREMIOS = textoCantidadPremios(entrada);
   // Las Tiendas Participantes (K1): una o varias, con un solo ranking.
   valores.TEXTO_TIENDAS_PARTICIPANTES = textoTiendasParticipantes(entrada);
   valores.LA_TIENDA = laTiendaDeLaCarrera(entrada);
@@ -903,6 +929,8 @@ if (typeof module !== 'undefined') {
     textoAcreditacionDelPremio: textoAcreditacionDelPremio,
     TEXTO_DESEMPATE_POR_OPCION: TEXTO_DESEMPATE_POR_OPCION,
     ganadorObjeto: ganadorObjeto,
+    aCadaGanador: aCadaGanador,
+    textoCantidadPremios: textoCantidadPremios,
     textoIntentosContacto: textoIntentosContacto,
     diasDesierto: diasDesierto,
     TEXTO_NATURALEZA_FISICO_ENTREGA_ORGANIZADOR: TEXTO_NATURALEZA_FISICO_ENTREGA_ORGANIZADOR,
