@@ -171,13 +171,14 @@ test('el documento queda en la carpeta del país, nunca en una general', () => {
   assert.ok(resultado.linkDoc.indexOf('docs.google.com') !== -1);
 });
 
-test('el documento se comparte con el solicitante y con el equipo de Legal como lectores', () => {
+test('el documento queda con el solicitante como lector y el equipo de Legal como editor', () => {
   const mundo = conSetup({ correo: 'kam@rappi.com' });
   generar(solicitudValida());
 
   const documento = mundo.documentos[Object.keys(mundo.documentos)[0]];
-  assert.deepStrictEqual(mundo.archivos[documento.getId()].lectores, [
-    'kam@rappi.com',
+  const archivo = mundo.archivos[documento.getId()];
+  assert.deepStrictEqual(archivo.lectores, ['kam@rappi.com']);
+  assert.deepStrictEqual(archivo.editores, [
     'valeria.rangel@rappi.com',
     'isabela.zuluaga@rappi.com',
     'juan.caicedo@rappi.com',

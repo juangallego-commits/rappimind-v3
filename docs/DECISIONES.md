@@ -1937,4 +1937,4 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
 
 ## 2026-11-03 · Acceso de lector al equipo de Legal en todos los documentos
 
-Cada documento generado se comparte como lector con el solicitante y con Valeria Rangel, Isabela Zuluaga y Juan Caicedo, porque por ahora ellos suben los T&C a Squarespace a mano. La lista vive en `LECTORES_POR_DEFECTO` (`src/server/Config.js`) y se puede cambiar sin tocar código con la propiedad del script `CORREOS_LECTORES_DOCUMENTOS` (correos separados por coma). Si un correo falla, los demás igual reciben acceso. El correo de Juan Caicedo es `@rappi.com` (confirmado por Juan).
+Cada documento generado se comparte como editor para Valeria Rangel, Isabela Zuluaga y Juan Caicedo (el solicitante sigue como lector), porque por ahora ellos suben los T&C a Squarespace a mano. La lista vive en `LECTORES_POR_DEFECTO` (`src/server/Config.js`) y se puede cambiar sin tocar código con la propiedad del script `CORREOS_LECTORES_DOCUMENTOS` (correos separados por coma). Si un correo falla, los demás igual reciben acceso. El correo de Juan Caicedo es `@rappi.com` (confirmado por Juan).

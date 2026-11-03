@@ -142,7 +142,7 @@ function horaAhora(zonaHoraria) {
 }
 
 /**
- * Personas del equipo de Legal que reciben acceso de lector a TODOS los
+ * Personas del equipo de Legal que reciben acceso de editor a TODOS los
  * documentos generados. Hoy el equipo sube los T&C a Squarespace a mano, así
  * que necesita abrir cada documento sin pedírselo al comercial.
  * Se puede cambiar sin tocar código con la propiedad CORREOS_LECTORES_DOCUMENTOS
