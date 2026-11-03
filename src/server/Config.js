@@ -151,7 +151,7 @@ function horaAhora(zonaHoraria) {
 var LECTORES_POR_DEFECTO = [
   'valeria.rangel@rappi.com',
   'isabela.zuluaga@rappi.com',
-  'juan.caicedo@rappi.co',
+  'juan.caicedo@rappi.com',
 ];
 
 function correosLectoresDocumentos() {

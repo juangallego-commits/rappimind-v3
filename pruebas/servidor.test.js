@@ -180,7 +180,7 @@ test('el documento se comparte con el solicitante y con el equipo de Legal como 
     'kam@rappi.com',
     'valeria.rangel@rappi.com',
     'isabela.zuluaga@rappi.com',
-    'juan.caicedo@rappi.co',
+    'juan.caicedo@rappi.com',
   ]);
 });
 
