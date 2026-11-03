@@ -171,12 +171,17 @@ test('el documento queda en la carpeta del país, nunca en una general', () => {
   assert.ok(resultado.linkDoc.indexOf('docs.google.com') !== -1);
 });
 
-test('el documento se comparte con el solicitante como lector', () => {
+test('el documento se comparte con el solicitante y con el equipo de Legal como lectores', () => {
   const mundo = conSetup({ correo: 'kam@rappi.com' });
   generar(solicitudValida());
 
   const documento = mundo.documentos[Object.keys(mundo.documentos)[0]];
-  assert.deepStrictEqual(mundo.archivos[documento.getId()].lectores, ['kam@rappi.com']);
+  assert.deepStrictEqual(mundo.archivos[documento.getId()].lectores, [
+    'kam@rappi.com',
+    'valeria.rangel@rappi.com',
+    'isabela.zuluaga@rappi.com',
+    'juan.caicedo@rappi.co',
+  ]);
 });
 
 test('el cuerpo del documento lleva el formato de la especificación', () => {

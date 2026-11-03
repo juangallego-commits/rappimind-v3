@@ -1934,3 +1934,7 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
      `dist/` desde dos archivos a la vez lo borra mientras otra lo lee. Comprobé
      que cazan el defecto: con el `src/` de antes del arreglo fallan 14; las que
      pasan son las que cuidan que lo que ya salía bien siga igual.
+
+## 2026-11-03 · Acceso de lector al equipo de Legal en todos los documentos
+
+Cada documento generado se comparte como lector con el solicitante y con Valeria Rangel, Isabela Zuluaga y Juan Caicedo, porque por ahora ellos suben los T&C a Squarespace a mano. La lista vive en `LECTORES_POR_DEFECTO` (`src/server/Config.js`) y se puede cambiar sin tocar código con la propiedad del script `CORREOS_LECTORES_DOCUMENTOS` (correos separados por coma). Si un correo falla, los demás igual reciben acceso. Pendiente de confirmar: el correo de Juan Caicedo está como `@rappi.co`, no `@rappi.com`.

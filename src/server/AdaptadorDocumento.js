@@ -97,13 +97,20 @@ function crearDocumento(titulo, estructura, carpeta, correoLector) {
   }
 
   // Lector, y sin notificación de Drive: el aviso lo manda el correo de RappiMind.
-  if (correoLector) {
+  // Además del solicitante, el equipo de Legal que publica en Squarespace.
+  var lectores = [];
+  if (correoLector) lectores.push(correoLector);
+  correosLectoresDocumentos().forEach(function (correo) {
+    if (lectores.indexOf(correo) === -1) lectores.push(correo);
+  });
+  lectores.forEach(function (correo) {
     try {
-      archivo.addViewer(correoLector);
+      archivo.addViewer(correo);
     } catch (error) {
-      // Si ya es lector o es el dueño, Drive se queja y no pasa nada.
+      // Si ya es lector o es el dueño, Drive se queja y no pasa nada. Un correo
+      // que falle no debe impedir que los demás reciban acceso.
     }
-  }
+  });
 
   return { id: documento.getId(), url: documento.getUrl() };
 }
