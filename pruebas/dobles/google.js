@@ -140,6 +140,7 @@ function Archivo(id, nombre, tipo) {
   this.tipo = tipo;
   this.carpeta = null;
   this.lectores = [];
+  this.editores = [];
 }
 Archivo.prototype.getId = function () { return this.id; };
 Archivo.prototype.getName = function () { return this.nombre; };
@@ -148,6 +149,11 @@ Archivo.prototype.setTrashed = function (valor) { this.enPapelera = !!valor; ret
 Archivo.prototype.isTrashed = function () { return !!this.enPapelera; };
 Archivo.prototype.addViewer = function (correo) {
   if (this.lectores.indexOf(correo) === -1) this.lectores.push(correo);
+  return this;
+};
+
+Archivo.prototype.addEditor = function (correo) {
+  if (this.editores.indexOf(correo) === -1) this.editores.push(correo);
   return this;
 };
 

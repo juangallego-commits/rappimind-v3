@@ -18,6 +18,7 @@ var PROPIEDADES = {
   CANAL_AYUDA_URL: 'CANAL_AYUDA_URL',
   CORREO_COPIA_LEGAL: 'CORREO_COPIA_LEGAL',
   CORREOS_ADMIN: 'CORREOS_ADMIN',
+  CORREOS_LECTORES_DOCUMENTOS: 'CORREOS_LECTORES_DOCUMENTOS',
   CONFIRMACIONES_APLICADAS: 'CONFIRMACIONES_APLICADAS',
 };
 
@@ -140,6 +141,28 @@ function horaAhora(zonaHoraria) {
   return Utilities.formatDate(new Date(), zona, 'HH:mm');
 }
 
+/**
+ * Personas del equipo de Legal que reciben acceso de editor a TODOS los
+ * documentos generados. Hoy el equipo sube los T&C a Squarespace a mano, así
+ * que necesita abrir cada documento sin pedírselo al comercial.
+ * Se puede cambiar sin tocar código con la propiedad CORREOS_LECTORES_DOCUMENTOS
+ * (correos separados por coma); si está vacía se usa esta lista.
+ */
+var LECTORES_POR_DEFECTO = [
+  'valeria.rangel@rappi.com',
+  'isabela.zuluaga@rappi.com',
+  'juan.caicedo@rappi.com',
+];
+
+function correosLectoresDocumentos() {
+  var configurada = leerPropiedad(PROPIEDADES.CORREOS_LECTORES_DOCUMENTOS);
+  if (!configurada) return LECTORES_POR_DEFECTO.slice();
+  return configurada
+    .split(',')
+    .map(function (correo) { return correo.trim().toLowerCase(); })
+    .filter(function (correo) { return correo.length > 0; });
+}
+
 /** Correos que setup() deja como administradores. */
 function correosAdministradores() {
   var lista = leerPropiedad(PROPIEDADES.CORREOS_ADMIN)
@@ -176,5 +199,6 @@ if (typeof module !== 'undefined') {
     horaAhora: horaAhora,
     ahoraTexto: ahoraTexto,
     correosAdministradores: correosAdministradores,
+    correosLectoresDocumentos: correosLectoresDocumentos,
   };
 }

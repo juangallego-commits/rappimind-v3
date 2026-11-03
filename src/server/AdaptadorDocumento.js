@@ -97,13 +97,24 @@ function crearDocumento(titulo, estructura, carpeta, correoLector) {
   }
 
   // Lector, y sin notificación de Drive: el aviso lo manda el correo de RappiMind.
-  if (correoLector) {
+  // El solicitante es lector. El equipo de Legal que publica en Squarespace es
+  // editor, para poder corregir el documento sin pedirle nada al comercial.
+  // Un correo que falle (ya es dueño o ya tiene acceso) no frena a los demás.
+  var editores = correosLectoresDocumentos();
+  if (correoLector && editores.indexOf(correoLector) === -1) {
     try {
       archivo.addViewer(correoLector);
     } catch (error) {
       // Si ya es lector o es el dueño, Drive se queja y no pasa nada.
     }
   }
+  editores.forEach(function (correo) {
+    try {
+      archivo.addEditor(correo);
+    } catch (error) {
+      // Ver arriba.
+    }
+  });
 
   return { id: documento.getId(), url: documento.getUrl() };
 }
