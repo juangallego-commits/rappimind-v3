@@ -267,15 +267,20 @@ var PREGUNTAS = {
 
   // --- Quién la organiza --------------------------------------------------
 
+  /*
+   * Hasta el 9 de noviembre de 2026 decia solo "empresa". Una persona natural
+   * comerciante tambien organiza campanas (Juan lo confirmo ese dia), y quien
+   * tenia una enfrente no sabia si podia seguir.
+   */
   organizadorRazonSocial: p({
     paso: 'organizador',
-    pregunta: '¿Qué empresa paga el beneficio?',
-    ayuda: 'Tal como sale en {DONDE_ID_FISCAL}, por ejemplo: Alimentos del Norte S.A.S. Nunca es Rappi.',
+    pregunta: '¿Qué empresa o comerciante paga el beneficio?',
+    ayuda: 'Tal como sale en {DONDE_ID_FISCAL}, por ejemplo: Alimentos del Norte S.A.S. Si es una persona natural, su nombre completo. Nunca es Rappi.',
     porQue: 'El Organizador responde por la campaña frente al usuario y frente a la autoridad. Rappi solo pone la plataforma, así que el nombre tiene que ser exacto.',
     ejemplo: 'Alimentos del Norte S.A.S.',
     placeholders: ['ORGANIZADOR'],
     errores: {
-      vacio: 'Escribe la razón social de la empresa que paga el beneficio. Si no la tienes, pídesela a tu contacto en la tienda.',
+      vacio: 'Escribe la razón social de la empresa que paga el beneficio, o el nombre completo del comerciante si es una persona natural. Si no lo tienes, pídeselo a tu contacto en la tienda.',
     },
   }),
 
@@ -291,13 +296,13 @@ var PREGUNTAS = {
    */
   organizadorId: p({
     paso: 'organizador',
-    pregunta: '¿Cuál es el número de {ID_FISCAL} de esa empresa?',
+    pregunta: '¿Qué número de {ID_FISCAL} tiene esa empresa o comerciante?',
     ayuda: 'Escríbelo completo, tal como sale en {DONDE_ID_FISCAL}: {EJEMPLO_ID_FISCAL}.',
     porQue: 'El documento identifica al Organizador con su número tributario. Un número mal escrito deja el documento sin un responsable identificable.',
     ejemplo: '{EJEMPLO_ID_FISCAL}',
     placeholders: ['ID_ORGANIZADOR'],
     errores: {
-      vacio: 'Escribe el número de {ID_FISCAL} de la empresa organizadora, completo.',
+      vacio: 'Escribe el número de {ID_FISCAL} de la empresa o el comerciante que organiza, completo.',
       formato: 'Ese número no cuadra. Revísalo en {DONDE_ID_FISCAL} y escríbelo otra vez.',
     },
     confirmacion: 'válido',
@@ -2043,8 +2048,8 @@ var NOMBRE_DEL_HUECO = {
   HORA_INICIO: 'la hora de inicio',
   FECHA_FIN: 'el día de fin',
   HORA_FIN: 'la hora de fin',
-  ORGANIZADOR: 'la empresa que paga',
-  ID_ORGANIZADOR: 'la identificación tributaria de esa empresa',
+  ORGANIZADOR: 'la empresa o comerciante que paga',
+  ID_ORGANIZADOR: 'la identificación tributaria de esa empresa o comerciante',
   TEXTO_SEGMENTO: 'quiénes participan',
   TEXTO_METODO_PAGO: 'con qué puede pagar',
   TEXTO_MINIMO_COMPRA: 'la compra mínima',

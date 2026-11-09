@@ -2871,3 +2871,37 @@ en el punto 137: un premio físico de valor enorme (2.000 millones o más por
 ganador con 500 ganadores) sigue frenando con este mismo mensaje, porque el
 total no cabe en letras. Ahí limpiar espacios no ayuda, y sigue siendo un cambio
 pequeño darle un mensaje que el comercial entienda, si lo quieres.
+
+## 9 de noviembre · El NIT de una persona natural comerciante ya pasa
+
+### Qué encontré
+
+Un comercial no podía avanzar con un Organizador persona natural comerciante,
+con matrícula activa en el RUES. Su NIT es su cédula de diez números más el
+dígito, y el validador exigía exactamente nueve dígitos (el largo del NIT de
+una sociedad). El dígito de verificación sí cuadraba.
+
+### Qué quedó
+
+- El NIT de Colombia acepta de 5 a 10 dígitos más el de verificación. Sin
+  guion, el último número es el dígito. Detalle en `docs/DECISIONES.md`.
+- Si el dígito no cuadra en un número sin guion, el mensaje también dice cuál
+  sería el dígito si el comercial escribió solo la cédula.
+- Juan confirmó que una persona natural comerciante puede ser Organizador. Las
+  preguntas del paso Organizador ahora dicen "empresa o comerciante":
+  "¿Qué empresa o comerciante paga el beneficio?" y "¿Qué número de NIT tiene
+  esa empresa o comerciante?" (con el nombre del número de cada país). La
+  ayuda pide el nombre completo si es persona natural.
+
+### Cómo probarlo
+
+```
+npm test
+```
+
+782 pasan, 0 fallan, 8 saltadas como antes. En pantalla: paso Organizador de
+cualquier campaña de Colombia, escribir `1020304050-8` o `10203040508`.
+
+### Qué necesito de Juan
+
+Nada. Juan aprobó el despliegue el 9 de noviembre.
