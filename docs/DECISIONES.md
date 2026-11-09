@@ -1938,3 +1938,35 @@ las de texto están en `docs/PARA_DECIDIR.md`, bloque G.
 ## 2026-11-03 · Acceso de lector al equipo de Legal en todos los documentos
 
 Cada documento generado se comparte como editor para Valeria Rangel, Isabela Zuluaga y Juan Caicedo (el solicitante sigue como lector), porque por ahora ellos suben los T&C a Squarespace a mano. La lista vive en `LECTORES_POR_DEFECTO` (`src/server/Config.js`) y se puede cambiar sin tocar código con la propiedad del script `CORREOS_LECTORES_DOCUMENTOS` (correos separados por coma). Si un correo falla, los demás igual reciben acceso. El correo de Juan Caicedo es `@rappi.com` (confirmado por Juan).
+
+## 2026-11-09 · El NIT de una persona natural comerciante ya pasa
+
+**El defecto.** Un comercial no pudo seguir con un Organizador que es persona
+natural comerciante, con matrícula activa en el RUES. Su NIT es su cédula más
+el dígito de verificación, y la cédula tiene diez números. El validador
+(`validarNit` en `src/core/identificaciones.js`) exigía exactamente nueve
+dígitos antes del de verificación, que es el largo del NIT de una sociedad, y
+respondía "El NIT tiene 9 dígitos más el de verificación". El dígito de
+verificación de ese NIT sí cuadraba: lo único que fallaba era el largo. Lo
+mismo le pasaba a cualquier persona natural con cédula antigua de ocho números
+o menos. La regla venía de la especificación (sección 6), que solo pensó en
+sociedades.
+
+**El arreglo.** El NIT acepta de 5 a 10 dígitos más el de verificación. El
+algoritmo de la DIAN es el mismo para cualquier largo (los pesos ya llegaban a
+15 posiciones), así que el dígito sigue frenando los errores de tecleo. Sin
+guion, el último número siempre es el dígito: `9001112221` es `900.111.222-1`
+y `10203040508` es `1.020.304.050-8`. El mensaje de formato ahora explica los
+dos casos (sociedad y persona natural), y cuando el dígito no cuadra en un
+número escrito sin guion, el mensaje dice también cuál sería el dígito si el
+comercial escribió solo la cédula. El mínimo de 5 deja pasar cédulas viejas y
+de extranjería; el máximo de 10 es el largo de la cédula actual.
+
+Como el mismo validador sirve al paso del Organizador, a Cashback
+Multitienda, a las validaciones del servidor y al derivado `ID_ORGANIZADOR`, el
+arreglo cubre los cuatro. La comparación contra los NIT de Rappi
+(`nitSinVerificacion`) no cambia: sigue tomando los nueve primeros dígitos, y
+ninguna cédula de diez números empieza como un NIT de Rappi.
+
+Pruebas nuevas en `pruebas/identificaciones.test.js` con un número inventado,
+no con el del aliado.

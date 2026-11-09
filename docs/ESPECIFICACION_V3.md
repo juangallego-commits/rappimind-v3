@@ -287,7 +287,7 @@ Pendiente de confirmar por Juan: si el máximo de pedidos aplica en toda la camp
 
 | País | Tipo | Regla |
 |---|---|---|
-| CO | NIT | 9 dígitos más dígito de verificación. Pesos desde la derecha: 3, 7, 13, 17, 19, 23, 29, 37, 41, 43, 47, 53, 59, 67, 71. r = suma mod 11; dv = r si r es 0 o 1, si no 11 − r. Formato de salida `NIT 900.111.222-1`. |
+| CO | NIT | De 5 a 10 dígitos más dígito de verificación (9 para una sociedad; la cédula, de hasta 10, para una persona natural comerciante). Sin guion, el último número es el dígito. Pesos desde la derecha: 3, 7, 13, 17, 19, 23, 29, 37, 41, 43, 47, 53, 59, 67, 71. r = suma mod 11; dv = r si r es 0 o 1, si no 11 − r. Formato de salida `NIT 900.111.222-1`. |
 | MX | RFC | Persona moral: 3 letras, 6 dígitos (fecha) y 3 de homoclave. Dígito: se antepone un espacio, se mapea cada carácter (0 a 9 → 0 a 9; A a N → 10 a 23; & → 24; O a Z → 25 a 36; espacio → 37; Ñ → 38), pesos 13 a 2 sobre los primeros 12; r = suma mod 11; dv = 0 si r = 0; "A" si 11 − r = 10; si no 11 − r. Aceptar también RFC de persona física (13 caracteres, sin espacio antepuesto). |
 | PE | RUC | 11 dígitos. Pesos 5, 4, 3, 2, 7, 6, 5, 4, 3, 2. dv = 11 − (suma mod 11); 10 → 0; 11 → 1. |
 | AR | CUIT | 11 dígitos. Pesos 5, 4, 3, 2, 7, 6, 5, 4, 3, 2. dv = 11 − (suma mod 11); 11 → 0; 10 → inválido. Formato `CUIT 30-71580389-1`. |

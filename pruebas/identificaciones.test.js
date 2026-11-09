@@ -39,6 +39,43 @@ test('NIT de Colombia: dígito de verificación y formato', () => {
   assert.ok(!validarIdentificacion('CO', '90011122-1').valido);
 });
 
+/*
+ * Una persona natural comerciante organiza campanas con su NIT, que es su
+ * cedula mas el digito. Hasta el 9 de noviembre de 2026 solo pasaban nueve
+ * digitos y se rechazaba a cualquiera con cedula de diez o de ocho.
+ */
+test('NIT de Colombia: persona natural con cédula de diez o de ocho números', () => {
+  for (const escrito of ['1020304050-8', '1.020.304.050-8', '1020304050 - 8', '10203040508']) {
+    const revision = validarIdentificacion('CO', escrito);
+    assert.ok(revision.valido, escrito + ' debería ser válido: ' + revision.mensaje);
+    assert.strictEqual(revision.formateado, 'NIT 1.020.304.050-8');
+  }
+  const vieja = validarIdentificacion('CO', '79.123.456-0');
+  assert.ok(vieja.valido, vieja.mensaje);
+  assert.strictEqual(vieja.formateado, 'NIT 79.123.456-0');
+
+  // El digito de verificacion sigue mandando con cualquier largo.
+  const malo = validarIdentificacion('CO', '1020304050-3');
+  assert.ok(!malo.valido);
+  assert.match(malo.mensaje, /Para 1\.020\.304\.050 el dígito es 8/);
+});
+
+test('NIT de Colombia: sin el dígito, el mensaje dice cuál es', () => {
+  // Quien escribe solo la cedula no deberia quedarse con una pista que apunta
+  // a otro numero: el mensaje dice tambien el digito del numero completo.
+  const revision = validarIdentificacion('CO', '1020304050');
+  assert.ok(!revision.valido);
+  assert.match(revision.mensaje, /para 1\.020\.304\.050 el dígito es 8/);
+});
+
+test('NIT de Colombia: largos imposibles se rechazan con el ejemplo', () => {
+  for (const escrito of ['123-4', '12345678901-2', '900111222-X']) {
+    const revision = validarIdentificacion('CO', escrito);
+    assert.ok(!revision.valido, escrito);
+    assert.match(revision.mensaje, /cédula más el dígito/);
+  }
+});
+
 test('RFC de México: persona moral y persona física', () => {
   const moral = validarIdentificacion('MX', 'PRU200101AB5');
   assert.ok(moral.valido);

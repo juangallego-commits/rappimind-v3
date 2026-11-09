@@ -46,11 +46,32 @@ function digitoNit(cuerpo) {
   return r === 0 || r === 1 ? r : 11 - r;
 }
 
+/*
+ * Cuantos digitos puede tener el NIT antes del de verificacion.
+ *
+ * Hasta el 9 de noviembre de 2026 eran exactamente nueve, que es el NIT de una
+ * sociedad. Pero una persona natural comerciante tambien organiza campanas, y
+ * su NIT es su cedula mas el digito: las cedulas nuevas tienen diez numeros
+ * (el NIT de un comerciante del Huila, con matricula activa en el RUES, se
+ * rechazaba por eso) y las antiguas tienen ocho o menos. El limite de abajo
+ * deja pasar las cedulas viejas y las de extranjeria; el digito de
+ * verificacion sigue frenando los errores de tecleo.
+ */
+var MINIMO_DIGITOS_NIT = 5;
+var MAXIMO_DIGITOS_NIT = 10;
+
 function validarNit(valor) {
-  var limpio = String(valor || '').trim().replace(/[.\s]/g, '');
-  var partido = /^(\d{9})-?(\d)$/.exec(limpio);
-  if (!partido) {
-    return resultado(false, 'El NIT tiene 9 dígitos más el de verificación, por ejemplo 900.111.222-1.');
+  var limpio = String(valor || '').trim().replace(/[.,\s]/g, '');
+  /*
+   * El ultimo numero siempre es el digito de verificacion, venga o no con
+   * guion. Sin guion no hay otra forma de leerlo: 9001112221 es 900.111.222-1
+   * y 10203040508 es 1.020.304.050-8.
+   */
+  var partido = /^(\d+)-?(\d)$/.exec(limpio);
+  if (!partido || partido[1].length < MINIMO_DIGITOS_NIT || partido[1].length > MAXIMO_DIGITOS_NIT) {
+    return resultado(false, 'El NIT son los números del RUT más el dígito de verificación, ' +
+      'por ejemplo 900.111.222-1. Si es una persona natural, es su cédula más el dígito, ' +
+      'por ejemplo 1.020.304.050-8.');
   }
   var cuerpo = partido[1];
   var dv = Number(partido[2]);
@@ -65,8 +86,20 @@ function validarNit(valor) {
    */
   var correcto = digitoNit(cuerpo);
   if (correcto !== dv) {
-    return resultado(false, 'El dígito de verificación no cuadra con ese NIT. Para ' +
-      agruparMiles(cuerpo, '.') + ' el dígito es ' + correcto + '. Revisa el número completo.');
+    var mensaje = 'El dígito de verificación no cuadra con ese NIT. Para ' +
+      agruparMiles(cuerpo, '.') + ' el dígito es ' + correcto + '.';
+    /*
+     * Sin guion, puede que el comercial haya escrito solo la cedula o solo el
+     * NIT, sin el digito. Entonces el ultimo numero que se tomo como digito es
+     * en realidad parte del numero, y la pista de arriba apunta a otro NIT.
+     * Se le dice tambien cual seria el digito si el numero estaba completo.
+     */
+    var completo = cuerpo + partido[2];
+    if (limpio.indexOf('-') === -1 && completo.length <= MAXIMO_DIGITOS_NIT) {
+      mensaje += ' Si escribiste el número sin el dígito, para ' + agruparMiles(completo, '.') +
+        ' el dígito es ' + digitoNit(completo) + ' y va al final.';
+    }
+    return resultado(false, mensaje + ' Revisa el número completo.');
   }
   return resultado(true, '', 'NIT ' + agruparMiles(cuerpo, '.') + '-' + dv);
 }
