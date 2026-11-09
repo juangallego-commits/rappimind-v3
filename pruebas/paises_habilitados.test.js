@@ -166,7 +166,7 @@ test('la pregunta del organizador dice el nombre que el número tiene allí', ()
   for (const pais of paises) {
     const pregunta = conDatosDelPais(preguntaDe('organizadorId', 'descuento'), pais);
     assert.strictEqual(pregunta.pregunta,
-      '¿Cuál es el número de ' + esperado[pais.codigo] + ' de esa empresa?', pais.codigo);
+      '¿Qué número de ' + esperado[pais.codigo] + ' tiene esa empresa o comerciante?', pais.codigo);
     assert.ok(pregunta.ayuda.indexOf(pais.ejemplo_id_fiscal) !== -1,
       pais.codigo + ': la ayuda no trae el ejemplo de ese país');
     // Y fuera de Colombia no queda ni rastro del NIT.
@@ -279,7 +279,7 @@ test('poner los datos de un país no deja al siguiente hablando de ese país', (
   assert.strictEqual(PREGUNTAS.organizadorId.pregunta, antes, 'se pisó la pregunta original');
   assert.strictEqual(
     conDatosDelPais(preguntaDe('organizadorId', 'descuento'), porCodigo('CO')).pregunta,
-    '¿Cuál es el número de NIT de esa empresa?'
+    '¿Qué número de NIT tiene esa empresa o comerciante?'
   );
 
   // Lo mismo con las subpreguntas de la lista de tiendas, que van anidadas.
