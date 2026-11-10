@@ -2905,3 +2905,28 @@ cualquier campaña de Colombia, escribir `1020304050-8` o `10203040508`.
 ### Qué necesito de Juan
 
 Nada. Juan aprobó el despliegue el 9 de noviembre.
+
+## 10 de noviembre · Créditos que vencen el último día de la campaña
+
+### Qué quedó
+
+- Los Créditos con vigencia "Hasta una fecha" pueden vencer el último día de la
+  campaña si llegan el mismo día del pedido (carga inmediata o en una fecha).
+  Con la carga al día siguiente sigue frenando, con un mensaje que explica cómo
+  arreglarlo.
+- Nuevo: el vencimiento no puede ser antes de la fecha de carga.
+- Ayuda y por qué de la pregunta actualizados. Detalle en `docs/DECISIONES.md`.
+
+### Cómo probarlo
+
+```
+npm test
+```
+
+784 pasan, 0 fallan, 8 saltadas como antes. En pantalla: un Cashback del 13 al
+17 de noviembre, carga "Apenas termina el pedido", vencimiento el 17: pasa. Con
+carga "Al día siguiente del pedido": frena con el mensaje nuevo.
+
+### Qué necesito de Juan
+
+Nada. Juan aprobó la regla y el despliegue el 10 de noviembre.

@@ -437,6 +437,14 @@ function validarCashback(entrada, tipo, idioma) {
   return errores;
 }
 
+/**
+ * Los Creditos le llegan al usuario el mismo dia en que compra: carga
+ * inmediata, o una fecha fija (que ya se comparo con el vencimiento).
+ */
+function llegaElMismoDia(entrada) {
+  return entrada.carga === 'inmediata' || entrada.carga === 'fecha';
+}
+
 /** Cruces de los Creditos: carga y redencion frente a la vigencia. */
 function validarCreditos(entrada, esquema, idioma) {
   var errores = [];
@@ -454,9 +462,28 @@ function validarCreditos(entrada, esquema, idioma) {
 
   if (entrada.vigencia === 'fecha') {
     var redencion = comoNumeroFecha(entrada.fechaFinRedencion);
-    if (redencion !== null && fin !== null && redencion <= fin) {
+    var cargaFija = entrada.carga === 'fecha' ? comoNumeroFecha(entrada.fechaCarga) : null;
+    /*
+     * Tres reglas, de la mas grave a la menos, y una sola a la vez para que el
+     * comercial no lea dos mensajes sobre la misma fecha.
+     *
+     * 1. Nunca antes de la carga: hasta el 10 de noviembre de 2026 nadie lo
+     *    revisaba, y una carga el 25 con vencimiento el 20 pasaba.
+     * 2. Nunca antes del fin de la campana.
+     * 3. El mismo dia del fin solo si los Creditos llegan ese mismo dia. Juan lo
+     *    pidio ese dia para las campanas cuyos Creditos solo sirven durante el
+     *    evento. Con la carga al dia siguiente, quien compra el ultimo dia los
+     *    recibiria vencidos.
+     */
+    if (redencion !== null && cargaFija !== null && redencion < cargaFija) {
+      errores.push(error('fechaFinRedencion', mensajeDe('fechaFinRedencion', tipo, 'antesDeLaCarga', idioma,
+        'La fecha límite de redención no puede ser anterior a la fecha de carga.')));
+    } else if (redencion !== null && fin !== null && redencion < fin) {
       errores.push(error('fechaFinRedencion', mensajeDe('fechaFinRedencion', tipo, 'orden', idioma,
-        'La fecha límite de redención debe ser posterior al fin de la campaña.')));
+        'La fecha límite de redención no puede ser anterior al fin de la campaña.')));
+    } else if (redencion !== null && fin !== null && redencion === fin && !llegaElMismoDia(entrada)) {
+      errores.push(error('fechaFinRedencion', mensajeDe('fechaFinRedencion', tipo, 'mismoDia', idioma,
+        'La fecha límite de redención solo puede ser el último día de la campaña si los Créditos llegan el mismo día del pedido.')));
     }
   }
   return errores;

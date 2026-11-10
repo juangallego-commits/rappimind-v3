@@ -847,12 +847,23 @@ var PREGUNTAS = {
   fechaFinRedencion: p({
     paso: 'creditos',
     pregunta: '¿Qué día se vencen los Créditos?',
-    ayuda: 'Tiene que ser después de que termine la campaña.',
-    porQue: 'Si vencen el mismo día que termina la campaña, quien compra el último día no alcanza a usarlos.',
+    ayuda: 'Puede ser el último día de la campaña solo si los Créditos llegan el mismo día del pedido.',
+    porQue: 'Si vencen antes de llegarle al usuario, no alcanza a usarlos y eso termina en reclamos.',
     placeholders: ['TEXTO_VIGENCIA_CREDITOS'],
+    /*
+     * Hasta el 10 de noviembre de 2026 el vencimiento tenia que ser despues del
+     * fin de la campana, siempre. Juan confirmo que hay campanas donde los
+     * Creditos solo sirven mientras dura el evento: del 13 al 17, vencen el 17.
+     * Eso vale cuando le llegan al usuario el mismo dia (carga inmediata o en
+     * una fecha fija que no pase del vencimiento). Con la carga al dia
+     * siguiente, quien compra el ultimo dia los recibiria ya vencidos, y ahi
+     * sigue frenando.
+     */
     errores: {
       vacio: 'Elige el día en que se vencen los Créditos.',
-      orden: 'Los Créditos tienen que vencerse después de que termine la campaña. Si no, quien compre el último día no alcanza a usarlos.',
+      orden: 'Los Créditos no pueden vencerse antes de que termine la campaña. Si no, quien compre los últimos días no alcanza a usarlos.',
+      mismoDia: 'Los Créditos llegan al día siguiente del pedido, así que quien compre el último día los recibiría ya vencidos. Pon el vencimiento al menos un día después del fin, o cambia la carga a "Apenas termina el pedido".',
+      antesDeLaCarga: 'Los Créditos se vencerían antes de llegar. El vencimiento tiene que ser el mismo día de la carga o después.',
     },
   }),
 
