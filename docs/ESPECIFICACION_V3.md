@@ -198,7 +198,7 @@ Validaciones cruzadas: fecha y hora de fin posteriores a las de inicio; fechas n
 | secciones | casillas (lista configurable) | si redencion = secciones | TEXTO_LUGAR_REDENCION |
 | condiciones | casillas | no | TEXTO_CONDICIONES |
 
-Validaciones cruzadas: tope y presupuesto mayores que cero; tope menor o igual al presupuesto; fecha de carga dentro o después de la vigencia de la campaña; fecha fin de redención posterior al fin de la campaña.
+Validaciones cruzadas: tope y presupuesto mayores que cero; tope menor o igual al presupuesto; fecha de carga dentro o después de la vigencia de la campaña; fecha fin de redención igual o posterior a la fecha de carga (si la carga es en una fecha) y posterior al fin de la campaña; puede ser el mismo día del fin solo si la carga es inmediata o en una fecha (decisión de Juan del 10 de noviembre de 2026).
 
 **Filtro de entrada (preguntas sí o no antes del formulario):** ¿la campaña la fondea Rappi y no una tienda o marca? ¿la tienda o la marca exige sus propios T&C? Si alguna respuesta es sí, no se genera y se muestra la pantalla "Esta campaña la redacta Legal" con el link a `URL_FORMULARIO_LEGAL`.
 

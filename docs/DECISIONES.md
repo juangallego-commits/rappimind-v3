@@ -1970,3 +1970,30 @@ ninguna cédula de diez números empieza como un NIT de Rappi.
 
 Pruebas nuevas en `pruebas/identificaciones.test.js` con un número inventado,
 no con el del aliado.
+
+## 2026-11-10 · Los Créditos pueden vencer el último día de la campaña si llegan ese mismo día
+
+**Lo que pasaba.** Con la vigencia "Hasta una fecha", el vencimiento tenía que
+ser posterior al fin de la campaña, siempre (especificación, sección 4). Un
+comercial con un evento del 13 al 17 de noviembre, cuyos Créditos solo sirven
+durante el evento, no podía poner el 17.
+
+**La decisión (de Juan, 10 de noviembre de 2026).** El vencimiento puede ser el
+mismo día del fin solo si los Créditos le llegan al usuario ese mismo día:
+carga "Apenas termina el pedido" o carga en una fecha fija. Con la carga "Al día
+siguiente del pedido" (la opción por defecto) sigue frenando, porque quien
+compra el último día los recibiría ya vencidos. El mensaje le dice al comercial
+las dos salidas: mover el vencimiento un día o cambiar la carga.
+
+**El hueco que se cerró en el mismo cambio.** Nadie comparaba la fecha de carga
+con la de vencimiento: una carga el 25 con vencimiento el 20 pasaba y el T&C
+decía que los Créditos se vencían antes de llegar. Ahora el vencimiento tiene
+que ser el mismo día de la carga o después. Juan lo aprobó.
+
+**Detalle técnico.** Las tres reglas viven en `validarCreditos`
+(`src/core/validaciones.js`) y se revisan de la más grave a la menos (antes de
+la carga, antes del fin, mismo día del fin sin carga ese día), con un solo
+mensaje a la vez sobre la misma fecha. Los mensajes viven en la pregunta
+`fechaFinRedencion` (`src/core/preguntas.js`), claves `orden`, `mismoDia` y
+`antesDeLaCarga`. Brasil no tiene traducción de esta pregunta en
+`preguntas_pt.js`, igual que antes.

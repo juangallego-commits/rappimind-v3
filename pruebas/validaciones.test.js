@@ -142,9 +142,41 @@ test('el tope y el presupuesto deben ser mayores que cero', () => {
   assert.deepStrictEqual(campos(solicitudBase({ presupuesto: 0 })), ['presupuesto']);
 });
 
-test('la fecha límite de redención debe ser posterior al fin', () => {
-  const entrada = solicitudBase({ vigencia: 'fecha', diasVigencia: null, fechaFinRedencion: '2026-09-21' });
+test('la fecha límite de redención no puede ser anterior al fin', () => {
+  const entrada = solicitudBase({ vigencia: 'fecha', diasVigencia: null, fechaFinRedencion: '2026-09-20' });
   assert.deepStrictEqual(campos(entrada), ['fechaFinRedencion']);
+});
+
+/*
+ * Desde el 10 de noviembre de 2026: hay campanas cuyos Creditos solo sirven
+ * mientras dura el evento (del 13 al 17, vencen el 17). Vale si le llegan al
+ * usuario el mismo dia; con la carga al dia siguiente, quien compra el ultimo
+ * dia los recibiria vencidos.
+ */
+test('los Créditos pueden vencer el último día si llegan el mismo día del pedido', () => {
+  const mismoDia = { vigencia: 'fecha', diasVigencia: null, fechaFinRedencion: '2026-09-21' };
+  assert.deepStrictEqual(campos(solicitudBase(Object.assign({ carga: 'inmediata' }, mismoDia))), []);
+  assert.deepStrictEqual(campos(solicitudBase(Object.assign({ carga: 'fecha', fechaCarga: '2026-09-21' }, mismoDia))), []);
+  assert.deepStrictEqual(campos(solicitudBase(Object.assign({ carga: 'dia_siguiente' }, mismoDia))), ['fechaFinRedencion']);
+
+  // Con la carga al dia siguiente, un dia despues del fin ya alcanza.
+  assert.deepStrictEqual(campos(solicitudBase({
+    carga: 'dia_siguiente', vigencia: 'fecha', diasVigencia: null, fechaFinRedencion: '2026-09-22',
+  })), []);
+});
+
+test('los Créditos no pueden vencer antes de la fecha de carga', () => {
+  const resultado = validarSolicitud(solicitudBase({
+    carga: 'fecha', fechaCarga: '2026-09-25', vigencia: 'fecha', diasVigencia: null, fechaFinRedencion: '2026-09-23',
+  }), CO, CONTEXTO);
+  // Un solo mensaje sobre esa fecha, aunque tambien quede igual o antes del fin.
+  assert.deepStrictEqual(resultado.errores.map((e) => e.campo), ['fechaFinRedencion']);
+  assert.strictEqual(resultado.errores[0].mensaje,
+    'Los Créditos se vencerían antes de llegar. El vencimiento tiene que ser el mismo día de la carga o después.');
+
+  assert.deepStrictEqual(campos(solicitudBase({
+    carga: 'fecha', fechaCarga: '2026-09-25', vigencia: 'fecha', diasVigencia: null, fechaFinRedencion: '2026-09-25',
+  })), []);
 });
 
 test('las ciudades son obligatorias cuando el alcance no es nacional', () => {
@@ -246,8 +278,11 @@ test('los mensajes de rango, orden y fecha pasada son los escritos para cada pre
     'El tope por pedido es mayor que el presupuesto total. Con eso, el primer pedido se lleva toda la campaña. Revisa los dos números.');
   assert.strictEqual(mensajeDe({ porcentaje: 101 }, 'porcentaje'),
     'El porcentaje va de 1 a 100. Si necesitas varios porcentajes o un rango, eso es otra campaña: escríbele a Legal.');
-  assert.strictEqual(mensajeDe({ vigencia: 'fecha', fechaFinRedencion: '2026-09-21' }, 'fechaFinRedencion'),
-    'Los Créditos tienen que vencerse después de que termine la campaña. Si no, quien compre el último día no alcanza a usarlos.');
+  assert.strictEqual(mensajeDe({ vigencia: 'fecha', fechaFinRedencion: '2026-09-20' }, 'fechaFinRedencion'),
+    'Los Créditos no pueden vencerse antes de que termine la campaña. Si no, quien compre los últimos días no alcanza a usarlos.');
+  assert.strictEqual(mensajeDe({ carga: 'dia_siguiente', vigencia: 'fecha', fechaFinRedencion: '2026-09-21' }, 'fechaFinRedencion'),
+    'Los Créditos llegan al día siguiente del pedido, así que quien compre el último día los recibiría ya vencidos. ' +
+    'Pon el vencimiento al menos un día después del fin, o cambia la carga a "Apenas termina el pedido".');
 });
 
 // --- lo que salió de la revisión crítica del 17 de septiembre ---------------
